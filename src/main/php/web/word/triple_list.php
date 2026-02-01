@@ -300,7 +300,7 @@ class triple_list extends ListBase
      *
      * @param triple_list_ui $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(triple_list_ui $del_lst): void
+    private function remove(triple_list_ui $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -400,7 +400,7 @@ class triple_list extends ListBase
      */
     function ex_time(): void
     {
-        $this->diff($this->time_lst());
+        $this->remove($this->time_lst());
     }
 
     /**
@@ -408,7 +408,7 @@ class triple_list extends ListBase
      */
     function ex_measure(): void
     {
-        $this->diff($this->measure_lst());
+        $this->remove($this->measure_lst());
     }
 
     /**
@@ -416,7 +416,7 @@ class triple_list extends ListBase
      */
     function ex_scaling(): void
     {
-        $this->diff($this->scaling_lst());
+        $this->remove($this->scaling_lst());
     }
 
     /**
@@ -424,7 +424,7 @@ class triple_list extends ListBase
      */
     function ex_percent(): void
     {
-        $this->diff($this->percent_lst());
+        $this->remove($this->percent_lst());
     }
 
     /**

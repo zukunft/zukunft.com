@@ -44,8 +44,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
-include_once paths::MODEL_SYSTEM . 'base_list.php';
-include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'list_db_write.php';
+include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 //include_once paths::MODEL_HELPER . 'combine_named.php';
 //include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::DB . 'sql_creator.php';
@@ -63,6 +63,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
@@ -70,7 +71,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
-use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -83,13 +84,15 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-class sandbox_list extends base_list
+class sandbox_list extends list_db_write
 {
 
     /*
@@ -104,7 +107,7 @@ class sandbox_list extends base_list
      */
 
     /**
-     * always set the user because a link list is always user specific
+     * always set the user because a link list is always user-specific
      * @param user $usr the user who requested to see e.g. the formula links
      */
     function __construct(user $usr, array $lst = array())
@@ -401,42 +404,40 @@ class sandbox_list extends base_list
      * add one object to the list of user sandbox objects, but only if it is not yet part of the list
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     * @param user_message|Message $msg to report which entry is double
+     * @returns bool if adding failed or something is strange, the messages for the user with the suggested solutions
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
-        bool                                                         $allow_duplicates = false
-    ): user_message
+        bool                                                         $allow_duplicates = false,
+        user_message|Message                                         $msg = new Message()
+    ): bool
     {
-        // TODO Prio 1 add $usr_msg as parameter
-        $usr_msg = new user_message();
-
         // add only objects that have all mandatory values
-        $obj_to_add->db_ready($usr_msg);
+        $obj_to_add->db_ready($msg);
 
         // add a missing user to the object
         // or check if the object user matches the list user
         // and allow exceptions only for admin users
-        $usr_msg->add($this->add_user_check($obj_to_add));
+        $msg->merge($this->add_user_check($obj_to_add));
 
         if ($obj_to_add->id() <> 0) {
             if ($allow_duplicates) {
-                $usr_msg->add(parent::add_obj($obj_to_add, $allow_duplicates));
+                parent::add_obj($obj_to_add, $allow_duplicates, $msg);
             } else {
                 if ($obj_to_add->id() <> 0) {
                     if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
-                        $usr_msg->add(parent::add_obj($obj_to_add));
+                        parent::add_obj($obj_to_add, $allow_duplicates, $msg);
                     } else {
-                        $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
-                            [
-                                msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                                msg_id::VAR_CLASS_NAME => $obj_to_add::class
-                            ]);
+                        $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
+                            msg_id::VAR_NAME => $obj_to_add->dsp_id(),
+                            msg_id::VAR_CLASS_NAME => $obj_to_add::class
+                        ]);
                     }
                 }
             }
         }
-        return $usr_msg;
+        return $msg->is_ok();
     }
 
     /**
@@ -453,12 +454,12 @@ class sandbox_list extends base_list
         $usr_msg = new user_message();
         if ($obj_to_add->get_user() == null) {
             $obj_to_add->set_user($this->get_user());
-            $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
+            $usr_msg->add(msg_id::USER_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         }
         if ($obj_to_add->get_user() !== $this->get_user()) {
             if (!$this->get_user()->is_admin() and !$this->get_user()->is_system()) {
-                $usr_msg->add_id_with_vars(msg_id::LIST_USER_NO_MATCH,
+                $usr_msg->add(msg_id::LIST_USER_NO_MATCH,
                     [
                         msg_id::VAR_NAME => $obj_to_add->dsp_id(),
                         msg_id::VAR_USER_NAME => $obj_to_add->get_user()->name(),
@@ -477,11 +478,13 @@ class sandbox_list extends base_list
     /**
      * check if the user of the object to add matches the user of the list
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
-     * @return user_message the warning message if the user of the object does not match with the list user
+     * @return user_message|Message the warning message if the user of the object does not match with the list user
      */
-    function same_user(IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add): user_message
+    function same_user(
+        IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
+    ): user_message|Message
     {
-        $usr_msg = new user_message();
+        $usr_msg = new Message();
         if ($obj_to_add->get_user() !== $this->get_user()) {
             if ($obj_to_add->get_user() == null) {
                 $obj_to_add->set_user($this->get_user());

@@ -29,7 +29,7 @@ COMMENT ON COLUMN component_links.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN component_links.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to link components to views with an n:m relation
+-- table structure to save user-specific changes to link components to views with an n:m relation
 --
 
 CREATE TABLE IF NOT EXISTS user_component_links

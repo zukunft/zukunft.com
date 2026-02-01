@@ -276,7 +276,7 @@ class verb_list extends type_list
         $vrb = new verb();
         $vrb->id = verbs::TIME_STEP_ID;
         $vrb->set_name(verbs::TIME_STEP_NAME);
-        $vrb->set_formula_name(verbs::TIME_STEP_NAME_FORMULA);
+        $vrb->frm_name = verbs::TIME_STEP_NAME_FORMULA;
         $vrb->set_code_id_db(verbs::TIME_STEP);
         $this->add_verb($vrb);
         $vrb = new verb();
@@ -415,9 +415,9 @@ class verb_list extends type_list
      * cast
      */
 
-    function term_list(): term_list
+    function term_list(user $usr): term_list
     {
-        $trm_lst = new term_list($this->usr);
+        $trm_lst = new term_list($usr);
         foreach ($this->lst() as $vrb) {
             $trm_lst->add($vrb->term());
         }
@@ -608,11 +608,11 @@ class verb_list extends type_list
                     $id = $vrb->id();
                     $select_row[] = $id;
                     $select_row[] = $select_name;
-                    $select_row[] = $vrb->get_usage();
+                    $select_row[] = $vrb->usage;
                     $combined_list[$id] = $select_row;
 
                     $select_row = array();
-                    $select_name = $vrb->get_reverse();
+                    $select_name = $vrb->reverse;
                     /* like above ...
                     if ($vrb->name() != '' and $select_name != '') {
                         $select_name .= ' (' . $vrb->name() . ')';
@@ -622,7 +622,7 @@ class verb_list extends type_list
                         $id = $vrb->id() * -1;
                         $select_row[] = $id;
                         $select_row[] = $select_name;
-                        $select_row[] = $vrb->get_usage(); // TODO separate the backward usage or separate the reverse form
+                        $select_row[] = $vrb->usage; // TODO separate the backward usage or separate the reverse form
                         $combined_list[$id] = $select_row;
                     }
                 }
@@ -689,7 +689,7 @@ class verb_list extends type_list
                 // actual save the reference to the database
                 $vrb->save($vrb_usr_msg);
                 // collect the user message for a consolidated list for the user
-                $usr_msg->add($vrb_usr_msg);
+                $usr_msg->merge($vrb_usr_msg);
             }
         }
 

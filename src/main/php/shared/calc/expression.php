@@ -36,6 +36,8 @@
 namespace Zukunft\ZukunftCom\main\php\shared\calc;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -75,6 +77,15 @@ class expression
 {
 
     /*
+     * constants
+     */
+
+    // the minimum length of a formula expression in the database reference format
+    const int MIN_REF_LENGTH = 3;
+    // the minimum length of a formula expression in the human-readable format
+    const int MIN_LENGTH = 4;
+
+    /*
      * object vars
      */
 
@@ -87,7 +98,7 @@ class expression
     // true if the human-readable text has been updated and not yet converted
     private bool $ref_text_dirty = false;
     // the formula name only for better user messages
-    private string $frm_name = '';
+    public string $frm_name = '';
 
 
     /*
@@ -107,6 +118,24 @@ class expression
     /*
      * set and get
      */
+
+    /**
+     * update the database reference expression and the human-readable format
+     * @param string|null $ref_txt the formula expression in the database reference format
+     * @param string|null $usr_txt the formula expression in the human-readable format
+     * @return void
+     */
+    function set_ref_and_user_text(?string $ref_txt, ?string $usr_txt): void
+    {
+        if ($ref_txt != null) {
+            $this->ref_text = $ref_txt;
+            $this->ref_text_dirty = false;
+        }
+        if ($usr_txt != null) {
+            $this->usr_text = $usr_txt;
+            $this->usr_text_dirty = false;
+        }
+    }
 
     /**
      * update the expression by setting the human-readable format and try to update the database reference format
@@ -168,9 +197,11 @@ class expression
         user_message                $usr_msg = new user_message()
     ): ?string
     {
-        if ($this->ref_text_dirty) {
-            $this->ref_text = $this->get_ref_text($trm_lst, $usr_msg);
+        // TODO Prio 0 use the ref text check functions that includes the user message
+        if ($this->ref_text_dirty or $this->ref_text == null or $this->ref_text == '') {
+            $new_ref_txt = $this->get_ref_text($trm_lst, $usr_msg);
             if ($usr_msg->is_ok()) {
+                $this->ref_text = $new_ref_txt;
                 $this->ref_text_dirty = false;
             }
         }
@@ -190,27 +221,34 @@ class expression
     /**
      * convert the user text to the database reference format
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @param user_message $usr_msg to enrich with problems and suggested solution
+     * @param user_message $msg to enrich with problems and suggested solution
      * @return string the expression in the formula reference format
      */
     protected function get_ref_text(
         term_list|term_list_ui|null $trm_lst = null,
-        user_message                $usr_msg = new user_message()
+        user_message $msg = new user_message()
     ): string
     {
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
-        $pos = strpos($this->user_text($trm_lst), chars::CHAR_CALC);
-        if ($pos >= 0) {
-            $left_part = $this->res_part_usr();
-            $right_part = $this->r_part_usr();
-            $left_part = $this->get_ref_part($left_part, $trm_lst, $usr_msg);
-            // continue with the right part of the expression only if the left part has been fine
-            if (!$this->usr_text_dirty) {
-                $right_part = $this->get_ref_part($right_part, $trm_lst, $usr_msg);
+        // TODO Prio 1 check that a false return of strpos is always handled
+        $pos = strpos($this->usr_text, chars::CHAR_CALC);
+        if ($pos === false) {
+            $msg->add(msg_id::EXPRESSION_EQUAL_SIGN_MISSING, [
+                msg_id::VAR_FORMULA => $this->usr_text
+            ]);
+        } else {
+            if ($pos >= 0) {
+                $left_part = $this->res_part_usr();
+                $right_part = $this->r_part_usr();
+                $left_part = $this->get_ref_part($left_part, $trm_lst, $msg);
+                // continue with the right part of the expression only if the left part has been fine
+                if (!$this->usr_text_dirty) {
+                    $right_part = $this->get_ref_part($right_part, $trm_lst, $msg);
+                }
+                $result = $left_part . chars::CHAR_CALC . $right_part;
             }
-            $result = $left_part . chars::CHAR_CALC . $right_part;
         }
 
         // remove all spaces because they are not relevant for calculation and to avoid too much recalculation
@@ -291,13 +329,13 @@ class expression
      *
      * @param string $frm_part_text the expression text in user format that should be converted
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
-     * @param user_message $usr_msg to enrich with problems and suggested solution
+     * @param user_message $msg to enrich with problems and suggested solution
      * @return string the expression text in the database ref format
      */
     private function get_ref_part(
         string                      $frm_part_text,
         term_list|term_list_ui|null $trm_lst = null,
-        user_message                $usr_msg = new user_message()
+        user_message $msg = new user_message()
     ): string
     {
         $result = $frm_part_text;
@@ -322,21 +360,30 @@ class expression
                 // check if the preloaded terms can be used for the conversion
                 if ($trm_lst != null) {
                     $trm = $trm_lst->get_by_name($name);
+                    // TODO Prio 1 avoid loading the corresponding formula
                     if ($trm != null) {
+                        if ($trm->obj()::class == word::class) {
+                            if ($trm->obj()->type_id == phrase_types::FORMULA_LINK_ID) {
+                                $frm_trm = new formula($this->usr);
+                                $frm_trm->load_by_name($name);
+                                $trm = $frm_trm->term();
+                            }
+                        }
                         if ($trm->obj_id() > 0) {
                             $db_sym = $this->get_db_sym($trm);
                         }
                     } else {
-                        $usr_msg->add_id_with_vars(msg_id::FORMULA_TERM_MISSING, [
+                        $msg->add(msg_id::FORMULA_TERM_MISSING, [
                             msg_id::VAR_NAME => $name,
                             msg_id::VAR_FORMULA => $this->frm_name,
                             msg_id::VAR_EXPRESSION => $frm_part_text
                         ]);
                     }
+
                 }
 
                 if ($db_sym == '') {
-                    $db_sym = $this->get_term_symbol($name, $usr_msg);
+                    $db_sym = $this->get_term_symbol($name, $msg);
                 }
 
                 $result = $left . $db_sym . $right;
@@ -468,9 +515,7 @@ class expression
             $id = $lib->str_between($frm_part_ref_text, chars::VERB_START, chars::VERB_END);
             if ($id > 0) {
                 $vrb = $trm_lst?->verb_by_id($id);
-                if ($vrb == null) {
-                    $vrb = $this->load_verb($id);
-                }
+                $vrb?->load_by_id($id);
                 if ($vrb == null) {
                     $this->usr_text_dirty = true;
                     log_warning('Verb with id ' . $id . ' not found');
@@ -504,7 +549,7 @@ class expression
         return $db_sym;
     }
 
-    protected function get_term_symbol(string $name, user_message $usr_msg): string
+    protected function get_term_symbol(string $name, user_message $msg): string
     {
         // check for formulas first, because for every formula a word is also existing
         // similar to a part in get_usr_part, maybe combine
@@ -528,7 +573,7 @@ class expression
         // if still not found report the missing link
         if ($db_sym == '' and $name <> '') {
             $this->ref_text_dirty = true;
-            $usr_msg->add_id_with_vars(msg_id::FORMULA_TERM_NAME_MISSING, [
+            $msg->add(msg_id::FORMULA_TERM_NAME_MISSING, [
                 msg_id::VAR_NAME => $name
             ]);
         }

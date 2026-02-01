@@ -72,7 +72,7 @@ class element_db
     const string FLD_TEXT = 'resolved_text';
     // TODO: is resolved text needed?
 
-    // all database field names excluding the id, standard name and user specific fields
+    // all database field names excluding the id, standard name and user-specific fields
     const array FLD_NAMES = array(
         formula_db::FLD_ID,
         user_db::FLD_ID,

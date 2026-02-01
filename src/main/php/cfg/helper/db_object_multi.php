@@ -205,18 +205,18 @@ class db_object_multi extends db_object_key
      * general part to import a database multi table object from a JSON array object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        $usr_msg->start_time = microtime(true);
-        return $usr_msg->is_ok();
+        $msg->start_time = microtime(true);
+        return $msg->is_ok();
     }
 
     /*
@@ -245,15 +245,15 @@ class db_object_multi extends db_object_key
      */
     function fill(db_object_multi $obj, user $usr_req): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($obj->id() !== 0 and $obj->id() !== '' ) {
             if ($this->id() === 0 or $this->id() === '') {
                 $this->set_id($obj->id());
             } elseif ($obj->id() != $this->id()) {
-                $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
+                $msg->add(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -292,15 +292,15 @@ class db_object_multi extends db_object_key
      */
     function diff_msg(db_object_multi $obj): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($this->id() != $obj->id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
+            $msg->add(msg_id::DIFF_ID, [
                 msg_id::VAR_ID => $obj->id(),
                 msg_id::VAR_ID_CHK => $this->id(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

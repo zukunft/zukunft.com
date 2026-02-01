@@ -75,7 +75,7 @@ class value_read_tests
         $phr_lst = $val->grp()->phrase_list();
         if ($phr_lst->count() > 0) {
             $phr = $phr_lst->lst()[0];
-            $t->assert($ts . $test_name, $phr->description(), triples::PI_COM);
+            $t->assert($ts . $test_name, $phr->get_description(), triples::PI_COM);
             $test_name = words::PI . ' phrase code id ' . phrase_types::TRIPLE_HIDDEN;
             $t->assert($ts . $test_name, $phr->type_code_id(), phrase_types::TRIPLE_HIDDEN);
         } else {

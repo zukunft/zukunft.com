@@ -40,7 +40,18 @@ class job_types
     const int VALUE_UPDATE_ID = 1;
     const string VALUE_UPDATE_NAME = "update value";
     const string VALUE_UPDATE_COM = "if a value is updated all the depending results should be calculated again";
+    const string VALUE_ADD = "value_add";
+    const string VALUE_DEL = "value_del";
     const string WORD_DELETE = "word_delete";
+    const string WORD_UNLINK = "word_unlink";
+    const string TRIPLE = "triple";
     const string TRIPLE_DELETE = "triple_delete";
+    const string FORMULA_UPDATE = "formula_update";
+    const string FORMULA_ADD = "formula_add";
+    const string FORMULA_DEL = "formula_del";
+    const string FORMULA_LINK = "formula_link";
+    const string FORMULA_UNLINK = "formula_unlink";
+    const string BASE_IMPORT = "base_import"; // import the base configuration by a system user on initial setup
+    const int BASE_IMPORT_ID = 11;
 
 }

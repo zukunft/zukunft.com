@@ -437,11 +437,14 @@ class sys_log extends db_object_seq_id
     }
 
     /**
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(
+        user_message        $msg,
+        sql_type_list|array $sc_par_lst = []
+    ): bool
     {
         log_debug();
 
@@ -459,15 +462,15 @@ class sys_log extends db_object_seq_id
             }
 
             if (!$this->save_field_status($db_con, $db_rec)) {
-                $usr_msg->add_message_text('saving the error log failed');
+                $msg->add_message_text('saving the error log failed');
             }
         }
 
-        if (!$usr_msg->is_ok()) {
-            log_err($usr_msg->get_last_message());
+        if (!$msg->is_ok()) {
+            log_err($msg->get_last_message());
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

@@ -33,8 +33,6 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UTILS . 'test_api.php';
@@ -51,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -65,37 +64,32 @@ use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 
 class test_cleanup extends test_api
 {
-    // queries to check if removing of the test rows is complete
-    const string CLEAN_CHECK_WORDS = 'db/cleanup/test_words.sql';
-    const string CLEAN_CHECK_TRIPLES = 'db/cleanup/test_triples.sql';
-    const string CLEAN_CHECK_FORMULAS = 'db/cleanup/test_formulas.sql';
-    const string CLEAN_CHECK_SOURCES = 'db/cleanup/test_sources.sql';
-    const array CLEAN_CHECKS = array(
-        self::CLEAN_CHECK_WORDS,
-        self::CLEAN_CHECK_TRIPLES,
-        self::CLEAN_CHECK_FORMULAS,
-        self::CLEAN_CHECK_SOURCES
-    );
 
+    /*
+     * execute
+     */
 
     /**
+     * TODO use the user message object instead of a string
+     * TODO Prio 2 split and use more internal functions for the parts
      * to remove all system test rows from the database
      *
-     * @return bool true if all test rows have been successful deleted
+     * @return bool true if all test rows have been successfully deleted
      */
-    function cleanup(): bool
+    function cleanup(user_message $usr_msg): bool
     {
         global $db_con;
 
         global $test_val_lst;
 
         $t_db = new test_db_load($this);
-        $usr_msg = new user_message($this->usr1);
 
         $result = ''; // the combine error message of all cleanup actions
 
@@ -188,14 +182,6 @@ class test_cleanup extends test_api
             $this->assert_true($test_name, $cmp2_usr2->unlink($msk_usr2, $usr_msg), self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
-        foreach (components::TEST_COMPONENTS as $cmp_name) {
-            $cmp = $t_db->load_component($cmp_name);
-            if ($cmp->id() > 0) {
-                $test_name = 'request to delete the added test views of "' . $cmp_name . '"';
-                $this->assert_true($test_name, $cmp->del($usr_msg), self::TIMEOUT_LIMIT_DB_MULTI);
-            }
-        }
-
         // request to delete the added test views
         foreach (views::TEST_VIEWS as $dsp_name) {
             $msk = $t_db->load_view($dsp_name);
@@ -205,6 +191,17 @@ class test_cleanup extends test_api
                 $result .= $usr_msg->get_last_message();
                 $target = '';
                 $this->assert('view->del of "' . $dsp_name . '"', $result, $target);
+            }
+        }
+
+        foreach (components::TEST_COMPONENTS as $cmp_name) {
+            $cmp = $t_db->load_component($cmp_name);
+            if ($cmp->id() > 0) {
+                // TODO Prio 0 use a local usr_msg for all del calls
+                $usr_msg_del = $usr_msg->clone_reset();
+                $test_name = 'request to delete the added test views of "' . $cmp_name . '"';
+                $this->assert_true($test_name, $cmp->del($usr_msg_del), self::TIMEOUT_LIMIT_DB_MULTI);
+                $usr_msg->merge($usr_msg_del);
             }
         }
 
@@ -305,7 +302,14 @@ class test_cleanup extends test_api
             $test_name = $test_name_loop . ' "' . $frm_name . '"';
             $frm = $t_db->load_formula($frm_name);
             if ($frm->id() > 0) {
+                $usr_msg->reset(true);
                 $this->assert_true($test_name, $frm->del($usr_msg), self::TIMEOUT_LIMIT_DB);
+            }
+            // remove the corresponding formula word
+            $wrd = $t_db->load_word($frm_name);
+            if ($wrd->id() > 0) {
+                $usr_msg->reset(true);
+                $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
             }
         }
 
@@ -344,6 +348,7 @@ class test_cleanup extends test_api
         $test_name = 'request to delete the renamed test word  of "' . words::TEST_RENAMED . '"';
         $wrd = $t_db->load_word(words::TEST_RENAMED);
         if ($wrd->id() > 0) {
+            $usr_msg->reset(true);
             $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
         }
 
@@ -353,6 +358,12 @@ class test_cleanup extends test_api
             if ($wrd_name != words::MATH) {
                 $wrd = $t_db->load_word($wrd_name);
                 if ($wrd->id() > 0) {
+                    $usr_msg->reset();
+                    $owner = $wrd->owner();
+                    $usr_msg->usr = $owner;
+                    // reload the word as owner
+                    // TODO Prio 1 also reload the other objects as owner before trying to delete them
+                    $wrd = $t_db->load_word($wrd_name, $owner);
                     $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
                 }
             } else {
@@ -380,24 +391,88 @@ class test_cleanup extends test_api
 
     }
 
-    /**
-     * to check if there are any system test rows still in the database (e.g. to missing foreign key cleanup)
-     *
-     * @return bool true if no test record needs to be removed if $just_check has been true
+    /*
+     * test
      */
-    function cleanup_check(): bool
+
+    /**
+     * test with general queries if there are any test rows left in the database.
+     * reports what has been left over so that the issue can be fixed.
+     * removes any remaining the test datasets from the database using different methods
+     * @param user_message $usr_msg with the user messages that occurred until now
+     * @return bool true if the clean-up was successful
+     */
+    function check_cleanup(user_message $usr_msg): bool
     {
-        $result = $this->cleanup_check_queries();
-        if (!$result) {
-            if (!$this->cleanup()) {
-                log_err('Removing of system test database rows failed');
+        if (!$this->cleanup_check_queries($usr_msg)) {
+            $msg_start = 'there are ';
+            $msg_text = 'unexpected system test rows in the database that could ';
+            if ($this->cleanup($usr_msg)) {
+                if ($this->cleanup_check_queries($usr_msg)) {
+                    $msg_start = 'there have been ';
+                    $msg_text .= 'habe been removed: ';
+                } else {
+                    $msg_start = 'there are still ';
+                    $msg_text .= 'NOT be removed: ';
+                }
+            } else {
+                $msg_text .= 'NOT be fully removed: ';
             }
-            $result = $this->cleanup_check_queries();
-            if (!$result) {
-                log_err('Removing of system test database rows incomplete');
+            $err_txt = $usr_msg->all_message_text();
+            $msg = $msg_start . $msg_text . $err_txt;
+            if ($err_txt != '') {
+                log_err($msg);
+            } else {
+                log_warning($msg);
             }
         }
-        return $result;
+        return $usr_msg->is_ok();
+    }
+
+
+    /*
+     * internal
+     */
+
+    /**
+     * test if there are any system test rows still in the database using a list of general queries
+     * e.g. to missing foreign key clean-up.
+     * always run all queries to get an overview about all remaining rows
+     * @return bool true if no system test rows remain in the database
+     */
+    private function cleanup_check_queries(user_message $usr_msg): bool
+    {
+
+        foreach (test_files::CLEAN_CHECKS as $sql_file_name) {
+            if (!$this->cleanup_check_query($usr_msg, $sql_file_name)) {
+                log_warning('cleanup check failed for ' . $sql_file_name);
+            };
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * @return bool true if the given query finds no system test row
+     */
+    private function cleanup_check_query(user_message $msg, string $sql_file_name): bool
+    {
+        global $db_con;
+
+        $qp = new sql_par(self::class);
+        $qp->name .= $sql_file_name;
+        $qp->sql = $this->file($sql_file_name);
+        $db_rows = $db_con->get($qp);
+        if ($db_rows !== false) {
+            if (count($db_rows) > 0) {
+                $msg->add(msg_id::DB_CLEANUP_ERROR, [
+                    msg_id::VAR_COUNTER => count($db_rows),
+                    msg_id::VAR_FILE_NAME => $sql_file_name
+                ]);
+            }
+        }
+
+        return $msg->is_ok();
     }
 
     /**
@@ -443,43 +518,6 @@ class test_cleanup extends test_api
             $pos++;
         }
         return $trm_lst;
-    }
-
-    /**
-     * to check if there are any system test rows still in the database (e.g. to missing foreign key cleanup)
-     * @return bool true if no system test rows remain in the database
-     */
-    private function cleanup_check_queries(): bool
-    {
-
-        $result = true;
-        foreach (self::CLEAN_CHECKS as $sql_file_name) {
-            if ($result) {
-                $result = $this->cleanup_check_query($sql_file_name);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return bool true if no system test row is found by the given query
-     */
-    private function cleanup_check_query(string $sql_file_name): bool
-    {
-        global $db_con;
-
-        $result = true;
-        $qp = new sql_par(self::class);
-        $qp->name .= $sql_file_name;
-        $qp->sql = $this->file($sql_file_name);
-        $db_rows = $db_con->get($qp);
-        if ($db_rows != false) {
-            log_err('There are ' . count($db_rows) . ' unexpected system test rows detected by ' . $sql_file_name);
-            $result = false;
-        }
-
-        return $result;
     }
 
     function html_page_test(string $body, string $title, string $filename): void

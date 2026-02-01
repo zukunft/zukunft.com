@@ -316,6 +316,9 @@
       "name": "htp"
     },
     {
+      "name": "one"
+    },
+    {
       "name": "million",
       "comment": "to specify numbers in millions",
       "type": "scaling",

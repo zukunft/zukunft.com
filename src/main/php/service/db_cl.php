@@ -195,6 +195,12 @@ class db_cl
         return $sys->typ_lst->job_typ->id($code_id);
     }
 
+    function job_status_id(string $code_id): int
+    {
+        global $sys;
+        return $sys->typ_lst->job_sta->id($code_id);
+    }
+
     function log_action_id(string $code_id): int
     {
         global $sys;
@@ -309,6 +315,12 @@ class db_cl
         return $sys->typ_lst->job_typ->get_by_id($id);
     }
 
+    function job_status(int $id)
+    {
+        global $sys;
+        return $sys->typ_lst->job_sta->get_by_id($id);
+    }
+
     function log_action(int $id)
     {
         global $sys;
@@ -328,7 +340,7 @@ class db_cl
     }
 
     /**
-     * get the user specific name of a database row selected by the database id
+     * get the user-specific name of a database row selected by the database id
      *
      * @param int $id
      * @return string
@@ -453,6 +465,12 @@ class db_cl
         return $sys->typ_lst->job_typ->name($id);
     }
 
+    function job_status_name(int $id): string
+    {
+        global $sys;
+        return $sys->typ_lst->job_sta->name($id);
+    }
+
     function log_action_name(int $id): string
     {
         global $sys;
@@ -474,12 +492,12 @@ class db_cl
 }
 
 /**
- * get the user specific name of a code linked database row
+ * get the user-specific name of a code linked database row
  * e.g. cl_name(db_cl::)
  *
  * @param string $type
  * @param int $id
- * @return string the user specific name of the type
+ * @return string the user-specific name of the type
  */
 function cl_name(string $type, int $id): string
 {

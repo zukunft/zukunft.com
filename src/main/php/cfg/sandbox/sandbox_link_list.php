@@ -191,7 +191,7 @@ class sandbox_link_list extends sandbox_list
         // add a missing user to the object
         // or check if the object user matches the list user
         // and allow exceptions only for admin users
-        $usr_msg->add($this->add_user_check($obj_to_add));
+        $usr_msg->merge($this->add_user_check($obj_to_add));
 
         // if a sandbox object has the names of the objects to link, but not (yet) an id, add it nevertheless to the list
         if (!in_array($obj_to_add->get_key(), array_keys($this->key_pos_list())) or $allow_duplicates) {

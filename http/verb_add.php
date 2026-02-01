@@ -58,6 +58,7 @@ include_once html_paths::VERB . 'verb.php';
 $app = new frontend();
 $db_con = $app->start("link_type_add");
 $html = new html_base();
+$msg = '';
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
@@ -89,16 +90,16 @@ if ($usr->id() > 0) {
             $vrb->set_name($_GET[url_var::NAME]);
         }
         if ($_GET[url_var::PLURAL] != null) {
-            $vrb->set_plural($_GET[url_var::PLURAL]);
+            $vrb->plural = $_GET[url_var::PLURAL];
         }
         if (isset($_GET[url_var::REVERSE])) {
-            $vrb->set_reverse($_GET[url_var::REVERSE]);
+            $vrb->reverse = $_GET[url_var::REVERSE];
         }
         if (isset($_GET[url_var::REVERSE_PLURAL])) {
-            $vrb->set_reverse_plural($_GET[url_var::REVERSE_PLURAL]);
+            $vrb->rev_plural = $_GET[url_var::REVERSE_PLURAL];
         }
         if (isset($_GET[url_var::NAME_IN_FORMULA])) {
-            $vrb->set_formula_name($_GET[url_var::NAME_IN_FORMULA]);
+            $vrb->frm_name = $_GET[url_var::NAME_IN_FORMULA];
         }
 
         if ($_GET['confirm'] > 0) {

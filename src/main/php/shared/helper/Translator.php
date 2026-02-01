@@ -65,7 +65,7 @@ class Translator
      *
      * @param msg_id $msg_id the id const of the message that should be shown
      * @param string $lan the code id of the target language
-     * @return string the message text in the user specific language that should be shown to the user
+     * @return string the message text in the user-specific language that should be shown to the user
      */
     function txt(msg_id $msg_id, string $lan = ''): string
     {
@@ -108,14 +108,14 @@ class Translator
             try {
                 return msg_id::get($msg_id_txt);
             } catch (ValueError $error) {
-                $usr_msg = new user_message();
-                $usr_msg->add_id_with_vars(msg_id::MISSING_TRANSLATION, [
+                $msg = new user_message();
+                $msg->add(msg_id::MISSING_TRANSLATION, [
                     msg_id::VAR_MESSAGE_ID => $msg_id_txt,
                     msg_id::VAR_LANGUAGE => $this->lan,
                     msg_id::VAR_ERROR_TEXT => $error->getMessage()
                 ]);
-                $msg = $usr_msg->var_message_text();
-                log_err($msg);
+                $msg_txt = $msg->var_message_text();
+                log_err($msg_txt);
                 return msg_id::ERROR_TEXT;
             }
         }

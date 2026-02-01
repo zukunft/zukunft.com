@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
+include_once html_paths::GROUP . 'group.php';
 //include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
@@ -61,6 +62,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
@@ -605,7 +607,7 @@ class phrase_list extends sandbox_list_named
      */
     function add_phrase(phrase $phr): bool
     {
-        return parent::add_obj($phr)->is_ok();
+        return parent::add_obj($phr);
     }
 
     /**
@@ -673,6 +675,32 @@ class phrase_list extends sandbox_list_named
         log_debug($lib->dsp_count($this->lst()));
         return $result;
     }
+
+    /*
+     * repeat backend
+     */
+
+    /**
+     * @return group|null the group with only the id set based to this list or null if no group matches
+     */
+    function get_grp_id(bool $do_save = true): ?group
+    {
+        $grp = null;
+        if ($this->is_empty()) {
+            // TODO Prio 0 switch back to error
+            log_warning('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
+        } else {
+            $grp = new group();
+            $grp_id = new group_id();
+            $grp->set_id($grp_id->get_id($this));
+            $grp->set_phrase_list(clone $this);
+        }
+        return $grp;
+    }
+
+    /*
+     * to review
+     */
 
     /**
      * TODO review

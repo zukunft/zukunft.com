@@ -142,8 +142,8 @@ class test_triples extends test_objects
         $trp->name_given = triples::MATH_CONST_GIVEN;
         $trp->weight = 0.5;
         $trp->set_view_id(views::MATH_CONST_ID);
-        $trp->set_usage(triples::SYSTEM_TEST_ADD_USAGE);
-        $trp->set_impact(triples::SYSTEM_TEST_ADD_IMPACT);
+        $trp->usage = triples::SYSTEM_TEST_ADD_USAGE;
+        $trp->impact = triples::SYSTEM_TEST_ADD_IMPACT;
         $trp->exclude();
         return $trp;
     }
@@ -448,23 +448,6 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set_name(triples::SYSTEM_TEST_ADD_VIA_FUNC);
         $wrd_add_func = $t_db->load_word(words::TEST_ADD_VIA_FUNC);
-        $wrd_math = $t_db->load_word(words::MATH);
-        $trp->set_from($wrd_add_func->phrase());
-        $trp->set_verb($t_vrb->verb_is());
-        $trp->set_to($wrd_math->phrase());
-        return $trp;
-    }
-
-    /**
-     * @return triple to test the sql insert without use of a function
-     */
-    function triple_add_by_sql(): triple
-    {
-        $t_vrb = new test_verbs($this->env);
-        $t_db = new test_db_load($this->env);
-        $trp = new triple($this->env->usr1);
-        $trp->set_name(triples::SYSTEM_TEST_ADD_VIA_SQL);
-        $wrd_add_func = $t_db->load_word(words::TEST_ADD_VIA_SQL);
         $wrd_math = $t_db->load_word(words::MATH);
         $trp->set_from($wrd_add_func->phrase());
         $trp->set_verb($t_vrb->verb_is());

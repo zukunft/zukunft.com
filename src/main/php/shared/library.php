@@ -54,8 +54,11 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
@@ -73,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -399,13 +403,19 @@ class library
     }
 
     /**
-     * @param string $text the text from which the left part should be taken e.g. "select" of "select>end ignore"
-     * @param string $maker e.g. ">end"
+     * @param string|null $text the text from which the left part should be taken e.g. "select" of "select>end ignore"
+     * @param string|null $maker e.g. ">end"
      * @return string the selected text e.g. "select"
      */
-    function str_left_of(string $text, string $maker): string
+    function str_left_of(?string $text, ?string $maker): string
     {
         $result = "";
+        if ($text == null) {
+            $text = "";
+        }
+        if ($maker == null) {
+            $maker = "";
+        }
         $pos = strpos($text, $maker);
         if ($pos > 0) {
             $result = substr($text, 0, strpos($text, $maker));
@@ -3015,6 +3025,9 @@ class library
         if ($result == 'value_geos') {
             $result = 'values_geo';
         }
+        if ($result == 'job_statuss') {
+            $result = 'job_statuus';
+        }
         return $result;
     }
 
@@ -3116,6 +3129,7 @@ class library
             case $this->class_to_name(sys_log_type::class):
             case $this->class_to_name(sys_log_status::class):
             case $this->class_to_name(sys_log_function::class):
+            case $this->class_to_name(job_status::class):
             case $this->class_to_name(job_type::class):
             case $this->class_to_name(user_type::class):
             case $this->class_to_name(user_profile::class):

@@ -431,11 +431,11 @@ class frontend
         global $sys;
 
         $sys->times->switch(system_time_type::LOAD_FRONTEND);
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($this->dto?->typ_lst_cache == null) {
             $api_msg = $this->api_get(type_lists::class);
             if ($api_msg == '' or $api_msg == null) {
-                $usr_msg->add_id_with_vars(msg_id::API_MESSAGE_EMPTY, [
+                $msg->add(msg_id::API_MESSAGE_EMPTY, [
                     msg_id::VAR_REQUEST => 'load cache'
                 ]);
             } else {
@@ -443,7 +443,7 @@ class frontend
             }
         }
         $sys->times->switch(system_time_type::DEFAULT);
-        return $usr_msg;
+        return $msg;
     }
 
     function set_cache(data_object $dto): void

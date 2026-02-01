@@ -49,11 +49,11 @@ include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_web;
 
 class ListOfIdObjects extends ListOf
 {
@@ -94,8 +94,8 @@ class ListOfIdObjects extends ListOf
     }
 
     /**
-     * to be called after the lists have been updated
-     * but the index list have not yet been updated
+     * to be called after the lists have been updated,
+     * but the index list has not yet been updated
      * is overwritten by the child sandbox_list_named, sandbox_link_list and sandbox_value_list
      */
     protected function set_lst_dirty(): void
@@ -104,7 +104,7 @@ class ListOfIdObjects extends ListOf
     }
 
     /**
-     * @return true if the at least one of the hash tables is not updated
+     * @return true if at least one of the hash tables is not updated
      */
     protected function is_dirty(): bool
     {
@@ -178,6 +178,28 @@ class ListOfIdObjects extends ListOf
 
 
     /*
+     * filter
+     */
+
+    /**
+     * get all objects that are not in the given list
+     *
+     * @param ListOfIdObjects $lst the list to compare with
+     * @return ListOfIdObjects the list of objects that are only in this list
+     */
+    function diff(ListOfIdObjects $lst): ListOfIdObjects
+    {
+        $result = new ListOfIdObjects();
+        foreach ($this->lst() as $obj) {
+            if (!$lst->get_by_id($obj->id())) {
+                $result->add_obj($obj);
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -186,15 +208,15 @@ class ListOfIdObjects extends ListOf
      *
      * @param IdObject|TextIdObject|CombineObject $obj_to_add an object with a unique database id that should be added to the list
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
-     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     * @param Message $msg to report which entry is double
+     * @returns bool false if the object has not been added
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject $obj_to_add,
-        bool                                $allow_duplicates = false
-    ): user_message
+        bool                                $allow_duplicates = false,
+        Message                             $msg = new Message()
+    ): bool
     {
-        $usr_msg = new user_message();
-
         // check boolean first because in_array might take longer
         if ($allow_duplicates) {
             $this->add_direct($obj_to_add);
@@ -203,10 +225,26 @@ class ListOfIdObjects extends ListOf
             if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
                 $this->add_direct($obj_to_add);
             } else {
-                $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
+                    msg_id::VAR_NAME => $obj_to_add->dsp_id(),
+                    msg_id::VAR_CLASS_NAME => $obj_to_add::class
+                ]);
             }
         }
-        return $usr_msg;
+        return $msg->is_ok();
+    }
+
+    /**
+     * remove / unset an object of the list
+     * and set the cache to dirty
+     *
+     * @param int|string $key the unique id of the entry
+     * @returns bool true if the object has been added
+     */
+    function unset(int|string $key): bool
+    {
+        $this->set_lst_dirty();
+        return parent::unset($key);
     }
 
     /**
@@ -245,19 +283,6 @@ class ListOfIdObjects extends ListOf
             }
         }
         $this->lst_dirty = false;
-    }
-
-    /**
-     * unset an object of the list
-     * and set the cache to dirty
-     *
-     * @param int|string $key the unique id of the entry
-     * @returns bool true if the object has been added
-     */
-    protected function unset(int|string $key): bool
-    {
-        $this->set_lst_dirty();
-        return parent::unset($key);
     }
 
 

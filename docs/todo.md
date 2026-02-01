@@ -7,7 +7,19 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO fix all prio 0 TODO including unit tests
+    TODO finish the expression code review
+    TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
+    TODO for messages use these main functions:
+         - add:            to add a translatable message to the user with parameters
+         - add_text:       to add a translatable message to the user without parameters
+         - add_admin:      to add a non translatable message to the admin
+         - add_develop:    to add a non translatable message for developers
+         - merge (ex add): to merge two messages into one
+
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
+    TODO finish the frontend component tests
+    TODO create the frontend page reaction flow tests
     TODO review and create missing formula unit, read and write tests
     TODO m2 should be the formula meter * meter in unit.jsom import message
     TODO document why there is a hidden word for each formula: the reason is that 
@@ -48,6 +60,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add a color theme per view
     TODO use the view (db) version to update the database by using a next_step-php
     TODO create a seperate php session for backend, frontend and test and from test test the login prozess
+    TODO on term load by name get the formula before the word to avoid loading the formula link word instade of the formula
     TODO cleanup init.php to speed up the api
          make init.php as small and fast as possible
          make const.php as small and fast as possible
@@ -72,9 +85,9 @@ A proper issue ticket should be created for these TODOs notes:
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
     TODO use only these global vars:
          - $sys to cache execution times, types and system configuration that change rarely
-                and is not user specific and for easy check how many times the code writes
+                and is not user-specific and for easy check how many times the code writes
          - $db_con for the database connection
-         - $cac for the backend cache of user specific data_object and the user configuration
+         - $cac for the backend cache of user-specific data_object and the user configuration
          - $ui_cac for the frontend cache including the session user
          - $mtr for the message translation use as the last step in the frontend
          - $t for the base test object with the functions for assert and cleanup
@@ -114,7 +127,7 @@ A proper issue ticket should be created for these TODOs notes:
             - created (if null the cache is invalid)
             - last_used (timestamp of the last use, so that old unused cache can be cleaned up)
             - json (the message e.g. in the json format)
-         Only write user specific system views if really needed
+         Only write user-specific system views if really needed
          do not write a combined cache because reading 3 rows from the is fast if done with one request
     TODO add a frontend db cache table (until it is known how e.g. a cockie can be used as a cache)
          the fields of the table "cache_ui" are the same as for the backend but without user and backend config: 
@@ -212,7 +225,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO make it possible to change the parent view and while changing either keep the view or keep the chances or a combination of both
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
     TODO add import fail test to check the error message creation
-    TODO on import create a fail message if the import tries to import a word that exists already as a formula (or create a user specific word and rename the formula)
+    TODO on import create a fail message if the import tries to import a word that exists already as a formula (or create a user-specific word and rename the formula)
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view
     TODO clean up the phrase_list (and triple_list and word_list) cfg/class and add unit and db read tests for all
@@ -238,7 +251,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO create a config get function for the frontend
     TODO cleanup the object vars and use objects instead repeating ids
     TODO remove the old frontend objects based on the api object
-    TODO remove the dsp_obj() functions (without api objects where it can be used for unit tests) and base the frontend objects only on the json api message
+    TODO remove the dsp_obj() functions (without api objects where it can be used for unit tests) and base the frontend objects only on the api json message
     TODO add at least one HTML test for each class
     TODO remove all dsp_obj functions from the model classes
     TODO make sure that im-and export and api check all objects fields
@@ -325,7 +338,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO ... and switch off the SQL standard log for tables that are using the user friendly log process of this code e.g. the changes tables
     TODO use LLM KI systems like deepSeek to fill up and validate the phrases semi automatically
     TODO fix the button frontend issue
-    TODO use the json api message header for all api messages
+    TODO use the api json message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
     TODO always sort the phrase list by id before creating the group id
@@ -366,7 +379,7 @@ A proper issue ticket should be created for these TODOs notes:
          and the small object contains basically e.g. the id and the name
     TODO add a simple UI API JSON to text frontend for the view validation
     TODO exclude any search objects from list objects e.g. remove the phrase from the value list which implies to split the list loading into single functions such as load_by_phr
-    TODO use a key-value table without a phrase group if a value is not user specific and none of the default settings has been changed
+    TODO use a key-value table without a phrase group if a value is not user-specific and none of the default settings has been changed
          for the key-value table without a phrase group encode the key, so that automatically a virtual phrase group can be created
          e.g. convert -12,3,67 to something like 4c48d5685a7e with the possibility to reverse
     TODO create db id sync tables (with this_pod_db_id, foreign_pod, foreign_db_id)
@@ -498,7 +511,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO create a alternative backend based on Rust for better speed
     TODO all pods write change requests first to its own database
     TODO if the local pod is not the master pod for the phrase, the change is transferred to the master pod
-    TODO in case of a conflict, that later change wins and because all changes are user specific the probability of a ultimate conflict is nearly zero
+    TODO in case of a conflict, that later change wins and because all changes are user-specific the probability of a ultimate conflict is nearly zero
     TODO use zeroMQ or Kafka to sync the insert and update statements between the pod
     TODO use separate kafka topics for values and results of each pod e.g. switzerland_values for all updates related to Switzerland
     TODO allow to assign users to an admin and offer each admin to use different settings for "his" users so that different behavior due to setting changes can be tested to the same pod
@@ -533,7 +546,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO create a related table with the phrase, the context as a group, the weight and the related phrase
          for fast selection of phrases related to a given phrase within a given context
          this related table should be automatically filled by a batch job based e.g. on the number and usage
-    TODO create different related tables for prime and big context and user specific
+    TODO create different related tables for prime and big context and user-specific
     TODO move code id const to a code_id.yaml file for better sharing between the different code languages
     TODO add a test case to check missing or invalid code id const e.g. in php, java, JavaScript, python
     TODO check if all backend api calls are actually called from the frontend
@@ -726,7 +739,7 @@ features
 - each user can define uo to 100 users as "preferred trust"
 - for each user show all values, formulas, words where the user has different settings than the other users and allow to move back to the standard
 - it should be possible to link an existing formula to a word/phrase (plus on formula should allow also to link an existing formula)
-- make the phrase to value links for fast searching user specific
+- make the phrase to value links for fast searching user-specific
 - allow to undo just von change or to revert all changes (of these formulas or all formulas, words, values) up to this point of time
 - display in the formula (value, word) the values of other users
 - check the correct usage of verbs (see definition)

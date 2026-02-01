@@ -222,23 +222,23 @@ class source extends sandbox_code_id
      * set the object vars of this source object based on the import json array
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::URL, $in_ex_json)) {
             $this->url = $in_ex_json[json_fields::URL];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -511,48 +511,6 @@ class source extends sandbox_code_id
 
 
     /*
-     * save
-     */
-
-    /**
-     * set the update parameters for the source url
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param source $db_rec the database record before the saving
-     * @param source $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private function save_field_url(sql_db $db_con, source $db_rec, source $std_rec): user_message
-    {
-        $usr_msg = new user_message;
-        if ($db_rec->url <> $this->url) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->url;
-            $log->new_value = $this->url;
-            $log->std_value = $std_rec->url;
-            $log->row_id = $this->id();
-            $log->set_field(source_db::FLD_URL);
-            $usr_msg->add($this->save_field_user($db_con, $log));
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * save all updated source fields excluding the name, because already done when adding a source
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param source|sandbox $db_obj the database record before the saving
-     * @param source|sandbox $norm_obj the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_all_fields(sql_db $db_con, source|sandbox $db_obj, source|sandbox $norm_obj): user_message
-    {
-        $usr_msg = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
-        $usr_msg->add($this->save_field_url($db_con, $db_obj, $norm_obj));
-        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $usr_msg;
-    }
-
-
-    /*
      * save helper
      */
 
@@ -635,13 +593,13 @@ class source extends sandbox_code_id
      * get a list of database field names, values and types that have been updated
      *
      * @param source|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list of the database field names that have been updated
      */
     function db_fields_changed(
         source|db_object_seq_id $obj,
-        user_message            $usr_msg,
+        user_message            $msg,
         sql_type_list           $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -651,7 +609,7 @@ class source extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(

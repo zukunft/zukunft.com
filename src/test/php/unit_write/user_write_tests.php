@@ -43,6 +43,7 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -56,10 +57,10 @@ class user_write_tests
 
     function run(test_cleanup $t): void
     {
-        global $sys;
 
         // init
         $t_usr = new test_users($t);
+        $usr_msg = new user_message($t->usr1);
         $t->name = 'user db write->';
 
         // start the test section (ts)
@@ -166,6 +167,9 @@ class user_write_tests
 
         // cleanup - fallback delete
         $t_usr->cleanup($ts);
+
+        // test if there are any test leftovers in the database and report which
+        $t->check_cleanup($usr_msg);
 
     }
 

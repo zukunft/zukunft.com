@@ -21,7 +21,7 @@
     - calc:              manage the formula calculation
     - im- and export:    create an export object and set the vars from an import object
     - expression:        handel to single parts of a formula
-    - link:              add or remove a link to a word (this is user specific, so use the user sandbox)
+    - link:              add or remove a link to a word (this is user-specific, so use the user sandbox)
     - save:              to update the formula in the database and for the user sandbox
     - del:               manage to remove from the database
     - sql write:         sql statement creation to write to the database
@@ -60,6 +60,7 @@ include_once paths::MODEL_ELEMENT . 'element.php';
 include_once paths::MODEL_ELEMENT . 'element_db.php';
 include_once paths::MODEL_ELEMENT . 'element_list.php';
 include_once paths::MODEL_FORMULA . 'formula_map.php';
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
@@ -70,15 +71,18 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -89,9 +93,11 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula extends formula_map
@@ -138,14 +144,56 @@ class formula extends formula_map
      * info
      */
 
-    /**
-     * if the formula has a fixed process for the result
-     * e.g. "this" or "next" where the value of this or the following time word is returned
-     * @return bool true if result calculation is a kind of hardcoded
-     */
-    function is_predefined(): bool
+    function ref_exp_is_valid(user_message $msg): bool
     {
-        return in_array($this->type_code_id(), formula_type::PREDEFINED_CALCULATION);
+        if ($this->ref_text == null) {
+            $msg->add(msg_id::EXPRESSION_REF_IS_NULL, [
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        } elseif ($this->ref_text == '') {
+            $msg->add(msg_id::EXPRESSION_REF_IS_EMPTY, [
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        } elseif (strlen($this->ref_text) < expression::MIN_REF_LENGTH) {
+            $msg->add(msg_id::EXPRESSION_REF_IS_EMPTY, [
+                msg_id::VAR_EXPRESSION => $this->ref_text,
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        }
+        return $msg->is_ok();
+    }
+
+    function user_exp_is_valid(user_message $msg): bool
+    {
+        if ($this->usr_text == null) {
+            $msg->add(msg_id::EXPRESSION_USER_IS_NULL, [
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        } elseif ($this->usr_text == '') {
+            $msg->add(msg_id::EXPRESSION_USER_IS_EMPTY, [
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        } elseif (strlen($this->usr_text) < expression::MIN_LENGTH) {
+            $msg->add(msg_id::EXPRESSION_USER_IS_TOO_SHORT, [
+                msg_id::VAR_EXPRESSION => $this->ref_text,
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        }
+        return $msg->is_ok();
+    }
+
+    function expression_may_match(user_message $msg): bool
+    {
+        if (substr_count($this->ref_text, chars::TERM_START)
+            + substr_count($this->ref_text, chars::TERM_END)
+            > substr_count($this->usr_text, chars::TERM_DELIMITER)) {
+            $msg->add(msg_id::EXPRESSION_USER_IS_TOO_SHORT, [
+                msg_id::VAR_EXPRESSION => $this->ref_text,
+                msg_id::VAR_FORMULA => $this->dsp_id(),
+                msg_id::VAR_NAME => $this->usr_text
+            ]);
+        }
+        return $msg->is_ok();
     }
 
 
@@ -305,7 +353,7 @@ class formula extends formula_map
     }
 
     /**
-     * the user specific list of a phrases assigned to a formula
+     * the user-specific list of a phrases assigned to a formula
      * TODO Prio 1 move to phrase list
      */
     function assign_phr_ulst_direct(): ?phrase_list
@@ -360,7 +408,7 @@ class formula extends formula_map
     }
 
     /**
-     * the user specific list of a phrases assigned to a formula
+     * the user-specific list of a phrases assigned to a formula
      * TODO Prio 1 move to phrase list
      */
     function assign_phr_ulst(): phrase_list
@@ -417,6 +465,69 @@ class formula extends formula_map
      */
 
     /**
+     * create a list of formula results with values instead of terms
+     *
+     * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
+     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param term_list|null $trm_lst list of preloaded / cached terms
+     * @param value_list|null $val_lst list of preloaded / cached values
+     * TODO verbs
+     * @return result_list all results of the formula for the given phrase list
+     */
+    function to_num_new(
+        phrase_list  $phr_lst,
+        user_message $usr_msg,
+        ?term_list   $trm_lst = null,
+        ?value_list  $val_lst = null
+    ): result_list
+    {
+        // create an empty result list that is filled up with the results of the formula calculation
+        $res_lst = new result_list($this->get_user());
+
+        $exp = $this->expression_new($usr_msg, $trm_lst);
+        return $res_lst;
+    }
+
+    /**
+     * load all missing terms from the database
+     * and select the terms that are needed to select the values for the calculation
+     * based on the given phrase list
+     *
+     * @param phrase_list $phr_lst with the calculation context
+     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param term_list|null $trm_lst list of terms that are already loaded
+     * @return term_list list of all terms that are needed to calculate the formula
+     */
+    function load_all_terms(
+        phrase_list  $phr_lst,
+        user_message $usr_msg,
+        ?term_list   $trm_lst
+    ): term_list
+    {
+        $trm_lst = new term_list($this->get_user());
+        return $trm_lst;
+    }
+
+    /**
+     * load all values for the formula calculation
+     * based on the context on the given phrase list
+     *
+     * @param phrase_list $phr_lst with the calculation context
+     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param term_list|null $trm_lst list of terms that are already loaded
+     * @return value_list list of all values that are needed to calculate the formula
+     */
+    function load_values(
+        phrase_list  $phr_lst,
+        user_message $usr_msg,
+        ?term_list   $trm_lst
+    ): value_list
+    {
+        $val_lst = new value_list($this->get_user());
+        return $val_lst;
+    }
+
+    /**
      * fill the formula in the reference format with numbers
      * TODO review by splitting it up
      *
@@ -429,14 +540,16 @@ class formula extends formula_map
     {
         log_debug('get numbers for ' . $this->dsp_id() . ' and ' . $phr_lst->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
 
         // check
         $pre_trm_lst = $pre_phr_lst?->term_list();
-        if ($this->ref_text_r == '' and $this->ref_text <> '') {
-            $exp = new expression($this);
-            $exp->set_ref_text($this->ref_text, $pre_trm_lst);
-            $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
-        }
+        $exp = new expression($this);
+        $exp->set_ref_text($this->ref_text, $pre_trm_lst);
+        $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
+
+        // reload missing terms from the database
+        $trm_lst = $this->load_exp_terms($usr_msg, $pre_trm_lst, $exp);
 
         // create the result list
         $res_lst = new result_list($this->get_user());
@@ -448,8 +561,8 @@ class formula extends formula_map
         // e.g. for "sales differentiator sector / Total sales" the element groups are
         //      "sales differentiator sector" and "Total sales" where
         //      the element group "sales differentiator sector" has the elements: "sales" (of type word), "differentiator" (verb), "sector" (word)
-        $exp = $this->expression($pre_trm_lst);
-        $elm_grp_lst = $exp->element_grp_lst($pre_trm_lst);
+        $exp = $this->expression($trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
         // to check if all needed values are given
@@ -463,7 +576,7 @@ class formula extends formula_map
             // a figure is either the user edited value or a calculated formula result
             $elm_grp->phr_lst = clone $phr_lst;
             $elm_grp->build_symbol();
-            $fig_lst = $elm_grp->figures($pre_trm_lst);
+            $fig_lst = $elm_grp->figures($trm_lst);
             log_debug('figures ');
             log_debug('figures ' . $fig_lst->dsp_id() . ' (' . $lib->dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
 
@@ -515,7 +628,7 @@ class formula extends formula_map
 
                                         // if the result has been the standard result utils now
                                         if ($res->is_std()) {
-                                            // ... and the value is user specific
+                                            // ... and the value is user-specific
                                             if (!$fig->is_std()) {
                                                 // split the result into a standard
                                                 // get the standard value
@@ -527,7 +640,7 @@ class formula extends formula_map
                                                 }
                                                 log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
                                                 $res_lst->add_obj($res_std);
-                                                // ... and split into a user specific part
+                                                // ... and split into a user-specific part
                                                 $res->is_std = false;
                                             }
                                         }
@@ -540,7 +653,7 @@ class formula extends formula_map
                                     } else {
                                         // if the result has been the standard result utils now
                                         if ($res_master->is_std()) {
-                                            // ... and the value is user specific
+                                            // ... and the value is user-specific
                                             if (!$fig->is_std()) {
                                                 // split the result into a standard
                                                 // get the standard value
@@ -552,7 +665,7 @@ class formula extends formula_map
                                                 }
                                                 log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
                                                 $res_lst->add_obj($res_std);
-                                                // ... and split into a user specific part
+                                                // ... and split into a user-specific part
                                                 $res_master->is_std = false;
                                             }
                                         }
@@ -618,7 +731,7 @@ class formula extends formula_map
                                 if ($res->is_std) {
                                     log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $res->name_linked() . ': ' . $res->num_text);
                                 } else {
-                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $res->name_linked() . ': ' . $res->num_text . ' (user specific)');
+                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $res->name_linked() . ': ' . $res->num_text . ' (user-specific)');
                                 }
                                 $can_calc = true;
                             }
@@ -707,7 +820,7 @@ class formula extends formula_map
             $has_result_phrases = false;
             $res_lst = new result_list($this->get_user());
             if ($exp->is_valid()) {
-                $res_add_phr_lst = $exp->result_phrases();
+                $res_add_phr_lst = $exp->load_result_phrases();
                 if (isset($res_add_phr_lst)) {
                     log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
                     $has_result_phrases = true;
@@ -818,15 +931,23 @@ class formula extends formula_map
     }
 
     /**
+     * refresh the formula expression
+     *
+     * @param user_message $usr_msg to collect the problems and solution for the user to pick
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return expression the formula expression as an expression element
      */
-    function expression(?term_list $trm_lst = null): expression
+    function expression_new(user_message $usr_msg, ?term_list $trm_lst = null): expression
     {
         $exp = new expression($this);
-        $exp->set_ref_text($this->ref_text, $trm_lst);
-        $exp->set_user_text($this->usr_text, $trm_lst);
-        log_debug('->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
+        if ($this->ref_exp_is_valid($usr_msg)
+            and $this->user_exp_is_valid($usr_msg)
+            and $this->expression_may_match($usr_msg)) {
+            $exp->set_ref_and_user_text($this->ref_text, $this->usr_text);
+        } else {
+            $exp->set_ref_text($this->ref_text, $trm_lst);
+            $exp->set_user_text($this->usr_text, $trm_lst);
+        }
         return $exp;
     }
 
@@ -874,7 +995,7 @@ class formula extends formula_map
     }
 
     /**
-     * get all terms used in this formula
+     * get all terms used in this formula,
      * including the phrases that should be added to the result
      * @param term_list $cache with the terms already loaded
      * @return term_list list of all terms used in the formula expression
@@ -882,12 +1003,13 @@ class formula extends formula_map
     function term_list(term_list $cache): term_list
     {
         $trm_lst = new term_list($this->get_user());
+        $usr_msg = new user_message();
         $exp = $this->expression($cache);
-        $elm_lst = $exp->element_list($cache);
+        $elm_lst = $exp->element_list($usr_msg, $cache);
         foreach ($elm_lst->lst() as $elm) {
             $trm_lst->add($elm->term());
         }
-        $res_phr_lst = $exp->result_phrases($cache);
+        $res_phr_lst = $exp->load_result_phrases($cache);
         return $trm_lst->merge($res_phr_lst->term_list());
     }
 
@@ -1065,7 +1187,7 @@ class formula extends formula_map
      * @param string $frm_text the reference text that should be used for the update
      * @return bool true if the update has been fine
      */
-    function element_refresh(string $frm_text): bool
+    function element_refresh_old(string $frm_text): bool
     {
         log_debug('->element_refresh (f' . $this->id() . $frm_text . ',u' . $this->get_user()->id() . ')');
 
@@ -1090,7 +1212,7 @@ class formula extends formula_map
             $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, 0, $this->get_user()->id);
         }
 
-        // refresh the links for the user specific formula
+        // refresh the links for the user-specific formula
         $qp = $this->load_sql_user_changes_frm($db_con);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
@@ -1118,6 +1240,44 @@ class formula extends formula_map
         return $result;
     }
 
+    /**
+     * update the database references to the formula elements
+     * to be able to use the sql statements to find all formulas depending on a word. triple, verb or formula
+     *
+     * @param user_message $usr_msg
+     * @return bool true if the update has been fine
+     */
+    function element_refresh(user_message $usr_msg): bool
+    {
+        $imp = new import();
+
+        // get the target list of elements that should be linked to the formula
+        $elm_lst = $this->element_list($usr_msg);
+
+        // read the existing elements from the database
+        $db_lst = new element_list($this->get_user());
+        $db_lst->load_by_frm($this->id());
+
+        // add the missing links
+        $add_lst = $elm_lst->diff($db_lst);
+        $add_lst->db_insert($usr_msg, $imp, $this::class);
+
+        // delete links not needed any more
+        $del_lst = $db_lst->diff($elm_lst);
+        $del_lst->db_delete($usr_msg, $imp);
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * get the list of elements used in this formula
+     * @return element_list the list of elements used in this formula
+     */
+    function element_list(user_message $usr_msg, ?term_list $trm_lst = null): element_list
+    {
+        $exp = $this->expression($trm_lst);
+        return $exp->element_list($usr_msg, $trm_lst);
+    }
 
 
 
@@ -1140,7 +1300,7 @@ class formula extends formula_map
     ): bool
     {
         if ($this->usr_text != null) {
-            if ($this->ref_text == '' or !$this->ref_text_dirty) {
+            if ($this->ref_text == '' or $this->ref_text_dirty) {
                 $exp = new expression($this);
                 $exp->set_user_text($this->usr_text, $trm_lst);
                 $this->ref_text = $exp->ref_text($trm_lst, $usr_msg);

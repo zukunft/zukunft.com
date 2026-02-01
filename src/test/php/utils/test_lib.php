@@ -71,7 +71,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
-use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -265,11 +265,11 @@ class test_lib
      * TODO add missing frontend objects like
      * TODO Prio 0 easy add missing mapping error log message to all other object mapper
      * get the frontend object related to the given backend object
-     * @param db_object_seq_id|sandbox_value|base_list|type_list $dbo the given backend object
+     * @param db_object_seq_id|sandbox_value|list_db_read|type_list $dbo the given backend object
      * @return false|db_object_ui|list_ui the corresponding frontend object
      */
     public function obj_to_ui_obj(
-        db_object_seq_id|sandbox_value|base_list|type_list $dbo
+        db_object_seq_id|sandbox_value|list_db_read|type_list $dbo
     ): false|db_object_ui|list_ui
     {
         $result =  match ($dbo::class) {

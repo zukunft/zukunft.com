@@ -69,24 +69,24 @@ class view_relation_db
     const string FLD_START_POS = 'start_pos';
     const string FLD_START_POS_COM = 'the staring position in the component chain where the changes should apply';
 
-    // database fields that cannot be user specific excluding the id
+    // database fields that cannot be user-specific excluding the id
     const array FLD_NAMES = array(
         self::FLD_PARENT,
         view_relation_type::FLD_ID,
         self::FLD_CHILD,
     );
-    // list of the user specific database field names
+    // list of the user-specific database field names
     const array FLD_NAMES_USR = array(
         sql_db::FLD_DESCRIPTION,
     );
-    // list of the numeric user specific database field names
+    // list of the numeric user-specific database field names
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_START_POS,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-    // all database field names, excluding the id, used to identify if there are some user specific changes
+    // all database field names, excluding the id, used to identify if there are some user-specific changes
     // TODO check if this is used in all relevant objects
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_START_POS,

@@ -281,6 +281,11 @@
       "from": "¥",
       "verb": "is symbol for",
       "to": "Japanese yen"
+    },
+    {
+      "from": "$",
+      "verb": "is alias of",
+      "to": "US-Dollar"
     }
   ],
   "formulas": [

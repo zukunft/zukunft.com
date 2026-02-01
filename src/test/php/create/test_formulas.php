@@ -44,6 +44,7 @@ include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_FORMULA . 'formula_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
@@ -157,8 +159,8 @@ class test_formulas extends test_objects
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
         $frm->set_view_id(views::START_ID);
-        $frm->set_usage(test_const::DUMMY_USAGE_FORMULA);
-        $frm->set_impact(test_const::DUMMY_IMPACT);
+        $frm->usage = test_const::DUMMY_USAGE_FORMULA;
+        $frm->impact = test_const::DUMMY_IMPACT;
         $frm->exclude();
         $frm->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
@@ -206,11 +208,14 @@ class test_formulas extends test_objects
      */
     function formula_this(): formula
     {
+        global $sys;
         $t_phr = new test_phrases($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formulas::THIS_ID, formulas::THIS_NAME);
         $frm->set_user_text(formulas::THIS_EXP, $t_phr->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::THIS, $this->env->usr1);
+        $frm->description = formulas::THIS_COM;
+        $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $frm;
     }
 
@@ -330,20 +335,6 @@ class test_formulas extends test_objects
         return $frm;
     }
 
-    /**
-     * based on the phrase list by intention to test what happens if the formulas are missing
-     * @return formula to test the sql insert without use of function
-     */
-    function formula_add_by_sql(): formula
-    {
-        $t_phr = new test_phrases($this->env);
-        $frm = new formula($this->env->usr1);
-        $frm->set_name(formulas::SYSTEM_TEST_ADD_VIA_SQL);
-        $frm->set_user_text(formulas::INCREASE_EXP, $t_phr->phrase_list_increase()->term_list());
-        $frm->set_type(formula_type::CALC, $this->env->usr1);
-        return $frm;
-    }
-
     function expression(): expression
     {
         $t_trm = new test_terms($this->env);
@@ -360,9 +351,11 @@ class test_formulas extends test_objects
     function element_list(): element_list
     {
         $t_trm = new test_terms($this->env);
+        $usr_msg = new user_message();
         $trm_lst = $t_trm->term_list_time();
-        $exp = $this->formula()->expression($trm_lst);
-        return $exp->element_list($trm_lst);
+        $frm = $this->formula();
+        $exp = $frm->expression($trm_lst);
+        return $exp->element_list($usr_msg, $trm_lst);
     }
 
 

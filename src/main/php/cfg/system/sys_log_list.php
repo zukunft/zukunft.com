@@ -33,7 +33,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'list_db_read.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
@@ -41,7 +41,7 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'list_db_read.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
@@ -62,7 +62,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 
-class sys_log_list extends base_list
+class sys_log_list extends list_db_read
 {
 
     // display types

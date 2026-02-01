@@ -89,13 +89,13 @@ class value_time_series extends sandbox_value
     const string FLD_LAST_UPDATE_COM = 'timestamp of the last update of any value of the list for fast update detection';
     const string FLD_LAST_UPDATE = 'last_update';
 
-    // all database field names excluding the id and excluding the user specific fields
+    // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         user_db::FLD_ID,
         group::FLD_ID
     );
 
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
         sql_db::FLD_EXCLUDED,
@@ -315,10 +315,9 @@ class value_time_series extends sandbox_value
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, ?bool $use_func = null): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug('->add');
 
@@ -378,12 +377,11 @@ class value_time_series extends sandbox_value
      */
 
     /**
-     * insert or update a time series in the database or save user specific time series numbers
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * insert or update a time series in the database or save user-specific time series numbers
      * @param user_message the message that should be shown to the user in case something went wrong
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $msg): bool
     {
         log_debug('->save');
 
@@ -404,7 +402,7 @@ class value_time_series extends sandbox_value
         }
 
         if ($this->id() <= 0) {
-            $this->add($usr_msg);
+            $this->add($msg);
         } else {
             // update a value
             // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
@@ -423,23 +421,23 @@ class value_time_series extends sandbox_value
             }
 
             // check if the id parameters are supposed to be changed
-            $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
+            $this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
             // TODO add function based db saving
-            if ($usr_msg->is_ok()) {
+            if ($msg->is_ok()) {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec, $usr_msg));
+                $msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec, $msg));
             }
 
         }
 
-        if (!$usr_msg->is_ok()) {
-            log_err($usr_msg->get_last_message());
+        if (!$msg->is_ok()) {
+            log_err($msg->get_last_message());
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

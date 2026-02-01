@@ -101,12 +101,12 @@ class result extends sandbox_value
      * set the vars of this result bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
 
         if (array_key_exists(json_fields::FORMULA_ID, $json_array)) {
             $frm = new formula();
@@ -121,7 +121,7 @@ class result extends sandbox_value
             $this->set_usr_text(null);
         }
         */
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     function formula_id(): ?int

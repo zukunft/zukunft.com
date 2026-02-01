@@ -60,6 +60,7 @@ include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula_list extends sandbox_list_named
@@ -95,7 +97,7 @@ class formula_list extends sandbox_list_named
     const int UPDATE_BLOCK_SIZE = 100;
 
     // array $lst are the loaded formula objects
-    // if user $usr->id is 0 (not NULL) for standard formulas, otherwise for a user specific formulas
+    // if user $usr->id is 0 (not NULL) for standard formulas, otherwise for a user-specific formulas
 
     // TODO move to display object: in memory only fields
     public ?string $back = null;         // the calling stack
@@ -588,11 +590,17 @@ class formula_list extends sandbox_list_named
     /**
      * add one formula to the formula list, but only if it is not yet part of the list
      * @param formula|sandbox_named|triple|phrase|term|null $to_add the formula backend object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param Message $msg to report which entry is double
      * @returns bool true the formula has been added
      */
-    function add(formula|sandbox_named|triple|phrase|term|null $to_add): bool
+    function add(
+        formula|sandbox_named|triple|phrase|term|null $to_add,
+        bool                                          $allow_duplicates = false,
+        Message                                       $msg = new Message()
+    ): bool
     {
-        return parent::add_obj($to_add)->is_ok();
+        return parent::add_obj($to_add, $allow_duplicates, $msg);
     }
 
 
@@ -624,7 +632,7 @@ class formula_list extends sandbox_list_named
      *
      * @param formula_list $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(formula_list $del_lst): void
+    function remove(formula_list $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -645,7 +653,7 @@ class formula_list extends sandbox_list_named
 
     /**
      * @param sql_db $db_con the active database connection
-     * @return int|null the total number of formulas (without user specific changes)
+     * @return int|null the total number of formulas (without user-specific changes)
      */
     function count_db(sql_db $db_con): ?int
     {
@@ -780,13 +788,19 @@ class formula_list extends sandbox_list_named
             $db_lst_all = new formula_list($this->get_user());
             $add_lst = new formula_list($this->get_user());
 
-            // create a new user message object for each try to get only the user messages of the last try to get only the remaining messages
+            // create a new user message object for each try
+            // to get only the user messages of the last try
+            // and to report only the remaining messages
             $lst_usr_msg = new user_message();
+            $ref_usr_msg = new user_message();
+            $trm_usr_msg = new user_message();
 
             while ($frm_added and $level < $max_frm_levels) {
 
                 // recreate a new user message object for each try to get only the user messages of the last try to get only the remaining messages
                 $lst_usr_msg = new user_message();
+                $ref_usr_msg = new user_message();
+                $trm_usr_msg = new user_message();
 
                 $frm_added = false;
                 $lst_usr_msg->unset_added_depending();
@@ -794,15 +808,18 @@ class formula_list extends sandbox_list_named
                 // collect the formulas used in the expressions
                 $chk_lst = clone $this;
                 foreach ($this->lst() as $frm) {
-                    $exp = $frm->expression($trm_lst);
-                    if ($exp->is_valid() or $frm->is_predefined()) {
-                        $frm_trm_lst = $exp->terms($trm_lst);
-                        foreach ($frm_trm_lst->lst() as $trm) {
-                            $frm_trm = $trm_lst->get_by_name($trm->name());
-                            if ($frm_trm == null) {
-                                $chk_lst->add_by_name($frm_trm);
-                            }
-                        }
+                    // TODO Prio 0 remove
+                    if ($frm->name() == 'Financial income/expense, net') {
+                        log_info('Financial income/expense, net');
+                    }
+                    // try to reload missing terms
+                    // only for the formulas that are not yet in the database
+                    if ($frm->id == 0) {
+                        // load missing terms even if loading of previous terms failed
+                        // to show to the user all terms missing in the import file at once
+                        $frm_usr_msg = new user_message();
+                        $trm_lst = $frm->load_missing_terms($frm_usr_msg, $trm_lst, $chk_lst);
+                        $trm_usr_msg->merge($frm_usr_msg);
                     }
                 }
 
@@ -833,7 +850,6 @@ class formula_list extends sandbox_list_named
                 $load_lst->fill_by_name($db_lst, true, false);
 
                 // refresh reference text
-                $ref_usr_msg = new user_message();
                 $load_lst->refresh_ref_text($trm_lst, $ref_usr_msg);
 
                 // select the formulas that are ready to be added to the database
@@ -855,7 +871,7 @@ class formula_list extends sandbox_list_named
 
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, formula::class, $add_lst->count(), $step_time);
-                    $lst_usr_msg->add($add_lst->insert($trm_lst, true, $imp, formula::class));
+                    $lst_usr_msg->merge($add_lst->insert($trm_lst, $imp, formula::class));
                     if ($add_lst->count() > 0) {
                         $lst_usr_msg->set_added_depending();
                         $frm_added = true;
@@ -866,27 +882,31 @@ class formula_list extends sandbox_list_named
                 // create the related words
                 $this->save_formulas_words($imp, $lst_usr_msg);
 
+                // fill up the cache to prevent loading the same formula again in the next level
+                // TODO increase speed!
+                $trm_lst = $trm_lst->merge($db_lst->term_list());
+
+                // fill up the overall db list with db value for later detection of the formulas that needs to be updated
+                $db_lst_all->merge($db_lst);
+
                 $trm_lst->filter_valid();
 
                 $level++;
             }
 
             // add the user_messages to the last try
-            $usr_msg->add($lst_usr_msg);
-
-            // reload the id of the formulas added with the last run
-            // TODO use the insert message instead to increase speed
-            $db_lst = new formula_list($this->get_user());
-            if (!$add_lst->is_empty()) {
-                $db_lst->load_by_names($add_lst->names(true), true);
+            if (!$ref_usr_msg->is_ok()) {
+                $usr_msg->merge($ref_usr_msg);
+            }
+            if (!$lst_usr_msg->is_ok()) {
+                $usr_msg->merge($lst_usr_msg);
+            }
+            if (!$trm_usr_msg->is_ok()) {
+                $usr_msg->merge($trm_usr_msg);
             }
 
-            // fill up the overall db list with db value for later detection of the formulas that needs to be updated
-            $db_lst_all->merge($db_lst);
-
-
             // create any missing sql update functions and update the formulas
-            $usr_msg->add($this->update($db_lst_all, true, $imp, formula::class, $upd_per_sec));
+            $usr_msg->merge($this->update($db_lst_all, $imp, formula::class, $upd_per_sec));
 
 
             // fill up the main list with the words
@@ -895,11 +915,11 @@ class formula_list extends sandbox_list_named
             $this->fill_by_name($db_lst_all, true);
 
             // report missing formulas
-            $this->report_missing($usr_msg, $trm_lst);
+            $this->report_missing($usr_msg, $trm_lst, $imp->file_name);
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->add($this->delete($db_lst_all, true, $imp, formula::class, $del_per_sec));
+            $usr_msg->merge($this->delete($db_lst_all, $imp, formula::class, $del_per_sec));
 
         }
 
@@ -914,20 +934,20 @@ class formula_list extends sandbox_list_named
         }
     }
 
-    private function save_formulas_words(import $imp, user_message $usr_msg): void
+    private function save_formulas_words(import $imp, user_message $msg): void
     {
         $wrd_lst = new word_list($this->get_user());
         foreach ($this->lst() as $frm) {
             $wrd = $frm->formula_word();
             $wrd_lst->add_by_name($wrd);
         }
-        $wrd_lst->save($usr_msg, $imp);
+        $wrd_lst->save($msg, $imp);
         foreach ($this->lst() as $frm) {
             $name_wrd = $wrd_lst->get_by_name($frm->name());
             if ($name_wrd->id() > 0) {
                 $frm->name_wrd = $name_wrd;
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                $msg->add(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_WORD_NAME => $frm->name(),
                     msg_id::VAR_FORMULA => $frm->id(),
                 ]);
@@ -996,14 +1016,14 @@ class formula_list extends sandbox_list_named
      * get a list of formulas that are ready to be added to the database
      * @return formula_list list of the formulas that have an id or a name
      */
-    function get_ready(user_message $usr_msg, string $file_name = ''): formula_list
+    function get_ready(user_message $msg, string $file_name = ''): formula_list
     {
         $frm_lst = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
-            if ($frm->db_ready($usr_msg)) {
+            if ($frm->db_ready($msg)) {
                 $frm_lst->add_by_name($frm);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                $msg->add(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $frm->dsp_id(),
                 ]);
@@ -1040,7 +1060,7 @@ class formula_list extends sandbox_list_named
     private function fill_triple_by_name(
         formula_list|sandbox_list_named $db_lst,
         formula                         $frm,
-        user_message                    $usr_msg,
+        user_message                    $msg,
         bool                            $fill_all = false,
         bool                            $report_missing = true
     ): void
@@ -1053,7 +1073,7 @@ class formula_list extends sandbox_list_named
             } else {
                 if ($report_missing and !$frm->is_excluded()) {
                     $lib = new library();
-                    $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_NOT_FOUND, [
+                    $msg->add(msg_id::ADDED_OBJECT_NOT_FOUND, [
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($frm::class),
                         msg_id::VAR_NAME => $frm->dsp_id()
                     ]);
@@ -1062,16 +1082,24 @@ class formula_list extends sandbox_list_named
         }
     }
 
-    private function report_missing(user_message $usr_msg, term_list $cache): void
+    private function report_missing(user_message $msg, term_list $cache, string $file_name): void
     {
         foreach ($this->lst() as $frm) {
+            if ($frm->id() == 0) {
+                $msg->add(msg_id::IMPORT_FORMULA_FAILED, [
+                    msg_id::VAR_FORMULA => $frm->name(),
+                    msg_id::VAR_FILE_NAME => $file_name
+                ]);
+            }
             $exp = $frm->expression($cache);
-            $frm_trm_lst = $exp->terms($cache);
+            // TODO Prio 3 try to avoid reloading of the terms
+            $trm_lst = $frm->load_terms($msg, $cache, $exp);
+            $frm_trm_lst = $exp->terms($msg, $trm_lst);
             foreach ($frm_trm_lst->lst() as $trm) {
                 if ($trm->id() == 0) {
-                    $frm_trm = $cache->get_by_name($trm->name());
+                    $frm_trm = $trm_lst->get_by_name($trm->name());
                     if ($frm_trm == null) {
-                        $usr_msg->add_id_with_vars(msg_id::IMPORT_TERM_NOT_FOUND, [
+                        $msg->add(msg_id::IMPORT_TERM_NOT_FOUND, [
                             msg_id::VAR_NAME => $trm->name(),
                             msg_id::VAR_ID => $frm->dsp_id()
                         ]);

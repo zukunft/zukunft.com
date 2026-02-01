@@ -611,7 +611,7 @@ class word_list extends sandbox_list_named
             // load all linked words
             $additional_added = $additional_added->load_linked_words($vrb, $direction);
             // get the words not added before
-            $additional_added->diff($added_wrd_lst);
+            $additional_added->remove($added_wrd_lst);
             // remember the added words
             $added_wrd_lst->merge($additional_added);
 
@@ -743,7 +743,7 @@ class word_list extends sandbox_list_named
         $wrd_lst = $wrd_lst->are();
         $wrd_lst = $wrd_lst->contains();
         $added_lst = clone $wrd_lst;
-        $added_lst->diff($this);
+        $added_lst->remove($this);
         if (count($added_lst->lst()) > 0) {
             log_debug('add ' . $added_lst->name() . ' to ' . $wrd_lst->name());
         }
@@ -755,7 +755,7 @@ class word_list extends sandbox_list_named
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
                 $next_lst = $next_lst->contains();
-                $next_lst->diff($added_lst);
+                $next_lst->remove($added_lst);
                 $added_lst->merge($next_lst);
                 if (count($next_lst->lst()) > 0) {
                     log_debug('add ' . $next_lst->name() . ' to ' . $wrd_lst->name());
@@ -823,7 +823,7 @@ class word_list extends sandbox_list_named
             $parents->merge($wrd_lst);
         }
         $result = clone $this;
-        $result->diff($parents);
+        $result->remove($parents);
         return $result;
     }
 
@@ -884,7 +884,7 @@ class word_list extends sandbox_list_named
      *
      * @param word_list $del_wrd_lst is the list of words that should be removed from this list object
      */
-    function diff(word_list $del_wrd_lst): void
+    function remove(word_list $del_wrd_lst): void
     {
         log_debug('->diff of ' . $del_wrd_lst->dsp_id() . ' and ' . $this->dsp_id());
 
@@ -933,7 +933,7 @@ class word_list extends sandbox_list_named
     function ex_time(): void
     {
         $del_wrd_lst = $this->time_lst();
-        $this->diff($del_wrd_lst);
+        $this->remove($del_wrd_lst);
         log_debug($this->dsp_id());
     }
 
@@ -943,7 +943,7 @@ class word_list extends sandbox_list_named
     function ex_measure(): void
     {
         $del_wrd_lst = $this->measure_lst();
-        $this->diff($del_wrd_lst);
+        $this->remove($del_wrd_lst);
         log_debug($this->dsp_id());
     }
 
@@ -953,7 +953,7 @@ class word_list extends sandbox_list_named
     function ex_scaling(): void
     {
         $del_wrd_lst = $this->scaling_lst();
-        $this->diff($del_wrd_lst);
+        $this->remove($del_wrd_lst);
         log_debug($this->dsp_id());
     }
 
@@ -963,7 +963,7 @@ class word_list extends sandbox_list_named
     function ex_percent(): void
     {
         $del_wrd_lst = $this->percent_lst();
-        $this->diff($del_wrd_lst);
+        $this->remove($del_wrd_lst);
         log_debug($this->dsp_id());
     }
 
@@ -1264,7 +1264,7 @@ class word_list extends sandbox_list_named
 
     /**
      * @return value the first (or later "best") value related to the word lst
-     * or an array with the value and the user_id if the result is user specific
+     * or an array with the value and the user_id if the result is user-specific
      */
     function value(): value
     {

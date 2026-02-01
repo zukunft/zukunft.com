@@ -39,7 +39,7 @@ COMMENT ON COLUMN words.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN words.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words
+-- table structure to save user-specific changes for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words
 --
 
 CREATE TABLE IF NOT EXISTS user_words

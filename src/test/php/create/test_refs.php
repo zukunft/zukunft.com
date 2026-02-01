@@ -183,7 +183,7 @@ class test_refs
     }
 
     /**
-     * @return ref with all field changed to a non default value that can be user specific
+     * @return ref with all field changed to a non default value that can be user-specific
      */
     function ref_filled_user(): ref
     {

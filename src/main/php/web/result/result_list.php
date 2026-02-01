@@ -160,7 +160,9 @@ class result_list extends sandbox_list_value
      * add a formula result to the list
      * @returns bool true if the formula result has been added
      */
-    function add(triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add_result(
+        triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject|null $to_add
+    ): bool
     {
         $result = false;
         if (!in_array($to_add->id(), $this->id_lst())) {
@@ -188,21 +190,21 @@ class result_list extends sandbox_list_value
         if ($dbo::class == formula::class) {
             foreach ($this->lst() as $res) {
                 if ($res->calculated_by_formula($dbo)) {
-                    $res_lst->add($res);
+                    $res_lst->add_result($res);
                 }
             }
         }
         if ($dbo::class == word::class or $dbo::class == triple::class) {
             foreach ($this->lst() as $res) {
                 if ($res->has_phrase($dbo->phrase())) {
-                    $res_lst->add($res);
+                    $res_lst->add_result($res);
                 }
             }
         }
         if ($dbo::class == source::class) {
             foreach ($this->lst() as $res) {
                 if ($res->source_id() == $dbo->id()) {
-                    $res_lst->add($res);
+                    $res_lst->add_result($res);
                 }
             }
         }

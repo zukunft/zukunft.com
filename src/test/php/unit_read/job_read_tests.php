@@ -33,9 +33,9 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class job_read_tests
@@ -59,11 +59,11 @@ class job_read_tests
         $sys_usr = new user;
         $sys_usr->load_by_id(users::SYSTEM_ID);
 
-        // check if loading of the first entry is the adding of the word name
+        $test_name = 'check if at least one batch job has the base import id ' . job_types::BASE_IMPORT_ID;
         $job_lst = new job_list($sys_usr);
-        $job_lst->load_by_type(job_type_list::BASE_IMPORT);
+        $job_lst->load_by_type(job_types::BASE_IMPORT);
         $first_job = $job_lst->lst()[0];
-        $t->assert('first batch job change is adding', $first_job->type_id(), '11');
+        $t->assert($test_name, $first_job->type_id(), job_types::BASE_IMPORT_ID);
 
 
         $t->subheader($ts . 'api');

@@ -8,7 +8,7 @@
     the suggested var name in the backend is global $sys
     this object contains objects and vars from the database that are often used
     and thet are user independent
-    the user specific cache is in the data_object which has the var name global $cac
+    the user-specific cache is in the data_object which has the var name global $cac
 
 
     This file is part of zukunft.com - calc with words

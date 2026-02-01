@@ -1,17 +1,17 @@
 DROP PROCEDURE IF EXISTS view_relation_insert_log_0155510000;
 CREATE PROCEDURE view_relation_insert_log_0155510000
-    (_parent_view_id bigint,
-     _view_relation_type_id smallint,
-     _child_view_id bigint,
-     _user_id bigint,
-     _change_action_id smallint,
-     _change_table_id smallint,
-     _new_text_from text,
-     _new_text_link text,
-     _new_text_to text,
-     _field_id_user_id smallint,
-     _field_id_start_pos smallint,
-     _start_pos bigint)
+    (_parent_view_id         bigint,
+     _view_relation_type_id  smallint,
+     _child_view_id          bigint,
+     _user_id                bigint,
+     _change_action_id       smallint,
+     _change_table_id        smallint,
+     _new_text_from          text,
+     _new_text_link          text,
+     _new_text_to            text,
+     _field_id_user_id       smallint,
+     _field_id_start_pos     smallint,
+     _start_pos              bigint)
 
 BEGIN
 

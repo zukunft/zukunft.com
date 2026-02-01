@@ -73,6 +73,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SYSTEM . 'job.php';
+//include_once paths::MODEL_SYSTEM . 'job_status.php';
 //include_once paths::MODEL_SYSTEM . 'job_type.php';
 //include_once paths::MODEL_SYSTEM . 'pod.php';
 //include_once paths::MODEL_SYSTEM . 'session.php';
@@ -158,6 +159,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
@@ -292,7 +294,7 @@ class def
         component::class,
     ];
 
-    // classes that have a frontend and backend object but are not user specific
+    // classes that have a frontend and backend object but are not user-specific
     const array SYSTEM_UI_CLASSES = [
         language::class,
         pod::class,
@@ -336,6 +338,7 @@ class def
     const array BASE_CODE_LINK_FILES = [
         sys_log_status::class,
         sys_log_type::class,
+        job_status::class,
         job_type::class,
         change_action::class,
         change_table::class,
@@ -431,6 +434,12 @@ class def
         change_link::class,
     ];
 
+    // TODO Prion 1 review and combine with CLASSES_NO_CHANGE_LOG
+    // list of classes that use a database table but where the changes never needs to be added to the change log
+    const array CLASSES_NO_LOG = [
+        job::class,
+    ];
+
     // list of classes that use a database table but where the changes do not need to be logged
     const array CLASSES_NO_CHANGE_LOG = [
         sys_log_status::class,
@@ -476,6 +485,7 @@ class def
         'system_time_types',
         'job_times',
         'jobs',
+        'job_statuus',
         'job_types',
         'user_official_types',
         'ip_ranges',
@@ -680,6 +690,7 @@ class def
         'change_fields_change_field_id_seq',
         'change_tables_change_table_id_seq',
         'config_config_id_seq',
+        'job_statuus_job_status_id_seq',
         'job_types_job_type_id_seq',
         'jobs_job_id_seq',
         'sys_log_status_sys_log_status_id_seq',

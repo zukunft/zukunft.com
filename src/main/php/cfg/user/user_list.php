@@ -5,6 +5,8 @@
     model/user/user_list.php - a list of users
     ------------------------
 
+    TODO Prio 2 base this list on ListOfIdObjects to avoid repeating e.g. of the is_empty function
+
 
     This file is part of zukunft.com - calc with words
 
@@ -96,7 +98,7 @@ class user_list
      */
 
     /**
-     * always set the user because a link list is always user specific
+     * always set the user because a link list is always user-specific
      * @param user|null $usr the user who requested to see e.g. the formula links
      */
     function __construct(?user $usr = null)
@@ -562,7 +564,7 @@ class user_list
         bool $allow_duplicates = false
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // check boolean first because in_array might take longer
         if ($allow_duplicates) {
@@ -573,32 +575,32 @@ class user_list
                     if (!array_key_exists($usr_to_add->name(), $this->names())) {
                         $this->add_direct($usr_to_add);
                     } else {
-                        $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                        $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                     }
                 } else {
-                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                 }
             } elseif ($usr_to_add->name() != '') {
                 if (!array_key_exists($usr_to_add->name(), $this->names())) {
                     $this->add_direct($usr_to_add);
                 } else {
-                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                 }
             } elseif ($usr_to_add->email() != '') {
                 if (!array_key_exists($usr_to_add->email(), $this->emails())) {
                     $this->add_direct($usr_to_add);
                 } else {
-                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::LIST_USER_INVALID,
+                $msg->add(msg_id::LIST_USER_INVALID,
                     [
                         msg_id::VAR_USER_NAME => $usr_to_add->dsp_id(),
                         msg_id::VAR_USER_LIST_NAME => $this->names(),
                     ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -619,7 +621,7 @@ class user_list
      */
 
     /**
-     * create an array for the json api message
+     * create an array for the api json message
      *
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @param user|null $usr_req the user for whom the api message should be created which can differ from the session user
@@ -666,7 +668,7 @@ class user_list
                     $usr->save_user($usr_msg, $usr_req);
                 }
                 // collect the user message for a consolidated list for the user
-                $usr_msg_all->add($usr_msg);
+                $usr_msg_all->merge($usr_msg);
             }
         }
     }

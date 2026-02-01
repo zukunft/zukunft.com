@@ -140,7 +140,6 @@ class triples
     const string SYSTEM_TEST_RENAMED = 'System Test Triple renamed';
     const string SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
-    const string SYSTEM_TEST_ADD_VIA_SQL = 'System Test Triple added via prepared sql insert';
 
     // triple used in the default start view
     const string GLOBAL_PROBLEM = 'global problem';
@@ -233,7 +232,6 @@ class triples
     const array TEST_TRIPLES = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_ADD_VIA_FUNC,
-        self::SYSTEM_TEST_ADD_VIA_SQL,
         self::SYSTEM_TEST_RENAMED,
         self::SYSTEM_TEST_EXCLUDED,
     );

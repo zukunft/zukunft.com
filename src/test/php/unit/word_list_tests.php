@@ -184,7 +184,7 @@ class word_list_tests
         $t->assert($t->name . '->merge and check by ids', $wrd_lst->ids(), array(1, 2, 3));
 
         // diff of two lists
-        $wrd_lst->diff($wrd_lst2);
+        $wrd_lst->remove($wrd_lst2);
         $t->assert($t->name . '->diff and check by ids', $wrd_lst->ids(), array(1));
 
         // diff by ids

@@ -45,8 +45,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class ref_type extends type_object
 {

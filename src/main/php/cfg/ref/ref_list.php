@@ -317,7 +317,7 @@ class ref_list extends type_list
             // actual save the reference to the database
             $ref->save($ref_usr_msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->add($ref_usr_msg);
+            $usr_msg->merge($ref_usr_msg);
         }
         /*
         if ($this->is_empty()) {

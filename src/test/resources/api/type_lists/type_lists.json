@@ -941,6 +941,12 @@
         "code_id": "change_actions",
         "description": "",
         "id": 130
+      },
+      {
+        "name": "job_statuus",
+        "code_id": "job_statuus",
+        "description": "",
+        "id": 131
       }
     ],
     "change_field_list": [
@@ -6415,6 +6421,42 @@
         "code_id": "130description",
         "description": "",
         "id": 912
+      },
+      {
+        "name": "131job_status_id",
+        "code_id": "131job_status_id",
+        "description": "",
+        "id": 913
+      },
+      {
+        "name": "131type_name",
+        "code_id": "131type_name",
+        "description": "",
+        "id": 914
+      },
+      {
+        "name": "131code_id",
+        "code_id": "131code_id",
+        "description": "",
+        "id": 915
+      },
+      {
+        "name": "131description",
+        "code_id": "131description",
+        "description": "",
+        "id": 916
+      },
+      {
+        "name": "131priority",
+        "code_id": "131priority",
+        "description": "",
+        "id": 917
+      },
+      {
+        "name": "27ip_range_key",
+        "code_id": "27ip_range_key",
+        "description": "",
+        "id": 918
       }
     ],
     "job_types": [
@@ -6563,6 +6605,68 @@
         "id": 24
       }
     ],
+    "job_statuus": [
+      {
+        "name": "created",
+        "code_id": "new",
+        "description": "the job is not yet assigned to any calc engine",
+        "id": 1
+      },
+      {
+        "name": "assigned",
+        "code_id": "assigned",
+        "description": "the job has been assigned to a calc engine",
+        "id": 2
+      },
+      {
+        "name": "forced",
+        "code_id": "forced",
+        "description": "the priority of the job has been increased",
+        "id": 3
+      },
+      {
+        "name": "delayed",
+        "code_id": "delayed",
+        "description": "the priority of the job has been reduced",
+        "id": 4
+      },
+      {
+        "name": "working",
+        "code_id": "working",
+        "description": "the calc engine is reporting the progress",
+        "id": 5
+      },
+      {
+        "name": "not responding",
+        "code_id": "not_responding",
+        "description": "the calc engine is not reporting the progress",
+        "id": 6
+      },
+      {
+        "name": "waiting",
+        "code_id": "waiting",
+        "description": "the task is waiting for user input of other jobs",
+        "id": 7
+      },
+      {
+        "name": "done",
+        "code_id": "done",
+        "description": "the task has been completed successfully",
+        "id": 8
+      },
+      {
+        "name": "failed",
+        "code_id": "failed",
+        "description": "the task has been completed unsuccessful",
+        "id": 9
+      },
+      {
+        "name": "retry",
+        "code_id": "retry",
+        "description": "an admin has forced to retry the execution",
+        "id": 10
+      }
+    ],
     "languages": [
       {
         "name": "English",
@@ -6675,7 +6779,7 @@
         "plural": null,
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 1
@@ -6687,7 +6791,7 @@
         "plural": "are",
         "reverse": "are",
         "rev_plural": "are",
-        "frm_name": "of all",
+        "name_in_formula": "of all",
         "usage": null,
         "impact": null,
         "id": 2
@@ -6699,7 +6803,7 @@
         "plural": "is part of",
         "reverse": "contains",
         "rev_plural": "contains",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 3
@@ -6711,7 +6815,7 @@
         "plural": "can be part of",
         "reverse": "contains",
         "rev_plural": "contains",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 4
@@ -6723,7 +6827,7 @@
         "plural": "of",
         "reverse": "of",
         "rev_plural": "of",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 5
@@ -6733,9 +6837,9 @@
         "code_id": "with",
         "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
         "plural": "with",
-        "reverse": null,
-        "rev_plural": null,
-        "frm_name": null,
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 6
@@ -6747,7 +6851,7 @@
         "plural": "has",
         "reverse": "is used for",
         "rev_plural": "is used for",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 7
@@ -6759,7 +6863,7 @@
         "plural": "are the time jump for",
         "reverse": "has the default time jump",
         "rev_plural": "have the default time jump",
-        "frm_name": "time jump",
+        "name_in_formula": "time jump",
         "usage": null,
         "impact": null,
         "id": 8
@@ -6771,7 +6875,7 @@
         "plural": null,
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 9
@@ -6783,7 +6887,7 @@
         "plural": null,
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 10
@@ -6795,7 +6899,7 @@
         "plural": "is follower of",
         "reverse": "is followed by",
         "rev_plural": "is followed by",
-        "frm_name": "follower",
+        "name_in_formula": "follower",
         "usage": null,
         "impact": null,
         "id": 11
@@ -6807,7 +6911,7 @@
         "plural": "uses",
         "reverse": "is used by",
         "rev_plural": "are used by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 12
@@ -6819,7 +6923,7 @@
         "plural": "issues",
         "reverse": "is issued by",
         "rev_plural": "are issued by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 13
@@ -6831,7 +6935,7 @@
         "plural": "are measure type for",
         "reverse": "has the measure type",
         "rev_plural": "have the measure type",
-        "frm_name": "measure type",
+        "name_in_formula": "measure type",
         "usage": null,
         "impact": null,
         "id": 14
@@ -6843,7 +6947,7 @@
         "plural": "are an acronyms for",
         "reverse": "is an acronym of",
         "rev_plural": "are an acronyms of",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 15
@@ -6855,7 +6959,7 @@
         "plural": "can be used as a differentiator for",
         "reverse": "can be differentiated by",
         "rev_plural": "can be differentiated by",
-        "frm_name": "differentiator",
+        "name_in_formula": "differentiator",
         "usage": null,
         "impact": null,
         "id": 16
@@ -6867,7 +6971,7 @@
         "plural": "influences",
         "reverse": "is influenced by",
         "rev_plural": "is influenced by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 17
@@ -6879,7 +6983,7 @@
         "plural": "is alias of",
         "reverse": "is alias of",
         "rev_plural": "is alias of",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 18
@@ -6891,7 +6995,7 @@
         "plural": "can",
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 19
@@ -6903,7 +7007,7 @@
         "plural": "can be",
         "reverse": "can be",
         "rev_plural": "can be",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 20
@@ -6915,7 +7019,7 @@
         "plural": "can get",
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 21
@@ -6927,7 +7031,7 @@
         "plural": "can cause",
         "reverse": "can be caused by",
         "rev_plural": "can be caused by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 22
@@ -6939,7 +7043,7 @@
         "plural": "can have",
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 23
@@ -6951,7 +7055,7 @@
         "plural": "can use",
         "reverse": "can be used by",
         "rev_plural": "can be used by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 24
@@ -6963,7 +7067,7 @@
         "plural": "scaled by",
         "reverse": "is scaling for",
         "rev_plural": "are scaling for",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 25
@@ -6973,9 +7077,9 @@
         "code_id": "per",
         "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
         "plural": "per",
-        "reverse": null,
-        "rev_plural": null,
-        "frm_name": null,
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 26
@@ -6987,7 +7091,7 @@
         "plural": "times",
         "reverse": "times",
         "rev_plural": "times",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 27
@@ -6999,7 +7103,7 @@
         "plural": "are selectors for",
         "reverse": "is grouped by",
         "rev_plural": "are grouped by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 28
@@ -7011,7 +7115,7 @@
         "plural": "are symbols for",
         "reverse": "can have symbol",
         "rev_plural": "can have symbols",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 29
@@ -7023,7 +7127,7 @@
         "plural": "and",
         "reverse": "and",
         "rev_plural": "and",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 30
@@ -7035,7 +7139,7 @@
         "plural": "on",
         "reverse": "distribute to",
         "rev_plural": "distribute to",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 31
@@ -7045,9 +7149,9 @@
         "code_id": "in",
         "description": "to specify the measure unit",
         "plural": "in",
-        "reverse": null,
-        "rev_plural": null,
-        "frm_name": null,
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 32
@@ -7057,9 +7161,9 @@
         "code_id": "to",
         "description": "to define a time period e.g. \"12:00 to 13:00\" or \"1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover",
         "plural": "to",
-        "reverse": null,
-        "rev_plural": null,
-        "frm_name": null,
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 33
@@ -7071,7 +7175,7 @@
         "plural": "are ranked by",
         "reverse": "is sort phrases for",
         "rev_plural": "are sort phrases for",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 34
@@ -7564,7 +7668,7 @@
       {
         "name": "fixed word",
         "code_id": "phrase",
-        "description": "show the user specific name of a word or a triple as a text",
+        "description": "show the user-specific name of a word or a triple as a text",
         "id": 4
       },
       {

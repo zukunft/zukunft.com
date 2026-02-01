@@ -42,6 +42,7 @@ include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -133,6 +135,7 @@ class type_lists
     public change_field_list $cng_fld;
 
     // language and system jobs
+    public job_status_list $job_sta;
     public job_type_list $job_typ;
     public language_list $lan;
     public language_form_list $lan_for;
@@ -179,6 +182,7 @@ class type_lists
         $this->cng_fld = new change_field_list();
 
         // language and system jobs
+        $this->job_sta = new job_status_list();
         $this->job_typ = new job_type_list();
         $this->lan = new language_list();
         $this->lan_for = new language_form_list();
@@ -244,6 +248,9 @@ class type_lists
         if ($result) {
             $result = $this->job_typ->load($db_con);
         }
+        if ($result) {
+            $result = $this->job_sta->load($db_con);
+        }
 
         // sandbox
         if ($result) {
@@ -303,6 +310,14 @@ class type_lists
 
         // preload the little more complex objects
         $this->vrb->load($db_con);
+
+        // fallback to avoid getting stuck in load process
+        if ($this->vrb->is_empty()) {
+            log_warning('Verb list is empty, fallback to dummy data');
+            $this->vrb->load_dummy();
+        }
+
+
         // TODO move the a separate loader on the data_object level
         //$sys_msk_cac = new view_sys_list($usr);
         //$sys_msk_cac->load($db_con);
@@ -401,6 +416,7 @@ class type_lists
         $vars[json_fields::LIST_CHANGE_LOG_FIELDS] = $this->cng_fld->api_json_array();
 
         $vars[json_fields::LIST_JOB_TYPES] = $this->job_typ->api_json_array();
+        $vars[json_fields::LIST_JOB_STATUUS] = $this->job_sta->api_json_array();
         $vars[json_fields::LIST_LANGUAGES] = $this->lan->api_json_array();
         $vars[json_fields::LIST_LANGUAGE_FORMS] = $this->lan_for->api_json_array();
 

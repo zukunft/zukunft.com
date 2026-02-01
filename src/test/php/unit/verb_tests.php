@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
@@ -79,12 +80,11 @@ class verb_tests
         $t->assert_sql_by_code_id($sc, $vrb);
 
         $t->subheader($ts . 'sql write');
-        // TODO Prio 2 activate db write
-        //$t->assert_sql_insert($sc, $vrb);
-        // TODO Prio 2 activate db write
-        //$t->assert_sql_update($sc, $vrb);
-        // TODO Prio 2 activate db write
-        //$t->assert_sql_delete($sc, $vrb);
+        $vrb = $t_vrb->verb_name_only();
+        $t->assert_sql_insert($sc, $vrb, [sql_type::LOG]);
+        $vrb = $t_vrb->verb_is_filled();
+        $vrb_db = $vrb->clone_reset();
+        $t->assert_sql_update($sc, $vrb, $vrb_db, [sql_type::LOG]);
 
 
         $t->subheader($ts . 'im- and export');

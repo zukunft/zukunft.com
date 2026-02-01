@@ -525,7 +525,7 @@ class view_exe extends view_base
                 $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
             }
             $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_edit('design the view', $call_edit) . ' ';
+            $result .= btn_edit('design the view', $call_edit) . ' ';
             $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';

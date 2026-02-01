@@ -5,7 +5,7 @@
     web/helper/config.php - to cache and manage the user config in the frontend
     ---------------------
 
-    This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user specific values and links
+    This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user-specific values and links
 
 
     This file is part of zukunft.com - calc with words
@@ -101,14 +101,14 @@ class config extends value_list
      */
 
     /**
-     * request the user specific frontend configuration from the backend
+     * request the user-specific frontend configuration from the backend
      * @return user_message if it fails the reason why
      */
     function load(string $part = api::CONFIG_FRONTEND): user_message
     {
         global $sys;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $sys->times->switch(system_time_type::LOAD_CONFIG);
 
         $data = [];
@@ -117,16 +117,16 @@ class config extends value_list
         $rest = new rest_call();
         $json_body = $rest->api_get(config::class, $data);
         if (array_key_exists(json_fields::MSG, $json_body)) {
-            $usr_msg->add_id_with_vars(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
+            $msg->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
         }
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $this->api_mapper($json_body);
             if ($this->is_empty()) {
-                $usr_msg->add_id(msg_id::CONFIG_API_MESSAGE_EMPTY);
+                $msg->add_id(msg_id::CONFIG_API_MESSAGE_EMPTY);
             }
         }
         $sys->times->switch(system_time_type::DEFAULT);
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -134,7 +134,7 @@ class config extends value_list
      *
      * @param array $names with the phrase names to select the config value
      * @param bool $no_zero if true a non-zero number is returned to avoid decision by zero
-     * @return int|float|string|null with the user specific config value
+     * @return int|float|string|null with the user-specific config value
      */
     function get_by(array $names, bool $no_zero = false): int|float|string|null
     {

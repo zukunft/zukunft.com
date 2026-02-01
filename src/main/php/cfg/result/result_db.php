@@ -94,7 +94,7 @@ class result_db
         [self::FLD_RESULT_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
     );
 
-    // all database field names excluding the id and excluding the user specific fields
+    // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         formula_db::FLD_ID,
         user_db::FLD_ID,
@@ -131,16 +131,16 @@ class result_db
         self::FLD_SOURCE_GRP,
         formula_db::FLD_ID,
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR_EX_STD = array(
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
-    // list of the user specific datetime database field names
+    // list of the user-specific datetime database field names
     const array FLD_NAMES_DATE_USR_EX_STD = array(
         sandbox_multi::FLD_LAST_UPDATE
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         sandbox_multi::FLD_VALUE,
         sandbox_multi::FLD_LAST_UPDATE,

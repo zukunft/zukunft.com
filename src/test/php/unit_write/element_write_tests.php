@@ -68,7 +68,7 @@ class element_write_tests
         // load increase formula for testing
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
-        $elm_lst = $exp->element_list();
+        $elm_lst = $exp->element_list($usr_msg);
 
         // get the test word ids
         $wrd_country = $t_db->load_word(words::COUNTRY);
@@ -133,6 +133,7 @@ class element_write_tests
         }
 
         $t->subheader($ts . 'cleanup formula element write');
+        $usr_msg->reset(true);
         $frm_sector->del($usr_msg);
         $wrd_total->del($usr_msg);
 
@@ -154,8 +155,9 @@ class element_write_tests
 
         // load increase formula for testing
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
-        $exp = $frm->expression();
-        $elm_lst = $exp->element_list();
+        $trm_lst = $frm->load_terms($usr_msg);
+        $exp = $frm->expression($trm_lst);
+        $elm_lst = $exp->element_list($usr_msg, $trm_lst);
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
@@ -168,6 +170,7 @@ class element_write_tests
         }
 
         $t->subheader($ts . 'cleanup');
+        $usr_msg->reset(true);
         $frm_sector->del($usr_msg);
         $wrd_total->del($usr_msg);
 

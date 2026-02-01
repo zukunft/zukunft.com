@@ -73,7 +73,7 @@ class value extends value_base
     // object specific database and JSON object field names
     const string FLD_VALUE = 'numeric_value';
     const string FLD_COM = 'the numeric given by the user';
-    const string FLD_USER_COM = 'the user specific numeric value change';
+    const string FLD_USER_COM = 'the user-specific numeric value change';
 
     // database field with the sql type specification
     const array FLD_NAMES_STD = value_db::FLD_NAMES_STD;

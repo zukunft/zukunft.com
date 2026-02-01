@@ -2,7 +2,7 @@
 
 /*
 
-    model/helper/db_id_object_non_sandbox.php - a base object for not user specific database id objects
+    model/helper/db_id_object_non_sandbox.php - a base object for not user-specific database id objects
     -----------------------------------------
 
     used for the user, ip_range, pod and job
@@ -176,16 +176,16 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * delete the related db row and log the deletion
      *
-     * @param user_message $usr_msg if the deletion cannot be done the reason why for the user
+     * @param user_message $msg if the deletion cannot be done the reason why for the user
      * @return bool true if everything has been fine
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
         global $usr;
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         if ($this->id() == 0) {
-            $usr_msg->add_id_with_vars(msg_id::ID_MISSING_FOR_DEL, [
+            $msg->add(msg_id::ID_MISSING_FOR_DEL, [
                 msg_id::VAR_CLASS_NAME => $class_name,
                 msg_id::VAR_NAME => $this->dsp_id()
             ]);
@@ -212,11 +212,11 @@ class db_id_object_non_sandbox extends db_object_seq_id
                         . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr);
                 } else {
                     // TODO check if there are related log entries and if yes exclude it instead of delete
-                    $usr_msg->add($this->del_exe($usr));
+                    $msg->merge($this->del_exe($usr));
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -234,9 +234,9 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $usr_msg->usr = $usr_req;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_delete($sc, $usr_req, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
         $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
-        $usr_msg->add($del_msg);
+        $usr_msg->merge($del_msg);
 
         return $usr_msg;
     }
@@ -250,14 +250,12 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user $usr_req the user who has requested the deletion
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $usr_msg collect the messages for the user with the user set who has requested the deletion
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
-        user          $usr_req,
         user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
@@ -279,7 +277,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $usr_req, $sc_par_lst_used);
+            $qp = $this->sql_delete_and_log($sc, $qp, $usr_msg->usr, $sc_par_lst_used);
         } else {
             $par_lst = [$this->id()];
             $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);
@@ -475,15 +473,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
 
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        $msg = 'import_mapper used but not overwritten in ' . $this::class;
-        log_err($msg);
-        $usr_msg = new user_message();
-        $usr_msg->add_message_text($msg);
-        return $usr_msg->is_ok();
+        $msg_txt = 'import_mapper used but not overwritten in ' . $this::class;
+        log_err($msg_txt);
+        $msg = new user_message();
+        $msg->add_message_text($msg_txt);
+        return $msg->is_ok();
     }
 
 }

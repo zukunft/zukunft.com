@@ -231,6 +231,7 @@ class formula_link_write_tests
         // the code changes and tests for formula link should be moved the component_link
 
         $t->subheader($ts . 'cleanup formula link write');
+        $usr_msg->reset(true);
         $frm = new formula($t->usr1);
         $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $wrd = new word($t->usr1);
@@ -245,7 +246,9 @@ class formula_link_write_tests
             $t->write_named_cleanup($wrd, $wrd_name);
         }
 
+        $usr_msg->reset(true);
         $frm->del($usr_msg);
+        $usr_msg->reset(true);
         $wrd->del($usr_msg);
 
     }

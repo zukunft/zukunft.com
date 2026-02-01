@@ -851,7 +851,7 @@ class result_list extends sandbox_value_list
 
     /**
      * add all formula results to the list that may needs to be updated if a formula is updated for one user
-     * TODO: only request the user specific calculation if needed
+     * TODO: only request the user-specific calculation if needed
      */
     function frm_upd_lst_usr(
         formula $frm,
@@ -1006,6 +1006,7 @@ class result_list extends sandbox_value_list
     {
         log_debug('add ' . $frm->dsp_id() . ' to queue ...');
         $lib = new library();
+        $usr_msg = new user_message();
 
         // to inform the user about the progress
         $last_msg_time = microtime(true); // the start time
@@ -1032,8 +1033,9 @@ class result_list extends sandbox_value_list
         $trm_back = new term($this->get_user());
         $trm_back->load_by_id($back);
         $trm_lst_back->add($trm_back);
-        $phr_lst_preset_following = $exp->element_special_following($trm_lst_back);
-        $frm_lst_preset_following = $exp->element_special_following_frm($trm_lst_back);
+        $trm_lst_back = $frm->load_exp_terms($usr_msg, $trm_lst_back, $exp);
+        $phr_lst_preset_following = $exp->element_special_following($usr_msg, $trm_lst_back);
+        $frm_lst_preset_following = $exp->element_special_following_frm($usr_msg, $trm_lst_back);
 
         // combine all used predefined phrases/formulas
         $phr_lst_preset = $phr_lst_preset_following;
@@ -1043,7 +1045,7 @@ class result_list extends sandbox_value_list
         }
 
         // exclude the special elements from the phrase list to avoid double usage
-        $phr_lst_frm_used->diff($phr_lst_preset);
+        $phr_lst_frm_used->remove($phr_lst_preset);
         if ($phr_lst_preset->dsp_name() <> '""') {
             log_debug('Excluding the predefined phrases ' . $phr_lst_preset->dsp_name() . ' the formula uses ' . $phr_lst_frm_used->dsp_name());
         }
@@ -1075,7 +1077,7 @@ class result_list extends sandbox_value_list
 
         // get the phrase name of the formula e.g. "percent"
         $exp = $frm->expression();
-        $phr_lst_res = $exp->result_phrases();
+        $phr_lst_res = $exp->load_result_phrases();
         if (isset($phr_lst_res)) {
             log_debug('For ' . $frm->usr_text . ' formula results with the result phrases ' . $phr_lst_res->dsp_name() . ' should not be used for calculation to avoid loops');
         }
@@ -1096,7 +1098,7 @@ class result_list extends sandbox_value_list
         $phr_grp_lst_val->get_by_res_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // ... such as "this"
         $phr_grp_lst_used = clone $phr_grp_lst_val;
 
-        // first calculate the standard results for all user and then the user specific results
+        // first calculate the standard results for all user and then the user-specific results
         // than loop over the users and check if the user has changed any value, formula or formula assignment
         $usr_lst = new user_list($this->get_user());
         $usr_lst->load_active();

@@ -87,15 +87,16 @@ class import_file
 
     /**
      * import a single json file
-     * TODO add user_message as a parameter
+     * TODO Prio 0 add user_message as a parameter
      * TODO set $direct by default to false
      *
      * @param string $filename
      * @param user $usr the user who has requested the import (only used for direct import of the system users)
-     * @param bool $direct true if each object should be saved separate in the database
+     * @param bool $direct true if each object should be saved separately in the database
+     * @param bool $ignore_errors true if the import should continue even if some objects cannot be saved
      * @return user_message
      */
-    function json_file(string $filename, user $usr, bool $direct = true): user_message
+    function json_file(string $filename, user $usr, bool $direct = true, bool $ignore_errors = false): user_message
     {
         global $cfg;
 
@@ -171,13 +172,13 @@ class import_file
                         $usr_msg->add_info_text(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
-
-                    // TODO Prio 0 activate
                     // TODO Prio 1 move to calling function and include save
-                    //if (!$usr_msg->is_ok()) {
-                    //    log_err('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
-                    //}
-                    $usr_msg->add_message_text('import of ' . $filename . ' failed');
+                    $err_msg = 'import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text();
+                    if (!$ignore_errors) {
+                        log_err($err_msg);
+                    } else {
+                        log_warning($err_msg);
+                    }
                 }
             }
         }
@@ -190,7 +191,7 @@ class import_file
      *
      * @param string $filename the file name including the local path of the file that should be imported
      * @param user $usr the user who has triggered the import
-     * @return user_message the result of the import with suggested solution in case of a problem
+     * @return user_message the result of the import with a suggested solution in case of a problem
      */
     function yaml_file(string $filename, user $usr): user_message
     {
@@ -211,7 +212,7 @@ class import_file
                 } else {
                     $this->failed($import_result->all_message_text(), $usr_msg);
                 }
-                $usr_msg->add($import_result);
+                $usr_msg->merge($import_result);
             }
         }
 
@@ -233,17 +234,17 @@ class import_file
         global $mtr;
         global $log_txt;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // only admin users are allowed to load the system config from the resource file
         if ($usr->is_admin() or $usr->is_system()) {
 
             // import the system configuration from the resource file
             $imf = new import_file();
-            $usr_msg->add($imf->yaml_file(files::SYSTEM_CONFIG, $usr));
+            $msg->merge($imf->yaml_file(files::SYSTEM_CONFIG, $usr));
 
             // check the import if needed or requested
-            if (!$usr_msg->is_ok() or $validate) {
+            if (!$msg->is_ok() or $validate) {
 
                 // load the system configuration from the database
                 // TODO Prio 3 base the validation on the export yaml
@@ -252,12 +253,12 @@ class import_file
 
                 // check based on the number of values
                 $cfg_nbr = $cfg->count();
-                $chk_nbr = $usr_msg->checksum();
+                $chk_nbr = $msg->checksum();
                 if ($cfg_nbr != $chk_nbr or $validate) {
 
                     // report a number difference
                     if ($cfg_nbr != $chk_nbr) {
-                        $usr_msg->add_id_with_vars(msg_id::IMPORT_COUNT_DIFF, [
+                        $msg->add(msg_id::IMPORT_COUNT_DIFF, [
                             msg_id::VAR_FILE_NAME => files::SYSTEM_CONFIG,
                             msg_id::VAR_VALUE_COUNT => $cfg_nbr,
                             msg_id::VAR_VALUE_COUNT_CHK => $chk_nbr,
@@ -275,27 +276,27 @@ class import_file
                     if (!$load_msg->is_ok()) {
 
                         // report the issues on loading the config values
-                        $usr_msg->add($load_msg);
+                        $msg->merge($load_msg);
                     } else {
                         if ($validate) {
 
                             // report all config value differences
-                            $usr_msg->add($cfg->diff_msg($dto->value_list()));
+                            $msg->merge($cfg->diff_msg($dto->value_list()));
                         } else {
 
                             // report al least the missing config values
-                            $val_diff = $dto->value_list()->diff($cfg);
+                            $val_diff = $dto->value_list()->remove_list($cfg);
                             if ($val_diff->is_empty()) {
 
                                 // confirm the validation by counting the values
-                                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_COUNT_VALIDATED, [
+                                $msg->add(msg_id::IMPORT_VALUE_COUNT_VALIDATED, [
                                     msg_id::VAR_FILE_NAME => files::SYSTEM_CONFIG,
                                     msg_id::VAR_VALUE_COUNT => $cfg_nbr,
                                 ]);
                             } else {
 
                                 // report al least the missing config values
-                                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUES_MISSING, [
+                                $msg->add(msg_id::IMPORT_VALUES_MISSING, [
                                     msg_id::VAR_FILE_NAME => files::SYSTEM_CONFIG,
                                     msg_id::VAR_VALUE_LIST => $val_diff->dsp_id(),
                                 ]);
@@ -304,27 +305,27 @@ class import_file
                     }
 
                     // sum the import result
-                    if (!$usr_msg->is_ok()) {
-                        $usr_msg->add_id_with_vars(msg_id::IMPORT_FAIL_BECAUSE, [
+                    if (!$msg->is_ok()) {
+                        $msg->add(msg_id::IMPORT_FAIL_BECAUSE, [
                             msg_id::VAR_FILE_NAME => files::SYSTEM_CONFIG,
-                            msg_id::VAR_VALUE_LIST => $usr_msg->all_message_text(),
+                            msg_id::VAR_VALUE_LIST => $msg->all_message_text(),
                         ]);
-                        $msg = $usr_msg->all_message_text();
-                        echo $msg . "\n";
-                        log_err($msg);
+                        $msg_txt = $msg->all_message_text();
+                        echo $msg_txt . "\n";
+                        log_err($msg_txt);
                     }
                 }
             }
 
             // show the last message to the user which is hopefully a confirmation how many config values have been imported
-            $msg = $usr_msg->all_message_text();
-            $log_txt->echo_log($mtr->txt(msg_id::IMPORT_JSON) . ' ' . basename(files::SYSTEM_CONFIG) . ' ' . $msg);
-            if (!$usr_msg->is_ok()) {
-                log_warning($msg);
+            $msg_txt = $msg->all_message_text();
+            $log_txt->echo_log($mtr->txt(msg_id::IMPORT_JSON) . ' ' . basename(files::SYSTEM_CONFIG) . ' ' . $msg_txt);
+            if (!$msg->is_ok()) {
+                log_warning($msg_txt);
             }
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -426,11 +427,11 @@ class import_file
      * add the file read error to the user message
      * @param string $name the filename and path of the import file
      * @param string $type the file type
-     * @param user_message $usr_msg the user message object
+     * @param user_message $msg the user message object
      */
-    private function read_error(string $name, string $type, user_message $usr_msg): void
+    private function read_error(string $name, string $type, user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::IMPORT_READ_ERROR, [
+        $msg->add(msg_id::IMPORT_READ_ERROR, [
             msg_id::VAR_FILE_TYPE => $type,
             msg_id::VAR_FILE_NAME => $name
         ]);
@@ -439,11 +440,11 @@ class import_file
     /**
      * add a warning that the file is empty to the user message
      * @param string $name the filename and path of the import file
-     * @param user_message $usr_msg the user message object
+     * @param user_message $msg the user message object
      */
-    private function empty_warning(string $name, user_message $usr_msg): void
+    private function empty_warning(string $name, user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::IMPORT_EMPTY, [
+        $msg->add(msg_id::IMPORT_EMPTY, [
             msg_id::VAR_FILE_NAME => $name
         ]);
     }
@@ -451,11 +452,11 @@ class import_file
     /**
      * add the final import result to the user message
      * @param string $err_txt a description of the errors and warning due to the import
-     * @param user_message $usr_msg the user message object
+     * @param user_message $msg the user message object
      */
-    private function failed(string $err_txt, user_message $usr_msg): void
+    private function failed(string $err_txt, user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::IMPORT_FAILED, [
+        $msg->add(msg_id::IMPORT_FAILED, [
             msg_id::VAR_ERROR_TEXT => $err_txt
         ]);
     }
@@ -463,11 +464,11 @@ class import_file
     /**
      * add the final import result to the user message
      * @param string $summary a description of what has been imported
-     * @param user_message $usr_msg the user message object
+     * @param user_message $msg the user message object
      */
-    private function done(string $summary, user_message $usr_msg): void
+    private function done(string $summary, user_message $msg): void
     {
-        $usr_msg->add_info_with_vars(msg_id::IMPORT_DONE, [
+        $msg->add_info_with_vars(msg_id::IMPORT_DONE, [
             msg_id::VAR_SUMMARY => $summary
         ]);
     }

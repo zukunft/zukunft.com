@@ -424,7 +424,7 @@ class triple_list extends sandbox_list_named
         $sc->set_fields(array_merge(triple_db::FLD_NAMES_LINK, triple_db::FLD_NAMES));
         $sc->set_usr_fields(triple_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(triple_db::FLD_NAMES_NUM_USR);
-        // also load the linked user specific phrase with the same SQL statement (word until now)
+        // also load the linked user-specific phrase with the same SQL statement (word until now)
         $sc->set_join_fields(
             phrase::FLD_NAMES,
             phrase::class,
@@ -761,7 +761,7 @@ class triple_list extends sandbox_list_named
                 if (!$add_lst->is_empty()) {
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, triple::class, $add_lst->count(), $step_time);
-                    $lst_usr_msg->add($add_lst->insert($cache, true, $imp, triple::class));
+                    $lst_usr_msg->merge($add_lst->insert($cache, $imp, triple::class));
                     if ($add_lst->count() > 0) {
                         $lst_usr_msg->set_added_depending();
                         $trp_added = true;
@@ -769,27 +769,31 @@ class triple_list extends sandbox_list_named
                     $imp->step_end($add_lst->count(), $save_per_sec);
                 }
 
+                // reload the id of the triples added with the last run
+                // TODO use the insert message instead to increase speed
+                $db_lst = new triple_list($this->get_user());
+                if (!$add_lst->is_empty()) {
+                    $db_lst->load_by_names($add_lst->names(true), true);
+                }
+
+                // fill up the cache to prevent loading the same triple again in the next level
+                // TODO increase speed!
+                $cache = $cache->merge($db_lst->phrase_list());
+
+                // fill up the overall db list with db value for later detection of the triples that needs to be updated
+                $db_lst_all->merge($db_lst);
+
                 $cache->filter_valid();
 
                 $level++;
             }
 
             // add the user_messages to the last try
-            $usr_msg->add($lst_usr_msg);
-
-            // reload the id of the triples added with the last run
-            // TODO use the insert message instead to increase speed
-            $db_lst = new triple_list($this->get_user());
-            if (!$add_lst->is_empty()) {
-                $db_lst->load_by_names($add_lst->names(true), true);
-            }
-
-            // fill up the overall db list with db value for later detection of the triples that needs to be updated
-            $db_lst_all->merge($db_lst);
+            $usr_msg->merge($lst_usr_msg);
 
 
             // create any missing sql update functions and update the triples
-            $usr_msg->add($this->update($db_lst_all, true, $imp, triple::class, $upd_per_sec));
+            $usr_msg->merge($this->update($db_lst_all, $imp, triple::class, $upd_per_sec));
 
 
             // fill up the main list with the words
@@ -802,7 +806,7 @@ class triple_list extends sandbox_list_named
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->add($this->delete($db_lst_all, true, $imp, triple::class, $del_per_sec));
+            $usr_msg->merge($this->delete($db_lst_all, $imp, triple::class, $del_per_sec));
 
         }
 
@@ -837,14 +841,14 @@ class triple_list extends sandbox_list_named
         return $usr_msg;
     }
 
-    private function report_missing(user_message $usr_msg): void
+    private function report_missing(user_message $msg): void
     {
         foreach ($this->lst() as $trp) {
             if (!$trp->excluded) {
                 if ($trp->needs_from()) {
                     $phr = $trp->get_from();
                     if (!$phr->is_valid()) {
-                        $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
+                        $msg->add(msg_id::IMPORT_PHRASE_NOT_FOUND, [
                             msg_id::VAR_NAME => $phr->name(),
                             msg_id::VAR_ID => $trp->dsp_id()
                         ]);
@@ -852,7 +856,7 @@ class triple_list extends sandbox_list_named
                 }
                 $phr = $trp->get_to();
                 if (!$phr->is_valid()) {
-                    $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
+                    $msg->add(msg_id::IMPORT_PHRASE_NOT_FOUND, [
                         msg_id::VAR_NAME => $phr->name(),
                         msg_id::VAR_ID => $trp->dsp_id()
                     ]);
@@ -864,7 +868,7 @@ class triple_list extends sandbox_list_named
     private function fill_triple_by_name(
         triple_list|sandbox_list_named $db_lst,
         triple|phrase                  $phr,
-        user_message                   $usr_msg,
+        user_message                   $msg,
         bool                           $fill_all = false,
         bool                           $report_missing = true
     ): void
@@ -877,7 +881,7 @@ class triple_list extends sandbox_list_named
             } else {
                 if ($report_missing and !$phr->is_excluded()) {
                     $lib = new library();
-                    $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_NOT_FOUND, [
+                    $msg->add(msg_id::ADDED_OBJECT_NOT_FOUND, [
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($phr::class),
                         msg_id::VAR_NAME => $phr->dsp_id()
                     ]);
@@ -890,33 +894,33 @@ class triple_list extends sandbox_list_named
     {
         global $sys;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($this->lst() as $phr) {
             if ($phr::class == triple::class) {
                 if ($phr->get_verb() == null) {
                     $phr->set_verb($sys->typ_lst->vrb->get_verb(verbs::NOT_SET));
-                    $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_SET, [
+                    $msg->add(msg_id::TRIPLE_VERB_SET, [
                         msg_id::VAR_ID => $phr->dsp_id(),
                         msg_id::VAR_VALUE => verbs::NOT_SET
                     ]);
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
      * get a list of triples that are ready to be added to the database
      * @return triple_list list of the triples that have an id or a name
      */
-    function get_ready(user_message $usr_msg = new user_message(), string $file_name = ''): triple_list
+    function get_ready(user_message $msg = new user_message(), string $file_name = ''): triple_list
     {
         $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $trp) {
-            if ($trp->db_ready($usr_msg)) {
+            if ($trp->db_ready($msg)) {
                 $trp_lst->add_by_name($trp);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_TRIPLE_NOT_READY, [
+                $msg->add(msg_id::IMPORT_TRIPLE_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_TRIPLE_NAME => $trp->dsp_id(),
                 ]);

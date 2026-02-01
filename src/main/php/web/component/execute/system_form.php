@@ -96,7 +96,7 @@ class system_form extends component
     /**
      * start an HTML form, show the title and set and set the unique form name
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user specific frontend language
+     * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
      * @return string the html code to start a new form and display the tile
      */
     function form_tile(string $form_name, ?msg_id $ui_msg_code_id = null): string

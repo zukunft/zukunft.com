@@ -202,6 +202,7 @@ enum messages: string
     const string VAR_EXPRESSION = 'VarObjExpression';
     const string VAR_JSON_PART = 'VarJsonPart';
     const string VAR_VERB_NAME = 'VarVerbName';
+    const string VAR_COUNTER = 'VarCounter';
     const string IMPORT_SUCCESS = 'finished successful';
 
     // unique message keys
@@ -586,6 +587,59 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
         . '" created';
 
+    case EXPRESSION_EMPTY = 'the expression of formula "'
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . '" is empty';
+    case EXPRESSION_SYMBOL_TOO_SHORT = 'the formula expression symbol "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is too short';
+    case EXPRESSION_ID_NOT_A_NUMBER = 'the formula expression id '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is no a valid integer number';
+    case EXPRESSION_EQUAL_SIGN_MISSING = 'the equal sign (""=) is missing formula expression "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '"';
+    case EXPRESSION_ID_NOT_VALID = 'the formula expression id '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid number.';
+    case EXPRESSION_SYMBOL_NOT_VALID = 'the formula expression symbol "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not valid. only word, triple, verb and formula are expected.';
+    case EXPRESSION_TERM_MISSING = 'the term "'
+        . self::VAR_START . self::VAR_TERM . self::VAR_END
+        . '" of formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is missing';
+    case EXPRESSION_REF_IS_NULL = 'the database format of the formula expression of "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is null';
+    case EXPRESSION_REF_IS_EMPTY = 'the database format of the formula expression of "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is empty';
+    case EXPRESSION_REF_IS_TOO_SHORT = 'the database format of the formula expression "'
+        . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END
+        . '" of "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is too short to be a valid expression';
+    case EXPRESSION_HAS_MORE_REFS_THAN_USER_TERMS = 'the database format of the formula expression "'
+        . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END
+        . '" has more references than the  "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is too short to be a valid expression';
+    case EXPRESSION_USER_IS_NULL = 'the formula expression of "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is null';
+    case EXPRESSION_USER_IS_EMPTY = 'the formula expression of "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is empty';
+    case EXPRESSION_USER_IS_TOO_SHORT = 'the database format of formula expression "'
+        . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END
+        . '" of formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" does probably not contain all terms of the formula expression "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '". Probably at least one term is not in the database any more';
+
     case PHRASE_TYPE_UNEXPECTED = 'it is not yet defined how "'
         . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
         . '" should be handled to '
@@ -770,6 +824,11 @@ enum messages: string
         . '" failed because the triple "'
         . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
         . '" is incomplete.';
+    case IMPORT_COMPONENT_NOT_READY = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because the component "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is incomplete.';
     case IMPORT_FORMULA_NOT_READY = 'import of "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" failed because the formula "'
@@ -787,6 +846,13 @@ enum messages: string
         . '" should be assigned to formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" but it is not defined.';
+
+    case IMPORT_FORMULA_FAILED = 'import of formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" failed when importing "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '"';
+
     case IMPORT_VALUE_COUNT_VALIDATED = 'import from "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" validated by counting '
@@ -961,6 +1027,16 @@ enum messages: string
         . ' for '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not found';
+    case JOB_STATUS_MISSING = 'job status '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case JOB_TYPE_MISSING = 'job type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
 
     case NO_UPDATE_PRIVILEGES =
         self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
@@ -1013,6 +1089,11 @@ enum messages: string
         . ' != '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
 
+    case DB_CLEANUP_ERROR = 'There are '
+        . self::VAR_START . self::VAR_COUNTER . self::VAR_END
+        . ' unexpected system test rows detected by '
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END;
+
     case IMPORT_PHRASE_NOT_FOUND = 'Cannot find word or triple "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" when importing '
@@ -1034,6 +1115,22 @@ enum messages: string
         . '" already exists. Please use another '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' name.';
+
+    case JOB_TYPE_INVALID = 'the job type for job '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
+
+    case JOB_ROW_MISSING = 'the database id for job '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is missing';
+
+    case IP_RANGE_FROM_MISSING = 'the from value of the ip range '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
+
+    case IP_RANGE_TO_MISSING = 'the to value of the ip range '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
 
     case VERB_UPDATE_FAILED = 'updating '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
@@ -1471,6 +1568,7 @@ enum messages: string
 
     case TRIPLE_FROM_PHRASE_MISSING = 'triple from phrase is missing';
     case TRIPLE_PHRASE_FROM_NAME_MISSING = 'triple phrase from name is missing and id is 0';
+    case TRIPLE_PHRASE_WITHOUT_DB_ID = 'triple phrase from id is 0';
     case TRIPLE_TO_PHRASE_MISSING = 'triple to phrase is missing';
     case TRIPLE_PHRASE_TO_NAME_MISSING = 'triple phrase to name is missing and id is 0';
     case FAILED_TO_DELETE_UNUSED_WORK_LINK = 'Failed to delete the unused work link';
@@ -1487,6 +1585,11 @@ enum messages: string
         . '" already exists. Please use another name or merge with this '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '.';
+
+    case MISSING_KEY =
+        self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is missing in '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
 
     /*
      * internal code errors

@@ -328,7 +328,7 @@ class value_list extends ListBase
         }
 
         // if no phrase is left for the header, show 'description' as a dummy replacement
-        // TODO make the replacement language and user specific
+        // TODO make the replacement language and user-specific
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {

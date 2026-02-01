@@ -29,7 +29,7 @@ ALTER TABLE view_relations
     MODIFY view_relation_id bigint NOT NULL AUTO_INCREMENT;
 
 --
--- table structure to save user specific changes to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view
+-- table structure to save user-specific changes to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view
 --
 
 CREATE TABLE IF NOT EXISTS user_view_relations

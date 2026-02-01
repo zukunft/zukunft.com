@@ -163,6 +163,12 @@ class ref extends sandbox_link
     const array FLD_LST_USER_CAN_CHANGE = ref_db::FLD_LST_USER_CAN_CHANGE;
     const array FLD_LST_NON_CHANGEABLE = ref_db::FLD_LST_NON_CHANGEABLE;
 
+    // overwrite the parent link const
+    const string FLD_FROM = phrase::FLD_ID;
+    const string FLD_PREDICATE = ref_db::FLD_TYPE;
+    const string FLD_TO = ref_db::FLD_EX_KEY;
+
+
     // char used to create one unique key string for the reference
     private const string SEP = '|';
     private const string ESC_CHR = '|';
@@ -301,17 +307,17 @@ class ref extends sandbox_link
      * set the vars of this reference object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         global $sys;
         global $db_con;
@@ -325,7 +331,7 @@ class ref extends sandbox_link
                 if ($db_con->is_open()) {
                     $src->load_by_name($src_name);
                     if ($src->id() == 0) {
-                        $usr_msg->add_id_with_vars(msg_id::IMPORT_SOURCE_NOT_FOUND, [
+                        $msg->add(msg_id::IMPORT_SOURCE_NOT_FOUND, [
                             msg_id::VAR_NAME => $src_name,
                             msg_id::VAR_ID => $this->dsp_id()
                         ]);
@@ -340,7 +346,7 @@ class ref extends sandbox_link
             $this->set_predicate_id($sys->typ_lst->ref_typ->id($in_ex_json[json_fields::TYPE_NAME]));
 
             if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
-                $usr_msg->add_id_with_vars(msg_id::REFERENCE_TYPE_NOT_FOUND, [
+                $msg->add(msg_id::REFERENCE_TYPE_NOT_FOUND, [
                     msg_id::VAR_TYPE_NAME->value => $in_ex_json[json_fields::TYPE_NAME],
                 ]);
 
@@ -363,7 +369,7 @@ class ref extends sandbox_link
                 if ($db_con->is_open()) {
                     $phr->load_by_name($phr_name);
                     if ($phr->id() == 0) {
-                        $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
+                        $msg->add(msg_id::IMPORT_PHRASE_NOT_FOUND, [
                             msg_id::VAR_NAME => $phr_name,
                             msg_id::VAR_ID => $this->dsp_id()
                         ]);
@@ -375,7 +381,7 @@ class ref extends sandbox_link
             $this->set_phrase($phr);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -624,19 +630,19 @@ class ref extends sandbox_link
 
     function set_code_id(?string $code_id, user $usr): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr->can_set_code_id()) {
             $this->code_id = $code_id;
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
                 msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -679,7 +685,7 @@ class ref extends sandbox_link
      *
      * @return string|null the description from the object e.g. word using the same function as the phrase and term
      */
-    function description(): ?string
+    function get_description(): ?string
     {
         return $this->description;
     }
@@ -1174,128 +1180,35 @@ class ref extends sandbox_link
      */
 
     /**
-     * set the update parameters for the description
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param ref|sandbox $db_rec the database record before the saving
-     * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private function save_field_description(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-        // if the plural is not set, don't overwrite any db entry
-        if ($this->description <> Null) {
-            if ($this->description <> $db_rec->description) {
-                $log = $this->log_upd_field();
-                $log->old_value = $db_rec->description;
-                $log->new_value = $this->description;
-                $log->std_value = $std_rec->description;
-                $log->row_id = $this->id();
-                $log->set_field(sql_db::FLD_DESCRIPTION);
-                $usr_msg->add($this->save_field_user($db_con, $log));
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the reference url
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param ref|sandbox $db_rec the database record before the saving
-     * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private function save_field_url(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-        // if the plural is not set, don't overwrite any db entry
-        if ($this->get_url() <> Null) {
-            if ($this->get_url() <> $db_rec->get_url()) {
-                $log = $this->log_upd_field();
-                $log->old_value = $db_rec->get_url();
-                $log->new_value = $this->get_url();
-                $log->std_value = $std_rec->get_url();
-                $log->row_id = $this->id();
-                $log->set_field(ref_db::FLD_URL);
-                $usr_msg->add($this->save_field_user($db_con, $log));
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the reference url
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param ref|sandbox $db_rec the database record before the saving
-     * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private function save_field_source(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-        if ($db_rec->source_id() <> $this->source_id()) {
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->source_name();
-            $log->old_id = $db_rec->source_id();
-            $log->new_value = $this->source_name();
-            $log->new_id = $this->source_id();
-            $log->std_value = $std_rec->source_name();
-            $log->std_id = $std_rec->source_id();
-            $log->row_id = $this->id();
-            $log->set_field(ref_db::FLD_SOURCE);
-            $usr_msg->add($this->save_field_user($db_con, $log));
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * save all updated reference fields
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param ref|sandbox $db_obj the database record before the saving
-     * @param ref|sandbox $norm_obj the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_all_fields(sql_db $db_con, ref|sandbox $db_obj, ref|sandbox $norm_obj): user_message
-    {
-        $usr_msg = parent::save_all_fields($db_con, $db_obj, $norm_obj);
-        $usr_msg->add($this->save_field_description($db_con, $db_obj, $norm_obj));
-        $usr_msg->add($this->save_field_url($db_con, $db_obj, $norm_obj));
-        $usr_msg->add($this->save_field_source($db_con, $db_obj, $norm_obj));
-        log_debug('all fields for "' . $this->dsp_id() . '" has been saved');
-        return $usr_msg;
-    }
-
-    /**
      * update a ref in the database or update the existing
-     * @param user_message $usr_msg with status ok
+     * @param user_message $msg with status ok
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $msg): bool
     {
         log_debug('ref->add ' . $this->dsp_id());
 
         global $db_con;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-        if ($usr_msg->is_ok()) {
-            if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
-                $this->id = $usr_msg->get_row_id();
+        $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
+        if ($msg->is_ok()) {
+            if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg)) {
+                $this->id = $msg->get_row_id();
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
      * get a similar reference
-     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      */
-    function get_similar(user_message $usr_msg): ref
+    function get_similar(user_message $msg): ref
     {
         $result = new ref($this->get_user());
         log_debug('ref->get_similar ' . $this->dsp_id());
@@ -1315,20 +1228,18 @@ class ref extends sandbox_link
      * update a ref in the database or update the existing
      * TODO review by comparing with sandbox function
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(
+        user_message        $msg,
+        sql_type_list|array $sc_par_lst = []
+    ): bool
     {
         log_debug();
 
         global $db_con;
-
-        // decide which db write method should be used
-        if ($use_func === null) {
-            $use_func = $this->sql_default_script_usage();
-        }
 
         // build the database object because the is anyway needed
         if ($this->get_user() != null) {
@@ -1340,7 +1251,7 @@ class ref extends sandbox_link
         if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar($usr_msg);
+            $similar = $this->get_similar($msg);
             if (isset($similar)) {
                 if ($similar->id() != 0) {
                     $this->id = $similar->id();
@@ -1351,7 +1262,7 @@ class ref extends sandbox_link
         // create a new object or update an existing
         if ($this->id() <= 0) {
             log_debug('add ' . $this->dsp_id());
-            $this->add($usr_msg, $use_func);
+            $this->add($msg);
         } else {
             log_debug('update ' . $this->dsp_id());
 
@@ -1366,29 +1277,14 @@ class ref extends sandbox_link
             $std_rec->load_standard();
             log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
 
-            // if needed log the change and update the database
-            if ($this->get_external_key() <> $db_rec->get_external_key()) {
-                $log = $this->log_link_upd($db_rec);
-                if ($log->id() > 0) {
-                    $db_con->set_class(ref::class);
-                    if ($db_con->update_old($this->id(), ref_db::FLD_EX_KEY, $this->get_external_key())) {
-                        log_debug('ref->save update ... done.');
-                    }
-                }
-            }
-
             // if everything has been fine until here
             // update the
-            if ($usr_msg->is_ok()) {
-                if ($use_func) {
-                    $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                } else {
-                    $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                }
+            if ($msg->is_ok()) {
+                $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1424,13 +1320,13 @@ class ref extends sandbox_link
      * get a list of database field names, values and types that have been updated
      *
      * @param ref|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         ref|db_object_seq_id $obj,
-        user_message         $usr_msg,
+        user_message         $msg,
         sql_type_list        $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -1441,7 +1337,7 @@ class ref extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
             // for insert into the standard table the type field should always be included
@@ -1456,7 +1352,7 @@ class ref extends sandbox_link
                 }
                 global $sys;
                 if ($this->predicate_id() < 0) {
-                    $usr_msg->add_id_with_vars(msg_id::REFERENCE_TYPE_MISSING, [
+                    $msg->add(msg_id::REFERENCE_TYPE_MISSING, [
                         msg_id::VAR_TYPE => $this->predicate_id(),
                         msg_id::VAR_NAME => $this->dsp_id()
                     ]);

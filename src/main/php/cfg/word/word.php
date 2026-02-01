@@ -196,8 +196,26 @@ class word extends sandbox_code_id
         }
     }
 
-    // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
-    private ?float $impact;
+    // the importance of the word; a higher number indicates a higher relevance
+    // based on the value defined for each word by the words "impact" and "criteria".
+    // set the cache value to sort this word by relevance
+    public ?float $impact {
+        get {
+            // TODO Prio 2 calculate impact from criteria if useful or requested
+            return $this->impact;
+        }
+        /**
+         * set the cache value to sort this word by relevance
+         * the impact is calculated based on the formula assigned to the object
+         * by the system triple "impact phrase"
+         *
+         * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
+         */
+        set(?float $impact) {
+            // TODO Prio 2 remember refresh timestamp to avoid too many updates
+            $this->impact = $impact;
+        }
+    }
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -321,13 +339,13 @@ class word extends sandbox_code_id
      * set the vars of this word object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -338,7 +356,7 @@ class word extends sandbox_code_id
         $this->reset(true);
 
         // set the object vars based on the json
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $sys->typ_lst->phr_typ->id($in_ex_json[json_fields::TYPE_NAME]);
@@ -356,10 +374,10 @@ class word extends sandbox_code_id
                 foreach ($ref_json as $ref_data) {
                     $ref_obj = new ref($this->get_user());
                     $ref_obj->set_phrase($this->phrase());
-                    $ref_obj->import_mapper($ref_data, $usr_msg, $dto);
+                    $ref_obj->import_mapper($ref_data, $msg, $dto);
                     // TODO $dto should never be null if no direct import is used
                     $dto?->add_reference($ref_obj);
-                    if ($usr_msg->is_ok()) {
+                    if ($msg->is_ok()) {
                         $this->ref_lst[] = $ref_obj;
                     }
                 }
@@ -373,7 +391,7 @@ class word extends sandbox_code_id
             if ($db_con->is_open()) {
                 $wrd_view->load_by_name($msk_name);
                 if ($wrd_view->id() == 0) {
-                    $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $msk_name]);
+                    $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $msk_name]);
                 } else {
                     $this->set_view_id($wrd_view->id());
                 }
@@ -388,7 +406,7 @@ class word extends sandbox_code_id
             $this->type_id = $sys->typ_lst->phr_typ->default_id();
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -413,12 +431,12 @@ class word extends sandbox_code_id
             } else {
                 $vars = parent::api_json_array($typ_lst, $usr);
                 $vars[json_fields::PLURAL] = $this->plural;
-                $vars[json_fields::IMPACT] = $this->get_impact();
+                $vars[json_fields::IMPACT] = $this->impact;
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
-            $vars[json_fields::IMPACT] = $this->get_impact();
+            $vars[json_fields::IMPACT] = $this->impact;
         }
 
         return $vars;
@@ -521,27 +539,6 @@ class word extends sandbox_code_id
         } else {
             return $this->view->id();
         }
-    }
-
-    /**
-     * set the cache value to sort this word by relevance
-     * the impact is calculated based on the formula assigned to the object
-     * by the system triple "impact phrase"
-     *
-     * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
-     * @return void
-     */
-    function set_impact(?float $impact): void
-    {
-        $this->impact = $impact;
-    }
-
-    /**
-     * @return float|null a higher number indicates a higher relevance
-     */
-    function get_impact(): ?float
-    {
-        return $this->impact;
     }
 
 
@@ -768,7 +765,7 @@ class word extends sandbox_code_id
      * if there is just one formula linked to the word, get it
      * TODO separate the query parameter creation and add a unit test
      * TODO allow also to retrieve a list of formulas
-     * TODO get the user specific list of formulas
+     * TODO get the user-specific list of formulas
      */
     function reload_formula(): formula
     {
@@ -808,15 +805,15 @@ class word extends sandbox_code_id
      */
     function diff_msg(word|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         if ($this->id() != $obj->id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
+            $msg->add(msg_id::DIFF_ID, [
                 msg_id::VAR_ID => $obj->dsp_id(),
                 msg_id::VAR_ID_CHK => $this->dsp_id(),
                 msg_id::VAR_WORD_NAME => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -922,9 +919,9 @@ class word extends sandbox_code_id
 
     /**
      * fill this word based on the given word
-     * if the id is set in the given word loaded from the database but this import word does not yet have the db id, set the id
-     * if the given description is not set (null) the description is not remove
-     * if the given description is an empty string the description is removed
+     * if the id is set in the given word loaded from the database, but this import word does not yet have the db id, set the id.
+     * if the given description is not set (null). the description is not removed.
+     * if the given description is an empty string. the description is removed.
      *
      * @param word|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
      * @param user $usr_req the user who has requested the fill
@@ -941,6 +938,9 @@ class word extends sandbox_code_id
         }
         if ($obj->impact != null) {
             $this->impact = $obj->impact;
+        }
+        if ($obj->view != null) {
+            $this->view = $obj->view;
         }
         return $usr_msg;
     }
@@ -1165,7 +1165,7 @@ class word extends sandbox_code_id
         $phr_lst = $this->phrase_list();
         $phr_lst = $phr_lst->are();
         $added_lst = $phr_lst->contains();
-        $added_lst->diff($this->phrase_list());
+        $added_lst->remove($this->phrase_list());
         // ... and after that get only for the new
         if ($added_lst->count() > 0) {
             $loops = 0;
@@ -1174,7 +1174,7 @@ class word extends sandbox_code_id
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
-                $added_lst->diff($phr_lst);
+                $added_lst->remove($phr_lst);
                 if (!$added_lst->is_empty()) {
                     log_debug('add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
                 }
@@ -1478,7 +1478,7 @@ class word extends sandbox_code_id
 
     /**
      * remember the word view, which means to save the view id for this word
-     * each user can define set the view individually, so this is user specific
+     * each user can define set the view individually, so this is user-specific
      */
     function save_view(int $view_id): user_message
     {
@@ -1506,87 +1506,6 @@ class word extends sandbox_code_id
             }
         }
         return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the word code_id
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private
-    function save_field_code_id(sql_db $db_con, word $db_rec, word $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-        // if the code_id is not set, don't overwrite any db entry
-        if ($this->get_code_id() <> Null) {
-            if ($this->get_code_id() <> $db_rec->get_code_id()) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->get_code_id();
-                $log->new_value = $this->get_code_id();
-                $log->std_value = $std_rec->get_code_id();
-                $log->row_id = $this->id();
-                $log->set_field(sql_db::FLD_CODE_ID);
-                $usr_msg->add($this->save_field_user($db_con, $log));
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the word plural
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private
-    function save_field_plural(sql_db $db_con, word $db_rec, word $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-        // if the plural is not set, don't overwrite any db entry
-        if ($this->plural <> Null) {
-            if ($this->plural <> $db_rec->plural) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->plural;
-                $log->new_value = $this->plural;
-                $log->std_value = $std_rec->plural;
-                $log->row_id = $this->id;
-                $log->set_field(word_db::FLD_PLURAL);
-                $usr_msg->add($this->save_field_user($db_con, $log));
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the word view_id
-     * @param word|sandbox $db_rec the database record before the saving
-     * @return user_message the message that should be shown to the user in case something went wrong
-     * TODO replace string by usr_msg to include more infos e.g. suggested solutions
-     */
-    private
-    function save_field_view(word|sandbox $db_rec): user_message
-    {
-        $usr_msg = new user_message();
-        if ($db_rec->get_view_id() <> $this->get_view_id()) {
-            $usr_msg->add($this->save_view($this->get_view_id()));
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * save all updated word fields
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param word|sandbox $db_obj the database record before the saving
-     * @param word|sandbox $norm_obj the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_all_fields(sql_db $db_con, word|sandbox $db_obj, word|sandbox $norm_obj): user_message
-    {
-        $result = $this->save_field_code_id($db_con, $db_obj, $norm_obj);
-        $result->add($this->save_field_plural($db_con, $db_obj, $norm_obj));
-        $result->add($this->save_field_description($db_con, $db_obj, $norm_obj));
-        $result->add($this->save_field_type($db_con, $db_obj, $norm_obj));
-        $result->add($this->save_field_view($db_obj));
-        $result->add($this->save_field_excluded($db_con, $db_obj, $norm_obj));
-        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $result;
     }
 
 
@@ -1689,13 +1608,13 @@ class word extends sandbox_code_id
      * get a list of database field names, values and types that have been updated
      *
      * @param word|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         word|db_object_seq_id $obj,
-        user_message          $usr_msg,
+        user_message          $msg,
         sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -1705,7 +1624,7 @@ class word extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
@@ -1716,7 +1635,7 @@ class word extends sandbox_code_id
             }
             global $sys;
             if ($this->type_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::PHRASE_TYPE_MISSING, [
+                $msg->add(msg_id::PHRASE_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->type_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);

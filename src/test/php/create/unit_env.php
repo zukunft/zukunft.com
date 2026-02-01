@@ -133,6 +133,7 @@ class unit_env
         $this->init_protection_types();
         $this->init_languages();
         $this->init_language_forms();
+        $this->init_job_statuus();
         $this->init_job_types();
         $this->init_log_actions();
         $this->init_log_tables();
@@ -409,6 +410,16 @@ class unit_env
     {
         global $sys;
         $sys->typ_lst->job_typ->load_dummy();
+
+    }
+
+    /**
+     * create the job status array for the unit tests without database connection
+     */
+    private function init_job_statuus(): void
+    {
+        global $sys;
+        $sys->typ_lst->job_sta->load_dummy();
 
     }
 

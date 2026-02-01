@@ -2,10 +2,11 @@
 
 /*
 
-    model/system/base_list.php - the minimal list object used for the list used in the model
-    --------------------------
+    model/system/list_db_read.php - add function for paged database reading to the minimal list object
+    ------------------------------
 
     e.g. used for the ip range list object
+
 
     This file is part of zukunft.com - calc with words
 
@@ -37,33 +38,17 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
 //include_once paths::DB . 'sql_db.php';
-include_once paths::MODEL_HELPER . 'combine_object.php';
-include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
-//include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_HELPER . 'CombineObject.php';
-include_once paths::SHARED_HELPER . 'IdObject.php';
-include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED . 'library.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
-use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\api_message;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
-use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
-use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
-class base_list extends ListOfIdObjects
+class list_db_read extends ListOfIdObjects
 {
 
     /*
@@ -153,7 +138,7 @@ class base_list extends ListOfIdObjects
     }
 
     /**
-     * create an array for the json api message
+     * create an array for the api json message
      *
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user

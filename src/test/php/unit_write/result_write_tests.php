@@ -175,7 +175,7 @@ class result_write_tests
 
         Additional test cases for formula result
 
-        if a user changes a value the result for him should be updated and the result should be user specific
+        if a user changes a value the result for him should be updated and the result should be user-specific
         but the result for other user should not be changed
         if the user undo the value change, the result should be updated
 

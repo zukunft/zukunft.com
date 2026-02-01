@@ -170,7 +170,7 @@ class word_list extends list_named
      *
      * @param word_list $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(word_list $del_lst): void
+    private function remove(word_list $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -432,7 +432,7 @@ class word_list extends list_named
      */
     function ex_time(): void
     {
-        $this->diff($this->time_lst());
+        $this->remove($this->time_lst());
     }
 
     /**
@@ -440,7 +440,7 @@ class word_list extends list_named
      */
     function ex_measure(): void
     {
-        $this->diff($this->measure_lst());
+        $this->remove($this->measure_lst());
     }
 
     /**
@@ -448,7 +448,7 @@ class word_list extends list_named
      */
     function ex_scaling(): void
     {
-        $this->diff($this->scaling_lst());
+        $this->remove($this->scaling_lst());
     }
 
     /**
@@ -456,7 +456,7 @@ class word_list extends list_named
      */
     function ex_percent(): void
     {
-        $this->diff($this->percent_lst());
+        $this->remove($this->percent_lst());
     }
 
 }

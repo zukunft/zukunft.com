@@ -66,8 +66,6 @@ class component_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'component prepared write');
-        $test_name = 'add component ' . components::TEST_ADD_VIA_SQL_NAME . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_sql(), false);
         $test_name = 'add component ' . components::TEST_ADD_VIA_FUNC_NAME . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_func(), true);
 
@@ -192,14 +190,14 @@ class component_write_tests
         }
         $t->assert('component->load component_type_id for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
 
-        $test_name = 'user specific component is created if another user changes the component for "' . components::TEST_RENAMED_NAME . '"';
+        $test_name = 'user-specific component is created if another user changes the component for "' . components::TEST_RENAMED_NAME . '"';
         $cmp_usr2 = new component($t->usr2);
         $cmp_usr2->load_by_name(components::TEST_RENAMED_NAME);
         $cmp_usr2->description = 'Just changed for testing the user sandbox';
         $cmp_usr2->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::FORMULAS);
         $t->assert_true($test_name, $cmp_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // check if a user specific component changes have been saved
+        // check if a user-specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
         $cmp_usr2_reloaded->load_by_name(components::TEST_RENAMED_NAME);
         $result = $cmp_usr2_reloaded->description;
@@ -226,7 +224,7 @@ class component_write_tests
         $cmp_usr2->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::PHRASE_NAME);
         $t->assert_true($test_name, $cmp_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // check if a user specific component changes have been saved
+        // check if a user-specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
         $cmp_usr2_reloaded->load_by_name(components::TEST_RENAMED_NAME);
         $result = $cmp_usr2_reloaded->description;
@@ -236,8 +234,8 @@ class component_write_tests
         //$target = cl(SQL_VIEW_TYPE_WORD_NAME);
         //$t->assert('component->load type_id for "'.component::TEST_NAME_RENAMED.'"', $result, $target);
 
-        // redo the user specific component changes
-        // check if the user specific changes can be removed with one click
+        // redo the user-specific component changes
+        // check if the user-specific changes can be removed with one click
 
         // cleanup - fallback delete
         $cmp = new component($t->usr1);

@@ -100,6 +100,7 @@ include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -136,6 +137,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -160,24 +162,24 @@ class phrase extends combine_named
     const string FLD_USAGE = 'usage';
     const string FLD_IMPACT = 'impact';
 
-    // the common phrase database field names excluding the id and excluding the user specific fields
+    // the common phrase database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         phrase::FLD_TYPE
     );
-    // list of the common user specific database field names of phrases excluding the standard name field
+    // list of the common user-specific database field names of phrases excluding the standard name field
     const array FLD_NAMES_USR_EX = array(
         sql_db::FLD_DESCRIPTION
     );
-    // list of the common user specific database field names of phrases
+    // list of the common user-specific database field names of phrases
     const array FLD_NAMES_USR = array(
         phrase::FLD_NAME,
         sql_db::FLD_DESCRIPTION
     );
-    // list of the common user specific database field names of phrases
+    // list of the common user-specific database field names of phrases
     const array FLD_NAMES_USR_NO_NAME = array(
         sql_db::FLD_DESCRIPTION
     );
-    // list of the common user specific numeric database field names of phrases
+    // list of the common user-specific numeric database field names of phrases
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_USAGE,
         self::FLD_IMPACT,
@@ -231,7 +233,7 @@ class phrase extends combine_named
      */
 
     /**
-     * always set the user because a phrase is always user specific
+     * always set the user because a phrase is always user-specific
      * @param user|word|triple|null $obj the word or triple that should be covered by the phrase
      * @param int|null $id the database id of the phrase (not the object!)
      */
@@ -484,6 +486,14 @@ class phrase extends combine_named
         return $this->obj()->owner_id();
     }
 
+    /**
+     * @return string|null the description of this phrase or term object based on the word, verb, triple or formula
+     */
+    function get_description(): ?string
+    {
+        return $this->obj()->description;
+    }
+
     function code_id(): ?int
     {
         return $this->obj()->get_code_id();
@@ -507,7 +517,7 @@ class phrase extends combine_named
      */
     function set_usage(?int $usage): void
     {
-        $this->obj()->set_usage($usage);
+        $this->obj()->usage = $usage;
     }
 
     /**
@@ -518,7 +528,7 @@ class phrase extends combine_named
      */
     function set_impact(?float $impact): void
     {
-        $this->obj()->set_impact($impact);
+        $this->obj()->impact = $impact;
     }
 
     /**
@@ -574,7 +584,7 @@ class phrase extends combine_named
      */
     function get_usage(): ?int
     {
-        return $this->obj()->get_usage();
+        return $this->obj()->usage;
     }
 
     /**
@@ -582,7 +592,7 @@ class phrase extends combine_named
      */
     function get_impact(): ?float
     {
-        return $this->obj()->get_impact();
+        return $this->obj()->impact;
     }
 
     /**
@@ -601,12 +611,12 @@ class phrase extends combine_named
     /**
      * checks if the word or triple object can be added to the database
      *
-     * @param user_message $usr_msg the explanation for the user why the underlying word or triple cannot yet be added to the database
+     * @param user_message|Message $msg the explanation for the user why the underlying word or triple cannot yet be added to the database
      * @return true if all mandatory vars of the underlying object are set and the phrase can be stored in the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
-        return $this->obj()->db_ready($usr_msg);
+        return $this->obj()->db_ready($msg);
     }
 
     /**
@@ -631,22 +641,22 @@ class phrase extends combine_named
      */
     function fill(phrase|db_object_seq_id $phr, user $usr_req): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($this->is_word()) {
             if ($phr::class == phrase::class) {
                 if ($phr->is_word()) {
-                    $usr_msg->add($this->obj()->fill($phr->word(), $usr_req));
+                    $msg->merge($this->obj()->fill($phr->word(), $usr_req));
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                    $msg->add(msg_id::FILL_WORD_WITH_OTHER,
                         [
                             msg_id::VAR_WORD_NAME => $this->dsp_id(),
                             msg_id::VAR_NAME => $phr->dsp_id(),
                         ]);
                 }
             } elseif ($phr::class == word::class) {
-                $usr_msg->add($this->obj()->fill($phr, $usr_req));
+                $msg->merge($this->obj()->fill($phr, $usr_req));
             } else {
-                $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                $msg->add(msg_id::FILL_WORD_WITH_OTHER,
                     [
                         msg_id::VAR_WORD_NAME => $this->dsp_id(),
                         msg_id::VAR_NAME => $phr->dsp_id(),
@@ -655,25 +665,25 @@ class phrase extends combine_named
         } else {
             if ($phr::class == phrase::class) {
                 if ($phr->is_triple()) {
-                    $usr_msg->add($this->obj()->fill($phr->triple(), $usr_req));
+                    $msg->merge($this->obj()->fill($phr->triple(), $usr_req));
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::FILL_TRIPLE_WITH_OTHER,
+                    $msg->add(msg_id::FILL_TRIPLE_WITH_OTHER,
                         [
                             msg_id::VAR_TRIPLE_NAME => $this->dsp_id(),
                             msg_id::VAR_NAME => $phr->dsp_id(),
                         ]);
                 }
             } elseif ($phr::class == triple::class) {
-                $usr_msg->add($this->obj()->fill($phr, $usr_req));
+                $msg->merge($this->obj()->fill($phr, $usr_req));
             } else {
-                $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                $msg->add(msg_id::FILL_WORD_WITH_OTHER,
                     [
                         msg_id::VAR_TRIPLE_NAME => $this->dsp_id(),
                         msg_id::VAR_NAME => $phr->dsp_id(),
                     ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -996,7 +1006,7 @@ class phrase extends combine_named
      * if there is just one formula linked to the phrase, get it
      * TODO separate the query parameter creation and add a unit test
      * TODO allow also to retrieve a list of formulas
-     * TODO get the user specific list of formulas
+     * TODO get the user-specific list of formulas
      */
     function formula(): formula
     {

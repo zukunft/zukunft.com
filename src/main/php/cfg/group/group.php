@@ -133,7 +133,7 @@ class group extends sandbox_multi
     const string FLD_ID_COM = 'the 64-bit prime index to find the -=class=-';
     const string FLD_ID_COM_USER = 'the 64-bit prime index to find the user -=class=-';
     const string FLD_ID = 'group_id';
-    const string FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+    const string FLD_NAME_COM = 'the user-specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
     const string FLD_NAME = 'group_name';
     const sql_field_type FLD_NAME_SQL_TYP = sql_field_type::TEXT;
 
@@ -246,12 +246,12 @@ class group extends sandbox_multi
      * map a group api json to this model group object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the group values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
@@ -263,7 +263,7 @@ class group extends sandbox_multi
             $this->set_description($api_json[json_fields::DESCRIPTION]);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -290,8 +290,8 @@ class group extends sandbox_multi
             if ($this->name != null or !$typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $vars[json_fields::NAME] = $this->name();
             }
-            if ($this->description() != null) {
-                $vars[json_fields::DESCRIPTION] = $this->description();
+            if ($this->get_description() != null) {
+                $vars[json_fields::DESCRIPTION] = $this->get_description();
             }
             if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $phr_lst = $this->phrase_list();
@@ -376,7 +376,7 @@ class group extends sandbox_multi
     /**
      * @return string|null the description of the value, which is the description of the phrase group
      */
-    function description(): ?string
+    function get_description(): ?string
     {
         return $this->description;
     }
@@ -456,7 +456,7 @@ class group extends sandbox_multi
     /**
      * @return sql_par_field_list with the id field or fields of this group
      */
-    function id_fvt(user_message $usr_msg): sql_par_field_list
+    function id_fvt(user_message $msg): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
         if ($this->is_prime()) {
@@ -470,7 +470,7 @@ class group extends sandbox_multi
                     $pos++;
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::MANDATORY_GROUP_ID_MISSING, [
+                $msg->add(msg_id::MANDATORY_GROUP_ID_MISSING, [
                     msg_id::VAR_VALUE => $this->dsp_id()
                 ]);
             }
@@ -484,7 +484,7 @@ class group extends sandbox_multi
         return $fvt_lst;
     }
 
-    function id_fvt_main(user_message $usr_msg): sql_par_field_list
+    function id_fvt_main(user_message $msg): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
         $grp_id = new group_id();
@@ -497,7 +497,7 @@ class group extends sandbox_multi
                 $pos++;
             }
         } else {
-            $usr_msg->add_id_with_vars(msg_id::MANDATORY_GROUP_ID_MISSING, [
+            $msg->add(msg_id::MANDATORY_GROUP_ID_MISSING, [
                 msg_id::VAR_VALUE => $this->dsp_id()
             ]);
         }
@@ -1249,10 +1249,10 @@ class group extends sandbox_multi
      * check if the user has requested a group with a preserved name
      * and yes if return a message to the user
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
-    protected function check_preserved(user_message $usr_msg): bool
+    protected function check_preserved(user_message $msg): bool
     {
         global $usr;
         global $mtr;
@@ -1267,13 +1267,13 @@ class group extends sandbox_multi
             // the admin user needs to add the read test group name during initial load
             // so for admin do not create a message
             if (!$usr->is_admin() and !$usr->is_system()) {
-                $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
+                $msg->add(msg_id::GROUP_IS_RESERVED, [
                     msg_id::VAR_NAME => $this->name(),
                     msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
                 ]);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1468,52 +1468,22 @@ class group extends sandbox_multi
     /**
      * add a new group to the database
      *
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message $usr_msg with status ok
-     *                               or if something went wrong
-     *                               the message that should be shown to the user
-     *                               including suggested solutions
+     * @param user_message $usr_msg with status OK
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
-        if ($use_func) {
-            $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
-                $this->id = $usr_msg->get_row_id();
-            }
-        } else {
-
-            // log the insert attempt first
-            $log = $this->log_add();
-            if ($log->id() > 0) {
-
-                // insert the new object and save the object key
-                // TODO check that always before a db action is called the db type is set correctly
-                $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc, $usr_msg);
-                if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                    $this->set_saved();
-                }
-
-                // save the object fields if saving the key was successful
-                if ($this->is_saved()) {
-                    log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
-                    // update the id in the log
-                    if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
-                    }
-
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_GROUP, [msg_id::VAR_ID => $this->dsp_id()]);
-                }
-            }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+            $this->id = $usr_msg->get_row_id();
         }
 
         return $usr_msg->is_ok();
@@ -1526,7 +1496,7 @@ class group extends sandbox_multi
 
     /**
      * return the first value related to the word lst
-     * or an array with the value and the user_id if the result is user specific
+     * or an array with the value and the user_id if the result is user-specific
      */
     function value(): value
     {
@@ -1568,7 +1538,7 @@ class group extends sandbox_multi
         $res = new result($this->get_user());
         $result = $res->load_by_grp($this);
 
-        // if no user specific result is found, get the standard result
+        // if no user-specific result is found, get the standard result
         if ($result === false) {
             $result = $res->load_std_by_grp($this);
 
@@ -1719,33 +1689,15 @@ class group extends sandbox_multi
      * TODO maybe move this to del_exe
      *
      * @param user_message $usr_msg
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return bool
      */
-    function del(user_message $usr_msg, ?bool $use_func = null): bool
+    function del(user_message $usr_msg): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
 
-        if ($use_func) {
-            $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
-        } else {
-
-            // log the delete attempt first
-            if ($this->is_prime()) {
-                $log = $this->log_del_prime();
-            } elseif ($this->is_big()) {
-                $log = $this->log_del_big();
-            } else {
-                $log = $this->log_del();
-            }
-            if ($log->id() > 0) {
-                $db_con->set_class(group::class);
-                $qp = $this->sql_delete($sc, $usr_msg);
-                $db_con->delete($qp, 'del ' . $this->dsp_id(), $usr_msg);
-            }
-        }
+        $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
 
         return $usr_msg->is_ok();
     }

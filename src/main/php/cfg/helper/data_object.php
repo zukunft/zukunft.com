@@ -168,7 +168,7 @@ class data_object
     // all preloaded types
     public type_lists $typ_lst;
 
-    // all preloaded views which can be user specific
+    // all preloaded views which can be user-specific
     public view_sys_list $sys_msk;
 
 
@@ -593,7 +593,7 @@ class data_object
         $wrd_lst->load_by_names($wrd_lst->names());
         $trp_lst = $this->triple_list();
         $trp_lst->load_by_names($trp_lst->names());
-        $usr_msg->add($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
+        $usr_msg->merge($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
         //$this->value_list()->load_by_ids();
         return $usr_msg;
     }
@@ -875,6 +875,7 @@ class data_object
     function save(user_message $usr_msg, import $imp): bool
     {
         global $cfg;
+        global $sys;
 
         // get the relevant config values
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -961,10 +962,20 @@ class data_object
             log_debug('values not imported because ' . $usr_msg->all_message_text());
         }
 
+        // temp solution to get a valid user
+        // TODO Prio 2 deprecate
+        $vrb_usr = $usr_msg->usr;
+        if ($vrb_usr == null) {
+            $vrb_usr = $this->get_user();
+        }
+
         // clone the term list as cache to filter the terms already fine
         // without removing the fine words, triples, verbs and formulas from the original lists
         $trm_lst = clone $phr_lst->term_list();
-        $trm_lst->merge($this->vrb_lst->term_list());
+        $trm_lst->merge($this->vrb_lst->term_list($vrb_usr));
+
+        // always add the preloaded verbs to the term list
+        $trm_lst->merge($sys->typ_lst->vrb->term_list($vrb_usr));
 
         // import the formulas
         $this->save_formulas($usr_msg, $imp, $trm_lst);
@@ -1090,9 +1101,13 @@ class data_object
 
         $frm_lst = $this->formula_list();
         if (!$frm_lst->is_empty()) {
+            // to prevent that errors in some formulas lead to missing links in formulas that are fine
+            // but to allow that nevertheless links can be saved with blocks of db insert statements
+            $usr_msg_lnk = clone $usr_msg;
+
             $frm_est = $frm_lst->count() / $frm_per_sec;
             $imp->step_start(msg_id::SAVE, formula::class, $frm_lst->count(), $frm_est);
-            $usr_msg->add($frm_lst->save_with_cache($imp, $cache));
+            $usr_msg->merge($frm_lst->save_with_cache($imp, $cache));
             $imp->step_end($frm_lst->count(), $frm_per_sec);
 
             // update the reference table for fast calculation
@@ -1104,7 +1119,7 @@ class data_object
                         log_err('formula ' . $frm->dsp_id() . ' not saved because ' . $usr_msg->all_message_text());
                     }
                     if ($frm->ref_text != null) {
-                        if (!$frm->element_refresh($frm->ref_text)) {
+                        if (!$frm->element_refresh_old($frm->ref_text)) {
                             $usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
                         }
                     }
@@ -1115,9 +1130,11 @@ class data_object
             // TODO Prio 2 use fast formulas_link_list block save process
             foreach ($frm_lst->lst() as $frm) {
                 if (!$frm->is_excluded()) {
-                    $frm->save_links($usr_msg);
+                    $frm->save_links($usr_msg_lnk);
                 }
             }
+
+            $usr_msg->merge($usr_msg_lnk);
 
             // fill up the data_object list to prevent reloading the same triples again
             $this->formula_list()->fill_by_name($frm_lst);
@@ -1211,9 +1228,9 @@ class data_object
     function diff_msg(data_object $dto): user_message
     {
         $usr_msg = new user_message();
-        $usr_msg->add($this->word_list()->diff_msg($dto->word_list()));
-        $usr_msg->add($this->triple_list()->diff_msg($dto->triple_list()));
-        $usr_msg->add($this->value_list()->diff_msg($dto->value_list()));
+        $usr_msg->merge($this->word_list()->diff_msg($dto->word_list()));
+        $usr_msg->merge($this->triple_list()->diff_msg($dto->triple_list()));
+        $usr_msg->merge($this->value_list()->diff_msg($dto->value_list()));
         return $usr_msg;
     }
 
@@ -1255,15 +1272,15 @@ class data_object
      * set the missing id in the phrase based on the given database phrase
      * @param phrase $phr which might have a missing id
      * @param phrase|null $db_phr which might have the missing id
-     * @param user_message $usr_msg warning if something has been missing
+     * @param user_message $msg warning if something has been missing
      */
-    private function set_phrase_id(phrase $phr, phrase|null $db_phr, user_message $usr_msg): void
+    private function set_phrase_id(phrase $phr, phrase|null $db_phr, user_message $msg): void
     {
         if ($phr->id() == 0) {
             if ($db_phr != null) {
                 $phr->set_id($db_phr->id());
             } else {
-                $usr_msg->add_id_with_vars(msg_id::DB_PHRASE_MISSING, [
+                $msg->add(msg_id::DB_PHRASE_MISSING, [
                     msg_id::VAR_NAME => $phr->dsp_id()
                 ]);
             }
@@ -1274,15 +1291,15 @@ class data_object
      * set the missing id in the term based on the given database term
      * @param term $trm which might have a missing id
      * @param term|null $db_trm which might have the missing id
-     * @param user_message $usr_msg warning if something has been missing
+     * @param user_message $msg warning if something has been missing
      */
-    private function set_term_id(term $trm, term|null $db_trm, user_message $usr_msg): void
+    private function set_term_id(term $trm, term|null $db_trm, user_message $msg): void
     {
         if ($trm->id() == 0) {
             if ($db_trm != null) {
                 $trm->set_id($db_trm->id());
             } else {
-                $usr_msg->add_id_with_vars(msg_id::DB_TERM_MISSING, [
+                $msg->add(msg_id::DB_TERM_MISSING, [
                     msg_id::VAR_NAME => $trm->dsp_id()
                 ]);
             }

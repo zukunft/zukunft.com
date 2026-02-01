@@ -61,6 +61,7 @@ the object structure is:
     \-- source_type_list - to link coded functionality to a source
     \-- protection_type_list - a database based enum list for the data protection types
     \-- share_type_list - a database based enum list for the data share types
+    \-- job_status_list - list of predefined system batch jobs
     \-- job_type_list - list of predefined system batch jobs
     \-- sys_log_function_list - to group the system log entries by function
     \-- sys_log_status_list - list of the system log statuus
@@ -84,11 +85,11 @@ the object structure is:
 +-- result_db - the database const for triple tables
 \-- user_service
     \-- xml - to im- and export xml files
-+-- ip_range_exp - a base object for a list of database IDs
++-- ip_range_db - the database const for ip_range tables
++-- job_db - the database const for job tables
 +-- log - the simple log interface object
 +-- system_time_list - a list of system error objects
 +-- user_list - a list of users
-+-- user_message - a complex object that functions can return
 +-- value_db - the database const for value tables
 +-- value_obj - just to select the best fitting class for a value
 +-- verb_db - the database const for predicate/verb tables
@@ -103,6 +104,7 @@ the object structure is:
 +-- filesShared - resource file names used in backend and frontend
 +-- formulasShared - predefined formulas used in the backend and frontend as code id
 +-- groupsShared - phrase group or value names used by the system for testing
++-- ip_rangesShared - ip ranges used for system testing
 +-- refsShared - references used by the system for testing
 +-- rest_ctrlShared - constants used for the backend to frontend api of zukunft.com
 +-- resultsShared - results used by the system for testing only in the backend
@@ -193,6 +195,7 @@ the object structure is:
                 \-- source_type - the base object for external source type such as pubmed
                 \-- protection_type - to define if and how an object can changed
                 \-- share_type - to define if an object can be shared between the users
+                \-- job_status - predefined status of batch task as a database table e.g. so that admin can change the description
                 \-- job_type - a predefined batch task that can be triggered by a user action or a scheduler
                 \-- pod - the technical details of the mash network pods
                 \-- pod_status - the status of a pod
@@ -218,34 +221,35 @@ the object structure is:
 \-- ListOfShared
     \-- value_type_list - a list of value types e.g. to create the query extension
     \-- ListOfIdObjectsShared
-        \-- base_list
-            \-- element_group - a group of formula elements that, in combination, return a value or a list of values
+        \-- list_db_read
             \-- change_log_list - read the changes from the database and forward them to the API
-            \-- sandbox_list
-                \-- element_group_list - simply a list of formula element groups to place the name function
-                \-- element_list - a list of formula elements to place the name function
-                \-- figure_list - a list of figures, so either a value of a formula result object
-                \-- group_list - a list of word and triple groups
-                \-- sandbox_link_list
-                    \-- component_link_list - a list of links between a view and a component
-                    \-- formula_link_list - a list of formula word links
-                    \-- term_view_list - a list of assignments from terms to views
-                    \-- view_relation_list - a list of view to view relations
-                \-- sandbox_list_named
-                    \-- component_list - list of predefined system components
-                    \-- formula_list - a simple list of formulas
-                    \-- phrase_list - a list of phrase (word or triple) objects
-                    \-- term_list - a list of word, triple, verb or formula objects
-                    \-- source_list - al list of source objects
-                    \-- view_list - list of predefined system views
-                    \-- triple_list - a list of word links, mainly used to build a RDF graph
-                    \-- word_list - a list of word objects
-                \-- sandbox_value_list
-                    \-- result_list - a list of formula results
-                    \-- value_list
-                        \-- config_numbers - additional behavior for the system and user config graph value tree
-            \-- ip_range_list - a list of internet protocol address ranges
-            \-- job_list - a list of calculation request
+            \-- list_db_write
+                \-- element_group - a group of formula elements that, in combination, return a value or a list of values
+                \-- sandbox_list
+                    \-- element_group_list - simply a list of formula element groups to place the name function
+                    \-- element_list - a list of formula elements to place the name function
+                    \-- figure_list - a list of figures, so either a value of a formula result object
+                    \-- group_list - a list of word and triple groups
+                    \-- sandbox_link_list
+                        \-- component_link_list - a list of links between a view and a component
+                        \-- formula_link_list - a list of formula word links
+                        \-- term_view_list - a list of assignments from terms to views
+                        \-- view_relation_list - a list of view to view relations
+                    \-- sandbox_list_named
+                        \-- component_list - list of predefined system components
+                        \-- formula_list - a simple list of formulas
+                        \-- phrase_list - a list of phrase (word or triple) objects
+                        \-- term_list - a list of word, triple, verb or formula objects
+                        \-- source_list - al list of source objects
+                        \-- view_list - list of predefined system views
+                        \-- triple_list - a list of word links, mainly used to build a RDF graph
+                        \-- word_list - a list of word objects
+                    \-- sandbox_value_list
+                        \-- result_list - a list of formula results
+                        \-- value_list
+                            \-- config_numbers - additional behavior for the system and user config graph value tree
+                \-- ip_range_list - a list of internet protocol address ranges
+                \-- job_list - a list of calculation request
             \-- sys_log_list - a list of system error objects
         \-- ListBaseUi
             \-- element_groupUi - a group of formula elements that, in combination, return a value or a list of values
@@ -272,6 +276,9 @@ the object structure is:
             \-- view_listUi - a list function to create the HTML code to display a view list
             \-- triple_listUi - a list function to create the HTML code to display a triple list
 +-- MapObjectShared - temp helper object to map the frontend to backend objects until the api is fast enough
+\-- MessageShared
+    \-- user_message - a complex object that functions can return
+    \-- user_messageUi - messages created by the frontend for the user
 \-- TextIdObjectShared
     \-- db_object_key
         \-- db_object_multi
@@ -320,7 +327,7 @@ the object structure is:
                 \-- valueUi - create the html code to show a value to the user
         \-- jobUi - the extension of the batch task API objects to create job base html code
         \-- userUi
-            \-- user_display_oldUi - to display the user specific settings
+            \-- user_display_oldUi - to display the user-specific settings
 +-- TranslatorShared - translates a message for the user into the user language
 +-- WorkflowShared - defines which view to show next
 +-- json_fieldsShared - list of json field names used for the api and im- and export
@@ -332,6 +339,7 @@ the object structure is:
 +-- file_typesShared - ENUM of the used file types
 +-- formula_link_typesShared - db based ENUM of the formula link types
 +-- formula_typesShared - db based ENUM of the formula types
++-- job_statuusShared - ENUM of the used job statuus
 +-- job_typesShared - ENUM of the used job types
 +-- phrase_typesShared - the phrase code_ids used in back- and frontend
 +-- position_typesShared - how view components can be placed for the user
@@ -398,10 +406,9 @@ the object structure is:
     \-- view_relation_type_listUi - the preloaded data of view relation types used for the html frontend
     \-- view_style_listUi - the preloaded view styles used for the html frontend
     \-- view_type_listUi - the preloaded data view types used for the html frontend
-    \-- user_type_listUi - the display extension of the user specific api type list object
+    \-- user_type_listUi - the display extension of the user-specific api type list object
     \-- verb_listUi - al list of verb objects
 +-- type_listsUi - parent object for all preloaded types used in the html frontend
 \-- type_objectUi
     \-- ref_typeUi - the child class for reference types which has additional the url
-+-- user_messageUi - messages created by the frontend for the user
 ```

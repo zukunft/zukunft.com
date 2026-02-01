@@ -127,7 +127,7 @@ class result extends sandbox_value
     const string TBL_COMMENT = 'to cache the formula ';
     const string TBL_COMMENT_PRIME = 'to cache the formula most often requested ';
     const string TBL_COMMENT_STD = 'to cache the formula public unprotected ';
-    const string TBL_COMMENT_USER = 'to cache the user specific changes of ';
+    const string TBL_COMMENT_USER = 'to cache the user-specific changes of ';
 
     // forward the const to enable usage of $this::CONST_NAME
     const array FLD_NAMES = result_db::FLD_NAMES;
@@ -158,7 +158,7 @@ class result extends sandbox_value
     public ?group $src_grp = null;      // the phrase group used that selected the numbers to calculate this result
     public formula $frm;                // the formula object used to calculate this result
     // TODO use the is_std of the sandbox_value object
-    public ?bool $is_std = True;        // true as long as no user specific value, formula or assignment is used for this result
+    public ?bool $is_std = True;        // true as long as no user-specific value, formula or assignment is used for this result
 
     // database related variables
     private ?float $number = null;
@@ -229,19 +229,19 @@ class result extends sandbox_value
      * TODO move the common parts to the parent object
      * map a result api json to this model result object
      * @param array $api_json the api array with the values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         // make sure that there are no unexpected leftovers but keep the user
         $this->reset(true);
 
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::PHRASES, $api_json)) {
             $phr_lst = new phrase_list($this->get_user());
-            if ($phr_lst->api_mapper($api_json[json_fields::PHRASES], $usr_msg)) {
+            if ($phr_lst->api_mapper($api_json[json_fields::PHRASES], $msg)) {
                 $this->grp()->set_phrase_list($phr_lst);
             }
         }
@@ -253,14 +253,14 @@ class result extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                $msg->add(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
                     msg_id::VAR_VALUE => $value,
                     msg_id::VAR_GROUP => $this->grp()->dsp_id()
                 ]);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -268,13 +268,13 @@ class result extends sandbox_value
      * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -285,12 +285,12 @@ class result extends sandbox_value
         } else {
             $frm_lst = new formula_list($this->get_user());
         }
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::WORDS, $in_ex_json)) {
             $phr_lst = new phrase_list($this->get_user());
-            $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $usr_msg, $dto);
-            if ($usr_msg->is_ok()) {
+            $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $msg, $dto);
+            if ($msg->is_ok()) {
                 $phr_grp = $phr_lst->get_grp_id(false);
                 $this->set_grp($phr_grp);
             }
@@ -301,7 +301,7 @@ class result extends sandbox_value
             $frm = $frm_lst->get_by_name($frm_name);
             if ($frm == null) {
                 if ($db_con->is_open()) {
-                    $usr_msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
+                    $msg->add(msg_id::FORMULA_MISSING_IMPORT, [
                         msg_id::VAR_FORMULA => $frm_name,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
@@ -313,7 +313,7 @@ class result extends sandbox_value
             $this->frm = $frm;
         }
 
-        return $this->common_mapper($in_ex_json, $usr_msg);
+        return $this->common_mapper($in_ex_json, $msg);
     }
 
     /**
@@ -321,12 +321,12 @@ class result extends sandbox_value
      * that are the same for the api and the import mapper
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg the user message object to remember the message that should be shown to the user
+     * @param user_message $msg the user message object to remember the message that should be shown to the user
      * @return bool true if everything was fine
      */
     private function common_mapper(
         array        $in_ex_json,
-        user_message $usr_msg
+        user_message $msg
     ): bool
     {
         $lib = new library();
@@ -336,7 +336,7 @@ class result extends sandbox_value
             if (strtotime($value)) {
                 $this->set_last_update($lib->get_datetime($value, $this->dsp_id(), 'JSON import'));
             } else {
-                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP,
+                $msg->add(msg_id::CANNOT_ADD_TIMESTAMP,
                     [msg_id::VAR_VALUE => $value, msg_id::VAR_ID => $this->dsp_id()]
                 );
             }
@@ -347,13 +347,13 @@ class result extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC,
+                $msg->add(msg_id::IMPORT_VALUE_NOT_NUMERIC,
                     [msg_id::VAR_VALUE => $value, msg_id::VAR_GROUP => $this->grp()->dsp_id()]
                 );
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -925,19 +925,19 @@ class result extends sandbox_value
      * validate a formulas value by comparing the external object result with the calculated result
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         global $db_con;
 
-        $this->import_mapper($in_ex_json, $usr_msg);
+        $this->import_mapper($in_ex_json, $msg);
 
         if ($db_con->is_open()) {
             $do_save = true;
@@ -951,7 +951,7 @@ class result extends sandbox_value
             // the phrases of the result
             if ($key == json_fields::WORDS) {
                 $phr_lst = new phrase_list($this->get_user());
-                if ($phr_lst->import_lst($res, $usr_msg)) {
+                if ($phr_lst->import_lst($res, $msg)) {
                     $phr_grp = $phr_lst->get_grp_id($do_save);
                     log_debug('got word group ' . $phr_grp->dsp_id());
                     $this->set_grp($phr_grp);
@@ -962,7 +962,7 @@ class result extends sandbox_value
             // the phrases used to calculate the result
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->get_user());
-                if ($phr_lst->import_lst($res, $usr_msg)) {
+                if ($phr_lst->import_lst($res, $msg)) {
                     $phr_grp = $phr_lst->get_grp_id($do_save);
                     log_debug('got context ' . $phr_grp->dsp_id());
                     $this->set_src_grp($phr_grp);
@@ -988,15 +988,15 @@ class result extends sandbox_value
 
         // save the result in the database
         if ($db_con->is_open()) {
-            if ($usr_msg->is_ok()) {
-                $this->save($usr_msg);
+            if ($msg->is_ok()) {
+                $this->save($msg);
                 log_debug($this->dsp_id());
             } else {
-                log_debug($usr_msg->all_message_text());
+                log_debug($msg->all_message_text());
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1405,14 +1405,13 @@ class result extends sandbox_value
 
     /**
      * save the formula result to the database
-     * TODO check if user specific result needs to be added
+     * TODO check if user-specific result needs to be added
      * for the word selection the id list is the lead, not the object list and not the group
      *
-     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @param user_message $msg the message that should be shown to the user in case something went wrong
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $msg): bool
     {
 
         global $db_con;
@@ -1457,34 +1456,34 @@ class result extends sandbox_value
             // updates of results are not logged because they could be reproduced
             if ($row_id > 0) {
                 if ($db_con->sf($db_val) <> $db_con->sf($this->number())) {
-                    $msg = 'update result ' . sandbox_multi::FLD_VALUE . ' to ' . $this->number()
+                    $msg_txt = 'update result ' . sandbox_multi::FLD_VALUE . ' to ' . $this->number()
                         . ' from ' . $db_val . ' for ' . $this->dsp_id();
-                    log_debug($msg);
+                    log_debug($msg_txt);
                     $db_con->set_class(result::class);
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_update($sc, $res_db, $usr_msg);
-                    if ($db_con->update($qp, $msg, $usr_msg)) {
-                        $usr_msg->set_db_row_id($row_id);
+                    $qp = $this->sql_update($sc, $res_db, $msg);
+                    if ($db_con->update($qp, $msg_txt, $msg)) {
+                        $msg->set_db_row_id($row_id);
                     }
                 } else {
-                    $msg = 'update of result ' . sandbox_multi::FLD_VALUE . ' ' . $this->dsp_id() . ' not needed';
-                    log_debug($msg);
+                    $msg_txt = 'update of result ' . sandbox_multi::FLD_VALUE . ' ' . $this->dsp_id() . ' not needed';
+                    log_debug($msg_txt);
                     $this->id = $row_id;
-                    $usr_msg->set_db_row_id($row_id);
+                    $msg->set_db_row_id($row_id);
                 }
             } else {
-                $msg = 'insert result ' . $this->number() . ' for ' . $this->dsp_id();
+                $msg_txt = 'insert result ' . $this->number() . ' for ' . $this->dsp_id();
                 $db_con->set_class(result::class);
                 $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc, $usr_msg);
-                if ($db_con->insert($qp, $msg, $usr_msg)) {
-                    $usr_msg->set_db_row_id($row_id);
+                $qp = $this->sql_insert($sc, $msg);
+                if ($db_con->insert($qp, $msg_txt, $msg)) {
+                    $msg->set_db_row_id($row_id);
                 }
             }
         }
 
-        log_debug("id (" . $usr_msg->get_row_id() . ")");
-        return $usr_msg->is_ok();
+        log_debug("id (" . $msg->get_row_id() . ")");
+        return $msg->is_ok();
 
     }
 

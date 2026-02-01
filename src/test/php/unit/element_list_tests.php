@@ -39,9 +39,10 @@ include_once paths::MODEL_ELEMENT . 'element_list.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
-use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class element_list_tests
@@ -54,9 +55,12 @@ class element_list_tests
         // init
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
+        $t_trm = new test_terms($t);
         $t->name = 'element_list->';
         $t->resource_path = 'db/element/';
         $elm_lst = new element_list($t->usr1);
+        $usr_msg = new user_message();
+
 
         // start the test section (ts)
         $ts = 'unit element list ';
@@ -75,6 +79,15 @@ class element_list_tests
         $test_name = 'sql to delete a list of elements';
         $elm_lst = $t_frm->element_list();
         $this->assert_sql_del_by_id_lst($t, $sc, $elm_lst, $test_name);
+
+        $test_name = 'element list name of the elements of one formula';
+        // TODO Prio 0 add fail test cases
+        $frm = $t_frm->formula();
+        $trm_lst = $t_trm->term_list_time();
+        $elm_lst = $frm->element_list($usr_msg, $trm_lst);
+        $result = $elm_lst->dsp_id();
+        $target = '"minute" (element_id 1) for user 3 (zukunft.com system test)';
+        $t->assert($test_name, $result, $target);
 
     }
 

@@ -43,7 +43,7 @@ class words
 
     // words used in the frontend and backend for the system configuration
     // code_id and name of a words used by the system for its own configuration
-    // e.g. the number of decimal places related to the user specific words
+    // e.g. the number of decimal places related to the user-specific words
     // system configuration that are core for the database setup and update check are using the flat cfg methods
     // *_COM is the tooltip for the word; to have the comments on one place the yaml is the preferred place
     // *_ID is the expected database id only used for system testing
@@ -264,7 +264,7 @@ class words
     const string SPEED = 'speed';
     const int SPEED_ID = 87;
     const string METER = 'meter';
-    const int METER_ID = 1140;
+    const int METER_ID = 1139;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 131;
     const string TRANSITION = 'transition';
@@ -437,7 +437,6 @@ class words
     const string TEST_ADD_COM = 'test description added to the word via import';
     const string TEST_ADD_TO = 'System Test Word To';
     const string TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
-    const string TEST_ADD_VIA_SQL = 'System Test Word added via sql insert';
     const string TEST_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
     const string TEST_ADD_GROUP_PRIME_SQL = 'System Test Word for prime group add via sql insert';
     const string TEST_ADD_GROUP_MOST_FUNC = 'System Test Word for main group add via sql function';
@@ -594,7 +593,6 @@ class words
         self::COMPANY,
         self::TEST_ADD,
         self::TEST_ADD_VIA_FUNC,
-        self::TEST_ADD_VIA_SQL,
         self::TEST_ADD_GROUP_MOST_FUNC,
         self::TEST_ADD_GROUP_MOST_SQL,
         self::TEST_ADD_GROUP_PRIME_FUNC,
@@ -651,7 +649,6 @@ class words
     const array TEST_WORDS = array(
         self::TEST_ADD,
         self::TEST_ADD_VIA_FUNC,
-        self::TEST_ADD_VIA_SQL,
         self::TEST_ADD_GROUP_PRIME_FUNC,
         self::TEST_ADD_GROUP_PRIME_SQL,
         self::TEST_ADD_GROUP_MOST_FUNC,

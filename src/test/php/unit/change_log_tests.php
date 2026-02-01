@@ -232,12 +232,12 @@ class change_log_tests
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
 
         // sql to load a log entry by field and row id
-        // TODO check that user specific changes are included in the list of changes
+        // TODO check that user-specific changes are included in the list of changes
         $log = new change($usr);
         $this->assert_sql_by_field_row($t, $db_con, $log);
 
         // sql to load a log entry by field and row id
-        // TODO check that user specific changes are included in the list of changes
+        // TODO check that user-specific changes are included in the list of changes
         // TODO add tests for all value types
         $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($usr));
 
@@ -295,13 +295,13 @@ class change_log_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log->load_sql_by_vars($db_con, 1);
+        $qp = $log->load_sql_by_table($db_con, 1);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $log->load_sql_by_vars($db_con, 1);
+            $qp = $log->load_sql_by_table($db_con, 1);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

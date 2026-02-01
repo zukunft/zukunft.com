@@ -275,16 +275,6 @@ class test_views
         return $msk;
     }
 
-    /**
-     * @return view to test the sql insert without use of function
-     */
-    function view_add_by_sql(): view
-    {
-        $msk = new view($this->env->usr1);
-        $msk->set_name(views::TEST_ADD_VIA_SQL_NAME);
-        return $msk;
-    }
-
     function view_with_components(): view
     {
         $t_cmp = new test_components($this->env);

@@ -38,17 +38,39 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
+include_once paths::SHARED_TYPES . 'job_statuus.php';
 include_once test_paths::CREATE . 'test_users.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
 class test_jobs
 {
+
+    /*
+     * init
+     */
+
+    // use the global test environment
+    private test_cleanup $env;
+
+    function __construct(test_cleanup $env)
+    {
+        $this->env = $env;
+    }
+
+
+    /*
+     * map
+     */
 
     /**
      * @return job a batch job entry with some dummy values
@@ -59,9 +81,33 @@ class test_jobs
         $sys_usr = $t_usr->system_user();
         $job = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
         $job->id = 1;
+        $job->set_type(job_types::BASE_IMPORT, $sys_usr);
         $job->start_time = new DateTime(sys_log_tests::TV_TIME);
-        $job->set_type(job_type_list::BASE_IMPORT, $sys_usr);
-        $job->row_id = 1;
+        $job->priority = job_statuus::PRIO_HIGHEST;
+        return $job;
+    }
+
+    /**
+     * @return job a batch job entry with all fields set
+     */
+    function job_filled(): job
+    {
+        $t_usr = new test_users();
+        $t_src = new test_sources($this->env);
+        $t_ref = new test_refs($this->env);
+        $sys_usr = $t_usr->system_user();
+        $job = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
+        $job->id = 2;
+        $job->set_type(job_types::BASE_IMPORT, $sys_usr);
+        $job->set_status(job_types::BASE_IMPORT, $sys_usr);
+        $job->start_time = new DateTime(sys_log_tests::TV_TIME);
+        $job->end_time = new DateTime(sys_log_tests::TV_TIME_TO);
+        $job->parameter = '1';
+        $job->change_field = 2;
+        $job->row_id = 3;
+        $job->src = $t_src->source();
+        $job->ref = $t_ref->reference();
+        $job->priority = job_statuus::PRIO_HIGHEST;
         return $job;
     }
 

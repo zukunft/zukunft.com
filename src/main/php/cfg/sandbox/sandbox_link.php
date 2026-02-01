@@ -2,7 +2,7 @@
 
 /*
 
-    model/sandbox/sandbox_link.php - the superclass for handling user specific link objects including the database saving
+    model/sandbox/sandbox_link.php - the superclass for handling user-specific link objects including the database saving
     ------------------------------
 
     This superclass should be used by the class word links, formula links and view link
@@ -74,7 +74,6 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
-//include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_link.php';
@@ -91,6 +90,7 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
@@ -102,7 +102,6 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -127,6 +126,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -151,6 +151,11 @@ class sandbox_link extends sandbox
     const string KEY_SEP = '/';
     // to allow the usage of the name key separator within an object name
     const string KEY_SEP_ESC = '//';
+
+    // the fields names of the link that are supposed to be overwritten by the child objects
+    const string FLD_FROM = 'from_id';
+    const string FLD_PREDICATE = 'predicate_id';
+    const string FLD_TO = 'to_id';
 
 
     /*
@@ -606,33 +611,33 @@ class sandbox_link extends sandbox
     /**
      * check if the link object (e.g. triple) might be added to the database
      * if all related objects have been added to the database
-     * @param user_message $usr_msg to add the suggested solutions if something is missing e.g. a linked object
+     * @param user_message $msg to add the suggested solutions if something is missing e.g. a linked object
      * @return bool true if the link can be added to the database after the linked objects have been added
      */
-    function can_be_ready(user_message $usr_msg): bool
+    function can_be_ready(user_message $msg): bool
     {
-        parent::db_ready($usr_msg);
+        parent::db_ready($msg);
 
         if ($this->needs_from()) {
             if ($this->fob == null) {
-                $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
+                $msg->add(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
-                $this->fob->can_be_ready($usr_msg);
+                $this->fob->can_be_ready($msg);
             }
         }
         if ($this->needs_to()) {
             if ($this->tob == null) {
-                $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
+                $msg->add(msg_id::TO_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
                 // a reference have only an external key but not a target object
                 if ($this::class != ref::class) {
-                    $this->tob->can_be_ready($usr_msg);
+                    $this->tob->can_be_ready($msg);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     function needs_from(): bool
@@ -649,40 +654,40 @@ class sandbox_link extends sandbox
      * returns ok message if this link e.g. triple can be added to the database
      * if e.g. the database id of the from or the to object is missing
      *         first the linked object needs to be added to the database
-     * @param user_message $usr_msg is enriched with the explanation why the link cannot yet be added to the database
+     * @param user_message|Message $msg is enriched with the explanation why the link cannot yet be added to the database
      * @return bool false if something is missing
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
-        parent::db_ready($usr_msg);
+        parent::db_ready($msg);
 
         if ($this->needs_from()) {
             if ($this->fob == null) {
                 // for some triples it is ok if the from object is not set
                 // e.g. per day
-                $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
+                $msg->add(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
                 // if the from object is set it should be valid
                 // e.g. for cubic meter per second
                 if (!$this->fob->is_valid()) {
-                    $usr_msg->add_id_with_vars(msg_id::FROM_ZERO_ID,
+                    $msg->add(msg_id::FROM_ZERO_ID,
                         [msg_id::VAR_NAME => $this->dsp_id()]);
                 }
             }
         }
         if ($this->needs_to()) {
             if ($this->tob == null) {
-                $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
+                $msg->add(msg_id::TO_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
                 if (!$this->tob->is_valid()) {
-                    $usr_msg->add_id_with_vars(msg_id::TO_ZERO_ID,
+                    $msg->add(msg_id::TO_ZERO_ID,
                         [msg_id::VAR_NAME => $this->dsp_id()]);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -871,73 +876,28 @@ class sandbox_link extends sandbox
     /**
      * create a new link object and log the change
      * TODO do a rollback in case of an error
-     * @param user_message $usr_msg with status ok
+     * @param user_message $msg with status ok
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
-        if ($use_func) {
-            $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            if ($usr_msg->is_ok()) {
-                $msg = 'add and log ' . $this->dsp_id();
-                if ($db_con->insert($qp, $msg, $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-            }
-        } else {
-
-            // log the insert attempt first
-            $log = $this->log_link_add();
-            if ($log->id() > 0) {
-
-                // insert the new object and save the object key
-                // TODO check that always before a db action is called the db type is set correctly
-                $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc, $usr_msg);
-                if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-
-                // save the object fields if saving the key was successful
-                if ($this->id > 0) {
-                    log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
-                    // update the id in the log
-                    if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
-                        // TODO do rollback or retry?
-                    } else {
-                        //$usr_msg->add_message_text($this->set_owner($new_owner_id));
-
-                        // create an empty db_rec element to force saving of all set fields
-                        $db_rec = clone $this;
-                        $db_rec->reset();
-                        $db_rec->fob = $this->fob;
-                        $db_rec->tob = $this->tob;
-                        $db_rec->set_user($this->get_user());
-                        $std_rec = clone $db_rec;
-                        // save the object fields
-                        $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                    }
-
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_LOGGING_ERROR, [
-                        msg_id::VAR_CLASS_NAME => $this::class,
-                        msg_id::VAR_ID => $this->dsp_id()
-                    ]);
-                }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
+        if ($msg->is_ok()) {
+            $msg_txt = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg_txt, $msg)) {
+                $this->id = $msg->get_row_id();
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1053,11 +1013,11 @@ class sandbox_link extends sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      * @returns string a filled object that links the same objects
      *                 or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(user_message $usr_msg): sandbox
+    function get_similar(user_message $msg): sandbox
     {
         $result = new sandbox($this->get_user());
 
@@ -1345,13 +1305,13 @@ class sandbox_link extends sandbox
      * of the object to combine the list with the list of the child object e.g. word
      *
      * @param sandbox_link|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_link|db_object_seq_id $obj,
-        user_message                  $usr_msg,
+        user_message                  $msg,
         sql_type_list                 $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -1376,9 +1336,9 @@ class sandbox_link extends sandbox
             // to delete a link, the actual link is compared with an empty link, so no message should be created
             if ($this->needs_from() and !$sc_par_lst->is_delete()) {
                 if ($this->fob() == null) {
-                    $this->message_from_invalid($usr_msg);
+                    $this->message_from_invalid($msg);
                 } elseif (!$this->fob()->is_valid()) {
-                    $this->message_from_invalid($usr_msg);
+                    $this->message_from_invalid($msg);
                 }
             }
             if ($obj->from_id() !== $this->from_id()) {
@@ -1401,9 +1361,9 @@ class sandbox_link extends sandbox
                 // to delete a link, the actual link is compared with an empty link, so no message should be created
                 if ($this->needs_to() and !$sc_par_lst->is_delete()) {
                     if ($this->tob() == null) {
-                        $this->message_to_invalid($usr_msg);
+                        $this->message_to_invalid($msg);
                     } elseif (!$this->tob()->is_valid()) {
-                        $this->message_to_invalid($usr_msg);
+                        $this->message_to_invalid($msg);
                     }
                 }
             }
@@ -1670,17 +1630,17 @@ class sandbox_link extends sandbox
      * message
      */
 
-    function message_from_invalid(user_message $usr_msg): void
+    function message_from_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_FROM_OBJECT_INVALID, [
+        $msg->add(msg_id::MANDATORY_FROM_OBJECT_INVALID, [
             msg_id::VAR_NAME_FROM => $this->fob()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);
     }
 
-    function message_to_invalid(user_message $usr_msg): void
+    function message_to_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_TO_OBJECT_INVALID, [
+        $msg->add(msg_id::MANDATORY_TO_OBJECT_INVALID, [
             msg_id::VAR_NAME_TO => $this->tob()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);

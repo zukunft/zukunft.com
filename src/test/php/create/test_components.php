@@ -245,17 +245,6 @@ class test_components
         return $cmp;
     }
 
-    /**
-     * @return component to test the sql insert without use of function
-     */
-    function component_add_by_sql(): component
-    {
-        $cmp = new component($this->env->usr1);
-        $cmp->set_name(components::TEST_ADD_VIA_SQL_NAME);
-        $cmp->set_type(component_types::TEXT, $this->env->usr1);
-        return $cmp;
-    }
-
     function component_word_add_title(): component
     {
         $cmp = new component($this->env->usr1);

@@ -109,6 +109,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true if the changes should never be added to the change log
+     */
+    function no_log(): bool
+    {
+        return in_array(sql_type::NO_LOG, $this->lst);
+    }
+
+    /**
      * @return bool true if the field list should not include the id field e.g. because the field list is used for a pure insert statement
      */
     function no_id_field(): bool
@@ -261,7 +269,7 @@ class sql_type_list
     }
 
     /**
-     * @return bool true if sql should return the normal values and not the user specific
+     * @return bool true if sql should return the normal values and not the user-specific
      */
     function is_norm(): bool
     {

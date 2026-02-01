@@ -56,7 +56,7 @@ enum sql_par_type: string
     case TEXT_LIST = 'text_list';
     case TEXT_OR = 'text_or';
     case KEY_512 = 'key512';
-    case TEXT_USR = 'text_usr'; // a name that can be user specific e.g. the word or triple name
+    case TEXT_USR = 'text_usr'; // a name that can be user-specific e.g. the word or triple name
     case LIKE_R = 'like_start_with'; // add a wildcard to the right to fine the values that start with the given text
     case LIKE = 'like';
     case LIKE_OR = 'like_or'; // connect with the previous condition with OR and like

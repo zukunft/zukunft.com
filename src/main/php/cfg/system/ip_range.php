@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -33,16 +33,16 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
-include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
-include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
@@ -51,18 +51,19 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
@@ -70,15 +71,13 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class ip_range extends db_object_seq_id
 {
-
-    const string OBJ_NAME = 'ip range';
 
     /*
      * database link
@@ -86,26 +85,11 @@ class ip_range extends db_object_seq_id
 
     // database and JSON object field names and comments
     const string TBL_COMMENT = 'of ip addresses that should be blocked';
-    const string FLD_ID = 'ip_range_id';
-    const string FLD_FROM = 'ip_from';
-    const string FLD_TO = 'ip_to';
-    const string FLD_REASON = 'reason';
-    const string FLD_ACTIVE = 'is_active';
 
-    const array FLD_NAMES = array(
-        self::FLD_FROM,
-        self::FLD_TO,
-        self::FLD_REASON,
-        self::FLD_ACTIVE
-    );
-
-    // field lists for the table creation
-    const array FLD_LST_ALL = array(
-        [self::FLD_FROM, sql_field_type::IP_ADDR, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
-        [self::FLD_TO, sql_field_type::IP_ADDR, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
-        [self::FLD_REASON, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', ''],
-        [self::FLD_ACTIVE, sql_field_type::INT_SMALL, sql_field_default::ONE, '', '', ''],
-    );
+    // forward the const to enable usage of $this::CONST_NAME
+    const string FLD_ID = ip_range_db::FLD_ID;
+    const array FLD_NAMES = ip_range_db::FLD_NAMES;
+    const array FLD_LST_ALL = ip_range_db::FLD_LST_ALL;
 
 
     /*
@@ -113,8 +97,8 @@ class ip_range extends db_object_seq_id
      */
 
     // database fields
-    public string $from = '';
-    public string $to = '';
+    public ?string $from = null;
+    public ?string $to = null;
     public ?string $reason = null;
     public bool $active = false;
 
@@ -128,13 +112,11 @@ class ip_range extends db_object_seq_id
 
     function reset(bool $keep_user = false): void
     {
-        $this->id = 0;
-        $this->from = '';
-        $this->to = '';
+        parent::reset($keep_user);
+        $this->from = null;
+        $this->to = null;
         $this->reason = null;
         $this->active = false;
-
-        $this->set_user(null);
     }
 
     /**
@@ -147,12 +129,12 @@ class ip_range extends db_object_seq_id
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        $result = parent::row_mapper($db_row, self::FLD_ID);
+        $result = parent::row_mapper($db_row, ip_range_db::FLD_ID);
         if ($result) {
-            $this->from = $db_row[self::FLD_FROM];
-            $this->to = $db_row[self::FLD_TO];
-            $this->reason = $db_row[self::FLD_REASON];
-            $this->active = $db_row[self::FLD_ACTIVE];
+            $this->from = $db_row[ip_range_db::FLD_FROM];
+            $this->to = $db_row[ip_range_db::FLD_TO];
+            $this->reason = $db_row[ip_range_db::FLD_REASON];
+            $this->active = $db_row[ip_range_db::FLD_ACTIVE];
         }
         return $result;
     }
@@ -161,13 +143,13 @@ class ip_range extends db_object_seq_id
      * set the vars of this ip range object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -175,7 +157,7 @@ class ip_range extends db_object_seq_id
         if (key_exists(json_fields::IP_FROM, $in_ex_json)) {
             $this->from = $in_ex_json[json_fields::IP_FROM];
         } else {
-            $usr_msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
+            $msg->add(msg_id::IMPORT_IP_MISSING, [
                 msg_id::VAR_NAME => json_fields::IP_FROM,
                 msg_id::VAR_IP_RANGE => json_encode($in_ex_json),
             ]);
@@ -183,7 +165,7 @@ class ip_range extends db_object_seq_id
         if (key_exists(json_fields::IP_TO, $in_ex_json)) {
             $this->to = $in_ex_json[json_fields::IP_TO];
         } else {
-            $usr_msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
+            $msg->add(msg_id::IMPORT_IP_MISSING, [
                 msg_id::VAR_NAME => json_fields::IP_TO,
                 msg_id::VAR_IP_RANGE => json_encode($in_ex_json),
             ]);
@@ -195,7 +177,7 @@ class ip_range extends db_object_seq_id
             $this->active = filter_var($in_ex_json[json_fields::IS_ACTIVE], FILTER_VALIDATE_BOOLEAN);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -222,9 +204,55 @@ class ip_range extends db_object_seq_id
         return $this->usr;
     }
 
+    /**
+     * @return string|null the unique key of the ip range
+     */
+    function key(): string|null
+    {
+        if ($this->from <> '' and $this->to <> '') {
+            return $this->from . '-' . $this->to;
+        } else {
+            return null;
+        }
+    }
+
 
     /*
-     * loading
+     * load
+     */
+
+    /**
+     * load an ip range from the database selected by id
+     * @param int $id the id of an ip range
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id): int
+    {
+        global $db_con;
+
+        $this->reset();
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
+        return $this->load($qp);
+    }
+
+    /**
+     * load an ip range from the database selected by the start and end ip address
+     * @param string $ip_from the start ip address that should be used for the query
+     * @param string $ip_to the end ip address that should be used for the query
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_ip_addresses(string $ip_from, string $ip_to): int
+    {
+        global $db_con;
+
+        $this->reset();
+        $qp = $this->load_sql_by_ip_addresses($db_con->sql_creator(), $ip_from, $ip_to);
+        return $this->load($qp);
+    }
+
+
+    /*
+     * load sql
      */
 
     /**
@@ -241,7 +269,7 @@ class ip_range extends db_object_seq_id
         $sc->set_class($class);
 
         $sc->set_name($qp->name);
-        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_fields(ip_range_db::FLD_NAMES);
 
         return $qp;
     }
@@ -249,59 +277,20 @@ class ip_range extends db_object_seq_id
     /**
      * create an SQL statement to retrieve the ip range from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
+     * @param string $ip_from the start ip address that should be used for the query
+     * @param string $ip_to the end ip address that should be used for the query
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_by_vars(sql_db $db_con): sql_par
+    function load_sql_by_ip_addresses(sql_creator $sc, string $ip_from, string $ip_to): sql_par
     {
-        $db_con->set_class($this::class);
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
-        $qp = new sql_par($class_name);
-        $qp->name = $class_name . '_by_';
-        $sql_where = '';
-        if ($this->id() != 0) {
-            $qp->name .= sql_db::FLD_ID;
-            $db_con->add_par(sql_par_type::INT, $this->id());
-            $sql_where .= self::FLD_ID . ' = ' . $db_con->par_name();
-        } elseif ($this->from != '' and $this->to != '') {
-            $qp->name .= 'range';
-            $db_con->add_par(sql_par_type::TEXT, $this->from);
-            $sql_where .= self::FLD_FROM . " = " . $db_con->par_name();
-            $db_con->add_par(sql_par_type::TEXT, $this->to);
-            $sql_where .= " and " . self::FLD_TO . " = " . $db_con->par_name();
-        } else {
-            $qp->name = '';
-            log_err("Either the database ID (" . $this->id() .
-                ") or the ip range (" . $this->dsp_id() .
-                ") must be set to load an ip range.", $class_name . '->load_sql');
-        }
-
-        if ($qp->name != '') {
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->get_user()->id);
-            $db_con->set_fields(self::FLD_NAMES);
-            $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-        }
+        $qp = $this->load_sql($sc, 'ip_addresses');
+        $sc->add_where(ip_range_db::FLD_FROM, $ip_from);
+        $sc->add_where(ip_range_db::FLD_TO, $ip_to);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-    /**
-     * load an ip range from the database selected by id
-     * @param int $id the id of an ip range
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id): int
-    {
-        global $db_con;
-
-        $this->reset();
-        $this->id = $id;
-        $qp = $this->load_sql_by_vars($db_con);
-        return $this->load($qp);
     }
 
 
@@ -313,45 +302,45 @@ class ip_range extends db_object_seq_id
      * import an ip range from an imported json object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         global $db_con;
 
-        $this->import_mapper($in_ex_json, $usr_msg);
+        $this->import_mapper($in_ex_json, $msg);
 
         // reset of object not needed, because the calling function has just created the object
         // TODO Prio 0 switch to a key_exists
         foreach ($in_ex_json as $key => $value) {
-            if ($key == self::FLD_FROM) {
+            if ($key == ip_range_db::FLD_FROM) {
                 $this->from = $value;
             }
-            if ($key == self::FLD_TO) {
+            if ($key == ip_range_db::FLD_TO) {
                 $this->to = $value;
             }
-            if ($key == self::FLD_REASON) {
+            if ($key == ip_range_db::FLD_REASON) {
                 $this->reason = $value;
             }
-            if ($key == self::FLD_ACTIVE) {
+            if ($key == ip_range_db::FLD_ACTIVE) {
                 $this->active = $value;
             }
         }
 
         // save the ip range in the database
         if ($db_con->is_open()) {
-            if ($usr_msg->is_ok()) {
-                $this->save($usr_msg);
+            if ($msg->is_ok()) {
+                $this->save($msg);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -397,169 +386,45 @@ class ip_range extends db_object_seq_id
         return $result;
     }
 
+    protected function can_delete(user_message $msg): bool
+    {
+        $can_del = false;
+        if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+            $can_del = true;
+        }
+        return $can_del;
+    }
+
 
     /*
      * save
      */
 
     /**
-     * actually update a formula field in the main database record
-     * @param sql_db $db_con the active database connection
-     * @param change $log with the action and table already set
-     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
-     */
-    private function save_field_do(sql_db $db_con, change $log): user_message
-    {
-        $usr_msg = new user_message();
-        if ($log->add($usr_msg)) {
-            $db_con->set_class(self::class);
-            if (!$db_con->update_old($this->id(), $log->field(), $log->new_value)) {
-                $usr_msg->add_id_with_vars(msg_id::UPDATE_FAILED, [
-                    msg_id::VAR_NAME => $log->field(),
-                    msg_id::VAR_VALUE => $log->new_value,
-                    msg_id::VAR_CLASS_NAME => self::OBJ_NAME,
-                    msg_id::VAR_ID => $this->dsp_id()
-                ]);
-            }
-
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the block reason
-     * @param sql_db $db_con the active database connection
-     * @param ip_range $db_rec the ip range reason as saved in the database before the change
-     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
-     */
-    private function save_field_reason(sql_db $db_con, ip_range $db_rec): user_message
-    {
-        $usr_msg = new user_message();
-        if ($db_rec->reason <> $this->reason) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->reason;
-            $log->new_value = $this->reason;
-            $log->std_value = $db_rec->reason;
-            $log->row_id = $this->id();
-            $log->set_field(self::FLD_REASON);
-            $usr_msg = $this->save_field_do($db_con, $log);
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the block reason
-     * @param sql_db $db_con the active database connection
-     * @param ip_range $db_rec the ip range active flag as saved in the database before the change
-     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
-     */
-    private function save_field_active(sql_db $db_con, ip_range $db_rec): user_message
-    {
-        $usr_msg = new user_message();
-        if ($db_rec->active <> $this->active) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->active;
-            $log->new_value = $this->active;
-            $log->std_value = $db_rec->active;
-            $log->row_id = $this->id();
-            $log->set_field(self::FLD_ACTIVE);
-            $usr_msg = $this->save_field_do($db_con, $log);
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the log entry parameter for a new ip range
-     * @return change with the action set to add
-     */
-    function log_add(): change
-    {
-        log_debug('->log_add ' . $this->dsp_id());
-        $lib = new library();
-        $usr_msg = new user_message();
-        $tbl_name = $lib->class_to_name($this::class);
-
-        $log = new change($this->get_user());
-        $log->set_action(change_actions::ADD);
-        $log->set_table($tbl_name);
-        $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
-        $log->new_value = $this->name();
-        $log->row_id = 0;
-        $log->add($usr_msg);
-
-        return $log;
-    }
-
-    /**
-     * set the main log entry parameters for updating one verb field
-     * @return change with the action set to update
-     */
-    private function log_upd(): change
-    {
-        log_debug('->log_upd ' . $this->dsp_id());
-        $lib = new library();
-        $tbl_name = $lib->class_to_name($this::class);
-
-        $log = new change($this->get_user());
-        $log->set_action(change_actions::UPDATE);
-        $log->set_table($tbl_name);
-
-        return $log;
-    }
-
-    /**
-     * save all updated verb fields excluding the name, because already done when adding a verb
-     * @param sql_db $db_con the active database connection
-     * @param ip_range $db_rec the ip range entry as saved in the database before the change
-     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
-     */
-    private function save_fields(sql_db $db_con, ip_range $db_rec): user_message
-    {
-        $usr_msg = $this->save_field_reason($db_con, $db_rec);
-        $result = $this->save_field_active($db_con, $db_rec);
-        if ($result) {
-            $usr_msg = $result;
-        }
-        return $usr_msg;
-    }
-
-    /**
      * add an ip range to the database
      *
-     * @return user_message the database id of the created reference or 0 if not successful
+     * @param user_message $usr_msg with status OK
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
+     * @return bool true if everything has been fine
      */
-    private function add(): user_message
+    private function add(user_message $usr_msg): bool
     {
+        log_debug($this->dsp_id());
+
         global $db_con;
-        $usr_msg = new user_message();
 
-        // log the insert attempt first
-        $log = $this->log_add();
-        if ($log->id() > 0) {
-            // insert the new ip range
-            $db_con->set_class($this::class);
-            $db_con->set_usr($this->get_user()->id);
-
-            $this->id = $db_con->insert_old(
-                array(self::FLD_FROM, self::FLD_TO, self::FLD_REASON, self::FLD_ACTIVE),
-                array($this->from, $this->to, $this->reason, $this->active));
-            if ($this->id() > 0) {
-                // update the id in the log for the correct reference
-                if (!$log->add_ref($this->id())) {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE_LOG, [
-                        msg_id::VAR_ID => $this->dsp_id()
-                    ]);
-                    log_err('Adding reference for ' . $this->dsp_id() . ' in the log failed.', self::class . '->add');
-                }
-            } else {
-                $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE, [
-                    msg_id::VAR_ID => $this->dsp_id()
-                ]);
-                log_err('Adding reference ' . $this->dsp_id() . ' failed.', self::class . '->add');
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($usr_msg->is_ok()) {
+            $msg = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg, $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -567,19 +432,14 @@ class ip_range extends db_object_seq_id
      *
      * @return ip_range|db_object|null the ip range that matches e.g. to update the reason
      */
-    function get_similar(user_message $usr_msg): ip_range|db_object|null
+    function get_similar(user_message $msg): ip_range|db_object|null
     {
-        global $db_con;
         $result = null;
 
         $db_chk = clone $this;
         $db_chk->reset();
-        $db_chk->id = $this->id();
-        $db_chk->from = $this->from;
-        $db_chk->to = $this->to;
         $db_chk->set_user($this->get_user());
-        $qp = $this->load_sql_by_vars($db_con);
-        $db_chk->load($qp);
+        $db_chk->load_by_ip_addresses($this->from, $this->to);
         if ($db_chk->id() > 0) {
             log_debug('->get_similar an ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
@@ -591,15 +451,27 @@ class ip_range extends db_object_seq_id
     /**
      * update an ip range in the database or update the existing
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = true): bool
+    function save(
+        user_message        $msg,
+        sql_type_list|array $sc_par_lst = []
+    ): bool
     {
         log_debug('ip_range->save ' . $this->dsp_id());
 
         global $db_con;
+
+        // by default all verb changes are logged
+        if (is_array($sc_par_lst)) {
+            if ($sc_par_lst == []) {
+                $sc_par_lst = new sql_type_list([sql_type::LOG]);
+            } else {
+                $sc_par_lst = new sql_type_list($sc_par_lst);
+            }
+        }
 
         // build the database object because this is needed anyway
         $db_con->set_usr($this->get_user()->id);
@@ -609,7 +481,7 @@ class ip_range extends db_object_seq_id
         if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('->save check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar($usr_msg);
+            $similar = $this->get_similar($msg);
             if ($similar != null) {
                 if ($similar->id() != 0) {
                     $this->id = $similar->id();
@@ -619,7 +491,9 @@ class ip_range extends db_object_seq_id
 
         // create a new object or update an existing
         if ($this->id() <= 0) {
-            $usr_msg->add($this->add());
+            if (!$this->add($msg)) {
+                log_warning('ip range add failed');
+            }
         } else {
             log_debug('->save update');
 
@@ -627,14 +501,20 @@ class ip_range extends db_object_seq_id
             // done first, because it needs to be done for user and general object values
             $db_rec = clone $this;
             $db_rec->reset();
-            $db_rec->id = $this->id();
             $db_rec->set_user($this->get_user());
-            $qp = $this->load_sql_by_vars($db_con);
-            if ($db_rec->load($qp) > 0) {
-                $usr_msg->add($this->save_fields($db_con, $db_rec));
+            $db_rec->load_by_id($this->id());
+            if ($db_rec->id() > 0) {
+                if ($this->needs_db_update($db_rec)) {
+                    // ... create the prepared sql function ...
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_update($sc, $db_rec, $msg, $sc_par_lst);
+
+                    // ... and update the database row
+                    $db_con->update($qp, 'update ' . $this->dsp_id(), $msg);
+                }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -643,8 +523,274 @@ class ip_range extends db_object_seq_id
      */
     function id_field(): string
     {
-        return self::FLD_ID;
+        return ip_range_db::FLD_ID;
     }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a object e.g. word to the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_par $qp
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param string $id_fld_new
+     * @param user_message $usr_msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_insert_key_field(
+        sql_creator        $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst,
+        string             $id_fld_new,
+        user_message       $usr_msg,
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
+
+        // list of parameters actually used in order of the function usage
+        $sql = '';
+        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+
+        // create the sql to insert the row
+        if ($usr_msg->is_ok()) {
+            $fvt_insert_list = new sql_par_field_list();
+            $fvt_insert_list->add($fvt_insert);
+            $sc_insert = clone $sc;
+            $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
+            $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+            if ($sc->db_type == sql_db::MYSQL) {
+                $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+            }
+            $qp_insert->sql = $sc_insert->create_sql_insert(
+                $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+            $qp_insert->par = [$fvt_insert->value];
+
+            // add the insert row to the function body
+            $sql .= ' ' . $qp_insert->sql . '; ';
+
+            // get the new row id for MySQL db
+            if ($sc->db_type == sql_db::MYSQL) {
+                $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+            }
+
+            $qp->sql = $sql;
+            $qp->par_fld = $fvt_insert;
+        }
+
+        return $qp;
+    }
+
+
+    /*
+     * sql helper
+     */
+
+    /**
+     * check if the named object in the database needs to be updated
+     * is expected to be similar to the diff_msg function
+     *
+     * @param ip_range|IdObject $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the database
+     */
+    function needs_db_update(ip_range|IdObject $db_obj): bool
+    {
+        $result = parent::needs_db_update($db_obj);
+        // TODO Prio 3 review
+        if ($db_obj->id() == $this->id()) {
+            $result = false;
+        }
+        if ($db_obj->from !== $this->from) {
+            $result = true;
+        }
+        if ($db_obj->to !== $this->to) {
+            $result = true;
+        }
+        if ($db_obj->reason !== $this->reason) {
+            $result = true;
+        }
+        if ($db_obj->active !== $this->active) {
+            $result = true;
+        }
+        return $result;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
+    {
+        return array_merge(
+            parent::db_fields_all(),
+            [
+                ip_range_db::FLD_KEY,
+                ip_range_db::FLD_FROM,
+                ip_range_db::FLD_TO,
+                ip_range_db::FLD_REASON,
+                ip_range_db::FLD_ACTIVE,
+            ]
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param ip_range|db_object_seq_id $obj the compare value to detect the changed fields
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        ip_range|db_object_seq_id $obj,
+        user_message              $msg,
+        sql_type_list             $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
+    {
+        global $sys;
+
+        $sc = new sql_creator();
+        $do_log = $sc_par_lst->incl_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
+        if ($obj->key() <> $this->key()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . ip_range_db::FLD_KEY,
+                    $sys->typ_lst->cng_fld->id($table_id . ip_range_db::FLD_KEY),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                ip_range_db::FLD_KEY,
+                $this->key(),
+                sql_field_type::TEXT,
+                $obj->key()
+            );
+        }
+        if ($obj->from !== $this->from) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . ip_range_db::FLD_FROM,
+                    $sys->typ_lst->cng_fld->id($table_id . ip_range_db::FLD_FROM),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                ip_range_db::FLD_FROM,
+                $this->from,
+                sql_field_type::TEXT,
+                $obj->from
+            );
+        }
+        if ($obj->to !== $this->to) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . ip_range_db::FLD_TO,
+                    $sys->typ_lst->cng_fld->id($table_id . ip_range_db::FLD_TO),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                ip_range_db::FLD_TO,
+                $this->to,
+                sql_field_type::TEXT,
+                $obj->to
+            );
+        }
+        if ($obj->reason !== $this->reason) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . ip_range_db::FLD_REASON,
+                    $sys->typ_lst->cng_fld->id($table_id . ip_range_db::FLD_REASON),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                ip_range_db::FLD_REASON,
+                $this->reason,
+                sql_field_type::TEXT,
+                $obj->reason
+            );
+        }
+        if ($obj->active !== $this->active) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . ip_range_db::FLD_ACTIVE,
+                    $sys->typ_lst->cng_fld->id($table_id . ip_range_db::FLD_ACTIVE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            // TODO Prio 2 review and remove exception if possible
+            $old_val = $obj->active;
+            if ($obj->active === false) {
+                $old_val = null;
+            }
+            $lst->add_field(
+                ip_range_db::FLD_ACTIVE,
+                $this->active,
+                sql_field_type::BOOL,
+                $old_val
+            );
+        }
+        return $lst;
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    function name_field(): string
+    {
+        return ip_range_db::FLD_KEY;
+    }
+
+
+    /*
+     * db helper
+     */
+
+    /**
+     * check if the user can add this object to the database
+     * e.g. reject if a reserved name is used and the user is not a system test user or an admin user
+     * to be overwritten by the child objects
+     *
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
+     */
+    protected function check(user_message $msg): bool
+    {
+        // to and from must be a valid ip address
+        if ($this->from == '') {
+            $msg->add_err_with_vars(msg_id::IP_RANGE_FROM_MISSING, [
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
+        }
+        if ($this->to == '') {
+            $msg->add_err_with_vars(msg_id::IP_RANGE_TO_MISSING, [
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
+        }
+        return $msg->is_ok();
+    }
+
 
 
     /*
@@ -656,7 +802,9 @@ class ip_range extends db_object_seq_id
      */
     function dsp_id(): string
     {
-        $result = self::OBJ_NAME . ' ' . $this->name();
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $result = $class_name . ' ' . $this->name();
         if ($result <> '') {
             if ($this->id() > 0) {
                 $result .= ' (' . $this->id() . ')';
@@ -677,24 +825,3 @@ class ip_range extends db_object_seq_id
 
 }
 
-/**
- * the helper class to im- and export an ip range filter
- */
-class ip_range_exp
-{
-
-    // field names used for JSON creation
-    public string $ip_from = '';
-    public string $ip_to = '';
-    public ?string $reason = null;
-    public bool $is_active = false;
-
-    function reset(): void
-    {
-        $this->ip_from = '';
-        $this->ip_to = '';
-        $this->reason = null;
-        $this->is_active = false;
-    }
-
-}

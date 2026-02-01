@@ -146,7 +146,7 @@ class base_ui_tests
         $grp_canton = new group($t->usr1);
         $grp_canton->set_phrase_list($t_phr->phrase_list_canton_mio());
         $grp_ch = new group($t->usr1);
-        $grp_ch->set_phrase_list($t_phr->phrase_list_ch_mio());
+        $grp_ch->set_phrase_list($t_phr->ch_inhabitants_in_mio_2019());
         $grp_city_pct = new group($t->usr1);
         $grp_city_pct->set_phrase_list($t_phr->phrase_list_zh_city_pct());
         $grp_canton_pct = new group($t->usr1);
@@ -198,8 +198,8 @@ class base_ui_tests
 
         // create the formula result list and the table to display the results
         $res_lst = new result_list_ui();
-        $res_lst->add(new result_ui($res_city->api_json([api_types::INCL_PHRASES])));
-        $res_lst->add(new result_ui($res_canton->api_json([api_types::INCL_PHRASES])));
+        $res_lst->add_result(new result_ui($res_city->api_json([api_types::INCL_PHRASES])));
+        $res_lst->add_result(new result_ui($res_canton->api_json([api_types::INCL_PHRASES])));
         $t->html_page_test($res_lst->table(), '', 'table_result', $t);
 
         // create the same table as above, but within a context

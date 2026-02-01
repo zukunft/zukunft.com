@@ -197,42 +197,51 @@ class sandbox_list_named extends sandbox_list
     /**
      * add one named object e.g. a word to the list, but only if it is not yet part of the list
      * @param sandbox_named|triple|phrase|term|sandbox_value|value|result|IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
+     * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
+     * @param user_message $usr_msg to report which entry is double
      * @returns bool true the object has been added
      */
-    function add(triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add(
+        triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject|null $to_add,
+        bool                                                                                                 $allow_duplicates = false,
+        user_message                                                                                         $usr_msg = new user_message()
+    ): bool
     {
-        $result = false;
         if ($to_add != null) {
             if ($this->is_empty()) {
-                $result = $this->add_obj($to_add)->is_ok();
+                $this->add_obj($to_add, $allow_duplicates, $usr_msg);
             } else {
                 if (!in_array($to_add->id(), $this->ids())) {
                     if ($to_add->id() != 0) {
-                        $result = $this->add_obj($to_add)->is_ok();
+                        $this->add_obj($to_add, $allow_duplicates, $usr_msg);
                     }
                 }
             }
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
      * add a named object to the list that does not yet have an id but has a name
      * @param sandbox_named|triple|phrase|term|null $to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param user_message $usr_msg to report which entry is double
      * @returns bool true if the object has been added
      */
-    function add_by_name(sandbox_named|triple|phrase|term|null $to_add, bool $allow_duplicates = false): bool
+    function add_by_name(
+        sandbox_named|triple|phrase|term|null $to_add,
+        bool                                  $allow_duplicates = false,
+        user_message                          $usr_msg = new user_message()
+    ): bool
     {
-        $result = false;
         if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             if ($to_add->id() == null) {
                 $this->set_lst_dirty();
             }
-            $result = parent::add_obj($to_add, $allow_duplicates);
+            parent::add_obj($to_add, $allow_duplicates, $usr_msg);
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -261,7 +270,7 @@ class sandbox_list_named extends sandbox_list
     {
         global $usr;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_id($sbx_new->id());
@@ -271,12 +280,12 @@ class sandbox_list_named extends sandbox_list
                     $this->add($sbx_new);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::ID_AND_NAME_MISSING, [
+                $msg->add(msg_id::ID_AND_NAME_MISSING, [
                     msg_id::VAR_ID => $sbx_new->dsp_id()
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -288,7 +297,7 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_name(sandbox_list_named $lst_new): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_name($sbx_new->name());
@@ -297,12 +306,12 @@ class sandbox_list_named extends sandbox_list
                     $this->add($sbx_new);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::ID_AND_NAME_MISSING, [
+                $msg->add(msg_id::ID_AND_NAME_MISSING, [
                     msg_id::VAR_ID => $sbx_new->dsp_id()
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

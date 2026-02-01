@@ -71,6 +71,7 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -100,6 +101,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
@@ -122,11 +124,11 @@ class term extends combine_named
     const string FLD_IMPACT = 'impact';
     const string FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
 
-    // the common term database field names excluding the id and excluding the user specific fields
+    // the common term database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         self::FLD_TYPE
     );
-    // list of the user specific database field names
+    // list of the user-specific database field names
     // some fields like the formula expression are only used for one term class e.g. formula
     // this is done because the total number of terms is expected to be less than 10 million
     // which database should be able to handle and only a few hundred are expected to be sent to via api at once
@@ -135,7 +137,7 @@ class term extends combine_named
         formula_db::FLD_FORMULA_TEXT,
         formula_db::FLD_FORMULA_USER_TEXT
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         sql_db::FLD_USAGE,
         sql_db::FLD_IMPACT,
@@ -232,7 +234,7 @@ class term extends combine_named
      */
 
     /**
-     * always set the user because a term is always user specific
+     * always set the user because a term is always user-specific
      * @param user|word|triple|formula|verb|null $obj the user who requested to see this term
      */
     function __construct(user|word|triple|formula|verb|null $obj)
@@ -451,6 +453,17 @@ class term extends combine_named
     }
 
     /**
+     * set the value to rank the words by impact
+     *
+     * @param float|null $impact a higher value moves the word to the top of the selection list
+     * @return void
+     */
+    function set_impact(?float $impact): void
+    {
+        $this->obj()->impact = $impact;
+    }
+
+    /**
      * set the user of the term object, which is also the user of the term
      * because of this object retrieval set and get of the user is needed for all linked objects
      *
@@ -506,24 +519,9 @@ class term extends combine_named
     function set_usage(?int $usage): void
     {
         if ($usage == null) {
-            $this->obj()->set_usage(0);
+            $this->obj()->usage = 0;
         } else {
-            $this->obj()->set_usage($usage);
-        }
-    }
-
-    /**
-     * set the value to rank the terms by impact
-     *
-     * @param float|null $impact a higher value moves the term to the top of the selection list
-     * @return void
-     */
-    function set_impact(?float $impact): void
-    {
-        if ($impact == null) {
-            $this->obj()->set_impact(0);
-        } else {
-            $this->obj()->set_impact($impact);
+            $this->obj()->usage = $usage;
         }
     }
 
@@ -603,12 +601,12 @@ class term extends combine_named
 
     function get_usage(): ?int
     {
-        return $this->obj()->get_usage();
+        return $this->obj()->usage;
     }
 
     function get_impact(): ?float
     {
-        return $this->obj()->get_impact();
+        return $this->obj()->impact;
     }
 
 
@@ -1083,18 +1081,18 @@ class term extends combine_named
     function id_used_msg(db_object_seq_id $obj_to_add): user_message
     {
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         if ($this->id() != 0) {
             $class = $lib->class_to_name($this->type());
-            $usr_msg->add_id_with_vars(msg_id::CLASS_ALREADY_EXISTS, [
+            $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
                 msg_id::VAR_CLASS_NAME => $class,
                 msg_id::VAR_NAME => $this->name(),
                 msg_id::VAR_VALUE => $lib->class_to_name($obj_to_add::class)
             ]);
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -1172,12 +1170,12 @@ class term extends combine_named
     /**
      * checks if the word, verb, triple or formula object can be added to the database
      *
-     * @param user_message $usr_msg the explanation for the user why the underlying word, verb, triple or formula cannot yet be added to the database
+     * @param user_message|Message $msg the explanation for the user why the underlying word, verb, triple or formula cannot yet be added to the database
      * @return true if all mandatory vars of the underlying object are set and the term can be stored in the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
-        return $this->obj()->db_ready($usr_msg);
+        return $this->obj()->db_ready($msg);
     }
 
     /**
@@ -1188,10 +1186,6 @@ class term extends combine_named
         return $this->obj()->is_valid();
     }
 
-
-    /*
-     * im- and export
-     */
 
     /*
      * im- and export
@@ -1215,20 +1209,20 @@ class term extends combine_named
         $this->reset(true);
 
         if (array_key_exists(json_fields::OBJECT_CLASS, $in_ex_json)) {
-            $class =  $in_ex_json[json_fields::OBJECT_CLASS];
-            if ($class == json_fields::CLASS_WORD)  {
+            $class = $in_ex_json[json_fields::OBJECT_CLASS];
+            if ($class == json_fields::CLASS_WORD) {
                 $wrd = new word($this->get_user());
                 $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($wrd);
-            } elseif ($class == json_fields::CLASS_VERB)  {
+            } elseif ($class == json_fields::CLASS_VERB) {
                 $vrb = new verb();
                 $vrb->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($vrb);
-            } elseif ($class == json_fields::CLASS_TRIPLE)  {
+            } elseif ($class == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->get_user());
                 $trp->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($trp);
-            } elseif ($class == json_fields::CLASS_FORMULA)  {
+            } elseif ($class == json_fields::CLASS_FORMULA) {
                 $frm = new formula($this->get_user());
                 $frm->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($frm);

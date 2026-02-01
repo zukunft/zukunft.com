@@ -203,16 +203,17 @@ class view_tests
         $t->assert_sql_by_id($sc, $mrl);
 
         $t->subheader($ts . 'sql write insert');
-        $mrl = $t_msk->view_relation();
-        // TODO Prio 0 switch on the tests
-        //$t->assert_sql_insert($sc, $mrl, [sql_type::LOG]);
-        //$t->assert_sql_insert($sc, $mrl, [sql_type::LOG, sql_type::USER]);
+        $mrl = $t_msk->view_relation_filled_add();
+        $t->assert_sql_insert($sc, $mrl, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $mrl, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql write update');
-        $mrl = $t_msk->view_relation();
+        $mrl = $t_msk->view_relation_filled();
         $mrl_moved = clone $mrl;
         $mrl_moved->start_pos = $mrl->start_pos + 1;
-        //$t->assert_sql_update($sc, $mrl_moved, $mrl, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $mrl_moved, $mrl, [sql_type::LOG]);
+
+        // sql write delete is already tested in the horizontal tests
 
 
         /*

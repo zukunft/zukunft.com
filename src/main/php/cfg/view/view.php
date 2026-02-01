@@ -260,13 +260,13 @@ class view extends sandbox_code_id
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -277,15 +277,15 @@ class view extends sandbox_code_id
 
         // reset the all parameters for the view object but keep the user
         $this->reset(true);
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         // first save the parameters of the view itself
         // TODO aline all type_list mappings with this set_style call
         if (key_exists(json_fields::STYLE, $in_ex_json)) {
-            $usr_msg->add($this->set_style($in_ex_json[json_fields::STYLE]));
+            $msg->merge($this->set_style($in_ex_json[json_fields::STYLE]));
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $usr_msg->add($this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_msg->usr));
+            $msg->merge($this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg->usr));
         }
 
         // TODO get component from the dto object
@@ -294,10 +294,10 @@ class view extends sandbox_code_id
             $json_lst = $in_ex_json[json_fields::COMPONENTS];
             $cmp_pos = 1;
             foreach ($json_lst as $json_cmp) {
-                $lnk = new component_link($usr_msg->usr);
-                if ($lnk->import_mapper($json_cmp, $usr_msg, $dto)) {
+                $lnk = new component_link($msg->usr);
+                if ($lnk->import_mapper($json_cmp, $msg, $dto)) {
                     $this->add_component($lnk, $cmp_pos);
-                    $this->check_component_position($json_cmp, $cmp_pos, $usr_msg);
+                    $this->check_component_position($json_cmp, $cmp_pos, $msg);
                     $cmp_pos++;
                 }
             }
@@ -319,12 +319,12 @@ class view extends sandbox_code_id
             }
         }
 
-        if (!$usr_msg->is_ok()) {
+        if (!$msg->is_ok()) {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::VIEW_IMPORT_ERROR, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
+            $msg->add(msg_id::VIEW_IMPORT_ERROR, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -332,13 +332,13 @@ class view extends sandbox_code_id
      * TODO add unit test case
      * @param array $cmp_lnk_json the part of the json array which contains one component link
      * @param int $pos the expected position
-     * @param user_message $usr_msg the user message object where the potential warning should be added
+     * @param user_message $msg the user message object where the potential warning should be added
      * @return void just enriches the given user message object with the warning message
      */
     private function check_component_position(
         array        $cmp_lnk_json,
         int          $pos,
-        user_message $usr_msg
+        user_message $msg
     ): void
     {
         if (in_array(json_fields::POSITION, $cmp_lnk_json)) {
@@ -348,7 +348,7 @@ class view extends sandbox_code_id
                 if (in_array(json_fields::NAME, $cmp_lnk_json)) {
                     $json_pos = $cmp_lnk_json[json_fields::NAME];;
                 }
-                $usr_msg->add_id_with_vars(msg_id::JSON_ORDER_POS_COMPONENT, [
+                $msg->add(msg_id::JSON_ORDER_POS_COMPONENT, [
                     msg_id::VAR_VALUE => $json_pos,
                     msg_id::VAR_VALUE_CHK => $pos,
                     msg_id::VAR_COMPONENT_NAME => $cmp_name,
@@ -400,26 +400,26 @@ class view extends sandbox_code_id
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         global $db_con;
-        $this->import_mapper($in_ex_json, $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $msg, $dto);
 
         if ($db_con->is_open()) {
             if ($this->name == '') {
-                $usr_msg->add_id(msg_id::VIEW_NAME_MISSING);
+                $msg->add_id(msg_id::VIEW_NAME_MISSING);
             } else {
-                $this->save($usr_msg);
+                $this->save($msg);
 
-                if ($usr_msg->is_ok()) {
+                if ($msg->is_ok()) {
                     // TODO save also the components
                     //$dsp_lnk = new component_link();
                     // TODO save also the links
@@ -443,20 +443,20 @@ class view extends sandbox_code_id
                             '" as requested by the import of ');
                     }
                     if ($trm->id() != 0) {
-                        $this->add_term_db($trm, $usr_msg);
+                        $this->add_term_db($trm, $msg);
                     }
                 }
             }
         }
 
-        if (!$usr_msg->is_ok()) {
+        if (!$msg->is_ok()) {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::VIEW_IMPORT_ERROR, [
+            $msg->add(msg_id::VIEW_IMPORT_ERROR, [
                 msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
             ]);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -534,20 +534,20 @@ class view extends sandbox_code_id
     function set_style(?string $code_id): user_message
     {
         global $sys;
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($code_id == null) {
             $this->style = null;
         } else {
             if ($sys->typ_lst->msk_sty->has_code_id($code_id)) {
                 $this->style = $sys->typ_lst->msk_sty->get_by_code_id($code_id);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::VIEW_STYLE_NOT_FOUND, [
+                $msg->add(msg_id::VIEW_STYLE_NOT_FOUND, [
                     msg_id::VAR_NAME => $code_id
                 ]);
                 $this->style = null;
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -792,7 +792,7 @@ class view extends sandbox_code_id
     /**
      * create an SQL statement to retrieve all view components of a view
      * TODO check if it can be combined with load_sql from component_link_list
-     * TODO make the order user specific
+     * TODO make the order user-specific
      *
      * @param sql_db $db_con as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
@@ -962,19 +962,19 @@ class view extends sandbox_code_id
      */
     function add_term(term $trm, string $json_part = ''): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($this->trm_msk_lst == null) {
             $this->trm_msk_lst = new term_view_list($this->get_user());
         }
         $added = $this->trm_msk_lst->add(0, $this, $trm);
         if (!$added) {
-            $usr_msg->add_id_with_vars(msg_id::IMPORT_TERM_VIEW_DOUBLE, [
+            $msg->add(msg_id::IMPORT_TERM_VIEW_DOUBLE, [
                 msg_id::VAR_TERM_NAME => $trm->name(),
                 msg_id::VAR_VIEW_NAME => $this->name(),
                 msg_id::VAR_JSON_PART => $json_part,
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -1075,18 +1075,21 @@ class view extends sandbox_code_id
      * add or update a view in the database or create a user view
      * overwrite the _sandbox function to save also the related component links
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(
+        user_message        $msg,
+        sql_type_list|array $sc_par_lst = []
+    ): bool
     {
-        if (parent::save($usr_msg, $use_func)) {
+        if (parent::save($msg, $sc_par_lst)) {
             if ($this->has_components()) {
-                $this->save_component_links($usr_msg);
+                $this->save_component_links($msg);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1117,21 +1120,6 @@ class view extends sandbox_code_id
             view_db::FLD_NAMES_NUM_USR
         ));
         return parent::load_sql_user_changes($sc, $sc_par_lst);
-    }
-
-    /**
-     * save all updated view fields excluding the name, because already done when adding a view
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param view|sandbox $db_obj the database record before the saving
-     * @param view|sandbox $norm_obj the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_all_fields(sql_db $db_con, view|sandbox $db_obj, view|sandbox $norm_obj): user_message
-    {
-        $usr_msg = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
-        //$usr_msg->add($this->save_field_code_id($db_con, $db_obj, $norm_obj));
-        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $usr_msg;
     }
 
 
@@ -1215,13 +1203,13 @@ class view extends sandbox_code_id
      * get a list of database field names, values and types that have been updated
      *
      * @param view|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         view|db_object_seq_id $obj,
-        user_message          $usr_msg,
+        user_message          $msg,
         sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -1231,7 +1219,7 @@ class view extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
@@ -1242,7 +1230,7 @@ class view extends sandbox_code_id
             }
             global $sys;
             if ($this->type_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::VIEW_TYPE_MISSING, [
+                $msg->add(msg_id::VIEW_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->type_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -1266,7 +1254,7 @@ class view extends sandbox_code_id
             global $sys;
             // TODO move to id function of type list
             if ($this->get_style_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::VIEW_STYLE_MISSING, [
+                $msg->add(msg_id::VIEW_STYLE_MISSING, [
                     msg_id::VAR_TYPE => $this->get_style_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);

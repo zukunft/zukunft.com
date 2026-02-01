@@ -927,6 +927,7 @@ class test_db_load
         if ($src->id() == 0) {
             $src->set_name($src_name);
             $usr_msg = new user_message();
+            $usr_msg->usr = $this->env->usr1;
             if (!$src->save($usr_msg)) {
                 log_err('add source failed due to: ' . $usr_msg->get_last_message());
             }

@@ -66,8 +66,8 @@ include_once paths::MODEL_SYSTEM . 'ip_range.php';
 include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_time.php';
+include_once paths::MODEL_SYSTEM . 'job_status.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
-include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
@@ -99,18 +99,15 @@ include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_table.php';
 include_once paths::MODEL_PHRASE . 'phrase_table_status.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
-include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_SYSTEM . 'pod.php';
 include_once paths::MODEL_SYSTEM . 'pod_status.php';
 include_once paths::MODEL_SYSTEM . 'pod_type.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_type.php';
-include_once paths::MODEL_REF . 'ref_type_list.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SYSTEM . 'session.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_type.php';
-include_once paths::MODEL_REF . 'source_type_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
@@ -138,13 +135,10 @@ include_once paths::MODEL_VALUE . 'value_ts_data.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_VIEW . 'view.php';
-include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_VIEW . 'view_link_type.php';
-include_once paths::MODEL_VIEW . 'view_link_type_list.php';
 include_once paths::MODEL_VIEW . 'view_sys_list.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
-include_once paths::MODEL_VIEW . 'view_type_list.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_VIEW . 'view_relation_type.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -157,6 +151,8 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
+include_once paths::SHARED_TYPES . 'job_statuus.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -200,8 +196,8 @@ use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\cfg\system\log;
@@ -220,26 +216,24 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table_status;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
-use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -247,7 +241,6 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -262,11 +255,9 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
@@ -344,12 +335,12 @@ class sql_db
     const string FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
     const sql_field_type FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
     const string FLD_DESCRIPTION = 'description';
-    const string FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
+    const string FLD_DESCRIPTION_COM = 'the user-specific description for mouse over helps';
     const sql_field_type FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const string FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
     const sql_field_type FLD_CODE_ID_SQL_TYP = sql_field_type::CODE_ID;
     const string FLD_VALUE = 'value';         // field name e.g. for the configuration value
-    const string FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
+    const string FLD_TYPE_NAME = 'type_name'; // field name for the user-specific name of a type; types are used to assign code to a db row
     const string FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
 
     const string FLD_USAGE = 'usage';
@@ -358,7 +349,11 @@ class sql_db
     const string FLD_IMPACT = 'impact';
     const string FLD_IMPACT_COM = 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
     const sql_field_type FLD_IMPACT_SQL_TYP = sql_field_type::NUMERIC_FLOAT;
-    // TODO MAYBE convert the impact to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user specific system settings
+    // TODO MAYBE convert the impact to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user-specific system settings
+
+    // the formatting used to convert a php DateTime var to a SQL string (maybe add "c" for time zone)
+    const string DATE_FORMAT = 'Y-m-d H:i:s';
+    const string DATE_FORMAT_MYSQL = 'Y-m-d H:i:s';
 
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const array DB_TABLE_CLASSES = [
@@ -369,6 +364,7 @@ class sql_db
         sys_log::class,
         system_time_type::class,
         system_time::class,
+        job_status::class,
         job_type::class,
         job_time::class,
         job::class,
@@ -483,6 +479,7 @@ class sql_db
         change_table::class,
         config::class,
         job::class,
+        job_status::class,
         job_type::class,
         //sql_db::TBL_SYS_SCRIPT,
         sys_log::class,
@@ -510,25 +507,6 @@ class sql_db
         user_type::class,
         user_profile_list::class,
         user_profile::class
-    ];
-
-    // classes which use by default the "with log" function for saving data
-    const array CLASSES_THAT_USE_SQL_FUNC = [
-        word::class,
-        triple::class,
-        source::class,
-        ref::class,
-        group::class,
-        value::class,
-        value_text::class,
-        value_time::class,
-        value_geo::class,
-        formula::class,
-        formula_link::class,
-        view::class,
-        term_view::class,
-        component::class,
-        component_link::class
     ];
 
     // classes that use the prepared sql write statement
@@ -647,9 +625,9 @@ class sql_db
     private ?array $par_use_link = [];              // array of bool, true if the parameter should be used on the linked table
     private array $par_named = [];                  // array of bool, true if the parameter placeholder is already used in the SQL statement
     private ?array $field_lst = [];                 // list of fields that should be returned to the next select query
-    private ?array $usr_field_lst = [];             // list of user specific fields that should be returned to the next select query
-    private ?array $usr_num_field_lst = [];         // list of user specific numeric fields that should be returned to the next select query
-    private ?array $usr_bool_field_lst = [];        // list of user specific boolean / tinyint fields that should be returned to the next select query
+    private ?array $usr_field_lst = [];             // list of user-specific fields that should be returned to the next select query
+    private ?array $usr_num_field_lst = [];         // list of user-specific numeric fields that should be returned to the next select query
+    private ?array $usr_bool_field_lst = [];        // list of user-specific boolean / tinyint fields that should be returned to the next select query
     private ?array $usr_only_field_lst = [];        // list of fields that are only in the user sandbox
     private ?array $join_field_lst = [];            // list of fields that should be returned to the next select query that are taken from a joined table
     private ?array $join2_field_lst = [];           // same as $join_field_lst but for the second join
@@ -689,14 +667,14 @@ class sql_db
     private ?string $join2_type = '';               // the type name of the second table to join (maybe later switch to join n tables)
     private ?string $join3_type = '';               // the type name of the third table to join (maybe later switch to join n tables)
     private ?string $join4_type = '';               // the type name of the fourth table to join (maybe later switch to join n tables)
-    private bool $all_query = false;                // true, if the query is expected to retrieve the standard and the user specific data
-    private bool $usr_query = false;                // true, if the query is expected to retrieve user specific data
-    private bool $join_usr_query = false;           // true, if the joined query is also expected to retrieve user specific data
+    private bool $all_query = false;                // true, if the query is expected to retrieve the standard and the user-specific data
+    private bool $usr_query = false;                // true, if the query is expected to retrieve user-specific data
+    private bool $join_usr_query = false;           // true, if the joined query is also expected to retrieve user-specific data
     private bool $join2_usr_query = false;          // same as $usr_join_query but for the second join
     private bool $join3_usr_query = false;          // same as $usr_join_query but for the third join
     private bool $join4_usr_query = false;          // same as $usr_join_query but for the fourth join
     private bool $join_usr_added = false;           // true, if the user join statement has been created
-    private bool $usr_only_query = false;           // true, if the query is expected to retrieve ONLY the user specific data without the standard values
+    private bool $usr_only_query = false;           // true, if the query is expected to retrieve ONLY the user-specific data without the standard values
 
     private ?string $fields = '';                   // the fields                SQL statement that is used for the next select query
     private ?string $from = '';                     // the FROM                  SQL statement that is used for the next select query
@@ -1170,10 +1148,10 @@ class sql_db
                 $sys->times->switch(system_time_type::DB_SETUP);
                 $sql_msg = $this->exe_script($sql);
                 $sys->times->switch();
-                $usr_msg->add($sql_msg);
+                $usr_msg->merge($sql_msg);
             }
             if (!$sql_msg->is_ok()) {
-                $usr_msg->add($sql_msg);
+                $usr_msg->merge($sql_msg);
             }
         } catch (Exception $e) {
             $msg = ' creation of the database failed due to ' . $e->getMessage();
@@ -1192,6 +1170,7 @@ class sql_db
             global $usr;
             $usr = new user;
             $usr->load_by_id(users::SYSTEM_ID);
+            $usr_msg->usr = $usr;
 
             // recreate the code link database rows
             $log_txt->echo_log('Create the code links');
@@ -1203,8 +1182,11 @@ class sql_db
             $this->check_sequences();
 
             // reload the base configuration
+            // TODO Prio 3 review
             $job = new job($usr);
-            $job_id = $job->add(job_type_list::BASE_IMPORT);
+            $job->set_type(job_types::BASE_IMPORT, $usr);
+            $job->priority = job_statuus::PRIO_HIGHEST;
+            $job->save($usr_msg);
 
             $import = new import_file();
             $this->import_verbs($usr);
@@ -1275,8 +1257,10 @@ class sql_db
     function reset_db_core(): void
     {
         // run reset the main database tables
-        $tbl_lst = $this->fetch_all(sql::SELECT
-            . " table_name FROM information_schema.tables WHERE table_schema = 'public';");
+        $usr_msg = new user_message();
+        $sql = sql::SELECT
+            . " table_name FROM information_schema.tables WHERE table_schema = 'public';";
+        $tbl_lst = $this->fetch_all($sql, $usr_msg);
         foreach ($tbl_lst as $tbl) {
             $tbl_name = $tbl[0];
             $this->drop_table($tbl_name);
@@ -1745,7 +1729,7 @@ class sql_db
     {
         $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
-        // e.g. add the user fields to an existing not user specific join
+        // e.g. add the user fields to an existing not user-specific join
         if ($this->join_type == ''
             or (($this->join_field == $join_field or $join_field == '')
                 and ($this->join_to_field == $join_to_field or $join_to_field == ''))) {
@@ -1795,7 +1779,7 @@ class sql_db
     {
         $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
-        // e.g. add the user fields to an existing not user specific join
+        // e.g. add the user fields to an existing not user-specific join
         if ($this->join_type == ''
             or (($this->join_field == $join_field and $join_field != '')
                 and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
@@ -1857,7 +1841,7 @@ class sql_db
     }
 
     /**
-     * define that the SQL statement should return the standard value and the user specific changes of all users
+     * define that the SQL statement should return the standard value and the user-specific changes of all users
      */
     function set_all(): void
     {
@@ -1865,7 +1849,7 @@ class sql_db
     }
 
     /**
-     * set the SQL statement for the user sandbox fields that should be returned in a select query which can be user specific
+     * set the SQL statement for the user sandbox fields that should be returned in a select query which can be user-specific
      */
     function set_usr_fields($usr_field_lst): void
     {
@@ -1916,11 +1900,11 @@ class sql_db
 
     /**
      * interface function for sql_usr_field
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $field_format the enum of the sql field type e.g. INT
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     function get_usr_field(
         string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL,
@@ -1931,10 +1915,10 @@ class sql_db
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and text fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     private function set_field_usr_text(
         string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL, string $as = ''): void
@@ -1944,10 +1928,10 @@ class sql_db
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     private function set_field_usr_num(
         string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL, string $as = ''): void
@@ -1957,9 +1941,9 @@ class sql_db
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     private function set_field_usr_count(
         string $field, string $stb_tbl = sql_db::LNK_TBL, string $as = ''): void
@@ -1969,8 +1953,8 @@ class sql_db
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and boolean / tinyint fields
-     * @param string $field the field name of the user specific field
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $field the field name of the user-specific field
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     private function set_field_usr_bool(
         string $field, string $as = ''): void
@@ -1980,13 +1964,13 @@ class sql_db
     }
 
     /**
-     * create the sql statement to get the user specific value if it is set or the value for all users
+     * create the sql statement to get the user-specific value if it is set or the value for all users
      * uses $db_type is the SQL database type which is in this case independent of the class setting to be able to use it anywhere
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $field_format the enum of the sql field type e.g. INT
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
     private function sql_usr_field(
@@ -2212,28 +2196,28 @@ class sql_db
             }
         }
 
-        // add user specific fields
+        // add user-specific fields
         foreach ($this->usr_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_text($field);
         }
 
-        // add user specific numeric fields
+        // add user-specific numeric fields
         foreach ($this->usr_num_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field);
         }
 
-        // add user specific boolean fields
+        // add user-specific boolean fields
         foreach ($this->usr_bool_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_bool($field);
         }
 
-        // add user specific join fields
+        // add user-specific join fields
         foreach ($this->join_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
@@ -2244,7 +2228,7 @@ class sql_db
             }
         }
 
-        // add user specific numeric join fields
+        // add user-specific numeric join fields
         foreach ($this->join_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
@@ -2255,49 +2239,49 @@ class sql_db
             }
         }
 
-        // add user specific second join fields
+        // add user-specific second join fields
         foreach ($this->join2_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_text($field_esc, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $this->name_sql_esc($field . '2'));
         }
 
-        // add user specific numeric second join fields
+        // add user-specific numeric second join fields
         foreach ($this->join2_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field_esc, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $this->name_sql_esc($field . '2'));
         }
 
-        // add user specific third join fields
+        // add user-specific third join fields
         foreach ($this->join3_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_text($field_esc, sql_db::LNK3_TBL, sql_db::ULK3_TBL, $this->name_sql_esc($field . '3'));
         }
 
-        // add user specific numeric third join fields
+        // add user-specific numeric third join fields
         foreach ($this->join3_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field_esc, sql_db::LNK3_TBL, sql_db::ULK3_TBL, $this->name_sql_esc($field . '3'));
         }
 
-        // add user specific fourth join fields
+        // add user-specific fourth join fields
         foreach ($this->join4_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_text($field_esc, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $this->name_sql_esc($field . '4'));
         }
 
-        // add user specific numeric fourth join fields
+        // add user-specific numeric fourth join fields
         foreach ($this->join4_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field_esc, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $this->name_sql_esc($field . '4'));
         }
 
-        // add user specific count join fields
+        // add user-specific count join fields
         foreach ($this->join_usr_count_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_usr_count($field_esc, sql_db::LNK_TBL, $this->name_sql_esc($field . '_count'));
@@ -2360,6 +2344,9 @@ class sql_db
             $result = 'user_values';
         }
         // for the database upgrade process only
+        if ($result == 'job_statuss') {
+            $result = 'job_statuus';
+        }
         if ($result == 'job_typess') {
             $result = 'job_types';
         }
@@ -2530,6 +2517,9 @@ class sql_db
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'job_status_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'job_type_name') {
@@ -2973,15 +2963,21 @@ class sql_db
 
     /**
      * fetch the first value from an SQL database (either Postgres or MySQL at the moment)
+     * TODO Prio 0 return false in case of an error
      *
      * @param string $sql the sql statement that should be executed
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
-     * @param bool $fetch_all true all database rows are returned at once
-     * @return array|null with one or all database records
+     * @param bool $fetch_all if true, all database rows are returned at once
+     * @return array|false with one or all database records or false if something went wrong
      */
-    private
-    function fetch(string $sql, string $sql_name = '', array $sql_array = array(), bool $fetch_all = false): ?array
+    private function fetch(
+        string       $sql,
+        user_message $usr_msg,
+        string       $sql_name = '',
+        array        $sql_array = array(),
+        bool         $fetch_all = false
+    ): array|false
     {
         global $sys;
 
@@ -2999,21 +2995,20 @@ class sql_db
                         if ($fetch_all) {
                             if ($exe_result) {
                                 while ($sql_row = pg_fetch_array($exe_result)) {
-                                    if ($sql_row != false) {
-                                        $result[] = $sql_row;
-                                    }
+                                    $result[] = $sql_row;
                                 }
                             }
                         } else {
                             $sql_row = pg_fetch_array($exe_result);
-                            if ($sql_row != false) {
+                            if ($sql_row !== false) {
                                 $result = $sql_row;
                             }
                         }
                     } catch (Exception $e) {
                         $msg = 'Select';
                         $trace_link = log_fatal($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'fetch');
-                        $result = [];
+                        $usr_msg->add_message_text($msg . log::MSG_ERR_INTERNAL . $trace_link);
+                        $result = false;
                     }
                 }
             } elseif ($this->db_type == sql_db::MYSQL) {
@@ -3033,7 +3028,8 @@ class sql_db
                     } catch (Exception $e) {
                         $msg = 'Select';
                         $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-                        $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
+                        $usr_msg->add_message_text($msg . log::MSG_ERR_INTERNAL . $trace_link);
+                        $result = false;
                     }
                 }
             } else {
@@ -3048,19 +3044,21 @@ class sql_db
     /**
      * fetch the first row from an SQL database (either Postgres or MySQL at the moment)
      */
-    private
-    function fetch_first(string $sql, string $sql_name = '', array $sql_array = array()): ?array
+    private function fetch_first(
+        string $sql, user_message $usr_msg, string $sql_name = '', array $sql_array = array()
+    ): ?array
     {
-        return $this->fetch($sql, $sql_name, $sql_array);
+        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array);
     }
 
     /**
      * fetch the all value from an SQL database (either Postgres or MySQL at the moment)
      */
-    private
-    function fetch_all($sql, string $sql_name = '', array $sql_array = array()): array
+    private function fetch_all(
+        $sql, user_message $usr_msg, string $sql_name = '', array $sql_array = array()
+    ): array|false
     {
-        return $this->fetch($sql, $sql_name, $sql_array, true);
+        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array, true);
     }
 
     private
@@ -3075,24 +3073,27 @@ class sql_db
     }
 
     /**
+     * TODO Prio 1 deprecate
      * returns all values of an SQL query in an array
      */
     function get_old(string $sql, string $sql_name = '', array $sql_array = array()): array
     {
+        $usr_msg = new user_message();
         $this->debug_msg($sql, 'get_old');
-        return $this->fetch_all($sql, $sql_name, $sql_array);
+        return $this->fetch_all($sql, $usr_msg, $sql_name, $sql_array);
     }
 
     /**
      * returns all values of an SQL query in an array
      *
      * @param sql_par $qp the sql statement to get the db rows
-     * @return array the database rows or an empty array
+     * @return array|false the database rows or an empty array
      */
-    function get(sql_par $qp): array
+    function get(sql_par $qp): array|false
     {
+        $usr_msg = new user_message();
         $this->debug_msg($qp->sql, 'get');
-        return $this->fetch_all($qp->sql, $qp->name, $qp->par);
+        return $this->fetch_all($qp->sql, $usr_msg, $qp->name, $qp->par);
     }
 
     /**
@@ -3104,7 +3105,8 @@ class sql_db
      */
     function get_internal(string $sql): array
     {
-        return $this->fetch_all($sql);
+        $usr_msg = new user_message();
+        return $this->fetch_all($sql, $usr_msg);
     }
 
     /**
@@ -3115,7 +3117,7 @@ class sql_db
      * @param string $sql the sql statement to get the db row
      * @return array|null the database row or null
      */
-    function get1_internal(string $sql): ?array
+    function get1_internal(string $sql, user_message $usr_msg = new user_message()): ?array
     {
         $this->debug_msg($sql, 'get1');
 
@@ -3129,13 +3131,13 @@ class sql_db
             }
         }
 
-        return $this->fetch_first($sql, '', array());
+        return $this->fetch_first($sql, $usr_msg, '', array());
     }
 
     /**
      * get only the first record from the database
      */
-    function get1(sql_par $qp): ?array
+    function get1(sql_par $qp, user_message $usr_msg = new user_message()): ?array
     {
         $this->debug_msg($qp->sql, 'get1');
 
@@ -3149,7 +3151,7 @@ class sql_db
             }
         }
 
-        return $this->fetch_first($sql, $qp->name, $qp->par);
+        return $this->fetch_first($sql, $usr_msg, $qp->name, $qp->par);
     }
 
     /**
@@ -3168,11 +3170,13 @@ class sql_db
     }
 
     /**
+     * TODO Prio 1 deprecate
      * returns first value of a simple SQL query
      */
     function get_value($field_name, $id_name, $id)
     {
         $result = '';
+        $usr_msg = new user_message();
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id_name . ' = ' . $this->sf($id));
 
         if ($this->class <> '') {
@@ -3192,7 +3196,7 @@ class sql_db
             //$sql_array = array($this->sf($id));
             $sql = "SELECT " . $this->name_sql_esc($field_name) . " FROM " . $this->name_sql_esc($this->table) . " WHERE " . $id_name . " = " . $this->sf($id) . " LIMIT 1;";
 
-            $sql_row = $this->fetch_first($sql);
+            $sql_row = $this->fetch_first($sql, $usr_msg);
 
             if ($sql_row) {
                 if (count($sql_row) > 0) {
@@ -3208,11 +3212,13 @@ class sql_db
     }
 
     /**
+     * TODO Prio 1 deprecate
      * similar to sql_db->get_value, but for two key fields
      */
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2)
     {
         $result = '';
+        $usr_msg = new user_message();
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
 
         $sql = "SELECT " . $this->name_sql_esc($field_name) .
@@ -3227,7 +3233,7 @@ class sql_db
         $sql_name = 'get_' . $field_name . '_from_' . $this->table . '_where_' . $id1_name . '_and_' . $id2_name;
         $sql_array = array($id1, $id2);
 
-        $sql_row = $this->fetch_first($sql, $sql_name, $sql_array);
+        $sql_row = $this->fetch_first($sql, $usr_msg, $sql_name, $sql_array);
 
         if ($sql_row != false) {
             if (count($sql_row) > 0) {
@@ -3432,9 +3438,9 @@ class sql_db
 
         if ($name <> '' and !is_null($this->usr_id)) {
             /*
-             * because the object name can be user specific,
+             * because the object name can be user-specific,
              * don't use the standard name for the selection e.g. s.view_name
-             * use instead the user specific name e.g. view_name
+             * use instead the user-specific name e.g. view_name
              */
             $this->add_par(sql_par_type::TEXT, $name);
             if ($this->usr_query or $this->join <> '') {
@@ -3472,7 +3478,7 @@ class sql_db
      * if $id_from or $id_to is null all links to the other side are selected
      *    e.g. if for formula_links just the phrase id is set, all formulas linked to the given phrase are returned
      * TODO allow also to retrieve a list of linked objects
-     * TODO get the user specific list of linked objects
+     * TODO get the user-specific list of linked objects
      * TODO use always parameterized values
      */
     function set_where_link_no_fld(int $id = 0, int $id_from = 0, int $id_to = 0, int $id_type = 0): string
@@ -4118,7 +4124,7 @@ class sql_db
     }
 
     /**
-     * @return string the SQL statement to for the user specific data
+     * @return string the SQL statement to for the user-specific data
      */
     function select_by_id_not_owner(int $id, ?int $owner_id = 0): string
     {
@@ -4149,7 +4155,7 @@ class sql_db
      * init the sql statement to get the users that has changed to value or result object
      * replaces the standard sql db function
      *
-     * @return string the SQL statement to for the user specific data
+     * @return string the SQL statement to for the user-specific data
      */
     function select_value_by_id_not_owner(int $id, ?int $owner_id = 0): string
     {

@@ -65,14 +65,15 @@ enum sql_type: string
 
     // the fixed table subtypes
     case STANDARD = 'standard'; // value or result that is public and unprotected
-    case USER = 'user'; // for user specific values and results
-    case USER_TBL = 'user_table'; // to select the table for the user specific values without selecting the user
+    case USER = 'user'; // for user-specific values and results
+    case USER_TBL = 'user_table'; // to select the table for the user-specific values without selecting the user
 
     // sql builder parameters
     case FUNCTION = 'function'; // create a function that combines a list of sql statements
     case SUB = 'sub'; // the created sql statement should be used as part of another prepared sql statement
     case LIST = 'list'; // the created sql statement should be used as part of with sql statement
     case LOG = 'log'; // the created sql statement should include statements for logging the changes
+    case NO_LOG = 'no_log'; // do not created sql statement to log the changes
     case NO_ID_RETURN = 'no_id_return'; // the created sql statement does not need to return the id
     case NO_ID_FIELD = 'no_id_field'; // the field list should not include the id field e.g. because the field list is used for a pure insert statement
     case NAMED_PAR = 'named_par'; // to use named parameters in the prepared query e.g. _user_id instead od $1

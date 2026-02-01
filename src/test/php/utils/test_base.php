@@ -202,6 +202,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UNIT . 'lib_tests.php';
 include_once test_paths::UNIT . 'math_tests.php';
 include_once test_paths::UNIT . 'system_tests.php';
+include_once test_paths::UNIT . 'ip_range_tests.php';
 include_once test_paths::UNIT . 'sql_tests.php';
 include_once test_paths::UNIT . 'pod_tests.php';
 include_once test_paths::UNIT . 'user_tests.php';
@@ -454,8 +455,8 @@ class test_base
     {
 
         // create the system test user to simulate the user sandbox
-        // e.g. a value owned by the first user cannot be adjusted by the second user instead a user specific value is created
-        // instead a user specific value is created
+        // e.g. a value owned by the first user cannot be adjusted by the second user instead a user-specific value is created
+        // instead a user-specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
         $this->usr1 = new user();
         $this->usr1->load_by_name(users::SYSTEM_TEST_NAME);
@@ -668,7 +669,7 @@ class test_base
      * check if the result is true and format the result as a string
      *
      * @param string $msg (unique) description of the test
-     * @param bool $result the result of the previous called test
+     * @param bool $result the result of the previously called test
      * @return bool true is the result is fine
      */
     function assert_true(
@@ -685,10 +686,30 @@ class test_base
     }
 
     /**
+     * check if the result is null
+     *
+     * @param string $msg (unique) description of the test
+     * @param string|null $result the result of the previously called test
+     * @return bool true is the result is fine
+     */
+    function assert_null(
+        string      $msg,
+        string|null $result,
+        float       $exe_max_time = self::TIMEOUT_LIMIT
+    ): bool
+    {
+        if ($result === null) {
+            return true;
+        } else {
+            return $this->assert_dsp($msg, false, 'null', $result, '', $exe_max_time);
+        }
+    }
+
+    /**
      * check if the result is false and format the result as a string
      *
      * @param string $msg (unique) description of the test
-     * @param bool $result the result of the previous called test
+     * @param bool $result the result of the previously called test
      * @return bool true is the result is fine
      */
     function assert_false(
@@ -705,7 +726,7 @@ class test_base
 
     /**
      * check if the result text is empty
-     * e.g. because the result string is a difference message
+     * e.g. because the result string is a different message
      *
      * @param string $msg (unique) description of the test
      * @param string $err_message the error message which is expected to be an empty string
@@ -1511,21 +1532,13 @@ class test_base
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
-        } else {
-            $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
-        }
+        $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
-            } else {
-                $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
-            }
+            $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -2564,15 +2577,14 @@ class test_base
      *
      * @param string $test_name the description of the test
      * @param sandbox_named|sandbox_link_named $sbx the sandbox object with the vars set for the test
-     * @param bool $use_func true if the complex function including the logging should be used
      * @return bool true if the test has been successful
      */
-    function assert_write_via_func_or_sql(string $test_name, sandbox_named|sandbox_link_named $sbx, bool $use_func): bool
+    function assert_write_via_func_or_sql(string $test_name, sandbox_named|sandbox_link_named $sbx): bool
     {
         $usr_msg = new user_message($this->usr1);
         // add the named object and remember the name
         $name = $sbx->name();
-        $sbx->save($usr_msg, $use_func);
+        $sbx->save($usr_msg);
         // reset the user_message because we don't care if the object already existed before saving it,
         $usr_msg = new user_message($this->usr1);
         $sbx->reset(true);
@@ -2582,19 +2594,17 @@ class test_base
         // check the log
         if ($result) {
             $id = $sbx->id();
-            if ($use_func) {
-                $log_msg = $sbx->log_last_field_msg($this->usr1, $sbx->name_field());
-                $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name);
-                if ($result) {
-                    $result = $this->assert_text_contains($test_name . ' log add', $log_msg, msg_id::LOG_ADD->value);
-                }
+            $log_msg = $sbx->log_last_field_msg($this->usr1, $sbx->name_field());
+            $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name);
+            if ($result) {
+                $result = $this->assert_text_contains($test_name . ' log add', $log_msg, msg_id::LOG_ADD->value);
             }
         }
 
         // update the name
         if ($result) {
             $sbx->set_name($name . self::EXT_RENAME);
-            $sbx->save($usr_msg, $use_func);
+            $sbx->save($usr_msg);
             $sbx->reset(true);
             $sbx->load_by_id($id);
             $result = $this->assert_true($test_name, $sbx->is_loaded());
@@ -2602,7 +2612,7 @@ class test_base
         }
 
         // check the log
-        if ($result and $use_func) {
+        if ($result) {
             $log_msg = $sbx->log_last_msg($this->usr1);
             $result = $this->assert_text_contains($test_name . ' log update', $log_msg, $name);
             if ($result) {
@@ -2612,11 +2622,11 @@ class test_base
 
         if ($result) {
             // delete the name
-            $sbx->del($usr_msg, $use_func);
+            $sbx->del($usr_msg);
         }
 
         // check the log
-        if ($result and $use_func) {
+        if ($result) {
             $log_msg = $sbx->log_last_msg($this->usr1);
             $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, $name);
             if ($result) {
@@ -3846,6 +3856,7 @@ class test_base
 
     /**
      * check if the filling up an almost empty object matches the filled object
+     * using the api json and the no_diff function
      * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $empty the object with almost all vars null
      * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $filled the object filled with all vars
      * @return bool true if the api message matches
@@ -3860,12 +3871,21 @@ class test_base
         $usr_sys = $this->user_system();
 
         $lib = new library();
+        $usr_msg = new user_message();
         $class = $lib->class_to_name($empty::class);
-        $test_name = $class . ' fill empty object and test via api json';
+        $test_name = 'empty ' . $class . ' differs from filled object and the no_diff function works';
+        $this->assert_false($test_name, $empty->no_diff($filled, $usr_msg));
         $original_json = $filled->api_json([api_types::TEST_MODE], $usr_sys);
         $empty->fill($filled, $usr_sys);
-        $filled_json = $empty->api_json([api_types::TEST_MODE], $usr_sys);
-        return $this->assert_json_string($test_name, $filled_json, $original_json);
+        $test_name = 'no_diff finds no difference in the filled ' . $class . ' compared to the original';
+        $this->assert_true($test_name, $empty->no_diff($filled, $usr_msg));
+        if ($usr_msg->is_ok()) {
+            $test_name = $class . ' fill empty object and test via api json';
+            $filled_json = $empty->api_json([api_types::TEST_MODE], $usr_sys);
+            return $this->assert_json_string($test_name, $filled_json, $original_json);
+        } else {
+            return false;
+        }
     }
 
 
@@ -4231,7 +4251,7 @@ class test_base
      * @param string $fld the name if the field that should be used to filter the changes
      * @param int|string|null $id the field value if the given field name
      * @param bool $ex_time true if the change time should not be included in the text
-     * @param bool $usr_only true if only user specific changes should be shown
+     * @param bool $usr_only true if only user-specific changes should be shown
      * @return string the last log entry that the given user has done on a named object
      */
     function log_last_by_field(

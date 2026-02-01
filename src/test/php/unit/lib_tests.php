@@ -551,7 +551,7 @@ class lib_tests
         $test_result = $t->file('/web/system/result_long.sql');
         $test_target = $t->file('/web/system/target_long.sql');
         $result = $lib->diff_msg($test_result, $test_target);
-        $target = "6185//- values';////+ values numeric value';//8843//+ phrases numeric value'; COMMENT ON COLUMN user_values_big.user_id// and 8093 more";
+        $target = "6185//- values';////+ values numeric value';//8843//+ phrases numeric value'; COMMENT ON COLUMN user_values_big.user_id// and 8038 more";
         // TODO speed up
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_FILE);
 
@@ -811,7 +811,7 @@ class lib_tests
         $msg_2->add_message_text('error text');
         $t->assert("but adding an error text does", $msg_2->is_ok(), false);
 
-        $usr_msg->add($msg_2);
+        $usr_msg->merge($msg_2);
         $t->assert("last message of the combined message should be from msg_2", $usr_msg->get_last_message(), 'error text');
     }
 

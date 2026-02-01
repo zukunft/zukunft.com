@@ -177,7 +177,7 @@ class json_fields
     const string EXTERNAL_KEY = 'external_key'; // the unique key of the reference
 
     // object specific fields
-    const string IS_STD = 'is_std'; // flag if a value or result is user specific or the default value for all users
+    const string IS_STD = 'is_std'; // flag if a value or result is user-specific or the default value for all users
     const string USER_TEXT = 'user_text'; // the formula expression in a human-readable format
     const string REF_TEXT = 'ref_text'; // the formula expression in a database reference format
     const string NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
@@ -258,6 +258,7 @@ class json_fields
 
     // to review
     const string USER_NAME = 'user';
+    const string JOB_PARAMETER = 'job_parameter';
 
 
     /*
@@ -269,6 +270,7 @@ class json_fields
     const string LIST_PHRASE_TYPES = 'phrase_types';
     const string LIST_FORMULA_TYPES = 'formula_types';
     const string LIST_FORMULA_LINK_TYPES = 'formula_link_types';
+    const string LIST_ELEMENTS = 'elements';
     const string LIST_ELEMENT_TYPES = 'element_types';
     const string LIST_VIEW_TYPES = 'view_types';
     const string LIST_VIEW_STYLES = 'view_styles';
@@ -284,6 +286,7 @@ class json_fields
     const string LIST_LANGUAGES = 'languages';
     const string LIST_LANGUAGE_FORMS = 'language_forms';
     const string LIST_SYS_LOG_STATUUS = 'sys_log_statuus';
+    const string LIST_JOB_STATUUS = 'job_statuus';
     const string LIST_JOB_TYPES = 'job_types';
     const string LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const string LIST_CHANGE_LOG_TABLES = 'change_table_list';

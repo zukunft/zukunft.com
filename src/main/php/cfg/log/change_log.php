@@ -236,7 +236,7 @@ class change_log extends db_object_seq_id_user
      */
 
     /**
-     * always set the user because a change log list is always user specific
+     * always set the user because a change log list is always user-specific
      * @param user|null $usr the user who requested to see the log entries
      */
     function __construct(?user $usr)
@@ -1022,39 +1022,6 @@ class change_log extends db_object_seq_id_user
         return $fvt_lst;
     }
 
-    /**
-     * get a list of all database fields
-     * list must be corresponding to the db_values fields
-     * TODO deprecate
-     *
-     * @return array list of the database field names
-     */
-    function db_fields(): array
-    {
-        $sql_fields = array();
-        $sql_fields[] = user_db::FLD_ID;
-        $sql_fields[] = change_action::FLD_ID;
-        $sql_fields[] = change_field::FLD_ID;
-
-        return $sql_fields;
-    }
-
-    /**
-     * get a list of database field values that have been updated
-     *
-     * @return array list of the database field values
-     */
-    function db_values(): array
-    {
-        $sql_values = array();
-        $sql_values[] = $this->get_user()->id;
-        $sql_values[] = $this->action_id;
-        $sql_values[] = $this->field_id;
-
-        return $sql_values;
-    }
-
-
     /*
      * save
      */
@@ -1101,6 +1068,43 @@ class change_log extends db_object_seq_id_user
         }
 
         return $result;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields
+     * list must be corresponding to the db_values fields
+     * TODO deprecate
+     *
+     * @return array list of the database field names
+     */
+    function db_fields(): array
+    {
+        $sql_fields = array();
+        $sql_fields[] = user_db::FLD_ID;
+        $sql_fields[] = change_action::FLD_ID;
+        $sql_fields[] = change_field::FLD_ID;
+
+        return $sql_fields;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @return array list of the database field values
+     */
+    function db_values(): array
+    {
+        $sql_values = array();
+        $sql_values[] = $this->get_user()->id;
+        $sql_values[] = $this->action_id;
+        $sql_values[] = $this->field_id;
+
+        return $sql_values;
     }
 
 

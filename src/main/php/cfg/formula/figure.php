@@ -70,7 +70,7 @@ class figure extends combine_object
     // the database and JSON object duplicate field names for combined value and result mainly to link figures
     const string FLD_ID = 'figure_id';
 
-    // the common figure database field names excluding the id and excluding the user specific fields
+    // the common figure database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         group::FLD_ID
     );

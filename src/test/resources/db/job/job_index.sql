@@ -6,6 +6,7 @@
 
 CREATE INDEX jobs_user_idx ON jobs (user_id);
 CREATE INDEX jobs_job_type_idx ON jobs (job_type_id);
+CREATE INDEX jobs_job_status_idx ON jobs (job_status_id);
 CREATE INDEX jobs_request_time_idx ON jobs (request_time);
 CREATE INDEX jobs_start_time_idx ON jobs (start_time);
 CREATE INDEX jobs_end_time_idx ON jobs (end_time);

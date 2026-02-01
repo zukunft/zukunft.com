@@ -78,12 +78,9 @@ class triple_write_tests
 
         $t->subheader($ts . 'prepare');
         $vrb_is_id = $t->assert_verb_id(verbs::IS, verbs::IS_ID, 'load the verb used for testing');
-        $t_db->test_word(words::TEST_ADD_VIA_SQL);
         $t_db->test_word(words::TEST_ADD_VIA_FUNC);
 
         $t->subheader($ts . 'triple prepared write');
-        $test_name = 'add triple ' . triples::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t_trp->triple_add_by_sql(), false);
         $test_name = 'add triple ' . triples::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_trp->triple_add_by_func(), true);
 
@@ -312,6 +309,9 @@ class triple_write_tests
 
         // cleanup - fallback delete
         $t_trp->cleanup($ts);
+
+        // test if there are any test leftovers in the database and report which
+        $t->check_cleanup($usr_msg);
 
     }
 

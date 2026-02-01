@@ -158,8 +158,8 @@ class test_words extends test_objects
         $wrd->set_code_id(words::MATH, $this->env->usr_system);
         $wrd->plural = words::MATH_PLURAL;
         $wrd->set_view_id(views::MATH_CONST_ID);
-        $wrd->set_usage(test_const::DUMMY_USAGE_WORD);
-        $wrd->set_impact(test_const::DUMMY_IMPACT);
+        $wrd->usage = test_const::DUMMY_USAGE_WORD;
+        $wrd->impact = test_const::DUMMY_IMPACT;
         $wrd->exclude();
         $wrd->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
@@ -197,16 +197,6 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set_name(words::TEST_ADD_VIA_FUNC);
-        return $wrd;
-    }
-
-    /**
-     * @return word to test the sql insert without use of function
-     */
-    function word_add_by_sql(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set_name(words::TEST_ADD_VIA_SQL);
         return $wrd;
     }
 

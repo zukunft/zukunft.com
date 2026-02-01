@@ -90,7 +90,7 @@ class value_geo extends value_base
     // object specific database and JSON object field names
     const string FLD_VALUE = 'geo_value';
     const string FLD_COM = 'the geolocation given by the user';
-    const string FLD_USER_COM = 'the user specific geolocation change';
+    const string FLD_USER_COM = 'the user-specific geolocation change';
 
     // database field with the sql type specification
     const array FLD_ALL_VALUE = array(
@@ -105,11 +105,11 @@ class value_geo extends value_base
         source_db::FLD_ID,
     );
 
-    // list of the user specific database field names for geo values
+    // list of the user-specific database field names for geo values
     const array FLD_NAMES_USR = array(
         self::FLD_VALUE,
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
@@ -117,7 +117,7 @@ class value_geo extends value_base
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_VALUE,
         source_db::FLD_ID,

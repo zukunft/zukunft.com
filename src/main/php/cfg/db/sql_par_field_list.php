@@ -46,12 +46,13 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
-//include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 //include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
-include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -62,14 +63,15 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
@@ -300,6 +302,42 @@ class sql_par_field_list
     }
 
     /**
+     * add the id, the ids of the link and the user field to this list
+     * *
+     * @param sandbox_link $sbx the sandbox object that has been updated
+     * @return void
+     */
+    function add_id_link_and_user(sandbox_link $sbx): void
+    {
+        $this->add_field(
+            $sbx::FLD_ID,
+            $sbx->id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+        $this->add_field(
+            user_db::FLD_ID,
+            $sbx->get_user_id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+        $this->add_field(
+            $sbx::FLD_FROM,
+            $sbx->from_id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+        $this->add_field(
+            $sbx::FLD_PREDICATE,
+            $sbx->predicate_id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+        $this->add_field(
+            $sbx::FLD_TO,
+            $sbx->to_id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+
+    }
+
+    /**
      * add the user field to this list
      *
      * @param sandbox|sandbox_multi $sbx_upd the updated fields of the user sandbox object should be saved
@@ -441,8 +479,13 @@ class sql_par_field_list
      */
     function is_empty_except_internal_fields(): bool
     {
-        $names = array_diff($this->names(),
-            [sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID, user_db::FLD_ID, formula_db::FLD_LAST_UPDATE]);
+        $names = array_diff($this->names(), [
+            sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID,
+            user_db::FLD_ID,
+            verb_db::FLD_ID,
+            sandbox_multi::FLD_LAST_UPDATE,
+            formula_db::FLD_LAST_UPDATE
+        ]);
         if (count($names) == 0) {
             return true;
         } else {
@@ -552,20 +595,20 @@ class sql_par_field_list
     /**
      * get the value for the given field name
      * @param string $name the name of the field to select
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param bool $can_be_missing if true no error log message is created if the field does not exists
      * @return sql_par_field|null the name, value and type selected by the name
      */
     function get(
         string       $name,
-        user_message $usr_msg,
+        user_message $msg,
         bool         $can_be_missing = false
     ): ?sql_par_field
     {
         $key = array_search($name, $this->names());
         if ($key === false) {
             if (!$can_be_missing) {
-                $usr_msg->add_id_with_vars(msg_id::MANDATORY_FIELD_MISSING, [
+                $msg->add(msg_id::MANDATORY_FIELD_MISSING, [
                     msg_id::VAR_NAME => $name,
                     msg_id::VAR_NAME_LIST => implode(',', $this->names())
                 ]);

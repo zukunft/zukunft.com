@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS results
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula numeric results related to up to 16 phrases';
 
 --
--- table structure to cache the user specific changes of numeric results related to up to 16 phrases
+-- table structure to cache the user-specific changes of numeric results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results
@@ -73,14 +73,14 @@ CREATE TABLE IF NOT EXISTS user_results
     group_id        char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user numeric result',
     source_group_id char(112) DEFAULT NULL COMMENT '512-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the numeric result',
-    numeric_value   double    DEFAULT NULL COMMENT 'the user specific numeric value change',
+    numeric_value   double    DEFAULT NULL COMMENT 'the user-specific numeric value change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (group_id, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the user specific changes of numeric results related to up to 16 phrases';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the user-specific changes of numeric results related to up to 16 phrases';
 
 -- --------------------------------------------------------
 
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS results_prime
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula most often requested numeric results related up to four prime phrase';
 
 --
--- table structure to store the user specific changes for the most often requested numeric results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested numeric results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_prime
@@ -117,14 +117,14 @@ CREATE TABLE IF NOT EXISTS user_results_prime
     phrase_id_4     smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a numeric result',
     source_group_id bigint    DEFAULT NULL COMMENT '64-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the numeric result',
-    numeric_value   double    DEFAULT NULL COMMENT 'the user specific numeric value change',
+    numeric_value   double    DEFAULT NULL COMMENT 'the user-specific numeric value change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes for the most often requested numeric results related up to four prime phrase';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes for the most often requested numeric results related up to four prime phrase';
 
 -- --------------------------------------------------------
 
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS results_main
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula second most often requested numeric results related up to eight prime phrase';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested numeric results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested numeric results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_main
@@ -169,14 +169,14 @@ CREATE TABLE IF NOT EXISTS user_results_main
     phrase_id_8     smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a numeric result',
     source_group_id bigint    DEFAULT NULL COMMENT '64-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the numeric result',
-    numeric_value   double    DEFAULT NULL COMMENT 'the user specific numeric value change',
+    numeric_value   double    DEFAULT NULL COMMENT 'the user-specific numeric value change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes to cache the formula second most often requested numeric results related up to eight prime phrase';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes to cache the formula second most often requested numeric results related up to eight prime phrase';
 
 -- --------------------------------------------------------
 
@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS results_big
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula numeric results related to more than 16 phrases';
 
 --
--- table structure to store the user specific changes of numeric results related to more than 16 phrases
+-- table structure to store the user-specific changes of numeric results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_big
@@ -207,14 +207,14 @@ CREATE TABLE IF NOT EXISTS user_results_big
     group_id        char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the numeric result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the numeric result',
-    numeric_value   double    DEFAULT NULL COMMENT 'the user specific numeric value change',
+    numeric_value   double    DEFAULT NULL COMMENT 'the user-specific numeric value change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (group_id, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes of numeric results related to more than 16 phrases';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes of numeric results related to more than 16 phrases';
 
 -- --------------------------------------------------------
 
@@ -282,7 +282,7 @@ CREATE TABLE IF NOT EXISTS results_text
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula text results related to up to 16 phrases';
 
 --
--- table structure to cache the user specific changes of text results related to up to 16 phrases
+-- table structure to cache the user-specific changes of text results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text
@@ -290,14 +290,14 @@ CREATE TABLE IF NOT EXISTS user_results_text
     group_id        char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user text result',
     source_group_id char(112) DEFAULT NULL COMMENT '512-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the text result',
-    text_value      text      DEFAULT NULL COMMENT 'the user specific text value change',
+    text_value      text      DEFAULT NULL COMMENT 'the user-specific text value change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (group_id, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the user specific changes of text results related to up to 16 phrases';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the user-specific changes of text results related to up to 16 phrases';
 
 -- --------------------------------------------------------
 
@@ -323,7 +323,7 @@ CREATE TABLE IF NOT EXISTS results_text_prime
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula most often requested text results related up to four prime phrase';
 
 --
--- table structure to store the user specific changes for the most often requested text results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested text results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text_prime
@@ -334,14 +334,14 @@ CREATE TABLE IF NOT EXISTS user_results_text_prime
     phrase_id_4     smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a text result',
     source_group_id bigint    DEFAULT NULL COMMENT '64-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the text result',
-    text_value      text      DEFAULT NULL COMMENT 'the user specific text value change',
+    text_value      text      DEFAULT NULL COMMENT 'the user-specific text value change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes for the most often requested text results related up to four prime phrase';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes for the most often requested text results related up to four prime phrase';
 
 -- --------------------------------------------------------
 
@@ -371,7 +371,7 @@ CREATE TABLE IF NOT EXISTS results_text_main
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula second most often requested text results related up to eight prime phrase';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested text results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested text results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text_main
@@ -386,14 +386,14 @@ CREATE TABLE IF NOT EXISTS user_results_text_main
     phrase_id_8     smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a text result',
     source_group_id bigint    DEFAULT NULL COMMENT '64-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the text result',
-    text_value      text      DEFAULT NULL COMMENT 'the user specific text value change',
+    text_value      text      DEFAULT NULL COMMENT 'the user-specific text value change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes to cache the formula second most often requested text results related up to eight prime phrase';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes to cache the formula second most often requested text results related up to eight prime phrase';
 
 -- --------------------------------------------------------
 
@@ -416,7 +416,7 @@ CREATE TABLE IF NOT EXISTS results_text_big
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula text results related to more than 16 phrases';
 
 --
--- table structure to store the user specific changes of text results related to more than 16 phrases
+-- table structure to store the user-specific changes of text results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text_big
@@ -424,14 +424,14 @@ CREATE TABLE IF NOT EXISTS user_results_text_big
     group_id        char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the text result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the text result',
-    text_value      text      DEFAULT NULL COMMENT 'the user specific text value change',
+    text_value      text      DEFAULT NULL COMMENT 'the user-specific text value change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (group_id, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes of text results related to more than 16 phrases';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes of text results related to more than 16 phrases';
 
 -- --------------------------------------------------------
 
@@ -499,7 +499,7 @@ CREATE TABLE IF NOT EXISTS results_time
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula time results related to up to 16 phrases';
 
 --
--- table structure to cache the user specific changes of time results related to up to 16 phrases
+-- table structure to cache the user-specific changes of time results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time
@@ -507,14 +507,14 @@ CREATE TABLE IF NOT EXISTS user_results_time
     group_id        char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user time result',
     source_group_id char(112) DEFAULT NULL COMMENT '512-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the time result',
-    time_value      timestamp DEFAULT NULL COMMENT 'the user specific timestamp change',
+    time_value      timestamp DEFAULT NULL COMMENT 'the user-specific timestamp change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (group_id, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the user specific changes of time results related to up to 16 phrases';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the user-specific changes of time results related to up to 16 phrases';
 
 -- --------------------------------------------------------
 
@@ -540,7 +540,7 @@ CREATE TABLE IF NOT EXISTS results_time_prime
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula most often requested time results related up to four prime phrase';
 
 --
--- table structure to store the user specific changes for the most often requested time results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested time results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time_prime
@@ -551,14 +551,14 @@ CREATE TABLE IF NOT EXISTS user_results_time_prime
     phrase_id_4     smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time result',
     source_group_id bigint    DEFAULT NULL COMMENT '64-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the time result',
-    time_value      timestamp DEFAULT NULL COMMENT 'the user specific timestamp change',
+    time_value      timestamp DEFAULT NULL COMMENT 'the user-specific timestamp change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes for the most often requested time results related up to four prime phrase';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes for the most often requested time results related up to four prime phrase';
 
 -- --------------------------------------------------------
 
@@ -588,7 +588,7 @@ CREATE TABLE IF NOT EXISTS results_time_main
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula second most often requested time results related up to eight prime phrase';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested time results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested time results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time_main
@@ -603,14 +603,14 @@ CREATE TABLE IF NOT EXISTS user_results_time_main
     phrase_id_8     smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time result',
     source_group_id bigint    DEFAULT NULL COMMENT '64-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the time result',
-    time_value      timestamp DEFAULT NULL COMMENT 'the user specific timestamp change',
+    time_value      timestamp DEFAULT NULL COMMENT 'the user-specific timestamp change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes to cache the formula second most often requested time results related up to eight prime phrase';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes to cache the formula second most often requested time results related up to eight prime phrase';
 
 -- --------------------------------------------------------
 
@@ -633,7 +633,7 @@ CREATE TABLE IF NOT EXISTS results_time_big
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula time results related to more than 16 phrases';
 
 --
--- table structure to store the user specific changes of time results related to more than 16 phrases
+-- table structure to store the user-specific changes of time results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time_big
@@ -641,14 +641,14 @@ CREATE TABLE IF NOT EXISTS user_results_time_big
     group_id        char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the time result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the time result',
-    time_value      timestamp DEFAULT NULL COMMENT 'the user specific timestamp change',
+    time_value      timestamp DEFAULT NULL COMMENT 'the user-specific timestamp change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (group_id, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes of time results related to more than 16 phrases';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes of time results related to more than 16 phrases';
 
 -- --------------------------------------------------------
 
@@ -716,7 +716,7 @@ CREATE TABLE IF NOT EXISTS results_geo
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula geo results related to up to 16 phrases';
 
 --
--- table structure to cache the user specific changes of geo results related to up to 16 phrases
+-- table structure to cache the user-specific changes of geo results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo
@@ -724,14 +724,14 @@ CREATE TABLE IF NOT EXISTS user_results_geo
     group_id        char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user geo result',
     source_group_id char(112) DEFAULT NULL COMMENT '512-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the geo result',
-    geo_value       point     DEFAULT NULL COMMENT 'the user specific geolocation change',
+    geo_value       point     DEFAULT NULL COMMENT 'the user-specific geolocation change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (group_id, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the user specific changes of geo results related to up to 16 phrases';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the user-specific changes of geo results related to up to 16 phrases';
 
 -- --------------------------------------------------------
 
@@ -757,7 +757,7 @@ CREATE TABLE IF NOT EXISTS results_geo_prime
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula most often requested geo results related up to four prime phrase';
 
 --
--- table structure to store the user specific changes for the most often requested geo results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested geo results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo_prime
@@ -768,14 +768,14 @@ CREATE TABLE IF NOT EXISTS user_results_geo_prime
     phrase_id_4     smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a geo result',
     source_group_id bigint    DEFAULT NULL COMMENT '64-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the geo result',
-    geo_value       point     DEFAULT NULL COMMENT 'the user specific geolocation change',
+    geo_value       point     DEFAULT NULL COMMENT 'the user-specific geolocation change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes for the most often requested geo results related up to four prime phrase';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes for the most often requested geo results related up to four prime phrase';
 
 -- --------------------------------------------------------
 
@@ -805,7 +805,7 @@ CREATE TABLE IF NOT EXISTS results_geo_main
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula second most often requested geo results related up to eight prime phrase';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested geo results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested geo results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo_main
@@ -820,14 +820,14 @@ CREATE TABLE IF NOT EXISTS user_results_geo_main
     phrase_id_8     smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a geo result',
     source_group_id bigint    DEFAULT NULL COMMENT '64-bit reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the geo result',
-    geo_value       point     DEFAULT NULL COMMENT 'the user specific geolocation change',
+    geo_value       point     DEFAULT NULL COMMENT 'the user-specific geolocation change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes to cache the formula second most often requested geo results related up to eight prime phrase';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes to cache the formula second most often requested geo results related up to eight prime phrase';
 
 -- --------------------------------------------------------
 
@@ -850,7 +850,7 @@ CREATE TABLE IF NOT EXISTS results_geo_big
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to cache the formula geo results related to more than 16 phrases';
 
 --
--- table structure to store the user specific changes of geo results related to more than 16 phrases
+-- table structure to store the user-specific changes of geo results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo_big
@@ -858,14 +858,14 @@ CREATE TABLE IF NOT EXISTS user_results_geo_big
     group_id        char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the geo result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the geo result',
-    geo_value       point     DEFAULT NULL COMMENT 'the user specific geolocation change',
+    geo_value       point     DEFAULT NULL COMMENT 'the user-specific geolocation change',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     formula_id      bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
     excluded        smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (group_id, user_id)
-) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes of geo results related to more than 16 phrases';
+) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user-specific changes of geo results related to more than 16 phrases';
 
 -- --------------------------------------------------------
 

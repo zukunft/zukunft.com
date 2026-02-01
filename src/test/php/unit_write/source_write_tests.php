@@ -57,8 +57,6 @@ class source_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepared');
-        $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_sql(), false);
         $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_func(), true);
 
@@ -79,7 +77,7 @@ class source_write_tests
         $target = '';
         $t->assert('source->save undo the user source fields beside the name for "' . sources::TN_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // check if a user specific source changes have been saved
+        // check if a user-specific source changes have been saved
         $src_usr2_reloaded = new source($t->usr2);
         $src_usr2_reloaded->load_by_name(sources::TN_RENAMED, source::class);
         $result = $src_usr2_reloaded->url();
