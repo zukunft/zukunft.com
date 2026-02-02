@@ -158,13 +158,13 @@ class triple_list extends sandbox_list_named
 
     /**
      * load a list of triples by the ids
-     * @param array $wrd_ids a list of int values with the triple ids
+     * @param array $trp_ids a list of int values with the triple ids
      * @return bool true if at least one triple found
      */
-    function load_by_ids(array $wrd_ids): bool
+    function load_by_ids(array $trp_ids): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $wrd_ids);
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $trp_ids);
         return $this->load($qp);
     }
 
@@ -217,23 +217,29 @@ class triple_list extends sandbox_list_named
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $trp = new triple($this->get_user());
-                    $trp->row_mapper_sandbox($db_row);
+                    $db_trp = new triple($this->get_user());
+                    $db_trp->row_mapper_sandbox($db_row);
                     // the simple object row mapper allows mapping excluded objects to remove the exclusion
                     // but an object list should not have excluded objects
-                    if (!$trp->is_excluded() or $load_all) {
-                        $this->add_obj($trp);
+                    if (!$db_trp->is_excluded() or $load_all) {
+                        $this->add_obj($db_trp);
                         $result = true;
                         // fill verb
-                        $trp->set_verb_id($db_row[verb_db::FLD_ID]);
+                        $db_trp->set_verb_id($db_row[verb_db::FLD_ID]);
                         // fill from
-                        $trp->set_fob(new phrase($this->get_user()));
-                        $trp->fob()->row_mapper_sandbox($db_row, triple_db::FLD_FROM, '1');
+                        $db_trp->set_fob(new phrase($this->get_user()));
+                        $db_trp->fob()->row_mapper_sandbox($db_row, triple_db::FLD_FROM, '1');
                         // fill to
-                        $trp->set_tob(new phrase($this->get_user()));
-                        $trp->tob()->row_mapper_sandbox($db_row, triple_db::FLD_TO, '2');
+                        $db_trp->set_tob(new phrase($this->get_user()));
+                        $db_trp->tob()->row_mapper_sandbox($db_row, triple_db::FLD_TO, '2');
+                        $trp = $this->get_by_id($db_trp->id());
+                        if ($trp == null) {
+                            $this->add_obj($db_trp);
+                        } else {
+                            $trp->fill($db_trp, $this->get_user());
+                        }
                     } else {
-                        log_info($trp->dsp_id() . ' is excluded');
+                        log_info($db_trp->dsp_id() . ' is excluded');
                     }
                 }
             }

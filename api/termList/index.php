@@ -66,7 +66,7 @@ if ($db_con->is_open()) {
 
         if ($trm_ids != '') {
             $lst = new term_list($usr);
-            $lst->load_by_ids((new trm_ids(explode(",", $trm_ids))));
+            $lst->load_by_ids(new trm_ids(explode(",", $trm_ids)), true);
             $result = $lst->api_json();
         } elseif ($pattern != '') {
             $lst = new term_list($usr);

@@ -632,6 +632,39 @@ class term extends combine_named
         return $phr;
     }
 
+
+    /*
+     * object
+     */
+
+    /**
+     * call the object fill function
+     *
+     * @param word|triple|verb|formula|term $obj the object that should fill up this term
+     * @return void
+     */
+    function fill(word|triple|verb|formula|term $obj): void
+    {
+        if ($this->is_word() and $obj::class == word::class) {
+            $this->obj()->fill($obj, $this->get_user());
+        } elseif ($this->is_word() and $obj::class == term::class and $obj->is_word()) {
+            $this->obj()->fill($obj->get_word(), $this->get_user());
+        } elseif ($this->is_triple() and $obj::class == triple::class) {
+            $this->obj()->fill($obj, $this->get_user());
+        } elseif ($this->is_triple() and $obj::class == term::class and $obj->is_triple()) {
+            $this->obj()->fill($obj->get_triple(), $this->get_user());
+        } elseif ($this->is_verb() and $obj::class == verb::class) {
+            $this->obj()->fill($obj, $this->get_user());
+        } elseif ($this->is_verb() and $obj::class == term::class and $obj->is_verb()) {
+            $this->obj()->fill($obj->get_triple(), $this->get_user());
+        } elseif ($this->is_formula() and $obj::class == formula::class) {
+            $this->obj()->fill($obj, $this->get_user());
+        } elseif ($this->is_formula() and $obj::class == term::class and $obj->is_formula()) {
+            $this->obj()->fill($obj->get_triple(), $this->get_user());
+        }
+    }
+
+
     /*
      * load functions
      */

@@ -530,7 +530,7 @@ class test_api extends test_base
         $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
 
-        // TODO remove
+        // TODO Prio 0 remove
         if ($class == $lib->class_to_name(phrase_list::class)) {
             if ($filename == '' and $id_fld != url_var::ID_LST) {
                 $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
@@ -538,12 +538,6 @@ class test_api extends test_base
             } else {
                 $filename = $class . '_without_link';
             }
-        }
-        if ($class == $lib->class_to_name(term_list::class)) {
-            $lst = new term_list($this->usr1);
-            $lst->load_by_ids((new trm_ids($ids)));
-            $actual = json_decode($lst->api_json(), true);
-            $filename = $class . '_without_link';
         }
 
         if ($filename == '' and $id_fld != url_var::ID_LST) {

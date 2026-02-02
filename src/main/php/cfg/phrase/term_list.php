@@ -40,9 +40,12 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -53,9 +56,12 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -140,14 +146,43 @@ class term_list extends sandbox_list_named
      * load the terms selected by the id
      *
      * @param trm_ids $ids of term ids that should be loaded
+     * @param bool $load_all force to include also the excluded terms e.g. for admins
+     *                       and the details of each term e.g. the triple from and to objects
      * @return bool true if at least one term has been loaded
      */
-    function load_by_ids(trm_ids $ids): bool
+    function load_by_ids(trm_ids $ids, bool $load_all = false): bool
     {
         global $db_con;
 
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($qp);
+        $result = $this->load($qp);
+        if ($load_all) {
+            // reload the missing triple and formula parameters
+            // TODO Prio 1 reload including excluded terms
+            if ($result) {
+                $trp_lst = $this->triple_list();
+                $result = $trp_lst->load_by_ids($trp_lst->ids());
+                $this->fill_by_id($trp_lst);
+            }
+            if ($result) {
+                global $sys;
+                if ($sys?->typ_lst?->vrb != null) {
+                    $vrb_lst = $this->verb_list();
+                    foreach ($vrb_lst->lst() as $vrb) {
+                        $vrb_db = $sys->typ_lst->vrb->get($vrb->id());
+                        if ($vrb_db != null) {
+                            $vrb->fill($vrb_db, $this->get_user());
+                        }
+                    }
+                }
+            }
+            if ($result) {
+                $frm_lst = $this->formula_list();
+                $result = $frm_lst->load_by_ids($frm_lst->ids());
+                $this->fill_by_id($frm_lst);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -464,6 +499,51 @@ class term_list extends sandbox_list_named
             }
         }
         return $phr_lst;
+    }
+
+    /**
+     * get the triples out of a term list
+     * @return triple_list the list of triples picked from the term list
+     */
+    function triple_list(): triple_list
+    {
+        $trp_lst = new triple_list($this->get_user());
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_triple()) {
+                $trp_lst->add($trm->obj());
+            }
+        }
+        return $trp_lst;
+    }
+
+    /**
+     * get the verbs out of a term list
+     * @return verb_list the list of verbs picked from the term list
+     */
+    function verb_list(): verb_list
+    {
+        $vrb_lst = new verb_list($this->get_user());
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_verb()) {
+                $vrb_lst->add($trm->obj());
+            }
+        }
+        return $vrb_lst;
+    }
+
+    /**
+     * get the formulas out of a term list
+     * @return formula_list the list of formulas picked from the term list
+     */
+    function formula_list(): formula_list
+    {
+        $trp_lst = new formula_list($this->get_user());
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_formula()) {
+                $trp_lst->add($trm->obj());
+            }
+        }
+        return $trp_lst;
     }
 
 

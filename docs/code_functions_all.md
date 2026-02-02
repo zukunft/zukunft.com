@@ -727,7 +727,7 @@
         \-- formula - @return result_list a list of all formula results linked to this formula
 \-- expression
     \-- term_list
-        \-- formula - get all terms used in this formula
+        \-- formula - get all terms used in this formula,
     \-- wrd_ids
         \-- formula - @param string $frm_text the formula expression in the reference format
     \-- trp_ids
@@ -1862,6 +1862,7 @@
     \-- id_obj - section for function id_obj not yet defined that it should be set and get in /phrase/term.php
     \-- name - section for function name is expected to be debug in /phrase/term.php
     \-- type - section for function type not yet defined that it should be set and get in /phrase/term.php
+    \-- fill - section for function fill is expected to be modify in /phrase/term.php
     \-- load_sql_by_id - section for function load_sql_by_id is expected to be load sql in /phrase/term.php
     \-- load_sql_by_name - section for function load_sql_by_name is expected to be load sql in /phrase/term.php
     \-- load_by_id - section for function load_by_id is expected to be load in /phrase/term.php
@@ -1903,6 +1904,9 @@
     \-- triple_by_id - section for function triple_by_id not yet defined that it should be get function in /phrase/term_list.php
     \-- formula_by_id - section for function formula_by_id not yet defined that it should be get function in /phrase/term_list.php
     \-- verb_by_id - section for function verb_by_id not yet defined that it should be get function in /phrase/term_list.php
+    \-- triple_list - section for function triple_list not yet defined that it should be cast in /phrase/term_list.php
+    \-- verb_list - section for function verb_list not yet defined that it should be cast in /phrase/term_list.php
+    \-- formula_list - section for function formula_list not yet defined that it should be cast in /phrase/term_list.php
     \-- intersect - section for function intersect not yet defined that it should be modify in /phrase/term_list.php
     \-- remove - section for function remove not yet defined that it should be modify in /phrase/term_list.php
     \-- merge_by_name - section for function merge_by_name not yet defined that it should be modify in /phrase/term_list.php

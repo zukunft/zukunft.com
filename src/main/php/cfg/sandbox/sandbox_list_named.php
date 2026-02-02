@@ -544,7 +544,7 @@ class sandbox_list_named extends sandbox_list
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get_by_id($sbx_new->id());
+                $sbx_old = $this->get_by_id($sbx_new->term()->id());
                 if ($sbx_old != null) {
                     $sbx_old->fill($sbx_new, $usr);
                 } else {

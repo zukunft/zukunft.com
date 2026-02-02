@@ -293,7 +293,7 @@ class type_object extends db_object_seq_id
     function set_code_id(?string $code_id, user $usr): user_message
     {
         $msg = new user_message();
-        if ($usr->can_set_code_id()) {
+        if ($usr->can_set_code_id() or $this->code_id == null) {
             $this->code_id = $code_id;
         } else {
             $lib = new library();
