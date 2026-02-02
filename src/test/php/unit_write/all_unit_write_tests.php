@@ -168,15 +168,13 @@ class all_unit_write_tests extends all_unit_read_tests
                 //new result_write_tests()->run_list($t);
                 new job_write_tests()->run($t);
                 new job_write_tests()->run_list($t);
-                // TODO Prio 0 activate
-                //new view_write_tests()->run($t);
+                new view_write_tests()->run($t);
                 new view_relation_write_tests()->run($this);
                 new view_link_write_tests()->run($this);
                 new component_write_tests()->run($t);
                 new component_link_write_tests()->run($t);
 
-                // TODO Prio 0 activate
-                //new api_write_tests()->run($t);
+                new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
 
                 // url tests

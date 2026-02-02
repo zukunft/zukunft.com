@@ -105,7 +105,8 @@ class a_selected_test extends test_cleanup
         //new system_tests()->run($this);
         //new import_tests()->run($this);
         //new formula_link_tests()->run($this);
-        new formula_calc_tests()->run($this);
+        //new formula_calc_tests()->run($this);
+        new api_tests()->run($this);
 
         // restore the global vars that may be overwritten if additional tests are activated
         $db_con = $global_db_con;
@@ -242,7 +243,7 @@ class a_selected_test extends test_cleanup
 
             // run the selected db write tests
             //new user_write_tests()->run($this);
-            new word_write_tests()->run($this);
+            //new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
             //new verb_write_tests()->run($t);
             //new triple_write_tests()->run($this);
@@ -260,7 +261,7 @@ class a_selected_test extends test_cleanup
             //new expression_write_tests()->run($this);
             //new element_write_tests()->run($this);
             //new element_write_tests()->run_list($this);
-            new element_group_write_tests()->run($this);
+            //new element_group_write_tests()->run($this);
             //new formula_write_tests()->run($this);
             //new formula_write_tests()->run_list($this);
             //new formula_link_write_tests()->run($this);
@@ -276,7 +277,7 @@ class a_selected_test extends test_cleanup
             //new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);
 
-            //new api_write_tests()->run($t);
+            new api_write_tests()->run($this);
             //new import_write_tests()->run($this);
 
             //$import = new import_file();

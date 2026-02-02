@@ -300,14 +300,18 @@ class controller
                 if ($this->put($request_body, $obj, $usr_msg)) {
 
                     // set response code - 200 OK
-                    http_response_code(200);
+                    if (!headers_sent()) {
+                        http_response_code(200);
+                    }
                     echo json_encode(
                         array(url_var::ID => $usr_msg->get_row_id())
                     );
                 } else {
 
                     // set response code - 400 Bad Request
-                    http_response_code(400);
+                    if (!headers_sent()) {
+                        http_response_code(400);
+                    }
                     echo json_encode(
                         array(json_fields::MSG => $usr_msg->get_row_id())
                     );
@@ -318,7 +322,9 @@ class controller
                 if ($msg == '') {
 
                     // set response code - 200 OK
-                    http_response_code(200);
+                    if (!headers_sent()) {
+                        http_response_code(200);
+                    }
 
                     // return e.g. the word object
                     echo $api_obj;
@@ -326,7 +332,9 @@ class controller
                 } else {
 
                     // set response code - 400 Bad Request
-                    http_response_code(400);
+                    if (!headers_sent()) {
+                        http_response_code(400);
+                    }
 
                     // tell the user no object found
                     echo json_encode(
@@ -347,14 +355,18 @@ class controller
                     // return the result
                     if (is_numeric($result)) {
                         // set response code - 200 OK
-                        http_response_code(200);
+                        if (!headers_sent()) {
+                            http_response_code(200);
+                        }
                         echo json_encode(
                             array(url_var::ID => $result)
                         );
                     } else {
 
                         // set response code - 400 Bad Request
-                        http_response_code(400);
+                        if (!headers_sent()) {
+                            http_response_code(400);
+                        }
                         echo json_encode(
                             array(json_fields::MSG => $result)
                         );
@@ -369,10 +381,14 @@ class controller
                         $obj->del($usr_msg);
                         if ($usr_msg->is_ok()) {
                             // set response code - 200 OK
-                            http_response_code(200);
+                            if (!headers_sent()) {
+                                http_response_code(200);
+                            }
                         } else {
                             // set response code - 409 Conflict
-                            http_response_code(409);
+                            if (!headers_sent()) {
+                                http_response_code(409);
+                            }
 
                             echo json_encode(
                                 array(url_var::RESULT => $usr_msg->get_last_message())
@@ -382,7 +398,9 @@ class controller
                 } else {
 
                     // set response code - 400 Bad Request
-                    http_response_code(400);
+                    if (!headers_sent()) {
+                        http_response_code(400);
+                    }
                     // set response code - 410 Gone
                     // http_response_code(410);
                     // set response code - 403 Forbidden
@@ -396,7 +414,9 @@ class controller
                 break;
             default:
                 // set response code - 400 Bad Request
-                http_response_code(400);
+                if (!headers_sent()) {
+                    http_response_code(400);
+                }
                 break;
         }
     }

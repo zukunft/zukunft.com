@@ -72,7 +72,7 @@ if ($db_con->is_open()) {
 
         $lst = new phrase_list($usr);
         if ($phr_ids != '') {
-            $lst->load_names_by_ids((new phr_ids(explode(",", $phr_ids))));
+            $lst->load_names_by_ids(new phr_ids(explode(",", $phr_ids)));
         } elseif ($phr_id != '') {
             $phr = new phrase($usr);
             $phr->set_id($phr_id);
