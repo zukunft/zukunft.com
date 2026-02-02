@@ -466,8 +466,7 @@ class db_object extends TextIdObject
     function value(): float|string|DateTime|null
     {
         $msg = 'ERROR: value not overwritten by ' . $this::class;
-        // TODO Prio 0 activate
-        //log_err($msg);
+        log_err($msg);
         return 0;
     }
 
@@ -495,7 +494,7 @@ class db_object extends TextIdObject
     }
 
     /**
-     * @returns string the formula expression in the user readable format and including user formatting
+     * @returns string the formula expression in the user-readable format and including user formatting
      */
     function user_expression(): string
     {

@@ -824,7 +824,7 @@ class sql_creator
      *                           if empty the field will be guessed
      * @param string $join_to_field if set the field name in the joined table that should be used for the join; only needed, if the joined field name differ from the type id field
      * @param string $join_select_field if set the field name in the joined table that should be used for a where selection
-     * @param int $join_select_id if $join_select_field is set the id (int) used for the selection
+     * @param int $join_select_id if $join_select_field is set, the id (int) used for the selection
      */
     function set_join_fields(array  $join_field_lst,
                              string $join_type,

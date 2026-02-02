@@ -1163,8 +1163,7 @@ class view extends sandbox_code_id
 
         // collect all view relations where this view is used
         $mrl_lst = new view_relation_list($this->get_user());
-        // TODO Prio 0 activate
-        //$mrl_lst->load_by_view($this);
+        $mrl_lst->load_by_view($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else

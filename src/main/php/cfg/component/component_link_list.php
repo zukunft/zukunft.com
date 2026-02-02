@@ -199,7 +199,7 @@ class component_link_list extends sandbox_link_list
         $qp = $this->load_sql($sc, component::FLD_ID);
         if ($cmp->id() > 0) {
             $sc->add_where(component::FLD_ID, $cmp->id());
-            $sc = (new view($this->get_user()))->set_join($sc);
+            $sc = new view($this->get_user())->set_join($sc);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';

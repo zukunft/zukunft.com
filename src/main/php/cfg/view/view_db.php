@@ -109,6 +109,11 @@ class view_db
         sql_db::FLD_DESCRIPTION
     );
     // list of the user-specific database field names
+    const array FLD_NAMES_USR_ALL = array(
+        self::FLD_NAME,
+        sql_db::FLD_DESCRIPTION
+    );
+    // list of the user-specific database field names
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
         self::FLD_STYLE,
