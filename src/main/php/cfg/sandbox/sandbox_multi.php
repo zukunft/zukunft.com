@@ -1028,6 +1028,7 @@ class sandbox_multi extends db_object_multi_user
     function diff_msg(sandbox_multi|db_object_multi $obj): user_message
     {
         $msg = parent::diff_msg($obj);
+        $lib = new library();
         // TODO Prio 2 check owner is sometimes null on load?
         if ($this->owner_id() != $obj->owner_id()
             and $this->owner() != null
@@ -1035,6 +1036,7 @@ class sandbox_multi extends db_object_multi_user
             $msg->add(msg_id::DIFF_OWNER, [
                 msg_id::VAR_USER => $obj->owner()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->owner()->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
@@ -1042,6 +1044,7 @@ class sandbox_multi extends db_object_multi_user
             $msg->add(msg_id::DIFF_SHARE, [
                 msg_id::VAR_SHARE => $obj->share_type_name(),
                 msg_id::VAR_SHARE_CHK => $this->share_type_name(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
@@ -1049,6 +1052,7 @@ class sandbox_multi extends db_object_multi_user
             $msg->add(msg_id::DIFF_PROTECTION, [
                 msg_id::VAR_PROTECT => $obj->protection_type_name(),
                 msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
@@ -1056,6 +1060,7 @@ class sandbox_multi extends db_object_multi_user
             $msg->add(msg_id::DIFF_EXCLUSION, [
                 msg_id::VAR_EXCLUDE => $obj->is_excluded(),
                 msg_id::VAR_EXCLUDE_CHK => $this->is_excluded(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
@@ -1787,23 +1792,25 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
         user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par
+    ): sql_par|null
     {
         // clone the parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::INSERT);
         // create an empty sandbox object but of the same type and with the same user to detect the fields that should be written
-        $db_row = $this->cloned(null);
+        $sbx_empty = $this->cloned(null);
+        // TODO Prio 1 activate next line for a new sandbox object the owner should be set, so remove the user id to force writing the user
+        $sbx_empty->set_user($this->get_user()->clone_reset());
         // get a list of all fields that could potentially be updated
         $all_fields = $this->db_fields_all();
-        return $this->sql_write($sc, $db_row, $all_fields, $usr_msg, $sc_par_lst_used);
+        return $this->sql_write($sc, $sbx_empty, $all_fields, $usr_msg, $sc_par_lst_used);
     }
 
 
@@ -3482,7 +3489,6 @@ class sandbox_multi extends db_object_multi_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_multi|null $db_obj the user sandbox object with the database values before the update or the standard db_row
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param array $fld_lst_all list of field names of the given object
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -3663,6 +3669,12 @@ class sandbox_multi extends db_object_multi_user
                 $fvt_lst_write->add($fvt_lst_all->get($fld, $usr_msg));
             }
         }
+        // add the changed group fields
+        if ($this::class == group::class) {
+            foreach ($fld_lst_ex_id as $fld) {
+                $fvt_lst_write->add($fvt_lst_all->get($fld, $usr_msg));
+            }
+        }
         if (!$sc_par_lst->is_standard()) {
             if ($fvt_lst_all->has_name(user_db::FLD_ID) and $sc_par_lst->is_insert()) {
                 $fvt_lst_write->add($fvt_lst_all->get(user_db::FLD_ID, $usr_msg));
@@ -3723,7 +3735,8 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * dummy function to save all updated word fields, which is always overwritten by the child class
+     * dummy function to get the list of all id fields
+     * to be overwritten by the child objects
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the id fields, values and types for this value or result object
      */
@@ -4508,7 +4521,7 @@ class sandbox_multi extends db_object_multi_user
     function value_type(): sql_type
     {
         log_err('dummy value_type() function called in sandbox_multi, which should never happen');
-        return sql_type::MAIN;
+        return sql_type::NUMERIC;
     }
 
     public function sql_field_type(): sql_field_type
@@ -4538,6 +4551,29 @@ class sandbox_multi extends db_object_multi_user
             return sql_field_type::TEXT;
         } else {
             return sql_field_type::KEY_512;
+        }
+    }
+
+    /**
+     * @param bool $usr_tbl true if also the user group id field should be returned
+     * @param bool $usr_only true if only the user table field should be returned
+     * @return string|array with the id field for a none prime value
+     */
+    function id_field_group(bool $usr_tbl = false, bool $usr_only = false): string|array
+    {
+        $lib = new library();
+        $fld_name = $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+        if (!$usr_tbl) {
+            if ($usr_only) {
+                return sql_db::TBL_USER_PREFIX . $fld_name;
+            } else {
+                return $fld_name;
+            }
+        } else {
+            $id_fields = array();
+            $id_fields[] = $fld_name;
+            $id_fields[] = sql_db::TBL_USER_PREFIX . $fld_name;
+            return $id_fields;
         }
     }
 

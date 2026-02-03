@@ -256,14 +256,16 @@ class group extends sandbox_named
      */
     function api_array(): array
     {
-        //$vars = array();
-        $phr_lst_vars = array();
-        //$vars[json_fields::ID] = $this->id();
-        foreach ($this->lst as $phr) {
-            $phr_lst_vars[] = $phr->api_array();
+        $vars = parent::api_array();
+        $vars[json_fields::ID] = $this->id();
+        $vars[json_fields::PHRASES] = $this->phr_lst()->api_array();
+        if ($this->description != null) {
+            $vars[json_fields::NAME] = $this->name;
         }
-        //$vars[json_fields::PHRASES] = $phr_lst_vars;
-        return $phr_lst_vars;
+        if ($this->description != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

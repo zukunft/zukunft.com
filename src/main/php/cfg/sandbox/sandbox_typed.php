@@ -418,7 +418,7 @@ class sandbox_typed extends sandbox_named
      * check if the typed object in the database needs to be updated
      *
      * @param sandbox_typed|CombineObject|IdObject $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the database
+     * @return bool true if this word has info that should be saved in the database
      */
     function needs_db_update(sandbox_typed|CombineObject|IdObject $db_obj): bool
     {

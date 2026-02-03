@@ -1268,7 +1268,7 @@ class component extends sandbox_code_id
      * is expected to be similar to the diff_msg function
      *
      * @param component|CombineObject|IdObject $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the database
+     * @return bool true if this word has info that should be saved in the database
      */
     function needs_db_update(component|CombineObject|IdObject $db_obj): bool
     {

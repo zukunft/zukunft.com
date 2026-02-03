@@ -1863,7 +1863,8 @@ class sql_creator
             or $class == value_time::class
             or $class == value_text::class
             or $class == value_geo::class
-            or $class == value_time_series::class) {
+            or $class == value_time_series::class
+            or $class == group::class) {
             return true;
         } else {
             return false;

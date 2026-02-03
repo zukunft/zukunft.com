@@ -2374,11 +2374,11 @@ class test_base
     /**
      * check the object loading by id
      *
-     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
      * @param int|string $id the id of the object if not 1
      * @return bool the load object to use it for more tests
      */
-    function assert_load_by_id(sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
+    function assert_load_by_id(sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
     {
         // check the loading via id and check if the id has been mapped
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
@@ -3826,10 +3826,10 @@ class test_base
 
     /**
      * check if all mandatory vars of the given object are set so that it can be saved in the database
-     * @param sandbox_named|sandbox_link|sandbox_value|verb|user $sbx the object filled with all vars
+     * @param sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx the object filled with all vars
      * @return bool true if the test was successful
      */
-    function assert_db_ready(sandbox_named|sandbox_link|sandbox_value|verb|user $sbx): bool
+    function assert_db_ready(sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx): bool
     {
         $usr_msg = new user_message();
         $lib = new library();
@@ -3840,10 +3840,10 @@ class test_base
 
     /**
      * check if an error message is added to the user_message if a mandatory vars of the given object is missing
-     * @param sandbox_named|sandbox_link|sandbox_value|verb|user $sbx the object filled with some vars
+     * @param sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx the object filled with some vars
      * @return bool true if the test was successful
      */
-    function assert_not_db_ready(sandbox_named|sandbox_link|sandbox_value|verb|user $sbx): bool
+    function assert_not_db_ready(sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx): bool
     {
         $usr_msg = new user_message();
         $lib = new library();
@@ -3857,13 +3857,13 @@ class test_base
     /**
      * check if the filling up an almost empty object matches the filled object
      * using the api json and the no_diff function
-     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $empty the object with almost all vars null
-     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $filled the object filled with all vars
+     * @param sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $empty the object with almost all vars null
+     * @param sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $filled the object filled with all vars
      * @return bool true if the api message matches
      */
     function assert_fill(
-        sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $empty,
-        sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $filled
+        sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $empty,
+        sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $filled
     ): bool
     {
 

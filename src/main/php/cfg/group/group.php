@@ -75,6 +75,10 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
@@ -103,6 +107,10 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -1347,6 +1355,103 @@ class group extends sandbox_multi
 
 
     /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    {
+        $vars = parent::export_json($exp_typ, $do_load);
+
+        if ($do_load) {
+            $this->load_phrases();
+        }
+
+        // add the words
+        $wrd_lst = array();
+        if (!$this->phrase_list()->is_empty()) {
+            if (!$this->phrase_list()->words()->is_empty()) {
+                foreach ($this->phrase_list()->words()->lst() as $wrd) {
+                    $wrd_lst[] = $wrd->name();
+                }
+                if (count($wrd_lst) > 0) {
+                    $vars[json_fields::WORDS] = $wrd_lst;
+                }
+            }
+        }
+
+        // add the triples
+        $triples_lst = array();
+        if (!$this->phrase_list()->is_empty()) {
+            if (!$this->phrase_list()->triples()->is_empty()) {
+                foreach ($this->phrase_list()->triples()->lst() as $trp) {
+                    $triples_lst[] = $trp->name();
+                }
+                if (count($triples_lst) > 0) {
+                    $vars[json_fields::TRIPLES] = $triples_lst;
+                }
+            }
+        }
+
+        $vars[json_fields::NAME] = $this->name;
+        $vars[json_fields::DESCRIPTION] = $this->description;
+
+        return $vars;
+    }
+
+    /**
+     * set the vars of this value object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
+     */
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        if ($dto == null) {
+            $dto = new data_object($this->get_user());
+        }
+
+        parent::import_mapper($in_ex_json, $msg, $dto);;
+
+        $phr_lst = new phrase_list($this->get_user());
+
+        if (key_exists(json_fields::WORDS, $in_ex_json)) {
+            $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $msg, $dto);
+        }
+
+        if (key_exists(json_fields::TRIPLES, $in_ex_json)) {
+            $phr_lst->import_mapper($in_ex_json[json_fields::TRIPLES], $msg, $dto);
+        }
+
+        if ($msg->is_ok()) {
+            $phr_grp = $phr_lst->get_grp_id(false);
+            $this->set_id($phr_grp->id());
+            $this->set_phrase_list($phr_lst);
+        }
+
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->name = $in_ex_json[json_fields::NAME];
+        }
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            $this->description = $in_ex_json[json_fields::DESCRIPTION];
+        }
+
+        return $msg->is_ok();
+    }
+
+
+    /*
      * modify
      */
 
@@ -1424,6 +1529,30 @@ class group extends sandbox_multi
 
 
     /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     *
+     * @param group|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(group|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->name() != null) {
+            $this->set_name($obj->name());
+        }
+        if ($obj->get_description() != null) {
+            $this->set_description($obj->get_description());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * save
      */
 
@@ -1482,7 +1611,9 @@ class group extends sandbox_multi
 
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-        if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+        // TODO Prio 1 set the user table based on the exiting db rows link the sandbox add
+        $usr_tbl = false;
+        if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg, $usr_tbl, true)) {
             $this->id = $usr_msg->get_row_id();
         }
 
@@ -1713,34 +1844,25 @@ class group extends sandbox_multi
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
         user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par
+    ): sql_par|null
     {
         // clone the sql parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::INSERT);
-        $qp = $this->sql_common($sc, $sc_par_lst_used);
-        // overwrite the standard auto increase id field name
-        $sc->set_id_field($this->id_field());
-        //$qp->name .= sql::file_sep . sql::file_insert;
-        $sc->set_name($qp->name);
-        $fvt_lst = new sql_par_field_list();
-        $fvt_lst->set([
-            [group::FLD_ID, $this->id(), $sc->get_sql_par_type($this->id())],
-            [user_db::FLD_ID, $this->get_user()->id(), sql_par_type::INT],
-            [self::FLD_NAME, $this->name, sql_par_type::TEXT],
-            [sql_db::FLD_DESCRIPTION, $this->description, sql_par_type::TEXT]
-        ]);
-        $qp->sql = $sc->create_sql_insert($fvt_lst);
-        $qp->par = $fvt_lst->values();
-
-        return $qp;
+        // fields and values that the word has additional to the standard named user sandbox object
+        $grp_empty = $this->clone_reset();
+        // for a new sandbox object the owner should be set, so remove the user id to force writing the user
+        $grp_empty->set_user($this->get_user()->clone_reset());
+        // get the list of all fields that can be changed by the user
+        $all_fields = $this->db_fields_all();
+        return $this->sql_write($sc, $grp_empty, $all_fields, $usr_msg, $sc_par_lst_used);
     }
 
     /**
@@ -1763,38 +1885,30 @@ class group extends sandbox_multi
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::UPDATE);
-        $lib = new library();
-        $qp = $this->sql_common($sc, $sc_par_lst_used);
-        $fld_val_typ_lst = $this->db_changed($db_grp);
-        if (count($fld_val_typ_lst) == 0) {
-            $fld_val_typ_lst = [
-                [self::FLD_NAME, $this->name, self::FLD_NAME_SQL_TYP],
-                [sql_db::FLD_DESCRIPTION, $this->description, sql_db::FLD_DESCRIPTION_SQL_TYP]
-            ];
-        }
-        $fields = $sc->get_fields($fld_val_typ_lst);
-        $fld_name = implode(sql::NAME_SEP, $lib->sql_name_shorten($fields));
-        $qp->name .= sql::NAME_SEP . $fld_name;
-        $sc->set_name($qp->name);
-        $fvt_lst = new sql_par_field_list();
-        $fvt_lst->set($fld_val_typ_lst);
-        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
-        $values = $sc->get_values($fld_val_typ_lst);
-        $values[] = $this->id();
-        $qp->par = $values;
-        return $qp;
+        // TODO Prio 1 move db_fields_all to sql_write
+        // get the list of all fields that can be changed by the user
+        $all_fields = $this->db_fields_all();
+        return $this->sql_write($sc, $db_grp, $all_fields, $usr_msg, $sc_par_lst_used);
     }
 
     /**
      * the common part of the sql statement creation for insert and update statements
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param string $ext query name extension to make the query name unique based on the changed fields
+     * @param string $id_ext query name extension to make the query name unique based on the table type
      * @return sql_par the common part for insert and update sql statements
      */
-    protected function sql_common(sql_creator $sc, sql_type_list $sc_par_lst): sql_par
+    protected function sql_common(
+        sql_creator $sc,
+        sql_type_list $sc_par_lst,
+        string $ext = '',
+        string $id_ext = ''
+    ): sql_par
     {
         $sc_par_lst->add($this->table_type());
         $qp = new sql_par($this::class, $sc_par_lst);
+        $qp->name .= $ext;
         $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
         return $qp;
@@ -1812,31 +1926,108 @@ class group extends sandbox_multi
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return array_merge([self::FLD_NAME, sql_db::FLD_DESCRIPTION]);
+        return array_merge([self::FLD_NAME, user_db::FLD_ID, sql_db::FLD_DESCRIPTION]);
     }
 
     /**
      * get a list of database fields that have been updated
      *
-     * @param group $grp the compare value to detect the changed fields
-     * @return array list of the database field names that have been updated
+     * @param group|sandbox_multi $sbx the compare value to detect the changed fields
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list of the database fields with the parameters that have been updated
      */
-    function db_changed(group $grp): array
+    function db_fields_changed(
+        group|sandbox_multi $sbx,
+        user_message        $usr_msg,
+        sql_type_list       $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
     {
-        $lst = [];
-        if ($grp->name() <> $this->name()) {
-            $lst[] = [
+        global $sys;
+
+        $sc = new sql_creator();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = new sql_par_field_list();
+
+        if ($sbx->name() <> $this->name()) {
+            if ($sc_par_lst->incl_log()) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME,
+                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_NAME),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
                 self::FLD_NAME,
                 $this->name(),
                 self::FLD_NAME_SQL_TYP
-            ];
+            );
         }
-        if ($grp->description <> $this->description) {
-            $lst[] = [
+
+        if ($sc_par_lst->is_insert()) {
+            $lst->add_user($this, $sbx, $sc_par_lst->incl_log(), $table_id);
+        }
+
+        if ($sbx->description <> $this->description) {
+            if ($sc_par_lst->incl_log()) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
                 sql_db::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP
-            ];
+            );
+        }
+        return $lst;
+    }
+
+
+    /*
+     * sql helper
+     */
+
+    /**
+     * the value type is irrelevant for the group so that function returns the default type
+     * this might be replaced be an if statement in the calling function
+     * @return sql_type
+     */
+    function value_type(): sql_type
+    {
+        return sql_type::NUMERIC;
+    }
+
+    /**
+     * get the id fields, values and types for this value or result object
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the id fields, values and types for this value or result object
+     */
+    function id_fvt_lst(sql_type_list $sc_par_lst = new sql_type_list()): sql_par_field_list
+    {
+        $lst = new sql_par_field_list();
+        if ($this->is_prime()) {
+            $lst->add_field(
+                $this->id_field_group(),
+                $this->id(),
+                sql_field_type::KEY_INT
+            );
+        } elseif ($this->is_big()) {
+            $lst->add_field(
+                $this->id_field_group(),
+                $this->id(),
+                sql_field_type::TEXT
+            );
+        } else {
+            $lst->add_field(
+                $this->id_field_group(),
+                $this->id(),
+                sql_field_type::KEY_512
+            );
         }
         return $lst;
     }

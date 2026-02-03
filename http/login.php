@@ -36,6 +36,8 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -49,6 +51,7 @@ include_once paths::MODEL_USER . 'user_db.php';
 $app = new frontend();
 $db_con = $app->start("login", "center_form");
 $html = new html_base();
+$msg_txt = '';
 
 if ($db_con->is_open()) {
 
@@ -101,7 +104,7 @@ if ($db_con->is_open()) {
             } else {
                 $url = $html->url(rest_ctrl::LOGIN_RESET);
                 $ref = $html->ref($url, 'Forgot password?', 'Send a new password via email.');
-                $msg .= $html->dsp_err('Login failed. ' . $ref);
+                $msg_txt .= $html->dsp_err('Login failed. ' . $ref);
             }
         }
     }
@@ -117,7 +120,7 @@ if ($db_con->is_open()) {
         $result .= '  password:<br> ';
         $result .= '  <input type="' . html_base::INPUT_PASSWORD . '" name="password"><br><br> ';
         $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '"> ';
-        $result .= $msg;
+        $result .= $msg_txt;
         $result .= '  <input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Login"> ';
         $result .= '</form>   ';
         $result .= '</div>   ';

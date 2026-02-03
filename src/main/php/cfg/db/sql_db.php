@@ -4410,7 +4410,7 @@ class sql_db
      * @param string $description for the user to identify the statement
      * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
      * @param bool $usr_tbl true if a row in the user table is added which implies that no new id is returned
-     * @param bool $is_val if true the row to be added to the database is a value or result and is using the group id, so no database id needs to be returned
+     * @param bool $is_val if true, the row to be added to the database is a value, result or group and is using the group id, so no database id needs to be returned
      * @return true if the database has been updated
      */
     function insert(

@@ -56,7 +56,8 @@ $db_con = $app->start("import");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
+$msg = new user_message(); // to collect all messages that should be shown to the user immediately
+$msg_txt = '';
 
 // load the session user parameters
 $usr = new user;
@@ -86,38 +87,38 @@ if ($usr->id() > 0) {
     if (isset($_POST["submit"])) {
         $uploadOk = True;
         if ($fileName <> '') {
-            $msg .= 'Uploading of ' . $fileName;
+            $msg_txt .= 'Uploading of ' . $fileName;
         }
         $imageFileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
         // Check file size if above 10 MB, which might take long
         if ($_FILES["fileToUpload"]["size"] > 11000000) {
-            if ($msg == '') {
-                $msg .= "Sorry, ";
+            if ($msg_txt == '') {
+                $msg_txt .= "Sorry, ";
             } else {
-                $msg .= ", but ";
+                $msg_txt .= ", but ";
             }
-            $msg .= "your file is larger than the limit of 10MB per file";
+            $msg_txt .= "your file is larger than the limit of 10MB per file";
             $uploadOk = False;
         }
         if ($_FILES["fileToUpload"]["size"] <= 0) {
-            if ($msg == '') {
-                $msg .= "Sorry, ";
+            if ($msg_txt == '') {
+                $msg_txt .= "Sorry, ";
             } else {
-                $msg .= " and ";
+                $msg_txt .= " and ";
             }
-            $msg .= "your file is empty";
+            $msg_txt .= "your file is empty";
             $uploadOk = False;
         }
 
         // Allow certain file formats
         if ($imageFileType != "json") {
-            if ($msg == '') {
-                $msg .= "Sorry, ";
+            if ($msg_txt == '') {
+                $msg_txt .= "Sorry, ";
             } else {
-                $msg .= " and ";
+                $msg_txt .= " and ";
             }
-            $msg .= "only JSON files are allowed at the moment";
+            $msg_txt .= "only JSON files are allowed at the moment";
             $uploadOk = False;
         }
 
@@ -131,7 +132,7 @@ if ($usr->id() > 0) {
                 $import = new import;
                 $import_result = $import->put($json_array, $usr);
                 if ($import_result->is_ok()) {
-                    $msg .= ' done ('
+                    $msg_txt .= ' done ('
                         . $import->words_done . ' words, '
                         . $import->verbs_done . ' verbs, '
                         . $import->triples_done . ' triples, '
@@ -145,26 +146,26 @@ if ($usr->id() > 0) {
                         . $import->calc_validations_done . ' results validated, '
                         . $import->view_validations_done . ' views validated)';
                     if ($import->users_done > 0) {
-                        $msg .= ' ... and ' . $import->users_done . ' $users';
+                        $msg_txt .= ' ... and ' . $import->users_done . ' $users';
                     }
                     if ($import->system_done > 0) {
-                        $msg .= ' ... and ' . $import->system_done . ' $system objects';
+                        $msg_txt .= ' ... and ' . $import->system_done . ' $system objects';
                     }
                 } else {
-                    $msg .= ' failed because ' . $import_result->all_message_text() . '.';
+                    $msg_txt .= ' failed because ' . $import_result->all_message_text() . '.';
                 }
             } else {
-                if ($msg == '') {
-                    $msg .= "Sorry, ";
+                if ($msg_txt == '') {
+                    $msg_txt .= "Sorry, ";
                 } else {
-                    $msg .= " and ";
+                    $msg_txt .= " and ";
                 }
-                $msg .= "there was an error uploading your file with a size of " . $_FILES["fileToUpload"]["size"] . ' bytes';
+                $msg_txt .= "there was an error uploading your file with a size of " . $_FILES["fileToUpload"]["size"] . ' bytes';
             }
         }
     }
-    if ($msg <> '') {
-        $msg .= ".";
+    if ($msg_txt <> '') {
+        $msg_txt .= ".";
     }
 
     // if nothing yet done display the edit view (and any message on the top)
@@ -174,7 +175,7 @@ if ($usr->id() > 0) {
         $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
-        $result .= $html->dsp_err($usr_msg->all_message_text());
+        $result .= $html->dsp_err($msg->all_message_text());
 
         $result .= $html->dsp_form_file_select();
         // $result .= dsp_btn_text ('Start import', '/http/import.php?confirm=1&filepath='.);

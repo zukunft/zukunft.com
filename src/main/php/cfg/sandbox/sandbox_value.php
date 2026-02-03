@@ -1381,29 +1381,6 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * @param bool $usr_tbl true if also the user group id field should be returned
-     * @param bool $usr_only true if only the user table field should be returned
-     * @return string|array with the id field for a none prime value
-     */
-    function id_field_group(bool $usr_tbl = false, bool $usr_only = false): string|array
-    {
-        $lib = new library();
-        $fld_name = $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
-        if (!$usr_tbl) {
-            if ($usr_only) {
-                return sql_db::TBL_USER_PREFIX . $fld_name;
-            } else {
-                return $fld_name;
-            }
-        } else {
-            $id_fields = array();
-            $id_fields[] = $fld_name;
-            $id_fields[] = sql_db::TBL_USER_PREFIX . $fld_name;
-            return $id_fields;
-        }
-    }
-
-    /**
      * set the id field based on the given table type
      * used for list load queries where the id if not yet set
      * @param sql_type $tbl_typ the table type that should be used for the id field selection
@@ -1696,7 +1673,7 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * actually update a field in the main database record or the user sandbox
+     * to actually update a field in the main database record or the user sandbox,
      * the usr id is taken into account in sql_db->update (maybe move outside)
      *
      * for values the log should show to the user just which value has been changed

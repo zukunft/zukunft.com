@@ -806,10 +806,12 @@ class word extends sandbox_code_id
     function diff_msg(word|CombineObject|db_object_seq_id $obj): user_message
     {
         $msg = parent::diff_msg($obj);
+        $lib = new library();
         if ($this->id() != $obj->id()) {
             $msg->add(msg_id::DIFF_ID, [
                 msg_id::VAR_ID => $obj->dsp_id(),
                 msg_id::VAR_ID_CHK => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_WORD_NAME => $this->dsp_id(),
             ]);
         }

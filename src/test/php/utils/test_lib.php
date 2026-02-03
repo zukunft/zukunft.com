@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -267,11 +268,11 @@ class test_lib
      * TODO add missing frontend objects like
      * TODO Prio 0 easy add missing mapping error log message to all other object mapper
      * get the frontend object related to the given backend object
-     * @param db_object_seq_id|sandbox_value|list_db_read|type_list $dbo the given backend object
+     * @param db_object_seq_id|sandbox_multi|list_db_read|type_list $dbo the given backend object
      * @return false|db_object_ui|list_ui the corresponding frontend object
      */
     public function obj_to_ui_obj(
-        db_object_seq_id|sandbox_value|list_db_read|type_list $dbo
+        db_object_seq_id|sandbox_multi|list_db_read|type_list $dbo
     ): false|db_object_ui|list_ui
     {
         $result =  match ($dbo::class) {
