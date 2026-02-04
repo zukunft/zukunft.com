@@ -95,6 +95,7 @@ include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::MODEL_FORMULA . 'figure.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_multi.php';
@@ -156,6 +157,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -2176,7 +2178,7 @@ class value_base extends sandbox_value
                 $ext = $this->grp()->table_extension();
                 $db_con->set_class(self::class, false, $ext);
                 $result = $db_con->update_old($this->id(),
-                    array(group::FLD_ID),
+                    array(group_db::FLD_ID),
                     array($this->grp()->id()));
             }
         }

@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::SERVICE . 'config.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
@@ -58,6 +59,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
@@ -353,7 +355,7 @@ class db_check
 
         $result .= $db_con->change_table_name('results', result_two::class);
         $result .= $db_con->change_table_name('user_phrase_groups', 'user_' . group::class);
-        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'phrase_group_id', group::FLD_ID);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'phrase_group_id', group_db::FLD_ID);
 
         // TODO set default profile_id in users to 1
         if ($db_con->db_type == sql_db::MYSQL) {

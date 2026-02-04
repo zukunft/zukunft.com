@@ -135,47 +135,8 @@ class group extends sandbox_multi
      * db const
      */
 
-    // object specific database and JSON object field names
-    // *_COM: the description of the field
-    // *_SQL_TYP is the sql data type used for the field
-    const string FLD_ID_COM = 'the 64-bit prime index to find the -=class=-';
-    const string FLD_ID_COM_USER = 'the 64-bit prime index to find the user -=class=-';
-    const string FLD_ID = 'group_id';
-    const string FLD_NAME_COM = 'the user-specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
-    const string FLD_NAME = 'group_name';
-    const sql_field_type FLD_NAME_SQL_TYP = sql_field_type::TEXT;
-
-    // comments used for the database creation
-    const string TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
-    const string TBL_COMMENT_PRIME = 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
-    const string TBL_COMMENT_INDEX = 'to add a user given name using a 64-bit group id index for one 32-bit and two 16-bit phrase ids including the order';
-    const string TBL_COMMENT_BIG = 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
-    const string TBL_COMMENT_INDEX_BIG = 'to add a user given name using a 64-bit group id index for one 48-bit and one 16-bit phrase id including the order';
-
-    // list of fields with parameters used for the database creation
-    // the fields that can be changed by the user
-    const array FLD_KEY_PRIME = array(
-        [group::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM],
-    );
-    const array FLD_KEY_PRIME_USER = array(
-        [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM_USER],
-    );
-    const array FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_DESCRIPTION_COM],
-    );
-
-    // all database field names excluding the id
-    const array FLD_NAMES = array(
-        sql_db::FLD_DESCRIPTION
-    );
-    // list of fixed tables where a group name overwrite might be stored
-    // TODO check if this can be used somewhere else means if there are unwanted repeating
-    const array TBL_LIST = array(
-        [sql_type::MOST],
-        [sql_type::PRIME],
-        [sql_type::BIG]
-    );
+    // forward the const to enable usage of $this::CONST_NAME
+    const array FLD_NAMES = group_db::FLD_NAMES;
 
 
     /*
@@ -234,16 +195,16 @@ class group extends sandbox_multi
         $result = false;
         if ($db_row != null) {
             $this->set_id(0);
-            if (array_key_exists(self::FLD_ID, $db_row)) {
-                $this->set_id($db_row[self::FLD_ID]);
+            if (array_key_exists(group_db::FLD_ID, $db_row)) {
+                $this->set_id($db_row[group_db::FLD_ID]);
                 $grp_id = new group_id();
-                $phr_ids = new phr_ids($grp_id->get_array($db_row[self::FLD_ID]));
+                $phr_ids = new phr_ids($grp_id->get_array($db_row[group_db::FLD_ID]));
                 $this->load_lst($phr_ids);
                 $result = true;
             }
         }
         if ($result) {
-            $this->name = $db_row[self::FLD_NAME];
+            $this->name = $db_row[group_db::FLD_NAME];
             $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->is_saved = true;
         }
@@ -484,9 +445,9 @@ class group extends sandbox_multi
             }
         } else {
             if ($this->is_big()) {
-                $fvt_lst->add_field(group::FLD_ID, $this->id(), sql_field_type::TEXT);
+                $fvt_lst->add_field(group_db::FLD_ID, $this->id(), sql_field_type::TEXT);
             } else {
-                $fvt_lst->add_field(group::FLD_ID, $this->id(), sql_field_type::KEY_512);
+                $fvt_lst->add_field(group_db::FLD_ID, $this->id(), sql_field_type::KEY_512);
             }
         }
         return $fvt_lst;
@@ -584,7 +545,7 @@ class group extends sandbox_multi
             msg_id::VAR_FUNCTION_NAME => 'name_field',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return self::FLD_NAME;
+        return group_db::FLD_NAME;
     }
 
     /**
@@ -681,12 +642,12 @@ class group extends sandbox_multi
         $sql_foreign = $sc->sql_separator();
         $sql_truncate = '';
         $sql_lst = [$sql, $sql_index, $sql_foreign, $sql_truncate];
-        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::MOST]), sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::MOST, sql_type::USER]), sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::PRIME]), group::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::PRIME, sql_type::USER]), group::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::BIG]), sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
-        return $this->sql_one_tbl($sc, new sql_type_list([sql_type::BIG, sql_type::USER]), sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::MOST]), sandbox_value::FLD_KEY, group_db::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::MOST, sql_type::USER]), sandbox_value::FLD_KEY_USER, group_db::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::PRIME]), group_db::FLD_KEY_PRIME, group_db::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::PRIME, sql_type::USER]), group_db::FLD_KEY_PRIME_USER, group_db::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::BIG]), sandbox_value::FLD_KEY_BIG, group_db::TBL_COMMENT_BIG, $sql_lst);
+        return $this->sql_one_tbl($sc, new sql_type_list([sql_type::BIG, sql_type::USER]), sandbox_value::FLD_KEY_BIG_USER, group_db::TBL_COMMENT_BIG, $sql_lst);
     }
 
     /**
@@ -707,10 +668,10 @@ class group extends sandbox_multi
     ): array
     {
         $sc->set_class($this::class, $sc_par_lst);
-        $fields = array_merge($key_fld, sandbox_value::FLD_ALL_OWNER, $this::FLD_LST_USER_CAN_CHANGE);
+        $fields = array_merge($key_fld, sandbox_value::FLD_ALL_OWNER, group_db::FLD_LST_USER_CAN_CHANGE);
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         if ($usr_tbl) {
-            $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_USER_CAN_CHANGE);
+            $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, group_db::FLD_LST_USER_CAN_CHANGE);
         }
         $sql_lst[0] .= parent::sql_table_create($sc, $sc_par_lst, $fields, $tbl_comment);
         $sql_lst[1] .= parent::sql_index_create($sc, $sc_par_lst, $fields);
@@ -880,7 +841,7 @@ class group extends sandbox_multi
     function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
-        foreach (group::TBL_LIST as $tbl_typ) {
+        foreach (group_db::TBL_LIST as $tbl_typ) {
             $qp_tbl = $this->load_sql_by_name_single($sc, $name, $tbl_typ);
             if ($sc->db_type() != sql_db::MYSQL) {
                 $qp->merge($qp_tbl, true);
@@ -915,7 +876,7 @@ class group extends sandbox_multi
     {
         $sc_par_lst = new sql_type_list($sc_par_arr);
         $qp = $this->load_sql_multi($sc, sql_db::FLD_NAME, $this::class, $sc_par_lst);
-        $sc->add_where(self::FLD_NAME, $name);
+        $sc->add_where(group_db::FLD_NAME, $name);
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
@@ -944,7 +905,7 @@ class group extends sandbox_multi
     function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
     {
         $fld_lst = array_merge(
-            $this::FLD_NAMES,
+            group_db::FLD_NAMES,
             array(user_db::FLD_ID)
         );
         return parent::load_sql_standard($sc, $fld_lst);
@@ -964,7 +925,7 @@ class group extends sandbox_multi
         $qp->name .= sql_db::FLD_NAME;
 
         $fld_lst = array_merge(
-            $this::FLD_NAMES,
+            group_db::FLD_NAMES,
             array(user_db::FLD_ID)
         );
 
@@ -999,7 +960,7 @@ class group extends sandbox_multi
         $qp->name .= $this->load_sql_name_ext();
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
-        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_fields(group_db::FLD_NAMES);
 
         return $this->load_sql_select_qp($sc, $qp);
     }
@@ -1059,12 +1020,12 @@ class group extends sandbox_multi
     private function load_sql_select_qp(sql_creator $sc, sql_par $qp): sql_par
     {
         if ($this->id() != 0) {
-            $sc->add_where(self::FLD_ID, $this->id());
+            $sc->add_where(group_db::FLD_ID, $this->id());
         } elseif (!$this->phrase_list()->is_empty()) {
             $this->set_id_from_phrase_list($this->phrase_list());
-            $sc->add_where(self::FLD_ID, $this->id());
+            $sc->add_where(group_db::FLD_ID, $this->id());
         } elseif ($this->name != '') {
-            $sc->add_where(self::FLD_NAME, $this->name, sql_par_type::TEXT);
+            $sc->add_where(group_db::FLD_NAME, $this->name, sql_par_type::TEXT);
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1333,7 +1294,7 @@ class group extends sandbox_multi
                 $db_con->usr_id = $this->get_user()->id();
                 $db_grp = $db_con->get1_old($sql);
                 if ($db_grp != null) {
-                    $this->id = $db_grp[group::FLD_ID];
+                    $this->id = $db_grp[group_db::FLD_ID];
                     if ($this->id() > 0) {
                         log_debug('group->get_by_wrd_lst got id ' . $this->id());
                         $result = $this->load();
@@ -1926,7 +1887,7 @@ class group extends sandbox_multi
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return array_merge([self::FLD_NAME, user_db::FLD_ID, sql_db::FLD_DESCRIPTION]);
+        return array_merge([group_db::FLD_NAME, user_db::FLD_ID, sql_db::FLD_DESCRIPTION]);
     }
 
     /**
@@ -1953,15 +1914,15 @@ class group extends sandbox_multi
         if ($sbx->name() <> $this->name()) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME,
-                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_NAME),
+                    sql::FLD_LOG_FIELD_PREFIX . group_db::FLD_NAME,
+                    $sys->typ_lst->cng_fld->id($table_id . group_db::FLD_NAME),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_NAME,
+                group_db::FLD_NAME,
                 $this->name(),
-                self::FLD_NAME_SQL_TYP
+                group_db::FLD_NAME_SQL_TYP
             );
         }
 
@@ -2055,7 +2016,7 @@ class group extends sandbox_multi
         $db_con->set_name($qp->name);
         $db_con->set_fields(array(phrase::FLD_ID));
         $db_con->add_par(sql_par_type::INT, $this->id());
-        $qp->sql = $db_con->select_by_field(group::FLD_ID);
+        $qp->sql = $db_con->select_by_field(group_db::FLD_ID);
         $qp->par = $db_con->get_par();
         $lnk_id_lst = $db_con->get($qp);
         foreach ($lnk_id_lst as $db_row) {

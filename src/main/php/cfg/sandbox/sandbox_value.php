@@ -50,6 +50,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
@@ -174,10 +176,10 @@ class sandbox_value extends sandbox_multi
     // field lists for the table creation
     // the group is not a foreign key, because if the name is not changed by the user an entry in the group table is not needed
     const array FLD_KEY = array(
-        [group::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the -=class=-'],
+        [group_db::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the -=class=-'],
     );
     const array FLD_KEY_USER = array(
-        [group::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the user -=class=-'],
+        [group_db::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the user -=class=-'],
     );
     // TODO use not null for all keys if a separate table for each number of phrase is implemented
     // TODO FLD_KEY_PRIME and FLD_KEY_PRIME_USER are not the same only if just one phrase is the key
@@ -194,10 +196,10 @@ class sandbox_value extends sandbox_multi
         [sandbox_value::FLD_ID_PREFIX . '4', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
     );
     const array FLD_KEY_BIG = array(
-        [group::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, '', '', 'the variable text index to find -=class=-'],
+        [group_db::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, '', '', 'the variable text index to find -=class=-'],
     );
     const array FLD_KEY_BIG_USER = array(
-        [group::FLD_ID, sql_field_type::KEY_PART_TEXT, sql_field_default::NOT_NULL, '', '', 'the text index for more than 16 phrases to find the -=class=-'],
+        [group_db::FLD_ID, sql_field_type::KEY_PART_TEXT, sql_field_default::NOT_NULL, '', '', 'the text index for more than 16 phrases to find the -=class=-'],
     );
     const array FLD_ALL_VALUE = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', 'the numeric value given by the user'],
@@ -1959,7 +1961,7 @@ class sandbox_value extends sandbox_multi
         );
 
         // get the fields for the value log entry
-        $fvt_lst_log->add_field(group::FLD_ID, $this->grp()->id);
+        $fvt_lst_log->add_field(group_db::FLD_ID, $this->grp()->id);
 
         // for standard prime values add the user only for the log
         if ($sc_par_lst->is_standard() and $sc_par_lst->is_prime()) {
@@ -2067,7 +2069,7 @@ class sandbox_value extends sandbox_multi
         if ($this->is_prime() or $this->is_main()) {
             $fields = $this->grp()->id_names();
         } else {
-            $fields = [group::FLD_ID];
+            $fields = [group_db::FLD_ID];
         }
         if (!$sc_par_lst->is_standard()) {
             $fields[] = user_db::FLD_ID;
@@ -2297,7 +2299,7 @@ class sandbox_value extends sandbox_multi
     {
         $result = [];
         if ($sbx->grp_id() <> $this->grp_id()) {
-            $result[] = group::FLD_ID;
+            $result[] = group_db::FLD_ID;
         }
         if ($sbx->number() <> $this->number()) {
             $result[] = value_db::FLD_VALUE;

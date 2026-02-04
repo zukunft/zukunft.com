@@ -44,7 +44,7 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
-//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
 //include_once paths::MODEL_GROUP . 'result_id.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -72,7 +72,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
-use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -289,7 +289,7 @@ class sandbox_value_list extends sandbox_list
                 $spt = sql_par_type::LIKE_OR;
             }
             $grp_id = new group_id();
-            $sc->add_where_par(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
+            $sc->add_where_par(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
         }
 
         // add the user parameter
@@ -386,7 +386,7 @@ class sandbox_value_list extends sandbox_list
                 if ($or) {
                     $spt = sql_par_type::LIKE_OR;
                 }
-                $sc->add_where_no_par('', group::FLD_ID, $spt, $grp_pos);
+                $sc->add_where_no_par('', group_db::FLD_ID, $spt, $grp_pos);
             }
         }
         $qp->sql = $sc->sql(0, true, false);

@@ -44,6 +44,7 @@ include_once paths::DB . 'sql_pg.php';
 include_once paths::DB . 'sql.php';
 include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_LOG . 'change_value.php';
@@ -101,6 +102,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
@@ -1309,7 +1311,7 @@ class sql_creator
                                 if ($par != '') {
                                     $par_name = sql::PAR_PREFIX_MYSQL . $par;
                                 } else {
-                                    if ($chg_row_fld == sql::NAME_SEP . group::FLD_ID) {
+                                    if ($chg_row_fld == sql::NAME_SEP . group_db::FLD_ID) {
                                         $par_name = $chg_row_fld;
                                     } else {
                                         $par_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
@@ -1744,7 +1746,7 @@ class sql_creator
         $ext = sql::NAME_SEP . self::FILE_INSERT;
         if ($this->is_value_class($class)) {
             // to log changes of values or results always the group id is used instead e.g. the four id phrase fields
-            $id_fld = group::FLD_ID;
+            $id_fld = group_db::FLD_ID;
             $id_fld_new = sql::NAME_SEP . $id_fld;
         } else {
             $id_fld_new = $this->var_name_new_id($sc_par_lst);
@@ -2214,7 +2216,7 @@ class sql_creator
         $log->set_class($sbx::class);
         $log->set_field($num_fld);
 
-        $log->group_id = $fvt_lst->get_value(group::FLD_ID);
+        $log->group_id = $fvt_lst->get_value(group_db::FLD_ID);
         $val_old = null;
         if ($sc_par_lst->is_update()) {
             $val_old = $fvt_lst->get_old($num_fld);
@@ -2267,12 +2269,12 @@ class sql_creator
         }
         if (is_numeric($log->group_id)) {
             $par_lst_out->add_field(
-                group::FLD_ID,
+                group_db::FLD_ID,
                 intval($log->group_id),
                 sql_par_type::INT);
         } else {
             $par_lst_out->add_field(
-                group::FLD_ID,
+                group_db::FLD_ID,
                 $log->group_id,
                 sql_par_type::TEXT);
         }

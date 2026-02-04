@@ -270,7 +270,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO cast api object in model object and dsp object in api object and add the dsp_obj() function to model object
     TODO define all database field names as const
     TODO for reference field names use the destination object
-            e.g. for the field name phrase_group_id use phrase_group::FLD_ID
+            e.g. for the field name phrase_group_id use phrase_group_db::FLD_ID
     TODO if a translation is missing offer the user to translate the message
     TODO rename phrase_group to group
     TODO move the time field of phrase groups to the group

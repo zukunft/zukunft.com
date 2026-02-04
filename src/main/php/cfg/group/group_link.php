@@ -56,7 +56,7 @@ class group_link extends db_object_seq_id
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
-        group::FLD_ID,
+        group_db::FLD_ID,
         triple_db::FLD_ID
     );
 
@@ -82,7 +82,7 @@ class group_link extends db_object_seq_id
     {
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->grp_id = $db_row[group::FLD_ID];
+            $this->grp_id = $db_row[group_db::FLD_ID];
             $this->trp_id = $db_row[triple_db::FLD_ID];
         }
         return $result;
@@ -134,7 +134,7 @@ class group_link extends db_object_seq_id
         }
         $db_con->set_name($qp->name);
         $db_con->set_fields(self::FLD_NAMES);
-        $qp->sql = $db_con->select_by_field(group::FLD_ID);
+        $qp->sql = $db_con->select_by_field(group_db::FLD_ID);
         $qp->par = $db_con->get_par();
 
         return $qp;

@@ -33,6 +33,7 @@ the object structure is:
 +-- xml_serializer - turning an array or object into XML using PHP
 +-- fig_ids - helper class for figure id lists
 +-- formula_db - the database const for formula tables
++-- group_db - the database const for group tables
 +-- group_id_list - functions for a list of group ids
 \-- id
     \-- group_id - e.g. to create a group_id based on a phrase list

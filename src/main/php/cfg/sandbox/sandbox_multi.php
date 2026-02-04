@@ -79,6 +79,7 @@ include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
 //include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 //include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
 //include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -142,6 +143,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi_user;
@@ -755,7 +757,7 @@ class sandbox_multi extends db_object_multi_user
                 $pos++;
             }
         } else {
-            $sc->add_where(group::FLD_ID, $this->grp()->id);
+            $sc->add_where(group_db::FLD_ID, $this->grp()->id);
         }
         return $qp;
     }
@@ -1313,7 +1315,7 @@ class sandbox_multi extends db_object_multi_user
                 $std->save($usr_msg);
             } else {
                 if (!$db_con->update_old(
-                    $this->id(), user_db::FLD_ID, $new_owner_id, group::FLD_ID)) {
+                    $this->id(), user_db::FLD_ID, $new_owner_id, group_db::FLD_ID)) {
                     $usr_msg->add_message_text('cannot set owner');
                 }
             }
@@ -3596,7 +3598,7 @@ class sandbox_multi extends db_object_multi_user
         // get the fields for the value log entry
         // TODO review check why a different list for the log is needed; instead use the field names like in sandbox
         $fvt_lst_log = clone $fvt_lst;
-        $fvt_lst_log->add_field(group::FLD_ID, $this->grp()->id());
+        $fvt_lst_log->add_field(group_db::FLD_ID, $this->grp()->id());
         $fvt_lst_log->add_field(user_db::FLD_ID, $this->get_user_id(), sql_par_type::INT);
 
         // create the log entry for the value
@@ -3640,12 +3642,12 @@ class sandbox_multi extends db_object_multi_user
             // add the group_id to the parameter list if it has not yet been added e.g. because the number has not been changed
             if ($this->is_prime()) {
                 $par_lst_out->add_field(
-                    group::FLD_ID,
+                    group_db::FLD_ID,
                     $this->grp()->id(),
                     sql_par_type::INT);
             } else {
                 $par_lst_out->add_field(
-                    group::FLD_ID,
+                    group_db::FLD_ID,
                     $this->grp()->id(),
                     sql_par_type::TEXT);
             }

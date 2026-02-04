@@ -44,6 +44,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_RESULT . 'result.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_USER . 'user.php';
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -255,7 +257,7 @@ class db_object extends IdObject
             and $sc_par_lst->is_prime()
             and $query_name == 'name'
             and !$sc->is_MySQL()) {
-            $sc->set_id_field(group::FLD_ID . '::text');
+            $sc->set_id_field(group_db::FLD_ID . '::text');
         }
 
         return $qp;

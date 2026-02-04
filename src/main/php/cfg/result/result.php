@@ -66,6 +66,7 @@ include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
@@ -1503,7 +1505,7 @@ class result extends sandbox_value
     {
         $fields = parent::db_fields_all();
         if (!$sc_par_lst->is_standard()) {
-            $fields[] = result_db::FLD_SOURCE . group::FLD_ID;
+            $fields[] = result_db::FLD_SOURCE . group_db::FLD_ID;
             $fields[] = formula_db::FLD_ID;
             $fields = array_merge($fields, $this->db_fields_all_sandbox());
         }
@@ -1529,7 +1531,7 @@ class result extends sandbox_value
         if (!$sc_par_lst->is_standard()) {
             if ($sbx->src_grp_id() !== $this->src_grp_id()) {
                 $lst->add_field(
-                    result_db::FLD_SOURCE . group::FLD_ID,
+                    result_db::FLD_SOURCE . group_db::FLD_ID,
                     $this->src_grp_id(),
                     sql_field_type::INT
                 );

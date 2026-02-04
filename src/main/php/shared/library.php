@@ -36,13 +36,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
 //include_once paths::MODEL_CONST . 'def.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_REF . 'source_db.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
-use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
@@ -2847,7 +2848,7 @@ class library
                 break;
             case result::class:
             case value::class;
-                $id_fld = group::FLD_ID;
+                $id_fld = group_db::FLD_ID;
                 break;
         }
         return $id_fld;

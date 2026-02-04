@@ -41,7 +41,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'combine_object.php';
-include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -50,8 +50,8 @@ include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
-use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -72,7 +72,7 @@ class figure extends combine_object
 
     // the common figure database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
-        group::FLD_ID
+        group_db::FLD_ID
     );
 
 
