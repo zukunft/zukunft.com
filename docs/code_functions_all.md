@@ -357,6 +357,7 @@
         \-- formula_map - map a formula api json to this model formula object
         \-- ref - map a ref api json to this model ref object
         \-- source - map a source api json to this model source object
+        \-- value - map a numeric value api json to this model value object
         \-- verb - map a verb api json to this model verb object
     \-- import_mapper
         \-- component - import a view component from a JSON object
@@ -3373,6 +3374,9 @@
         \-- sandbox_code_id - set the vars of this object bases on the api json array
         \-- sandbox_typed - set the type based on the api json
         \-- sandbox_value_list - map a figure list api json to this model figure list object
+        \-- value_geo - map a geo value api json to this model value object
+        \-- value_text - map a time value api json to this model value object
+        \-- value_time - map a time value api json to this model value object
     \-- row_mapper
         \-- db_object_key - dummy map function to be overwritten by the child object
         \-- db_object_no_id - dummy map function to be overwritten by the child object

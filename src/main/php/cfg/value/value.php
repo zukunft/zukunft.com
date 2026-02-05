@@ -51,6 +51,8 @@ include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -59,6 +61,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
@@ -110,6 +114,31 @@ class value extends value_base
     )
     {
         parent::__construct($usr, $val, $grp);
+    }
+
+    /**
+     * map a numeric value api json to this model value object
+     * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successfully
+     */
+    function api_mapper(array $api_json, user_message $msg): bool
+    {
+        parent::api_mapper($api_json, $msg);
+
+        if (array_key_exists(json_fields::NUMBER, $api_json)) {
+            $value = $api_json[json_fields::NUMBER];
+            if (is_numeric($value)) {
+                $this->set_value($value);
+            } else {
+                $msg->add(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                    msg_id::VAR_VALUE => $value,
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id()
+                ]);
+            }
+        }
+
+        return $msg->is_ok();
     }
 
 

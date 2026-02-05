@@ -202,7 +202,7 @@ class sandbox_link extends sandbox
      * fill the vars with this link type sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {

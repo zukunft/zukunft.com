@@ -63,6 +63,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_VALUE . 'value_time.php';
 //include_once paths::MODEL_VALUE . 'value_geo.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -86,8 +87,12 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sandbox_value_list extends sandbox_list
@@ -102,7 +107,6 @@ class sandbox_value_list extends sandbox_list
     private bool $name_hash_dirty = true;
 
 
-
     /*
      * construct and map
      */
@@ -115,13 +119,26 @@ class sandbox_value_list extends sandbox_list
     /**
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         foreach ($api_json as $json_val) {
-            $val = new value($this->get_user());
+            if (array_key_exists(json_fields::NUMBER, $json_val)) {
+                $val = new value($this->get_user());
+            } elseif (array_key_exists(json_fields::TIME_VALUE, $json_val)) {
+                $val = new value_time($this->get_user());
+            } elseif (array_key_exists(json_fields::TEXT_VALUE, $json_val)) {
+                $val = new value_text($this->get_user());
+            } elseif (array_key_exists(json_fields::GEO_VALUE, $json_val)) {
+                $val = new value_geo($this->get_user());
+            } else {
+                $val = new value($this->get_user());
+                $usr_msg->add(msg_id::IMPORT_VALUE_FORMAT_NOT_KNOWN, [
+                    msg_id::VAR_JSON_TEXT => $json_val
+                ]);
+            }
             if ($val->api_mapper($json_val, $usr_msg)) {
                 $this->add($val);
             }

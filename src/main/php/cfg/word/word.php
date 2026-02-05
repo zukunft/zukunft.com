@@ -308,7 +308,7 @@ class word extends sandbox_code_id
      *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {

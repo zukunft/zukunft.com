@@ -529,6 +529,14 @@ enum messages: string
         . '" is expected to be a number ('
         . self::VAR_START . self::VAR_GROUP . self::VAR_END
         . ')';
+    case IMPORT_VALUE_NOT_DATETIME = 'Import value: "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" is expected to be a a datetime ('
+        . self::VAR_START . self::VAR_GROUP . self::VAR_END
+        . ')';
+    case IMPORT_VALUE_FORMAT_NOT_KNOWN = 'Import value has an unexpected json value name "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
     case FAILED_ADD_LOGGING_ERROR = 'Adding "'
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '" "'

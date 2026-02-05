@@ -79,7 +79,7 @@ class figure_list extends sandbox_list
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
      * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {

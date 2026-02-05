@@ -88,7 +88,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * fill the vars with this db id object based on the given api json array
      * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
      * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -118,7 +118,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * set the vars of this object based on json string from the frontend object
      * @param string $api_json
      * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function set_from_api(string $api_json, user_message $usr_msg): bool
     {

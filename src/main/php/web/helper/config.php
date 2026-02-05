@@ -6,6 +6,7 @@
     ---------------------
 
     This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user-specific values and links
+    var name: $ui_cfg
 
 
     This file is part of zukunft.com - calc with words

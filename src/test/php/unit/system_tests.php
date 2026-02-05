@@ -31,6 +31,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -125,6 +126,7 @@ class system_tests
         global $usr_sys;
         global $sys;
         global $mtr;
+        global $cfg;
 
         // init
         $lib = new library();
@@ -139,9 +141,9 @@ class system_tests
         $t->header($ts);
 
         $t->subheader($ts . 'config SQL setup');
-        $cfg = new config();
-        $t->assert_sql_table_create($cfg);
-        $t->assert_sql_index_create($cfg);
+        $sys_cfg = new config();
+        $t->assert_sql_table_create($sys_cfg);
+        $t->assert_sql_index_create($sys_cfg);
 
         $t->subheader($ts . 'session SQL setup');
         $ses = new session();
@@ -245,6 +247,17 @@ class system_tests
 
         $t->subheader($ts . 'IP filter');
 
+        /*
+         * config
+         */
+
+        $t->subheader($ts . 'config');
+
+        $test_name = 'get a system configuration value';
+        $pod_url = $cfg->get_by([words::POD, words::URL]);
+        $t->assert($test_name, $pod_url, def::POD_NAME);
+
+
 
         /*
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
@@ -268,13 +281,13 @@ class system_tests
         $t->subheader($ts . 'system config sql');
 
         $db_con->db_type = sql_db::POSTGRES;
-        $cfg = new config();
-        $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
+        $sys_cfg = new config();
+        $created_sql = $sys_cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get.sql');
         $t->assert('config->get_sql', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
+        $created_sql = $sys_cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get_mysql.sql');
         $t->assert('config->get_sql for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 

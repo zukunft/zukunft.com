@@ -87,14 +87,14 @@ A proper issue ticket should be created for these TODOs notes:
          - $sys to cache execution times, types and system configuration that change rarely
                 and is not user-specific and for easy check how many times the code writes
          - $db_con for the database connection
-         - $cac for the backend cache of user-specific data_object and the user configuration
+         - $cfg for the user configuration numbers that changes more often than the types and the system views  
+         - $cac for the backend cache of user-specific data_object
          - $ui_cac for the frontend cache including the session user
          - $mtr for the message translation use as the last step in the frontend
          - $t for the base test object with the functions for assert and cleanup
          - $t_sys for error counting and the execution times 
          - $debug to activate additional logging levels 
          - maybe $t_cac for the test environment 
-         - maybe $cfg for the user configuration that changes more often than the types and the system views  
          pro using a global var:
            - less parameters for functions, so easier to read and maybe faster
          cont:

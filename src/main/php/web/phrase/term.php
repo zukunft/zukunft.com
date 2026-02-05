@@ -75,7 +75,7 @@ class term extends combine_named
      * set the vars of this term html display object bases on the api message
      * @param array $json_array an api json message as a string
      * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $json_array, user_message $usr_msg): bool
     {

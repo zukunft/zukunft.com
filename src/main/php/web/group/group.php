@@ -191,7 +191,7 @@ class group extends sandbox_named
      * set the vars of this phrase list bases on the api json array
      * @param array $json_array an api json message
      * @param user_message $msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $json_array, user_message $msg): bool
     {

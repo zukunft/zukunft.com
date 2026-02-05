@@ -256,7 +256,7 @@ class formula_link extends sandbox_link
      * @param array $api_json the api array with the values that should be mapped
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
      * @param data_object|null $dto the data object that contains the already imported formulas
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(
         array        $api_json,
