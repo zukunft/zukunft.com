@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\import;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -44,6 +45,7 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'file_types.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -113,12 +115,12 @@ class import_file
         }
 
         // get the relevant config values
-        $read_bytes_per_sec = $cfg->get_by([triples::FILE_READ, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $total_bytes_per_sec = $cfg->get_by([words::TOTAL_PRE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $read_time_pct = $cfg->get_by([triples::FILE_READ, triples::TIME_PERCENT, words::IMPORT], 1);
-        $decode_time_pct = $cfg->get_by([words::DECODE, triples::TIME_PERCENT, words::IMPORT], 1);
-        $create_time_pct = $cfg->get_by([triples::OBJECT_CREATION, triples::TIME_PERCENT, words::IMPORT], 1);
-        $store_time_pct = $cfg->get_by([triples::OBJECT_STORING, triples::TIME_PERCENT, words::IMPORT], 1);
+        $read_bytes_per_sec = $cfg->get_by([triples::FILE_READ, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_BYTE_PER_SEC);
+        $total_bytes_per_sec = $cfg->get_by([words::TOTAL_PRE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_BYTE_PER_SEC);
+        $read_time_pct = $cfg->get_by([triples::FILE_READ, triples::TIME_PERCENT, words::IMPORT], def::FALLBACK_PERCENT_STEP);
+        $decode_time_pct = $cfg->get_by([words::DECODE, triples::TIME_PERCENT, words::IMPORT], def::FALLBACK_PERCENT_STEP);
+        $create_time_pct = $cfg->get_by([triples::OBJECT_CREATION, triples::TIME_PERCENT, words::IMPORT], def::FALLBACK_PERCENT_STEP);
+        $store_time_pct = $cfg->get_by([triples::OBJECT_STORING, triples::TIME_PERCENT, words::IMPORT], def::FALLBACK_PERCENT_STEP);
 
         // indicate to the user that the import has started
         $size = filesize($filename);

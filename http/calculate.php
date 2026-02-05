@@ -32,6 +32,7 @@
 
 */
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
@@ -63,7 +64,7 @@ $usr_id = $_GET[url_var::USER] ?? 0; // to force another user view for testing t
 if ($usr->id > 0) {
 
     global $cfg;
-    $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
+    $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR], def::FALLBACK_RESPONSE_TIME);
 
     $usr->load_usr_data();
     $lib = new library();

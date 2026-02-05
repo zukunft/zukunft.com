@@ -102,6 +102,7 @@ the object structure is:
 +-- expressionShared - common parts of the formula expressing handling used in front- and backend
 +-- charsShared - const symbols used for the formula expressions
 +-- componentsShared - const components with name and id used by the system
++-- defShared - general system definitions used in frontend and backend
 +-- filesShared - resource file names used in backend and frontend
 +-- formulasShared - predefined formulas used in the backend and frontend as code id
 +-- groupsShared - phrase group or value names used by the system for testing

@@ -90,7 +90,7 @@ class list_db_write extends list_db_read
 
             // get the configuration values
             $cfg_wrd = $lib->class_to_word($class);
-            $save_per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+            $save_per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
             // get the sql call to add the missing objects
             // TODO use sql_insert ?

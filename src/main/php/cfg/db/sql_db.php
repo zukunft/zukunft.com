@@ -793,9 +793,9 @@ class sql_db
     {
         global $cfg;
         if ($this->reconnect_delay = 0) {
-            $this->reconnect_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::START_DELAY]);
+            $this->reconnect_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::START_DELAY], def::FALLBACK_RETRY);
         } else {
-            $max_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::MAX_DELAY]);
+            $max_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::MAX_DELAY], def::FALLBACK_RETRY);
             if ($this->reconnect_delay * 2 < $max_delay) {
                 $this->reconnect_delay = $this->reconnect_delay * 2;
             }

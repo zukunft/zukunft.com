@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
@@ -63,6 +64,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -744,8 +746,8 @@ class formula_list extends sandbox_list_named
         global $cfg;
 
         // get the configuration
-        $avg_calc_time = $cfg->get_by([words::CALCULATION, triples::BLOCK_SIZE, triples::AVERAGE_DELAY]);
-        $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR], 1);
+        $avg_calc_time = $cfg->get_by([words::CALCULATION, triples::BLOCK_SIZE, triples::AVERAGE_DELAY], def::FALLBACK_PERCENT_STEP);
+        $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR], def::FALLBACK_RESPONSE_TIME);
 
         if ($total_formulas == 0) {
             $total_formulas = $db_con->count(formula::class);
@@ -770,11 +772,11 @@ class formula_list extends sandbox_list_named
 
         $usr_msg = new user_message();
 
-        $load_per_sec = $cfg->get_by([words::FORMULAS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $save_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $upd_per_sec = $cfg->get_by([words::FORMULAS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $del_per_sec = $cfg->get_by([words::FORMULAS, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $max_frm_levels = $cfg->get_by([words::FORMULAS, triples::MAX_LEVELS, words::IMPORT], 99);
+        $load_per_sec = $cfg->get_by([words::FORMULAS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $save_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $upd_per_sec = $cfg->get_by([words::FORMULAS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $del_per_sec = $cfg->get_by([words::FORMULAS, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $max_frm_levels = $cfg->get_by([words::FORMULAS, triples::MAX_LEVELS, words::IMPORT], def::FALLBACK_RECURSIVE_MAX);
 
         if ($this->is_empty()) {
             log_info('no formulas to save');

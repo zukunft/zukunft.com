@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_SYSTEM . 'ip_range.php';
 include_once paths::DB . 'sql_db.php';
@@ -46,6 +47,7 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
@@ -169,8 +171,8 @@ class ip_range_list extends list_db_write
     {
         global $cfg;
 
-        $load_per_sec = $cfg->get_by([words::IP_RANGES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $upd_per_sec = $cfg->get_by([words::IP_RANGES, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $load_per_sec = $cfg->get_by([words::IP_RANGES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $upd_per_sec = $cfg->get_by([words::IP_RANGES, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
         if ($this->is_empty()) {
             $usr_msg->add_info_id(msg_id::IP_LIST_EMPTY);
