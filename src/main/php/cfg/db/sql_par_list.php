@@ -36,8 +36,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class sql_par_list
@@ -175,5 +177,25 @@ class sql_par_list
         }
         return $result;
     }
+
+
+    /*
+     * debug
+     */
+
+    function dsp_id(): string
+    {
+        $result = '';
+        foreach ($this->lst as $qp) {
+            if ($result != '') {
+                $result .= ', ';
+            }
+            if (strlen($result) < def::DEBUG_SQL_LIST_TEXT) {
+                $result .= $qp->dsp_id();
+            }
+        }
+        return $result;
+    }
+
 }
 

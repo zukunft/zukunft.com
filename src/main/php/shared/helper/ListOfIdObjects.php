@@ -79,6 +79,21 @@ class ListOfIdObjects extends ListOf
         $this->lst_dirty = false;
     }
 
+    function reset(): void
+    {
+        parent::reset();
+
+        $this->id_pos_lst = [];
+        $this->lst_dirty = false;
+    }
+
+    function clone_reset(): ListOfIdObjects
+    {
+        $lst = clone $this;
+        $lst->reset();
+        return $lst;
+    }
+
 
     /*
      * set and get
@@ -189,7 +204,7 @@ class ListOfIdObjects extends ListOf
      */
     function diff(ListOfIdObjects $lst): ListOfIdObjects
     {
-        $result = new ListOfIdObjects();
+        $result = $this->clone_reset();
         foreach ($this->lst() as $obj) {
             if (!$lst->get_by_id($obj->id())) {
                 $result->add_obj($obj);

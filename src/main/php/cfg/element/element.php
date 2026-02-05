@@ -721,11 +721,11 @@ class element extends db_object_seq_id_user
         if ($name <> '') {
             $result .= '"' . $name . '" ';
         }
-        if ($this->id() > 0) {
-            $result .= '(' . $this->id() . ')';
+        if ($this->obj != null) {
+            $result .= '(' . $this->obj->id() . ')';
         } else {
-            if ($this->obj != null) {
-                $result .= '(' . $this->obj->id() . ')';
+            if ($this->id() > 0) {
+                $result .= '(' . $this->id() . ')';
             }
         }
         $result .= $this->dsp_id_user();

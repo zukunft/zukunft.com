@@ -55,8 +55,6 @@ class expression_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         $t_frm = new test_formulas($t);
         $t_trm = new test_terms($t);
         $usr_msg = new user_message();

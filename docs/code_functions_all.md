@@ -35,6 +35,7 @@
     \-- element_refresh_type - section for function element_refresh_type not yet defined that it should be expression in /formula/formula.php
     \-- element_refresh_old - section for function element_refresh_old not yet defined that it should be expression in /formula/formula.php
     \-- element_refresh - section for function element_refresh not yet defined that it should be expression in /formula/formula.php
+    \-- load_element_list - section for function load_element_list is expected to be load in /formula/formula.php
     \-- element_list - section for function element_list not yet defined that it should be expression in /formula/formula.php
     \-- generate_ref_text - section for function generate_ref_text not yet defined that it should be save in /formula/formula.php
     \-- generate_usr_text - section for function generate_usr_text not yet defined that it should be save in /formula/formula.php
@@ -794,6 +795,8 @@
         \-- formula - update the database references to the formula elements
     \-- element_refresh
         \-- formula - update the database references to the formula elements
+    \-- load_element_list
+        \-- formula - @return element_list with the element linked to this formula according to the database
     \-- element_list
         \-- formula - get the list of elements used in this formula
 \-- check
@@ -2404,6 +2407,7 @@
     \-- db_insert - section for function db_insert not yet defined that it should be db add in /system/list_db_write.php
     \-- db_delete - section for function db_delete not yet defined that it should be db del in /system/list_db_write.php
     \-- sql_insert_call_with_par - section for function sql_insert_call_with_par not yet defined that it should be db helper in /system/list_db_write.php
+    \-- sql_delete_call_with_par - section for function sql_delete_call_with_par not yet defined that it should be db helper in /system/list_db_write.php
     \-- select_by_name - section for function select_by_name not yet defined that it should be db helper in /system/list_db_write.php
     \-- diff - section for function diff not yet defined that it should be filter in /system/list_db_write.php
 \-- sys_log
@@ -3731,6 +3735,40 @@
         \-- sql_creator - @param array $fld_val_typ_lst an array with an array of the field name, value and the sql field type
     \-- get_types
         \-- sql_creator - @param array $fld_val_typ_lst an array with an array of the field name, value and the sql field type
+\-- debug
+    \-- dsp_id
+        \-- sql_par - combine two sql and the related parameters to one sql statement
+        \-- element - @return string best possible id for this element mainly used for debugging
+        \-- element_group - @return string with the unique id fields
+        \-- element_group_list - @return string to display the unique id fields
+        \-- expression - @return string with the expression name to use it for debugging
+        \-- group_list - @param term_list|null $trm_lst a cached list of terms
+        \-- db_object - name of log entry used shown to the user which entry has been deleted
+        \-- change - TODO move to the backend config class
+        \-- change_link - @return string with the unique log entry description for debugging
+        \-- change_log - @return string with the unique database id mainly for child dsp_id() functions
+        \-- change_value - get a list of database field values that have been updated
+        \-- sandbox_list - create a text that describes the list for unique identification
+        \-- ip_range - @return string to display the identifying ip range fields e.g. for a debug message
+        \-- job - @return string best possible identification for this formula mainly used for debugging
+        \-- sys_log - @return string with the unique database id mainly for child dsp_id() functions
+    \-- ids
+        \-- element_group - @param ?int $limit the max number of ids to show
+    \-- name
+        \-- expression - @return string with the expression name to use it for debugging
+        \-- group_list - create a useful (but not unique!) name of the phrase group list mainly used for debugging
+        \-- change_value - @return string with the best possible id for this value mainly used for debugging
+        \-- sandbox_list - to show the list name to the user in the most simple form (without any ids)
+        \-- ip_range - @return string with the unique name of the ip range
+        \-- job - @return string best possible identification for this formula mainly used for debugging
+    \-- names
+        \-- group_list - return a list of the word names
+        \-- sandbox_list - @param bool $ignore_excluded if true also the excluded names are included
+    \-- check
+        \-- group_list - return a list of the word names
+    \-- dsp_id_user
+        \-- db_object_multi_user - @returns string best possible identification for this object mainly used for debugging
+        \-- db_object_seq_id_user - @returns string best possible identification for this object mainly used for debugging
 \-- info sql type
     \-- do_log
         \-- sql_type_list - @return bool true if the changes should be added to the change log
@@ -3870,39 +3908,6 @@
         \-- change_link - get a list of database field values that have been updated
         \-- change_log - get a list of database field values that have been updated
         \-- change_value - get a list of database field values that have been updated
-\-- debug
-    \-- dsp_id
-        \-- element - @return string best possible id for this element mainly used for debugging
-        \-- element_group - @return string with the unique id fields
-        \-- element_group_list - @return string to display the unique id fields
-        \-- expression - @return string with the expression name to use it for debugging
-        \-- group_list - @param term_list|null $trm_lst a cached list of terms
-        \-- db_object - name of log entry used shown to the user which entry has been deleted
-        \-- change - TODO move to the backend config class
-        \-- change_link - @return string with the unique log entry description for debugging
-        \-- change_log - @return string with the unique database id mainly for child dsp_id() functions
-        \-- change_value - get a list of database field values that have been updated
-        \-- sandbox_list - create a text that describes the list for unique identification
-        \-- ip_range - @return string to display the identifying ip range fields e.g. for a debug message
-        \-- job - @return string best possible identification for this formula mainly used for debugging
-        \-- sys_log - @return string with the unique database id mainly for child dsp_id() functions
-    \-- ids
-        \-- element_group - @param ?int $limit the max number of ids to show
-    \-- name
-        \-- expression - @return string with the expression name to use it for debugging
-        \-- group_list - create a useful (but not unique!) name of the phrase group list mainly used for debugging
-        \-- change_value - @return string with the best possible id for this value mainly used for debugging
-        \-- sandbox_list - to show the list name to the user in the most simple form (without any ids)
-        \-- ip_range - @return string with the unique name of the ip range
-        \-- job - @return string best possible identification for this formula mainly used for debugging
-    \-- names
-        \-- group_list - return a list of the word names
-        \-- sandbox_list - @param bool $ignore_excluded if true also the excluded names are included
-    \-- check
-        \-- group_list - return a list of the word names
-    \-- dsp_id_user
-        \-- db_object_multi_user - @returns string best possible identification for this object mainly used for debugging
-        \-- db_object_seq_id_user - @returns string best possible identification for this object mainly used for debugging
 \-- display
     \-- 2
         \-- phrase_list - @return string one string with all names of the list and reduced in size mainly for debugging
@@ -4329,6 +4334,8 @@
 \-- db helper
     \-- sql_insert_call_with_par
         \-- list_db_write - get a list of all sql function names that are needed to add all objects of this list to the database
+    \-- sql_delete_call_with_par
+        \-- list_db_write - get a list of all sql function names that are needed to delete all objects of this list from the database
     \-- select_by_name
         \-- list_db_write - select a word list by names
 \-- loading / database access object (DAO) functions

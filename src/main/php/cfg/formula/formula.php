@@ -1244,29 +1244,39 @@ class formula extends formula_map
      * update the database references to the formula elements
      * to be able to use the sql statements to find all formulas depending on a word. triple, verb or formula
      *
-     * @param user_message $usr_msg
+     * @param user_message $usr_msg to collect problems and suggested solutions for the user
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return bool true if the update has been fine
      */
-    function element_refresh(user_message $usr_msg): bool
+    function element_refresh(user_message $usr_msg, ?term_list $trm_lst = null): bool
     {
         $imp = new import();
 
         // get the target list of elements that should be linked to the formula
-        $elm_lst = $this->element_list($usr_msg);
+        $elm_lst = $this->element_list($usr_msg, $trm_lst);
 
         // read the existing elements from the database
-        $db_lst = new element_list($this->get_user());
-        $db_lst->load_by_frm($this->id());
+        $db_lst = $this->load_element_list();
 
         // add the missing links
         $add_lst = $elm_lst->diff($db_lst);
-        $add_lst->db_insert($usr_msg, $imp, $this::class);
+        $add_lst->db_insert($usr_msg, $imp, element::class);
 
         // delete links not needed any more
         $del_lst = $db_lst->diff($elm_lst);
-        $del_lst->db_delete($usr_msg, $imp);
+        $del_lst->db_delete($usr_msg, $imp, element::class);
 
         return $usr_msg->is_ok();
+    }
+
+    /**
+     * @return element_list with the element linked to this formula according to the database
+     */
+    function load_element_list(): element_list
+    {
+        $db_lst = new element_list($this->get_user());
+        $db_lst->load_by_frm($this->id());
+        return $db_lst;
     }
 
     /**

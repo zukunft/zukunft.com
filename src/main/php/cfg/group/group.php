@@ -627,7 +627,7 @@ class group extends sandbox_multi
     }
 
     /**
-     * the sql statements to create
+     * the sql statements to create:
      * 0 => the group tables
      * 1 => all indices for the group tables used to store the group name changes of a user
      * 1 => all foreign keys for the group tables used to store the group name changes of a user

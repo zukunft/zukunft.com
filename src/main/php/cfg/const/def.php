@@ -210,6 +210,8 @@ class def
     const int LIST_MIN_NAMES = 4; // number of object names that should at least be shown
     const int LIST_MIN_NUM = 20; // number of object ids that should at least be shown
     const int DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
+    const int DEBUG_SQL_LENGTH = 200; // the max number of chars of an SQL statement shown in the debug text
+    const int DEBUG_SQL_LIST_TEXT = 500; // the max number of chars of a list of SQL statements shown in the debug text
 
 
     /*
@@ -219,6 +221,15 @@ class def
     // TODO Prio 2 allow overwrite by the config value
     const int MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
     const int MAX_RECURSIVE = 10; // max number of recursive call to avoid endless looping in case of a program error
+
+
+    /*
+     * fallback
+     */
+
+    // TODO Prio 1 collect all fallback values here
+    // configuration values used as fallback if the value is missing in the system configuration
+    const int FALLBACK_IMPORT_PER_SEC = 100; // expected number of objects that could be imported per second
 
 
     /*

@@ -377,6 +377,26 @@ class system_tests
         $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id_mysql.sql');
         $t->assert('database_upgrade->remove_prefix of verb code_id for MySQL', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
+
+        /*
+         * list
+         */
+
+        $t->subheader($ts . 'list db read');
+
+        $test_name = 'list db read';
+
+        $t->subheader($ts . 'list db write');
+
+        $usr_msg->reset();
+        $test_name = 'database delete calls based on element list';
+        $sc = $db_con->sql_creator();
+        $elm_lst = $t_frm->element_list();
+        $del_calls = $elm_lst->sql_delete_call_with_par($sc, $usr_msg);
+        $target = 'element_delete_log: "DELETE FROM elements  WHERE element_id = ?;" with the parameters (1)';
+        $t->assert($test_name, $del_calls->dsp_id(), $target);
+
+
         /*
          * system log SQL creation tests
          */

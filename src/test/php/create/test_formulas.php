@@ -355,9 +355,20 @@ class test_formulas extends test_objects
         $trm_lst = $t_trm->term_list_time();
         $frm = $this->formula();
         $exp = $frm->expression($trm_lst);
-        return $exp->element_list($usr_msg, $trm_lst);
+        $elm_lst = $exp->element_list($usr_msg, $trm_lst);
+        return $this->add_seq_number_to_element_list($elm_lst);
     }
 
+    function add_seq_number_to_element_list(element_list $elm_lst): element_list
+    {
+        $id = 1;
+        foreach ($elm_lst->lst() as $elm) {
+            if ($elm->id() == 0) {
+                $elm->id = $id++;
+            }
+        }
+        return $elm_lst;
+    }
 
     /*
      * formula test creation

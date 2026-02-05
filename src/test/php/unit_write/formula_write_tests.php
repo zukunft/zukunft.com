@@ -118,6 +118,40 @@ class formula_write_tests
         $target = $lib->dsp_bool(false);
         $t->assert('formula->is_special for "' . $frm->name() . '"', $result, $target);
 
+        /* TODO Prio 0 activate
+        $test_name = 'remove an element and update the database';
+        $frm->set_user_text(formulas::INCREASE_ALTERNATIVE_EXP);
+        $frm->element_refresh($usr_msg, $t_trm->term_list_all());
+        $elm_lst = $frm->element_list($usr_msg);
+        $elm_lst_db = $frm->load_element_list();
+        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
+        $test_name = 'remove an element and update the database ... compare with fixed text';
+        $target = '';
+        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
+
+        $test_name = 'add an element and update the database';
+        $frm->set_user_text(formulas::INCREASE_EXP);
+        $frm->element_refresh($usr_msg, $t_trm->term_list_all());
+        $elm_lst = $frm->element_list($usr_msg);
+        $elm_lst_db = $frm->load_element_list();
+        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
+
+        $test_name = 'remove an element and update the database without term cache';
+        $frm->set_user_text(formulas::INCREASE_ALTERNATIVE_EXP);
+        $frm->element_refresh($usr_msg);
+        $elm_lst = $frm->element_list($usr_msg);
+        $elm_lst_db = $frm->load_element_list();
+        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
+
+        $test_name = 'add an element and update the database without term cache';
+        $frm->set_user_text(formulas::INCREASE_EXP);
+        $frm->element_refresh($usr_msg, $t_trm->term_list_all());
+        $elm_lst = $frm->element_list($usr_msg);
+        $elm_lst_db = $frm->load_element_list();
+        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
+        */
+
+
         $exp = $frm->expression();
         $trm_lst = new term_list($t->usr1);
         $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));

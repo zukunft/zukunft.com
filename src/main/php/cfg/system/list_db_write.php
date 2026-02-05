@@ -40,6 +40,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -48,6 +49,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -138,14 +140,59 @@ class list_db_write extends list_db_read
      *
      * @param import|null $imp the import object with the estimate of the total save time
      * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param string $class the object class that should be removed from the database
      * @return bool true if everything has been fine
      */
-    function db_delete(user_message $usr_msg, ?import $imp = null): bool
+    function db_delete(user_message $usr_msg, ?import $imp, string $class): bool
     {
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'db_delete',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        global $db_con;
+        global $cfg;
+
+        if (!$this->is_empty()) {
+
+            // prepare
+            $sc = $db_con->sql_creator();
+            $lib = new library();
+
+            // get the configuration values
+            $cfg_wrd = $lib->class_to_word($class);
+            $save_per_sec = $cfg->get_by([$cfg_wrd, words::REMOVE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+
+            // get the sql call to delete the objects not needed any more
+            // TODO use sql_insert ?
+            $del_calls = $this->sql_delete_call_with_par($sc, $usr_msg);
+            $imp->step_start(msg_id::PREPARE, $class, $del_calls->count());
+
+            // get the functions that are already in the database
+            $db_func_lst = $db_con->get_functions();
+
+            // get the sql functions that have not yet been created
+            $func_to_create = $del_calls->sql_functions_missing($db_func_lst);
+
+            // get the first object that have requested the missing function
+            $func_create_obj = clone $this;
+            $func_create_obj_names = $func_to_create->object_names();
+            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+
+            // create the missing sql functions and add the first missing word
+            $func_to_create = $func_create_obj->sql_delete($sc);
+            $func_to_create->exe($class);
+            $imp->step_end($func_to_create->count());
+
+            // add the remaining missing words or triples
+            $step_time = $this->count() / $save_per_sec;
+            $imp->step_start(msg_id::ADD, $class, $this->count(), $step_time);
+            $del_lst = $this->filter_by_name($func_create_obj_names);
+            $del_calls = $del_lst->sql_delete_call_with_par($sc);
+            $usr_msg->merge($del_calls->exe($class));
+
+            // TODO create a loop to add depending triples
+            // add the just added words or triples id to this list
+            $this->add_id_by_name($usr_msg->db_row_id_lst(), $class);
+
+            $imp->step_end($del_lst->count(), $save_per_sec);
+
+        }
         return $usr_msg->is_ok();
     }
 
@@ -178,6 +225,38 @@ class list_db_write extends list_db_read
                     $usr_msg->merge($ins_usr_msg);
                     log_err('Internal import error: ' . $usr_msg->all_message_text());
                 }
+            }
+        }
+        return $sql_list;
+    }
+
+    /**
+     * get a list of all sql function names that are needed to delete all objects of this list from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param list_db_write|null $db_lst the list of delete statements that are already in the database
+     * @return sql_par_list with the sql function names
+     */
+    function sql_delete_call_with_par(
+        sql_creator $sc,
+        user_message $usr_msg,
+        list_db_write|null $db_lst = null
+    ): sql_par_list
+    {
+        $sql_list = new sql_par_list();
+        foreach ($this->lst() as $sbx) {
+            // check always user sandbox and normal name, because reading from database for check would take longer
+            $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
+            $sc_par_lst->add(sql_type::LOG);
+            $ins_usr_msg = new user_message();
+            $qp = $sbx->sql_delete($sc, $ins_usr_msg, $sc_par_lst);
+            if ($ins_usr_msg->is_ok()) {
+                $qp->obj_name = $sbx->name();
+                $sql_list->add($qp);
+            } else {
+                $usr_msg->merge($ins_usr_msg);
+                log_err('Internal import error: ' . $usr_msg->all_message_text());
             }
         }
         return $sql_list;

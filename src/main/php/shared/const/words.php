@@ -177,6 +177,7 @@ class words
     const string AUTOMATIC = 'automatic';
     const string CREATE = 'create';
     const string STORE = 'store';
+    const string REMOVE = 'remove';
     const string VIEW = 'view';
     const string FREEZE = 'freeze';
     const string CHANGE = 'change';
@@ -264,7 +265,7 @@ class words
     const string SPEED = 'speed';
     const int SPEED_ID = 87;
     const string METER = 'meter';
-    const int METER_ID = 1139;
+    const int METER_ID = 1141;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 131;
     const string TRANSITION = 'transition';

@@ -181,6 +181,10 @@ zukunft.com:
               ip-ranges:
                 sys-conf-value: 95
                 tooltip-comment: "the estimated number of ip-ranges that can be added or updated in the database per second"
+            remove:
+              elements:
+                sys-conf-value: 800
+                tooltip-comment: "the estimated number of elements that can be removed from the database per second using the list of predefined SQL statements"
       value table:
         table name:
           max phrase: 3
