@@ -2662,7 +2662,6 @@ CREATE TABLE IF NOT EXISTS elements
 (
     element_id BIGSERIAL PRIMARY KEY,
     formula_id      bigint           NOT NULL,
-    order_nbr       bigint           NOT NULL,
     element_type_id smallint         NOT NULL,
     user_id         bigint       DEFAULT NULL,
     ref_id          bigint       DEFAULT NULL,

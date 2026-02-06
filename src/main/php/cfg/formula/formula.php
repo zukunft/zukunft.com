@@ -1141,8 +1141,6 @@ class formula extends formula_map
             $field_values[] = $elm_type_id;
             $field_names[] = element_db::FLD_REF_ID;
             $field_values[] = $elm_add_id;
-            $field_names[] = element_db::FLD_ORDER;
-            $field_values[] = $elm_order_nbr;
             $db_con->set_class(element::class);
             $add_result = $db_con->insert_old($field_names, $field_values);
             // in this case the row id is not needed, but for testing the number of action should be indicated by adding a '1' to the result string
