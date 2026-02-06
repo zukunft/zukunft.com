@@ -7,24 +7,25 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
+    TODO finish the frontend component tests
+    TODO create the frontend page reaction flow tests
+
+    TODO Release 0.0.4
     TODO fix all prio 0 TODO including unit tests
     TODO finish the expression code review
-    TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
+    TODO create more unit tests and create code to review the code because I make too many msitakes!!!
+    TODO review and create missing formula unit, read and write tests
+    TODO m2 should be the formula meter * meter in unit.jsom import message
+    TODO document why there is a hidden word for each formula: the reason is that 
+         this way values and results are assigned to a list of phrases not terms 
+         because a value is never assign to a verb only a triple
     TODO for messages use these main functions:
          - add:            to add a translatable message to the user with parameters
          - add_text:       to add a translatable message to the user without parameters
          - add_admin:      to add a non translatable message to the admin
          - add_develop:    to add a non translatable message for developers
          - merge (ex add): to merge two messages into one
-
-    TODO create more unit tests and create code to review the code because I make too many msitakes!!!
-    TODO finish the frontend component tests
-    TODO create the frontend page reaction flow tests
-    TODO review and create missing formula unit, read and write tests
-    TODO m2 should be the formula meter * meter in unit.jsom import message
-    TODO document why there is a hidden word for each formula: the reason is that 
-         this way values and results are assigned to a list of phrases not terms 
-         because a value is never assign to a verb only a triple
     TODO check the formula test coverage via script
     TODO split the formula backend class into formula_base, formula_calc and the interface formula class
     TODO group the function by suggested test category which is unit, db read or db write

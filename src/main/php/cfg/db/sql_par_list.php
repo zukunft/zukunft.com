@@ -107,6 +107,11 @@ class sql_par_list
         return count($this->names());
     }
 
+    function is_empty(): bool
+    {
+        return count($this->lst) == 0;
+    }
+
     /**
      * @return user_message with the parameter names formatted for sql
      */

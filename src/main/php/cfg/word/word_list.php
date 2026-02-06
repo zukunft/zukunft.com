@@ -509,7 +509,7 @@ class word_list extends sandbox_list_named
         foreach ($json_obj as $value) {
             $wrd = new word($this->get_user());
             if ($wrd->import_obj($value, $usr_msg, $dto)) {
-                $this->add_by_name($wrd);
+                $this->add_by_key($wrd);
             }
         }
 
@@ -1251,9 +1251,9 @@ class word_list extends sandbox_list_named
         $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if (get_class($phr) == word::class) {
-                $phr_lst->add_by_name($phr->phrase());
+                $phr_lst->add_by_key($phr->phrase());
             } elseif (get_class($phr) == phrase::class) {
-                $phr_lst->add_by_name($phr);
+                $phr_lst->add_by_key($phr);
             } else {
                 log_err('unexpected object type ' . get_class($phr));
             }

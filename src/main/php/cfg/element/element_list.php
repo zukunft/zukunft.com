@@ -42,22 +42,28 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
-include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 
 class element_list extends sandbox_list
 {
@@ -177,6 +183,20 @@ class element_list extends sandbox_list
         return $qp;
     }
 
+    function get_by_link_id(element $elm): element|null
+    {
+        $res_elm = null;
+        foreach ($this->lst() as $chk_elm) {
+            if ($res_elm == null) {
+                if ($chk_elm->frm->id() == $elm->frm->id()
+                    and $chk_elm->trm_id() == $elm->trm_id()) {
+                    $res_elm = $elm;
+                }
+            }
+        }
+        return $res_elm;
+    }
+
 
     /*
      * info
@@ -198,8 +218,12 @@ class element_list extends sandbox_list
             foreach ($this->lst() as $sbx_obj) {
                 if ($pos <= $limit or $limit == null) {
                     // use only valid ids
-                    if ($sbx_obj->type_id() <> 0) {
-                        $result[] = $sbx_obj->type_id();
+                    if ($sbx_obj->frm?->id() != 0) {
+                        $id_txt = $sbx_obj->frm?->id();
+                        if ($sbx_obj->obj?->id() != 0) {
+                            $id_txt .= '/' . $sbx_obj->obj?->id();
+                        }
+                        $result[] = $id_txt;
                         $pos++;
                     }
                 }
@@ -214,6 +238,34 @@ class element_list extends sandbox_list
      */
 
     /**
+     * add an object to the list that does
+     * not yet have a database id
+     * but has linked objects
+     *
+     * @param element|db_object_seq_id|null $to_add the object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param Message $msg to report which entry is double
+     * @returns bool true if the object has been added
+     */
+    function add_by_link(
+        element|db_object_seq_id|null $to_add,
+        bool                          $allow_duplicates = false,
+        Message                       $msg = new Message()
+    ): bool
+    {
+        $result = false;
+        if ($allow_duplicates) {
+            $result = $this->add($to_add);
+        } else {
+            $elm = $this->get_by_link_id($to_add);
+            if ($elm == null) {
+                $result = $this->add($to_add);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * add one formula element to the list and keep the order (contrary to the parent function)
      * @returns bool true the element has been added
      */
@@ -222,6 +274,48 @@ class element_list extends sandbox_list
         parent::add_direct($elm_to_add);
         $this->set_lst_dirty();
         return true;
+    }
+
+
+    /*
+     * filter
+     */
+
+    /**
+     * get all objects that are not in the given list
+     *
+     * @param element_list|list_db_write|ListOfIdObjects $lst the list to compare with
+     * @return element_list|list_db_write|ListOfIdObjects the list of objects that are only in this list
+     */
+    function diff(
+        element_list|list_db_write|ListOfIdObjects $lst
+    ): element_list|list_db_write|ListOfIdObjects
+    {
+        $lst = $this->clone_reset();
+        foreach ($this->lst() as $elm) {
+            if (!$lst->get_by_link_id($elm)) {
+                $lst->add($elm);
+            }
+        }
+        return $lst;
+    }
+
+    /**
+     * get the formula elements from this list that use the verb following
+     * to select the values
+     * @return element_list with precoded formula elements using predicate "following"
+     */
+    function predefined_following(): element_list
+    {
+        $result = new element_list($this->get_user());
+        foreach ($this->lst() as $elm) {
+            if ($elm->is_formula()) {
+                if ($elm->obj->uses_following()) {
+                    $result->add($elm);
+                }
+            }
+        }
+        return $result;
     }
 
 

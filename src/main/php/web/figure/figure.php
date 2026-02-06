@@ -87,10 +87,10 @@ class figure extends combine_named
                 $val->api_mapper($json_array, $usr_msg);
                 $this->set_obj($val);
             } else {
-                $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a figure');
+                $usr_msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a figure');
             }
         } else {
-            $usr_msg->add_err('Json class missing, but expected for a figure');
+            $usr_msg->add_error_text('Json class missing, but expected for a figure');
         }
         return $usr_msg->is_ok();
     }

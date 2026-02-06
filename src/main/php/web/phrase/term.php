@@ -101,7 +101,7 @@ class term extends combine_named
             $this->set_obj($frm);
             //$this->set_id($frm->id());
         } else {
-            $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a term');
+            $usr_msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a term');
         }
         return $usr_msg->is_ok();
     }

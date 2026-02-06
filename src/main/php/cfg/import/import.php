@@ -1426,13 +1426,13 @@ class import
                     if ($wrd != null) {
                         $wrd->set_description($value);
                         $dto->add_word($wrd);
-                        $phr_lst->add_by_name($wrd->phrase());
+                        $phr_lst->add_by_key($wrd->phrase());
                         $wrd = null;
                     }
                     if ($trp != null) {
                         $trp->set_description($value);
                         $dto->add_triple($trp);
-                        $phr_lst->add_by_name($trp->phrase());
+                        $phr_lst->add_by_key($trp->phrase());
                         $trp = null;
                     }
                     if ($val != null) {
@@ -1459,12 +1459,12 @@ class import
                 // add the previous set word or triple to the lists
                 if ($wrd != null) {
                     $dto->add_word($wrd);
-                    $phr_lst->add_by_name($wrd->phrase());
+                    $phr_lst->add_by_key($wrd->phrase());
                     $wrd = null;
                 }
                 if ($trp != null) {
                     $dto->add_triple($trp);
-                    $phr_lst->add_by_name($trp->phrase());
+                    $phr_lst->add_by_key($trp->phrase());
                     $trp = null;
                 }
                 // add the previous value to the lists
@@ -1488,12 +1488,12 @@ class import
                 $sub_phr_lst = clone $phr_lst;
                 if ($wrd != null) {
                     $dto->add_word($wrd);
-                    $sub_phr_lst->add_by_name($wrd->phrase());
+                    $sub_phr_lst->add_by_key($wrd->phrase());
                     $wrd = null;
                 }
                 if ($trp != null) {
                     $dto->add_triple($trp);
-                    $sub_phr_lst->add_by_name($trp->phrase());
+                    $sub_phr_lst->add_by_key($trp->phrase());
                     $trp = null;
                 }
                 // add the sub array

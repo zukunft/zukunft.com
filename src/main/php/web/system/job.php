@@ -88,7 +88,7 @@ class job extends db_object
             try {
                 $request_timestamp = new DateTime($json_array[json_fields::TIME_REQUEST]);
             } catch (Exception $e) {
-                $msg->add_err('Error converting system log timestamp ' . $json_array[json_fields::TIME_REQUEST]
+                $msg->add_error_text('Error converting system log timestamp ' . $json_array[json_fields::TIME_REQUEST]
                     . ' because ' . $e->getMessage());
             }
         } else {
@@ -100,7 +100,7 @@ class job extends db_object
             try {
                 $request_timestamp = new DateTime($json_array[json_fields::TIME_START]);
             } catch (Exception $e) {
-                $msg->add_err('Error converting system log timestamp ' . $json_array[json_fields::TIME_START]
+                $msg->add_error_text('Error converting system log timestamp ' . $json_array[json_fields::TIME_START]
                     . ' because ' . $e->getMessage());
             }
         }
@@ -110,7 +110,7 @@ class job extends db_object
             try {
                 $request_timestamp = new DateTime($json_array[json_fields::TIME_END]);
             } catch (Exception $e) {
-                $msg->add_err('Error converting system log timestamp ' . $json_array[json_fields::TIME_END]
+                $msg->add_error_text('Error converting system log timestamp ' . $json_array[json_fields::TIME_END]
                     . ' because ' . $e->getMessage());
             }
         }

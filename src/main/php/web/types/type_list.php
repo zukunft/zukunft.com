@@ -108,7 +108,7 @@ class type_list
                 $this->add_obj($ref_typ);
             } else {
                 if (!array_key_exists(json_fields::CODE_ID, $value)) {
-                    $usr_msg->add_err('code id is missing for ' . implode(',', $value));
+                    $usr_msg->add_error_text('code id is missing for ' . implode(',', $value));
                 }
                 if (array_key_exists(json_fields::DESCRIPTION, $value)) {
                     $typ = new type_object(

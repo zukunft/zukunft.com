@@ -314,6 +314,11 @@ class def
         component::class,
     ];
 
+    // list of classes where the link of two objects is the main unique key beside the database id
+    const array LINK_CLASSES = [
+        element::class,
+    ];
+
     // classes that have a frontend and backend object but are not user-specific
     const array SYSTEM_UI_CLASSES = [
         language::class,

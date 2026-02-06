@@ -65,6 +65,8 @@ class element_db
     // database fields only used for formula elements
     const string FLD_ID = 'element_id';
     const string FLD_FORMULA_COM = 'each element can only be used for one formula';
+
+    // TODO Prio 0 deprecate because the order is already defined by the expression
     const string FLD_ORDER = 'order_nbr';
     const string FLD_TYPE = 'element_type_id';
     const string FLD_REF_ID_COM = 'either a term, verb or formula id';

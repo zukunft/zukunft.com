@@ -1417,7 +1417,7 @@ class sandbox_value extends sandbox_multi
     function load_by_grp(group $grp, bool $by_source = false): bool
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'load_by_grp',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2281,7 +2281,7 @@ class sandbox_value extends sandbox_multi
     function db_changed(sandbox_value $sbv): array
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'db_changed',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);

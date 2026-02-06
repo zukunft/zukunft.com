@@ -192,7 +192,7 @@ class user_message extends Message
      * @param string $txt the explanation that should be shown to the user
      * @return void
      */
-    function add_err(string $txt): void
+    function add_error_text(string $txt): void
     {
         if ($txt != '') {
             $this->add_message_text($txt);
@@ -293,17 +293,6 @@ class user_message extends Message
         return $this->db_row_id;
     }
 
-    /**
-     * TODO Prio 3 review
-     * @return string the translated text for all messages with vars
-     */
-    function var_message_text(): string
-    {
-        global $mtr;
-        $lib = new library();
-        return $lib->msg_var_text($this->msg_var_lst, $mtr);
-    }
-
 
     /*
      * internal
@@ -316,25 +305,6 @@ class user_message extends Message
     function get_last_message_translated(): string
     {
         return $this->get_message_translated(count($this->msg_var_lst));
-    }
-
-    /**
-     * simple return a translated message text with vars
-     * TODO review
-     * @param int $pos used to get another message than the main message
-     * @return string simple the message text
-     */
-    function get_message_translated(int $pos = 1): string
-    {
-        // the first message should have the position 1 not 0 like in php array
-        $pos = $pos - 1;
-        if (count($this->msg_var_lst) > $pos and $pos >= 0) {
-            return $this->var_message_text();
-        } else {
-            $msg = 'user message translation for position ' . $pos . ' not found';
-            log_warning($msg);
-            return $msg;
-        }
     }
 
     /**

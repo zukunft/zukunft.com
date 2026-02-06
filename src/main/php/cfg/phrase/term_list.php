@@ -608,7 +608,7 @@ class term_list extends sandbox_list_named
     {
         if (!$lst_to_add->is_empty()) {
             foreach ($lst_to_add->lst() as $trm_to_add) {
-                $this->add_by_name($trm_to_add);
+                $this->add_by_key($trm_to_add);
             }
         }
         return $this;

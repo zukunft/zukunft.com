@@ -511,7 +511,7 @@ class value_base extends sandbox_value
                 }
                 $src = new source($this->get_user());
                 $src->set_name($src_name);
-                $dto->source_list()->add_by_name($src);
+                $dto->source_list()->add_by_key($src);
             }
             $this->source = $src;
         }

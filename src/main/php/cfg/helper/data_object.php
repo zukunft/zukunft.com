@@ -641,7 +641,7 @@ class data_object
     {
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
-        $this->wrd_lst->add_by_name($wrd);
+        $this->wrd_lst->add_by_key($wrd);
 
         // add word references
         foreach ($wrd->ref_lst as $ref) {
@@ -669,7 +669,7 @@ class data_object
     {
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
-        $this->trp_lst->add_by_name($trp);
+        $this->trp_lst->add_by_key($trp);
     }
 
     /**
@@ -706,7 +706,7 @@ class data_object
      */
     function add_source(source $src): void
     {
-        $this->src_lst->add_by_name($src);
+        $this->src_lst->add_by_key($src);
     }
 
     /**
@@ -727,7 +727,7 @@ class data_object
     function add_formula(formula $frm): void
     {
         $this->trm_lst_dirty = true;
-        $this->frm_lst->add_by_name($frm);
+        $this->frm_lst->add_by_key($frm);
     }
 
     /**
@@ -770,7 +770,7 @@ class data_object
      */
     function add_view(view|sandbox_named $frm): void
     {
-        $this->msk_lst->add_by_name($frm);
+        $this->msk_lst->add_by_key($frm);
     }
 
     /**
@@ -780,7 +780,7 @@ class data_object
      */
     function add_component(component $cmp): void
     {
-        $this->cmp_lst->add_by_name($cmp);
+        $this->cmp_lst->add_by_key($cmp);
     }
 
     /**

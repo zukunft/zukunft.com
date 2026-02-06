@@ -103,14 +103,23 @@ class list_db_write extends list_db_read
             // get the sql functions that have not yet been created
             $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
 
-            // get the first object that have requested the missing function
-            $func_create_obj = clone $this;
-            $func_create_obj_names = $func_to_create->object_names();
-            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+            if (!$func_to_create->is_empty()) {
+                // TODO Prio 0 move to a function
+                // get the first object that have requested for each missing function
+                $func_create_obj_names = $func_to_create->object_names();
+                $func_create_lst = $this->select_by_name($func_create_obj_names);
 
-            // create the missing sql functions and add the first missing word
-            $func_to_create = $func_create_obj->sql_insert($sc);
-            $func_to_create->exe($class);
+                // create the missing sql functions
+                foreach ($func_create_lst->lst() as $func_create_obj) {
+                    $qp = $func_create_obj->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+                    if ($usr_msg->is_ok()) {
+                        $msg = 'add ' . $this->dsp_id();
+                        if ($db_con->insert($qp, $msg, $usr_msg)) {
+                            $func_create_obj->id = $usr_msg->get_row_id();
+                        }
+                    }
+                }
+            }
             $imp->step_end($func_to_create->count());
 
             // add the remaining missing words or triples
@@ -239,8 +248,8 @@ class list_db_write extends list_db_read
      * @return sql_par_list with the sql function names
      */
     function sql_delete_call_with_par(
-        sql_creator $sc,
-        user_message $usr_msg,
+        sql_creator        $sc,
+        user_message       $usr_msg,
         list_db_write|null $db_lst = null
     ): sql_par_list
     {
@@ -274,17 +283,23 @@ class list_db_write extends list_db_read
      */
     function select_by_name(array $names): list_db_write
     {
-        $result = clone $this;
-        $result->reset();
+        $result = $this->clone_reset();
 
         // check and adjust the parameters
         if (count($names) <= 0) {
             log_warning('Phrases to delete are missing.', 'word_list->filter');
         }
 
-        foreach ($this->lst() as $wrd) {
-            if (in_array($wrd->name(), $names)) {
-                $result->add_by_name($wrd);
+        foreach ($this->lst() as $obj) {
+            // for links the linked objects are the priority to detect duplicates
+            if (in_array($obj::class, def::LINK_CLASSES)) {
+                if (in_array($obj->name(), $names)) {
+                    $result->add_by_link($obj);
+                }
+            } elseif (in_array($obj::class, def::NAME_CLASSES)) {
+                if (in_array($obj->name(), $names)) {
+                    $result->add_by_key($obj);
+                }
             }
         }
 

@@ -102,6 +102,7 @@ class words
     const string REFERENCES = 'references';
     const string VALUES = 'values';
     const string FORMULAS = 'formulas';
+    const string ELEMENTS = 'elements';
     const string VIEWS = 'views';
     const string COMPONENTS = 'components';
     const string CHANGES = 'changes';

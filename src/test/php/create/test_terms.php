@@ -139,6 +139,7 @@ class test_terms
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
         $t_vrb = new test_verbs($this->env);
+        $t_frm = new test_formulas($this->env);
         $lst = new term_list($this->env->usr1);
         $lst->add($this->term());
         $lst->add($this->term_triple());
@@ -158,6 +159,8 @@ class test_terms
         $lst->add($t_vrb->verb_with()->term());
         $lst->add($t_wrd->word_one()->term());
         $lst->add($t_wrd->word_mio()->term());
+        $lst->add($t_frm->formula_this()->term());
+        $lst->add($t_frm->formula_prior()->term());
         return $lst;
     }
 

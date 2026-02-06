@@ -211,6 +211,7 @@ class formula_map extends sandbox_code_id
     private ?formula_link_list $lnk_lst = null;
     // old list of phrase that link to this formula
     private ?phrase_list $phr_lst = null;
+    // TODO Prio 0 deprecate
     public ?string $type_cl = '';          // the code id of the formula type
     public ?word $name_wrd = null;         // the triple object for the formula name:
     //                                        because values can only be assigned to phrases, also for the formula name a triple must exist
@@ -578,6 +579,17 @@ class formula_map extends sandbox_code_id
         return in_array($this->type_code_id(), formula_type::PREDEFINED_CALCULATION);
     }
 
+    /**
+     * if the formula uses the verb / predicate following
+     * to select an additional phrase for the value selection
+     * e.g. "this" or "next" to add a year to narrow the value selection
+     * @return bool true if another time phrase should be used for the value selection
+     */
+    function uses_following(): bool
+    {
+        return in_array($this->type_code_id(), formula_type::USES_FOLLOWING);
+    }
+
 
     /*
      * related
@@ -729,7 +741,7 @@ class formula_map extends sandbox_code_id
             foreach ($frm_trm_lst->lst() as $trm) {
                 $frm_trm = $trm_lst->get_by_name($trm->name());
                 if ($frm_trm == null) {
-                    $frm_lst->add_by_name($frm_trm);
+                    $frm_lst->add_by_key($frm_trm);
                 }
             }
             // TODO Prio 1 remove ignoring predefined errors
@@ -893,10 +905,10 @@ class formula_map extends sandbox_code_id
     /**
      * returns an ok message if this formula can be added to the database if the related terms are added
      * e.g. a formula without any expression should not be added to the database
-     * @param user_message $msg the explanation why the link cannot yet be added to the database
+     * @param user_message|Message $msg the explanation why the link cannot yet be added to the database
      * @return true if the formula can be added to the database
      */
-    function can_be_ready(user_message $msg): bool
+    function can_be_ready(user_message|Message $msg): bool
     {
         if ($this->ref_text == null or $this->ref_text == '') {
             if ($this->usr_text == null or $this->usr_text == '') {

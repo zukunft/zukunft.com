@@ -456,33 +456,33 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * add a named object to the list that does not yet have an id but has a name
-     * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
+     * @param sandbox_named|triple|phrase|term|db_object_seq_id|null $to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @param user_message $usr_msg to report which entry is double
+     * @param user_message $msg to report which entry is double
      * @returns bool true if the object has been added
      */
-    function add_by_name(
-        sandbox_named|triple|phrase|term|null $obj_to_add,
-        bool                                  $allow_duplicates = false,
-        user_message                          $usr_msg = new user_message()
+    function add_by_key(
+        sandbox_named|triple|phrase|term|db_object_seq_id|null $to_add,
+        bool                                                   $allow_duplicates = false,
+        Message                                                $msg = new Message()
     ): bool
     {
-        if ($obj_to_add != null) {
+        if ($to_add != null) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
-            $name = $obj_to_add->name();
+            $name = $to_add->name();
             if ($name != '') {
                 if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
                     // add only objects that have all mandatory values
-                    if ($obj_to_add->can_be_ready($usr_msg)) {
-                        $this->add_direct($obj_to_add);
+                    if ($to_add->can_be_ready($msg)) {
+                        $this->add_direct($to_add);
                         $this->set_lst_dirty();
                     }
                 } else {
-                    parent::add_obj($obj_to_add, $allow_duplicates, $usr_msg);
+                    parent::add_obj($to_add, $allow_duplicates, $msg);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -696,7 +696,7 @@ class sandbox_list_named extends sandbox_list
 
         foreach ($this->lst() as $wrd) {
             if (!in_array($wrd->name(), $names)) {
-                $result->add_by_name($wrd);
+                $result->add_by_key($wrd);
             }
         }
 
@@ -726,7 +726,7 @@ class sandbox_list_named extends sandbox_list
 
         foreach ($this->lst() as $wrd) {
             if (in_array($wrd->name(), $names)) {
-                $result->add_by_name($wrd);
+                $result->add_by_key($wrd);
             }
         }
 
@@ -1262,8 +1262,8 @@ class sandbox_list_named extends sandbox_list
      * @return sql_par_list with the sql function names
      */
     function sql_delete_call_with_par(
-        sql_creator $sc,
-        user_message $usr_msg,
+        sql_creator                           $sc,
+        user_message                          $usr_msg,
         sandbox_list_named|list_db_write|null $db_lst = null
     ): sql_par_list
     {

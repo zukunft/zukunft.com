@@ -194,7 +194,7 @@ class system_tests
         $t->assert_dsp_id($t_frm->formula_list_short(), 'scale minute to sec (formula_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->formula_link(), 'from "scale minute to sec" (formula_id 1) to "minute" (word_id 104) as phrase as (formula_link_id 1)');
         $t->assert_dsp_id($t_frm->element(), 'word "minute" (' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id 1/104) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::MINUTE_ID . '}*60)');
         $t->assert_dsp_id($t_res->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_res->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / ' . words::PCT_ID . ',,,) for user 1 (zukunft.com system test)');
@@ -255,6 +255,9 @@ class system_tests
 
         $test_name = 'get a system configuration value';
         $pod_url = $cfg->get_by([words::POD, words::URL]);
+        $t->assert($test_name, $pod_url, def::POD_NAME);
+        $test_name = 'use fallback value if configuration value is missing';
+        $pod_url = $cfg->get_by([words::POD, words::TEST_ADD], def::POD_NAME);
         $t->assert($test_name, $pod_url, def::POD_NAME);
 
 

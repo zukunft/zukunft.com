@@ -497,7 +497,7 @@ class triple_list extends sandbox_list_named
         foreach ($json_obj as $value) {
             $trp = new triple($this->get_user());
             if ($trp->import_obj($value, $usr_msg, $dto)) {
-                $this->add_by_name($trp);
+                $this->add_by_key($trp);
             }
         }
 
@@ -609,7 +609,7 @@ class triple_list extends sandbox_list_named
         foreach ($this->lst() as $lnk) {
             if ($lnk::class == phrase::class) {
                 log_err('unexpected phrase instead of triple in triple list');
-                $phr_lst->add_by_name($lnk);
+                $phr_lst->add_by_key($lnk);
             } else {
                 $phr_lst->add_by_name_direct($lnk->phrase());
             }
@@ -926,7 +926,7 @@ class triple_list extends sandbox_list_named
         $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $trp) {
             if ($trp->db_ready($msg)) {
-                $trp_lst->add_by_name($trp);
+                $trp_lst->add_by_key($trp);
             } else {
                 $msg->add(msg_id::IMPORT_TRIPLE_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,

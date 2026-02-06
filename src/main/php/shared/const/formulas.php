@@ -82,9 +82,9 @@ class formulas
     const int INCREASE_ID = 21;
     const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . words::THIS_NAME . '" / "' . words::PRIOR_NAME . '" )';
-    const string INCREASE_DB = '{w' . words::PCT_ID . '}=({w' . words::THIS_ID . '}-{w' . words::PRIOR_ID . '})/{w' . words::PRIOR_ID . '}';
+    const string INCREASE_DB = '{w' . words::PCT_ID . '}=({f' . formulas::THIS_ID . '}-{f' . formulas::PRIOR_ID . '})/{f' . formulas::PRIOR_ID . '}';
     const string LITRE_TO_M3 = 'scale litre to m3';
-    const string BIGGEST_CITY = 'population in the city of Zurich in percent of '  . words::CH . '';
+    const string BIGGEST_CITY = 'population in the city of Zurich in percent of '  . words::CH;
     const string SCALE_MIO = 'scale millions to one';
     const string SCALE_MIO_EXP = '"one" = "millions" * 1000000';
     const string SCALE_MIO_DB = '{w' . words::ONE_ID . '} = {w' . words::MIO_ID . '} * 1000000';

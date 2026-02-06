@@ -326,7 +326,7 @@ class sandbox_typed extends sandbox_named
 
     /**
      * the code id of the type for the export json
-     * must be overwritten by the child objects
+     * the child must overwrite this function
      * @return string|null with the code id of the type
      */
     function type_code_id(): string|null
@@ -342,7 +342,7 @@ class sandbox_typed extends sandbox_named
     function type_name(): string
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'type_name',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);

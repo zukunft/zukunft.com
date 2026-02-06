@@ -148,7 +148,7 @@ class db_object extends TextIdObject
                 $this->set_id($url_array[url_var::ID]);
             } else {
                 $this->set_id(0);
-                $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
+                $usr_msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
             }
         }
         return $usr_msg;
@@ -199,7 +199,7 @@ class db_object extends TextIdObject
             $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
-            $msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+            $msg->add_error_text('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
 
         // remember to send the updates to the backend

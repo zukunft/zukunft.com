@@ -402,6 +402,18 @@ class expression extends shared_expression
         return new trm_ids($id_lst);
     }
 
+    /**
+     * list of elements (in this case only formulas) that are of the predefined type "following"
+     * e.g. "this", "next" and "prior"
+     * @param term_list|null $trm_lst_in a list of preloaded terms that should be preferred used for the conversion
+     * @return term_list a list of all formulas words that are using hardcoded functions
+     */
+    function terms_following(user_message $usr_msg, ?term_list $trm_lst_in = null): term_list
+    {
+        $elm_lst = $this->element_list($usr_msg, $trm_lst_in);
+        return $elm_lst->predefined_following()->term_list();
+    }
+
 
     /*
      * internal
@@ -687,46 +699,6 @@ class expression extends shared_expression
      * filter elements
      * TODO to move to element list
      */
-
-    /**
-     * list of elements (in this case only formulas) that are of the predefined type "following"
-     * e.g. "this", "next" and "prior"
-     * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
-     * @return phrase_list a list of all formulas words that are using hardcoded functions
-     */
-    function element_special_following(user_message $usr_msg, ?term_list $trm_lst = null): phrase_list
-    {
-        global $sys;
-        $lib = new library();
-
-        $phr_lst = new phrase_list($this->usr);
-        $elm_lst = $this->element_list($usr_msg, $trm_lst);
-        if (!$elm_lst->is_empty()) {
-            foreach ($elm_lst->lst() as $elm) {
-                if ($elm->type() == formula::class) {
-                    if ($elm->obj != null) {
-                        if ($elm->obj->type_cl == formula_type::THIS
-                            or $elm->obj->type_cl == formula_type::NEXT
-                            or $elm->obj->type_cl == formula_type::PREV) {
-                            if ($elm->obj->name_wrd != null) {
-                                $phr_lst->add($elm->obj->name_wrd->phrase());
-                            }
-                        }
-                    }
-                }
-                if ($elm->type() == word::class or $elm->type() == triple::class) {
-                    if ($elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::THIS)
-                        or $elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::NEXT)
-                        or $elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::PRIOR)) {
-                        $phr_lst->add($elm->obj->phrase());
-                    }
-                }
-            }
-        }
-
-        log_debug($lib->dsp_count($phr_lst->lst()));
-        return $phr_lst;
-    }
 
     /**
      * similar to element_special_following, but returns the formula and not the word

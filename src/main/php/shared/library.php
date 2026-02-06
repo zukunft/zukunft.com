@@ -2876,6 +2876,9 @@ class library
             case formula::class;
                 $result = words::FORMULAS;
                 break;
+            case element::class;
+                $result = words::ELEMENTS;
+                break;
             case view::class;
                 $result = words::VIEWS;
                 break;

@@ -982,7 +982,7 @@ class value_list extends sandbox_value_list
             $phr_lst_to_add->add($val_phr);
         } else {
             $val_phr->set_name($val_key, word::class);
-            $phr_lst_to_add->add_by_name($val_phr);
+            $phr_lst_to_add->add_by_key($val_phr);
         }
         $val_to_add->set_number($val_number);
         $grp = $phr_lst_to_add->get_grp_id($do_save);

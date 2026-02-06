@@ -202,13 +202,13 @@ class phrase_list extends sandbox_list_named
                         // $usr_msg->add_type_message($phr_name, msg_id::PHRASE_MISSING->value);
                         $phr = new phrase($this->get_user());
                         $phr->set_name($phr_name);
-                        $phr_lst->add_by_name($phr);
-                        $this->add_by_name($phr);
+                        $phr_lst->add_by_key($phr);
+                        $this->add_by_key($phr);
                     } else {
                         if ($phr->id() != 0) {
                             $this->add($phr);
                         } elseif ($phr->name() != '') {
-                            $this->add_by_name($phr);
+                            $this->add_by_key($phr);
                         }
                     }
                 }
@@ -573,7 +573,7 @@ class phrase_list extends sandbox_list_named
                     } else {
                         // fallback for unit tests
                         $phr->set_name($phr_name, word::class);
-                        $this->add_by_name($phr);
+                        $this->add_by_key($phr);
                     }
                 }
             }
@@ -645,14 +645,14 @@ class phrase_list extends sandbox_list_named
                 foreach ($json_obj as $word) {
                     $wrd = new word($usr_msg->usr);
                     if ($wrd->import_mapper($word, $usr_msg)) {
-                        $this->add_by_name($wrd->phrase());
+                        $this->add_by_key($wrd->phrase());
                     }
                 }
             } elseif ($key == json_fields::TRIPLES) {
                 foreach ($json_obj as $triple) {
                     $trp = new triple($usr_msg->usr);
                     if ($trp->import_mapper($triple, $usr_msg)) {
-                        $this->add_by_name($trp->phrase());
+                        $this->add_by_key($trp->phrase());
                     }
                 }
             }
@@ -1068,7 +1068,7 @@ class phrase_list extends sandbox_list_named
         $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->id() == 0) {
-                $phr_lst->add_by_name($phr);
+                $phr_lst->add_by_key($phr);
             }
         }
         return $phr_lst;
@@ -1508,7 +1508,7 @@ class phrase_list extends sandbox_list_named
     {
         if (!$lst_to_add->is_empty()) {
             foreach ($lst_to_add->lst() as $phr_to_add) {
-                $this->add_by_name($phr_to_add);
+                $this->add_by_key($phr_to_add);
             }
         }
         return $this;
@@ -1861,7 +1861,7 @@ class phrase_list extends sandbox_list_named
         $lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_type($phr_typ)) {
-                $lst->add_by_name($phr);
+                $lst->add_by_key($phr);
             }
         }
         return $lst;
@@ -2168,7 +2168,7 @@ class phrase_list extends sandbox_list_named
         $result = clone $this;
         foreach ($join_phr_lst->lst as $phr) {
             if (!in_array($phr, $result->lst())) {
-                $result->add_by_name($phr);
+                $result->add_by_key($phr);
             }
         }
         log_debug($lib->dsp_count($result->lst()));
@@ -2264,10 +2264,10 @@ class phrase_list extends sandbox_list_named
         foreach ($this->lst() as $phr) {
             $db_phr = $db_lst->get_by_name($phr->name());
             if ($db_phr == null) {
-                $add_lst->add_by_name($phr);
+                $add_lst->add_by_key($phr);
             } else {
                 if ($phr->needs_db_update($db_phr)) {
-                    $chg_lst->add_by_name($phr);
+                    $chg_lst->add_by_key($phr);
                 }
             }
         }
@@ -2612,7 +2612,7 @@ class phrase_list extends sandbox_list_named
             if ($phr->is_word()) {
                 $wrd = $phr->obj();
                 if ($wrd->id() == 0 and $wrd->name() != '') {
-                    $wrd_lst->add_by_name($wrd);
+                    $wrd_lst->add_by_key($wrd);
                 } else {
                     $wrd_lst->add($wrd);
                 }
@@ -2632,7 +2632,7 @@ class phrase_list extends sandbox_list_named
             if ($phr->is_triple()) {
                 $trp = $phr->obj();
                 if ($trp->id() == 0 and $trp->name() != '') {
-                    $trp_lst->add_by_name($trp);
+                    $trp_lst->add_by_key($trp);
                 } else {
                     $trp_lst->add($trp);
                 }
@@ -2650,7 +2650,7 @@ class phrase_list extends sandbox_list_named
         $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_triple()) {
-                $trp_lst->add_by_name($phr->obj());
+                $trp_lst->add_by_key($phr->obj());
             }
         }
         return $trp_lst;

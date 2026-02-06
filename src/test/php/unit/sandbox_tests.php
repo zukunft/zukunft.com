@@ -116,7 +116,7 @@ class sandbox_tests
         $name_list_ex = implode('.', array_keys($wrd_lst->name_pos_lst_all()));
         $wrd_ex = $t_wrd->word_education();
         $wrd_ex->exclude();
-        $wrd_lst->add_by_name($wrd_ex);
+        $wrd_lst->add_by_key($wrd_ex);
         $name_list_ex_cache = implode('.', array_keys($wrd_lst->name_pos_lst_all()));
         // TODO Prio 2 activate and add the handling of excluded named objects
         //$t->assert_not($test_name, $name_list_ex_cache, $name_list);

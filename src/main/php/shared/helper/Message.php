@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class Message
 {
@@ -169,6 +170,21 @@ class Message
     }
 
     /**
+     * add a error message with variables
+     * and add the translated message to the log so that the admin can also see it
+     * TODO Prio 3 check if the causing user is added to the log
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_err(?msg_id $msg_id, array $var_lst): void
+    {
+        $this->add($msg_id, $var_lst, true);
+        $msg = $this->get_last_message_translated();
+        log_err($msg);
+    }
+
+    /**
      * add a message id for info only
      *
      * @param msg_id|null $msg_id the message text to add
@@ -230,6 +246,45 @@ class Message
     protected function get_all_var_messages(): array
     {
         return $this->msg_var_lst;
+    }
+
+    /**
+     * TODO should pick the last either from msg_var_lst or msg_id_lst
+     * @return string with the latest added message translated to the user language
+     */
+    function get_last_message_translated(): string
+    {
+        return $this->get_message_translated(count($this->msg_var_lst));
+    }
+
+    /**
+     * simple return a translated message text with vars
+     * TODO review
+     * @param int $pos used to get another message than the main message
+     * @return string simple the message text
+     */
+    function get_message_translated(int $pos = 1): string
+    {
+        // the first message should have the position 1 not 0 like in php array
+        $pos = $pos - 1;
+        if (count($this->msg_var_lst) > $pos and $pos >= 0) {
+            return $this->var_message_text();
+        } else {
+            $msg = 'user message translation for position ' . $pos . ' not found';
+            log_warning($msg);
+            return $msg;
+        }
+    }
+
+    /**
+     * TODO Prio 3 review
+     * @return string the translated text for all messages with vars
+     */
+    function var_message_text(): string
+    {
+        global $mtr;
+        $lib = new library();
+        return $lib->msg_var_text($this->msg_var_lst, $mtr);
     }
 
 }

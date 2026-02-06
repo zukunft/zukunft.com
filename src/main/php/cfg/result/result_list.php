@@ -1034,7 +1034,7 @@ class result_list extends sandbox_value_list
         $trm_back->load_by_id($back);
         $trm_lst_back->add($trm_back);
         $trm_lst_back = $frm->load_exp_terms($usr_msg, $trm_lst_back, $exp);
-        $phr_lst_preset_following = $exp->element_special_following($usr_msg, $trm_lst_back);
+        $phr_lst_preset_following = $exp->terms_following($usr_msg, $trm_lst_back);
         $frm_lst_preset_following = $exp->element_special_following_frm($usr_msg, $trm_lst_back);
 
         // combine all used predefined phrases/formulas

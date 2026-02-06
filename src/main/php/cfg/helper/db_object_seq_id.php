@@ -1266,7 +1266,7 @@ class db_object_seq_id extends db_object
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'sql_insert_key_field',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -1337,7 +1337,7 @@ class db_object_seq_id extends db_object
      */
     protected function check(user_message $msg): bool
     {
-        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'check',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -1429,7 +1429,7 @@ class db_object_seq_id extends db_object
      */
     function get_similar(user_message $msg): db_object|null
     {
-        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'get_similar',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);

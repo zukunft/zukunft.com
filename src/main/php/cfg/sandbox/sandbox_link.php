@@ -611,10 +611,10 @@ class sandbox_link extends sandbox
     /**
      * check if the link object (e.g. triple) might be added to the database
      * if all related objects have been added to the database
-     * @param user_message $msg to add the suggested solutions if something is missing e.g. a linked object
+     * @param user_message|Message $msg to add the suggested solutions if something is missing e.g. a linked object
      * @return bool true if the link can be added to the database after the linked objects have been added
      */
-    function can_be_ready(user_message $msg): bool
+    function can_be_ready(user_message|Message $msg): bool
     {
         parent::db_ready($msg);
 

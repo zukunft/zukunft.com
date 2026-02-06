@@ -127,7 +127,7 @@ class user extends db_object
             $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
-            $msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+            $msg->add_error_text('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
         if (array_key_exists(json_fields::NAME, $json_array)) {
             $this->name = $json_array[json_fields::NAME];

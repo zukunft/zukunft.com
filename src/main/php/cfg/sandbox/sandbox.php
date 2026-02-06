@@ -2496,7 +2496,7 @@ class sandbox extends db_object_seq_id_user
     function get_similar(user_message $msg): sandbox|db_object|null
     {
         $msg = new user_message();
-        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'get_similar',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2519,7 +2519,7 @@ class sandbox extends db_object_seq_id_user
      */
     function add(user_message $msg): bool
     {
-        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'add',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2915,7 +2915,7 @@ class sandbox extends db_object_seq_id_user
     function del_links(user_message $usr_msg): bool
     {
         // use the $usr_msg var instead of the log_err function directly to interrupt subsequently workflow
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'del_links',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -3994,7 +3994,7 @@ class sandbox extends db_object_seq_id_user
         sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
-        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'db_fields_changed',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);

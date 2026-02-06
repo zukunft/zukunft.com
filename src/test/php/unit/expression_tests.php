@@ -245,13 +245,14 @@ class expression_tests
         $target = '"parts","of","total" (element_id '
             . words::PARTS_ID . ',' . verbs::OF_ID . ',' . words::TOTAL_ID
             . ') for user 3 (zukunft.com system test)';
-        $target = '"parts","of","total" (element_id 1,2,1) for user 3 (zukunft.com system test)';
+        $target = '"parts","of","total" (element_id 1/285,1/5,1/286) for user 3 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 
         // tests based on the increase formula
         $test_name = 'test the conversion of the user text to the database reference text with fixed formulas';
-        $exp = new expression($frm);
+        $frm = $t_frm->formula_increase();
+        $exp = $frm->expression();
         $exp->set_user_text(formulas::INCREASE_EXP, $trm_lst);
         $result = $exp->ref_text($trm_lst);
         $target = formulas::INCREASE_DB;
@@ -259,7 +260,7 @@ class expression_tests
 
         $test_name = 'test getting the phrase ids';
         $result = implode(",", $exp->phr_id_lst($exp->ref_text())->lst);
-        $target = implode(",", array(words::PCT_ID, words::THIS_ID, words::PRIOR_ID));
+        $target = implode(",", array(words::PCT_ID));
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the conversion of the database reference text to the user text';
@@ -270,24 +271,24 @@ class expression_tests
         $test_name = 'test the formula element list';
         $elm_lst = $exp->element_list($usr_msg, $trm_lst);
         $result = $elm_lst->dsp_id();
-        $target = '"' . words::THIS_NAME . '","'
-            . words::PRIOR_NAME . '","'
-            . words::PRIOR_NAME . '" (element_id 1,1,1) for user 3 (zukunft.com system test)';
+        $target = '"' . formulas::THIS_NAME . '","'
+            . formulas::PRIOR . '","'
+            . formulas::PRIOR . '" (element_id 21/18,21/20,21/20) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the formula term list';
         $trm_lst = $exp->terms($usr_msg, $trm_lst);
         $result = $trm_lst->dsp_id();
         $target = '"' . words::PERCENT . '","'
-            . words::PRIOR_NAME . '","'
-            . words::THIS_NAME . '" (317,357,361)';
+            . formulas::PRIOR . '","'
+            . formulas::THIS_NAME . '" (36,40,317)';
         $t->assert($test_name, $result, $target);
 
         // element_special_following
         $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
-        $phr_lst = $exp->element_special_following($usr_msg, $trm_lst);
-        $result = $phr_lst->dsp_name();
-        $target = '"' . words::THIS_NAME . '","' . words::PRIOR_NAME . '"';
+        $follow_lst = $exp->terms_following($usr_msg, $trm_lst);
+        $result = $follow_lst->dsp_name();
+        $target = '"' . formulas::PRIOR . '","' . formulas::THIS_NAME . '"';
         $t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // TODO element_special_following_frm
@@ -301,7 +302,7 @@ class expression_tests
         $frm_prior = $trm_lst->get_by_name(formulas::PRIOR);
 
         $result = $elm_grp_lst->dsp_id();
-        $target = '"' . words::THIS_NAME . '" (' . $frm_this->id_obj() . ') / "' . words::PRIOR_NAME . '" (' . $frm_prior->id_obj() . ') / "' . words::PRIOR_NAME . '" ('
+        $target = '"' . formulas::THIS_NAME . '" (' . $frm_this->id_obj() . ') / "' . formulas::PRIOR . '" (' . $frm_prior->id_obj() . ') / "' . words::PRIOR_NAME . '" ('
             . $frm_prior->id_obj() . ')';
         $t->dsp_contains($test_name, $target, $result);
 

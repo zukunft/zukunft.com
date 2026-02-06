@@ -310,7 +310,7 @@ class result extends sandbox_value
                 }
                 $frm = new formula($this->get_user());
                 $frm->set_name($frm_name);
-                $frm_lst->add_by_name($frm);
+                $frm_lst->add_by_key($frm);
             }
             $this->frm = $frm;
         }

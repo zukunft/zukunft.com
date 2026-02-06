@@ -441,7 +441,7 @@ class verb_list extends type_list
             if ($vrb::class != verb::class) {
                 log_err('unexpected class ' . $vrb::class . ' in verb list');
             } else {
-                $trm_lst->add_by_name($vrb->term());
+                $trm_lst->add_by_key($vrb->term());
             }
         }
         return $trm_lst;

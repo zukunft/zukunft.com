@@ -675,7 +675,7 @@ class formula_list extends sandbox_list_named
             if ($frm::class != formula::class) {
                 log_err('unexpected class ' . $frm::class . ' in formula list');
             } else {
-                $trm_lst->add_by_name($frm->term());
+                $trm_lst->add_by_key($frm->term());
             }
         }
         return $trm_lst;
@@ -941,7 +941,7 @@ class formula_list extends sandbox_list_named
         $wrd_lst = new word_list($this->get_user());
         foreach ($this->lst() as $frm) {
             $wrd = $frm->formula_word();
-            $wrd_lst->add_by_name($wrd);
+            $wrd_lst->add_by_key($wrd);
         }
         $wrd_lst->save($msg, $imp);
         foreach ($this->lst() as $frm) {
@@ -1023,7 +1023,7 @@ class formula_list extends sandbox_list_named
         $frm_lst = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
             if ($frm->db_ready($msg)) {
-                $frm_lst->add_by_name($frm);
+                $frm_lst->add_by_key($frm);
             } else {
                 $msg->add(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,

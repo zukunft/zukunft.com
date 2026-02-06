@@ -49,6 +49,8 @@ include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
@@ -213,6 +215,11 @@ class ListOfIdObjects extends ListOf
         return $result;
     }
 
+    function get_first_object(): IdObject|TextIdObject|CombineObject|null
+    {
+        return $this->lst()[0] ?? null;
+    }
+
 
     /*
      * modify
@@ -298,6 +305,58 @@ class ListOfIdObjects extends ListOf
             }
         }
         $this->lst_dirty = false;
+    }
+
+
+    /*
+     * overwrite
+     */
+
+    /**
+     * add an object to the list that does
+     * not yet have a database id
+     * but has a name
+     * or in second priority linked objects
+     *
+     * @param db_object_seq_id|null $to_add the object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param Message $msg to report which entry is double
+     * @returns bool true if the object has been added
+     */
+    function add_by_key(
+        db_object_seq_id|null $to_add,
+        bool                  $allow_duplicates = false,
+        Message               $msg = new Message()
+    ): bool
+    {
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'add_by_key',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return false;
+    }
+
+    /**
+     * add an object to the list that does
+     * not yet have a database id
+     * but has linked objects
+     *
+     * @param db_object_seq_id|null $to_add the object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param Message $msg to report which entry is double
+     * @returns bool true if the object has been added
+     */
+    function add_by_link(
+        db_object_seq_id|null $to_add,
+        bool                  $allow_duplicates = false,
+        Message               $msg = new Message()
+    ): bool
+    {
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'add_by_link',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return false;
     }
 
 

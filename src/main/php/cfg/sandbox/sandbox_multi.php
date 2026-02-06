@@ -886,7 +886,7 @@ class sandbox_multi extends db_object_multi_user
     function load_objects(): bool
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'load_objects',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2012,7 +2012,7 @@ class sandbox_multi extends db_object_multi_user
     function log_del_link(): change_link
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'log_del_link',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2093,7 +2093,7 @@ class sandbox_multi extends db_object_multi_user
      */
     protected function check_preserved(user_message $msg): bool
     {
-        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'check_preserved',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2143,7 +2143,7 @@ class sandbox_multi extends db_object_multi_user
     function save_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'save_fields',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2479,7 +2479,7 @@ class sandbox_multi extends db_object_multi_user
     function name_field(): string
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'name_field',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2703,7 +2703,7 @@ class sandbox_multi extends db_object_multi_user
     function is_id_updated(sandbox_multi $db_rec): bool
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'is_id_updated',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2837,7 +2837,7 @@ class sandbox_multi extends db_object_multi_user
     function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec, user_message $usr_msg): bool
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'save_id_fields',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2858,7 +2858,7 @@ class sandbox_multi extends db_object_multi_user
     function is_same_std(object $obj_to_check): bool
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'is_same_std',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2963,7 +2963,7 @@ class sandbox_multi extends db_object_multi_user
     function get_similar(): sandbox_multi
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'get_similar',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2986,7 +2986,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function add(user_message $usr_msg): bool
     {
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'add',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -3745,7 +3745,7 @@ class sandbox_multi extends db_object_multi_user
     function id_fvt_lst(sql_type_list $sc_par_lst = new sql_type_list()): sql_par_field_list
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'id_fvt_lst',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -3760,7 +3760,7 @@ class sandbox_multi extends db_object_multi_user
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'db_fields_all',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -3802,7 +3802,7 @@ class sandbox_multi extends db_object_multi_user
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'db_fields_changed',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -4352,7 +4352,7 @@ class sandbox_multi extends db_object_multi_user
     function del_links(): user_message
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'del_links',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -4452,7 +4452,7 @@ class sandbox_multi extends db_object_multi_user
     function type_name(): string
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'type_name',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);

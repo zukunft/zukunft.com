@@ -693,10 +693,10 @@ class sandbox_named extends sandbox
     /**
      * check if this might be added to the database
      * which is for named objects without dependencies the same as db_ready
-     * @param user_message $msg including suggested solutions if something is missing e.g. a linked object
+     * @param user_message|Message $msg including suggested solutions if something is missing e.g. a linked object
      * @return bool true if the named object can be added to the database
      */
-    function can_be_ready(user_message $msg): bool
+    function can_be_ready(user_message|Message $msg): bool
     {
         return $this->db_ready($msg);
     }
