@@ -37,6 +37,10 @@ A proper issue ticket should be created for these TODOs notes:
          - a type assigns coded functionality to one object
          - a predicate assigns coded functionality to an object link between two objects
          - a specific predicate can be named ..._type e.g. view_relation_type is actually a predicate
+    TODO deprecate global $usr and use instead only
+         - the requesting user which is part of the Message $msg object
+         - the object owner which is a ->usr var within the object
+         - the sandbox root object owner which is a ->owner var of the sandbox object
     TODO add a coding rule test that checks
          - there is at least one succes and on fail test for each function
          - classes are no longer than 1000 lines

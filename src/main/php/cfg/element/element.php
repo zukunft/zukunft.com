@@ -64,10 +64,10 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -89,12 +89,12 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 
 class element extends db_object_seq_id_user
 {
@@ -168,6 +168,7 @@ class element extends db_object_seq_id_user
 
     /**
      * map the formula element database fields for a later load of the object
+     * TODO Prio 2 rename to row_mapper and use the term cache to avoid reloading of terms
      *
      * @param array|null $db_row with the data directly from the database
      * @return bool true if the triple is loaded and valid
@@ -177,7 +178,19 @@ class element extends db_object_seq_id_user
         $this->id = 0;
         $result = parent::row_mapper($db_row, element_db::FLD_ID);
         if ($result) {
-            $this->load_obj_by_id($db_row[element_db::FLD_REF_ID]);
+            if (array_key_exists(element_db::FLD_REF_ID, $db_row)
+                and array_key_exists(element_db::FLD_TYPE, $db_row)) {
+                $id = $db_row[element_db::FLD_REF_ID];
+                $typ_id = $db_row[element_db::FLD_TYPE];
+                $this->set_object_by_id($id, $typ_id);
+            }
+        }
+        if ($result) {
+            if (array_key_exists(formula_db::FLD_ID, $db_row)) {
+                $frm = new formula($this->get_user());
+                $frm->load_by_id($db_row[formula_db::FLD_ID]);
+                $this->frm = $frm;
+            }
         }
         return $result;
     }
@@ -278,6 +291,35 @@ class element extends db_object_seq_id_user
         } else {
             return '';
         }
+    }
+
+    /**
+     * set the element object by the id and the type id
+     * TODO use cache to avoid db reloading
+     *
+     * @param int $id the database id of the element object
+     * @param int $typ_id the id of the element object type
+     * @return bool true if a valid object has been set
+     */
+    function set_object_by_id(int $id, int $typ_id): bool
+    {
+        global $sys;
+
+        $typ = $sys->typ_lst->elm_typ->get($typ_id);
+        if ($typ->code_id == element_types::WORD_SELECTOR) {
+            $obj = new word($this->get_user());
+        } elseif ($typ->code_id == element_types::VERB_SELECTOR) {
+            $obj = new verb();
+        } elseif ($typ->code_id == element_types::TRIPLE_SELECTOR) {
+            $obj = new triple($this->get_user());
+        } elseif ($typ->code_id == element_types::FORMULA_SELECTOR) {
+            $obj = new formula($this->get_user());
+        } else {
+            $obj = new word($this->get_user());
+            log_err('id of type ' . $this->type() . ' is not expected');
+        }
+        $this->obj = $obj;
+        return $obj->load_by_id($id);
     }
 
     /**
@@ -524,11 +566,17 @@ class element extends db_object_seq_id_user
         // create an empty sandbox object but of the same type and with the same user to detect the fields that should be written
         $db_row = $this->clone_reset();
 
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
+
         // get the field names, values and parameter types that have been changed
-        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg);
+        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
 
         // prepare the sql statement
-        $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::INSERT, $sc_par_lst);
+        $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::INSERT, $sc_par_lst_used);
 
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->db_values();
@@ -551,6 +599,12 @@ class element extends db_object_seq_id_user
         user_message             $usr_msg,
         sql_type_list            $sc_par_lst = new sql_type_list()): sql_par
     {
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::UPDATE);
+
         // get the field names, values and parameter types that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
@@ -558,7 +612,7 @@ class element extends db_object_seq_id_user
         $fvt_lst = $this->db_fields_changed($db_row, $usr_msg);
 
         // prepare the sql statement
-        $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::UPDATE, $sc_par_lst);
+        $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::UPDATE, $sc_par_lst_used);
 
         $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
         $qp->par = $fvt_lst->db_values();

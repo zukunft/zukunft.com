@@ -1258,11 +1258,11 @@ class formula extends formula_map
 
         // add the missing links
         $add_lst = $elm_lst->diff($db_lst);
-        $add_lst->db_insert($usr_msg, $imp, element::class);
+        $add_lst->db_insert_no_log($usr_msg, $imp, element::class);
 
         // delete links not needed any more
         $del_lst = $db_lst->diff($elm_lst);
-        $del_lst->db_delete($usr_msg, $imp, element::class);
+        $del_lst->db_delete_no_log($usr_msg, $imp, element::class);
 
         return $usr_msg->is_ok();
     }

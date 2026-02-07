@@ -7478,15 +7478,15 @@
         "id": 2
       },
       {
-        "name": "formula",
-        "code_id": "formula",
-        "description": "to select the results of another formula using the given context",
-        "id": 3
-      },
-      {
         "name": "triple",
         "code_id": "triple",
         "description": "a reference to two predicate linked words used to select values using \"and\"",
+        "id": 3
+      },
+      {
+        "name": "formula",
+        "code_id": "formula",
+        "description": "to select the results of another formula using the given context",
         "id": 4
       }
     ],

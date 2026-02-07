@@ -118,12 +118,13 @@ class formula_write_tests
         $target = $lib->dsp_bool(false);
         $t->assert('formula->is_special for "' . $frm->name() . '"', $result, $target);
 
-        /*
-         * TODO Prio 0 activate
+        $t->subheader($ts . 'update elements in database for ' . formulas::SYSTEM_TEST_ADD);
+
         $test_name = 'remove an element and update the database';
         $frm->set_user_text(formulas::INCREASE_ALTERNATIVE_EXP);
-        $frm->element_refresh($usr_msg, $t_trm->term_list_all());
-        $elm_lst = $frm->element_list($usr_msg);
+        $trm_lst = $t_trm->term_list_all();
+        $frm->element_refresh($usr_msg, $trm_lst);
+        $elm_lst = $frm->element_list($usr_msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list();
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
         $test_name = 'remove an element and update the database ... compare with fixed text';
@@ -132,30 +133,35 @@ class formula_write_tests
 
         $test_name = 'add an element and update the database';
         $frm->set_user_text(formulas::INCREASE_EXP);
-        $frm->element_refresh($usr_msg, $t_trm->term_list_all());
-        $elm_lst = $frm->element_list($usr_msg);
+        $frm->element_refresh($usr_msg, $trm_lst);
+        $elm_lst = $frm->element_list($usr_msg, $trm_lst);
+        $elm_lst = $elm_lst->unique();
         $elm_lst_db = $frm->load_element_list();
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
 
         $test_name = 'remove an element and update the database without term cache';
         $frm->set_user_text(formulas::INCREASE_ALTERNATIVE_EXP);
         $frm->element_refresh($usr_msg);
-        $elm_lst = $frm->element_list($usr_msg);
+        $elm_lst = $frm->element_list($usr_msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list();
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
 
         $test_name = 'add an element and update the database without term cache';
         $frm->set_user_text(formulas::INCREASE_EXP);
-        $frm->element_refresh($usr_msg, $t_trm->term_list_all());
-        $elm_lst = $frm->element_list($usr_msg);
+        $frm->element_refresh($usr_msg, $trm_lst);
+        $elm_lst = $frm->element_list($usr_msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list();
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
-         */
 
+        $t->subheader($ts . 'formulas using verb following');
 
+        $usr_msg->reset();
+        $frm = new formula($t->usr1);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD, formula::class);
         $exp = $frm->expression();
         $trm_lst = new term_list($t->usr1);
-        $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
+        $trm_ids = $exp->terms_missing($usr_msg, $trm_lst);
+        $trm_lst->load_additional_by_id($trm_ids);
         $frm_lst = $exp->element_special_following_frm($usr_msg, $trm_lst);
         $phr_lst = new phrase_list($t->usr1);
         if (!$frm_lst->is_empty()) {

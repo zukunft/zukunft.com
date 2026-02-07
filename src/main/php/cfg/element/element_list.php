@@ -318,6 +318,26 @@ class element_list extends sandbox_list
         return $result;
     }
 
+    /**
+     * remove all duplicate links from this list
+     * the element list created from the expression may contain the same link more than once
+     * e.g. for correct number fillings.
+     * whereas the element list loaded from the database contains each link only once
+     * because the database table should only be used to select the the formula so no duplicates are needed
+     *
+     * @return element_list with only unique links
+     */
+    function unique(): element_list
+    {
+        $lst = $this->clone_reset();
+        foreach ($this->lst() as $elm) {
+            if (!$lst->get_by_link_id($elm)) {
+                $lst->add($elm);
+            }
+        }
+        return $lst;
+    }
+
 
     /*
      * del

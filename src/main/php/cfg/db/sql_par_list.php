@@ -131,6 +131,23 @@ class sql_par_list
     /**
      * @return user_message with the parameter names formatted for sql
      */
+    function exe_direct(): user_message
+    {
+        global $db_con;
+
+        $usr_msg = new user_message();
+
+        // TODO Prio 2 execute block wise
+        foreach ($this->lst as $qp) {
+            $db_con->exe_direct($qp, $usr_msg);
+            $usr_msg->add_list_name_id($usr_msg, $qp->obj_name);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return user_message with the parameter names formatted for sql
+     */
     function exe_update(string $class = ''): user_message
     {
         global $db_con;
@@ -175,9 +192,13 @@ class sql_par_list
     function sql_functions_missing(array $db_func_names): sql_par_list
     {
         $result = new sql_par_list();
+        $added_names = [];
         foreach ($this->lst as $qp) {
             if (!in_array($qp->name, $db_func_names)) {
-                $result->add($qp);
+                if (!in_array($qp->name, $added_names)) {
+                    $result->add($qp);
+                    $added_names[] = $qp->name;
+                }
             }
         }
         return $result;

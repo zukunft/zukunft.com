@@ -58,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -70,73 +71,32 @@ class list_db_write extends list_db_read
      */
 
     /**
-     * add all list objects to the database using grouped calls of predefined sql functions
+     * add all list objects to the database using grouped calls of prepared SQL statements
+     * without adding log entries
+     * e.g. because formula elements changes are already logged with the formula expression change
      *
      * @param import|null $imp the import object with the estimate of the total save time
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @param string $class the object class that should be stored in the database
      * @return bool true if everything has been fine
      */
-    function db_insert(user_message $usr_msg, ?import $imp, string $class): bool
+    function db_insert_no_log(user_message $msg, ?import $imp, string $class): bool
     {
         global $db_con;
-        global $cfg;
 
         if (!$this->is_empty()) {
 
             // prepare
             $sc = $db_con->sql_creator();
-            $lib = new library();
 
-            // get the configuration values
-            $cfg_wrd = $lib->class_to_word($class);
-            $save_per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+            // get the sql call to delete the objects not needed any more
+            $del_lst = $this->sql_insert_no_log($sc, $msg);
+            return $this->db_save_no_log(
+                $msg, $imp, $del_lst, $class, words::STORE, msg_id::ADD);
 
-            // get the sql call to add the missing objects
-            // TODO use sql_insert ?
-            $ins_calls = $this->sql_insert_call_with_par($sc, $usr_msg);
-            $imp->step_start(msg_id::PREPARE, $class, $ins_calls->count());
-
-            // get the functions that are already in the database
-            $db_func_lst = $db_con->get_functions();
-
-            // get the sql functions that have not yet been created
-            $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
-
-            if (!$func_to_create->is_empty()) {
-                // TODO Prio 0 move to a function
-                // get the first object that have requested for each missing function
-                $func_create_obj_names = $func_to_create->object_names();
-                $func_create_lst = $this->select_by_name($func_create_obj_names);
-
-                // create the missing sql functions
-                foreach ($func_create_lst->lst() as $func_create_obj) {
-                    $qp = $func_create_obj->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-                    if ($usr_msg->is_ok()) {
-                        $msg = 'add ' . $this->dsp_id();
-                        if ($db_con->insert($qp, $msg, $usr_msg)) {
-                            $func_create_obj->id = $usr_msg->get_row_id();
-                        }
-                    }
-                }
-            }
-            $imp->step_end($func_to_create->count());
-
-            // add the remaining missing words or triples
-            $step_time = $this->count() / $save_per_sec;
-            $imp->step_start(msg_id::ADD, $class, $this->count(), $step_time);
-            $add_lst = $this->filter_by_name($func_create_obj_names);
-            $ins_calls = $add_lst->sql_insert_call_with_par($sc);
-            $usr_msg->merge($ins_calls->exe($class));
-
-            // TODO create a loop to add depending triples
-            // add the just added words or triples id to this list
-            $this->add_id_by_name($usr_msg->db_row_id_lst(), $class);
-
-            $imp->step_end($add_lst->count(), $save_per_sec);
-
+        } else {
+            return $msg->is_ok();
         }
-        return $usr_msg->is_ok();
     }
 
 
@@ -148,11 +108,42 @@ class list_db_write extends list_db_read
      * delete all list objects from the database using grouped calls of predefined sql functions
      *
      * @param import|null $imp the import object with the estimate of the total save time
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @param string $class the object class that should be removed from the database
      * @return bool true if everything has been fine
      */
-    function db_delete(user_message $usr_msg, ?import $imp, string $class): bool
+    function db_delete_no_log(user_message $msg, ?import $imp, string $class): bool
+    {
+        global $db_con;
+
+        if (!$this->is_empty()) {
+
+            // prepare
+            $sc = $db_con->sql_creator();
+
+            // get the sql call to delete the objects not needed any more
+            $del_lst = $this->sql_delete_no_log($sc, $msg);
+            return $this->db_save_no_log(
+                $msg, $imp, $del_lst, $class, words::REMOVE, msg_id::DEL);
+
+        } else {
+            return $msg->is_ok();
+        }
+    }
+
+
+    /*
+     * db helper
+     */
+
+    private function db_save_no_log(
+        user_message $msg,
+        ?import      $imp,
+        sql_par_list $sql_lst,
+        string       $class,
+        string       $cfg_act_wrd,
+        msg_id       $msg_id
+    ): bool
     {
         global $db_con;
         global $cfg;
@@ -165,50 +156,22 @@ class list_db_write extends list_db_read
 
             // get the configuration values
             $cfg_wrd = $lib->class_to_word($class);
-            $save_per_sec = $cfg->get_by([$cfg_wrd, words::REMOVE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+            $save_per_sec = $cfg->get_by([$cfg_wrd, $cfg_act_wrd, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
-            // get the sql call to delete the objects not needed any more
-            // TODO use sql_insert ?
-            $del_calls = $this->sql_delete_call_with_par($sc, $usr_msg);
-            $imp->step_start(msg_id::PREPARE, $class, $del_calls->count());
+            // prepare missing SQL statements
+            $imp->step_start(msg_id::PREPARE, $class, $sql_lst->count());
+            $db_con->add_missing_prepared($sql_lst, $msg);
+            $imp->step_end($sql_lst->count());
 
-            // get the functions that are already in the database
-            $db_func_lst = $db_con->get_functions();
-
-            // get the sql functions that have not yet been created
-            $func_to_create = $del_calls->sql_functions_missing($db_func_lst);
-
-            // get the first object that have requested the missing function
-            $func_create_obj = clone $this;
-            $func_create_obj_names = $func_to_create->object_names();
-            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
-
-            // create the missing sql functions and add the first missing word
-            $func_to_create = $func_create_obj->sql_delete($sc);
-            $func_to_create->exe($class);
-            $imp->step_end($func_to_create->count());
-
-            // add the remaining missing words or triples
+            // add the remaining missing objects
             $step_time = $this->count() / $save_per_sec;
-            $imp->step_start(msg_id::ADD, $class, $this->count(), $step_time);
-            $del_lst = $this->filter_by_name($func_create_obj_names);
-            $del_calls = $del_lst->sql_delete_call_with_par($sc);
-            $usr_msg->merge($del_calls->exe($class));
-
-            // TODO create a loop to add depending triples
-            // add the just added words or triples id to this list
-            $this->add_id_by_name($usr_msg->db_row_id_lst(), $class);
-
-            $imp->step_end($del_lst->count(), $save_per_sec);
+            $imp->step_start($msg_id, $class, $this->count(), $step_time);
+            $msg->merge($sql_lst->exe_direct());
+            $imp->step_end($sql_lst->count(), $save_per_sec);
 
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
-
-
-    /*
-     * db helper
-     */
 
     /**
      * get a list of all sql function names that are needed to add all objects of this list to the database
@@ -225,6 +188,34 @@ class list_db_write extends list_db_read
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                 $sc_par_lst->add(sql_type::LOG);
+                $ins_usr_msg = new user_message();
+                $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
+                if ($ins_usr_msg->is_ok()) {
+                    $qp->obj_name = $sbx->name();
+                    $sql_list->add($qp);
+                } else {
+                    $usr_msg->merge($ins_usr_msg);
+                    log_err('Internal import error: ' . $usr_msg->all_message_text());
+                }
+            }
+        }
+        return $sql_list;
+    }
+
+    /**
+     * get a list of all sql function names that are needed to add all objects of this list to the database
+     *
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @return sql_par_list with the sql function names
+     */
+    function sql_insert_no_log(sql_creator $sc, user_message $usr_msg): sql_par_list
+    {
+        $sql_list = new sql_par_list();
+        foreach ($this->lst() as $sbx) {
+            // another validation check as a second line of defence
+            if ($sbx->db_ready($usr_msg)) {
+                // check always user sandbox and normal name, because reading from database for check would take longer
+                $sc_par_lst = new sql_type_list();
                 $ins_usr_msg = new user_message();
                 $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
                 if ($ins_usr_msg->is_ok()) {
@@ -258,6 +249,37 @@ class list_db_write extends list_db_read
             // check always user sandbox and normal name, because reading from database for check would take longer
             $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
             $sc_par_lst->add(sql_type::LOG);
+            $ins_usr_msg = new user_message();
+            $qp = $sbx->sql_delete($sc, $ins_usr_msg, $sc_par_lst);
+            if ($ins_usr_msg->is_ok()) {
+                $qp->obj_name = $sbx->name();
+                $sql_list->add($qp);
+            } else {
+                $usr_msg->merge($ins_usr_msg);
+                log_err('Internal import error: ' . $usr_msg->all_message_text());
+            }
+        }
+        return $sql_list;
+    }
+
+    /**
+     * get a list of all sql function names that are needed to delete all objects of this list from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param list_db_write|null $db_lst the list of delete statements that are already in the database
+     * @return sql_par_list with the sql function names
+     */
+    function sql_delete_no_log(
+        sql_creator        $sc,
+        user_message       $usr_msg,
+        list_db_write|null $db_lst = null
+    ): sql_par_list
+    {
+        $sql_list = new sql_par_list();
+        foreach ($this->lst() as $sbx) {
+            // check always user sandbox and normal name, because reading from database for check would take longer
+            $sc_par_lst = new sql_type_list();
             $ins_usr_msg = new user_message();
             $qp = $sbx->sql_delete($sc, $ins_usr_msg, $sc_par_lst);
             if ($ins_usr_msg->is_ok()) {

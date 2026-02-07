@@ -205,6 +205,11 @@ enum messages: string
     const string VAR_COUNTER = 'VarCounter';
     const string IMPORT_SUCCESS = 'finished successful';
 
+    // technical database vars
+    const string VAR_SQL = 'VarObjSQL';
+    const string VAR_TRACE_LINK = 'VarObjTraceLink';
+    const string VAR_SQL_REASON = 'VarObjSqlReason';
+
     // unique message keys
     // *_txt sample translation to test the English mapping
     case IS_RESERVED = 'is_reserved';
@@ -745,6 +750,17 @@ enum messages: string
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
         . ' is not valid and cannot be linked to '
         . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+
+    case DB_SQL_TYPE_UNKNOWN = 'database type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not expected';
+    case DB_SQL_EXE_PREPARE_ERROR = 'creating the prepared SQL statement "'
+        . self::VAR_START . self::VAR_SQL . self::VAR_END
+        . '" failed due to '
+        . self::VAR_START . self::VAR_SQL_REASON . self::VAR_END
+        . ' is not expected. this error can be traced with this link'
+        . self::VAR_START . self::VAR_TRACE_LINK . self::VAR_END
+        . '.';
 
     case PHRASE_TYPE_NOT_FOUND = 'word/triple type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
