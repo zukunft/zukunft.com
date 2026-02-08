@@ -276,6 +276,13 @@ class element_list extends sandbox_list
         return true;
     }
 
+    function merge(element_list $lst): void
+    {
+        foreach ($lst->lst() as $elm) {
+            $this->add($elm);
+        }
+    }
+
 
     /*
      * filter

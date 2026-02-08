@@ -75,6 +75,7 @@ include_once paths::MODEL_ELEMENT . 'element_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
@@ -124,6 +125,7 @@ use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -723,14 +725,14 @@ class formula_map extends sandbox_code_id
      * and if terms are added, add the formula to the given list of formulas that should be updated
      *
      * @param user_message $usr_msg to collect messages which terms are missing
-     * @param term_list $trm_lst with the terms that are already in the cache term list
-     * @param formula_list $frm_lst to collect formulas that should be updated with the terms that have been loaded
+     * @param term_list|null $trm_lst with the terms that are already in the cache term list
+     * @param formula_list|null $frm_lst to collect formulas that should be updated with the terms that have been loaded
      * @return term_list the additional terms that have been loaded
      */
     function load_missing_terms(
         user_message $usr_msg,
-        term_list    $trm_lst,
-        formula_list $frm_lst
+        ?term_list    $trm_lst = null,
+        ?formula_list $frm_lst = null
     ): term_list
     {
         $exp = $this->expression($trm_lst);
@@ -740,8 +742,10 @@ class formula_map extends sandbox_code_id
             $frm_trm_lst = $exp->terms($usr_msg, $trm_lst);
             foreach ($frm_trm_lst->lst() as $trm) {
                 $frm_trm = $trm_lst->get_by_name($trm->name());
-                if ($frm_trm == null) {
-                    $frm_lst->add_by_key($frm_trm);
+                if ($frm_trm != null and $frm_lst != null) {
+                    if ($frm_trm->is_formula()) {
+                        $frm_lst->add_by_key($frm_trm->get_formula());
+                    }
                 }
             }
             // TODO Prio 1 remove ignoring predefined errors
@@ -1789,8 +1793,11 @@ class formula_map extends sandbox_code_id
             // update the reference table for fast calculation
             // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
             if ($msg->is_ok()) {
-                if (!$this->element_refresh_old($this->ref_text)) {
-                    $msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
+                $msg_elm = $msg->clone_reset();
+                // TODO Prio 1 load upfront the needed term and use the trm_lst
+                if (!$this->element_refresh($msg_elm)) {
+                    log_info('formula import failed on first try. relevant?');
+                    //$msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
                 }
             }
         }
@@ -1807,6 +1814,75 @@ class formula_map extends sandbox_code_id
     /*
      * save helper
      */
+
+    /**
+     * update the database references to the formula elements
+     * to be able to use the sql statements to find all formulas depending on a word. triple, verb or formula
+     *
+     * @param user_message $usr_msg to collect problems and suggested solutions for the user
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return bool true if the update has been fine
+     */
+    function element_refresh(user_message $usr_msg, ?term_list $trm_lst = null): bool
+    {
+        $imp = new import();
+
+        $frm_usr_msg = $usr_msg->clone_reset();
+        $trm_lst = $this->load_missing_terms($frm_usr_msg, $trm_lst);
+
+        // get the target list of elements that should be linked to the formula
+        $elm_lst = $this->elements_incl_result_phrases($usr_msg, $trm_lst);
+
+        // read the existing elements from the database
+        $db_lst = $this->load_element_list();
+
+        // add the missing links
+        $add_lst = $elm_lst->diff($db_lst);
+        $add_lst->db_insert_no_log($usr_msg, $imp, element::class);
+
+        // delete links not needed any more
+        $del_lst = $db_lst->diff($elm_lst);
+        $del_lst->db_delete_no_log($usr_msg, $imp, element::class);
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * @return element_list with the element linked to this formula according to the database
+     */
+    function load_element_list(): element_list
+    {
+        $db_lst = new element_list($this->get_user());
+        $db_lst->load_by_frm($this->id());
+        return $db_lst;
+    }
+
+    /**
+     * get the list of elements used in this formula
+     *
+     * @param user_message $usr_msg to collect the error messages e.g. missing terms
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return element_list the list of elements used in this formula
+     */
+    function elements(user_message $usr_msg, ?term_list $trm_lst = null): element_list
+    {
+        $exp = $this->expression($trm_lst);
+        return $exp->element_list($usr_msg, $trm_lst);
+    }
+
+    /**
+     * get an element list with all formula elements
+     * plus the phrases that should be added to the result as elements
+     *
+     * @param user_message $usr_msg to collect the error messages e.g. missing terms
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return element_list the list of elements used in this formula
+     */
+    function elements_incl_result_phrases(user_message $usr_msg, ?term_list $trm_lst = null): element_list
+    {
+        $exp = $this->expression($trm_lst);
+        return $exp->elements_incl_result_phrases($usr_msg, $trm_lst);
+    }
 
     /**
      * create the corresponding name word object for the formula name

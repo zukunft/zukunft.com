@@ -79,6 +79,7 @@ class element_tests
         $t->assert_sql_insert($sc, $elm);
         $elm_db = $elm->clone_all();
         $elm_db->obj = $t_frm->formula_prior();
+        $elm_db->set_type();
         $t->assert_sql_update($sc, $elm, $elm_db);
         $t->assert_sql_delete($sc, $elm);
 
@@ -89,6 +90,7 @@ class element_tests
         $t->assert_api_json($elm);
 
         // JSON export list
+        // TODO Prio 1 activate or deprecate
         /*
         $wrd_lst = new word_list($usr);
         $wrd_lst->add($wrd_time);

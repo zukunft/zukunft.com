@@ -56,11 +56,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_ELEMENT . 'element.php';
-include_once paths::MODEL_ELEMENT . 'element_db.php';
-include_once paths::MODEL_ELEMENT . 'element_list.php';
 include_once paths::MODEL_FORMULA . 'formula_map.php';
-include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
@@ -68,21 +64,15 @@ include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
-include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\element\element;
-use Zukunft\ZukunftCom\main\php\cfg\element\element_db;
-use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
-use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -90,12 +80,10 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
-use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -1074,219 +1062,6 @@ class formula extends formula_map
     {
         return $this->trm_ids($frm_text, chars::FORMULA_START, chars::FORMULA_END);
     }
-
-    /**
-     * update formula links
-     * part of element_refresh for one element type and one user
-     * TODO move this to the formula element list object
-     */
-    function element_refresh_type(string $frm_text, $element_type, $frm_usr_id, $db_usr_id): bool
-    {
-        log_debug('->element_refresh_type (f' . $this->id() . $frm_text . ',' . $element_type . ',u' . $frm_usr_id . ')');
-
-        global $db_con;
-        $result = true;
-
-        // read the elements from the formula text
-        $elm_type_id = $element_type;
-        switch ($element_type) {
-            case parameter_type::TRIPLE_ID:
-                $elm_ids = $this->trp_ids($frm_text);
-                break;
-            case parameter_type::VERB_ID:
-                $elm_ids = $this->vrb_ids($frm_text);
-                break;
-            case parameter_type::FORMULA_ID:
-                $elm_ids = $this->frm_ids($frm_text);
-                break;
-            default:
-                $elm_ids = $this->wrd_ids($frm_text);
-                break;
-        }
-        $lib = new library();
-        log_debug('got (' . $lib->dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
-
-        // read the existing elements from the database
-        $frm_elm_lst = new element_list($this->get_user());
-        $qp = $frm_elm_lst->load_sql_by_frm_and_type_id($db_con->sql_creator(), $this->id(), $elm_type_id);
-        $db_lst = $db_con->get($qp);
-
-        $elm_db_ids = array();
-        if ($db_lst != null) {
-            foreach ($db_lst as $db_row) {
-                $elm_db_ids[] = $db_row[element_db::FLD_REF_ID];
-            }
-        }
-        $lib = new library();
-        log_debug('got (' . $lib->dsp_array($elm_db_ids) . ') of type ' . $element_type . ' from database');
-
-        // add missing links
-        $elm_add_ids = array_diff($elm_ids, $elm_db_ids);
-        $elm_order_nbr = 1;
-        $lib = new library();
-        log_debug('add ' . $element_type . ' (' . $lib->dsp_array($elm_add_ids) . ')');
-        // TODO use element list object
-        foreach ($elm_add_ids as $elm_add_id) {
-            $field_names = array();
-            $field_values = array();
-            $field_names[] = formula_db::FLD_ID;
-            $field_values[] = $this->id();
-            $field_names[] = user_db::FLD_ID;
-            if ($frm_usr_id > 0) {
-                $field_values[] = $frm_usr_id;
-            } else {
-                $field_values[] = $this->get_user()->id();
-            }
-            $field_names[] = element_db::FLD_TYPE;
-            $field_values[] = $elm_type_id;
-            $field_names[] = element_db::FLD_REF_ID;
-            $field_values[] = $elm_add_id;
-            $db_con->set_class(element::class);
-            $add_result = $db_con->insert_old($field_names, $field_values);
-            // in this case the row id is not needed, but for testing the number of action should be indicated by adding a '1' to the result string
-            //if ($add_result > 0) {
-            //    $result .= '1';
-            //}
-            $elm_order_nbr++;
-        }
-
-        // delete links not needed any more
-        $elm_del_ids = array_diff($elm_db_ids, $elm_ids);
-        $lib = new library();
-        log_debug('del ' . $element_type . ' (' . $lib->dsp_array($elm_del_ids) . ')');
-        foreach ($elm_del_ids as $elm_del_id) {
-            $field_names = array();
-            $field_values = array();
-            $field_names[] = formula_db::FLD_ID;
-            $field_values[] = $this->id();
-            if ($frm_usr_id > 0) {
-                $field_names[] = user_db::FLD_ID;
-                $field_values[] = $frm_usr_id;
-            }
-            $field_names[] = element_db::FLD_TYPE;
-            $field_values[] = $elm_type_id;
-            $field_names[] = element_db::FLD_REF_ID;
-            $field_values[] = $elm_del_id;
-            $db_con->set_class(element::class);
-            $del_result = $db_con->delete_old($field_names, $field_values);
-            if ($del_result != '') {
-                $result = false;
-            }
-        }
-
-        log_debug($lib->dsp_bool($result));
-        return $result;
-    }
-
-    /**
-     * update the database references to the formula elements
-     * to be able to use the sql statements to find all formulas depending on a word. triple, verb or formula
-     * TODO create one SQL statement for the update that is executed with one commit statement
-     * @param string $frm_text the reference text that should be used for the update
-     * @return bool true if the update has been fine
-     */
-    function element_refresh_old(string $frm_text): bool
-    {
-        log_debug('->element_refresh (f' . $this->id() . $frm_text . ',u' . $this->get_user()->id() . ')');
-
-        global $db_con;
-        $result = true;
-
-        // refresh the links for the standard formula used if the user has not changed the formula
-        $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, 0, $this->get_user()->id);
-
-        // update triple links of the standard formula
-        if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, 0, $this->get_user()->id);
-        }
-
-        // update verb links of the standard formula
-        if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, 0, $this->get_user()->id);
-        }
-
-        // update formula links of the standard formula
-        if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, 0, $this->get_user()->id);
-        }
-
-        // refresh the links for the user-specific formula
-        $qp = $this->load_sql_user_changes_frm($db_con);
-        $db_lst = $db_con->get($qp);
-        if ($db_lst != null) {
-            foreach ($db_lst as $db_row) {
-                // update word links of the user formula
-                if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user_db::FLD_ID], $this->get_user()->id);
-                }
-                // update triple links of the user formula
-                if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user_db::FLD_ID], $this->get_user()->id);
-                }
-                // update verb links of the user formula
-                if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user_db::FLD_ID], $this->get_user()->id);
-                }
-                // update formula links of the standard formula
-                if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user_db::FLD_ID], $this->get_user()->id);
-                }
-            }
-        }
-
-        log_debug('done' . $result);
-        return $result;
-    }
-
-    /**
-     * update the database references to the formula elements
-     * to be able to use the sql statements to find all formulas depending on a word. triple, verb or formula
-     *
-     * @param user_message $usr_msg to collect problems and suggested solutions for the user
-     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @return bool true if the update has been fine
-     */
-    function element_refresh(user_message $usr_msg, ?term_list $trm_lst = null): bool
-    {
-        $imp = new import();
-
-        // get the target list of elements that should be linked to the formula
-        $elm_lst = $this->element_list($usr_msg, $trm_lst);
-
-        // read the existing elements from the database
-        $db_lst = $this->load_element_list();
-
-        // add the missing links
-        $add_lst = $elm_lst->diff($db_lst);
-        $add_lst->db_insert_no_log($usr_msg, $imp, element::class);
-
-        // delete links not needed any more
-        $del_lst = $db_lst->diff($elm_lst);
-        $del_lst->db_delete_no_log($usr_msg, $imp, element::class);
-
-        return $usr_msg->is_ok();
-    }
-
-    /**
-     * @return element_list with the element linked to this formula according to the database
-     */
-    function load_element_list(): element_list
-    {
-        $db_lst = new element_list($this->get_user());
-        $db_lst->load_by_frm($this->id());
-        return $db_lst;
-    }
-
-    /**
-     * get the list of elements used in this formula
-     * @return element_list the list of elements used in this formula
-     */
-    function element_list(user_message $usr_msg, ?term_list $trm_lst = null): element_list
-    {
-        $exp = $this->expression($trm_lst);
-        return $exp->element_list($usr_msg, $trm_lst);
-    }
-
 
 
     /*

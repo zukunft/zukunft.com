@@ -3,3 +3,5 @@ element_type_id, type_name, description, code_id
 2, 'verb', 'a reference to a predicate', 'verb'
 3, 'triple', 'a reference to two predicate linked words used to select values using "and"', 'triple'
 4, 'formula', 'to select the results of another formula using the given context', 'formula'
+5, 'result word', 'a reference to a word that is added to the result phrases', 'word_result'
+6, 'result triple', 'a reference to a triple that is added to the result phrases', 'triple_result'

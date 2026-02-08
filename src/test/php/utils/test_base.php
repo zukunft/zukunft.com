@@ -832,7 +832,7 @@ class test_base
     }
 
     /**
-     * check if the test results contains at least all expected results
+     * check if the test for results contains at least all expected results
      *
      * @param string $msg (unique) description of the test
      * @param array $haystack the actual result

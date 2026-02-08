@@ -1121,8 +1121,10 @@ class data_object
                         log_err('formula ' . $frm->dsp_id() . ' not saved because ' . $usr_msg->all_message_text());
                     }
                     if ($frm->ref_text != null) {
-                        if (!$frm->element_refresh_old($frm->ref_text)) {
-                            $usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
+                        $msg_elm = $usr_msg->clone_reset();
+                        if (!$frm->element_refresh($msg_elm, $cache)) {
+                            log_info('formula import failed on first try. relevant?');
+                            //$usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
                         }
                     }
                 }

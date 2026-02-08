@@ -117,10 +117,12 @@ class element extends db_object_seq_id_user
      */
 
     // TODO should be actually just the linked formula id that extends the term
+    // TODO Prio 2 deprecate the symbol var and create it with a function
 
     public formula $frm;                              // the repeated formula object for direct access when saving to the database
     public word|verb|triple|formula|null $obj = null; // the word, verb, triple or formula object
     public ?string $symbol = null;                    // the database reference symbol for formula expressions
+    public int $typ_id = 0;                           // the element type which is the term type plus the result phrases plus special formula selections
 
 
     /*
@@ -150,6 +152,7 @@ class element extends db_object_seq_id_user
             $this->frm = new formula(new user());
         }
         $this->obj = null;
+        $this->typ_id = 0;
     }
 
     /**
@@ -192,6 +195,12 @@ class element extends db_object_seq_id_user
                 $this->frm = $frm;
             }
         }
+        if ($result) {
+            if (array_key_exists(element_db::FLD_TYPE, $db_row)) {
+                $this->typ_id = $db_row[element_db::FLD_TYPE];
+                $this->validate_type();
+            }
+        }
         return $result;
     }
 
@@ -208,30 +217,40 @@ class element extends db_object_seq_id_user
             log_warning('Missing id in api_json');
         } elseif (!array_key_exists(json_fields::OBJECT_CLASS, $api_json)) {
             log_warning('Missing class in api_json');
+        } elseif (!array_key_exists(json_fields::FORMULA, $api_json)) {
+            log_warning('Missing formula id in api_json');
         } else {
+            $this->id = $api_json[json_fields::ID];
+            $frm = new formula($this->get_user());
+            if ($frm->api_mapper($api_json[json_fields::FORMULA], $usr_msg)) {
+                $this->frm = $frm;
+            }
             if ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd = new word($this->get_user());
-                if ($wrd->api_mapper($api_json, $usr_msg)) {
+                if ($wrd->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
                     $this->obj = $wrd;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->get_user());
-                if ($trp->api_mapper($api_json, $usr_msg)) {
+                if ($trp->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
                     $this->obj = $trp;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
+                // TODO Prio 1 use verb_id
                 $vrb = new verb();
                 if ($usr_msg->is_ok()) {
                     $this->obj = $vrb;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
                 $frm = new formula($this->get_user());
-                if ($frm->api_mapper($api_json, $usr_msg)) {
+                if ($frm->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
                     $this->obj = $frm;
                 }
             } else {
                 $this->obj = null;
             }
+            $this->typ_id = $api_json[json_fields::TYPE];
+            $this->validate_type();
         }
         return $usr_msg->is_ok();
     }
@@ -252,8 +271,14 @@ class element extends db_object_seq_id_user
     {
         $vars = [];
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
+            if ($this->id() != 0) {
+                $vars[json_fields::ID] = $this->id();
+            }
+            if ($this->frm->id() != 0) {
+                $vars[json_fields::FORMULA] = $this->frm->api_json_array($typ_lst, $usr);
+            }
             if ($this->obj != null) {
-                $vars = $this->obj->api_json_array($typ_lst, $usr);
+                $vars[json_fields::TERM] = $this->obj->api_json_array($typ_lst, $usr);
                 if ($this->is_word()) {
                     $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
                 } elseif ($this->is_triple()) {
@@ -267,6 +292,9 @@ class element extends db_object_seq_id_user
                 }
             } else {
                 $vars[json_fields::OBJECT_CLASS] = '';
+            }
+            if ($this->typ_id != 0) {
+                $vars[json_fields::TYPE] = $this->typ_id;
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -306,11 +334,11 @@ class element extends db_object_seq_id_user
         global $sys;
 
         $typ = $sys->typ_lst->elm_typ->get($typ_id);
-        if ($typ->code_id == element_types::WORD_SELECTOR) {
+        if ($typ->code_id == element_types::WORD_SELECTOR or $typ->code_id == element_types::WORD_RESULT) {
             $obj = new word($this->get_user());
         } elseif ($typ->code_id == element_types::VERB_SELECTOR) {
             $obj = new verb();
-        } elseif ($typ->code_id == element_types::TRIPLE_SELECTOR) {
+        } elseif ($typ->code_id == element_types::TRIPLE_SELECTOR or $typ->code_id == element_types::TRIPLE_RESULT) {
             $obj = new triple($this->get_user());
         } elseif ($typ->code_id == element_types::FORMULA_SELECTOR) {
             $obj = new formula($this->get_user());
@@ -335,6 +363,45 @@ class element extends db_object_seq_id_user
         return $this->obj?->term();
     }
 
+    /**
+     * set the element type based on the given term or the already set element object
+     * @param bool $res_phr if true, the element is only used to add the phrase to the result phrases
+     * @param term|null $trm if given, use this term to detect the element type
+     * @return void
+     */
+    function set_type(bool $res_phr = false, ?term $trm = null): void
+    {
+        global $sys;
+
+        $typ_lst = $sys->typ_lst->elm_typ;
+
+        if ($trm == null) {
+            $trm = $this->obj->term();
+        }
+        if ($trm == null) {
+            log_err('term cannot be null when trying to set the type of an element');
+        }
+        if ($trm->is_word()) {
+            if ($res_phr) {
+                $this->typ_id = $typ_lst->id(element_types::WORD_RESULT);
+            } else {
+                $this->typ_id = $typ_lst->id(element_types::WORD_SELECTOR);
+            }
+        } elseif ($this->type() == verb::class) {
+            $this->typ_id = $typ_lst->id(element_types::VERB_SELECTOR);
+        } elseif ($this->type() == triple::class) {
+            if ($res_phr) {
+                $this->typ_id = $typ_lst->id(element_types::TRIPLE_RESULT);
+            } else {
+                $this->typ_id = $typ_lst->id(element_types::TRIPLE_SELECTOR);
+            }
+        } elseif ($this->type() == formula::class) {
+            $this->typ_id = $typ_lst->id(element_types::FORMULA_SELECTOR);
+        } else {
+            log_err('type of term ' . $trm->dsp_id() . ' is unknown');
+        }
+    }
+
     function type(): string
     {
         if ($this->obj != null) {
@@ -342,29 +409,6 @@ class element extends db_object_seq_id_user
         } else {
             return '';
         }
-    }
-
-    // TODO Prio 1 review and get from $sys and add the class to the code_id db col
-    function type_id(): int
-    {
-        global $sys;
-
-        $id = 0;
-        if ($this->obj != null) {
-            if ($this->type() == word::class) {
-                $id = 1;
-            } elseif ($this->type() == verb::class) {
-                $id = 2;
-            } elseif ($this->type() == triple::class) {
-                $id = 3;
-            } elseif ($this->type() == formula::class) {
-                $id = 4;
-            } else {
-                log_err('id of type ' . $this->type() . ' is not expected');
-            }
-
-        }
-        return $id;
     }
 
 
@@ -453,6 +497,10 @@ class element extends db_object_seq_id_user
      * forward
      */
 
+    // TODO Prio 2 deprecate because elements should never be excluded
+    //             because excluded term should not be used in expression
+    //             this implies that excluding a term updates all related formulas
+
     function include(): void
     {
         $this->obj->include();
@@ -537,10 +585,62 @@ class element extends db_object_seq_id_user
     function db_ready(user_message|Message $msg): bool
     {
         if ($this->obj != null) {
-            return $this->obj->db_ready($msg);
+            if ($this->typ_id > 0) {
+                if ($this->frm->db_ready($msg)) {
+                    return $this->obj->db_ready($msg);
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
+    }
+
+    /*
+     * validate
+     */
+
+    /**
+     * check if the object contradicts the element type
+     * @return bool true if no mismatch is detected
+     */
+    function validate_type(): bool
+    {
+        global $sys;
+
+        $result = false;
+        $typ_lst = $sys->typ_lst->elm_typ;
+
+        $trm = $this->obj?->term();
+        if ($trm != null) {
+            if ($trm->is_word()) {
+                if ($this->typ_id == $typ_lst->id(element_types::WORD_SELECTOR)
+                    or $this->typ_id == $typ_lst->id(element_types::WORD_RESULT)) {
+                    $result = true;
+                }
+            } elseif ($this->type() == verb::class) {
+                if ($this->typ_id == $typ_lst->id(element_types::VERB_SELECTOR)) {
+                    $result = true;
+                }
+            } elseif ($this->type() == triple::class) {
+                if ($this->typ_id == $typ_lst->id(element_types::TRIPLE_SELECTOR)
+                    or $this->typ_id == $typ_lst->id(element_types::TRIPLE_RESULT)) {
+                    $result = true;
+                }
+            } elseif ($this->type() == formula::class) {
+                if ($this->typ_id == $typ_lst->id(element_types::FORMULA_SELECTOR)) {
+                    $result = true;
+                }
+                $this->typ_id = $typ_lst->id(element_types::FORMULA_SELECTOR);
+            }
+        }
+        if (!$result) {
+            log_err('element type ' . $this->typ_id . ' does not match term ' . $trm->dsp_id());
+        }
+        return $result;
     }
 
 
@@ -728,12 +828,12 @@ class element extends db_object_seq_id_user
                 $obj->frm->id()
             );
         }
-        if ($obj->type_id() !== $this->type_id()) {
+        if ($obj->typ_id !== $this->typ_id) {
             $lst->add_field(
                 element_db::FLD_TYPE,
-                $this->type_id(),
+                $this->typ_id,
                 sql_field_type::INT,
-                $obj->type_id()
+                $obj->typ_id
             );
         }
         if ($obj->get_user_id() !== $this->get_user_id()) {
@@ -765,11 +865,17 @@ class element extends db_object_seq_id_user
      */
     function dsp_id(): string
     {
-        $lib = new library();
+        global $sys;
+
         $result = '';
-        if ($this->type() <> '') {
-            $class_name = $lib->class_to_name($this->type());
-            $result .= $class_name . ' ';
+
+        $lib = new library();
+        $typ_lst = $sys->typ_lst->elm_typ;
+
+        if ($this->typ_id > 0) {
+            $result .= $typ_lst->name($this->typ_id) . ' ';
+        } else {
+            $result .= 'element type not set ';
         }
         $name = $this->name();
         if ($name <> '') {

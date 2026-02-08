@@ -79,9 +79,9 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::SHARED_CONST . 'chars.php';
-include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -111,13 +111,13 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use DateTime;
-use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use DateTime;
 
 class result extends sandbox_value
 {
@@ -1192,16 +1192,20 @@ class result extends sandbox_value
     //      based on the frm id and the word group
     function update_depending(): array
     {
+        global $sys;
+        global $db_con;
+
         $lib = new library();
         $usr_msg = new user_message();
         log_debug("(f" . $this->frm->id() . ",t" . $lib->dsp_array($this->phr_ids()) . ",v" . $this->number() . " and user " . $this->get_user()->name . ")");
 
-        global $db_con;
         $result = array();
 
         // get depending formulas
+        $typ_lst = $sys->typ_lst->elm_typ;
+        $frm_typ_id = $typ_lst->id(element_types::FORMULA_SELECTOR);
         $frm_elm_lst = new element_list($this->get_user());
-        $frm_elm_lst->load_by_frm_and_type_id($this->frm->id(), parameter_type::FORMULA_ID);
+        $frm_elm_lst->load_by_frm_and_type_id($this->frm->id(), $frm_typ_id);
         $frm_ids = array();
         foreach ($frm_elm_lst as $frm_elm) {
             if ($frm_elm->obj != null) {

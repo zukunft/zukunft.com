@@ -51,17 +51,16 @@ include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
-include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
-include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Message.php';
+include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -80,17 +79,16 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
-use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula_list extends sandbox_list_named
@@ -294,13 +292,15 @@ class formula_list extends sandbox_list_named
      * @param int $ref_id the id of the used object
      * @param int $par_type_id the id of the parameter type
      * @param string $type_query_name the short name of the parameter type to make the query name unique
+     * @param int $res_par_typ_id the id of the parameter type for the result phrase
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ref(
         sql_creator $sc,
         int         $ref_id,
         int         $par_type_id,
-        string      $type_query_name): sql_par
+        string      $type_query_name,
+        int         $res_par_typ_id = 0): sql_par
     {
         $qp = $this->load_sql($sc, $type_query_name . '_ref');
         if ($ref_id > 0) {
@@ -312,6 +312,9 @@ class formula_list extends sandbox_list_named
             );
             $sc->add_where(element_db::FLD_REF_ID, $ref_id, null, sql_db::LNK_TBL);
             $sc->add_where(element_db::FLD_TYPE, $par_type_id, null, sql_db::LNK_TBL);
+            if ($res_par_typ_id != 0) {
+                $sc->add_where(element_db::FLD_TYPE, $res_par_typ_id, sql_par_type::INT_OR, sql_db::LNK_TBL);
+            }
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -329,11 +332,19 @@ class formula_list extends sandbox_list_named
      */
     function load_sql_by_word_ref(sql_creator $sc, word $wrd): sql_par
     {
+        global $sys;
+
+        $typ_lst = $sys->typ_lst->elm_typ;
+        $typ_id = $typ_lst->id(element_types::WORD_SELECTOR);
+        $res_typ_id = $typ_lst->id(element_types::WORD_RESULT);
+
         return $this->load_sql_by_ref(
             $sc,
             $wrd->id(),
-            parameter_type::WORD_ID,
-            'wrd');
+            $typ_id,
+            'wrd',
+            $res_typ_id
+        );
     }
 
     /**
@@ -345,11 +356,19 @@ class formula_list extends sandbox_list_named
      */
     function load_sql_by_triple_ref(sql_creator $sc, triple $trp): sql_par
     {
+        global $sys;
+
+        $typ_lst = $sys->typ_lst->elm_typ;
+        $typ_id = $typ_lst->id(element_types::TRIPLE_SELECTOR);
+        $res_typ_id = $typ_lst->id(element_types::TRIPLE_RESULT);
+
         return $this->load_sql_by_ref(
             $sc,
             $trp->id(),
-            parameter_type::TRIPLE_ID,
-            'trp');
+            $typ_id,
+            'trp',
+            $res_typ_id
+        );
     }
 
     /**
@@ -361,10 +380,15 @@ class formula_list extends sandbox_list_named
      */
     function load_sql_by_verb_ref(sql_creator $sc, verb $vrb): sql_par
     {
+        global $sys;
+
+        $typ_lst = $sys->typ_lst->elm_typ;
+        $typ_id = $typ_lst->id(element_types::VERB_SELECTOR);
+
         return $this->load_sql_by_ref(
             $sc,
             $vrb->id(),
-            parameter_type::VERB_ID,
+            $typ_id,
             'vrb');
     }
 
@@ -377,10 +401,15 @@ class formula_list extends sandbox_list_named
      */
     function load_sql_by_formula_ref(sql_creator $sc, formula $frm): sql_par
     {
+        global $sys;
+
+        $typ_lst = $sys->typ_lst->elm_typ;
+        $typ_id = $typ_lst->id(element_types::FORMULA_SELECTOR);
+
         return $this->load_sql_by_ref(
             $sc,
             $frm->id(),
-            parameter_type::FORMULA_ID,
+            $typ_id,
             'frm');
     }
 
