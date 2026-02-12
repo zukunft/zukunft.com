@@ -47,7 +47,7 @@ SELECT view_relation_insert_log_0155510000 (
                1,
                108,
                'word_edit',
-               'standard',
+               'add components',
                'word_usage',
                815,
                817,

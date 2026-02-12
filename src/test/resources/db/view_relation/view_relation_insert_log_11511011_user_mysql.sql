@@ -45,7 +45,7 @@ SELECT view_relation_insert_log_11511011_user (
                3,
                1,
                816,
-               'standard',
+               'add components',
                1,
                0,
                817,

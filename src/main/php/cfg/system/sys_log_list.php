@@ -43,10 +43,12 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SYSTEM . 'list_db_read.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_db.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
@@ -141,15 +143,15 @@ class sys_log_list extends list_db_read
             $db_con->set_class(sys_log::class);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->get_user()->id);
-            $db_con->set_fields(sys_log::FLD_NAMES);
+            $db_con->set_fields(sys_log_db::FLD_NAMES);
             $db_con->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
-            $db_con->set_join_fields(array(type_object::FLD_NAME), sys_log_status::class);
+            $db_con->set_join_fields(array(sys_log_status::FLD_NAME), sys_log_statuus::class, sys_log_status::FLD_ID, sys_log_status::FLD_ID);
             $db_con->set_join_fields(array(sandbox::FLD_USER_NAME), user::class);
             $db_con->set_join_fields(array(
-                sandbox::FLD_USER_NAME . ' AS ' . sys_log::FLD_SOLVER_NAME),
-                user::class, sys_log::FLD_SOLVER);
+                sandbox::FLD_USER_NAME . ' AS ' . sys_log_db::FLD_SOLVER_NAME),
+                user::class, sys_log_db::FLD_SOLVER);
             $db_con->set_where_text($sql_where);
-            $db_con->set_order(sys_log::FLD_TIME, sql::ORDER_DESC);
+            $db_con->set_order(sys_log_db::FLD_TIME, sql::ORDER_DESC);
             $db_con->set_page_par($this->size, $this->page);
             $sql = $db_con->select_by_set_id();
             $qp->sql = $sql;

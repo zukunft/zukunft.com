@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
@@ -355,7 +356,7 @@ class all_unit_write_tests extends all_unit_read_tests
     {
         $result = '';
         log_info('test import',
-            'import_test_files',
+            sys_log_functions::IMPORT_TEST_CONFIG_NAME,
             'import of the some test json files',
             'import_test_files',
             $usr, true

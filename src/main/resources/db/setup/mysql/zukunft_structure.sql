@@ -42,23 +42,23 @@ ALTER TABLE config
 -- table structure for system log types e.g. info,warning and error
 --
 
-CREATE TABLE IF NOT EXISTS sys_log_types
+CREATE TABLE IF NOT EXISTS sys_log_levels
 (
-    sys_log_type_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
-    type_name         varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    sys_log_level_id  smallint         NOT NULL COMMENT 'the internal unique primary index',
+    level_name        varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id           varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description       text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
-    PRIMARY KEY (sys_log_type_id)
+    PRIMARY KEY (sys_log_level_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for system log types e.g. info,warning and error';
 
 --
--- AUTO_INCREMENT for table sys_log_types
+-- AUTO_INCREMENT for table sys_log_levels
 --
-ALTER TABLE sys_log_types
-    MODIFY sys_log_type_id smallint NOT NULL AUTO_INCREMENT;
+ALTER TABLE sys_log_levels
+    MODIFY sys_log_level_id smallint NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -66,10 +66,10 @@ ALTER TABLE sys_log_types
 -- table structure to define the status of internal errors
 --
 
-CREATE TABLE IF NOT EXISTS sys_log_status
+CREATE TABLE IF NOT EXISTS sys_log_statuus
 (
     sys_log_status_id smallint         NOT NULL COMMENT 'the internal unique primary index',
-    type_name         varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    status_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id           varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description       text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
     action            varchar(255) DEFAULT NULL COMMENT 'description of the action to get to this status',
@@ -80,9 +80,9 @@ CREATE TABLE IF NOT EXISTS sys_log_status
     COMMENT 'to define the status of internal errors';
 
 --
--- AUTO_INCREMENT for table sys_log_status
+-- AUTO_INCREMENT for table sys_log_statuus
 --
-ALTER TABLE sys_log_status
+ALTER TABLE sys_log_statuus
     MODIFY sys_log_status_id smallint NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -119,12 +119,13 @@ CREATE TABLE IF NOT EXISTS sys_log
 (
     sys_log_id          bigint     NOT NULL COMMENT 'the internal unique primary index',
     sys_log_time        timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp of the creation',
-    sys_log_type_id     smallint   NOT NULL COMMENT 'the level e.g. debug,info,warning,error or fatal',
+    user_id             bigint DEFAULT NULL COMMENT 'the id of the user who has caused the log entry',
     sys_log_function_id smallint   NOT NULL COMMENT 'the function or function group for the entry e.g. db_write to measure the db write times',
+    sys_log_trace       text   DEFAULT NULL COMMENT 'the generated code trace to local the path to the error cause',
+    sys_log_level_id    smallint   NOT NULL COMMENT 'the level e.g. debug,info,warning,error or fatal',
+    sys_log_update_time timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp of the last update of this system error',
     sys_log_text        text   DEFAULT NULL COMMENT 'the short text of the log entry to identify the error and to reduce the number of double entries',
     sys_log_description text   DEFAULT NULL COMMENT 'the long description with all details of the log entry to solve ti issue',
-    sys_log_trace       text   DEFAULT NULL COMMENT 'the generated code trace to local the path to the error cause',
-    user_id             bigint DEFAULT NULL COMMENT 'the id of the user who has caused the log entry',
     solver_id           bigint DEFAULT NULL COMMENT 'user id of the user that is trying to solve the problem',
     sys_log_status_id   smallint   NOT NULL DEFAULT 1,
     PRIMARY KEY (sys_log_id)
@@ -197,7 +198,7 @@ ALTER TABLE system_times
 CREATE TABLE IF NOT EXISTS job_statuus
 (
     job_status_id smallint         NOT NULL COMMENT 'the internal unique primary index',
-    type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    status_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
     priority      smallint     DEFAULT NULL COMMENT 'execution priority offset based on the job status',
@@ -4468,20 +4469,20 @@ ALTER TABLE config
 -- --------------------------------------------------------
 
 --
--- indexes for table sys_log_types
+-- indexes for table sys_log_levels
 --
 
-ALTER TABLE sys_log_types
-    ADD KEY sys_log_types_type_name_idx (type_name);
+ALTER TABLE sys_log_levels
+    ADD KEY sys_log_levels_level_name_idx (level_name);
 
 -- --------------------------------------------------------
 
 --
--- indexes for table sys_log_status
+-- indexes for table sys_log_statuus
 --
 
-ALTER TABLE sys_log_status
-    ADD KEY sys_log_status_type_name_idx (type_name);
+ALTER TABLE sys_log_statuus
+    ADD KEY sys_log_statuus_status_name_idx (status_name);
 
 -- --------------------------------------------------------
 
@@ -4500,9 +4501,10 @@ ALTER TABLE sys_log_functions
 
 ALTER TABLE sys_log
     ADD KEY sys_log_sys_log_time_idx (sys_log_time),
-    ADD KEY sys_log_sys_log_type_idx (sys_log_type_id),
-    ADD KEY sys_log_sys_log_function_idx (sys_log_function_id),
     ADD KEY sys_log_user_idx (user_id),
+    ADD KEY sys_log_sys_log_function_idx (sys_log_function_id),
+    ADD KEY sys_log_sys_log_level_idx (sys_log_level_id),
+    ADD KEY sys_log_sys_log_update_time_idx (sys_log_update_time),
     ADD KEY sys_log_solver_idx (solver_id),
     ADD KEY sys_log_sys_log_status_idx (sys_log_status_id);
 
@@ -4533,7 +4535,7 @@ ALTER TABLE system_times
 --
 
 ALTER TABLE job_statuus
-    ADD KEY job_statuus_type_name_idx (type_name);
+    ADD KEY job_statuus_status_name_idx (status_name);
 
 -- --------------------------------------------------------
 
@@ -6255,10 +6257,11 @@ ALTER TABLE system_times
 --
 
 ALTER TABLE sys_log
-    ADD CONSTRAINT sys_log_sys_log_function_fk FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
     ADD CONSTRAINT sys_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sys_log_sys_log_function_fk FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
+    ADD CONSTRAINT sys_log_sys_log_level_fk FOREIGN KEY (sys_log_level_id) REFERENCES sys_log_levels (sys_log_level_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
-    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
+    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_statuus (sys_log_status_id);
 
 --
 -- constraints for table job_times

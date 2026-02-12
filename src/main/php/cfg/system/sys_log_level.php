@@ -2,8 +2,10 @@
 
 /*
 
-    model/system/sys_log_level.php - system ENUM definition for the log level
-    ------------------------------
+    model/system/sys_log_level.php - to link coded functionality to a system log status
+    ---------------------------
+
+    TODO to be combined with sys_log_level
 
     This file is part of zukunft.com - calc with words
 
@@ -22,55 +24,52 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
 namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_SYSTEM . 'BasicEnum.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
 
-use ReflectionException;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
-class sys_log_level extends BasicEnum
+class sys_log_level extends type_object
 {
-    // TODO Prio 2 use shared sys_log_types
-    const int UNDEFINED = 0;
-    const int INFO = 1;
-    const int REJECT = 2;
-    const int WARNING = 3;
-    const int ERROR = 4;
-    const int FATAL = 5;
 
-    /**
-     * @throws ReflectionException
+    /*
+     * database link
      */
-    protected static function get_description($value): string {
-        $result = parent::getDescription($value);
 
-        switch ($value) {
+    // comments used for the database creation
+    const string TBL_COMMENT = 'for system log types e.g. info, warning and error';
+    const string FLD_ID = 'sys_log_level_id';
+    const string FLD_NAME = 'level_name';
 
-            // system log
-            case sys_log_level::REJECT:
-                $result = 'Reject';
-                break;
-            case sys_log_level::WARNING:
-                $result = 'Warning';
-                break;
-            case sys_log_level::ERROR:
-                $result = 'Error';
-                break;
-            case sys_log_level::FATAL:
-                $result = 'FATAL ERROR';
-                break;
-        }
+    // field lists for the table creation
+    const array FLD_LST_NAME = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
 
-        return $result;
+
+    /*
+     * sql fields
+     */
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
     }
-}
 
+}

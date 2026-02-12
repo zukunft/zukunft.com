@@ -105,7 +105,7 @@ class db_check
         $main_tbl_name = $lib->class_to_name(config::class);
         if (!$db_con->has_table($main_tbl_name)) {
             // because no log yet exists here echo instead of log_echo() is used
-            $log_txt->echo_log('zukunft.com: empty database detected');
+            $log_txt->echo_text_log('zukunft.com: empty database detected');
             $usr_msg = $db_con->setup_db();
             if ($usr_msg->is_ok()) {
                 $db_con->db_fill_code_links();

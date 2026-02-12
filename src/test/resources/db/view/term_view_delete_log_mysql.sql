@@ -30,7 +30,7 @@ SELECT term_view_delete_log
      3,
      89,
      'Start view',
-     'standard',
+     'main word',
      'mathematics',
      1,
      1,

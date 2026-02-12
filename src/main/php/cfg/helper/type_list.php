@@ -81,12 +81,13 @@ include_once paths::MODEL_PHRASE . 'phrase_type.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_SANDBOX . 'share_type_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function_list.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
@@ -150,10 +151,11 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -264,9 +266,13 @@ class type_list
     function add(type_object|ref|view $item): void
     {
         if ($item->id() <= 0) {
-            log_err('Type id ' . $item->id() . ' not expected');
+            if ($this::class == sys_log_level_list::class) {
+                log_debug('Type id ' . $item->name() . ' (' . $item::class . ' ' . $item->id() . ') is allowed only for ' . sys_log_level_list::class);
+            } else {
+                log_err('Type id ' . $item->name() . ' (' . $item::class . ' ' . $item->id() . ') not expected');
+            }
         } elseif ($item->get_code_id() == '' and !$this->usr_can_add) {
-            log_err('Type code id for ' . $item->id() . ' cannot be empty');
+            log_err('Type code id for ' . $item->name() . ' (' . $item::class . ' ' . $item->id() . ') cannot be empty');
         } else {
             $this->lst[$item->id()] = $item;
             $this->hash[$item->get_code_id()] = $item->id();
@@ -388,6 +394,7 @@ class type_list
     {
         return match ($class) {
             sys_log_function_list::class => sys_log_function::class,
+            sys_log_level_list::class => sys_log_level::class,
             sys_log_status_list::class => sys_log_status::class,
             user_profile_list::class => user_profile::class,
             change_action_list::class => change_action::class,
@@ -439,15 +446,28 @@ class type_list
                     $type_name = strval($db_row[type_object::FLD_TABLE]);
                 } elseif ($class == change_table_field::class) {
                     $type_name = strval($db_row[type_object::FLD_FIELD]);
+                } elseif ($class == sys_log_function::class) {
+                    $type_name = strval($db_row[sys_log_function::FLD_NAME]);
+                } elseif ($class == sys_log_level::class) {
+                    $type_name = strval($db_row[sys_log_level::FLD_NAME]);
+                } elseif ($class == sys_log_status::class) {
+                    $type_name = strval($db_row[sys_log_status::FLD_NAME]);
                 } elseif ($class == language_form::class) {
                     $type_name = strval($db_row[language_form::FLD_NAME]);
                 } elseif ($class == language::class) {
                     $type_name = strval($db_row[language::FLD_NAME]);
                 } elseif ($class == view_style::class) {
                     $type_name = strval($db_row[$db_con->get_name_field($class)]);
+                } elseif ($class == job_status::class) {
+                    $type_name = strval($db_row[job_status::FLD_NAME]);
                 } else {
                     // TODO use a unique type name for each type
-                    $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
+                    if (array_key_exists(sql_db::FLD_TYPE_NAME, $db_row)) {
+                        $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
+                    } else {
+                        $type_name = '';
+                        log_err(sql_db::FLD_TYPE_NAME . ' missing for class ' . $class);
+                    }
                 }
                 $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
@@ -665,9 +685,10 @@ class type_list
      * and if code id is not found, use the name
      *
      * @param string $code_id or the name
+     * @param bool $log_err can be set to false if it is not an issue the the id is missing
      * @return int the database id for the given code_id
      */
-    function id(string $code_id): int
+    function id(string $code_id, bool $log_err = true): int
     {
         $lib = new library();
         $result = 0;
@@ -680,11 +701,15 @@ class type_list
                         $result = $this->name_hash[$code_id];
                     } else {
                         $result = self::CODE_ID_NOT_FOUND;
-                        log_err('Type id not found for name "' . $code_id . '" in ' . $lib->dsp_array_keys($this->name_hash));
+                        if ($log_err) {
+                            log_err('Type id not found for name "' . $code_id . '" in ' . $lib->dsp_array_keys($this->name_hash));
+                        }
                     }
                 } else {
                     $result = self::CODE_ID_NOT_FOUND;
-                    log_warning('Type id not found for "' . $code_id . '" in ' . $lib->dsp_array_keys($this->hash));
+                    if ($log_err) {
+                        log_warning('Type id not found for "' . $code_id . '" in ' . $lib->dsp_array_keys($this->hash));
+                    }
                 }
             }
         } else {

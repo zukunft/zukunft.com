@@ -189,6 +189,7 @@ class json_fields
     const string TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
     const string PRIORITY = 'priority'; // of the batch job
     const string TIME_START = 'start_time'; // e.g. the timestamp of a log entry
+    const string TIME_UPDATE = 'update_time'; // e.g. the timestamp of the last system error update
     const string TIME_END = 'end_time'; // e.g. the timestamp of a log entry
     const string STATUS = 'status'; // of the job and also used for the sys log
 
@@ -198,8 +199,8 @@ class json_fields
 
     // system log fields
     const string TRACE = 'trace'; // what has lead to the issue
-    const string PRG_PART = 'prg_part'; // which part has caused the issue
-    const string OWNER = 'owner'; // the developer which wants to fix the problem
+    const string FUNCTION_ID = 'function_id'; // id of a code part that has caused an issue
+    const string SOLVER = 'solver'; // the developer which wants to fix the problem
 
     // the database id e.g. of a component_link
     const string LINK_ID = 'link_id';
@@ -285,6 +286,8 @@ class json_fields
     const string LIST_PROTECTION_TYPES = 'protection_types';
     const string LIST_LANGUAGES = 'languages';
     const string LIST_LANGUAGE_FORMS = 'language_forms';
+    const string LIST_SYS_LOG_FUNCTIONS = 'sys_log_functions';
+    const string LIST_SYS_LOG_LEVELS = 'sys_log_levels';
     const string LIST_SYS_LOG_STATUUS = 'sys_log_statuus';
     const string LIST_JOB_STATUUS = 'job_statuus';
     const string LIST_JOB_TYPES = 'job_types';

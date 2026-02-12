@@ -1,0 +1,7 @@
+sys_log_level_id, level_name, code_id, description
+0, 'undefined', 'undefined', ''
+2, 'Debug', 'log_debug', 'Additional information only message that can be switched on upon request for more debugging'
+4, 'Info', 'log_info', 'Information only message for debugging and execution time details'
+6, 'Warning', 'log_warning', 'if a message has been shown to the user'
+8, 'Error', 'log_error', 'if the process has not been completed'
+10, 'FATAL ERROR', 'log_fatal', 'if other processes are also stopped'

@@ -65,6 +65,7 @@ the object structure is:
     \-- job_status_list - list of predefined system batch jobs
     \-- job_type_list - list of predefined system batch jobs
     \-- sys_log_function_list - to group the system log entries by function
+    \-- sys_log_level_list - list of the system log types
     \-- sys_log_status_list - list of the system log statuus
     \-- user_profile_list - a list of possible user profiles with the database id
     \-- verb_list - al list of verb objects
@@ -89,6 +90,7 @@ the object structure is:
 +-- ip_range_db - the database const for ip_range tables
 +-- job_db - the database const for job tables
 +-- log - the simple log interface object
++-- sys_log_db - the database const for the system log table
 +-- system_time_list - a list of system error objects
 +-- user_list - a list of users
 +-- value_db - the database const for value tables
@@ -203,8 +205,8 @@ the object structure is:
                 \-- pod_status - the status of a pod
                 \-- pod_type - to assign predefined code to a some pods
                 \-- sys_log_function - to group the system log entries by function
+                \-- sys_log_level - to link coded functionality to a system log status
                 \-- sys_log_status - to link coded functionality to a system log status
-                \-- sys_log_type - to link coded functionality to a system log status
                 \-- user_official_type - the superclass for word, formula and view types
                 \-- user_profile - a database based enum for the user profiles
                 \-- user_type - the superclass for word, formula and view types

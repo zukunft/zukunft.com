@@ -51,9 +51,6 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
 //include_once paths::MODEL_GROUP . 'group.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
-//include_once paths::MODEL_SYSTEM . 'ip_range.php';
-//include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
-//include_once paths::MODEL_SYSTEM . 'job.php';
 //include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_link.php';
@@ -81,7 +78,13 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+//include_once paths::MODEL_SYSTEM . 'ip_range.php';
+//include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+//include_once paths::MODEL_SYSTEM . 'job.php';
+//include_once paths::MODEL_SYSTEM . 'job_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
@@ -120,9 +123,6 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
@@ -137,7 +137,13 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -4907,9 +4913,6 @@ class sql_creator
         }
         $result = $type . sql_db::FLD_EXT_ID;
         // standard exceptions for nice english
-        if ($result == 'sys_log_statuss_id') {
-            $result = 'sys_log_status_id';
-        }
         if ($result == 'blocked_ip_id') {
             $result = 'ip_range_id';
         }
@@ -5062,8 +5065,11 @@ class sql_creator
         if ($result == 'change_values_geo_bigs') {
             $result = 'change_values_geo_big';
         }
+        if ($result == 'sys_log_statuuss') {
+            $result = 'sys_log_statuus';
+        }
         if ($result == 'sys_log_statuss') {
-            $result = 'sys_log_status';
+            $result = 'sys_log_statuus';
         }
         if ($result == 'sys_logs') {
             $result = 'sys_log';
@@ -5232,9 +5238,6 @@ class sql_creator
         if ($result == 'element_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
-        if ($result == 'sys_log_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
-        }
         if ($result == 'formula_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
@@ -5256,11 +5259,14 @@ class sql_creator
         if ($result == 'profile_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
+        if ($result == 'sys_log_level_name') {
+            $result = sys_log_level::FLD_NAME;
+        }
         if ($result == 'sys_log_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sys_log_status::FLD_NAME;
         }
         if ($result == 'job_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = job_status::FLD_NAME;
         }
         if ($result == 'job_type_name') {
             $result = sql_db::FLD_TYPE_NAME;

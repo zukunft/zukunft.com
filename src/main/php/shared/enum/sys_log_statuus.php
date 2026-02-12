@@ -41,7 +41,15 @@ enum sys_log_statuus: string
     const string OPEN_NAME = "new";
     const string OPEN_COM = "the error has just being logged and no one has yet looked at it";
     const string ASSIGNED = "assigned";
+    const int ASSIGNED_ID = 2;
+    const string ASSIGNED_COM = "A developer is looking at the error.";
     const string RESOLVED = "resolved";
+    const int RESOLVED_ID = 3;
+    const string RESOLVED_COM = "the error is supposed to be corrected";
     const string CLOSED = "closed";
+    const int CLOSED_ID = 4;
+    const string CLOSED_COM = "a second person (other than the developer) has confirmed that the problem is solved.";
+    const string REJECTED = "rejected";
+    const string REJECTED_COM = "the assignment has been rejected and the issue needs to be assigned again";
 
 }

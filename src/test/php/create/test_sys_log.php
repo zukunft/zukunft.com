@@ -38,17 +38,21 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'sys_log_functions.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use DateTime;
 
-class test_sys_log
+class test_sys_log extends test_objects
 {
 
     /**
@@ -59,13 +63,46 @@ class test_sys_log
         global $sys;
         $slg = new sys_log();
         $slg->id = 1;
+        $slg->usr = $this->env->usr1;
         $slg->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $slg->usr_name = users::SYSTEM_TEST_NAME;
-        $slg->log_text = sys_log_tests::TV_LOG_TEXT;
+        $slg->function_id = $sys->typ_lst->sys_log_fnc->id(sys_log_functions::IMPORT_BASE_CONFIG);
+        $slg->level_id = $sys->typ_lst->sys_log_lvl->id(sys_log_levels::INFO);
         $slg->log_trace = sys_log_tests::TV_LOG_TRACE;
-        $slg->function_name = sys_log_tests::TV_FUNC_NAME;
-        $slg->solver_name = sys_log_tests::TV_SOLVE_ID;
+        $slg->log_text = sys_log_tests::TV_LOG_TEXT;
         $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::OPEN);
+        return $slg;
+    }
+
+    /**
+     * @return sys_log a closed system error log entry
+     */
+    function sys_log_two(): sys_log
+    {
+        global $sys;
+        $slg = new sys_log();
+        $slg->id = 2;
+        $slg->usr = $this->env->usr2;
+        $slg->log_time = new DateTime(sys_log_tests::TV_TIME_TWO);
+        $slg->function_id = $sys->typ_lst->sys_log_fnc->id(sys_log_functions::IMPORT_TEST_CONFIG);
+        $slg->level_id = $sys->typ_lst->sys_log_lvl->id(sys_log_levels::ERROR);
+        $slg->log_trace = sys_log_tests::T2_LOG_TRACE;
+        $slg->log_text = sys_log_tests::T2_LOG_TEXT;
+        $slg->solver = $this->env->usr_admin;
+        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::ASSIGNED);
+        return $slg;
+    }
+
+    /**
+     * @return sys_log a closed system error log entry
+     */
+    function sys_log_filled(): sys_log
+    {
+        global $sys;
+        $slg = $this->sys_log_two();
+        $slg->update_time = new DateTime(sys_log_tests::TV_TIME_ASSIGNED);
+        $slg->log_description = sys_log_tests::TV_DESCRIPTION;
+        $slg->solver = $this->env->usr_system;
+        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::RESOLVED);
         return $slg;
     }
 
@@ -75,14 +112,7 @@ class test_sys_log
     function sys_log_closed(): sys_log
     {
         global $sys;
-        $slg = new sys_log();
-        $slg->id = 2;
-        $slg->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $slg->usr_name = users::SYSTEM_TEST_NAME;
-        $slg->log_text = sys_log_tests::T2_LOG_TEXT;
-        $slg->log_trace = sys_log_tests::T2_LOG_TRACE;
-        $slg->function_name = sys_log_tests::T2_FUNC_NAME;
-        $slg->solver_name = sys_log_tests::TV_SOLVE_ID;
+        $slg = $this->sys_log_filled();
         $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
         return $slg;
     }
@@ -94,7 +124,7 @@ class test_sys_log
     {
         $sys_lst = new sys_log_list();
         $sys_lst->add($this->sys_log());
-        $sys_lst->add($this->sys_log_closed());
+        $sys_lst->add($this->sys_log_filled());
         return $sys_lst;
     }
 

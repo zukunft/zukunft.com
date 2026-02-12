@@ -81,7 +81,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
-//include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_SYSTEM . 'system_time.php';
 //include_once paths::SHARED_TYPES . 'system_time_type.php';
 //include_once paths::MODEL_REF . 'ref.php';
@@ -167,8 +167,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -361,8 +360,9 @@ class def
 
     // type classes that have a csv file for the initial load
     const array BASE_CODE_LINK_FILES = [
-        sys_log_status::class,
-        sys_log_type::class,
+        sys_log_function::class,
+        sys_log_level::class,
+        sys_log_statuus::class,
         job_status::class,
         job_type::class,
         change_action::class,
@@ -467,9 +467,9 @@ class def
 
     // list of classes that use a database table but where the changes do not need to be logged
     const array CLASSES_NO_CHANGE_LOG = [
-        sys_log_status::class,
         sys_log_function::class,
-        sys_log_type::class,
+        sys_log_statuus::class,
+        sys_log_level::class,
         system_time_type::class,
         system_time::class,
         change_action::class,
@@ -502,10 +502,10 @@ class def
     // list of all ab tables in order of dependencies
     const array DB_TABLE_LIST = [
         'config',
-        'sys_log_types',
-        'sys_log',
-        'sys_log_status',
         'sys_log_functions',
+        'sys_log_levels',
+        'sys_log_statuus',
+        'sys_log',
         'system_times',
         'system_time_types',
         'job_times',

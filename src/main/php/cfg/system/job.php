@@ -670,7 +670,7 @@ class job extends db_object_seq_id_user
                 $sys->typ_lst->job_sta);
         }
         // TODO Prio 2 maybe add the time zone to the formatting and move the format to a SQL const
-        if ($obj->request_time !== $this->request_time) {
+        if ($obj->request_time != $this->request_time) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TIME_REQUEST,
@@ -685,7 +685,7 @@ class job extends db_object_seq_id_user
                 $obj->request_time?->format(sql_db::DATE_FORMAT)
             );
         }
-        if ($obj->start_time !== $this->start_time) {
+        if ($obj->start_time != $this->start_time) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TIME_START,
@@ -700,7 +700,7 @@ class job extends db_object_seq_id_user
                 $obj->start_time?->format(sql_db::DATE_FORMAT)
             );
         }
-        if ($obj->end_time !== $this->end_time) {
+        if ($obj->end_time != $this->end_time) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TIME_END,

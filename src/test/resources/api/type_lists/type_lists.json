@@ -115,6 +115,58 @@
         "id": 18
       }
     ],
+    "sys_log_functions": [
+      {
+        "name": "Import system configuration",
+        "code_id": "import_base_config",
+        "description": "Import the default system and user configuration",
+        "id": 1
+      },
+      {
+        "name": "Import pod configuration",
+        "code_id": "import_pod_config",
+        "description": "Import the default pod configuration",
+        "id": 2
+      },
+      {
+        "name": "Import test configuration",
+        "code_id": "import_test_config",
+        "description": "Import the configuration for system consistency tests",
+        "id": 3
+      }
+    ],
+    "sys_log_levels": [
+      {
+        "name": "Debug",
+        "code_id": "log_debug",
+        "description": "Additional information only message that can be switched on upon request for more debugging",
+        "id": 2
+      },
+      {
+        "name": "Info",
+        "code_id": "log_info",
+        "description": "Information only message for debugging and execution time details",
+        "id": 4
+      },
+      {
+        "name": "Warning",
+        "code_id": "log_warning",
+        "description": "if a message has been shown to the user",
+        "id": 6
+      },
+      {
+        "name": "Error",
+        "code_id": "log_error",
+        "description": "if the process has not been completed",
+        "id": 8
+      },
+      {
+        "name": "FATAL ERROR",
+        "code_id": "log_fatal",
+        "description": "if other processes are also stopped",
+        "id": 10
+      }
+    ],
     "sys_log_statuus": [
       {
         "name": "new",
@@ -835,14 +887,14 @@
         "id": 112
       },
       {
-        "name": "sys_log_types",
-        "code_id": "sys_log_types",
+        "name": "sys_log_levels",
+        "code_id": "sys_log_levels",
         "description": "",
         "id": 113
       },
       {
-        "name": "sys_log_status",
-        "code_id": "sys_log_status",
+        "name": "sys_log_statuus",
+        "code_id": "sys_log_statuus",
         "description": "",
         "id": 114
       },
@@ -947,6 +999,12 @@
         "code_id": "job_statuus",
         "description": "",
         "id": 131
+      },
+      {
+        "name": "sys_log",
+        "code_id": "sys_log",
+        "description": "",
+        "id": 132
       }
     ],
     "change_field_list": [
@@ -2157,8 +2215,8 @@
         "id": 201
       },
       {
-        "name": "31sys_log_type_id",
-        "code_id": "31sys_log_type_id",
+        "name": "31sys_log_level_id",
+        "code_id": "31sys_log_level_id",
         "description": "",
         "id": 202
       },
@@ -5973,14 +6031,14 @@
         "id": 837
       },
       {
-        "name": "113sys_log_type_id",
-        "code_id": "113sys_log_type_id",
+        "name": "113sys_log_level_id",
+        "code_id": "113sys_log_level_id",
         "description": "",
         "id": 838
       },
       {
-        "name": "113type_name",
-        "code_id": "113type_name",
+        "name": "113level_name",
+        "code_id": "113level_name",
         "description": "",
         "id": 839
       },
@@ -6003,8 +6061,8 @@
         "id": 842
       },
       {
-        "name": "114type_name",
-        "code_id": "114type_name",
+        "name": "114status_name",
+        "code_id": "114status_name",
         "description": "",
         "id": 843
       },
@@ -6027,8 +6085,8 @@
         "id": 846
       },
       {
-        "name": "115type_name",
-        "code_id": "115type_name",
+        "name": "115sys_log_function_name",
+        "code_id": "115sys_log_function_name",
         "description": "",
         "id": 847
       },
@@ -6429,8 +6487,8 @@
         "id": 913
       },
       {
-        "name": "131type_name",
-        "code_id": "131type_name",
+        "name": "131status_name",
+        "code_id": "131status_name",
         "description": "",
         "id": 914
       },
@@ -6457,6 +6515,72 @@
         "code_id": "27ip_range_key",
         "description": "",
         "id": 918
+      },
+      {
+        "name": "132sys_log_time",
+        "code_id": "132sys_log_time",
+        "description": "",
+        "id": 919
+      },
+      {
+        "name": "132sys_log_update_time",
+        "code_id": "132sys_log_update_time",
+        "description": "",
+        "id": 920
+      },
+      {
+        "name": "132sys_log_level_id",
+        "code_id": "132sys_log_level_id",
+        "description": "",
+        "id": 921
+      },
+      {
+        "name": "132sys_log_function_id",
+        "code_id": "132sys_log_function_id",
+        "description": "",
+        "id": 922
+      },
+      {
+        "name": "132sys_log_text",
+        "code_id": "132sys_log_text",
+        "description": "",
+        "id": 923
+      },
+      {
+        "name": "132sys_log_description",
+        "code_id": "132sys_log_description",
+        "description": "",
+        "id": 924
+      },
+      {
+        "name": "132sys_log_trace",
+        "code_id": "132sys_log_trace",
+        "description": "",
+        "id": 925
+      },
+      {
+        "name": "132solver_id",
+        "code_id": "132solver_id",
+        "description": "",
+        "id": 926
+      },
+      {
+        "name": "132sys_log_status_id",
+        "code_id": "132sys_log_status_id",
+        "description": "",
+        "id": 927
+      },
+      {
+        "name": "132sys_log_id",
+        "code_id": "132sys_log_id",
+        "description": "",
+        "id": 928
+      },
+      {
+        "name": "132user_id",
+        "code_id": "132user_id",
+        "description": "",
+        "id": 929
       }
     ],
     "job_types": [

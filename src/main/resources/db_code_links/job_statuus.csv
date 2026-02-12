@@ -1,4 +1,4 @@
-job_status_id, type_name, description, code_id, priority
+job_status_id, status_name, description, code_id, priority
 1, 'created', 'the job is not yet assigned to any calc engine', 'new', 6
 2, 'assigned', 'the job has been assigned to a calc engine', 'assigned', 4
 3, 'forced', 'the priority of the job has been increased', 'forced', 8

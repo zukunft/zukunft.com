@@ -45,8 +45,8 @@ use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
@@ -75,7 +75,7 @@ class type_tests
         // TODO job_types
 
         $t->subheader($ts . 'system log type sql setup');
-        $log_typ = new sys_log_type('');
+        $log_typ = new sys_log_level('');
         $t->assert_sql_table_create($log_typ);
         $t->assert_sql_index_create($log_typ);
 
@@ -184,7 +184,7 @@ class type_tests
         // TODO Prio 3 revert [sql_type::LOG] to [sql_type::NO_LOG]
 
         $t->subheader($ts . 'sql write insert with log e.g. for system setup');
-        $typ = $t_typ->sys_log_type();
+        $typ = $t_typ->sys_log_level();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->sys_log_status();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);

@@ -35,7 +35,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
@@ -54,9 +54,29 @@ class sys_log_status_list extends type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new type_object(sys_log_statuus::OPEN, sys_log_statuus::OPEN, '', 2);
+        $type = new type_object(
+            sys_log_statuus::OPEN,
+            sys_log_statuus::OPEN,
+            sys_log_statuus::OPEN_COM,
+            sys_log_statuus::OPEN_ID);
         $this->add($type);
-        $type = new type_object(sys_log_statuus::CLOSED, sys_log_statuus::CLOSED, '', 3);
+        $type = new type_object(
+            sys_log_statuus::ASSIGNED,
+            sys_log_statuus::ASSIGNED,
+            sys_log_statuus::ASSIGNED_COM,
+            sys_log_statuus::ASSIGNED_ID);
+        $this->add($type);
+        $type = new type_object(
+            sys_log_statuus::RESOLVED,
+            sys_log_statuus::RESOLVED,
+            sys_log_statuus::RESOLVED_COM,
+            sys_log_statuus::RESOLVED_ID);
+        $this->add($type);
+        $type = new type_object(
+            sys_log_statuus::CLOSED,
+            sys_log_statuus::CLOSED,
+            sys_log_statuus::CLOSED_COM,
+            sys_log_statuus::CLOSED_ID);
         $this->add($type);
     }
 

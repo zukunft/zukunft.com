@@ -1439,7 +1439,11 @@ class html_base
         if ($style_id != null) {
             global $sys;
             $style = $sys->typ_lst->msk_sty->get($style_id);
-            return $style->get_code_id();
+            if ($style != null) {
+                return $style->get_code_id();
+            } else {
+                return '';
+            }
         } else {
             return '';
         }

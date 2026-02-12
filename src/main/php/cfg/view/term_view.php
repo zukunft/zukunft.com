@@ -780,7 +780,7 @@ class term_view extends sandbox_link
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $obj->predicate_id(),
-                $sys->typ_lst->phr_typ);
+                $sys->typ_lst->msk_lnk_typ);
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }

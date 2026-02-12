@@ -171,7 +171,7 @@ class system_tests
         $t_cmp = new test_components($t);
         $t_lan = new test_languages();
         $t_log = new test_log($t);
-        $t_sys = new test_sys_log();
+        $t_sys = new test_sys_log($t);
         $t_job = new test_jobs($t);
         $t->assert_dsp_id($t_wrd->word(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_wrd->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 1 (zukunft.com system test)');
@@ -450,7 +450,7 @@ class system_tests
 
         $t->subheader($ts . 'system log frontend API');
 
-        $t_sys = new test_sys_log();
+        $t_sys = new test_sys_log($t);
         $log = $t_sys->sys_log();
         $api_msg = $log->api_json();
         $log_dsp = new sys_log_ui($api_msg);
@@ -470,16 +470,7 @@ class system_tests
         $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // create a second system log entry to create a list
-        $log2 = new sys_log();
-        $log2->id = 2;
-        $log2->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $log2->usr_name = $usr->name;
-        $log2->log_text = sys_log_tests::T2_LOG_TEXT;
-        //$log2->log_trace = (new Exception)->getTraceAsString();
-        $log2->log_trace = sys_log_tests::T2_LOG_TRACE;
-        $log2->function_name = sys_log_tests::T2_FUNC_NAME;
-        $log2->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $log2->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
+        $log2 = $t_sys->sys_log_filled();
 
         $log_lst = new sys_log_list();
         $log_lst->add($log);
@@ -488,7 +479,7 @@ class system_tests
         $log_lst_dsp = new sys_log_list_ui($log_lst->api_json());
         $usr1_dsp = new user($t->usr1->api_json());
         $created = $log_lst_dsp->api_json([api_types::HEADER], $usr1_dsp);
-        $expected = file_get_contents(test_files::SYS_LOG_LIST_API);
+        $expected = file_get_contents(test_files::SYS_LOG_LIST_TEST);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 

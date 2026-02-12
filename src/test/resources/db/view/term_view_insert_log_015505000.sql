@@ -43,6 +43,6 @@ SELECT term_view_insert_log_015505000
      1::smallint,
      89::smallint,
      'Start view'::text,
-     'standard'::text,
+     'main word'::text,
      'mathematics'::text,
      725::smallint);

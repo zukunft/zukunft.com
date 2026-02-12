@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
 
 --
--- indexes for table sys_log_status
+-- indexes for table sys_log_statuus
 --
 
-CREATE INDEX sys_log_status_type_name_idx ON sys_log_status (type_name);
+CREATE INDEX sys_log_statuus_status_name_idx ON sys_log_statuus (status_name);

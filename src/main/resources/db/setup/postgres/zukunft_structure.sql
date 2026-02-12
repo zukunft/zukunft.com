@@ -30,19 +30,19 @@ COMMENT ON COLUMN config.description IS 'text to explain the config value to an 
 -- table structure for system log types e.g. info,warning and error
 --
 
-CREATE TABLE IF NOT EXISTS sys_log_types
+CREATE TABLE IF NOT EXISTS sys_log_levels
 (
-    sys_log_type_id SERIAL PRIMARY KEY,
-    type_name         varchar(255)     NOT NULL,
-    code_id           varchar(255) DEFAULT NULL,
-    description       text         DEFAULT NULL
+    sys_log_level_id SERIAL PRIMARY KEY,
+    level_name  varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
 );
 
-COMMENT ON TABLE sys_log_types IS 'for system log types e.g. info,warning and error';
-COMMENT ON COLUMN sys_log_types.sys_log_type_id IS 'the internal unique primary index';
-COMMENT ON COLUMN sys_log_types.type_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN sys_log_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN sys_log_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON TABLE sys_log_levels IS 'for system log types e.g. info,warning and error';
+COMMENT ON COLUMN sys_log_levels.sys_log_level_id IS 'the internal unique primary index';
+COMMENT ON COLUMN sys_log_levels.level_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN sys_log_levels.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN sys_log_levels.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 -- --------------------------------------------------------
 
@@ -50,21 +50,21 @@ COMMENT ON COLUMN sys_log_types.description IS 'text to explain the type to the 
 -- table structure to define the status of internal errors
 --
 
-CREATE TABLE IF NOT EXISTS sys_log_status
+CREATE TABLE IF NOT EXISTS sys_log_statuus
 (
     sys_log_status_id SERIAL PRIMARY KEY,
-    type_name         varchar(255)     NOT NULL,
-    code_id           varchar(255) DEFAULT NULL,
-    description       text         DEFAULT NULL,
-    action            varchar(255) DEFAULT NULL
+    status_name varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL,
+    action      varchar(255) DEFAULT NULL
 );
 
-COMMENT ON TABLE sys_log_status IS 'to define the status of internal errors';
-COMMENT ON COLUMN sys_log_status.sys_log_status_id IS 'the internal unique primary index';
-COMMENT ON COLUMN sys_log_status.type_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN sys_log_status.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN sys_log_status.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-COMMENT ON COLUMN sys_log_status.action IS 'description of the action to get to this status';
+COMMENT ON TABLE sys_log_statuus IS 'to define the status of internal errors';
+COMMENT ON COLUMN sys_log_statuus.sys_log_status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN sys_log_statuus.status_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN sys_log_statuus.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN sys_log_statuus.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON COLUMN sys_log_statuus.action IS 'description of the action to get to this status';
 
 
 -- --------------------------------------------------------
@@ -97,12 +97,13 @@ CREATE TABLE IF NOT EXISTS sys_log
 (
     sys_log_id          BIGSERIAL PRIMARY KEY,
     sys_log_time        timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    sys_log_type_id     smallint   NOT NULL,
+    user_id             bigint DEFAULT NULL,
     sys_log_function_id smallint   NOT NULL,
+    sys_log_trace       text   DEFAULT NULL,
+    sys_log_level_id    smallint   NOT NULL,
+    sys_log_update_time timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sys_log_text        text   DEFAULT NULL,
     sys_log_description text   DEFAULT NULL,
-    sys_log_trace       text   DEFAULT NULL,
-    user_id             bigint DEFAULT NULL,
     solver_id           bigint DEFAULT NULL,
     sys_log_status_id   smallint   NOT NULL DEFAULT 1
 );
@@ -110,12 +111,13 @@ CREATE TABLE IF NOT EXISTS sys_log
 COMMENT ON TABLE sys_log IS 'for system error tracking and to measure execution times';
 COMMENT ON COLUMN sys_log.sys_log_id IS 'the internal unique primary index';
 COMMENT ON COLUMN sys_log.sys_log_time IS 'timestamp of the creation';
-COMMENT ON COLUMN sys_log.sys_log_type_id IS 'the level e.g. debug,info,warning,error or fatal';
+COMMENT ON COLUMN sys_log.user_id IS 'the id of the user who has caused the log entry';
 COMMENT ON COLUMN sys_log.sys_log_function_id IS 'the function or function group for the entry e.g. db_write to measure the db write times';
+COMMENT ON COLUMN sys_log.sys_log_trace IS 'the generated code trace to local the path to the error cause';
+COMMENT ON COLUMN sys_log.sys_log_level_id IS 'the level e.g. debug,info,warning,error or fatal';
+COMMENT ON COLUMN sys_log.sys_log_update_time IS 'timestamp of the last update of this system error';
 COMMENT ON COLUMN sys_log.sys_log_text IS 'the short text of the log entry to identify the error and to reduce the number of double entries';
 COMMENT ON COLUMN sys_log.sys_log_description IS 'the long description with all details of the log entry to solve ti issue';
-COMMENT ON COLUMN sys_log.sys_log_trace IS 'the generated code trace to local the path to the error cause';
-COMMENT ON COLUMN sys_log.user_id IS 'the id of the user who has caused the log entry';
 COMMENT ON COLUMN sys_log.solver_id IS 'user id of the user that is trying to solve the problem';
 
 -- --------------------------------------------------------
@@ -169,7 +171,7 @@ COMMENT ON COLUMN system_times.milliseconds IS 'the execution time in millisecon
 CREATE TABLE IF NOT EXISTS job_statuus
 (
     job_status_id SERIAL PRIMARY KEY,
-    type_name   varchar(255) NOT NULL,
+    status_name varchar(255) NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL,
     priority    smallint     DEFAULT NULL
@@ -177,7 +179,7 @@ CREATE TABLE IF NOT EXISTS job_statuus
 
 COMMENT ON TABLE job_statuus IS 'predefined status of batch task as a database table e.g. so that admin can change the description';
 COMMENT ON COLUMN job_statuus.job_status_id IS 'the internal unique primary index';
-COMMENT ON COLUMN job_statuus.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN job_statuus.status_name IS 'the unique type name as shown to the user and used for the selection';
 COMMENT ON COLUMN job_statuus.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN job_statuus.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 COMMENT ON COLUMN job_statuus.priority IS 'execution priority offset based on the job status';
@@ -5283,18 +5285,18 @@ CREATE INDEX config_code_idx ON config (code_id);
 -- --------------------------------------------------------
 
 --
--- indexes for table sys_log_types
+-- indexes for table sys_log_levels
 --
 
-CREATE INDEX sys_log_types_type_name_idx ON sys_log_types (type_name);
+CREATE INDEX sys_log_levels_level_name_idx ON sys_log_levels (level_name);
 
 -- --------------------------------------------------------
 
 --
--- indexes for table sys_log_status
+-- indexes for table sys_log_statuus
 --
 
-CREATE INDEX sys_log_status_type_name_idx ON sys_log_status (type_name);
+CREATE INDEX sys_log_statuus_status_name_idx ON sys_log_statuus (status_name);
 
 -- --------------------------------------------------------
 
@@ -5311,9 +5313,10 @@ CREATE INDEX sys_log_functions_sys_log_function_name_idx ON sys_log_functions (s
 --
 
 CREATE INDEX sys_log_sys_log_time_idx ON sys_log (sys_log_time);
-CREATE INDEX sys_log_sys_log_type_idx ON sys_log (sys_log_type_id);
-CREATE INDEX sys_log_sys_log_function_idx ON sys_log (sys_log_function_id);
 CREATE INDEX sys_log_user_idx ON sys_log (user_id);
+CREATE INDEX sys_log_sys_log_function_idx ON sys_log (sys_log_function_id);
+CREATE INDEX sys_log_sys_log_level_idx ON sys_log (sys_log_level_id);
+CREATE INDEX sys_log_sys_log_update_time_idx ON sys_log (sys_log_update_time);
 CREATE INDEX sys_log_solver_idx ON sys_log (solver_id);
 CREATE INDEX sys_log_sys_log_status_idx ON sys_log (sys_log_status_id);
 
@@ -5341,7 +5344,7 @@ CREATE INDEX system_times_system_time_type_idx ON system_times (system_time_type
 -- indexes for table job_statuus
 --
 
-CREATE INDEX job_statuus_type_name_idx ON job_statuus (type_name);
+CREATE INDEX job_statuus_status_name_idx ON job_statuus (status_name);
 
 -- --------------------------------------------------------
 
@@ -6977,10 +6980,11 @@ ALTER TABLE system_times
 --
 
 ALTER TABLE sys_log
-    ADD CONSTRAINT sys_log_sys_log_function_fk FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
     ADD CONSTRAINT sys_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sys_log_sys_log_function_fk FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
+    ADD CONSTRAINT sys_log_sys_log_level_fk FOREIGN KEY (sys_log_level_id) REFERENCES sys_log_levels (sys_log_level_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
-    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
+    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_statuus (sys_log_status_id);
 
 --
 -- constraints for table job_times

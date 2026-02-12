@@ -5,4 +5,4 @@
 --
 
 ALTER TABLE job_statuus
-    ADD KEY job_statuus_type_name_idx (type_name);
+    ADD KEY job_statuus_status_name_idx (status_name);

@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
@@ -61,7 +62,7 @@ include_once paths::MODEL_SANDBOX . 'protection_type.php';
 include_once paths::MODEL_SANDBOX . 'share_type.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'job_status.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_USER . 'user_official_type.php';
@@ -80,7 +81,7 @@ include_once paths::SHARED_ENUM . 'language_forms.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
-include_once paths::SHARED_ENUM . 'sys_log_types.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'user_official_types.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_types.php';
@@ -133,7 +134,6 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
@@ -151,7 +151,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\language_forms;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_official_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
@@ -233,15 +233,15 @@ class test_types
     }
 
     /**
-     * @return sys_log_type "info" as the main system log type for unit testing
+     * @return sys_log_level "info" as the main system log type for unit testing
      */
-    function sys_log_type(): sys_log_type
+    function sys_log_level(): sys_log_level
     {
-        return new sys_log_type(
-            sys_log_types::INFO,
-            sys_log_types::INFO_NAME,
-            sys_log_types::INFO_COM,
-            sys_log_types::INFO_ID);
+        return new sys_log_level(
+            sys_log_levels::INFO,
+            sys_log_levels::INFO_NAME,
+            sys_log_levels::INFO_COM,
+            sys_log_levels::INFO_ID);
     }
 
     /**

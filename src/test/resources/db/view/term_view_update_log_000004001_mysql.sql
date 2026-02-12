@@ -33,7 +33,7 @@ SELECT term_view_update_log_000004001
     (3,
      2,
      726,
-     'standard',
+     'main word',
      1,
      null,
      null,

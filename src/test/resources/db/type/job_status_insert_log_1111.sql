@@ -1,8 +1,8 @@
 CREATE OR REPLACE FUNCTION job_status_insert_log_1111
-    (_type_name               text,
+    (_status_name             text,
      _user_id                 bigint,
      _change_action_id        smallint,
-     _field_id_type_name      smallint,
+     _field_id_status_name    smallint,
      _field_id_code_id        smallint,
      _code_id                 text,
      _field_id_description    smallint,
@@ -11,18 +11,18 @@ $$
 DECLARE new_job_status_id bigint;
 BEGIN
 
-        INSERT INTO job_statuus (type_name)
-             SELECT              _type_name
+        INSERT INTO job_statuus (status_name)
+             SELECT             _status_name
           RETURNING job_status_id INTO new_job_status_id;
 
-        INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,  row_id)
-             SELECT          _user_id,_change_action_id,_field_id_type_name,  _type_name,  new_job_status_id ;
+        INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
+             SELECT          _user_id,_change_action_id,_field_id_status_name,_status_name, new_job_status_id ;
 
-        INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,  row_id)
-             SELECT          _user_id,_change_action_id,_field_id_code_id,    _code_id,    new_job_status_id ;
+        INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
+             SELECT          _user_id,_change_action_id,_field_id_code_id,    _code_id,     new_job_status_id ;
 
-        INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,  row_id)
-             SELECT          _user_id,_change_action_id,_field_id_description,_description,new_job_status_id ;
+        INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
+             SELECT          _user_id,_change_action_id,_field_id_description,_description, new_job_status_id ;
 
              UPDATE job_statuus
                 SET code_id     = _code_id,

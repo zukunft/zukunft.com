@@ -53,6 +53,7 @@ include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
 include_once paths::MODEL_SANDBOX . 'share_type_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';

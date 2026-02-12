@@ -43,6 +43,7 @@ include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::SHARED_TYPES . 'file_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\types\file_types;
 
 class import_file
@@ -342,7 +344,7 @@ class import_file
     {
         $result = '';
         log_info('base setup',
-            'import_base_config',
+            sys_log_functions::IMPORT_BASE_CONFIG_NAME,
             'import of the base setup',
             'import_base_config',
             $usr, true
@@ -371,9 +373,9 @@ class import_file
     {
         $result = '';
         log_info('pod setup',
-            'import_pod_config',
+            sys_log_functions::IMPORT_POD_CONFIG_NAME,
             'import of the pod base setup',
-            'import_pod_config',
+            sys_log_functions::IMPORT_POD_CONFIG,
             $usr, true
         );
 
@@ -395,9 +397,9 @@ class import_file
     {
         $result = '';
         log_info('test setup',
-            'import_test_config',
+            sys_log_functions::IMPORT_TEST_CONFIG_NAME,
             'import of the pod test setup',
-            'import_test_config',
+            sys_log_functions::IMPORT_TEST_CONFIG,
             $usr, true
         );
 

@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 //include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_REF . 'source_db.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_db.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 
@@ -61,9 +62,10 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -130,6 +132,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
@@ -552,17 +555,21 @@ class library
      * and replace the variable names with the variable values
      *
      * @param array $msg_var_lst list with the variable names and the matching values
-     * @param object $mtr the translator object of the back or frontend
+     * @param object|null $mtr the translator object of the back or frontend
      * @return string the translated text for all messages with vars
      */
-    function msg_var_text(array $msg_var_lst, object $mtr): string
+    function msg_var_text(array $msg_var_lst, object|null $mtr = null): string
     {
         $part = '';
         foreach ($msg_var_lst as $msg_var) {
             if ($part != '') {
                 $part .= ', ';
             }
-            $msg_txt = $mtr->txt($msg_var[0]);
+            if ($mtr != null) {
+                $msg_txt = $mtr->txt($msg_var[0]);
+            } else {
+                $msg_txt = $msg_var[0];
+            }
             foreach ($msg_var[1] as $key => $var) {
                 $msg_txt = $this->msg_var_replace($msg_txt, $key, $var);
             }
@@ -2844,7 +2851,7 @@ class library
                 $id_fld = user_profile::FLD_ID;
                 break;
             case sys_log::class;
-                $id_fld = sys_log::FLD_ID;
+                $id_fld = sys_log_db::FLD_ID;
                 break;
             case result::class:
             case value::class;
@@ -3006,8 +3013,7 @@ class library
             and $class != changes_big::class
             and $class != change_values_prime::class
             and $class != change_values_norm::class
-            and $class != change_values_big::class
-            and $class != sys_log_status::class) {
+            and $class != change_values_big::class) {
             $result .= sql_db::TABLE_EXTENSION;
         }
         // TODO remove these exception
@@ -3031,6 +3037,15 @@ class library
         }
         if ($result == 'job_statuss') {
             $result = 'job_statuus';
+        }
+        if ($result == 'sys_log_statuss') {
+            $result = 'sys_log_statuus';
+        }
+        if ($result == 'sys_log_statuuss') {
+            $result = 'sys_log_statuus';
+        }
+        if ($result == 'sys_logs') {
+            $result = 'sys_log';
         }
         return $result;
     }
@@ -3130,7 +3145,7 @@ class library
             case $this->class_to_name(component_link::class):
                 $result = $this->class_to_name(component::class);
                 break;
-            case $this->class_to_name(sys_log_type::class):
+            case $this->class_to_name(sys_log_level::class):
             case $this->class_to_name(sys_log_status::class):
             case $this->class_to_name(sys_log_function::class):
             case $this->class_to_name(job_status::class):

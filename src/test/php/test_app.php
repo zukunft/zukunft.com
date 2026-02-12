@@ -178,7 +178,9 @@ class test_app
             $sys->times->switch(system_time_type::LOAD_TYPES);
             // the types are general so the system user can be used to load the types
             $cac = new data_object($usr_sys);
-            $sys->load_type_lists($db_con);
+            if (!$sys->load_type_lists($db_con)) {
+                   log_err('Type loading incomplete due to ');
+            }
 
             $log = new change_log($usr_sys);
             $db_changed = $log->create_log_references($db_con);

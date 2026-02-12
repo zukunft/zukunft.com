@@ -47,7 +47,7 @@ SELECT term_view_insert_log_015515000 (
                1,
                89,
                'Start view',
-               'standard',
+               'main word',
                'mathematics',
                725,
                727,

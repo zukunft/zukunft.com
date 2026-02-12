@@ -2,8 +2,10 @@
 
 /*
 
-    shared/enum/sys_log_types.php - enum of all possible system log types
+    shared/enum/sys_log_levels.php - enum of all possible system log types
     -----------------------------
+
+    TODO Prio 2 rename to sys_log_level
 
 
     This file is part of zukunft.com - calc with words
@@ -32,17 +34,30 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
-enum sys_log_types: string
+use ReflectionException;
+
+enum sys_log_levels: string
 {
 
     // list of all possible log statuus
     const string UNDEFINED = "undefined";
+    const string DEBUG = "log_debug";
+    const int DEBUG_ID = 2;
+    const string DEBUG_NAME = "Debug";
+    const string DEBUG_COM = "Additional information only message that can be switched on upon request for more debugging";
     const string INFO = "log_info";
-    const int INFO_ID = 1;
+    const int INFO_ID = 4;
     const string INFO_NAME = "Info";
     const string INFO_COM = "Information only message for debugging and execution time details";
     const string WARNING = "log_warning";
+    const int WARNING_ID = 6;
+    const string WARNING_NAME = "Warning";
+    const string WARNING_COM = "if a message has been shown to the user";
     const string ERROR = "log_error";
+    const int ERROR_ID = 8;
+    const string ERROR_NAME = "Error";
+    const string ERROR_COM = "if the process has not been completed";
     const string FATAL = "log_fatal";
+    const int FATAL_ID = 10;
 
 }

@@ -71,6 +71,7 @@ include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_LANGUAGE . 'language.php';
 include_once paths::MODEL_LANGUAGE . 'language_form.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
@@ -112,7 +113,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -150,6 +151,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_HELPER . 'Message.php';
@@ -169,6 +171,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -229,15 +232,8 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\helper\Message;
-use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
-use Zukunft\ZukunftCom\main\php\shared\types\job_types;
-use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -263,19 +259,25 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
-use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Exception;
 use mysqli;
 use mysqli_result;
@@ -362,7 +364,7 @@ class sql_db
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const array DB_TABLE_CLASSES = [
         config::class,
-        sys_log_type::class,
+        sys_log_level::class,
         sys_log_status::class,
         sys_log_function::class,
         sys_log::class,
@@ -1141,12 +1143,14 @@ class sql_db
         $sql = $this->sql_to_create_database_structure();
         try {
             // because no log yet exists here echo instead of log_echo() is used
-            $log_txt->echo_log('Run db setup sql script');
+            $log_txt->echo_text_log('Run db setup sql script');
             $sys->times->switch(system_time_type::DB_SETUP);
             $sql_msg = $this->exe_script($sql);
             $sys->times->switch();
             if (!$sql_msg->is_ok()) {
                 // retry once but try to delete upfront all remaining tables and objects
+                $log_txt->echo_text_log('Run db setup sql script failed due to ' . $sql_msg->all_message_text());
+                $log_txt->echo_text_log('Retry ...');
                 $usr_msg = new user_message();
                 $this->reset_db_core();
                 $sys->times->switch(system_time_type::DB_SETUP);
@@ -1166,7 +1170,7 @@ class sql_db
         // fill the tables with the essential data
         if ($usr_msg->is_ok()) {
             // because no user yet exists here echo instead of log_echo() is used
-            $log_txt->echo_log('Create system users');
+            $log_txt->echo_text_log('Create system users');
             $this->reset_config();
             $this->import_system_users();
 
@@ -1177,7 +1181,7 @@ class sql_db
             $usr_msg->usr = $usr;
 
             // recreate the code link database rows
-            $log_txt->echo_log('Create the code links');
+            $log_txt->echo_text_log('Create the code links');
             $this->db_fill_code_links();
             $cac = new data_object($usr);
             $sys->load_type_lists($db_con);
@@ -2347,6 +2351,9 @@ class sql_db
         if ($result == 'user_valuess') {
             $result = 'user_values';
         }
+        if ($result == 'sys_log_statuuss') {
+            $result = 'sys_log_statuus';
+        }
         // for the database upgrade process only
         if ($result == 'job_statuss') {
             $result = 'job_statuus';
@@ -2439,6 +2446,9 @@ class sql_db
             $this->id_field = $this->get_id_field_name($this->class);
         }
         // exceptions to be adjusted
+        if ($this->id_field == 'sys_log_statuus_id') {
+            $this->id_field = 'sys_log_status_id';
+        }
         if ($this->id_field == 'blocked_ips_id') {
             $this->id_field = 'ip_range_id';
         }
@@ -2496,8 +2506,8 @@ class sql_db
         if ($result == 'element_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
-        if ($result == 'sys_log_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+        if ($result == 'sys_log_level_name') {
+            $result = sys_log_level::FLD_NAME;
         }
         if ($result == 'formula_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
@@ -2521,7 +2531,7 @@ class sql_db
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sys_log_status::FLD_NAME;
         }
         if ($result == 'job_status_name') {
             $result = sql_db::FLD_TYPE_NAME;
@@ -2570,7 +2580,7 @@ class sql_db
         string $sql,
         string $sql_name = '',
         array  $sql_array = array(),
-        int    $log_level = sys_log_level::ERROR
+        int    $log_level = sys_log_levels::ERROR_ID
     ): string
     {
         $result = '';
@@ -2580,7 +2590,7 @@ class sql_db
                 $result .= $msg . log::MSG_ERR;
             }
         } catch (Exception $e) {
-            if ($log_level == sys_log_level::FATAL) {
+            if ($log_level == sys_log_levels::FATAL) {
                 log_fatal($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'exe_try');
             } else {
                 $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
@@ -2625,7 +2635,7 @@ class sql_db
     function exe_prepare(
         sql_par $qp,
         Message $msg,
-        int     $log_level = sys_log_level::WARNING
+        int     $log_level = sys_log_levels::WARNING_ID
     ): bool
     {
         if ($this->db_type == sql_db::POSTGRES) {
@@ -2645,7 +2655,7 @@ class sql_db
     private function exe_prepare_pg(
         sql_par $qp,
         Message $msg,
-        int     $log_level = sys_log_level::ERROR
+        int     $log_level = sys_log_levels::ERROR_ID
     ): bool
     {
         /*
@@ -2703,7 +2713,7 @@ class sql_db
     private function exe_prepare_mysql(
         sql_par $qp,
         Message $msg,
-        int     $log_level = sys_log_level::ERROR
+        int     $log_level = sys_log_levels::ERROR_ID
     ): bool
     {
         $sql_name = $qp->name;
@@ -2755,7 +2765,7 @@ class sql_db
     function exe_direct(
         sql_par $qp,
         Message $msg,
-        int     $log_level = sys_log_level::WARNING
+        int     $log_level = sys_log_levels::WARNING_ID
     ): bool
     {
         if ($this->db_type == sql_db::POSTGRES) {
@@ -2775,7 +2785,7 @@ class sql_db
     private function exe_direct_pg(
         sql_par $qp,
         Message $msg,
-        int     $log_level = sys_log_level::ERROR
+        int     $log_level = sys_log_levels::ERROR_ID
     ): bool
     {
         try {
@@ -2811,7 +2821,7 @@ class sql_db
     private function exe_direct_mysql(
         sql_par $qp,
         Message $msg,
-        int     $log_level = sys_log_level::ERROR
+        int     $log_level = sys_log_levels::ERROR_ID
     ): bool
     {
         $sql_name = $qp->name;
@@ -2862,7 +2872,7 @@ class sql_db
         array  $sql_array = array(),
         string $sql_call = '',
         string $sql_call_name = '',
-        int    $log_level = sys_log_level::ERROR
+        int    $log_level = sys_log_levels::ERROR_ID
     ): \PgSql\Result|mysqli_result|null
     {
         global $debug;
@@ -2942,7 +2952,7 @@ class sql_db
         array  $sql_array = array(),
         string $sql_call = '',
         string $sql_call_name = '',
-        int    $log_level = sys_log_level::ERROR
+        int    $log_level = sys_log_levels::ERROR_ID
     ): \PgSql\Result|null
     {
         global $debug;
@@ -3057,7 +3067,7 @@ class sql_db
         string    $msg,
         Exception $e,
         string    $sql = '',
-        int       $log_level = sys_log_level::ERROR
+        int       $log_level = sys_log_levels::ERROR_ID
     ): string
     {
         return $this->log_db_error_message($msg, $e->getMessage(), $sql, $log_level);
@@ -3077,11 +3087,11 @@ class sql_db
         string $msg,
         string $err,
         string $sql = '',
-        int    $log_level = sys_log_level::ERROR
+        int    $log_level = sys_log_levels::ERROR_ID
     ): string
     {
         $msg .= ' ' . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $err;
-        if ($log_level == sys_log_level::FATAL) {
+        if ($log_level == sys_log_levels::FATAL) {
             log_fatal($msg, 'exe_postgres');
             return $msg . log::MSG_ERR_INTERNAL;
         } else {
@@ -3114,7 +3124,7 @@ class sql_db
         string $sql_name = '',
         array  $sql_array = array(),
         string $sql_call = '',
-        int    $log_level = sys_log_level::ERROR): mysqli_result
+        int    $log_level = sys_log_levels::ERROR_ID): mysqli_result
     {
         $result = null;
 
@@ -4804,7 +4814,7 @@ class sql_db
     {
         global $sys;
 
-        $result = 0;
+        $result = null;
         $is_valid = false;
         $lib = new library();
         $sys->times->switch(system_time_type::DB_WRITE);
@@ -4913,7 +4923,7 @@ class sql_db
                 $sql = $sql . ';';
                 //$sql_result = $this->exe($sql, 'insert_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
                 try {
-                    $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
+                    $sql_result = $this->exe($sql, '', array(), sys_log_levels::FATAL);
                     if ($sql_result) {
                         $result = mysqli_insert_id($this->mysql);
                         // user database row have a double unique index, but relevant
@@ -4942,8 +4952,10 @@ class sql_db
             log_debug('failed (' . $sql . ')');
         }
 
-        if ($result == null) {
-            log_warning('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
+        if ($result === null) {
+            if ($log_err) {
+                log_warning('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
+            }
             $result = 0;
         }
         $sys->times->switch();
@@ -5048,7 +5060,7 @@ class sql_db
             log_debug('sql "' . $sql . '"', $debug - 12);
             //$result = $this->exe($sql, 'update_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
             try {
-                $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
+                $sql_result = $this->exe($sql, '', array(), sys_log_levels::FATAL);
                 if (!$sql_result) {
                     $result = false;
                 }
@@ -5115,7 +5127,11 @@ class sql_db
         }
 
         log_debug('sql "' . $sql . '"');
-        $result = $this->exe_try('Deleting of ' . $this->class, $sql, '', array(), sys_log_level::FATAL);
+        $result = $this->exe_try(
+            'Deleting of ' . $this->class,
+            $sql, '',
+            array(),
+            sys_log_levels::FATAL_ID);
         $sys->times->switch();
         return $result;
     }

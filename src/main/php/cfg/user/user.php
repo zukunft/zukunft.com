@@ -881,11 +881,11 @@ class user extends db_id_object_non_sandbox
         return $this->load($qp);
     }
 
-    function load_by_profile_code(string $profile_code_id): bool
+    function load_by_profile_code(string $profile_code_id, bool $log_err = true): bool
     {
         global $sys;
         if ($sys->typ_lst->usr_pro != null) {
-            return $this->load_by_profile($sys->typ_lst->usr_pro->id($profile_code_id));
+            return $this->load_by_profile($sys->typ_lst->usr_pro->id($profile_code_id, $log_err));
         } else {
             return false;
         }
@@ -1094,7 +1094,7 @@ class user extends db_id_object_non_sandbox
 
     function has_any_user_this_profile(string $profile_code_id): bool
     {
-        return $this->load_by_profile_code($profile_code_id);
+        return $this->load_by_profile_code($profile_code_id, false);
     }
 
     private function ip_in_range($ip_addr, $min, $max): bool

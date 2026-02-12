@@ -3688,8 +3688,8 @@
         "id": 201
       },
       {
-        "name": "31sys_log_type_id",
-        "code_id": "31sys_log_type_id",
+        "name": "31sys_log_level_id",
+        "code_id": "31sys_log_level_id",
         "description": "",
         "id": 202
       },

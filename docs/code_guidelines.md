@@ -136,6 +136,14 @@ all classes should have these functions:
 - display               - the result and the name of the object e.g. ABB, sales: 46'000
 - display_linked        - like display, but with HTML links to the related objects
 
+the main object should have these function
+- sql_insert, sql_update and sql_delete - to create SQL statements for database updates
+- insert, update and delete             - to prepare and execute the database actions
+- set                                   - to set vars and update depending on vars such as the cache
+- get                                   - either the get a var name that may also be taken from the cache
+                                          or get an entry of a list e.g. _by_id, _by_name or by _code_id
+- add, put, drop                        - to add, update or delete an item im a memory list 
+
 All objects needs to have the functions dsp_id and name. These two functions should never all any debug functionality, because they can be called from the debug functions
 
 *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test

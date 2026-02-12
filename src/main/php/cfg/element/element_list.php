@@ -49,6 +49,7 @@ include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 
@@ -59,9 +60,9 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 
@@ -358,7 +359,7 @@ class element_list extends sandbox_list
         $sc = $db_con->sql_creator();
         $qp = $this->del_sql_without_log($sc);
         $usr_msg->add_message_text(
-            $db_con->exe_try('del elements', $qp->sql, '', array(), sys_log_level::FATAL));
+            $db_con->exe_try('del elements', $qp->sql, '', array(), sys_log_levels::FATAL));
         return $usr_msg;
     }
 

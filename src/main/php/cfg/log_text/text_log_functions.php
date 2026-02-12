@@ -42,17 +42,18 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 /**
@@ -128,28 +129,10 @@ function log_info(string $msg_text,
 {
     return log_msg($msg_text,
         $msg_description,
-        sys_log_level::INFO,
+        sys_log_levels::INFO_ID,
         $function_name, $function_trace,
         $calling_usr,
         $force_log);
-}
-
-function log_reject(string  $msg_text,
-                     string  $function_name = '',
-                     string  $msg_description = '',
-                     string  $function_trace = '',
-                     ?user   $calling_usr = null,
-                     ?sql_db $given_db_con = null): string
-{
-    return log_msg($msg_text,
-        $msg_description,
-        sys_log_level::REJECT,
-        $function_name,
-        $function_trace,
-        $calling_usr,
-        false,
-        $given_db_con
-    );
 }
 
 function log_warning(string  $msg_text,
@@ -161,7 +144,7 @@ function log_warning(string  $msg_text,
 {
     return log_msg($msg_text,
         $msg_description,
-        sys_log_level::WARNING,
+        sys_log_levels::WARNING_ID,
         $function_name,
         $function_trace,
         $calling_usr,
@@ -195,7 +178,7 @@ function log_err(string $msg_text,
     }
     return log_msg($msg_text,
         $msg_description,
-        sys_log_level::ERROR,
+        sys_log_levels::ERROR_ID,
         $function_name,
         $function_trace,
         $calling_usr);
@@ -230,7 +213,7 @@ function log_fatal_db(
     return log_msg(
         'FATAL ERROR! ' . $msg_text,
         $msg_description,
-        sys_log_level::FATAL,
+        sys_log_levels::FATAL_ID,
         $function_name,
         $function_trace,
         $calling_usr);
@@ -292,9 +275,9 @@ function log_fatal(string $msg_text,
  * with the link for more details and to trace the resolution process
  * used also for system messages so no debug calls from here to avoid loops
  *
- * @param string $msg_text is a short description that is used to group and limit the number of error messages
+ * @param string $msg_text is a short description used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
- * @param string $msg_log_level is the criticality level e.g. debug, info, warning, error or fatal error
+ * @param int $msg_log_level is the criticality level e.g. debug, info, warning, error or fatal error
  * @param string $function_name is the function name which has most likely caused the error
  * @param string $function_trace is the complete system trace to get more details
  * @param user|null $usr is the user who has probably seen the error message
@@ -304,7 +287,7 @@ function log_fatal(string $msg_text,
  */
 function log_msg(string  $msg_text,
                  string  $msg_description,
-                 string  $msg_log_level,
+                 int     $msg_log_level,
                  string  $function_name,
                  string  $function_trace,
                  ?user   $usr = null,
@@ -382,7 +365,7 @@ function log_msg(string  $msg_text,
                 $function_trace = $used_db_con->sf($function_trace);
                 $fields = array();
                 $values = array();
-                $fields[] = "sys_log_type_id";
+                $fields[] = "sys_log_level_id";
                 $values[] = $msg_log_level;
                 $fields[] = "sys_log_function_id";
                 $values[] = $function_id;
