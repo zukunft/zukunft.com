@@ -53,6 +53,7 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -158,7 +159,7 @@ include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::MODEL_REF . 'source_type.php';
@@ -706,6 +707,26 @@ class test_base
     }
 
     /**
+     * check if the user message does not contain any error messages
+     *
+     * @param string $msg (unique) description of the test
+     * @param user_message $usr_msg which contains the messages that have occurred during the test
+     * @return bool true is the result is fine
+     */
+    function assert_msg(
+        string       $msg,
+        user_message $usr_msg,
+        float        $exe_max_time = self::TIMEOUT_LIMIT
+    ): bool
+    {
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return $this->assert_dsp($msg, false, true, $usr_msg->all_message_text(), '', $exe_max_time);
+        }
+    }
+
+    /**
      * check if the result is false and format the result as a string
      *
      * @param string $msg (unique) description of the test
@@ -832,7 +853,7 @@ class test_base
     }
 
     /**
-     * check if the test results contains at least all expected results
+     * check if the test for results contains at least all expected results
      *
      * @param string $msg (unique) description of the test
      * @param array $haystack the actual result
@@ -2374,11 +2395,11 @@ class test_base
     /**
      * check the object loading by id
      *
-     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
      * @param int|string $id the id of the object if not 1
      * @return bool the load object to use it for more tests
      */
-    function assert_load_by_id(sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
+    function assert_load_by_id(sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
     {
         // check the loading via id and check if the id has been mapped
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
@@ -2569,6 +2590,102 @@ class test_base
     /*
      * assert db write
      */
+
+    /**
+     * test if a database insert statement could be created for the given object,
+     * and if based on this statement, a database id is returned
+     *
+     * @param string $test_name the description of the test for the log
+     * @param db_object_seq_id $dbo the database object
+     * @param array $sc_par_lst list of parameters for the SQL creation
+     * @return int the database id of the row just created
+     */
+    function assert_insert(
+        string           $test_name,
+        db_object_seq_id $dbo,
+        user_message     $msg,
+        array            $sc_par_lst = []
+    ): int
+    {
+        global $db_con;
+
+        $db_id = 0;
+        $sc = $db_con->sql_creator();
+        $qp = $dbo->sql_insert($sc, $msg, new sql_type_list($sc_par_lst));
+        if ($msg->is_ok()) {
+            $msg_txt = 'add ' . $dbo->dsp_id() . ' for system testing';
+            if ($db_con->insert($qp, $msg_txt, $msg)) {
+                $db_id = $msg->get_row_id();
+                if ($db_id <= 0) {
+                    $msg->add(msg_id::DB_INSERT_ID_MISSING, [
+                        msg_id::VAR_NAME => $dbo->dsp_id()
+                    ]);
+                } else {
+                    $dbo->id = $db_id;
+                }
+            }
+        }
+        if (!$this->assert_msg($test_name, $msg)) {
+            $db_id = 0;
+        }
+        return $db_id;
+    }
+
+    /**
+     * test if a database update statement could be created for the given object,
+     * and if based on this statement, a database row updated
+     *
+     * @param string $test_name the description of the test for the log
+     * @param db_object_seq_id $dbo the database object
+     * @param array $sc_par_lst list of parameters for the SQL creation
+     * @return bool true if everything is fine
+     */
+    function assert_update(
+        string           $test_name,
+        db_object_seq_id $dbo,
+        user_message     $msg,
+        array            $sc_par_lst = []
+    ): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $db_row = $dbo->clone_reset();
+        $db_row->load_by_id($dbo->id());
+        $qp = $dbo->sql_update($sc, $db_row, $msg, new sql_type_list($sc_par_lst));
+        if ($msg->is_ok()) {
+            $msg_txt = 'update ' . $dbo->dsp_id() . ' for system testing';
+            $db_con->update($qp, $msg_txt, $msg);
+        }
+        return $this->assert_true($test_name, $msg->is_ok());
+    }
+
+    /**
+     * test if a database delete statement could be created for the given object,
+     * and if based on this statement, the database row is removed
+     *
+     * @param string $test_name the description of the test for the log
+     * @param db_object_seq_id $dbo the database object
+     * @param array $sc_par_lst list of parameters for the SQL creation
+     * @return bool true if everything is fine
+     */
+    function assert_delete(
+        string           $test_name,
+        db_object_seq_id $dbo,
+        user_message     $msg,
+        array            $sc_par_lst = []
+    ): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $dbo->sql_delete($sc, $msg, new sql_type_list($sc_par_lst));
+        if ($msg->is_ok()) {
+            $msg_txt = 'delete ' . $dbo->dsp_id() . ' of system testing';
+            $db_con->delete($qp, $msg_txt, $msg);
+        }
+        return $this->assert_true($test_name, $msg->is_ok());
+    }
 
     /**
      * test adding a named sandbox object e.g. a word to the database
@@ -3191,13 +3308,13 @@ class test_base
     /**
      * remove all remaining test rows of a named user sandbox object
      *
-     * @param sandbox_named|sandbox_link_named|phrase|verb $sbx the named user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|phrase|verb|type_object $sbx the named user sandbox object e.g. a word
      * @param string $name the name of the user sandbox object that should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
      *                    e.g. to detect incomplete clean-up of previous tests
      * @return void
      */
-    function write_named_cleanup(sandbox_named|sandbox_link_named|phrase|verb $sbx, string $name, bool $check = false): void
+    function write_named_cleanup(sandbox_named|sandbox_link_named|phrase|verb|type_object $sbx, string $name, bool $check = false): void
     {
         $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
         $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
@@ -3208,7 +3325,7 @@ class test_base
     /**
      * remove remaining test rows for one name and one user
      *
-     * @param sandbox_named|sandbox_link_named|phrase|verb $sbx the named user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|phrase|verb|type_object $sbx the named user sandbox object e.g. a word
      * @param string $name the name of the user sandbox object that should be removed
      * @param user $usr the user configuration of this user should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
@@ -3217,10 +3334,10 @@ class test_base
      */
     private
     function write_named_cleanup_one(
-        sandbox_named|sandbox_link_named|phrase|verb $sbx,
-        user                                         $usr,
-        string                                       $name,
-        bool                                         $check = false
+        sandbox_named|sandbox_link_named|phrase|verb|type_object $sbx,
+        user                                                     $usr,
+        string                                                   $name,
+        bool                                                     $check = false
     ): void
     {
         $usr_msg = new user_message($usr);
@@ -3826,10 +3943,10 @@ class test_base
 
     /**
      * check if all mandatory vars of the given object are set so that it can be saved in the database
-     * @param sandbox_named|sandbox_link|sandbox_value|verb|user $sbx the object filled with all vars
+     * @param sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx the object filled with all vars
      * @return bool true if the test was successful
      */
-    function assert_db_ready(sandbox_named|sandbox_link|sandbox_value|verb|user $sbx): bool
+    function assert_db_ready(sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx): bool
     {
         $usr_msg = new user_message();
         $lib = new library();
@@ -3840,10 +3957,10 @@ class test_base
 
     /**
      * check if an error message is added to the user_message if a mandatory vars of the given object is missing
-     * @param sandbox_named|sandbox_link|sandbox_value|verb|user $sbx the object filled with some vars
+     * @param sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx the object filled with some vars
      * @return bool true if the test was successful
      */
-    function assert_not_db_ready(sandbox_named|sandbox_link|sandbox_value|verb|user $sbx): bool
+    function assert_not_db_ready(sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx): bool
     {
         $usr_msg = new user_message();
         $lib = new library();
@@ -3857,13 +3974,13 @@ class test_base
     /**
      * check if the filling up an almost empty object matches the filled object
      * using the api json and the no_diff function
-     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $empty the object with almost all vars null
-     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $filled the object filled with all vars
+     * @param sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $empty the object with almost all vars null
+     * @param sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $filled the object filled with all vars
      * @return bool true if the api message matches
      */
     function assert_fill(
-        sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $empty,
-        sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $filled
+        sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $empty,
+        sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $filled
     ): bool
     {
 
@@ -3878,7 +3995,12 @@ class test_base
         $original_json = $filled->api_json([api_types::TEST_MODE], $usr_sys);
         $empty->fill($filled, $usr_sys);
         $test_name = 'no_diff finds no difference in the filled ' . $class . ' compared to the original';
-        $this->assert_true($test_name, $empty->no_diff($filled, $usr_msg));
+        if (!$empty->no_diff($filled, $usr_msg)) {
+            $fvt_lst = $empty->db_fields_changed($filled, $usr_msg);
+            //$fvt_lst = $fvt_lst->is_empty_except_internal_fields();
+            $diff_msg = implode(",", $fvt_lst->names());
+            $this->assert($test_name, $diff_msg, '');
+        }
         if ($usr_msg->is_ok()) {
             $test_name = $class . ' fill empty object and test via api json';
             $filled_json = $empty->api_json([api_types::TEST_MODE], $usr_sys);

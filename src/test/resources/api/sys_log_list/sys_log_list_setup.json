@@ -6,30 +6,53 @@
   "version": "0.0.3",
   "body": [
     {
+      "id": 5,
+      "user_id": 3,
+      "function_id": 3,
+      "trace": "import_test_files",
+      "type_id": 4,
+      "text": "test import",
+      "description": "import of the some test json files",
+      "status": 1
+    },
+    {
+      "id": 4,
+      "user_id": 3,
+      "function_id": 1,
+      "trace": "import_base_config",
+      "type_id": 4,
+      "text": "base setup",
+      "description": "import of the base setup",
+      "status": 1
+    },
+    {
       "id": 3,
-      "user": "zukunft.com system test",
-      "text": "'test setup'",
-      "description": "'import of the pod test setup'",
-      "trace": "'import_test_config'",
-      "prg_part": "import_test_config",
+      "user_id": 3,
+      "function_id": 3,
+      "trace": "import_test_config",
+      "type_id": 4,
+      "text": "test setup",
+      "description": "import of the pod test setup",
       "status": 1
     },
     {
       "id": 2,
-      "user": "zukunft.com system test",
-      "text": "'pod setup'",
-      "description": "'import of the pod base setup'",
-      "trace": "'import_pod_config'",
-      "prg_part": "import_pod_config",
+      "user_id": 3,
+      "function_id": 2,
+      "trace": "import_test_config",
+      "type_id": 4,
+      "text": "pod setup",
+      "description": "import of the pod base setup",
       "status": 1
     },
     {
       "id": 1,
-      "user": "zukunft.com system test",
-      "text": "'base setup'",
-      "description": "'import of the base setup'",
-      "trace": "'import_base_config'",
-      "prg_part": "import_base_config",
+      "user_id": 3,
+      "function_id": 1,
+      "trace": "import_base_config",
+      "type_id": 4,
+      "text": "base setup",
+      "description": "import of the base setup",
       "status": 1
     }
   ]

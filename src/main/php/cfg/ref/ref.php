@@ -188,7 +188,7 @@ class ref extends sandbox_link
     //                                       use the source to define an as good as possible import
     //                                       or at least a check if the reference is still valid
     public ?string $url;
-    private ?string $code_id = null;
+    public ?string $code_id = null;
     public ?string $description = null;
 
     // TODO deprecate
@@ -271,7 +271,7 @@ class ref extends sandbox_link
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the triple values that should be mapped
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {

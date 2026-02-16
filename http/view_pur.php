@@ -51,7 +51,7 @@ $result = '';
 
 // start the user session
 $session = new frontend('view');
-$result .= $session->start('view pur'); // e.g. if requested write to the system log server that a user has sent a new request
+$db_con = $session->start('view pur'); // e.g. if requested write to the system log server that a user has sent a new request
 
 // check e.g. if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($result != '') {

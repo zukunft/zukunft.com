@@ -36,6 +36,7 @@ include_once 'test_const.php';
 
 // load the main test class to get the test environment
 include_once TEST_PHP_PATH . 'test_app.php';
+
 use Zukunft\ZukunftCom\test\php\test_app;
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;

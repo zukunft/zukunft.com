@@ -424,7 +424,7 @@ class data_object
             if ($msk->id > 0) {
                 foreach ($msk->component_list()->lst() as $cmp) {
                     if ($cmp->id == 0) {
-                        $filled = $this->component_list()->get_by_id($cmp->id);
+                        $filled = $this->component_list()->get($cmp->id);
                         if ($filled != null) {
                             $cmp->fill($filled);
                         }

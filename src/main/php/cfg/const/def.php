@@ -41,6 +41,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_COMPONENT . 'view_style.php';
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
+//include_once paths::MODEL_GROUP . 'group.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_FORMULA . 'formula_map.php';
@@ -80,9 +81,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
-//include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_SYSTEM . 'system_time.php';
-//include_once paths::SHARED_TYPES . 'system_time_type.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'ref_type.php';
 //include_once paths::MODEL_REF . 'source.php';
@@ -108,6 +108,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_WORD . 'triple_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
+//include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 //include_once paths::SHARED_TYPES . 'protection_types.php';
 //include_once paths::SHARED_TYPES . 'share_types.php';
 //include_once paths::SHARED_TYPES . 'view_relation_types.php';
@@ -127,6 +129,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
@@ -165,8 +168,8 @@ use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -187,6 +190,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -208,6 +212,8 @@ class def
     const int LIST_MIN_NAMES = 4; // number of object names that should at least be shown
     const int LIST_MIN_NUM = 20; // number of object ids that should at least be shown
     const int DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
+    const int DEBUG_SQL_LENGTH = 200; // the max number of chars of an SQL statement shown in the debug text
+    const int DEBUG_SQL_LIST_TEXT = 500; // the max number of chars of a list of SQL statements shown in the debug text
 
 
     /*
@@ -217,6 +223,21 @@ class def
     // TODO Prio 2 allow overwrite by the config value
     const int MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
     const int MAX_RECURSIVE = 10; // max number of recursive call to avoid endless looping in case of a program error
+
+
+    /*
+     * fallback
+     */
+
+    // TODO Prio 1 collect all fallback values here
+    // configuration values used as fallback if the value is missing in the system configuration
+    const int FALLBACK_IMPORT_PER_SEC = 100; // expected number of objects that could be imported per second
+    const int FALLBACK_IMPORT_BYTE_PER_SEC = 10000; // expected number of bytes per second that could be processed in import
+    const int FALLBACK_PERCENT_STEP = 1; // the percent step size for the progress bar and of process parts
+    const int FALLBACK_RETRY = 10; // the default number of retries for a failed process
+    const int FALLBACK_RECURSIVE_MAX = 99; // the maximal number of recursive calls of a function
+    const int FALLBACK_DB_PAGE_ROWS = 20; // the number of database rows that should be loaded at once
+    const float FALLBACK_RESPONSE_TIME = 1.0; // the response time to update the frontend in seconds
 
 
     /*
@@ -267,6 +288,7 @@ class def
         triple::class,
         source::class,
         ref::class,
+        group::class,
         value::class,
         formula::class,
         formula_link::class,
@@ -276,6 +298,26 @@ class def
         term_view::class,
         component::class,
         component_link::class,
+    ];
+
+    // classes that should not be delete (the only exception is that system users can delete test rows)
+    const array NO_DELETE_CLASSES = [
+        user::class,
+    ];
+
+    // classes where database rows should never be updated (the only exception is that system users can delete test rows)
+    const array NO_UPDATE_CLASSES = [
+        change_log::class,
+    ];
+
+    // classes that should not be delete (the only exception is that system users can delete test rows)
+    const array ONLY_ADMIN_CAN_DELETE_CLASSES = [
+        language::class,
+    ];
+
+    // classes that should not be delete (the only exception is that system users can delete test rows)
+    const array ONLY_ADMIN_CAN_UPDATE_CLASSES = [
+        language::class,
     ];
 
     // classes that are directly linked to the main classes and that should be included in the same code function docs part
@@ -292,6 +334,11 @@ class def
         formula::class,
         view::class,
         component::class,
+    ];
+
+    // list of classes where the link of two objects is the main unique key beside the database id
+    const array LINK_CLASSES = [
+        element::class,
     ];
 
     // classes that have a frontend and backend object but are not user-specific
@@ -336,8 +383,9 @@ class def
 
     // type classes that have a csv file for the initial load
     const array BASE_CODE_LINK_FILES = [
-        sys_log_status::class,
-        sys_log_type::class,
+        sys_log_function::class,
+        sys_log_level::class,
+        sys_log_statuus::class,
         job_status::class,
         job_type::class,
         change_action::class,
@@ -442,9 +490,9 @@ class def
 
     // list of classes that use a database table but where the changes do not need to be logged
     const array CLASSES_NO_CHANGE_LOG = [
-        sys_log_status::class,
         sys_log_function::class,
-        sys_log_type::class,
+        sys_log_status::class,
+        sys_log_level::class,
         system_time_type::class,
         system_time::class,
         change_action::class,
@@ -477,10 +525,10 @@ class def
     // list of all ab tables in order of dependencies
     const array DB_TABLE_LIST = [
         'config',
-        'sys_log_types',
-        'sys_log',
-        'sys_log_status',
         'sys_log_functions',
+        'sys_log_levels',
+        'sys_log_statuus',
+        'sys_log',
         'system_times',
         'system_time_types',
         'job_times',

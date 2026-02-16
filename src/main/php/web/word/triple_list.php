@@ -174,15 +174,15 @@ class triple_list extends ListBase
         $prev_verb_id = 0;
 
         // loop over the graph elements
-        foreach (array_keys($this->lst()) as $lnk_id) {
+        foreach (array_keys($this->lst()) as $lnk_key) {
             // reset the vars
             $directional_link_type_id = 0;
 
-            $lnk = $this->get($lnk_id);
+            $lnk = $this->get_by_key($lnk_key);
             // get the next link to detect if there is more than one word linked with the same link type
             // TODO check with a unit test if last element is used
-            if ($this->count() - 1 > $lnk_id) {
-                $next_lnk = $this->get($lnk_id + 1);
+            if ($this->count() - 1 > $lnk_key) {
+                $next_lnk = $this->get_by_key($lnk_key + 1);
             } else {
                 $next_lnk = $lnk;
             }

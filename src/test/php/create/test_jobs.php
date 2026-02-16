@@ -101,7 +101,7 @@ class test_jobs
         $job->set_type(job_types::BASE_IMPORT, $sys_usr);
         $job->set_status(job_types::BASE_IMPORT, $sys_usr);
         $job->start_time = new DateTime(sys_log_tests::TV_TIME);
-        $job->end_time = new DateTime(sys_log_tests::TV_TIME_TO);
+        $job->end_time = new DateTime(sys_log_tests::TV_TIME_TWO);
         $job->parameter = '1';
         $job->change_field = 2;
         $job->row_id = 3;

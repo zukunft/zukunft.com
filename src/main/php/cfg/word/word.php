@@ -308,7 +308,7 @@ class word extends sandbox_code_id
      *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -806,10 +806,12 @@ class word extends sandbox_code_id
     function diff_msg(word|CombineObject|db_object_seq_id $obj): user_message
     {
         $msg = parent::diff_msg($obj);
+        $lib = new library();
         if ($this->id() != $obj->id()) {
             $msg->add(msg_id::DIFF_ID, [
                 msg_id::VAR_ID => $obj->dsp_id(),
                 msg_id::VAR_ID_CHK => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_WORD_NAME => $this->dsp_id(),
             ]);
         }

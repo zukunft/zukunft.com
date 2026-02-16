@@ -65,7 +65,7 @@ class test_groups
      */
 
     /**
-     * @return group with one prime phrases
+     * @return group with one prime phrase
      */
     function group(): group
     {
@@ -73,6 +73,16 @@ class test_groups
         $lst = $t_phr->phrase_list_pi();
         $grp = $lst->get_grp_id(false);
         $grp->name = groups::TN_READ;
+        return $grp;
+    }
+
+    /**
+     * @return group with one prime phrase and all object vars set
+     */
+    function group_filled(): group
+    {
+        $grp = $this->group();
+        $grp->description = groups::TN_READ_COM;
         return $grp;
     }
 
@@ -87,7 +97,7 @@ class test_groups
     }
 
     /**
-     * @return group with one prime phrases
+     * @return group with one prime phrase
      */
     function group_pi_symbol(): group
     {

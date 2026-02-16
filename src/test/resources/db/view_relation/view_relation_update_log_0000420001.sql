@@ -40,7 +40,7 @@ SELECT view_relation_update_log_0000420001 (
                3::bigint,
                2::smallint,
                816::smallint,
-               'standard'::text,
+               'add components'::text,
                1::smallint,
                null::text,
                null::smallint,

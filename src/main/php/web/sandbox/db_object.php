@@ -148,7 +148,7 @@ class db_object extends TextIdObject
                 $this->set_id($url_array[url_var::ID]);
             } else {
                 $this->set_id(0);
-                $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
+                $usr_msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
             }
         }
         return $usr_msg;
@@ -174,7 +174,7 @@ class db_object extends TextIdObject
      * set the vars of this frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
      * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function set_from_json(string $json_api_msg, user_message $usr_msg): bool
     {
@@ -187,7 +187,7 @@ class db_object extends TextIdObject
      *
      * @param array $json_array an api json message
      * @param user_message $msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $json_array, user_message $msg): bool
     {
@@ -199,7 +199,7 @@ class db_object extends TextIdObject
             $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
-            $msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+            $msg->add_error_text('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
 
         // remember to send the updates to the backend
@@ -466,8 +466,7 @@ class db_object extends TextIdObject
     function value(): float|string|DateTime|null
     {
         $msg = 'ERROR: value not overwritten by ' . $this::class;
-        // TODO Prio 0 activate
-        //log_err($msg);
+        log_err($msg);
         return 0;
     }
 
@@ -495,7 +494,7 @@ class db_object extends TextIdObject
     }
 
     /**
-     * @returns string the formula expression in the user readable format and including user formatting
+     * @returns string the formula expression in the user-readable format and including user formatting
      */
     function user_expression(): string
     {

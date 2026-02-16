@@ -191,7 +191,7 @@ class group extends sandbox_named
      * set the vars of this phrase list bases on the api json array
      * @param array $json_array an api json message
      * @param user_message $msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $json_array, user_message $msg): bool
     {
@@ -256,14 +256,16 @@ class group extends sandbox_named
      */
     function api_array(): array
     {
-        //$vars = array();
-        $phr_lst_vars = array();
-        //$vars[json_fields::ID] = $this->id();
-        foreach ($this->lst as $phr) {
-            $phr_lst_vars[] = $phr->api_array();
+        $vars = parent::api_array();
+        $vars[json_fields::ID] = $this->id();
+        $vars[json_fields::PHRASES] = $this->phr_lst()->api_array();
+        if ($this->description != null) {
+            $vars[json_fields::NAME] = $this->name;
         }
-        //$vars[json_fields::PHRASES] = $phr_lst_vars;
-        return $phr_lst_vars;
+        if ($this->description != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

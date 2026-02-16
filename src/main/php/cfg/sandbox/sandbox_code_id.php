@@ -98,7 +98,7 @@ class sandbox_code_id extends sandbox_typed
 
     // database field to select single object used by the system
     // without using the type that can potentially select more than one object
-    private ?string $code_id;
+    public ?string $code_id;
 
 
     /*
@@ -152,7 +152,7 @@ class sandbox_code_id extends sandbox_typed
      *
      * @param array $api_json an api json message
      * @param user_message ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {

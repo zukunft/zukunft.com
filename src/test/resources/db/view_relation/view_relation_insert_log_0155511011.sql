@@ -67,7 +67,7 @@ SELECT view_relation_insert_log_0155511011
         1::smallint,
         108::smallint,
         'word_edit'::text,
-        'standard'::text,
+        'add components'::text,
         'word_usage'::text,
         815::smallint,
         817::smallint,

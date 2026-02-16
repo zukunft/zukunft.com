@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 // more specific includes are switched off to avoid circular includes
 //include_once paths::MODEL_COMPONENT . 'component.php';
 //include_once paths::MODEL_COMPONENT . 'component_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_list.php';
@@ -86,6 +87,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
@@ -471,7 +473,7 @@ class data_object
      */
     function get_phrase_by_id(int $id, phrase $phr): phrase
     {
-        $phr_cac = $this->phrase_list()->get_by_id($id);
+        $phr_cac = $this->phrase_list()->get($id);
         if ($phr_cac == null) {
             $phr->set_id($id);
         } else {
@@ -518,7 +520,7 @@ class data_object
      */
     function get_formula_by_id(int $id, formula $frm): formula
     {
-        $frm_cac = $this->formula_list()->get_by_id($id);
+        $frm_cac = $this->formula_list()->get($id);
         if ($frm_cac == null) {
             $frm->id = $id;
         } else {
@@ -639,7 +641,7 @@ class data_object
     {
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
-        $this->wrd_lst->add_by_name($wrd);
+        $this->wrd_lst->add_by_key($wrd);
 
         // add word references
         foreach ($wrd->ref_lst as $ref) {
@@ -667,7 +669,7 @@ class data_object
     {
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
-        $this->trp_lst->add_by_name($trp);
+        $this->trp_lst->add_by_key($trp);
     }
 
     /**
@@ -704,7 +706,7 @@ class data_object
      */
     function add_source(source $src): void
     {
-        $this->src_lst->add_by_name($src);
+        $this->src_lst->add_by_key($src);
     }
 
     /**
@@ -725,7 +727,7 @@ class data_object
     function add_formula(formula $frm): void
     {
         $this->trm_lst_dirty = true;
-        $this->frm_lst->add_by_name($frm);
+        $this->frm_lst->add_by_key($frm);
     }
 
     /**
@@ -768,7 +770,7 @@ class data_object
      */
     function add_view(view|sandbox_named $frm): void
     {
-        $this->msk_lst->add_by_name($frm);
+        $this->msk_lst->add_by_key($frm);
     }
 
     /**
@@ -778,7 +780,7 @@ class data_object
      */
     function add_component(component $cmp): void
     {
-        $this->cmp_lst->add_by_name($cmp);
+        $this->cmp_lst->add_by_key($cmp);
     }
 
     /**
@@ -878,8 +880,8 @@ class data_object
         global $sys;
 
         // get the relevant config values
-        $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $val_per_sec = $cfg->get_by([words::VALUES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $val_per_sec = $cfg->get_by([words::VALUES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
 
         // save the data lists in order of the dependencies
@@ -1000,7 +1002,7 @@ class data_object
     {
         global $cfg;
 
-        $usr_per_sec = $cfg->get_by([words::USERS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $usr_per_sec = $cfg->get_by([words::USERS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
         $usr_lst = $this->user_list();
         if (!$usr_lst->is_empty()) {
@@ -1040,7 +1042,7 @@ class data_object
     {
         global $cfg;
 
-        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1, $usr_msg);
+        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC, $usr_msg);
 
         $vrb_lst = $this->verb_list();
         if (!$vrb_lst->is_empty()) {
@@ -1062,7 +1064,7 @@ class data_object
     {
         global $cfg;
 
-        $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
         $trp_lst = $this->triple_list();
         if (!$trp_lst->is_empty()) {
@@ -1097,7 +1099,7 @@ class data_object
     {
         global $cfg;
 
-        $frm_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $frm_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
         $frm_lst = $this->formula_list();
         if (!$frm_lst->is_empty()) {
@@ -1119,8 +1121,10 @@ class data_object
                         log_err('formula ' . $frm->dsp_id() . ' not saved because ' . $usr_msg->all_message_text());
                     }
                     if ($frm->ref_text != null) {
-                        if (!$frm->element_refresh_old($frm->ref_text)) {
-                            $usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
+                        $msg_elm = $usr_msg->clone_reset();
+                        if (!$frm->element_refresh($msg_elm, $cache)) {
+                            log_info('formula import failed on first try. relevant?');
+                            //$usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
                         }
                     }
                 }
@@ -1205,7 +1209,7 @@ class data_object
     {
         global $cfg;
 
-        $per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
         if (!$sbx_lst->is_empty()) {
             $est = $sbx_lst->count() / $per_sec;

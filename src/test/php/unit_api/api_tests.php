@@ -157,14 +157,13 @@ class api_tests
         $t->subheader($ts . 'api list');
 
         $t->assert_api_get_list(type_lists::class);
-        $t->assert_api_get_list(word_list::class, [1, 2, words::PI_ID]);
+        $t->assert_api_get_list(word_list::class, [words::MATH_ID, words::CONST_ID, words::PI_ID]);
         $t->assert_api_get_list(word_list::class, words::MATH, url_var::PATTERN);
         // TODO Prio 1 review and add triple links to phrases
         $t->assert_api_get_list(phrase_list::class, [words::MATH_ID, words::CONST_ID, words::PI_ID, triples::MATH_CONST_ID * -1, triples::PI_ID * -1]);
-        // TODO Prio 0 activate
-        //$t->assert_api_get_list(phrase_list::class, words::MATH, url_var::PATTERN);
-        $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
-        $t->assert_api_get_list(formula_list::class, [1]);
+        $t->assert_api_get_list(phrase_list::class, words::MATH, url_var::PATTERN);
+        $t->assert_api_get_list(term_list::class, [words::MATH_ID, triples::MATH_CONST_ID * -1, verbs::NOT_SET_ID * 2, formulas::SCALE_TO_SEC_ID * -2]);
+        $t->assert_api_get_list(formula_list::class, [formulas::SCALE_TO_SEC_ID]);
         $t->assert_api_get_list(view_list::class, views::START_NAME, url_var::PATTERN);
         $t->assert_api_get_list(component_list::class, views::WORD_ADD_ID, url_var::VIEW);
 

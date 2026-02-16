@@ -50,6 +50,7 @@ include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VERB . 'verb.php';
@@ -63,6 +64,7 @@ include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
+include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'url_mapper.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
@@ -80,6 +82,7 @@ include_once html_paths::WORD . 'word.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'groups.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'results.php';
 include_once paths::SHARED_CONST . 'sources.php';
@@ -108,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
@@ -120,6 +124,7 @@ use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
+use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
@@ -136,6 +141,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
@@ -174,9 +180,9 @@ class test_mappers
     /**
      * get the base test object related to the given class
      * @param string $class the given main class name
-     * @return sandbox|sandbox_value|sandbox_link|type_object|db_id_object_non_sandbox wit only a few vars filled
+     * @return sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox with only a few vars filled
      */
-    function class_to_base_object(string $class): sandbox|sandbox_value|sandbox_link|type_object|db_id_object_non_sandbox
+    function class_to_base_object(string $class): sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox
     {
         $obj = null;
         $t_usr = new test_users();
@@ -186,6 +192,7 @@ class test_mappers
         $t_src = new test_sources($this->env);
         $t_ref = new test_refs($this->env);
         $t_val = new test_values($this->env);
+        $t_grp = new test_groups($this->env);
         $t_frm = new test_formulas($this->env);
         $t_res = new test_results($this->env);
         $t_msk = new test_views($this->env);
@@ -211,6 +218,9 @@ class test_mappers
                 break;
             case value::class;
                 $obj = $t_val->value();
+                break;
+            case group::class;
+                $obj = $t_grp->group();
                 break;
             case formula::class;
                 $obj = $t_frm->formula();
@@ -243,8 +253,8 @@ class test_mappers
     }
 
     function change_base_object(
-        sandbox|sandbox_value|sandbox_link|type_object|db_id_object_non_sandbox $obj
-    ): sandbox|sandbox_value|sandbox_link|type_object|db_id_object_non_sandbox
+        sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox $obj
+    ): sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox
     {
         $t_wrd = new test_words($this->env);
         $t_frm = new test_formulas($this->env);
@@ -271,6 +281,9 @@ class test_mappers
             case value::class;
                 $obj->set_value(values::SAMPLE_FLOAT);
                 $obj->set_protection_by_code_id(protection_types::USER);
+                break;
+            case group::class;
+                $obj->set_name(groups::SYSTEM_TEST_RENAMED);
                 break;
             case formula::class;
                 $obj->set_name(formulas::SYSTEM_TEST_RENAMED);
@@ -310,9 +323,9 @@ class test_mappers
     /**
      * get the filled test object related to the given class
      * @param string $class the given main class name
-     * @return triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
+     * @return triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_multi|type_object|db_id_object_non_sandbox with only a few vars filled
      */
-    function class_to_filled_object(string $class): triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
+    function class_to_filled_object(string $class): triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_multi|type_object|db_id_object_non_sandbox
     {
         $obj = null;
         $t_usr = new test_users();
@@ -322,6 +335,7 @@ class test_mappers
         $t_src = new test_sources($this->env);
         $t_ref = new test_refs($this->env);
         $t_val = new test_values($this->env);
+        $t_grp = new test_groups($this->env);
         $t_frm = new test_formulas($this->env);
         $t_res = new test_results($this->env);
         $t_msk = new test_views($this->env);
@@ -347,6 +361,9 @@ class test_mappers
                 break;
             case value::class;
                 $obj = $t_val->value_16_filled();
+                break;
+            case group::class;
+                $obj = $t_grp->group_filled();
                 break;
             case formula::class;
                 $obj = $t_frm->formula_filled();
@@ -469,6 +486,9 @@ class test_mappers
                 break;
             case value::class;
                 $obj = new value_ui();
+                break;
+            case group::class;
+                $obj = new group_ui();
                 break;
             case formula::class;
                 $obj = new formula_ui();

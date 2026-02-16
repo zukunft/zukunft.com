@@ -43,8 +43,8 @@ SELECT component_link_type_insert_log_1111
     ('always'::text,
      1::bigint,
      1::smallint,
-     904::smallint,
-     905::smallint,
+     760::smallint,
+     761::smallint,
      'always'::text,
-     906::smallint,
+     762::smallint,
      'the component is always shown as it is'::text);

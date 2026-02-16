@@ -60,6 +60,14 @@ class formula_type extends type_object
         self::PREV,
     ];
 
+    // list of formula types where the calculation is based on the predicate "following"
+    // for the value selection e.g. "next"
+    const array USES_FOLLOWING = [
+        self::THIS,
+        self::NEXT,
+        self::PREV,
+    ];
+
 
     /*
      * database link

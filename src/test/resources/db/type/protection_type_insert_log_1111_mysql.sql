@@ -39,8 +39,8 @@ SELECT protection_type_insert_log_1111
     ('no protection',
      1,
      1,
-     867,
-     868,
+     190,
+     191,
      'no_protection',
-     869,
+     192,
      'anyone can take the ownership');

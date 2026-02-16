@@ -39,7 +39,7 @@ SELECT view_relation_update_log_0000420001 (
                3,
                2,
                816,
-               'standard',
+               'add components',
                1,
                null,
                null,

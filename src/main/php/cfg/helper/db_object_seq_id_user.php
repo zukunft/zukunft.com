@@ -48,6 +48,7 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_LOG . 'change.php';
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -118,6 +120,43 @@ class db_object_seq_id_user extends db_object_seq_id
         $obj = parent::clone_all();
         $obj->usr = $this->usr->clone_all();
         return $obj;
+    }
+
+    /**
+     * set the user based on the id from the database row array
+     * to be extended by the child functions
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if the user sandbox object is loaded and valid
+     */
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    {
+        $result = parent::row_mapper($db_row, $id_fld);
+        if (array_key_exists(user_db::FLD_ID, $db_row)) {
+            $obj_usr_id = $this->get_user_id();
+            $db_usr_id = $db_row[user_db::FLD_ID];
+            if ($obj_usr_id != $db_usr_id) {
+                log_warning('object user id ' . $obj_usr_id
+                    . ' does not match db row user id ' . $db_usr_id);
+                if ($obj_usr_id == 0) {
+                    global $sys;
+                    $usr = $sys->usr_sys->get_by_id($db_usr_id);
+                    if ($usr != null) {
+                        $this->set_user($usr);
+                    } else {
+                        // TODO Prio 2 try to get the user from cache
+                        $usr = new user();
+                        if ($usr->load_by_id($db_usr_id)) {
+                            $this->set_user($usr);
+                        } else {
+                            log_err('db user id ' . $obj_usr_id . ' not found');
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
 
@@ -252,7 +291,12 @@ class db_object_seq_id_user extends db_object_seq_id
         $sc = new sql_creator();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
+        // do not include the id field for insert statements
+        $sc_par_lst_id = clone $sc_par_lst;
+        if ($sc_par_lst->is_insert()) {
+            $sc_par_lst_id->add(sql_type::NO_ID_FIELD);
+        }
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst_id);
         if ($sc_par_lst->is_insert()) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(

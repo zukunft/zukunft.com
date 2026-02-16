@@ -397,7 +397,7 @@ class sandbox extends db_object_seq_id_user
      * fill the vars with this sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -539,7 +539,7 @@ class sandbox extends db_object_seq_id_user
      * set the vars of this object based on json string from the frontend object
      * @param string $api_json
      * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function set_from_api(string $api_json, user_message $usr_msg): bool
     {
@@ -2496,7 +2496,7 @@ class sandbox extends db_object_seq_id_user
     function get_similar(user_message $msg): sandbox|db_object|null
     {
         $msg = new user_message();
-        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'get_similar',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2519,7 +2519,7 @@ class sandbox extends db_object_seq_id_user
      */
     function add(user_message $msg): bool
     {
-        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'add',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2915,7 +2915,7 @@ class sandbox extends db_object_seq_id_user
     function del_links(user_message $usr_msg): bool
     {
         // use the $usr_msg var instead of the log_err function directly to interrupt subsequently workflow
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'del_links',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -3046,29 +3046,33 @@ class sandbox extends db_object_seq_id_user
      * @param sandbox|db_object_seq_id $db_row the sandbox object with the database values before the update
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator              $sc,
         sandbox|db_object_seq_id $db_row,
         user_message             $usr_msg,
         sql_type_list            $sc_par_lst = new sql_type_list()
-    ): sql_par
+    ): sql_par|null
     {
-        // clone the parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::UPDATE);
-        // get the field names, values and parameter types that have been changed
-        // and that needs to be updated in the database
-        // the db_* child function call the corresponding parent function
-        // including the sql parameters for logging
-        $fld_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
-        // get the list of all fields that can be changed by the user
-        $all_fields = $this->db_fields_all();
-        // create either the prepared sql query or a sql function that includes the logging of the changes
-        // unlike the db_* function the sql_update_* parent function is called directly
-        return $this::sql_update_switch($sc, $fld_lst, $all_fields, $usr_msg, $sc_par_lst_used);
+        if ($this->can_update($usr_msg)) {
+            // clone the parameter list to avoid changing the given list
+            $sc_par_lst_used = clone $sc_par_lst;
+            // set the sql query type
+            $sc_par_lst_used->add(sql_type::UPDATE);
+            // get the field names, values and parameter types that have been changed
+            // and that needs to be updated in the database
+            // the db_* child function call the corresponding parent function
+            // including the sql parameters for logging
+            $fld_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
+            // get the list of all fields that can be changed by the user
+            $all_fields = $this->db_fields_all();
+            // create either the prepared sql query or a sql function that includes the logging of the changes
+            // unlike the db_* function the sql_update_* parent function is called directly
+            return $this::sql_update_switch($sc, $fld_lst, $all_fields, $usr_msg, $sc_par_lst_used);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -3994,7 +3998,7 @@ class sandbox extends db_object_seq_id_user
         sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
-        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'db_fields_changed',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);

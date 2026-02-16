@@ -36,7 +36,7 @@ SELECT term_view_update_log_000004001
     (3::bigint,
      2::smallint,
      726::smallint,
-     'standard'::text,
+     'main word'::text,
      1::smallint,
      null::text,
      null::smallint,

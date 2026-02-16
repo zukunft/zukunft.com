@@ -84,9 +84,9 @@ class element_list_tests
         // TODO Prio 0 add fail test cases
         $frm = $t_frm->formula();
         $trm_lst = $t_trm->term_list_time();
-        $elm_lst = $frm->element_list($usr_msg, $trm_lst);
+        $elm_lst = $frm->elements($usr_msg, $trm_lst);
         $result = $elm_lst->dsp_id();
-        $target = '"minute" (element_id 1) for user 3 (zukunft.com system test)';
+        $target = '"minute" (element_id 1/104) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
     }

@@ -45,6 +45,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -56,7 +57,6 @@ include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
-include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -67,9 +67,6 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
-use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_list;
@@ -78,9 +75,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -89,7 +90,6 @@ use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
@@ -340,7 +340,7 @@ class result_list extends sandbox_value_list
                 $spt = sql_par_type::LIKE_OR;
             }
             $grp_id = new group_id();
-            $sc->add_where_par(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
+            $sc->add_where_par(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
         }
 
         // add the user parameter
@@ -474,9 +474,9 @@ class result_list extends sandbox_value_list
                 $pos++;
             }
         } elseif ($grp->is_big()) {
-            $sc->add_where(group::FLD_ID, $grp->id(), sql_par_type::TEXT);
+            $sc->add_where(group_db::FLD_ID, $grp->id(), sql_par_type::TEXT);
         } else {
-            $sc->add_where(group::FLD_ID, $grp->id());
+            $sc->add_where(group_db::FLD_ID, $grp->id());
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -554,7 +554,7 @@ class result_list extends sandbox_value_list
                 if ($by_source) {
                     $sql_by .= result_db::FLD_SOURCE_GRP;
                 } else {
-                    $sql_by .= group::FLD_ID;
+                    $sql_by .= group_db::FLD_ID;
                 }
             } elseif (get_class($obj) == word::class) {
                 $sql_by .= word_db::FLD_ID;
@@ -585,7 +585,7 @@ class result_list extends sandbox_value_list
                     if ($by_source) {
                         $link_fields[] = result_db::FLD_SOURCE_GRP;
                     } else {
-                        $link_fields[] = group::FLD_ID;
+                        $link_fields[] = group_db::FLD_ID;
                     }
                     $qp->sql = $db_con->select_by_field_list($link_fields);
                 } elseif (get_class($obj) == word::class) {
@@ -1034,7 +1034,7 @@ class result_list extends sandbox_value_list
         $trm_back->load_by_id($back);
         $trm_lst_back->add($trm_back);
         $trm_lst_back = $frm->load_exp_terms($usr_msg, $trm_lst_back, $exp);
-        $phr_lst_preset_following = $exp->element_special_following($usr_msg, $trm_lst_back);
+        $phr_lst_preset_following = $exp->terms_following($usr_msg, $trm_lst_back);
         $frm_lst_preset_following = $exp->element_special_following_frm($usr_msg, $trm_lst_back);
 
         // combine all used predefined phrases/formulas
@@ -1127,7 +1127,7 @@ class result_list extends sandbox_value_list
     {
         $result = new result($this->get_user());
         if (!$this->is_empty()) {
-            $result = $this->get(0);
+            $result = $this->get_by_key(0);
         }
         return $result;
     }

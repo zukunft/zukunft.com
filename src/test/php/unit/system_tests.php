@@ -31,6 +31,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -125,6 +126,7 @@ class system_tests
         global $usr_sys;
         global $sys;
         global $mtr;
+        global $cfg;
 
         // init
         $lib = new library();
@@ -139,9 +141,9 @@ class system_tests
         $t->header($ts);
 
         $t->subheader($ts . 'config SQL setup');
-        $cfg = new config();
-        $t->assert_sql_table_create($cfg);
-        $t->assert_sql_index_create($cfg);
+        $sys_cfg = new config();
+        $t->assert_sql_table_create($sys_cfg);
+        $t->assert_sql_index_create($sys_cfg);
 
         $t->subheader($ts . 'session SQL setup');
         $ses = new session();
@@ -169,7 +171,7 @@ class system_tests
         $t_cmp = new test_components($t);
         $t_lan = new test_languages();
         $t_log = new test_log($t);
-        $t_sys = new test_sys_log();
+        $t_sys = new test_sys_log($t);
         $t_job = new test_jobs($t);
         $t->assert_dsp_id($t_wrd->word(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_wrd->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 1 (zukunft.com system test)');
@@ -192,7 +194,7 @@ class system_tests
         $t->assert_dsp_id($t_frm->formula_list_short(), 'scale minute to sec (formula_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->formula_link(), 'from "scale minute to sec" (formula_id 1) to "minute" (word_id 104) as phrase as (formula_link_id 1)');
         $t->assert_dsp_id($t_frm->element(), 'word "minute" (' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id 1/104) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::MINUTE_ID . '}*60)');
         $t->assert_dsp_id($t_res->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_res->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / ' . words::PCT_ID . ',,,) for user 1 (zukunft.com system test)');
@@ -245,6 +247,20 @@ class system_tests
 
         $t->subheader($ts . 'IP filter');
 
+        /*
+         * config
+         */
+
+        $t->subheader($ts . 'config');
+
+        $test_name = 'get a system configuration value';
+        $pod_url = $cfg->get_by([words::POD, words::URL]);
+        $t->assert($test_name, $pod_url, def::POD_NAME);
+        $test_name = 'use fallback value if configuration value is missing';
+        $pod_url = $cfg->get_by([words::POD, words::TEST_ADD], def::POD_NAME);
+        $t->assert($test_name, $pod_url, def::POD_NAME);
+
+
 
         /*
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
@@ -268,13 +284,13 @@ class system_tests
         $t->subheader($ts . 'system config sql');
 
         $db_con->db_type = sql_db::POSTGRES;
-        $cfg = new config();
-        $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
+        $sys_cfg = new config();
+        $created_sql = $sys_cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get.sql');
         $t->assert('config->get_sql', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
+        $created_sql = $sys_cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get_mysql.sql');
         $t->assert('config->get_sql for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
@@ -377,6 +393,26 @@ class system_tests
         $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id_mysql.sql');
         $t->assert('database_upgrade->remove_prefix of verb code_id for MySQL', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
+
+        /*
+         * list
+         */
+
+        $t->subheader($ts . 'list db read');
+
+        $test_name = 'list db read';
+
+        $t->subheader($ts . 'list db write');
+
+        $usr_msg->reset();
+        $test_name = 'database delete calls based on element list';
+        $sc = $db_con->sql_creator();
+        $elm_lst = $t_frm->element_list();
+        $del_calls = $elm_lst->sql_delete_call_with_par($sc, $usr_msg);
+        $target = 'element_delete_log: "DELETE FROM elements  WHERE element_id = ?;" with the parameters (1)';
+        $t->assert($test_name, $del_calls->dsp_id(), $target);
+
+
         /*
          * system log SQL creation tests
          */
@@ -414,7 +450,7 @@ class system_tests
 
         $t->subheader($ts . 'system log frontend API');
 
-        $t_sys = new test_sys_log();
+        $t_sys = new test_sys_log($t);
         $log = $t_sys->sys_log();
         $api_msg = $log->api_json();
         $log_dsp = new sys_log_ui($api_msg);
@@ -434,16 +470,7 @@ class system_tests
         $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // create a second system log entry to create a list
-        $log2 = new sys_log();
-        $log2->id = 2;
-        $log2->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $log2->usr_name = $usr->name;
-        $log2->log_text = sys_log_tests::T2_LOG_TEXT;
-        //$log2->log_trace = (new Exception)->getTraceAsString();
-        $log2->log_trace = sys_log_tests::T2_LOG_TRACE;
-        $log2->function_name = sys_log_tests::T2_FUNC_NAME;
-        $log2->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $log2->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
+        $log2 = $t_sys->sys_log_filled();
 
         $log_lst = new sys_log_list();
         $log_lst->add($log);
@@ -452,7 +479,7 @@ class system_tests
         $log_lst_dsp = new sys_log_list_ui($log_lst->api_json());
         $usr1_dsp = new user($t->usr1->api_json());
         $created = $log_lst_dsp->api_json([api_types::HEADER], $usr1_dsp);
-        $expected = file_get_contents(test_files::SYS_LOG_LIST_API);
+        $expected = file_get_contents(test_files::SYS_LOG_LIST_TEST);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 

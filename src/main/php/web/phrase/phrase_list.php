@@ -595,7 +595,7 @@ class phrase_list extends sandbox_list_named
             sort($count_lst);
             if (($count_lst[0] / $this->count()) > $is_dominant_pct) {
                 $id = $count_lst[0];
-                $phr = $this->get_by_id($id);
+                $phr = $this->get($id);
             }
         }
         return $phr;

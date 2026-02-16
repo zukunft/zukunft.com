@@ -37,6 +37,6 @@ SELECT user_official_type_insert_log_1110
     ('EU passport'::text,
      1::bigint,
      1::smallint,
-     863::smallint,
-     864::smallint,
+     181::smallint,
+     182::smallint,
      'passport_eu'::text);

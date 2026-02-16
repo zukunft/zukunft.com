@@ -50,6 +50,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
@@ -174,10 +176,10 @@ class sandbox_value extends sandbox_multi
     // field lists for the table creation
     // the group is not a foreign key, because if the name is not changed by the user an entry in the group table is not needed
     const array FLD_KEY = array(
-        [group::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the -=class=-'],
+        [group_db::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the -=class=-'],
     );
     const array FLD_KEY_USER = array(
-        [group::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the user -=class=-'],
+        [group_db::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the user -=class=-'],
     );
     // TODO use not null for all keys if a separate table for each number of phrase is implemented
     // TODO FLD_KEY_PRIME and FLD_KEY_PRIME_USER are not the same only if just one phrase is the key
@@ -194,10 +196,10 @@ class sandbox_value extends sandbox_multi
         [sandbox_value::FLD_ID_PREFIX . '4', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
     );
     const array FLD_KEY_BIG = array(
-        [group::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, '', '', 'the variable text index to find -=class=-'],
+        [group_db::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, '', '', 'the variable text index to find -=class=-'],
     );
     const array FLD_KEY_BIG_USER = array(
-        [group::FLD_ID, sql_field_type::KEY_PART_TEXT, sql_field_default::NOT_NULL, '', '', 'the text index for more than 16 phrases to find the -=class=-'],
+        [group_db::FLD_ID, sql_field_type::KEY_PART_TEXT, sql_field_default::NOT_NULL, '', '', 'the text index for more than 16 phrases to find the -=class=-'],
     );
     const array FLD_ALL_VALUE = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', 'the numeric value given by the user'],
@@ -327,7 +329,7 @@ class sandbox_value extends sandbox_multi
      * map a value api json to this model value object
      * @param array $api_json the api array with the values that should be mapped
      * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $msg): bool
     {
@@ -1381,29 +1383,6 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * @param bool $usr_tbl true if also the user group id field should be returned
-     * @param bool $usr_only true if only the user table field should be returned
-     * @return string|array with the id field for a none prime value
-     */
-    function id_field_group(bool $usr_tbl = false, bool $usr_only = false): string|array
-    {
-        $lib = new library();
-        $fld_name = $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
-        if (!$usr_tbl) {
-            if ($usr_only) {
-                return sql_db::TBL_USER_PREFIX . $fld_name;
-            } else {
-                return $fld_name;
-            }
-        } else {
-            $id_fields = array();
-            $id_fields[] = $fld_name;
-            $id_fields[] = sql_db::TBL_USER_PREFIX . $fld_name;
-            return $id_fields;
-        }
-    }
-
-    /**
      * set the id field based on the given table type
      * used for list load queries where the id if not yet set
      * @param sql_type $tbl_typ the table type that should be used for the id field selection
@@ -1438,7 +1417,7 @@ class sandbox_value extends sandbox_multi
     function load_by_grp(group $grp, bool $by_source = false): bool
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'load_by_grp',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -1696,7 +1675,7 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * actually update a field in the main database record or the user sandbox
+     * to actually update a field in the main database record or the user sandbox,
      * the usr id is taken into account in sql_db->update (maybe move outside)
      *
      * for values the log should show to the user just which value has been changed
@@ -1818,14 +1797,14 @@ class sandbox_value extends sandbox_multi
      * @param sandbox_value $db_row the sandbox object with the database values before the update
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
         sandbox_value $db_row,
         user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par
+    ): sql_par|null
     {
         // clone the parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
@@ -1982,7 +1961,7 @@ class sandbox_value extends sandbox_multi
         );
 
         // get the fields for the value log entry
-        $fvt_lst_log->add_field(group::FLD_ID, $this->grp()->id);
+        $fvt_lst_log->add_field(group_db::FLD_ID, $this->grp()->id);
 
         // for standard prime values add the user only for the log
         if ($sc_par_lst->is_standard() and $sc_par_lst->is_prime()) {
@@ -2090,7 +2069,7 @@ class sandbox_value extends sandbox_multi
         if ($this->is_prime() or $this->is_main()) {
             $fields = $this->grp()->id_names();
         } else {
-            $fields = [group::FLD_ID];
+            $fields = [group_db::FLD_ID];
         }
         if (!$sc_par_lst->is_standard()) {
             $fields[] = user_db::FLD_ID;
@@ -2302,7 +2281,7 @@ class sandbox_value extends sandbox_multi
     function db_changed(sandbox_value $sbv): array
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'db_changed',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2320,7 +2299,7 @@ class sandbox_value extends sandbox_multi
     {
         $result = [];
         if ($sbx->grp_id() <> $this->grp_id()) {
-            $result[] = group::FLD_ID;
+            $result[] = group_db::FLD_ID;
         }
         if ($sbx->number() <> $this->number()) {
             $result[] = value_db::FLD_VALUE;

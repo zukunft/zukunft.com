@@ -694,12 +694,12 @@ class verb extends type_object
     /**
      * check if this might be added to the database
      * which is for named objects without dependencies the same as db_ready
-     * @param user_message $usr_msg to fill with the suggested solutions if something is missing e.g. a linked object
+     * @param user_message|Message $msg to fill with the suggested solutions if something is missing e.g. a linked object
      * @return bool true if the verb can be added to the database
      */
-    function can_be_ready(user_message $usr_msg): bool
+    function can_be_ready(user_message|Message $msg): bool
     {
-        return $this->db_ready($usr_msg);
+        return $this->db_ready($msg);
     }
 
     /**

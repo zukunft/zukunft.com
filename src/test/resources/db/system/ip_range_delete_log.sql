@@ -20,6 +20,6 @@ $$ LANGUAGE plpgsql;
 SELECT ip_range_delete_log
        (1::bigint,
         3::smallint,
-        918::smallint,
+        859::smallint,
         'from 66.249.64.95 to 66.249.64.95'::text,
         0::bigint);

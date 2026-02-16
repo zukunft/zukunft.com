@@ -47,7 +47,7 @@ SELECT view_relation_insert_log_11511011_user
     (3::bigint,
      1::smallint,
      816::smallint,
-     'standard'::text,
+     'add components'::text,
      1::smallint,
      0::bigint,
      817::smallint,

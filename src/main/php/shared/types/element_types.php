@@ -39,8 +39,10 @@ class element_types
     const int WORD_SELECTOR_ID = 1;
     const string WORD_SELECTOR_NAME = "Word selector";
     const string WORD_SELECTOR_COM = 'a reference to a word used to select values using "and"';
+    const string WORD_RESULT = "word_result";
     const string VERB_SELECTOR = "verb";
     const string FORMULA_SELECTOR = "formula";
     const string TRIPLE_SELECTOR = "triple";
+    const string TRIPLE_RESULT = "triple_result";
 
 }

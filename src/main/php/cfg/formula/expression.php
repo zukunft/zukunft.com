@@ -295,6 +295,25 @@ class expression extends shared_expression
     }
 
     /**
+     * get an element list with all formula elements
+     * plus the phrases that should be added to the result as elements
+     *
+     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param term_list|null $trm_lst cache of the terns to avoid multiple db loading
+     * @return element_list all formula elements including the result phrases
+     */
+    function elements_incl_result_phrases(
+        user_message $usr_msg,
+        ?term_list $trm_lst = null
+    ): element_list
+    {
+
+        $lst = $this->element_list($usr_msg, $trm_lst);
+        $lst->merge($this->result_phrases($usr_msg, $trm_lst));
+        return $lst;
+    }
+
+    /**
      * get a list of the phrases that should be added to the result
      * and report any missing phrases
      *
@@ -304,7 +323,7 @@ class expression extends shared_expression
      */
     function result_phrases(user_message $usr_msg, ?term_list $trm_lst = null): element_list
     {
-        return $this->element_part_list($this->res_part(), $usr_msg, $trm_lst, true);
+        return $this->element_part_list($this->res_part(), $usr_msg, $trm_lst, true, true);
     }
 
     /**
@@ -400,6 +419,18 @@ class expression extends shared_expression
             }
         }
         return new trm_ids($id_lst);
+    }
+
+    /**
+     * list of elements (in this case only formulas) that are of the predefined type "following"
+     * e.g. "this", "next" and "prior"
+     * @param term_list|null $trm_lst_in a list of preloaded terms that should be preferred used for the conversion
+     * @return term_list a list of all formulas words that are using hardcoded functions
+     */
+    function terms_following(user_message $usr_msg, ?term_list $trm_lst_in = null): term_list
+    {
+        $elm_lst = $this->element_list($usr_msg, $trm_lst_in);
+        return $elm_lst->predefined_following()->term_list();
     }
 
 
@@ -528,6 +559,7 @@ class expression extends shared_expression
      * @param string $exp_part the part of the formula expression e.g. w2 for word with id 2
      * @param user_message $msg to collect the error messages e.g. syntax errors
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param bool $res_phr if true the elements are used to add phrases to the result
      * @param bool $can_be_empty if true, no error is reported if the formula part $exp_part is empty
      * @return element_list the filled list of formula elements
      */
@@ -535,13 +567,14 @@ class expression extends shared_expression
         string       $exp_part,
         user_message $msg,
         ?term_list   $trm_lst = null,
+        bool         $res_phr = false,
         bool         $can_be_empty = false
     ): element_list
     {
         $elm_lst = new element_list($this->usr);
         $sym_lst = $this->symbol_list($msg, $exp_part, $can_be_empty);
         foreach ($sym_lst as $sym) {
-            $elm = $this->element_from_symbol($sym, $msg, $trm_lst);
+            $elm = $this->element_from_symbol($sym, $msg, $trm_lst, $res_phr);
             if ($elm != null) {
                 $elm_lst->add($elm);
             } else {
@@ -567,7 +600,8 @@ class expression extends shared_expression
     private function element_from_symbol(
         string       $obj_sym,
         user_message $msg,
-        ?term_list   $trm_lst = null
+        ?term_list   $trm_lst = null,
+        bool         $res_phr = false
     ): element|null
     {
         // set vars to fallback values
@@ -606,6 +640,7 @@ class expression extends shared_expression
                         $elm = new element($this->usr);
                         $elm->obj = $trm->obj();
                         $elm->frm = $this->frm;
+                        $elm->set_type($res_phr);
                         $elm->symbol = $this->get_db_sym($trm);
                     }
                 }
@@ -687,46 +722,6 @@ class expression extends shared_expression
      * filter elements
      * TODO to move to element list
      */
-
-    /**
-     * list of elements (in this case only formulas) that are of the predefined type "following"
-     * e.g. "this", "next" and "prior"
-     * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
-     * @return phrase_list a list of all formulas words that are using hardcoded functions
-     */
-    function element_special_following(user_message $usr_msg, ?term_list $trm_lst = null): phrase_list
-    {
-        global $sys;
-        $lib = new library();
-
-        $phr_lst = new phrase_list($this->usr);
-        $elm_lst = $this->element_list($usr_msg, $trm_lst);
-        if (!$elm_lst->is_empty()) {
-            foreach ($elm_lst->lst() as $elm) {
-                if ($elm->type() == formula::class) {
-                    if ($elm->obj != null) {
-                        if ($elm->obj->type_cl == formula_type::THIS
-                            or $elm->obj->type_cl == formula_type::NEXT
-                            or $elm->obj->type_cl == formula_type::PREV) {
-                            if ($elm->obj->name_wrd != null) {
-                                $phr_lst->add($elm->obj->name_wrd->phrase());
-                            }
-                        }
-                    }
-                }
-                if ($elm->type() == word::class or $elm->type() == triple::class) {
-                    if ($elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::THIS)
-                        or $elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::NEXT)
-                        or $elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::PRIOR)) {
-                        $phr_lst->add($elm->obj->phrase());
-                    }
-                }
-            }
-        }
-
-        log_debug($lib->dsp_count($phr_lst->lst()));
-        return $phr_lst;
-    }
 
     /**
      * similar to element_special_following, but returns the formula and not the word
@@ -949,43 +944,6 @@ class expression extends shared_expression
         }
 
         return $result;
-    }
-
-    /**
-     * create a formula element based on the id symbol e.g. w2 for word with id 2
-     * and get the word, triple, formula or verb either from the given preloaded term list
-     * or load the object from the database
-     *
-     * @param string $obj_sym the formula element symbol e.g. t2 for triple with id 2
-     * @param term_list|null $trm_lst a list of preloaded terms
-     * @return element the filled formula element
-     */
-    private function element_by_symbol_with_load(string $obj_sym, ?term_list $trm_lst = null): element
-    {
-        $elm = new element($this->usr);
-        $class = match ($obj_sym[0]) {
-            chars::WORD_SYMBOL => word::class,
-            chars::TRIPLE_SYMBOL => triple::class,
-            chars::FORMULA_SYMBOL => formula::class,
-            chars::VERB_SYMBOL => verb::class,
-            default => ''
-        };
-        $id = substr($obj_sym, 1);
-        $trm = $trm_lst?->term_by_obj_id($id, $class);
-        if ($trm == null) {
-            $trm = new term($this->usr);
-            $trm->load_by_obj_id($id, $class);
-        }
-        if ($trm != null) {
-            if ($trm->id() != 0) {
-                $elm->obj = $trm->obj();
-                $elm->symbol = $this->get_db_sym($trm);
-            } else {
-                log_warning($class . ' with id ' . $id . ' not found');
-            }
-        }
-
-        return $elm;
     }
 
     /**

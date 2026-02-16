@@ -66,6 +66,7 @@ class sys_log_function extends type_object
 
     // comments used for the database creation
     const string TBL_COMMENT = 'to group the system log entries by function';
+    const string FLD_ID = 'sys_log_function_id';
     const string FLD_NAME = 'sys_log_function_name';
 
     // field lists for the table creation
@@ -76,5 +77,15 @@ class sys_log_function extends type_object
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
+
+
+    /*
+     * sql fields
+     */
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
+    }
 
 }

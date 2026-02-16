@@ -71,6 +71,7 @@ include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_LANGUAGE . 'language.php';
 include_once paths::MODEL_LANGUAGE . 'language_form.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
@@ -112,7 +113,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -149,8 +150,11 @@ include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_TYPES . 'job_statuus.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -167,6 +171,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -227,14 +232,8 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
-use Zukunft\ZukunftCom\main\php\shared\types\job_types;
-use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -260,18 +259,25 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
-use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Exception;
 use mysqli;
 use mysqli_result;
@@ -358,7 +364,7 @@ class sql_db
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const array DB_TABLE_CLASSES = [
         config::class,
-        sys_log_type::class,
+        sys_log_level::class,
         sys_log_status::class,
         sys_log_function::class,
         sys_log::class,
@@ -793,9 +799,9 @@ class sql_db
     {
         global $cfg;
         if ($this->reconnect_delay = 0) {
-            $this->reconnect_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::START_DELAY]);
+            $this->reconnect_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::START_DELAY], def::FALLBACK_RETRY);
         } else {
-            $max_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::MAX_DELAY]);
+            $max_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::MAX_DELAY], def::FALLBACK_RETRY);
             if ($this->reconnect_delay * 2 < $max_delay) {
                 $this->reconnect_delay = $this->reconnect_delay * 2;
             }
@@ -1137,12 +1143,14 @@ class sql_db
         $sql = $this->sql_to_create_database_structure();
         try {
             // because no log yet exists here echo instead of log_echo() is used
-            $log_txt->echo_log('Run db setup sql script');
+            $log_txt->echo_text_log('Run db setup sql script');
             $sys->times->switch(system_time_type::DB_SETUP);
             $sql_msg = $this->exe_script($sql);
             $sys->times->switch();
             if (!$sql_msg->is_ok()) {
                 // retry once but try to delete upfront all remaining tables and objects
+                $log_txt->echo_text_log('Run db setup sql script failed due to ' . $sql_msg->all_message_text());
+                $log_txt->echo_text_log('Retry ...');
                 $usr_msg = new user_message();
                 $this->reset_db_core();
                 $sys->times->switch(system_time_type::DB_SETUP);
@@ -1162,7 +1170,7 @@ class sql_db
         // fill the tables with the essential data
         if ($usr_msg->is_ok()) {
             // because no user yet exists here echo instead of log_echo() is used
-            $log_txt->echo_log('Create system users');
+            $log_txt->echo_text_log('Create system users');
             $this->reset_config();
             $this->import_system_users();
 
@@ -1173,7 +1181,7 @@ class sql_db
             $usr_msg->usr = $usr;
 
             // recreate the code link database rows
-            $log_txt->echo_log('Create the code links');
+            $log_txt->echo_text_log('Create the code links');
             $this->db_fill_code_links();
             $cac = new data_object($usr);
             $sys->load_type_lists($db_con);
@@ -2343,6 +2351,9 @@ class sql_db
         if ($result == 'user_valuess') {
             $result = 'user_values';
         }
+        if ($result == 'sys_log_statuuss') {
+            $result = 'sys_log_statuus';
+        }
         // for the database upgrade process only
         if ($result == 'job_statuss') {
             $result = 'job_statuus';
@@ -2435,6 +2446,9 @@ class sql_db
             $this->id_field = $this->get_id_field_name($this->class);
         }
         // exceptions to be adjusted
+        if ($this->id_field == 'sys_log_statuus_id') {
+            $this->id_field = 'sys_log_status_id';
+        }
         if ($this->id_field == 'blocked_ips_id') {
             $this->id_field = 'ip_range_id';
         }
@@ -2492,8 +2506,8 @@ class sql_db
         if ($result == 'element_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
-        if ($result == 'sys_log_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+        if ($result == 'sys_log_level_name') {
+            $result = sys_log_level::FLD_NAME;
         }
         if ($result == 'formula_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
@@ -2517,7 +2531,7 @@ class sql_db
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sys_log_status::FLD_NAME;
         }
         if ($result == 'job_status_name') {
             $result = sql_db::FLD_TYPE_NAME;
@@ -2561,7 +2575,13 @@ class sql_db
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
      * @return string the message that should be shown to the user if something went wrong or an empty string
      */
-    function exe_try(string $msg, string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR): string
+    function exe_try(
+        string $msg,
+        string $sql,
+        string $sql_name = '',
+        array  $sql_array = array(),
+        int    $log_level = sys_log_levels::ERROR_ID
+    ): string
     {
         $result = '';
         try {
@@ -2570,7 +2590,7 @@ class sql_db
                 $result .= $msg . log::MSG_ERR;
             }
         } catch (Exception $e) {
-            if ($log_level == sys_log_level::FATAL) {
+            if ($log_level == sys_log_levels::FATAL) {
                 log_fatal($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'exe_try');
             } else {
                 $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
@@ -2586,6 +2606,247 @@ class sql_db
     function exe_par(sql_par $qp): string
     {
         return $this->exe_try('', $qp->sql, $qp->name, $qp->par);
+    }
+
+    /**
+     * execute the given sql with the parameters and report any problems in the user message
+     *
+     * @param sql_par $qp the sql statement and the parameters that should be executed
+     * @param user_message $msg to collect the user messages
+     * @return bool true if the sql statement was executed successfully, otherwise false
+     */
+    function exe_par_msg(sql_par $qp, user_message $msg, string $msg_txt = ''): bool
+    {
+        if ($msg->is_ok()) {
+            if (!$this->exe_try($msg_txt, $qp->sql, $qp->name, $qp->par)) {
+                $msg->add_warning_text($msg_txt . ' failed');
+            }
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * add a prepared SQL function to the database
+     *
+     * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
+     * @param Message $msg to collect the error messages for the user and the suggested solutions
+     * @return bool true if the statement has been added to the database
+     */
+    function exe_prepare(
+        sql_par $qp,
+        Message $msg,
+        int     $log_level = sys_log_levels::WARNING_ID
+    ): bool
+    {
+        if ($this->db_type == sql_db::POSTGRES) {
+            // Postgres part
+            return $this->exe_prepare_pg($qp, $msg, $log_level);
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            // MySQL part
+            return $this->exe_prepare_mysql($qp, $msg, $log_level);
+        } else {
+            $msg->add(msg_id::DB_SQL_TYPE_UNKNOWN, [
+                msg_id::VAR_NAME => $this->db_type
+            ]);
+            return $msg->is_ok();
+        }
+    }
+
+    private function exe_prepare_pg(
+        sql_par $qp,
+        Message $msg,
+        int     $log_level = sys_log_levels::ERROR_ID
+    ): bool
+    {
+        /*
+         * TODO Prio 2 active if requested or needed
+        try {
+            pg_query($this->postgres_link, "DEALLOCATE " . $qp->name);
+        } catch (Exception $e) {
+            $trace_link = $this->log_db_exception('prepare postgres query', $e, $qp->sql, $log_level);
+            $msg->add(msg_id::DB_SQL_EXE_PREPARE_ERROR, [
+                msg_id::VAR_SQL => $qp->sql,
+                msg_id::VAR_SQL_REASON => $e->getMessage(),
+                msg_id::VAR_TRACE_LINK => $trace_link,
+            ]);
+        }
+        */
+
+
+        try {
+            // TODO Prio 2 check if this check is also needed for MySQL
+            if (str_starts_with($qp->sql, sql::PREPARE)) {
+                $result = pg_query($this->postgres_link, $qp->sql);
+            } else {
+                $result = pg_prepare($this->postgres_link, $qp->sql);
+                log_warning('SQL ' . $qp->sql . ' is expected to start with ' . sql::PREPARE);
+            }
+
+            // it seems to be possible that result is not false, but there is nevertheless an error
+            $err_txt = pg_last_error($this->postgres_link);
+
+            if ($result === false || !empty($err_txt)) {
+                if (empty($err_txt)) {
+                    $err_txt = 'Unknown error during prepare';
+                }
+
+                $trace_link = $this->log_db_error_message('prepare postgres query', $err_txt, $qp->sql, $log_level);
+                $msg->add(msg_id::DB_SQL_EXE_PREPARE_ERROR, [
+                    msg_id::VAR_SQL => $qp->sql,
+                    msg_id::VAR_SQL_REASON => $err_txt,
+                    msg_id::VAR_TRACE_LINK => $trace_link,
+                ]);
+                $result = false;
+            }
+        } catch (Exception $e) {
+            $trace_link = $this->log_db_exception('prepare postgres query', $e, $qp->sql, $log_level);
+            $msg->add(msg_id::DB_SQL_EXE_PREPARE_ERROR, [
+                msg_id::VAR_SQL => $qp->sql,
+                msg_id::VAR_SQL_REASON => $e->getMessage(),
+                msg_id::VAR_TRACE_LINK => $trace_link,
+            ]);
+        }
+
+        return $msg->is_ok();
+    }
+
+    private function exe_prepare_mysql(
+        sql_par $qp,
+        Message $msg,
+        int     $log_level = sys_log_levels::ERROR_ID
+    ): bool
+    {
+        $sql_name = $qp->name;
+        $sql = $qp->sql;
+        $sql_array = $qp->par;
+        if ($this->has_query($sql_name)) {
+            $stmt = $this->prepared_stmt[$sql_name];
+        } else {
+            $stmt = mysqli_prepare($this->mysql, $sql);
+            $this->prepared_sql_names[] = $sql_name;
+            $this->prepared_stmt[$sql_name] = $stmt;
+        }
+        if ($stmt == null) {
+            $err_txt = pg_last_error($this->postgres_link);
+            $trace_link = $this->log_db_error_message('prepare mysql query', $err_txt, $sql, $log_level);
+            $msg->add(msg_id::DB_SQL_EXE_PREPARE_ERROR, [
+                msg_id::VAR_SQL => $sql,
+                msg_id::VAR_SQL_REASON => $err_txt,
+                msg_id::VAR_TRACE_LINK => $trace_link,
+            ]);
+        } else {
+            // TODO review to use a generic transformation for $sql_array
+            if (count($sql_array) == 1) {
+                $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0]);
+            } elseif (count($sql_array) == 2) {
+                $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0], $sql_array[1]);
+            } else {
+                $err_txt = 'Unexpected number of parameters (' . implode(',', $sql_array) . ')';
+                $trace_link = $this->log_db_error_message('Unexpected number of parameters', $err_txt, $sql, $log_level);
+                $msg->add(msg_id::DB_SQL_EXE_PREPARE_ERROR, [
+                    msg_id::VAR_SQL => $sql,
+                    msg_id::VAR_SQL_REASON => $err_txt,
+                    msg_id::VAR_TRACE_LINK => $trace_link,
+                ]);
+            }
+            $stmt->execute();
+            $result = $stmt->get_result();
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * execute a prepared SQL statement
+     *
+     * @param sql_par $qp the sql statement with the name of the query and parameter for this execution
+     * @param Message $msg to collect the error messages for the user and the suggested solutions
+     * @return bool true if the statement has been added to the database
+     */
+    function exe_direct(
+        sql_par $qp,
+        Message $msg,
+        int     $log_level = sys_log_levels::WARNING_ID
+    ): bool
+    {
+        if ($this->db_type == sql_db::POSTGRES) {
+            // Postgres part
+            return $this->exe_direct_pg($qp, $msg, $log_level);
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            // MySQL part
+            return $this->exe_direct_mysql($qp, $msg, $log_level);
+        } else {
+            $msg->add(msg_id::DB_SQL_TYPE_UNKNOWN, [
+                msg_id::VAR_NAME => $this->db_type
+            ]);
+            return $msg->is_ok();
+        }
+    }
+
+    private function exe_direct_pg(
+        sql_par $qp,
+        Message $msg,
+        int     $log_level = sys_log_levels::ERROR_ID
+    ): bool
+    {
+        try {
+            $result = pg_execute($this->postgres_link, $qp->name, $qp->par);
+
+            // it seems to be possible that result is not false, but there is nevertheless an error
+            $err_txt = pg_last_error($this->postgres_link);
+
+            if ($result === false || !empty($err_txt)) {
+                if (empty($err_txt)) {
+                    $err_txt = 'Unknown error during execute';
+                }
+
+                $trace_link = $this->log_db_error_message('execute postgres query', $err_txt, $qp->sql, $log_level);
+                $msg->add(msg_id::DB_SQL_EXE_PREPARE_ERROR, [
+                    msg_id::VAR_SQL => $qp->sql,
+                    msg_id::VAR_SQL_REASON => $err_txt,
+                    msg_id::VAR_TRACE_LINK => $trace_link,
+                ]);
+                $result = false;
+            }
+        } catch (Exception $e) {
+            $trace_link = $this->log_db_exception('prepare postgres query', $e, $qp->name, $log_level);
+            $msg->add(msg_id::DB_SQL_EXE_PREPARE_ERROR, [
+                msg_id::VAR_SQL => $qp->sql,
+                msg_id::VAR_SQL_REASON => $e->getMessage(),
+                msg_id::VAR_TRACE_LINK => $trace_link,
+            ]);
+        }
+        return $msg->is_ok();
+    }
+
+    private function exe_direct_mysql(
+        sql_par $qp,
+        Message $msg,
+        int     $log_level = sys_log_levels::ERROR_ID
+    ): bool
+    {
+        $sql_name = $qp->name;
+        $sql = $qp->sql;
+        $sql_array = $qp->par;
+
+        $stmt = $this->prepared_stmt[$sql_name];
+
+        // TODO review to use a generic transformation for $sql_array
+        if (count($sql_array) == 1) {
+            $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0]);
+        } elseif (count($sql_array) == 2) {
+            $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0], $sql_array[1]);
+        } else {
+            $msg_txt = 'Unexpected number of parameters in ' . $sql;
+            $trace_link = $this->log_db_error_message('execute MySQL direct', $msg_txt, $qp->name, $log_level);
+            $msg->add(msg_id::DB_SQL_EXE_PREPARE_ERROR, [
+                msg_id::VAR_SQL => $qp->sql,
+                msg_id::VAR_SQL_REASON => $msg_txt,
+                msg_id::VAR_TRACE_LINK => $trace_link,
+            ]);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $msg->is_ok();
     }
 
     /**
@@ -2611,7 +2872,7 @@ class sql_db
         array  $sql_array = array(),
         string $sql_call = '',
         string $sql_call_name = '',
-        int    $log_level = sys_log_level::ERROR
+        int    $log_level = sys_log_levels::ERROR_ID
     ): \PgSql\Result|mysqli_result|null
     {
         global $debug;
@@ -2691,7 +2952,7 @@ class sql_db
         array  $sql_array = array(),
         string $sql_call = '',
         string $sql_call_name = '',
-        int    $log_level = sys_log_level::ERROR
+        int    $log_level = sys_log_levels::ERROR_ID
     ): \PgSql\Result|null
     {
         global $debug;
@@ -2806,7 +3067,7 @@ class sql_db
         string    $msg,
         Exception $e,
         string    $sql = '',
-        int       $log_level = sys_log_level::ERROR
+        int       $log_level = sys_log_levels::ERROR_ID
     ): string
     {
         return $this->log_db_error_message($msg, $e->getMessage(), $sql, $log_level);
@@ -2826,11 +3087,11 @@ class sql_db
         string $msg,
         string $err,
         string $sql = '',
-        int    $log_level = sys_log_level::ERROR
+        int    $log_level = sys_log_levels::ERROR_ID
     ): string
     {
         $msg .= ' ' . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $err;
-        if ($log_level == sys_log_level::FATAL) {
+        if ($log_level == sys_log_levels::FATAL) {
             log_fatal($msg, 'exe_postgres');
             return $msg . log::MSG_ERR_INTERNAL;
         } else {
@@ -2863,7 +3124,7 @@ class sql_db
         string $sql_name = '',
         array  $sql_array = array(),
         string $sql_call = '',
-        int    $log_level = sys_log_level::ERROR): mysqli_result
+        int    $log_level = sys_log_levels::ERROR_ID): mysqli_result
     {
         $result = null;
 
@@ -2885,6 +3146,7 @@ class sql_db
             if ($sql_name == '') {
                 $result = mysqli_query($this->mysql, $sql);
             } else {
+                // TODO Prio 1 use function exe_prepare_mysql
                 if ($this->has_query($sql_name)) {
                     $stmt = $this->prepared_stmt[$sql_name];
                 } else {
@@ -3046,7 +3308,7 @@ class sql_db
      */
     private function fetch_first(
         string $sql, user_message $usr_msg, string $sql_name = '', array $sql_array = array()
-    ): ?array
+    ): array|false|null
     {
         return $this->fetch($sql, $usr_msg, $sql_name, $sql_array);
     }
@@ -3137,7 +3399,7 @@ class sql_db
     /**
      * get only the first record from the database
      */
-    function get1(sql_par $qp, user_message $usr_msg = new user_message()): ?array
+    function get1(sql_par $qp, user_message $usr_msg = new user_message()): array|false|null
     {
         $this->debug_msg($qp->sql, 'get1');
 
@@ -4410,7 +4672,7 @@ class sql_db
      * @param string $description for the user to identify the statement
      * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
      * @param bool $usr_tbl true if a row in the user table is added which implies that no new id is returned
-     * @param bool $is_val if true the row to be added to the database is a value or result and is using the group id, so no database id needs to be returned
+     * @param bool $is_val if true, the row to be added to the database is a value, result or group and is using the group id, so no database id needs to be returned
      * @return true if the database has been updated
      */
     function insert(
@@ -4552,7 +4814,7 @@ class sql_db
     {
         global $sys;
 
-        $result = 0;
+        $result = null;
         $is_valid = false;
         $lib = new library();
         $sys->times->switch(system_time_type::DB_WRITE);
@@ -4661,7 +4923,7 @@ class sql_db
                 $sql = $sql . ';';
                 //$sql_result = $this->exe($sql, 'insert_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
                 try {
-                    $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
+                    $sql_result = $this->exe($sql, '', array(), sys_log_levels::FATAL);
                     if ($sql_result) {
                         $result = mysqli_insert_id($this->mysql);
                         // user database row have a double unique index, but relevant
@@ -4690,8 +4952,10 @@ class sql_db
             log_debug('failed (' . $sql . ')');
         }
 
-        if ($result == null) {
-            log_warning('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
+        if ($result === null) {
+            if ($log_err) {
+                log_warning('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
+            }
             $result = 0;
         }
         $sys->times->switch();
@@ -4796,7 +5060,7 @@ class sql_db
             log_debug('sql "' . $sql . '"', $debug - 12);
             //$result = $this->exe($sql, 'update_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
             try {
-                $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
+                $sql_result = $this->exe($sql, '', array(), sys_log_levels::FATAL);
                 if (!$sql_result) {
                     $result = false;
                 }
@@ -4863,7 +5127,11 @@ class sql_db
         }
 
         log_debug('sql "' . $sql . '"');
-        $result = $this->exe_try('Deleting of ' . $this->class, $sql, '', array(), sys_log_level::FATAL);
+        $result = $this->exe_try(
+            'Deleting of ' . $this->class,
+            $sql, '',
+            array(),
+            sys_log_levels::FATAL_ID);
         $sys->times->switch();
         return $result;
     }
@@ -5156,7 +5424,49 @@ class sql_db
     }
 
     /**
-     * @return array with the function that are actually in the database
+     * add the missing prepared SQL statements to the database
+     *
+     * @param sql_par_list $lst with the SQL statements and parameters that should be in the database
+     * @return bool true if all SQL statements have been prepared
+     */
+    function add_missing_prepared(sql_par_list $lst, Message $msg): bool
+    {
+        // get the SQL statements that are already prepared
+        $db_lst = $this->get_prepared();
+
+        // get the SQL statements that have not yet been prepared
+        $lst_to_prepare = $lst->sql_functions_missing($db_lst);
+
+        if (!$lst_to_prepare->is_empty()) {
+            // create the missing sql functions
+            foreach ($lst_to_prepare->lst as $qp) {
+                $this->exe_prepare($qp, $msg);
+            }
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * @return array with the prepared SQL statements that are actually in the database
+     */
+    function get_prepared(): array
+    {
+        $names = [];
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = $this->resource_file('db/select/postgres/prepared.sql');
+        } else {
+            $sql = $this->resource_file('db/select/mysql/prepared.sql');
+        }
+        $db_lst = $this->get_internal($sql);
+        foreach ($db_lst as $row) {
+            $names[] = $row[0];
+        }
+
+        return $names;
+    }
+
+    /**
+     * @return array with the functions that are actually in the database
      */
     function get_functions(): array
     {

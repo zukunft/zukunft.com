@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\import;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -42,8 +43,10 @@ include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::SHARED_TYPES . 'file_types.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -51,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\types\file_types;
 
 class import_file
@@ -113,12 +117,12 @@ class import_file
         }
 
         // get the relevant config values
-        $read_bytes_per_sec = $cfg->get_by([triples::FILE_READ, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $total_bytes_per_sec = $cfg->get_by([words::TOTAL_PRE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $read_time_pct = $cfg->get_by([triples::FILE_READ, triples::TIME_PERCENT, words::IMPORT], 1);
-        $decode_time_pct = $cfg->get_by([words::DECODE, triples::TIME_PERCENT, words::IMPORT], 1);
-        $create_time_pct = $cfg->get_by([triples::OBJECT_CREATION, triples::TIME_PERCENT, words::IMPORT], 1);
-        $store_time_pct = $cfg->get_by([triples::OBJECT_STORING, triples::TIME_PERCENT, words::IMPORT], 1);
+        $read_bytes_per_sec = $cfg->get_by([triples::FILE_READ, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_BYTE_PER_SEC);
+        $total_bytes_per_sec = $cfg->get_by([words::TOTAL_PRE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_BYTE_PER_SEC);
+        $read_time_pct = $cfg->get_by([triples::FILE_READ, triples::TIME_PERCENT, words::IMPORT], def::FALLBACK_PERCENT_STEP);
+        $decode_time_pct = $cfg->get_by([words::DECODE, triples::TIME_PERCENT, words::IMPORT], def::FALLBACK_PERCENT_STEP);
+        $create_time_pct = $cfg->get_by([triples::OBJECT_CREATION, triples::TIME_PERCENT, words::IMPORT], def::FALLBACK_PERCENT_STEP);
+        $store_time_pct = $cfg->get_by([triples::OBJECT_STORING, triples::TIME_PERCENT, words::IMPORT], def::FALLBACK_PERCENT_STEP);
 
         // indicate to the user that the import has started
         $size = filesize($filename);
@@ -340,7 +344,7 @@ class import_file
     {
         $result = '';
         log_info('base setup',
-            'import_base_config',
+            sys_log_functions::IMPORT_BASE_CONFIG_NAME,
             'import of the base setup',
             'import_base_config',
             $usr, true
@@ -369,9 +373,9 @@ class import_file
     {
         $result = '';
         log_info('pod setup',
-            'import_pod_config',
+            sys_log_functions::IMPORT_POD_CONFIG_NAME,
             'import of the pod base setup',
-            'import_pod_config',
+            sys_log_functions::IMPORT_POD_CONFIG,
             $usr, true
         );
 
@@ -393,9 +397,9 @@ class import_file
     {
         $result = '';
         log_info('test setup',
-            'import_test_config',
+            sys_log_functions::IMPORT_TEST_CONFIG_NAME,
             'import of the pod test setup',
-            'import_test_config',
+            sys_log_functions::IMPORT_TEST_CONFIG,
             $usr, true
         );
 

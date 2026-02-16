@@ -45,6 +45,7 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -139,8 +141,8 @@ class change_value extends change_log
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
                 $this->row_id = $db_row[self::FLD_ROW_ID];
-            } elseif (array_key_exists(group::FLD_ID, $db_row)) {
-                $this->row_id = $db_row[group::FLD_ID];
+            } elseif (array_key_exists(group_db::FLD_ID, $db_row)) {
+                $this->row_id = $db_row[group_db::FLD_ID];
             }
             $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_value = $db_row[change::FLD_OLD_VALUE];
@@ -279,7 +281,7 @@ class change_value extends change_log
             or $this::class == change_values_geo_big::class) {
             $grp_typ = sql_par_type::TEXT;
         }
-        $fvt_lst->add_field(group::FLD_ID, $this->group_id, $grp_typ);
+        $fvt_lst->add_field(group_db::FLD_ID, $this->group_id, $grp_typ);
         return $fvt_lst;
     }
 
@@ -300,7 +302,7 @@ class change_value extends change_log
             $sql_fields[] = change::FLD_NEW_VALUE;
         }
 
-        $sql_fields[] = group::FLD_ID;
+        $sql_fields[] = group_db::FLD_ID;
         return $sql_fields;
     }
 

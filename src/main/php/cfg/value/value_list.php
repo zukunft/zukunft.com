@@ -57,6 +57,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -89,6 +90,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
@@ -132,8 +134,8 @@ class value_list extends sandbox_value_list
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 // TODO remove temp
-                if (array_key_exists(group::FLD_ID, $db_row)) {
-                    if ($db_row[group::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
+                if (array_key_exists(group_db::FLD_ID, $db_row)) {
+                    if ($db_row[group_db::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
                         log_info('got value');
                     }
                 } else {
@@ -420,7 +422,7 @@ class value_list extends sandbox_value_list
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
         $grp_id = new group_id();
-        $sc->add_where_par(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '', $par_name);
+        $sc->add_where_par(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '', $par_name);
 
         // add the user parameter
         $pos_usr = $par_pos;
@@ -805,7 +807,7 @@ class value_list extends sandbox_value_list
                     phrase::FLD_ID . '_' . $i, sql_par_type::INT_SAME_OR, $phr_pos);
             }
         } else {
-            $sc->add_where_no_par('', group::FLD_ID, sql_par_type::LIKE, $grp_pos);
+            $sc->add_where_no_par('', group_db::FLD_ID, sql_par_type::LIKE, $grp_pos);
         }
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
@@ -980,7 +982,7 @@ class value_list extends sandbox_value_list
             $phr_lst_to_add->add($val_phr);
         } else {
             $val_phr->set_name($val_key, word::class);
-            $phr_lst_to_add->add_by_name($val_phr);
+            $phr_lst_to_add->add_by_key($val_phr);
         }
         $val_to_add->set_number($val_number);
         $grp = $phr_lst_to_add->get_grp_id($do_save);
@@ -1021,9 +1023,9 @@ class value_list extends sandbox_value_list
         if ($this->count() > 1) {
 
             // use the first value to get the context parameter
-            $val0 = $this->get(0);
+            $val0 = $this->get_by_key(0);
             // use the second value to detect the context phrases
-            $val1 = $this->get(1);
+            $val1 = $this->get_by_key(1);
 
             // get phrase names of the first value
             $phr_lst1 = $val0->phr_names();

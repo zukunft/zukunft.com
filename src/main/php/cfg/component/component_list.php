@@ -44,6 +44,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -69,6 +70,7 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -347,11 +349,11 @@ class component_list extends sandbox_list_named
     {
         global $cfg;
 
-        $load_per_sec = $cfg->get_by([words::COMPONENTS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $save_per_sec = $cfg->get_by([words::COMPONENTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $upd_per_sec = $cfg->get_by([words::COMPONENTS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $del_per_sec = $cfg->get_by([words::COMPONENTS, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $max_frm_levels = $cfg->get_by([words::COMPONENTS, triples::MAX_LEVELS, words::IMPORT], 99);
+        $load_per_sec = $cfg->get_by([words::COMPONENTS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $save_per_sec = $cfg->get_by([words::COMPONENTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $upd_per_sec = $cfg->get_by([words::COMPONENTS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $del_per_sec = $cfg->get_by([words::COMPONENTS, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $max_frm_levels = $cfg->get_by([words::COMPONENTS, triples::MAX_LEVELS, words::IMPORT], def::FALLBACK_RECURSIVE_MAX);
 
         if ($this->is_empty()) {
             log_info('no components to save');
@@ -449,7 +451,7 @@ class component_list extends sandbox_list_named
         $cmp_lst = new component_list($this->get_user());
         foreach ($this->lst() as $cmp) {
             if ($cmp->db_ready($msg)) {
-                $cmp_lst->add_by_name($cmp);
+                $cmp_lst->add_by_key($cmp);
             } else {
                 $msg->add(msg_id::IMPORT_COMPONENT_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,

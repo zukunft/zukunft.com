@@ -779,12 +779,12 @@ class ip_range extends db_object_seq_id
     {
         // to and from must be a valid ip address
         if ($this->from == '') {
-            $msg->add_err_with_vars(msg_id::IP_RANGE_FROM_MISSING, [
+            $msg->add_err(msg_id::IP_RANGE_FROM_MISSING, [
                 msg_id::VAR_NAME => $this->dsp_id()
             ]);
         }
         if ($this->to == '') {
-            $msg->add_err_with_vars(msg_id::IP_RANGE_TO_MISSING, [
+            $msg->add_err(msg_id::IP_RANGE_TO_MISSING, [
                 msg_id::VAR_NAME => $this->dsp_id()
             ]);
         }

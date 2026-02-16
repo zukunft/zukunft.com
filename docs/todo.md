@@ -7,24 +7,25 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
+    TODO finish the frontend component tests
+    TODO create the frontend page reaction flow tests
+
+    TODO Release 0.0.4
     TODO fix all prio 0 TODO including unit tests
     TODO finish the expression code review
-    TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
+    TODO create more unit tests and create code to review the code because I make too many msitakes!!!
+    TODO review and create missing formula unit, read and write tests
+    TODO m2 should be the formula meter * meter in unit.jsom import message
+    TODO document why there is a hidden word for each formula: the reason is that 
+         this way values and results are assigned to a list of phrases not terms 
+         because a value is never assign to a verb only a triple
     TODO for messages use these main functions:
          - add:            to add a translatable message to the user with parameters
          - add_text:       to add a translatable message to the user without parameters
          - add_admin:      to add a non translatable message to the admin
          - add_develop:    to add a non translatable message for developers
          - merge (ex add): to merge two messages into one
-
-    TODO create more unit tests and create code to review the code because I make too many msitakes!!!
-    TODO finish the frontend component tests
-    TODO create the frontend page reaction flow tests
-    TODO review and create missing formula unit, read and write tests
-    TODO m2 should be the formula meter * meter in unit.jsom import message
-    TODO document why there is a hidden word for each formula: the reason is that 
-         this way values and results are assigned to a list of phrases not terms 
-         because a value is never assign to a verb only a triple
     TODO check the formula test coverage via script
     TODO split the formula backend class into formula_base, formula_calc and the interface formula class
     TODO group the function by suggested test category which is unit, db read or db write
@@ -32,10 +33,15 @@ A proper issue ticket should be created for these TODOs notes:
          start with the formula unit tests
     TODO add test blocks db read, api, workflow and integration which actually gets data from e.g. wikidata
     TODO add user_message parameter to all functions that return a user message or might create a message to the user
+    TODO check that all words, verbs and triples used in the system config are part of FIXED_NAMES which prevents the standard from beeing renamed
     TODO type versus predicate:
          - a type assigns coded functionality to one object
          - a predicate assigns coded functionality to an object link between two objects
          - a specific predicate can be named ..._type e.g. view_relation_type is actually a predicate
+    TODO deprecate global $usr and use instead only
+         - the requesting user which is part of the Message $msg object
+         - the object owner which is a ->usr var within the object
+         - the sandbox root object owner which is a ->owner var of the sandbox object
     TODO add a coding rule test that checks
          - there is at least one succes and on fail test for each function
          - classes are no longer than 1000 lines
@@ -87,14 +93,14 @@ A proper issue ticket should be created for these TODOs notes:
          - $sys to cache execution times, types and system configuration that change rarely
                 and is not user-specific and for easy check how many times the code writes
          - $db_con for the database connection
-         - $cac for the backend cache of user-specific data_object and the user configuration
+         - $cfg for the user configuration numbers that changes more often than the types and the system views  
+         - $cac for the backend cache of user-specific data_object
          - $ui_cac for the frontend cache including the session user
          - $mtr for the message translation use as the last step in the frontend
          - $t for the base test object with the functions for assert and cleanup
          - $t_sys for error counting and the execution times 
          - $debug to activate additional logging levels 
          - maybe $t_cac for the test environment 
-         - maybe $cfg for the user configuration that changes more often than the types and the system views  
          pro using a global var:
            - less parameters for functions, so easier to read and maybe faster
          cont:
@@ -270,7 +276,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO cast api object in model object and dsp object in api object and add the dsp_obj() function to model object
     TODO define all database field names as const
     TODO for reference field names use the destination object
-            e.g. for the field name phrase_group_id use phrase_group::FLD_ID
+            e.g. for the field name phrase_group_id use phrase_group_db::FLD_ID
     TODO if a translation is missing offer the user to translate the message
     TODO rename phrase_group to group
     TODO move the time field of phrase groups to the group

@@ -639,6 +639,47 @@ class user_list
 
 
     /*
+     * search
+     */
+
+    /**
+     * select an item by id
+     * TODO Prio 1 make the child of ListOfIdObjects and use the parent function
+     *
+     * @param int|string $id the unique database id of the object that should be returned
+     * @return object|null the found user sandbox object or null if no id is found
+     */
+    function get_by_id(int|string $id): object|null
+    {
+        $key_lst = $this->id_pos_lst();
+        if (array_key_exists($id, $key_lst)) {
+            $pos = $key_lst[$id];
+            return $this->lst()[$pos];
+        } else {
+            $lib = new library();
+            log_info($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
+            return null;
+        }
+    }
+
+    /**
+     * TODO Prio 1 make the child of ListOfIdObjects and use the parent function
+     * @returns array with all unique ids of this list with the keys within this list
+     */
+    protected function id_pos_lst(): array
+    {
+        $id_pos_lst = [];
+        foreach ($this->lst() as $key => $obj) {
+            if (!array_key_exists($obj->id(), $id_pos_lst)) {
+                $id_pos_lst[$obj->id()] = $key;
+            }
+        }
+        return $id_pos_lst;
+    }
+
+
+
+    /*
      * save
      */
 

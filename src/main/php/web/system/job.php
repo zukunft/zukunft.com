@@ -77,7 +77,7 @@ class job extends db_object
      * set the vars of this batch job html object bases on the api json array
      * @param array $json_array an api json message
      * @param user_message $msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $json_array, user_message $msg): bool
     {
@@ -88,7 +88,7 @@ class job extends db_object
             try {
                 $request_timestamp = new DateTime($json_array[json_fields::TIME_REQUEST]);
             } catch (Exception $e) {
-                $msg->add_err('Error converting system log timestamp ' . $json_array[json_fields::TIME_REQUEST]
+                $msg->add_error_text('Error converting system log timestamp ' . $json_array[json_fields::TIME_REQUEST]
                     . ' because ' . $e->getMessage());
             }
         } else {
@@ -100,7 +100,7 @@ class job extends db_object
             try {
                 $request_timestamp = new DateTime($json_array[json_fields::TIME_START]);
             } catch (Exception $e) {
-                $msg->add_err('Error converting system log timestamp ' . $json_array[json_fields::TIME_START]
+                $msg->add_error_text('Error converting system log timestamp ' . $json_array[json_fields::TIME_START]
                     . ' because ' . $e->getMessage());
             }
         }
@@ -110,7 +110,7 @@ class job extends db_object
             try {
                 $request_timestamp = new DateTime($json_array[json_fields::TIME_END]);
             } catch (Exception $e) {
-                $msg->add_err('Error converting system log timestamp ' . $json_array[json_fields::TIME_END]
+                $msg->add_error_text('Error converting system log timestamp ' . $json_array[json_fields::TIME_END]
                     . ' because ' . $e->getMessage());
             }
         }

@@ -57,6 +57,7 @@ global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
+$msg_txt = '';
 
 // load the session user parameters
 $usr = new user;
@@ -90,7 +91,7 @@ if ($usr->id() > 0) {
 
         // check essential parameters
         if ($_GET[url_var::NAME] == "") {
-            $msg .= 'Name missing; Please press back and enter a name for the new view.';
+            $msg_txt .= 'Name missing; Please press back and enter a name for the new view.';
         } else {
 
             $add_result = $msk_add->save($usr_msg);
@@ -102,7 +103,7 @@ if ($usr->id() > 0) {
                 $result .= $html->dsp_go_back($back, $usr);
             } else {
                 // ... or in case of a problem prepare to show the message
-                $msg .= $add_result;
+                $msg_txt .= $add_result;
             }
         }
     }

@@ -1,0 +1,4 @@
+sys_log_function_id, sys_log_function_name, code_id, description
+1, 'Import system configuration', 'import_base_config', 'Import the default system and user configuration'
+2, 'Import pod configuration', 'import_pod_config', 'Import the default pod configuration'
+3, 'Import test configuration', 'import_test_config', 'Import the configuration for system consistency tests'

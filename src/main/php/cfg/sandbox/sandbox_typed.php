@@ -139,7 +139,7 @@ class sandbox_typed extends sandbox_named
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
      * @param user_message $usr_msg with the requesting user and if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -326,7 +326,7 @@ class sandbox_typed extends sandbox_named
 
     /**
      * the code id of the type for the export json
-     * must be overwritten by the child objects
+     * the child must overwrite this function
      * @return string|null with the code id of the type
      */
     function type_code_id(): string|null
@@ -342,7 +342,7 @@ class sandbox_typed extends sandbox_named
     function type_name(): string
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'type_name',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -418,7 +418,7 @@ class sandbox_typed extends sandbox_named
      * check if the typed object in the database needs to be updated
      *
      * @param sandbox_typed|CombineObject|IdObject $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the database
+     * @return bool true if this word has info that should be saved in the database
      */
     function needs_db_update(sandbox_typed|CombineObject|IdObject $db_obj): bool
     {

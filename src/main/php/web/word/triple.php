@@ -175,7 +175,7 @@ class triple extends sandbox_code_id
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
      * @param user_message $msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $json_array, user_message $msg): bool
     {
@@ -322,7 +322,7 @@ class triple extends sandbox_code_id
         $phr = null;
         if ($dto != null) {
             $phr_lst = $dto->phr_lst;
-            $phr = $phr_lst->get_by_id($id);
+            $phr = $phr_lst->get($id);
         }
         if ($phr == null) {
             if ($id > 0) {

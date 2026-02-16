@@ -39,8 +39,8 @@ SELECT share_type_insert_log_1111
     ('public',
      1,
      1,
-     871,
-     872,
+     194,
+     195,
      'public',
-     873,
+     196,
      'value can be seen and used by everyone (default)');

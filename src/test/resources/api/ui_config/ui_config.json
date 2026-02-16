@@ -115,6 +115,58 @@
         "id": 18
       }
     ],
+    "sys_log_functions": [
+      {
+        "name": "Import system configuration",
+        "code_id": "import_base_config",
+        "description": "Import the default system and user configuration",
+        "id": 1
+      },
+      {
+        "name": "Import pod configuration",
+        "code_id": "import_pod_config",
+        "description": "Import the default pod configuration",
+        "id": 2
+      },
+      {
+        "name": "Import test configuration",
+        "code_id": "import_test_config",
+        "description": "Import the configuration for system consistency tests",
+        "id": 3
+      }
+    ],
+    "sys_log_levels": [
+      {
+        "name": "Debug",
+        "code_id": "log_debug",
+        "description": "Additional information only message that can be switched on upon request for more debugging",
+        "id": 2
+      },
+      {
+        "name": "Info",
+        "code_id": "log_info",
+        "description": "Information only message for debugging and execution time details",
+        "id": 4
+      },
+      {
+        "name": "Warning",
+        "code_id": "log_warning",
+        "description": "if a message has been shown to the user",
+        "id": 6
+      },
+      {
+        "name": "Error",
+        "code_id": "log_error",
+        "description": "if the process has not been completed",
+        "id": 8
+      },
+      {
+        "name": "FATAL ERROR",
+        "code_id": "log_fatal",
+        "description": "if other processes are also stopped",
+        "id": 10
+      }
+    ],
     "sys_log_statuus": [
       {
         "name": "new",
@@ -835,14 +887,14 @@
         "id": 112
       },
       {
-        "name": "sys_log_types",
-        "code_id": "sys_log_types",
+        "name": "sys_log_levels",
+        "code_id": "sys_log_levels",
         "description": "",
         "id": 113
       },
       {
-        "name": "sys_log_status",
-        "code_id": "sys_log_status",
+        "name": "sys_log_statuus",
+        "code_id": "sys_log_statuus",
         "description": "",
         "id": 114
       },
@@ -853,100 +905,16 @@
         "id": 115
       },
       {
-        "name": "job_types",
-        "code_id": "job_types",
-        "description": "",
-        "id": 116
-      },
-      {
-        "name": "user_types",
-        "code_id": "user_types",
-        "description": "",
-        "id": 117
-      },
-      {
-        "name": "user_profiles",
-        "code_id": "user_profiles",
-        "description": "",
-        "id": 118
-      },
-      {
-        "name": "user_official_types",
-        "code_id": "user_official_types",
-        "description": "",
-        "id": 119
-      },
-      {
-        "name": "protection_types",
-        "code_id": "protection_types",
-        "description": "",
-        "id": 120
-      },
-      {
-        "name": "share_types",
-        "code_id": "share_types",
-        "description": "",
-        "id": 121
-      },
-      {
-        "name": "source_types",
-        "code_id": "source_types",
-        "description": "",
-        "id": 122
-      },
-      {
-        "name": "ref_types",
-        "code_id": "ref_types",
-        "description": "",
-        "id": 123
-      },
-      {
-        "name": "formula_types",
-        "code_id": "formula_types",
-        "description": "",
-        "id": 124
-      },
-      {
-        "name": "view_types",
-        "code_id": "view_types",
-        "description": "",
-        "id": 125
-      },
-      {
-        "name": "view_styles",
-        "code_id": "view_styles",
-        "description": "",
-        "id": 126
-      },
-      {
-        "name": "view_link_types",
-        "code_id": "view_link_types",
-        "description": "",
-        "id": 127
-      },
-      {
-        "name": "view_relation_types",
-        "code_id": "view_relation_types",
-        "description": "",
-        "id": 128
-      },
-      {
-        "name": "component_link_types",
-        "code_id": "component_link_types",
-        "description": "",
-        "id": 129
-      },
-      {
         "name": "change_actions",
         "code_id": "change_actions",
         "description": "",
-        "id": 130
+        "id": 116
       },
       {
         "name": "job_statuus",
         "code_id": "job_statuus",
         "description": "",
-        "id": 131
+        "id": 117
       }
     ],
     "change_field_list": [
@@ -2157,8 +2125,8 @@
         "id": 201
       },
       {
-        "name": "31sys_log_type_id",
-        "code_id": "31sys_log_type_id",
+        "name": "31sys_log_level_id",
+        "code_id": "31sys_log_level_id",
         "description": "",
         "id": 202
       },
@@ -5973,14 +5941,14 @@
         "id": 837
       },
       {
-        "name": "113sys_log_type_id",
-        "code_id": "113sys_log_type_id",
+        "name": "113sys_log_level_id",
+        "code_id": "113sys_log_level_id",
         "description": "",
         "id": 838
       },
       {
-        "name": "113type_name",
-        "code_id": "113type_name",
+        "name": "113level_name",
+        "code_id": "113level_name",
         "description": "",
         "id": 839
       },
@@ -6003,8 +5971,8 @@
         "id": 842
       },
       {
-        "name": "114type_name",
-        "code_id": "114type_name",
+        "name": "114status_name",
+        "code_id": "114status_name",
         "description": "",
         "id": 843
       },
@@ -6027,8 +5995,8 @@
         "id": 846
       },
       {
-        "name": "115type_name",
-        "code_id": "115type_name",
+        "name": "115sys_log_function_name",
+        "code_id": "115sys_log_function_name",
         "description": "",
         "id": 847
       },
@@ -6045,8 +6013,8 @@
         "id": 849
       },
       {
-        "name": "116job_type_id",
-        "code_id": "116job_type_id",
+        "name": "116change_action_id",
+        "code_id": "116change_action_id",
         "description": "",
         "id": 850
       },
@@ -6069,14 +6037,14 @@
         "id": 853
       },
       {
-        "name": "117user_type_id",
-        "code_id": "117user_type_id",
+        "name": "117job_status_id",
+        "code_id": "117job_status_id",
         "description": "",
         "id": 854
       },
       {
-        "name": "117type_name",
-        "code_id": "117type_name",
+        "name": "117status_name",
+        "code_id": "117status_name",
         "description": "",
         "id": 855
       },
@@ -6093,370 +6061,22 @@
         "id": 857
       },
       {
-        "name": "118user_profile_id",
-        "code_id": "118user_profile_id",
+        "name": "117priority",
+        "code_id": "117priority",
         "description": "",
         "id": 858
-      },
-      {
-        "name": "118type_name",
-        "code_id": "118type_name",
-        "description": "",
-        "id": 859
-      },
-      {
-        "name": "118code_id",
-        "code_id": "118code_id",
-        "description": "",
-        "id": 860
-      },
-      {
-        "name": "118description",
-        "code_id": "118description",
-        "description": "",
-        "id": 861
-      },
-      {
-        "name": "119user_official_type_id",
-        "code_id": "119user_official_type_id",
-        "description": "",
-        "id": 862
-      },
-      {
-        "name": "119type_name",
-        "code_id": "119type_name",
-        "description": "",
-        "id": 863
-      },
-      {
-        "name": "119code_id",
-        "code_id": "119code_id",
-        "description": "",
-        "id": 864
-      },
-      {
-        "name": "119description",
-        "code_id": "119description",
-        "description": "",
-        "id": 865
-      },
-      {
-        "name": "120protection_type_id",
-        "code_id": "120protection_type_id",
-        "description": "",
-        "id": 866
-      },
-      {
-        "name": "120type_name",
-        "code_id": "120type_name",
-        "description": "",
-        "id": 867
-      },
-      {
-        "name": "120code_id",
-        "code_id": "120code_id",
-        "description": "",
-        "id": 868
-      },
-      {
-        "name": "120description",
-        "code_id": "120description",
-        "description": "",
-        "id": 869
-      },
-      {
-        "name": "121share_type_id",
-        "code_id": "121share_type_id",
-        "description": "",
-        "id": 870
-      },
-      {
-        "name": "121type_name",
-        "code_id": "121type_name",
-        "description": "",
-        "id": 871
-      },
-      {
-        "name": "121code_id",
-        "code_id": "121code_id",
-        "description": "",
-        "id": 872
-      },
-      {
-        "name": "121description",
-        "code_id": "121description",
-        "description": "",
-        "id": 873
-      },
-      {
-        "name": "118right_level",
-        "code_id": "118right_level",
-        "description": "",
-        "id": 874
-      },
-      {
-        "name": "122source_type_id",
-        "code_id": "122source_type_id",
-        "description": "",
-        "id": 875
-      },
-      {
-        "name": "122type_name",
-        "code_id": "122type_name",
-        "description": "",
-        "id": 876
-      },
-      {
-        "name": "122code_id",
-        "code_id": "122code_id",
-        "description": "",
-        "id": 877
-      },
-      {
-        "name": "122description",
-        "code_id": "122description",
-        "description": "",
-        "id": 878
-      },
-      {
-        "name": "123ref_type_id",
-        "code_id": "123ref_type_id",
-        "description": "",
-        "id": 879
-      },
-      {
-        "name": "123type_name",
-        "code_id": "123type_name",
-        "description": "",
-        "id": 880
-      },
-      {
-        "name": "123code_id",
-        "code_id": "123code_id",
-        "description": "",
-        "id": 881
-      },
-      {
-        "name": "123description",
-        "code_id": "123description",
-        "description": "",
-        "id": 882
-      },
-      {
-        "name": "124formula_type_id",
-        "code_id": "124formula_type_id",
-        "description": "",
-        "id": 883
-      },
-      {
-        "name": "124type_name",
-        "code_id": "124type_name",
-        "description": "",
-        "id": 884
-      },
-      {
-        "name": "124code_id",
-        "code_id": "124code_id",
-        "description": "",
-        "id": 885
-      },
-      {
-        "name": "124description",
-        "code_id": "124description",
-        "description": "",
-        "id": 886
-      },
-      {
-        "name": "125view_type_id",
-        "code_id": "125view_type_id",
-        "description": "",
-        "id": 887
-      },
-      {
-        "name": "125type_name",
-        "code_id": "125type_name",
-        "description": "",
-        "id": 888
-      },
-      {
-        "name": "125code_id",
-        "code_id": "125code_id",
-        "description": "",
-        "id": 889
-      },
-      {
-        "name": "125description",
-        "code_id": "125description",
-        "description": "",
-        "id": 890
-      },
-      {
-        "name": "126view_style_id",
-        "code_id": "126view_style_id",
-        "description": "",
-        "id": 891
-      },
-      {
-        "name": "126type_name",
-        "code_id": "126type_name",
-        "description": "",
-        "id": 892
-      },
-      {
-        "name": "126code_id",
-        "code_id": "126code_id",
-        "description": "",
-        "id": 893
-      },
-      {
-        "name": "126description",
-        "code_id": "126description",
-        "description": "",
-        "id": 894
-      },
-      {
-        "name": "127view_link_type_id",
-        "code_id": "127view_link_type_id",
-        "description": "",
-        "id": 895
-      },
-      {
-        "name": "127type_name",
-        "code_id": "127type_name",
-        "description": "",
-        "id": 896
-      },
-      {
-        "name": "127code_id",
-        "code_id": "127code_id",
-        "description": "",
-        "id": 897
-      },
-      {
-        "name": "127description",
-        "code_id": "127description",
-        "description": "",
-        "id": 898
-      },
-      {
-        "name": "128view_relation_type_id",
-        "code_id": "128view_relation_type_id",
-        "description": "",
-        "id": 899
-      },
-      {
-        "name": "128type_name",
-        "code_id": "128type_name",
-        "description": "",
-        "id": 900
-      },
-      {
-        "name": "128code_id",
-        "code_id": "128code_id",
-        "description": "",
-        "id": 901
-      },
-      {
-        "name": "128description",
-        "code_id": "128description",
-        "description": "",
-        "id": 902
-      },
-      {
-        "name": "129component_link_type_id",
-        "code_id": "129component_link_type_id",
-        "description": "",
-        "id": 903
-      },
-      {
-        "name": "129type_name",
-        "code_id": "129type_name",
-        "description": "",
-        "id": 904
-      },
-      {
-        "name": "129code_id",
-        "code_id": "129code_id",
-        "description": "",
-        "id": 905
-      },
-      {
-        "name": "129description",
-        "code_id": "129description",
-        "description": "",
-        "id": 906
-      },
-      {
-        "name": "123base_url",
-        "code_id": "123base_url",
-        "description": "",
-        "id": 907
-      },
-      {
-        "name": "126view_style_name",
-        "code_id": "126view_style_name",
-        "description": "",
-        "id": 908
-      },
-      {
-        "name": "130change_action_id",
-        "code_id": "130change_action_id",
-        "description": "",
-        "id": 909
-      },
-      {
-        "name": "130type_name",
-        "code_id": "130type_name",
-        "description": "",
-        "id": 910
-      },
-      {
-        "name": "130code_id",
-        "code_id": "130code_id",
-        "description": "",
-        "id": 911
-      },
-      {
-        "name": "130description",
-        "code_id": "130description",
-        "description": "",
-        "id": 912
-      },
-      {
-        "name": "131job_status_id",
-        "code_id": "131job_status_id",
-        "description": "",
-        "id": 913
-      },
-      {
-        "name": "131type_name",
-        "code_id": "131type_name",
-        "description": "",
-        "id": 914
-      },
-      {
-        "name": "131code_id",
-        "code_id": "131code_id",
-        "description": "",
-        "id": 915
-      },
-      {
-        "name": "131description",
-        "code_id": "131description",
-        "description": "",
-        "id": 916
-      },
-      {
-        "name": "131priority",
-        "code_id": "131priority",
-        "description": "",
-        "id": 917
       },
       {
         "name": "27ip_range_key",
         "code_id": "27ip_range_key",
         "description": "",
-        "id": 918
+        "id": 859
+      },
+      {
+        "name": "31sys_log_update_time",
+        "code_id": "31sys_log_update_time",
+        "description": "",
+        "id": 860
       }
     ],
     "job_types": [
@@ -7478,16 +7098,28 @@
         "id": 2
       },
       {
-        "name": "formula",
-        "code_id": "formula",
-        "description": "to select the results of another formula using the given context",
-        "id": 3
-      },
-      {
         "name": "triple",
         "code_id": "triple",
         "description": "a reference to two predicate linked words used to select values using \"and\"",
+        "id": 3
+      },
+      {
+        "name": "formula",
+        "code_id": "formula",
+        "description": "to select the results of another formula using the given context",
         "id": 4
+      },
+      {
+        "name": "result word",
+        "code_id": "word_result",
+        "description": "a reference to a word that is added to the result phrases",
+        "id": 5
+      },
+      {
+        "name": "result triple",
+        "code_id": "triple_result",
+        "description": "a reference to a triple that is added to the result phrases",
+        "id": 6
       }
     ],
     "view_types": [
@@ -17969,22 +17601,22 @@
             "position_type": 2
           },
           {
-            "link_id": 816,
-            "id": 187,
-            "name": "system show field description",
-            "description": "the object description as read only",
-            "type_id": 147,
-            "code_id": "show_field_description",
-            "position": 6,
-            "position_type": 1
-          },
-          {
             "link_id": 817,
             "id": 214,
             "name": "system formatter row right",
             "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
             "type_id": 33,
             "code_id": "row_right",
+            "position": 6,
+            "position_type": 1
+          },
+          {
+            "link_id": 816,
+            "id": 187,
+            "name": "system show field description",
+            "description": "the object description as read only",
+            "type_id": 147,
+            "code_id": "show_field_description",
             "position": 6,
             "position_type": 1
           },
@@ -19349,17 +18981,6 @@
             "position_type": 1
           },
           {
-            "link_id": 925,
-            "id": 203,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 927,
             "id": 206,
             "name": "system form button export",
@@ -19367,6 +18988,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 925,
+            "id": 203,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -19475,17 +19107,6 @@
             "position_type": 1
           },
           {
-            "link_id": 936,
-            "id": 203,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 938,
             "id": 206,
             "name": "system form button export",
@@ -19493,6 +19114,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 936,
+            "id": 203,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -19727,17 +19359,6 @@
             "position_type": 1
           },
           {
-            "link_id": 958,
-            "id": 203,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 960,
             "id": 206,
             "name": "system form button export",
@@ -19745,6 +19366,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 958,
+            "id": 203,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },

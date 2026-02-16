@@ -5,6 +5,10 @@
     model/element/element_type.php - to assign coded functionality to a formula element
     ------------------------------
 
+    the element type may differ from the term object type
+    e.g. for faster selection of formulas depending on special formula types
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

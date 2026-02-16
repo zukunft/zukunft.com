@@ -56,6 +56,7 @@ $html = new html_base();
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
+$msg_txt = '';
 
 // load the session user parameters
 $usr = new user;
@@ -120,7 +121,7 @@ if ($usr->id() > 0) {
             }
             // an empty value should never be saved; instead the value should be deleted)
             if ($val->usr_value == '') {
-                $msg .= 'An empty number should not be saved. Please delete/exclude the value instead.';
+                $msg_txt .= 'An empty number should not be saved. Please delete/exclude the value instead.';
             } else {
 
                 // adjust the user input using the phrases given

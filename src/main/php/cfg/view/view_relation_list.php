@@ -50,20 +50,26 @@ include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 
 class view_relation_list extends sandbox_link_list
 {
@@ -124,8 +130,10 @@ class view_relation_list extends sandbox_link_list
     {
         $qp = $this->load_sql($sc, view_db::FLD_ID);
         if ($msk->id() > 0) {
-            $sc->add_where(view_db::FLD_ID, $msk->id());
-            $sc = new view($this->get_user())->set_join($sc);
+            $sc->add_where(view_relation::FLD_FROM, $msk->id(), sql_par_type::INT_OR);
+            $sc->add_where(view_relation::FLD_TO, $msk->id(), sql_par_type::INT_OR);
+            $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_relation::FLD_FROM, '', true);
+            $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_relation::FLD_TO, '', true);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -180,13 +188,20 @@ class view_relation_list extends sandbox_link_list
 
     /**
      * add a view relation to the list without saving it to the database
+     * @param view_relation|db_object_seq_id|null $to_add the link user sandbox object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param Message $msg to report which entry is double
      * @return true if the link has been added
      */
-    function add_by_name(view_relation $lnk_to_add, user_message $usr_msg): bool
+    function add_by_key(
+        view_relation|db_object_seq_id|null $to_add,
+        bool                                $allow_duplicates = false,
+        Message                             $msg = new Message()
+    ): bool
     {
         $added = false;
-        if ($this->can_add($lnk_to_add)) {
-            $this->add_link_by_key($lnk_to_add);
+        if ($this->can_add($to_add)) {
+            $this->add_link_by_key($to_add);
             $added = true;
         }
         return $added;
@@ -194,8 +209,8 @@ class view_relation_list extends sandbox_link_list
 
     /**
      * delete all loaded view relations e.g. to delete all the links assigned to a view
-     * @param user_message $usr_msg the message for the user why deleting this view relations has failed and a suggested solution
-     * @return bool true if the view relations has been deleted
+     * @param user_message $usr_msg the message for the user why deleting this view relation has failed and a suggested solution
+     * @return bool true if the view relations have been deleted
      */
     function del(user_message $usr_msg): bool
     {

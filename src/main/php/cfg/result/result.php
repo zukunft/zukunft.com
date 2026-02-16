@@ -66,6 +66,7 @@ include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -78,9 +79,9 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::SHARED_CONST . 'chars.php';
-include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
@@ -109,13 +111,13 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use DateTime;
-use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use DateTime;
 
 class result extends sandbox_value
 {
@@ -230,7 +232,7 @@ class result extends sandbox_value
      * map a result api json to this model result object
      * @param array $api_json the api array with the values that should be mapped
      * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $msg): bool
     {
@@ -308,7 +310,7 @@ class result extends sandbox_value
                 }
                 $frm = new formula($this->get_user());
                 $frm->set_name($frm_name);
-                $frm_lst->add_by_name($frm);
+                $frm_lst->add_by_key($frm);
             }
             $this->frm = $frm;
         }
@@ -1190,16 +1192,20 @@ class result extends sandbox_value
     //      based on the frm id and the word group
     function update_depending(): array
     {
+        global $sys;
+        global $db_con;
+
         $lib = new library();
         $usr_msg = new user_message();
         log_debug("(f" . $this->frm->id() . ",t" . $lib->dsp_array($this->phr_ids()) . ",v" . $this->number() . " and user " . $this->get_user()->name . ")");
 
-        global $db_con;
         $result = array();
 
         // get depending formulas
+        $typ_lst = $sys->typ_lst->elm_typ;
+        $frm_typ_id = $typ_lst->id(element_types::FORMULA_SELECTOR);
         $frm_elm_lst = new element_list($this->get_user());
-        $frm_elm_lst->load_by_frm_and_type_id($this->frm->id(), parameter_type::FORMULA_ID);
+        $frm_elm_lst->load_by_frm_and_type_id($this->frm->id(), $frm_typ_id);
         $frm_ids = array();
         foreach ($frm_elm_lst as $frm_elm) {
             if ($frm_elm->obj != null) {
@@ -1503,7 +1509,7 @@ class result extends sandbox_value
     {
         $fields = parent::db_fields_all();
         if (!$sc_par_lst->is_standard()) {
-            $fields[] = result_db::FLD_SOURCE . group::FLD_ID;
+            $fields[] = result_db::FLD_SOURCE . group_db::FLD_ID;
             $fields[] = formula_db::FLD_ID;
             $fields = array_merge($fields, $this->db_fields_all_sandbox());
         }
@@ -1529,7 +1535,7 @@ class result extends sandbox_value
         if (!$sc_par_lst->is_standard()) {
             if ($sbx->src_grp_id() !== $this->src_grp_id()) {
                 $lst->add_field(
-                    result_db::FLD_SOURCE . group::FLD_ID,
+                    result_db::FLD_SOURCE . group_db::FLD_ID,
                     $this->src_grp_id(),
                     sql_field_type::INT
                 );

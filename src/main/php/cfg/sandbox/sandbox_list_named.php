@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
@@ -51,6 +52,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_PHRASE . 'phrase_list.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_REF . 'source_list.php';
+include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';
@@ -71,6 +73,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -85,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
@@ -124,7 +128,7 @@ class sandbox_list_named extends sandbox_list
     {
         $this->name_pos_lst = [];
         $this->name_pos_lst_all = [];
-        $this->set_lst_dirty();
+        $this->set_hash_dirty();
 
         parent::__construct($usr, $lst);
     }
@@ -138,9 +142,9 @@ class sandbox_list_named extends sandbox_list
      * to be called after the lists have been updated
      * but the index list have not yet been updated
      */
-    protected function set_lst_dirty(): void
+    protected function set_hash_dirty(): void
     {
-        parent::set_lst_dirty();
+        parent::set_hash_dirty();
         $this->lst_name_dirty = true;
         $this->lst_name_dirty_all = true;
     }
@@ -452,33 +456,33 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * add a named object to the list that does not yet have an id but has a name
-     * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
+     * @param sandbox_named|triple|phrase|term|db_object_seq_id|null $to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @param user_message $usr_msg to report which entry is double
+     * @param user_message $msg to report which entry is double
      * @returns bool true if the object has been added
      */
-    function add_by_name(
-        sandbox_named|triple|phrase|term|null $obj_to_add,
-        bool                                  $allow_duplicates = false,
-        user_message                          $usr_msg = new user_message()
+    function add_by_key(
+        sandbox_named|triple|phrase|term|db_object_seq_id|null $to_add,
+        bool                                                   $allow_duplicates = false,
+        Message                                                $msg = new Message()
     ): bool
     {
-        if ($obj_to_add != null) {
+        if ($to_add != null) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
-            $name = $obj_to_add->name();
+            $name = $to_add->name();
             if ($name != '') {
                 if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
                     // add only objects that have all mandatory values
-                    if ($obj_to_add->can_be_ready($usr_msg)) {
-                        $this->add_direct($obj_to_add);
-                        $this->set_lst_dirty();
+                    if ($to_add->can_be_ready($msg)) {
+                        $this->add_direct($to_add);
+                        $this->set_hash_dirty();
                     }
                 } else {
-                    parent::add_obj($obj_to_add, $allow_duplicates, $usr_msg);
+                    parent::add_obj($to_add, $allow_duplicates, $msg);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -503,7 +507,7 @@ class sandbox_list_named extends sandbox_list
             if ($name != '') {
                 if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
                     $this->add_direct($obj_to_add);
-                    $this->set_lst_dirty();
+                    $this->set_hash_dirty();
                 } else {
                     parent::add_obj($obj_to_add, $allow_duplicates, $usr_msg);
                 }
@@ -544,7 +548,7 @@ class sandbox_list_named extends sandbox_list
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get_by_id($sbx_new->id());
+                $sbx_old = $this->get($sbx_new->term()->id());
                 if ($sbx_old != null) {
                     $sbx_old->fill($sbx_new, $usr);
                 } else {
@@ -663,7 +667,7 @@ class sandbox_list_named extends sandbox_list
             $pos = $key_lst[$name];
         }
         if ($pos !== null) {
-            return $this->get($pos);
+            return $this->get_by_key($pos);
         } else {
             return null;
         }
@@ -692,7 +696,7 @@ class sandbox_list_named extends sandbox_list
 
         foreach ($this->lst() as $wrd) {
             if (!in_array($wrd->name(), $names)) {
-                $result->add_by_name($wrd);
+                $result->add_by_key($wrd);
             }
         }
 
@@ -722,7 +726,7 @@ class sandbox_list_named extends sandbox_list
 
         foreach ($this->lst() as $wrd) {
             if (in_array($wrd->name(), $names)) {
-                $result->add_by_name($wrd);
+                $result->add_by_key($wrd);
             }
         }
 
@@ -890,9 +894,9 @@ class sandbox_list_named extends sandbox_list
     {
         global $cfg;
 
-        $load_per_sec = $cfg->get_by([$cfg_wrd, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $upd_per_sec = $cfg->get_by([$cfg_wrd, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $del_per_sec = $cfg->get_by([$cfg_wrd, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $load_per_sec = $cfg->get_by([$cfg_wrd, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $upd_per_sec = $cfg->get_by([$cfg_wrd, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $del_per_sec = $cfg->get_by([$cfg_wrd, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
         if ($this->is_empty()) {
             $usr_msg->add_info_text('no ' . $cfg_wrd . ' to save');
@@ -943,7 +947,7 @@ class sandbox_list_named extends sandbox_list
 
         // get the configuration values
         $cfg_wrd = $lib->class_to_word($class);
-        $save_per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $save_per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
         // get the db id from the loaded objects
         $usr_msg->merge($this->fill_by_name($db_lst, true, false));
@@ -1114,7 +1118,7 @@ class sandbox_list_named extends sandbox_list
             // add the remaining missing words, triples or ...
             $step_time = $db_lst->count() / $del_per_sec;
             $imp->step_start(msg_id::DEL, $class, $db_lst->count(), $step_time);
-            $del_calls = $del_lst->sql_delete_call_with_par($sc, $db_lst);
+            $del_calls = $del_lst->sql_delete_call_with_par($sc, $usr_msg, $db_lst);
             $usr_msg->merge($del_calls->exe_delete($class));
 
             $imp->step_end($db_lst->count(), $del_per_sec);
@@ -1251,22 +1255,32 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * get a list of all sql function names that are needed to delete all loaded of this list to the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param sandbox_list_named|list_db_write|null $db_lst the list of delete statements that are already in the database
      * @return sql_par_list with the sql function names
      */
-    function sql_delete_call_with_par(sql_creator $sc, sandbox_list_named $db_lst): sql_par_list
+    function sql_delete_call_with_par(
+        sql_creator                           $sc,
+        user_message                          $usr_msg,
+        sandbox_list_named|list_db_write|null $db_lst = null
+    ): sql_par_list
     {
         $usr_msg = new user_message();
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
-            $db_row = $db_lst->get_by_name($sbx->name(true));
-            // another validation check as a second line of defence
-            if ($db_row != null) {
-                // check always user sandbox and normal name, because reading from database for check would take longer
-                $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
-                $sc_par_lst->add(sql_type::LOG);
-                $qp = $sbx->sql_delete($sc, $usr_msg, $sc_par_lst);
-                $qp->obj_name = $sbx->name(true);
-                $sql_list->add($qp);
+            if ($db_lst != null) {
+                $db_row = $db_lst->get_by_name($sbx->name(true));
+                // another validation check as a second line of defence
+                if ($db_row != null) {
+                    // check always user sandbox and normal name, because reading from database for check would take longer
+                    $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
+                    $sc_par_lst->add(sql_type::LOG);
+                    $qp = $sbx->sql_delete($sc, $usr_msg, $sc_par_lst);
+                    $qp->obj_name = $sbx->name(true);
+                    $sql_list->add($qp);
+                }
             }
         }
         return $sql_list;

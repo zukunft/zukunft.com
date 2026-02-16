@@ -60,6 +60,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_VALUE . 'value.php';
@@ -84,7 +85,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -187,8 +188,8 @@ class change extends change_log
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
                 $this->row_id = $db_row[self::FLD_ROW_ID];
-            } elseif (array_key_exists(group::FLD_ID, $db_row)) {
-                $this->row_id = $db_row[group::FLD_ID];
+            } elseif (array_key_exists(group_db::FLD_ID, $db_row)) {
+                $this->row_id = $db_row[group_db::FLD_ID];
             }
             $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_value = $db_row[change::FLD_OLD_VALUE];

@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
@@ -217,6 +218,19 @@ class view_tests
 
 
         /*
+         * view relation list
+         */
+
+        // start the test section (ts)
+        $ts = 'unit view relation list ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'sql');
+        $mrl_lst = new view_relation_list($t->usr1);
+        $this->assert_sql_by_view($t, $sc, $mrl_lst, $t_msk->view());
+
+
+        /*
          * Display tests
          */
 
@@ -236,6 +250,37 @@ class view_tests
         $t->assert('view->display', $result, $target);
         */
 
+    }
+
+    /**
+     * check the SQL statement to load a db object by id
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param view_relation_list $mrl the view relation object
+     * @param view $msk the view to which the related view should be loaded
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_view(
+        test_cleanup  $t,
+        sql_creator   $sc,
+        view_relation_list $mrl,
+        view $msk
+    ): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $mrl->load_sql_by_view($sc, $msk);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $mrl->load_sql_by_view($sc, $msk);
+            $result = $t->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
     }
 
 }

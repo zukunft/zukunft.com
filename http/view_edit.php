@@ -56,6 +56,7 @@ $html = new html_base();
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
+$msg_txt = '';
 
 // load the session user parameters
 $usr = new user;
@@ -91,7 +92,7 @@ if ($usr->id() > 0) {
             $upd_result = $msk_edit->entry_up($_GET['move_up']);
             if (str_replace('1', '', $upd_result) <> '') {
                 // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result;
+                $msg_txt .= $upd_result;
             }
         }
 
@@ -99,7 +100,7 @@ if ($usr->id() > 0) {
             $upd_result .= $msk_edit->entry_down($_GET['move_down']);
             if (str_replace('1', '', $upd_result) <> '') {
                 // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result;
+                $msg_txt .= $upd_result;
             }
         }
 
@@ -164,7 +165,7 @@ if ($usr->id() > 0) {
                 // $result .= dsp_go_back($back, $usr);
             } else {
                 // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result;
+                $msg_txt .= $upd_result;
             }
         }
 

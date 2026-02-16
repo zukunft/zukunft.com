@@ -32,5 +32,5 @@ SELECT term_view_insert_log_1115000_user (
                'System Test description for a view term link',
                0,
                726,
-               'standard',
+               'main word',
                1);

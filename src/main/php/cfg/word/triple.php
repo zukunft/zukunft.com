@@ -373,7 +373,7 @@ class triple extends sandbox_link_named
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the triple values that should be mapped
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -2117,10 +2117,10 @@ class triple extends sandbox_link_named
     /**
      * check if the triple might be added to the database
      * if all related objects have been added to the database
-     * @param user_message $msg including suggested solutions if something is missing e.g. a linked object
+     * @param user_message|Message $msg including suggested solutions if something is missing e.g. a linked object
      * @return bool false if a mandatory var of the triple is not yet set that will not be added if the linked phrased are saved
      */
-    function can_be_ready(user_message $msg): bool
+    function can_be_ready(user_message|Message $msg): bool
     {
         parent::can_be_ready($msg);
         $this->check($msg);

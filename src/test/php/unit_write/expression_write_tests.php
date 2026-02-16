@@ -164,7 +164,7 @@ class expression_write_tests
 
         // test getting special phrases
         $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
-        $phr_lst = $exp->element_special_following($usr_msg, $trm_lst);
+        $phr_lst = $exp->terms_following($usr_msg, $trm_lst);
         $result = $phr_lst->dsp_name();
         $target = '"' . formulas::THIS_NAME . '","' . formulas::PRIOR . '"';
         // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);

@@ -240,7 +240,7 @@ class view extends sandbox_code_id
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -1163,8 +1163,7 @@ class view extends sandbox_code_id
 
         // collect all view relations where this view is used
         $mrl_lst = new view_relation_list($this->get_user());
-        // TODO Prio 0 activate
-        //$mrl_lst->load_by_view($this);
+        $mrl_lst->load_by_view($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else

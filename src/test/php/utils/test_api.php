@@ -50,6 +50,7 @@ include_once paths::MODEL_LOG . 'change_field_list.php';
 include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_db.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_db.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once test_paths::UTILS . 'test_base.php';
@@ -61,14 +62,11 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_db;
-use Zukunft\ZukunftCom\main\php\cfg\system\job;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -530,7 +528,7 @@ class test_api extends test_base
         $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
 
-        // TODO remove
+        // TODO Prio 0 remove
         if ($class == $lib->class_to_name(phrase_list::class)) {
             if ($filename == '' and $id_fld != url_var::ID_LST) {
                 $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
@@ -538,12 +536,6 @@ class test_api extends test_base
             } else {
                 $filename = $class . '_without_link';
             }
-        }
-        if ($class == $lib->class_to_name(term_list::class)) {
-            $lst = new term_list($this->usr1);
-            $lst->load_by_ids((new trm_ids($ids)));
-            $actual = json_decode($lst->api_json(), true);
-            $filename = $class . '_without_link';
         }
 
         if ($filename == '' and $id_fld != url_var::ID_LST) {
@@ -899,8 +891,9 @@ class test_api extends test_base
     private function json_remove_volatile_item(array $json, bool $ignore_id): array
     {
         // remove or replace the volatile time fields
-        $json = $this->json_remove_volatile_time_field($json, sys_log::FLD_TIME_JSON);
-        $json = $this->json_remove_volatile_time_field($json, sys_log::FLD_TIMESTAMP_JSON);
+        $json = $this->json_remove_volatile_time_field($json, sys_log_db::FLD_TIME_JSON);
+        $json = $this->json_remove_volatile_time_field($json, sys_log_db::FLD_TIMESTAMP_JSON);
+        $json = $this->json_remove_volatile_time_field($json, json_fields::TIME_UPDATE);
         $json = $this->json_remove_volatile_time_field($json, change_log::FLD_TIME);
         $json = $this->json_remove_volatile_time_field($json, job_db::FLD_TIME_REQUEST);
         $json = $this->json_remove_volatile_time_field($json, job_db::FLD_TIME_START);

@@ -119,7 +119,7 @@ class user extends db_object
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
      * @param user_message $msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $json_array, user_message $msg): bool
     {
@@ -127,7 +127,7 @@ class user extends db_object
             $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
-            $msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+            $msg->add_error_text('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
         if (array_key_exists(json_fields::NAME, $json_array)) {
             $this->name = $json_array[json_fields::NAME];

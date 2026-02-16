@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
@@ -135,8 +136,13 @@ class all_unit_write_tests extends all_unit_read_tests
                 $t->set_users();
                 $t_db->create_test_db_entries($t);
 
-                // run the db write tests
+                // run the general db write tests
                 new user_write_tests()->run($t);
+                // TODO Prio 0 activate
+                //new sys_log_write_tests()->run($t);
+                //new horizontal_write_tests()->run($t);
+
+                // run object specific db write tests
                 new word_write_tests()->run($t);
                 new word_list_write_tests()->run($t);
                 // TODO Prio 1 activate
@@ -168,15 +174,13 @@ class all_unit_write_tests extends all_unit_read_tests
                 //new result_write_tests()->run_list($t);
                 new job_write_tests()->run($t);
                 new job_write_tests()->run_list($t);
-                // TODO Prio 0 activate
-                //new view_write_tests()->run($t);
+                new view_write_tests()->run($t);
                 new view_relation_write_tests()->run($this);
                 new view_link_write_tests()->run($this);
                 new component_write_tests()->run($t);
                 new component_link_write_tests()->run($t);
 
-                // TODO Prio 0 activate
-                //new api_write_tests()->run($t);
+                new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
 
                 // url tests
@@ -357,7 +361,7 @@ class all_unit_write_tests extends all_unit_read_tests
     {
         $result = '';
         log_info('test import',
-            'import_test_files',
+            sys_log_functions::IMPORT_TEST_CONFIG_NAME,
             'import of the some test json files',
             'import_test_files',
             $usr, true

@@ -205,6 +205,11 @@ enum messages: string
     const string VAR_COUNTER = 'VarCounter';
     const string IMPORT_SUCCESS = 'finished successful';
 
+    // technical database vars
+    const string VAR_SQL = 'VarObjSQL';
+    const string VAR_TRACE_LINK = 'VarObjTraceLink';
+    const string VAR_SQL_REASON = 'VarObjSqlReason';
+
     // unique message keys
     // *_txt sample translation to test the English mapping
     case IS_RESERVED = 'is_reserved';
@@ -529,6 +534,14 @@ enum messages: string
         . '" is expected to be a number ('
         . self::VAR_START . self::VAR_GROUP . self::VAR_END
         . ')';
+    case IMPORT_VALUE_NOT_DATETIME = 'Import value: "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" is expected to be a a datetime ('
+        . self::VAR_START . self::VAR_GROUP . self::VAR_END
+        . ')';
+    case IMPORT_VALUE_FORMAT_NOT_KNOWN = 'Import value has an unexpected json value name "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
     case FAILED_ADD_LOGGING_ERROR = 'Adding "'
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '" "'
@@ -737,6 +750,17 @@ enum messages: string
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
         . ' is not valid and cannot be linked to '
         . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+
+    case DB_SQL_TYPE_UNKNOWN = 'database type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not expected';
+    case DB_SQL_EXE_PREPARE_ERROR = 'creating the prepared SQL statement "'
+        . self::VAR_START . self::VAR_SQL . self::VAR_END
+        . '" failed due to '
+        . self::VAR_START . self::VAR_SQL_REASON . self::VAR_END
+        . ' is not expected. this error can be traced with this link'
+        . self::VAR_START . self::VAR_TRACE_LINK . self::VAR_END
+        . '.';
 
     case PHRASE_TYPE_NOT_FOUND = 'word/triple type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
@@ -1038,6 +1062,17 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not found';
 
+    case SYS_LOG_TYPE_MISSING = 'system log type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case SYS_LOG_FUNCTION_MISSING = 'system log function '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+
     case NO_UPDATE_PRIVILEGES =
         self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '  '
@@ -1076,6 +1111,9 @@ enum messages: string
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' failed';
 
+    case DB_INSERT_ID_MISSING = 'insert of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' does not return the expected database id';
     case DB_PHRASE_MISSING = 'phrase '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is unexpected missing in database during import';
@@ -1115,6 +1153,9 @@ enum messages: string
         . '" already exists. Please use another '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' name.';
+    case CLASS_LIST_UNEXPECTED = 'Cannot create type for the list class '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' because no matching type has been assigned in the code';
 
     case JOB_TYPE_INVALID = 'the job type for job '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
@@ -1131,6 +1172,12 @@ enum messages: string
     case IP_RANGE_TO_MISSING = 'the to value of the ip range '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is not valid';
+
+    case TYPE_CODE_ID_MISSING = 'the code_id of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' type for job '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' is missing';
 
     case VERB_UPDATE_FAILED = 'updating '
         . self::VAR_START . self::VAR_NAME . self::VAR_END

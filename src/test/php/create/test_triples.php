@@ -860,9 +860,9 @@ class test_triples extends test_objects
         // make sure that from and to is not the same
         $trp = new triple($this->env->usr1);
         $trp->id = $id;
-        $trp->set_from($phr_lst->get_by_id($from_id)->phrase());
+        $trp->set_from($phr_lst->get($from_id)->phrase());
         $trp->set_verb($t_vrb->random());
-        $trp->set_to($phr_lst->get_by_id($to_id)->phrase());
+        $trp->set_to($phr_lst->get($to_id)->phrase());
         $trp->set_name(words::TEST_SPEED_PREFIX . $id);
 
         $type_id = rand(1, $sys->typ_lst->phr_typ->count());

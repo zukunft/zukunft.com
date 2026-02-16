@@ -65,7 +65,7 @@ class element_db
     // database fields only used for formula elements
     const string FLD_ID = 'element_id';
     const string FLD_FORMULA_COM = 'each element can only be used for one formula';
-    const string FLD_ORDER = 'order_nbr';
+
     const string FLD_TYPE = 'element_type_id';
     const string FLD_REF_ID_COM = 'either a term, verb or formula id';
     const string FLD_REF_ID = 'ref_id';
@@ -76,7 +76,6 @@ class element_db
     const array FLD_NAMES = array(
         formula_db::FLD_ID,
         user_db::FLD_ID,
-        self::FLD_ORDER,
         self::FLD_TYPE,
         self::FLD_REF_ID
     );
@@ -84,7 +83,6 @@ class element_db
     // field lists for the table creation
     const array FLD_LST_ALL = array(
         [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
-        [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
         [element_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
         [self::FLD_REF_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_REF_ID_COM],

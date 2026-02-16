@@ -216,7 +216,7 @@ class term_view extends sandbox_link
      * basically use the json field type instead of predicate and
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -780,7 +780,7 @@ class term_view extends sandbox_link
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $obj->predicate_id(),
-                $sys->typ_lst->phr_typ);
+                $sys->typ_lst->msk_lnk_typ);
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }

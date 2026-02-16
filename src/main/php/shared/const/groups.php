@@ -39,6 +39,7 @@ class groups
 
     // persevered phrase group names for unit and integration tests
     const string TN_READ = 'Pi (math)';
+    const string TN_READ_COM = 'ratio of the circumference of a circle to its diameter';
     const string TN_RENAMED = 'Pi';
 
     const string ZH_CITY_INHABITANTS = words::ZH . ' ' . words::CITY . ' ' . words::INHABITANTS;
@@ -68,6 +69,8 @@ class groups
 
     const string TN_GEO_VALUE = 'zukunft.com development geolocation';
     const string TD_GEO_VALUE = 'the geolocation of the initial development of zukunft.com';
+
+    const string SYSTEM_TEST_RENAMED = 'System Test Group Renamed';
 
     // list of predefined group names used for system testing that are expected to be never renamed
     const array RESERVED_GROUP_NAMES = [

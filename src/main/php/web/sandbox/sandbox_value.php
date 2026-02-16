@@ -211,10 +211,10 @@ class sandbox_value extends sandbox
 
 
     /**
-     * set the vars of this object bases on the api json array
+     * set the vars of this base object on the api json array
      * @param array $json_array an api json message
-     * @param user_message $msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $msg OK or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $json_array, user_message $msg): bool
     {
@@ -224,7 +224,7 @@ class sandbox_value extends sandbox
             $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
-            $msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+            $msg->add_error_text('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
         if (array_key_exists(json_fields::NUMBER, $json_array)) {
             $this->number = $json_array[json_fields::NUMBER];
@@ -245,7 +245,7 @@ class sandbox_value extends sandbox
         if (array_key_exists(json_fields::PHRASES, $json_array)) {
             $this->grp->api_mapper($json_array[json_fields::PHRASES], $msg);
         } else {
-            $msg->add_err('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
+            $msg->add_error_text('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
         }
         return $msg->is_ok();
     }

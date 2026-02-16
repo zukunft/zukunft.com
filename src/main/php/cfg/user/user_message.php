@@ -344,21 +344,6 @@ class user_message extends Message
     }
 
     /**
-     * add a error message with variables
-     * and add the translated message to the log so that the admin can also see it
-     * TODO Prio 3 check if the causing user is added to the log
-     *
-     * @param msg_id|null $msg_id the message text to add
-     * @return void is never expected to fail
-     */
-    function add_err_with_vars(?msg_id $msg_id, array $var_lst): void
-    {
-        $this->add($msg_id, $var_lst, true);
-        $msg = $this->get_last_message_translated();
-        log_err($msg);
-    }
-
-    /**
      * to offer the user to see more details without a retry,
      * more than one message text can be added to a user message result
      *
@@ -576,17 +561,6 @@ class user_message extends Message
     }
 
     /**
-     * TODO Prio 3 review
-     * @return string the translated text for all messages with vars
-     */
-    function var_message_text(): string
-    {
-        global $mtr;
-        $lib = new library();
-        return $lib->msg_var_text($this->msg_var_lst, $mtr);
-    }
-
-    /**
      * simple return the message text
      * @param int $pos used to get other message than the main message
      * @return string simple the message text
@@ -607,27 +581,8 @@ class user_message extends Message
     }
 
     /**
-     * simple return a translated message text with vars
-     * TODO review
-     * @param int $pos used to get other message than the main message
-     * @return string simple the message text
-     */
-    function get_message_translated(int $pos = 1): string
-    {
-        // the first message should have the position 1 not 0 like in php array
-        $pos = $pos - 1;
-        if (count($this->msg_var_lst) > $pos and $pos >= 0) {
-            return $this->var_message_text();
-        } else {
-            $msg = 'user message translation for position ' . $pos . ' not found';
-            log_warning($msg);
-            return $msg;
-        }
-    }
-
-    /**
      * TODO should be deprecated once the msg_id is used for all messages
-     * @return string with latest added message text
+     * @return string with the latest added message text
      */
     function get_last_message(): string
     {
@@ -636,7 +591,7 @@ class user_message extends Message
 
     /**
      * TODO should pick the last either from msg_var_lst or msg_id_lst
-     * @return string with latest added message translated to the user language
+     * @return string with the latest added message translated to the user language
      */
     function get_last_message_translated(): string
     {

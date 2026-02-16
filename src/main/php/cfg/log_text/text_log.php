@@ -36,9 +36,9 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 
 class text_log
 {
@@ -48,9 +48,9 @@ class text_log
      */
 
     // fallback log level if not set by the environment settings or overwritten by the system configuration
-    const int DSP_LEVEL = sys_log_level::ERROR;   // starting from this criticality level messages are shown to the user
-    const int LOG_LEVEL = sys_log_level::WARNING; // starting from this criticality level messages are written to the log for debugging
-    const int MSG_LEVEL = sys_log_level::ERROR;   // in case of an error or fatal error
+    const int DSP_LEVEL = sys_log_levels::ERROR_ID;   // starting from this criticality level messages are shown to the user
+    const int LOG_LEVEL = sys_log_levels::WARNING_ID; // starting from this criticality level messages are written to the log for debugging
+    const int MSG_LEVEL = sys_log_levels::ERROR_ID;   // in case of an error or fatal error
     // additional the message a link to the system log shown
     // so that the user can track when the error is solved
 
@@ -122,7 +122,22 @@ class text_log
     /**
      * write a test result text or a log entry text to the standard io
      * and to the database log table if requested by the db log level
-     * @param string $text the english text for the system admin
+     * @param string $text the English text for the system admin
+     */
+    function echo_text_log(string $text): void
+    {
+        if ($this->format == text_log_format::TEXT) {
+            echo $this->time_stamp() . $text . "\n";
+        } else {
+            echo $this->time_stamp() . $text . '</p>' . "\n";
+        }
+        // TODO Prio 3 add a local text log
+    }
+
+    /**
+     * write a test result text or a log entry text to the standard io
+     * and to the database log table if requested by the db log level
+     * @param string $text the English text for the system admin
      */
     function echo_log(string $text): void
     {

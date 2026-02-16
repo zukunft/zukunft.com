@@ -88,6 +88,12 @@ class words
     const string LAUNCH = 'launch';
     const int LAUNCH_ID = 197;
 
+    const string LIMITS = 'limits';
+    const string LIFETIME = 'lifetime';
+    const string CHECK = 'check';
+    const string PERIOD = 'period';
+    const string TOLERANCE = 'tolerance';
+
     // for the user settings
     const string ROW = 'row';
     const string LIMIT = 'limit';
@@ -97,11 +103,13 @@ class words
     const string FORMULA = 'formula';
     const string WORDS = 'words';
     const string VERBS = 'verbs';
+    const int VERBS_ID = 419;
     const string TRIPLES = 'triples';
     const string SOURCES = 'sources';
     const string REFERENCES = 'references';
     const string VALUES = 'values';
     const string FORMULAS = 'formulas';
+    const string ELEMENTS = 'elements';
     const string VIEWS = 'views';
     const string COMPONENTS = 'components';
     const string CHANGES = 'changes';
@@ -177,6 +185,7 @@ class words
     const string AUTOMATIC = 'automatic';
     const string CREATE = 'create';
     const string STORE = 'store';
+    const string REMOVE = 'remove';
     const string VIEW = 'view';
     const string FREEZE = 'freeze';
     const string CHANGE = 'change';
@@ -264,7 +273,7 @@ class words
     const string SPEED = 'speed';
     const int SPEED_ID = 87;
     const string METER = 'meter';
-    const int METER_ID = 1139;
+    const int METER_ID = 1147;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 131;
     const string TRANSITION = 'transition';
@@ -639,9 +648,24 @@ class words
         self::TEST_UPD_API
     );
 
-    // array of word names that used for db read testing and that should not be renamed
+    // array of word names that used for system configuration or db read testing
+    // and that should not be renamed for all users
     const array FIXED_NAMES = array(
-        self::MATH
+        self::MATH,
+        self::POD,
+        self::JOB,
+        self::USER,
+        self::FRONTEND,
+        self::BACKEND,
+        self::LANGUAGE,
+        self::BYTE,
+        self::URL,
+        self::LAUNCH,
+        self::LIMITS,
+        self::LIFETIME,
+        self::CHECK,
+        self::PERIOD,
+        self::TOLERANCE,
     );
 
     // list of words that are used for system testing that should be removed are the system test has been completed

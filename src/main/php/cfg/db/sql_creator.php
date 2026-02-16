@@ -44,15 +44,13 @@ include_once paths::DB . 'sql_pg.php';
 include_once paths::DB . 'sql.php';
 include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_LOG . 'change_value.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
 //include_once paths::MODEL_GROUP . 'group.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
-//include_once paths::MODEL_SYSTEM . 'ip_range.php';
-//include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
-//include_once paths::MODEL_SYSTEM . 'job.php';
 //include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_link.php';
@@ -80,7 +78,13 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+//include_once paths::MODEL_SYSTEM . 'ip_range.php';
+//include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+//include_once paths::MODEL_SYSTEM . 'job.php';
+//include_once paths::MODEL_SYSTEM . 'job_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
@@ -101,6 +105,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
@@ -118,9 +123,6 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
@@ -135,7 +137,13 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -824,7 +832,7 @@ class sql_creator
      *                           if empty the field will be guessed
      * @param string $join_to_field if set the field name in the joined table that should be used for the join; only needed, if the joined field name differ from the type id field
      * @param string $join_select_field if set the field name in the joined table that should be used for a where selection
-     * @param int $join_select_id if $join_select_field is set the id (int) used for the selection
+     * @param int $join_select_id if $join_select_field is set, the id (int) used for the selection
      */
     function set_join_fields(array  $join_field_lst,
                              string $join_type,
@@ -1309,7 +1317,7 @@ class sql_creator
                                 if ($par != '') {
                                     $par_name = sql::PAR_PREFIX_MYSQL . $par;
                                 } else {
-                                    if ($chg_row_fld == sql::NAME_SEP . group::FLD_ID) {
+                                    if ($chg_row_fld == sql::NAME_SEP . group_db::FLD_ID) {
                                         $par_name = $chg_row_fld;
                                     } else {
                                         $par_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
@@ -1744,7 +1752,7 @@ class sql_creator
         $ext = sql::NAME_SEP . self::FILE_INSERT;
         if ($this->is_value_class($class)) {
             // to log changes of values or results always the group id is used instead e.g. the four id phrase fields
-            $id_fld = group::FLD_ID;
+            $id_fld = group_db::FLD_ID;
             $id_fld_new = sql::NAME_SEP . $id_fld;
         } else {
             $id_fld_new = $this->var_name_new_id($sc_par_lst);
@@ -1863,7 +1871,8 @@ class sql_creator
             or $class == value_time::class
             or $class == value_text::class
             or $class == value_geo::class
-            or $class == value_time_series::class) {
+            or $class == value_time_series::class
+            or $class == group::class) {
             return true;
         } else {
             return false;
@@ -1949,9 +1958,9 @@ class sql_creator
             $qp->sql .= ' ' . $qp_log->sql . ';';
 
             // add the user_id if needed
-            $log_usr_id = $fvt_lst->get_value(user_db::FLD_ID);
+            $log_usr_id = $usr->id;
             if ($log_usr_id == null) {
-                $log_usr_id = $usr->id;
+                $log_usr_id = $fvt_lst->get_value(user_db::FLD_ID);
             }
             $par_lst_out->add_field(
                 user_db::FLD_ID,
@@ -2213,7 +2222,7 @@ class sql_creator
         $log->set_class($sbx::class);
         $log->set_field($num_fld);
 
-        $log->group_id = $fvt_lst->get_value(group::FLD_ID);
+        $log->group_id = $fvt_lst->get_value(group_db::FLD_ID);
         $val_old = null;
         if ($sc_par_lst->is_update()) {
             $val_old = $fvt_lst->get_old($num_fld);
@@ -2266,12 +2275,12 @@ class sql_creator
         }
         if (is_numeric($log->group_id)) {
             $par_lst_out->add_field(
-                group::FLD_ID,
+                group_db::FLD_ID,
                 intval($log->group_id),
                 sql_par_type::INT);
         } else {
             $par_lst_out->add_field(
-                group::FLD_ID,
+                group_db::FLD_ID,
                 $log->group_id,
                 sql_par_type::TEXT);
         }
@@ -4904,9 +4913,6 @@ class sql_creator
         }
         $result = $type . sql_db::FLD_EXT_ID;
         // standard exceptions for nice english
-        if ($result == 'sys_log_statuss_id') {
-            $result = 'sys_log_status_id';
-        }
         if ($result == 'blocked_ip_id') {
             $result = 'ip_range_id';
         }
@@ -5059,8 +5065,11 @@ class sql_creator
         if ($result == 'change_values_geo_bigs') {
             $result = 'change_values_geo_big';
         }
+        if ($result == 'sys_log_statuuss') {
+            $result = 'sys_log_statuus';
+        }
         if ($result == 'sys_log_statuss') {
-            $result = 'sys_log_status';
+            $result = 'sys_log_statuus';
         }
         if ($result == 'sys_logs') {
             $result = 'sys_log';
@@ -5229,9 +5238,6 @@ class sql_creator
         if ($result == 'element_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
-        if ($result == 'sys_log_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
-        }
         if ($result == 'formula_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
@@ -5253,11 +5259,14 @@ class sql_creator
         if ($result == 'profile_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
+        if ($result == 'sys_log_level_name') {
+            $result = sys_log_level::FLD_NAME;
+        }
         if ($result == 'sys_log_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sys_log_status::FLD_NAME;
         }
         if ($result == 'job_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = job_status::FLD_NAME;
         }
         if ($result == 'job_type_name') {
             $result = sql_db::FLD_TYPE_NAME;

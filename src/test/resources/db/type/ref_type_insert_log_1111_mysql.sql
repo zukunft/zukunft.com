@@ -39,8 +39,8 @@ SELECT ref_type_insert_log_1111
     ('wikidata',
      1,
      1,
-     880,
-     881,
+     352,
+     353,
      'wikidata',
-     882,
+     354,
      'wikidata');

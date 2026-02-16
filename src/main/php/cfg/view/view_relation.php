@@ -726,7 +726,7 @@ class view_relation extends sandbox_link
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $obj->predicate_id(),
-                $sys->typ_lst->phr_typ);
+                $sys->typ_lst->mrl_typ);
         }
 
         if ($obj->start_pos !== $this->start_pos) {

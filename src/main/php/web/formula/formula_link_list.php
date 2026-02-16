@@ -96,7 +96,7 @@ class formula_link_list extends ListBase
         $phr_lst = new phrase_list();
         foreach ($this->lst() as $lnk) {
             $phr_id = $lnk->phrase()->id();
-            $to_add = $cac_lst->get_by_id($phr_id);
+            $to_add = $cac_lst->get($phr_id);
             if ($to_add == null) {
                 if ($phr_id != 0) {
                     // TODO Prio 2 speed up by loading all phrase at once

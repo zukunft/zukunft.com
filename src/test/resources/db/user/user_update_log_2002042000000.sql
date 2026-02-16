@@ -47,7 +47,7 @@ SELECT user_update_log_2002042000000
     ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);
 
 SELECT user_update_log_2002042000000
-        (3::bigint,
+        (2::bigint,
          2::smallint,
          211::smallint,
          'zukunft.com system test'::text,

@@ -48,6 +48,7 @@ include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -92,7 +94,7 @@ class value_time_series extends sandbox_value
     // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         user_db::FLD_ID,
-        group::FLD_ID
+        group_db::FLD_ID
     );
 
     // list of the user-specific numeric database field names
@@ -170,7 +172,7 @@ class value_time_series extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_multi($db_row, '', self::FLD_ID);
         if ($result) {
-            $this->grp()->set_id($db_row[group::FLD_ID]);
+            $this->grp()->set_id($db_row[group_db::FLD_ID]);
             if ($db_row[source_db::FLD_ID] > 0) {
                 $this->source = new source($this->get_user());
                 $this->source->id = $db_row[source_db::FLD_ID];
@@ -270,8 +272,8 @@ class value_time_series extends sandbox_value
      */
     function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, group::FLD_ID);
-        $sc->add_where(group::FLD_ID, $grp->id());
+        $qp = $this->load_sql($sc, group_db::FLD_ID);
+        $sc->add_where(group_db::FLD_ID, $grp->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -328,7 +330,7 @@ class value_time_series extends sandbox_value
         if ($log->id() > 0) {
             $db_con->set_class(value_time_series::class);
             $this->id = $db_con->insert_old(
-                array(group::FLD_ID, user_db::FLD_ID, self::FLD_LAST_UPDATE),
+                array(group_db::FLD_ID, user_db::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp()->id(), $this->get_user()->id(), sql::NOW));
             if ($this->id() > 0) {
                 // update the reference in the log

@@ -42,11 +42,13 @@ include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class db_object_multi_user extends db_object_multi
 {
@@ -138,10 +140,12 @@ class db_object_multi_user extends db_object_multi
     function diff_msg(db_object_multi_user|db_object_multi $obj): user_message
     {
         $msg = parent::diff_msg($obj);
+        $lib = new library();
         if ($this->get_user_id() != $obj->get_user_id()) {
             $msg->add(msg_id::DIFF_USER, [
                 msg_id::VAR_USER => $obj->get_user()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->get_user()->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }

@@ -37,6 +37,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 //include_once paths::DB . 'sql_db.php';
@@ -44,13 +45,16 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_RESULT . 'result.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -58,9 +62,11 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -255,7 +261,7 @@ class db_object extends IdObject
             and $sc_par_lst->is_prime()
             and $query_name == 'name'
             and !$sc->is_MySQL()) {
-            $sc->set_id_field(group::FLD_ID . '::text');
+            $sc->set_id_field(group_db::FLD_ID . '::text');
         }
 
         return $qp;
@@ -345,12 +351,73 @@ class db_object extends IdObject
         return '';
     }
 
+    /**
+     * TODO Prio 1 make sure that this function is always called before tying to delete a database row
+     * prevent critical rows such as user from completely being deleted
+     * but allow the system to remove test users
+     * and
+     * prevent critical rows such as language from completely being deleted
+     * but allow the admin users to remove user mistakes
+     *
+     * @param user_message $msg
+     * @return bool
+     */
+    protected function can_delete(user_message $msg): bool
+    {
+        if (in_array($this::class, def::NO_DELETE_CLASSES)) {
+            if ($msg->usr->is_system()) {
+                return true;
+            } else {
+                return false;
+            }
+        } elseif (in_array($this::class, def::ONLY_ADMIN_CAN_DELETE_CLASSES)) {
+            if ($msg->usr->is_admin()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * TODO Prio 1 make sure that this function is always called before tying to update a database row
+     * prevent critical rows such as log rows from completely being deleted
+     * but allow the system to remove test users
+     * and
+     * prevent critical rows such as language from completely being deleted
+     * but allow the admin users to remove user mistakes
+     *
+     * @param user_message $msg
+     * @return bool
+     */
+    protected function can_update(user_message $msg): bool
+    {
+        if (in_array($this::class, def::NO_UPDATE_CLASSES)) {
+            if ($msg->usr->is_system()) {
+                return true;
+            } else {
+                return false;
+            }
+        } elseif (in_array($this::class, def::ONLY_ADMIN_CAN_UPDATE_CLASSES)) {
+            if ($msg->usr->is_admin()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
 
     /*
      * debug
      */
 
-    function dsp_id(): string {
+    function dsp_id(): string
+    {
         $lib = new library();
         $class = $lib->class_to_name($this::class);
         return $class . ' with ' . $this->id_field() . '=' . $this->id();

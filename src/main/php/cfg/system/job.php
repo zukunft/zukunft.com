@@ -670,7 +670,7 @@ class job extends db_object_seq_id_user
                 $sys->typ_lst->job_sta);
         }
         // TODO Prio 2 maybe add the time zone to the formatting and move the format to a SQL const
-        if ($obj->request_time !== $this->request_time) {
+        if ($obj->request_time != $this->request_time) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TIME_REQUEST,
@@ -685,7 +685,7 @@ class job extends db_object_seq_id_user
                 $obj->request_time?->format(sql_db::DATE_FORMAT)
             );
         }
-        if ($obj->start_time !== $this->start_time) {
+        if ($obj->start_time != $this->start_time) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TIME_START,
@@ -700,7 +700,7 @@ class job extends db_object_seq_id_user
                 $obj->start_time?->format(sql_db::DATE_FORMAT)
             );
         }
-        if ($obj->end_time !== $this->end_time) {
+        if ($obj->end_time != $this->end_time) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TIME_END,
@@ -825,12 +825,12 @@ class job extends db_object_seq_id_user
     {
         // the job type must be valid
         if ($this->type_id() <= 0) {
-            $msg->add_err_with_vars(msg_id::JOB_TYPE_INVALID, [
+            $msg->add_err(msg_id::JOB_TYPE_INVALID, [
                 msg_id::VAR_NAME => $this->dsp_id()
             ]);
         } elseif ($this->type_code_id() != job_types::BASE_IMPORT) {
             if ($this->row_id <= 0) {
-                $msg->add_err_with_vars(msg_id::JOB_ROW_MISSING, [
+                $msg->add_err(msg_id::JOB_ROW_MISSING, [
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }

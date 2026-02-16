@@ -34,5 +34,5 @@ SELECT term_view_insert_log_1115000_user
      'System Test description for a view term link'::text,
      0::bigint,
      726::smallint,
-     'standard'::text,
+     'main word'::text,
      1::smallint);

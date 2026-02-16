@@ -632,6 +632,39 @@ class term extends combine_named
         return $phr;
     }
 
+
+    /*
+     * object
+     */
+
+    /**
+     * call the object fill function
+     *
+     * @param word|triple|verb|formula|term $obj the object that should fill up this term
+     * @return void
+     */
+    function fill(word|triple|verb|formula|term $obj): void
+    {
+        if ($this->is_word() and $obj::class == word::class) {
+            $this->obj()->fill($obj, $this->get_user());
+        } elseif ($this->is_word() and $obj::class == term::class and $obj->is_word()) {
+            $this->obj()->fill($obj->get_word(), $this->get_user());
+        } elseif ($this->is_triple() and $obj::class == triple::class) {
+            $this->obj()->fill($obj, $this->get_user());
+        } elseif ($this->is_triple() and $obj::class == term::class and $obj->is_triple()) {
+            $this->obj()->fill($obj->get_triple(), $this->get_user());
+        } elseif ($this->is_verb() and $obj::class == verb::class) {
+            $this->obj()->fill($obj, $this->get_user());
+        } elseif ($this->is_verb() and $obj::class == term::class and $obj->is_verb()) {
+            $this->obj()->fill($obj->get_triple(), $this->get_user());
+        } elseif ($this->is_formula() and $obj::class == formula::class) {
+            $this->obj()->fill($obj, $this->get_user());
+        } elseif ($this->is_formula() and $obj::class == term::class and $obj->is_formula()) {
+            $this->obj()->fill($obj->get_triple(), $this->get_user());
+        }
+    }
+
+
     /*
      * load functions
      */
@@ -1159,12 +1192,12 @@ class term extends combine_named
      * check if the word, verb, triple or formula can be added to the database if all related terms are added
      * the differentiation to the db_ready is relevant to save a list of triples to the database
      * where some triples are part of other triples that have to be added with another save list attempt
-     * @param user_message $usr_msg fill up with the message if this term might be read to be added to the database
+     * @param user_message|Message $msg fill up with the message if this term might be read to be added to the database
      * @return bool true if another save list attempt is expected to add more word, verb, triple or formula to the database
      */
-    function can_be_ready(user_message $usr_msg): bool
+    function can_be_ready(user_message|Message $msg): bool
     {
-        return $this->obj()->can_be_ready($usr_msg);
+        return $this->obj()->can_be_ready($msg);
     }
 
     /**
@@ -1228,7 +1261,7 @@ class term extends combine_named
                 $this->set_obj($frm);
             } else {
                 // TODO Prio 0 review
-                $usr_msg->add_err_with_vars(msg_id::IMPORT_FAILED, []);
+                $usr_msg->add_err(msg_id::IMPORT_FAILED, []);
             }
         }
 

@@ -43,8 +43,8 @@ SELECT view_type_insert_log_1111
     ('standard'::text,
      1::bigint,
      1::smallint,
-     888::smallint,
-     889::smallint,
+     714::smallint,
+     715::smallint,
      'default'::text,
-     890::smallint,
+     716::smallint,
      'the base display mask without additional functionalities'::text);

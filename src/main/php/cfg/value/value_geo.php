@@ -60,8 +60,11 @@ include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
@@ -76,9 +79,12 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use DateTime;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use DateTime;
 
 class value_geo extends value_base
 {
@@ -153,6 +159,32 @@ class value_geo extends value_base
     )
     {
         parent::__construct($usr, $val, $grp);
+    }
+
+    /**
+     * map a geo value api json to this model value object
+     * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successfully
+     */
+    function api_mapper(array $api_json, user_message $msg): bool
+    {
+        $lib = new library();
+        parent::api_mapper($api_json, $msg);
+
+        if (array_key_exists(json_fields::TIME_VALUE, $api_json)) {
+            $value = $api_json[json_fields::TIME_VALUE];
+            if (strtotime($value)) {
+                $this->set_last_update($lib->get_datetime($value, $this->dsp_id(), 'api mapper'));
+            } else {
+                $msg->add(msg_id::IMPORT_VALUE_NOT_DATETIME, [
+                    msg_id::VAR_VALUE => $value,
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id()
+                ]);
+            }
+        }
+
+        return $msg->is_ok();
     }
 
 

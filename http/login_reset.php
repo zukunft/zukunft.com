@@ -36,11 +36,13 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 
 $html = new html_base();
+$msg_txt = '';
 
 // TODO include("auth.php");
 // all taken from
@@ -103,7 +105,7 @@ if ($db_con->is_open()) {
                 //header("Location: view.php?sid=".SID.""); // Modify to go to the page you would like
                 exit;
             } else {
-                $msg .= '<p style="color:red">Username and email no found. Please try again.</p><br>';
+                $msg_txt .= '<p style="color:red">Username and email no found. Please try again.</p><br>';
             }
         }
     }
@@ -120,7 +122,7 @@ if ($db_con->is_open()) {
         $result .= '<input name="username"><br><br> ';
         $result .= 'Email address:<br> ';
         $result .= '<input type="' . html_base::INPUT_EMAIL . '" name="email"><br><br> ';
-        $result .= $msg;
+        $result .= $msg_txt;
         $result .= '  <input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Reset password"> ';
         $result .= '</form>   ';
         $result .= '</div>   ';

@@ -33,6 +33,7 @@ the object structure is:
 +-- xml_serializer - turning an array or object into XML using PHP
 +-- fig_ids - helper class for figure id lists
 +-- formula_db - the database const for formula tables
++-- group_db - the database const for group tables
 +-- group_id_list - functions for a list of group ids
 \-- id
     \-- group_id - e.g. to create a group_id based on a phrase list
@@ -42,35 +43,6 @@ the object structure is:
     \-- value_ts_data - for a single time series value data entry
 +-- id_list - a base object for a list of database IDs
 +-- system_object - a header object for the system data cache and execution time tracking
-\-- type_list
-    \-- component_link_type_list - to define the behaviour if a component is linked to a view
-    \-- component_type_list - to link coded functionality to a view component
-    \-- position_type_list - to link coded functionality to a view component position
-    \-- view_style_list - to define the view or component style e.g. the number of columns to use
-    \-- element_type_list - to link coded functionality to a formula element type
-    \-- formula_link_type_list - to link coded functionality to a formula link
-    \-- formula_type_list - list to link coded functionality to a formula
-    \-- language_form_list - a database based enum list of all languages
-    \-- language_list - a database based enum list of all languages
-    \-- change_action_list - the const for the change log action table
-    \-- change_field_list - the const for the change log field table
-    \-- change_table_list - to link coded functionality to a log log table
-    \-- phrase_types - to link coded functionality to a word or a triple, which means to every phrase
-    \-- ref_list - al list of ref objects
-    \-- ref_type_list - to link coded functionality to a reference
-    \-- source_type_list - to link coded functionality to a source
-    \-- protection_type_list - a database based enum list for the data protection types
-    \-- share_type_list - a database based enum list for the data share types
-    \-- job_status_list - list of predefined system batch jobs
-    \-- job_type_list - list of predefined system batch jobs
-    \-- sys_log_function_list - to group the system log entries by function
-    \-- sys_log_status_list - list of the system log statuus
-    \-- user_profile_list - a list of possible user profiles with the database id
-    \-- verb_list - al list of verb objects
-    \-- view_link_type_list - to defined how a term is linked to a view
-    \-- view_relation_type_list - to defined how a term is related to a view
-    \-- view_sys_list - list of predefined system views
-    \-- view_type_list - to link coded functionality to a view
 +-- type_lists - helper class to combine all preloaded types in one class for the API
 +-- convert_wikipedia_table - convert a wikipedia table to a
 +-- import - import data - take a object from a json, yaml or XML message and trigger the object saves
@@ -88,6 +60,7 @@ the object structure is:
 +-- ip_range_db - the database const for ip_range tables
 +-- job_db - the database const for job tables
 +-- log - the simple log interface object
++-- sys_log_db - the database const for the system log table
 +-- system_time_list - a list of system error objects
 +-- user_list - a list of users
 +-- value_db - the database const for value tables
@@ -101,6 +74,7 @@ the object structure is:
 +-- expressionShared - common parts of the formula expressing handling used in front- and backend
 +-- charsShared - const symbols used for the formula expressions
 +-- componentsShared - const components with name and id used by the system
++-- defShared - general system definitions used in frontend and backend
 +-- filesShared - resource file names used in backend and frontend
 +-- formulasShared - predefined formulas used in the backend and frontend as code id
 +-- groupsShared - phrase group or value names used by the system for testing
@@ -201,8 +175,8 @@ the object structure is:
                 \-- pod_status - the status of a pod
                 \-- pod_type - to assign predefined code to a some pods
                 \-- sys_log_function - to group the system log entries by function
+                \-- sys_log_level - to link coded functionality to a system log status
                 \-- sys_log_status - to link coded functionality to a system log status
-                \-- sys_log_type - to link coded functionality to a system log status
                 \-- user_official_type - the superclass for word, formula and view types
                 \-- user_profile - a database based enum for the user profiles
                 \-- user_type - the superclass for word, formula and view types
@@ -251,6 +225,38 @@ the object structure is:
                 \-- ip_range_list - a list of internet protocol address ranges
                 \-- job_list - a list of calculation request
             \-- sys_log_list - a list of system error objects
+        \-- ListOfIdNamedObjectsShared
+            \-- ListOfIdNamedCodeObjectsShared
+                \-- type_list
+                    \-- component_link_type_list - to define the behaviour if a component is linked to a view
+                    \-- component_type_list - to link coded functionality to a view component
+                    \-- position_type_list - to link coded functionality to a view component position
+                    \-- view_style_list - to define the view or component style e.g. the number of columns to use
+                    \-- element_type_list - to link coded functionality to a formula element type
+                    \-- formula_link_type_list - to link coded functionality to a formula link
+                    \-- formula_type_list - list to link coded functionality to a formula
+                    \-- language_form_list - a database based enum list of all languages
+                    \-- language_list - a database based enum list of all languages
+                    \-- change_action_list - the const for the change log action table
+                    \-- change_field_list - the const for the change log field table
+                    \-- change_table_list - to link coded functionality to a log log table
+                    \-- phrase_types - to link coded functionality to a word or a triple, which means to every phrase
+                    \-- ref_list - al list of ref objects
+                    \-- ref_type_list - to link coded functionality to a reference
+                    \-- source_type_list - to link coded functionality to a source
+                    \-- protection_type_list - a database based enum list for the data protection types
+                    \-- share_type_list - a database based enum list for the data share types
+                    \-- job_status_list - list of predefined system batch jobs
+                    \-- job_type_list - list of predefined system batch jobs
+                    \-- sys_log_function_list - to group the system log entries by function
+                    \-- sys_log_level_list - list of the system log types
+                    \-- sys_log_status_list - list of the system log statuus
+                    \-- user_profile_list - a list of possible user profiles with the database id
+                    \-- verb_list - al list of verb objects
+                    \-- view_link_type_list - to defined how a term is linked to a view
+                    \-- view_relation_type_list - to defined how a term is related to a view
+                    \-- view_sys_list - list of predefined system views
+                    \-- view_type_list - to link coded functionality to a view
         \-- ListBaseUi
             \-- element_groupUi - a group of formula elements that, in combination, return a value or a list of values
             \-- element_listUi - a list of formula elements to place the name function

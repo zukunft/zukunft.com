@@ -49,6 +49,7 @@ include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
@@ -63,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -96,9 +98,9 @@ class sandbox_list_named extends sandbox_list
      * to be called after the lists have been updated
      * but the index list have not yet been updated
      */
-    public function set_lst_dirty(): void
+    public function set_hash_dirty(): void
     {
-        parent::set_lst_dirty();
+        parent::set_hash_dirty();
         $this->lst_name_dirty = true;
     }
 
@@ -110,7 +112,7 @@ class sandbox_list_named extends sandbox_list
     function set_from_json(string $json_api_msg): user_message
     {
         $usr_msg = $this->api_mapper(json_decode($json_api_msg, true));
-        $this->set_lst_dirty();
+        $this->set_hash_dirty();
         return $usr_msg;
     }
 
@@ -118,7 +120,7 @@ class sandbox_list_named extends sandbox_list
      * to be called after the lists have been updated
      * but the index list have not yet been updated
      */
-    protected function set_lst_clean(): void
+    protected function set_hash_clean(): void
     {
         $this->lst_name_dirty = false;
     }
@@ -223,25 +225,25 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * add a named object to the list that does not yet have an id but has a name
-     * @param sandbox_named|triple|phrase|term|null $to_add the named user sandbox object that should be added
+     * @param sandbox_named|triple|phrase|term|IdObject|null $to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @param user_message $usr_msg to report which entry is double
+     * @param Message $msg to report which entry is double
      * @returns bool true if the object has been added
      */
-    function add_by_name(
-        sandbox_named|triple|phrase|term|null $to_add,
-        bool                                  $allow_duplicates = false,
-        user_message                          $usr_msg = new user_message()
+    function add_by_key(
+        sandbox_named|triple|phrase|term|IdObject|null $to_add,
+        bool                                           $allow_duplicates = false,
+        Message                                        $msg = new Message()
     ): bool
     {
         if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             if ($to_add->id() == null) {
-                $this->set_lst_dirty();
+                $this->set_hash_dirty();
             }
-            parent::add_obj($to_add, $allow_duplicates, $usr_msg);
+            parent::add_obj($to_add, $allow_duplicates, $msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -273,7 +275,7 @@ class sandbox_list_named extends sandbox_list
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get_by_id($sbx_new->id());
+                $sbx_old = $this->get($sbx_new->id());
                 if ($sbx_old != null) {
                     $sbx_old->fill($sbx_new, $usr);
                 } else {
@@ -349,7 +351,7 @@ class sandbox_list_named extends sandbox_list
             $pos = $key_lst[$name];
         }
         if ($pos !== null) {
-            return $this->get($pos);
+            return $this->get_by_key($pos);
         } else {
             return null;
         }

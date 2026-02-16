@@ -39,8 +39,8 @@ SELECT formula_type_insert_log_1111
     ('calc',
      1,
      1,
-     884,
-     885,
+     691,
+     692,
      'default',
-     886,
+     693,
      'a normal calculation formula');

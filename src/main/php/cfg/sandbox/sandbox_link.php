@@ -202,7 +202,7 @@ class sandbox_link extends sandbox
      * fill the vars with this link type sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -611,10 +611,10 @@ class sandbox_link extends sandbox
     /**
      * check if the link object (e.g. triple) might be added to the database
      * if all related objects have been added to the database
-     * @param user_message $msg to add the suggested solutions if something is missing e.g. a linked object
+     * @param user_message|Message $msg to add the suggested solutions if something is missing e.g. a linked object
      * @return bool true if the link can be added to the database after the linked objects have been added
      */
-    function can_be_ready(user_message $msg): bool
+    function can_be_ready(user_message|Message $msg): bool
     {
         parent::db_ready($msg);
 
@@ -1602,27 +1602,31 @@ class sandbox_link extends sandbox
      * @param sandbox|db_object_seq_id $db_row the word with the database values before the update
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator              $sc,
         sandbox|db_object_seq_id $db_row,
         user_message             $usr_msg,
         sql_type_list            $sc_par_lst = new sql_type_list()
-    ): sql_par
+    ): sql_par|null
     {
-        // clone the sql parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::UPDATE);
-        // get the field names, values and parameter types that have been changed
-        // and that needs to be updated in the database
-        // the db_* child function call the corresponding parent function
-        // including the sql parameters for logging
-        $fld_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
-        $all_fields = $this->db_fields_all($sc_par_lst_used);
-        // unlike the db_* function the sql_update_* parent function is called directly
-        return $this::sql_update_switch($sc, $fld_lst, $all_fields, $usr_msg, $sc_par_lst_used);
+        if ($this->can_update($usr_msg)) {
+            // clone the sql parameter list to avoid changing the given list
+            $sc_par_lst_used = clone $sc_par_lst;
+            // set the sql query type
+            $sc_par_lst_used->add(sql_type::UPDATE);
+            // get the field names, values and parameter types that have been changed
+            // and that needs to be updated in the database
+            // the db_* child function call the corresponding parent function
+            // including the sql parameters for logging
+            $fld_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
+            $all_fields = $this->db_fields_all($sc_par_lst_used);
+            // unlike the db_* function the sql_update_* parent function is called directly
+            return $this::sql_update_switch($sc, $fld_lst, $all_fields, $usr_msg, $sc_par_lst_used);
+        } else {
+            return null;
+        }
     }
 
 

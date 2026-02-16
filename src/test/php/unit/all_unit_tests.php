@@ -207,10 +207,24 @@ class all_unit_tests extends test_cleanup
         $usr->set_profile(user_profiles::EMAIL);
         $this->usr1 = $usr;
 
+        // create a second dummy user for testing
+        $usr2 = new user;
+        $usr2->id = users::SYSTEM_TEST_PARTNER_ID;
+        $usr2->name = users::SYSTEM_TEST_PARTNER_NAME;
+        $usr2->set_profile(user_profiles::EMAIL);
+        $this->usr2 = $usr2;
+
+        // create a dummy admin user for unit testing
+        $usr_admin = new user;
+        $usr_admin->id = users::SYSTEM_ADMIN_ID;
+        $usr_admin->name = users::SYSTEM_ADMIN_NAME;
+        $this->usr_admin = $usr_admin;
+
         // create a dummy system user for unit testing
         $usr_sys = new user;
         $usr_sys->id = users::SYSTEM_ID;
         $usr_sys->name = users::SYSTEM_NAME;
+        $this->usr_system = $usr_sys;
 
         $t_usr = new test_users();
         $this->usr_dev = $t_usr->user_dev();
