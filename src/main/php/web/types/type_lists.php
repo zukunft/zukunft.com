@@ -468,12 +468,12 @@ class type_lists
 
     function get_view_by_id(int $id): ?view
     {
-        return $this->html_system_views->get_by_id($id);
+        return $this->html_system_views->get($id);
     }
 
     function get_view(string $code_id): view
     {
-        return $this->html_system_views->get_by_id($code_id);
+        return $this->html_system_views->get($code_id);
     }
 
     function get_html(string $code_id): string

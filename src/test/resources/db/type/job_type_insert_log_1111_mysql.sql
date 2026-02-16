@@ -39,8 +39,8 @@ SELECT job_type_insert_log_1111
     ('update value',
      1,
      1,
-     851,
-     852,
+     232,
+     233,
      'value_update',
-     853,
+     234,
      'if a value is updated all the depending results should be calculated again');

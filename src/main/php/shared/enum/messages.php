@@ -1111,6 +1111,9 @@ enum messages: string
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' failed';
 
+    case DB_INSERT_ID_MISSING = 'insert of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' does not return the expected database id';
     case DB_PHRASE_MISSING = 'phrase '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is unexpected missing in database during import';
@@ -1150,6 +1153,9 @@ enum messages: string
         . '" already exists. Please use another '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' name.';
+    case CLASS_LIST_UNEXPECTED = 'Cannot create type for the list class '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' because no matching type has been assigned in the code';
 
     case JOB_TYPE_INVALID = 'the job type for job '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
@@ -1166,6 +1172,12 @@ enum messages: string
     case IP_RANGE_TO_MISSING = 'the to value of the ip range '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is not valid';
+
+    case TYPE_CODE_ID_MISSING = 'the code_id of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' type for job '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' is missing';
 
     case VERB_UPDATE_FAILED = 'updating '
         . self::VAR_START . self::VAR_NAME . self::VAR_END

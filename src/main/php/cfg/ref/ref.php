@@ -188,7 +188,7 @@ class ref extends sandbox_link
     //                                       use the source to define an as good as possible import
     //                                       or at least a check if the reference is still valid
     public ?string $url;
-    private ?string $code_id = null;
+    public ?string $code_id = null;
     public ?string $description = null;
 
     // TODO deprecate

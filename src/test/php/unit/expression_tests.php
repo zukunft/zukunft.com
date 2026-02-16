@@ -147,7 +147,7 @@ class expression_tests
         $id_lst = $exp->terms_missing($usr_msg, $trm_lst);
         $t->assert_true($test_name, $id_lst->is_empty());
         $test_name = 'id list of missing terms is returning the missing term id';
-        $trm_lst->unset(words::SECOND_ID);
+        $trm_lst->unset_by_id(words::SECOND_ID);
         $id_lst = $exp->terms_missing($usr_msg, $trm_lst);
         $t->assert($test_name, $result, $target);
 

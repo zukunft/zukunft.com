@@ -1488,7 +1488,7 @@ class phrase_list extends sandbox_list_named
         if (count($phr_ids) > 0) {
             if (in_array($phr_to_del->id(), $phr_ids)) {
                 $del_pos = array_search($phr_to_del->id(), $phr_ids);
-                if ($this->get($del_pos)->id() == $phr_to_del->id()) {
+                if ($this->get_by_key($del_pos)->id() == $phr_to_del->id()) {
                     unset($this->lst()[$del_pos]);
                 } else {
                     log_err('Remove of ' . $phr_to_del->dsp_id() . ' failed');
@@ -2029,6 +2029,7 @@ class phrase_list extends sandbox_list_named
     /**
      * sort the phrase object list by name
      * TODO use the sort function of the named list
+     * TODO Prio 1 check if a unit test exists
      * @return array list with the phrases (not a phrase list object!) sorted by name
      */
     function name_sort(): array
@@ -2045,9 +2046,9 @@ class phrase_list extends sandbox_list_named
         }
         asort($name_lst);
         log_debug('sorted "' . implode('","', $name_lst) . '" (' . $lib->dsp_array(array_keys($name_lst)) . ')');
-        foreach (array_keys($name_lst) as $sorted_id) {
-            log_debug('get ' . $sorted_id);
-            $phr_to_add = $this->get($sorted_id);
+        foreach (array_keys($name_lst) as $sorted_key) {
+            log_debug('get ' . $sorted_key);
+            $phr_to_add = $this->get_by_key($sorted_key);
             log_debug('got ' . $phr_to_add->name());
             $result[] = $phr_to_add;
         }
@@ -2063,6 +2064,7 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * TODO Prio 0 add a unit test
      * sort the phrase object list by id
      * @return phrase_list with the phrases (not a phrase list object!) sorted by name
      */
@@ -2072,14 +2074,15 @@ class phrase_list extends sandbox_list_named
         $id_lst = $this->id_lst();
         asort($id_lst);
         $result->set_lst(array());
-        foreach (array_keys($id_lst) as $sorted_id) {
-            $phr_to_add = $this->get($sorted_id);
+        foreach (array_keys($id_lst) as $sorted_key) {
+            $phr_to_add = $this->get_by_key($sorted_key);
             $result->add($phr_to_add);
         }
         return $result;
     }
 
     /**
+     * TODO Prio 0 add a unit test
      * sort the phrase object list by id in reverse order
      * @return phrase_list with the phrases (not a phrase list object!) sorted by name
      */
@@ -2089,8 +2092,8 @@ class phrase_list extends sandbox_list_named
         $id_lst = $this->id_lst();
         arsort($id_lst);
         $result->set_lst(array());
-        foreach (array_keys($id_lst) as $sorted_id) {
-            $phr_to_add = $this->get($sorted_id);
+        foreach (array_keys($id_lst) as $sorted_key) {
+            $phr_to_add = $this->get_by_key($sorted_key);
             $result->add($phr_to_add);
         }
         return $result;
@@ -2402,7 +2405,7 @@ class phrase_list extends sandbox_list_named
     {
         $phr_lst = new phrase_list($this->get_user());
         foreach ($ids as $id) {
-            $phr = $phr_lst->get_by_id($id);
+            $phr = $phr_lst->get($id);
             $phr_lst->add($phr);
         }
         return $phr_lst;

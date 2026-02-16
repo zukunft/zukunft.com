@@ -66,7 +66,7 @@ class ListOfIdObjects extends ListOf
 
     // memory vs speed optimize vars for faster finding the list position by the database id
     private array $id_pos_lst;
-    private bool $lst_dirty;
+    private bool $hash_dirty;
 
 
     /*
@@ -75,10 +75,9 @@ class ListOfIdObjects extends ListOf
 
     function __construct(array $lst = [])
     {
-        parent::__construct();
-
         $this->id_pos_lst = [];
-        $this->lst_dirty = false;
+        $this->set_hash_dirty();
+        parent::__construct($lst);
     }
 
     function reset(): void
@@ -86,7 +85,7 @@ class ListOfIdObjects extends ListOf
         parent::reset();
 
         $this->id_pos_lst = [];
-        $this->lst_dirty = false;
+        $this->hash_dirty = false;
     }
 
     function clone_reset(): ListOfIdObjects
@@ -106,18 +105,19 @@ class ListOfIdObjects extends ListOf
      */
     function set_lst(array $lst): bool
     {
-        $this->set_lst_dirty();
+        $this->set_hash_dirty();
         return parent::set_lst($lst);
     }
 
     /**
      * to be called after the lists have been updated,
      * but the index list has not yet been updated
-     * is overwritten by the child sandbox_list_named, sandbox_link_list and sandbox_value_list
+     * is overwritten by the child objects that have an additional hash
+     * e.g. ListOfIdNamedObjects, sandbox_list_named, sandbox_link_list and sandbox_value_list
      */
-    protected function set_lst_dirty(): void
+    protected function set_hash_dirty(): void
     {
-        $this->lst_dirty = true;
+        $this->hash_dirty = true;
     }
 
     /**
@@ -125,16 +125,16 @@ class ListOfIdObjects extends ListOf
      */
     protected function is_dirty(): bool
     {
-        return $this->lst_dirty;
+        return $this->hash_dirty;
     }
 
     /**
      * to be called after the index lists have been updated
      * is overwritten by the child _sandbox_list_named
      */
-    protected function set_lst_clean(): void
+    protected function set_hash_clean(): void
     {
-        $this->lst_dirty = false;
+        $this->hash_dirty = false;
     }
 
 
@@ -150,7 +150,7 @@ class ListOfIdObjects extends ListOf
      */
     function ids(?int $limit = null): array
     {
-        if ($limit == null and !$this->lst_dirty) {
+        if ($limit == null and !$this->hash_dirty) {
             $result = array_keys($this->id_pos_lst);
         } else {
             $result = array();
@@ -168,6 +168,16 @@ class ListOfIdObjects extends ListOf
         return $result;
     }
 
+    /**
+     * true if the id exists in this list
+     * @param string $id the database id of the list item to check
+     * @return bool true if the id exists in this list
+     */
+    function has_id(string $id): bool
+    {
+        return array_key_exists($id, $this->id_pos_lst());
+    }
+
 
     /*
      * search
@@ -180,7 +190,7 @@ class ListOfIdObjects extends ListOf
      * @param int|string $id the unique database id of the object that should be returned
      * @return object|null the found user sandbox object or null if no id is found
      */
-    function get_by_id(int|string $id): object|null
+    function get(int|string $id): object|null
     {
         $key_lst = $this->id_pos_lst();
         if (array_key_exists($id, $key_lst)) {
@@ -208,13 +218,18 @@ class ListOfIdObjects extends ListOf
     {
         $result = $this->clone_reset();
         foreach ($this->lst() as $obj) {
-            if (!$lst->get_by_id($obj->id())) {
+            if (!$lst->get($obj->id())) {
                 $result->add_obj($obj);
             }
         }
         return $result;
     }
 
+    /**
+     * return the first object as a function for easy adding of exceptions
+     *
+     * @return IdObject|TextIdObject|CombineObject|null the first object of the list
+     */
     function get_first_object(): IdObject|TextIdObject|CombineObject|null
     {
         return $this->lst()[0] ?? null;
@@ -242,9 +257,9 @@ class ListOfIdObjects extends ListOf
         // check boolean first because in_array might take longer
         if ($allow_duplicates) {
             $this->add_direct($obj_to_add);
-            $this->set_lst_dirty();
+            $this->set_hash_dirty();
         } else {
-            if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
+            if (!$this->has_id($obj_to_add->id())) {
                 $this->add_direct($obj_to_add);
             } else {
                 $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
@@ -260,13 +275,34 @@ class ListOfIdObjects extends ListOf
      * remove / unset an object of the list
      * and set the cache to dirty
      *
-     * @param int|string $key the unique id of the entry
+     * @param int|string $id the unique database id of the entry
      * @returns bool true if the object has been added
      */
-    function unset(int|string $key): bool
+    function unset_by_id(int|string $id): bool
     {
-        $this->set_lst_dirty();
-        return parent::unset($key);
+        $result = false;
+        $key = $this->key_by_id($id);
+        while ($key !== null) {
+            $this->set_hash_dirty();
+            if (parent::unset($key)) {
+                $result = true;
+                $key = $this->key_by_id($id);
+            } else {
+                $key = null;
+            }
+
+        }
+        return $result;
+    }
+
+    private function key_by_id(int|string $id): int|null
+    {
+        $key = null;
+        $id_pos_lst = $this->id_pos_lst();
+        if (array_key_exists($id, $id_pos_lst)) {
+            $key = $id_pos_lst[$id];
+        }
+        return $key;
     }
 
     /**
@@ -290,7 +326,7 @@ class ListOfIdObjects extends ListOf
      */
     protected function id_pos_lst(): array
     {
-        if ($this->lst_dirty) {
+        if ($this->hash_dirty) {
             $this->set_id_pos_lst();
         }
         return $this->id_pos_lst;
@@ -304,7 +340,7 @@ class ListOfIdObjects extends ListOf
                 $this->id_pos_lst[$obj->id()] = $key;
             }
         }
-        $this->lst_dirty = false;
+        $this->hash_dirty = false;
     }
 
 
@@ -357,6 +393,22 @@ class ListOfIdObjects extends ListOf
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
         return false;
+    }
+
+
+    /**
+     * TODO Prio 3 rename to remove
+     *
+     * unset an object of the list
+     * TODO move to ListOfIdObjects ? And if not, explain in a comment why
+     *
+     * @param int|string $key the unique id of the entry
+     * @returns bool true if the object has been added
+     */
+    protected function unset(int|string $key): bool
+    {
+        $this->set_hash_dirty();
+        return parent::unset($key);
     }
 
 

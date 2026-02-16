@@ -33,6 +33,7 @@ A proper issue ticket should be created for these TODOs notes:
          start with the formula unit tests
     TODO add test blocks db read, api, workflow and integration which actually gets data from e.g. wikidata
     TODO add user_message parameter to all functions that return a user message or might create a message to the user
+    TODO check that all words, verbs and triples used in the system config are part of FIXED_NAMES which prevents the standard from beeing renamed
     TODO type versus predicate:
          - a type assigns coded functionality to one object
          - a predicate assigns coded functionality to an object link between two objects

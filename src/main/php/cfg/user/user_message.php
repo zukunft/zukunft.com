@@ -582,7 +582,7 @@ class user_message extends Message
 
     /**
      * TODO should be deprecated once the msg_id is used for all messages
-     * @return string with latest added message text
+     * @return string with the latest added message text
      */
     function get_last_message(): string
     {
@@ -591,7 +591,7 @@ class user_message extends Message
 
     /**
      * TODO should pick the last either from msg_var_lst or msg_id_lst
-     * @return string with latest added message translated to the user language
+     * @return string with the latest added message translated to the user language
      */
     function get_last_message_translated(): string
     {

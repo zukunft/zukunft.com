@@ -640,13 +640,18 @@ class db_object_seq_id extends db_object
             // ... and add the database row
             $db_con->insert($qp, 'insert ' . $this->dsp_id(), $msg);
 
+            // ... set the id of the object
+            if ($this->id == 0) {
+                $this->id = $msg->get_row_id();
+            }
+
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         } else {
             $lib = new library();
             $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_PROFILE => $msg->usr->name()
+                msg_id::VAR_USER_PROFILE => $msg->usr?->name()
             ]);
         }
 
@@ -769,23 +774,27 @@ class db_object_seq_id extends db_object
      * @param type_object $db_row the sandbox object with the database values before the update
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator      $sc,
         db_object_seq_id $db_row,
         user_message     $usr_msg,
         sql_type_list    $sc_par_lst = new sql_type_list()
-    ): sql_par
+    ): sql_par|null
     {
-        // clone the parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::UPDATE);
-        if ($sc_par_lst_used->do_log()) {
-            return $this->sql_write($sc, $db_row, $usr_msg, $sc_par_lst_used);
+        if ($this->can_update($usr_msg)) {
+            // clone the parameter list to avoid changing the given list
+            $sc_par_lst_used = clone $sc_par_lst;
+            // set the sql query type
+            $sc_par_lst_used->add(sql_type::UPDATE);
+            if ($sc_par_lst_used->do_log()) {
+                return $this->sql_write($sc, $db_row, $usr_msg, $sc_par_lst_used);
+            } else {
+                return $this->sql_write_no_log($sc, $db_row, $usr_msg, $sc_par_lst_used);
+            }
         } else {
-            return $this->sql_write_no_log($sc, $db_row, $usr_msg, $sc_par_lst_used);
+            return null;
         }
     }
 
@@ -953,15 +962,6 @@ class db_object_seq_id extends db_object
         $qp->call_sql .= $call_val_str . ');';
 
         return $qp;
-    }
-
-    protected function can_delete(user_message $msg): bool
-    {
-        $msg->add(msg_id::MISSING_OVERWRITE, [
-            msg_id::VAR_NAME => 'can_delete',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return false;
     }
 
     /**
@@ -1366,9 +1366,14 @@ class db_object_seq_id extends db_object
         $class = $lib->class_to_name($this::class);
 
         // default is that all user can add data if they are not blocked
-        if ($usr_msg->usr->is_blocked()) {
+        if ($usr_msg->usr == null) {
             $can_change = false;
-            log_warning('adding of ' . $class . ' ' . $this->dsp_id() . ' by user ' . $usr_msg->usr->dsp_id() . ' is blocked');
+            log_warning('user missing while adding of ' . $class);
+        } else {
+            if ($usr_msg->usr->is_blocked()) {
+                $can_change = false;
+                log_warning('adding of ' . $class . ' ' . $this->dsp_id() . ' by user ' . $usr_msg->usr->dsp_id() . ' is blocked');
+            }
         }
 
         return $can_change;

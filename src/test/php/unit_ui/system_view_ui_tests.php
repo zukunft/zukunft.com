@@ -126,10 +126,6 @@ class system_view_ui_tests
         $ui->load_dummy_cache_from_test_resources($t->usr1);
         for ($msk_typ = 1; $msk_typ < 2; $msk_typ++) {
             for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
-                // TODO Prio 0 remove temp
-                if ($id == 24) {
-                    log_info('formula add');
-                }
                 $dbo = $this->view_id_to_dbo($id, $t->usr1);
                 $action = $this->view_id_to_url_action($id);
                 // TODO Prio 3 review and use random?

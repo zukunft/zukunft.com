@@ -29,7 +29,7 @@ SELECT sys_log_update_log_10000000008
 SELECT sys_log_update_log_10000000008
     (1::bigint,
      1::smallint,
-     927::smallint,
+     209::smallint,
      'resolved'::text,
      3::smallint,
      'closed'::text,

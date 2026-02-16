@@ -128,7 +128,7 @@ class sandbox_list_named extends sandbox_list
     {
         $this->name_pos_lst = [];
         $this->name_pos_lst_all = [];
-        $this->set_lst_dirty();
+        $this->set_hash_dirty();
 
         parent::__construct($usr, $lst);
     }
@@ -142,9 +142,9 @@ class sandbox_list_named extends sandbox_list
      * to be called after the lists have been updated
      * but the index list have not yet been updated
      */
-    protected function set_lst_dirty(): void
+    protected function set_hash_dirty(): void
     {
-        parent::set_lst_dirty();
+        parent::set_hash_dirty();
         $this->lst_name_dirty = true;
         $this->lst_name_dirty_all = true;
     }
@@ -475,7 +475,7 @@ class sandbox_list_named extends sandbox_list
                     // add only objects that have all mandatory values
                     if ($to_add->can_be_ready($msg)) {
                         $this->add_direct($to_add);
-                        $this->set_lst_dirty();
+                        $this->set_hash_dirty();
                     }
                 } else {
                     parent::add_obj($to_add, $allow_duplicates, $msg);
@@ -507,7 +507,7 @@ class sandbox_list_named extends sandbox_list
             if ($name != '') {
                 if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
                     $this->add_direct($obj_to_add);
-                    $this->set_lst_dirty();
+                    $this->set_hash_dirty();
                 } else {
                     parent::add_obj($obj_to_add, $allow_duplicates, $usr_msg);
                 }
@@ -548,7 +548,7 @@ class sandbox_list_named extends sandbox_list
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get_by_id($sbx_new->term()->id());
+                $sbx_old = $this->get($sbx_new->term()->id());
                 if ($sbx_old != null) {
                     $sbx_old->fill($sbx_new, $usr);
                 } else {
@@ -667,7 +667,7 @@ class sandbox_list_named extends sandbox_list
             $pos = $key_lst[$name];
         }
         if ($pos !== null) {
-            return $this->get($pos);
+            return $this->get_by_key($pos);
         } else {
             return null;
         }

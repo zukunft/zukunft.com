@@ -691,35 +691,40 @@ class element extends db_object_seq_id_user
      * @param element|db_object_seq_id $db_row the word with the database values before the update
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator              $sc,
         element|db_object_seq_id $db_row,
         user_message             $usr_msg,
-        sql_type_list            $sc_par_lst = new sql_type_list()): sql_par
+        sql_type_list            $sc_par_lst = new sql_type_list()
+    ): sql_par|null
     {
-        // clone the sql parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
+        if ($this->can_update($usr_msg)) {
+            // clone the sql parameter list to avoid changing the given list
+            $sc_par_lst_used = clone $sc_par_lst;
 
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::UPDATE);
+            // set the sql query type
+            $sc_par_lst_used->add(sql_type::UPDATE);
 
-        // get the field names, values and parameter types that have been changed
-        // and that needs to be updated in the database
-        // the db_* child function call the corresponding parent function
-        // including the sql parameters for logging
-        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg);
+            // get the field names, values and parameter types that have been changed
+            // and that needs to be updated in the database
+            // the db_* child function call the corresponding parent function
+            // including the sql parameters for logging
+            $fvt_lst = $this->db_fields_changed($db_row, $usr_msg);
 
-        // prepare the sql statement
-        $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::UPDATE, $sc_par_lst_used);
+            // prepare the sql statement
+            $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::UPDATE, $sc_par_lst_used);
 
-        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
-        $qp->par = $fvt_lst->db_values();
+            $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
+            $qp->par = $fvt_lst->db_values();
 
-        // unlike the db_* function the sql_update_* parent function is called directly
+            // unlike the db_* function the sql_update_* parent function is called directly
 
-        return $qp;
+            return $qp;
+        } else {
+            return null;
+        }
     }
 
     function sql_prepare(

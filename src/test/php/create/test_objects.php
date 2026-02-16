@@ -35,12 +35,14 @@ namespace Zukunft\ZukunftCom\test\php\create;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
@@ -71,9 +73,9 @@ class test_objects
      * delete any remaining test objects for a clean test start of each test
      */
     function cleanup_objects(
-        string                                       $ts,
-        array                                        $obj_names,
-        sandbox_named|sandbox_link_named|verb|phrase $obj
+        string                                                   $ts,
+        array                                                    $obj_names,
+        sandbox_named|sandbox_link_named|verb|phrase|type_object $obj
     ): void
     {
         $this->env->subheader($ts . 'cleanup');

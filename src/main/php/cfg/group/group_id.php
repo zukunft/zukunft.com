@@ -81,8 +81,8 @@ class group_id extends id
     /**
      * @param phrase_list $phr_lst the list of phrases that define the value
      * @param bool $fill true if a 512-bit key should be created
-     * @return int|string the group id based on the given phrase list
-     *                    as 64-bit integer, 512-bit key as 112 chars or list of more than 16 keys with 6 chars
+     * @return int|string the group id based on the given phrase list as s
+     *                    64-bit integer, 512-bit key as 112 chars or list of more than 16 keys with 6 chars
      */
     function get_id(phrase_list $phr_lst, bool $fill = true): int|string
     {

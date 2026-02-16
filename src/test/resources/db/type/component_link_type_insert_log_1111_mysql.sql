@@ -39,8 +39,8 @@ SELECT component_link_type_insert_log_1111
     ('always',
      1,
      1,
-     904,
-     905,
+     760,
+     761,
      'always',
-     906,
+     762,
      'the component is always shown as it is');

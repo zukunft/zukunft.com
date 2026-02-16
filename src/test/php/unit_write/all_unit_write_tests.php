@@ -136,8 +136,13 @@ class all_unit_write_tests extends all_unit_read_tests
                 $t->set_users();
                 $t_db->create_test_db_entries($t);
 
-                // run the db write tests
+                // run the general db write tests
                 new user_write_tests()->run($t);
+                // TODO Prio 0 activate
+                //new sys_log_write_tests()->run($t);
+                //new horizontal_write_tests()->run($t);
+
+                // run object specific db write tests
                 new word_write_tests()->run($t);
                 new word_list_write_tests()->run($t);
                 // TODO Prio 1 activate

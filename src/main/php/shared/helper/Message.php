@@ -235,6 +235,19 @@ class Message
         }
     }
 
+    /**
+     * the most useful message for the user
+     * translated to the frontend language
+     *
+     * @return string a text readable for humans, so no too long
+     */
+    function text(): string
+    {
+        // TODO Prio 1 fill up
+        return $this->get_last_message_translated();
+    }
+
+
 
     /*
      * internal

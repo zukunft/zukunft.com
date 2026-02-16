@@ -39,8 +39,8 @@ SELECT job_status_insert_log_1111
     ('created',
      1,
      1,
-     914,
-     915,
+     855,
+     856,
      'new',
-     916,
+     857,
      'the job is not yet assigned to any calc engine');

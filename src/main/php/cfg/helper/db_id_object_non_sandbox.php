@@ -252,39 +252,42 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg collect the messages for the user with the user set who has requested the deletion
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
         user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par
+    ): sql_par|null
     {
-        // clone the sql parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::DELETE);
-        // make the query name unique depending on the log entry
-        $ext = '';
-        if ($this::class == user::class) {
-            $ext = sql::NAME_SEP . $this->log_name_field();
-        }
-        // set the query name
-        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
-        $sc->set_name($qp->name);
-        // delete the user overwrite
-        // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
-        if ($sc_par_lst_used->incl_log()) {
-            // log functions must always use named parameters
-            $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $usr_msg->usr, $sc_par_lst_used);
+        if ($this->can_delete($usr_msg)) {
+            // clone the sql parameter list to avoid changing the given list
+            $sc_par_lst_used = clone $sc_par_lst;
+            // set the sql query type
+            $sc_par_lst_used->add(sql_type::DELETE);
+            // make the query name unique depending on the log entry
+            $ext = '';
+            if ($this::class == user::class) {
+                $ext = sql::NAME_SEP . $this->log_name_field();
+            }
+            // set the query name
+            $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
+            $sc->set_name($qp->name);
+            // delete the user overwrite
+            // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
+            if ($sc_par_lst_used->incl_log()) {
+                // log functions must always use named parameters
+                $sc_par_lst_used->add(sql_type::NAMED_PAR);
+                $qp = $this->sql_delete_and_log($sc, $qp, $usr_msg->usr, $sc_par_lst_used);
+            } else {
+                $par_lst = [$this->id()];
+                $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);
+                $qp->par = $par_lst;
+            }
+            return $qp;
         } else {
-            $par_lst = [$this->id()];
-            $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);
-            $qp->par = $par_lst;
+            return null;
         }
-
-        return $qp;
     }
 
     /**

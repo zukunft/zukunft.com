@@ -159,7 +159,7 @@ class type_object extends db_object_seq_id
      * construct and map
      */
 
-    function __construct(?string $code_id, string $name = '', ?string $description = null, int $id = 0)
+    function __construct(?string $code_id = '', string $name = '', ?string $description = null, int $id = 0)
     {
         parent::__construct();
         $this->id = $id;
@@ -906,6 +906,36 @@ class type_object extends db_object_seq_id
     function all_fields(): array
     {
         return type_object::FLD_NAMES;
+    }
+
+
+    /*
+     * db helper
+     */
+
+    /**
+     * check if the user can add this object to the database
+     * e.g. reject if a reserved name is used and the user is not a system test user or an admin user
+     * to be overwritten by the child objects
+     *
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
+     */
+    protected function check(user_message $msg): bool
+    {
+        // all types must have a code_id or a name
+        // TODO Prio 3 review
+        /*
+        if ($this->code_id != '') {
+            if ($this->name != '') {
+                $msg->add_err(msg_id::TYPE_CODE_ID_MISSING, [
+                    msg_id::VAR_NAME => $this->dsp_id(),
+                    msg_id::VAR_CLASS_NAME => $this::class
+                ]);
+            }
+        }
+        */
+        return $msg->is_ok();
     }
 
 

@@ -39,8 +39,8 @@ SELECT view_link_type_insert_log_1111
     ('main word',
      1,
      1,
-     896,
-     897,
+     732,
+     733,
      'main_word',
-     898,
+     734,
      'use the main word as start for the view');

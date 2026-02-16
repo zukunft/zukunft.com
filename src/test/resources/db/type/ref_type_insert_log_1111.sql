@@ -43,8 +43,8 @@ SELECT ref_type_insert_log_1111
     ('wikidata'::text,
      1::bigint,
      1::smallint,
-     880::smallint,
-     881::smallint,
+     352::smallint,
+     353::smallint,
      'wikidata'::text,
-     882::smallint,
+     354::smallint,
      'wikidata'::text);

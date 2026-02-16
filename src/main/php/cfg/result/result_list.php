@@ -1127,7 +1127,7 @@ class result_list extends sandbox_value_list
     {
         $result = new result($this->get_user());
         if (!$this->is_empty()) {
-            $result = $this->get(0);
+            $result = $this->get_by_key(0);
         }
         return $result;
     }

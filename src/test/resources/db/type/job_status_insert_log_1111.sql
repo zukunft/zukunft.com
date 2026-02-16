@@ -43,8 +43,8 @@ SELECT job_status_insert_log_1111
     ('created'::text,
      1::bigint,
      1::smallint,
-     914::smallint,
-     915::smallint,
+     855::smallint,
+     856::smallint,
      'new'::text,
-     916::smallint,
+     857::smallint,
      'the job is not yet assigned to any calc engine'::text);

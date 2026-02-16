@@ -98,7 +98,7 @@ class sandbox_code_id extends sandbox_typed
 
     // database field to select single object used by the system
     // without using the type that can potentially select more than one object
-    private ?string $code_id;
+    public ?string $code_id;
 
 
     /*

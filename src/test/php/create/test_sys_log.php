@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
@@ -45,6 +46,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
@@ -54,6 +56,19 @@ use DateTime;
 
 class test_sys_log extends test_objects
 {
+
+    /*
+     * cleanup
+     */
+
+    /**
+     * delete any remaining sys log test entries like test functions for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, [sys_log_functions::TEST_NAME], new sys_log_function());
+    }
+
 
     /**
      * @return sys_log an open system error log entry

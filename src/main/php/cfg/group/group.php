@@ -1833,14 +1833,14 @@ class group extends sandbox_multi
      * @param group $db_grp
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
         group         $db_grp,
         user_message  $usr_msg,
         sql_type_list $sc_par_lst
-    ): sql_par
+    ): sql_par|null
     {
         // clone the sql parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
@@ -1861,10 +1861,10 @@ class group extends sandbox_multi
      * @return sql_par the common part for insert and update sql statements
      */
     protected function sql_common(
-        sql_creator $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst,
-        string $ext = '',
-        string $id_ext = ''
+        string        $ext = '',
+        string        $id_ext = ''
     ): sql_par
     {
         $sc_par_lst->add($this->table_type());

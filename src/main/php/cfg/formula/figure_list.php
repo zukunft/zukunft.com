@@ -235,7 +235,7 @@ class figure_list extends sandbox_list
         $result = 0;
         if ($this != null) {
             if (count($this->lst()) > 0) {
-                $fig = $this->get(0);
+                $fig = $this->get_by_key(0);
                 if ($fig != null) {
                     $result = $fig->id();
                 }

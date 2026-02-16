@@ -41,11 +41,10 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
-include_once paths::MODEL_HELPER . 'type_list.php';
-include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_db.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -54,6 +53,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -66,8 +66,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -204,6 +202,38 @@ class sys_log extends db_object_seq_id
      */
 
     /**
+     * set the main system-log vars and prepare database writing
+     * @param int $usr_id
+     * @param string $func_name
+     * @param string $trace
+     * @param int $level_id
+     * @param string $text
+     * @param string $description
+     * @return void
+     */
+    function set(
+        int          $usr_id,
+        string       $func_name,
+        string       $trace,
+        int          $level_id,
+        string       $text,
+        string       $description,
+        user_message $msg
+    ): void
+    {
+
+        if ($this->log_time == null) {
+            $this->log_time = new DateTime();
+        }
+        $this->set_user_id($usr_id);
+        $this->set_function_by_name($func_name, $msg);
+        $this->log_trace = $trace;
+        $this->level_id = $level_id;
+        $this->log_text = $text;
+        $this->log_description = $description;
+    }
+
+    /**
      * set the user of the error log
      *
      * @param user|null $usr the person who wants to see the error log
@@ -215,11 +245,42 @@ class sys_log extends db_object_seq_id
     }
 
     /**
+     * set only the user just to write a log entry
+     *
+     * @param int $id the database id of the person who has faced the issue
+     * @return void
+     */
+    function set_user_id(int $id): void
+    {
+        $usr = new user();
+        $usr->id = $id;
+        $this->usr = $usr;
+    }
+
+    /**
      * @return user|null the person who wants to see the error log
      */
     function get_user(): ?user
     {
         return $this->usr;
+    }
+
+    function set_function_by_name(string $func_name, user_message $msg): bool
+    {
+        global $sys;
+
+        $fnc = $sys->typ_lst->sys_log_fnc->get_by_name($func_name);
+        if ($fnc == null) {
+            $fnc = new sys_log_function($func_name, $func_name, '', 0);
+            if ($fnc->save($msg)) {
+                $sys->typ_lst->sys_log_fnc->add($fnc);
+                // TODO Prio 2 trigger update of the types in frontend
+                $this->function_id = $fnc->id;
+            }
+        } else {
+            $this->function_id = $fnc->id;
+        }
+        return $msg->is_ok();
     }
 
 
@@ -440,6 +501,20 @@ class sys_log extends db_object_seq_id
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
+    }
+
+    /**
+     * add a new system log entry to the stdio text log and the database
+     * @param user_message $msg
+     * @return bool
+     */
+    function insert(user_message $msg): bool
+    {
+        global $db_con;
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $msg);
+        $db_con->insert($qp, 'add syslog', $msg);
+        return $msg->is_ok();
     }
 
     /**

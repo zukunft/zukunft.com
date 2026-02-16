@@ -322,7 +322,7 @@ class triple extends sandbox_code_id
         $phr = null;
         if ($dto != null) {
             $phr_lst = $dto->phr_lst;
-            $phr = $phr_lst->get_by_id($id);
+            $phr = $phr_lst->get($id);
         }
         if ($phr == null) {
             if ($id > 0) {

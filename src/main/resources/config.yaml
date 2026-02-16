@@ -337,6 +337,46 @@ zukunft.com:
           trusted: "Switzerland"
       launch: 2025-06-07
       point: 2025-06-07
+      limits:
+        tooltip-comment: "limits per pod that, like all other pod settings, can only be changed by an admin user and that are used as a second line of defence to prevent unwanted behavior"
+        max changes:
+          per day:
+            tooltip-comment: "the max number of insert or update changes that a normal user can do per days to prevent vandalism"
+            words:
+              sys-conf-value: 1000
+            verbs:
+              sys-conf-value: 10
+            triples:
+              sys-conf-value: 1000
+            formulas:
+              sys-conf-value: 100
+            values:
+              sys-conf-value: 10000
+          per week:
+            tooltip-comment: "like the max changes per days but per week"
+            words:
+              sys-conf-value: 5000
+          per month:
+            tooltip-comment: "like the max changes per days but per month"
+            words:
+              sys-conf-value: 20000
+          per year:
+            tooltip-comment: "like the max changes per days but per year"
+            words:
+              sys-conf-value: 1000000
+        max lifetime:
+          user:
+            sys-conf-value: 120
+            tooltip-comment: "the max number of years that a personal user account is expected to be active"
+        api user:
+          check period:
+            month:
+              sys-conf-value: 6
+              tooltip-comment: "the number of month after that an api user should to be confirmed by an admin user"
+          tolerance:
+            month:
+              sys-conf-value: 3
+              tooltip-comment: "the number of month that the admin user has time to confirm an api account"
       hardware:
         usage:
           CPU:

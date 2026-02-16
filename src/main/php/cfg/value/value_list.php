@@ -1023,9 +1023,9 @@ class value_list extends sandbox_value_list
         if ($this->count() > 1) {
 
             // use the first value to get the context parameter
-            $val0 = $this->get(0);
+            $val0 = $this->get_by_key(0);
             // use the second value to detect the context phrases
-            $val1 = $this->get(1);
+            $val1 = $this->get_by_key(1);
 
             // get phrase names of the first value
             $phr_lst1 = $val0->phr_names();

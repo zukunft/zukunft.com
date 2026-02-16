@@ -83,7 +83,6 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_SYSTEM . 'system_time.php';
-//include_once paths::SHARED_TYPES . 'system_time_type.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'ref_type.php';
 //include_once paths::MODEL_REF . 'source.php';
@@ -109,6 +108,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_WORD . 'triple_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
+//include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 //include_once paths::SHARED_TYPES . 'protection_types.php';
 //include_once paths::SHARED_TYPES . 'share_types.php';
 //include_once paths::SHARED_TYPES . 'view_relation_types.php';
@@ -168,6 +169,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -188,6 +190,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -295,6 +298,26 @@ class def
         term_view::class,
         component::class,
         component_link::class,
+    ];
+
+    // classes that should not be delete (the only exception is that system users can delete test rows)
+    const array NO_DELETE_CLASSES = [
+        user::class,
+    ];
+
+    // classes where database rows should never be updated (the only exception is that system users can delete test rows)
+    const array NO_UPDATE_CLASSES = [
+        change_log::class,
+    ];
+
+    // classes that should not be delete (the only exception is that system users can delete test rows)
+    const array ONLY_ADMIN_CAN_DELETE_CLASSES = [
+        language::class,
+    ];
+
+    // classes that should not be delete (the only exception is that system users can delete test rows)
+    const array ONLY_ADMIN_CAN_UPDATE_CLASSES = [
+        language::class,
     ];
 
     // classes that are directly linked to the main classes and that should be included in the same code function docs part
@@ -468,7 +491,7 @@ class def
     // list of classes that use a database table but where the changes do not need to be logged
     const array CLASSES_NO_CHANGE_LOG = [
         sys_log_function::class,
-        sys_log_statuus::class,
+        sys_log_status::class,
         sys_log_level::class,
         system_time_type::class,
         system_time::class,

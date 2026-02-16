@@ -46,6 +46,7 @@ include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'value_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
+include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -243,6 +244,9 @@ class a_selected_test extends test_cleanup
 
             // run the selected db write tests
             //new user_write_tests()->run($this);
+            //new sys_log_write_tests()->run($t);
+            new horizontal_write_tests()->run($this);
+
             //new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
             //new verb_write_tests()->run($t);
@@ -262,7 +266,7 @@ class a_selected_test extends test_cleanup
             //new element_write_tests()->run($this);
             //new element_write_tests()->run_list($this);
             //new element_group_write_tests()->run($this);
-            new formula_write_tests()->run($this);
+            //new formula_write_tests()->run($this);
             //new formula_write_tests()->run_list($this);
             //new formula_link_write_tests()->run($this);
             //new formula_link_write_tests()->run_list($this);

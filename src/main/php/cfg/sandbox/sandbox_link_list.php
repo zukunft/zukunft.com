@@ -86,7 +86,7 @@ class sandbox_link_list extends sandbox_list
     function __construct(user $usr, array $lst = [])
     {
         $this->key_pos_lst = [];
-        $this->set_lst_dirty();
+        $this->set_hash_dirty();
 
         parent::__construct($usr, $lst);
     }
@@ -98,11 +98,11 @@ class sandbox_link_list extends sandbox_list
 
     /**
      * to be called after the lists have been updated
-     * but the index list have not yet been updated
+     * but the index list has not yet been updated
      */
-    protected function set_lst_dirty(): void
+    protected function set_hash_dirty(): void
     {
-        parent::set_lst_dirty();
+        parent::set_hash_dirty();
         $this->key_lst_dirty = true;
     }
 

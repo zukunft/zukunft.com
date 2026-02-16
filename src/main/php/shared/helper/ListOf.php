@@ -76,11 +76,13 @@ class ListOf
     /**
      * TODO check if a more specific return object can be used
      * get one object of the list by the key
+     * TODO Prio 2 maybe rename to get_by_array_key not to confuse it with add_by_key which adds an item with a complex key instead of just a name as unique key
+     *
      * @param string|int $key the key of the lst array
      * @param user_message|null $msg to report missing keys
      * @return IdObject|TextIdObject|CombineObject|null the found user sandbox object or null if no id is found
      */
-    function get(
+    function get_by_key(
         string|int        $key,
         user_message|null $msg = null
     ): IdObject|TextIdObject|CombineObject|null
@@ -209,7 +211,7 @@ class ListOf
     {
         $result = false;
         $key_lst = array_keys($this->lst);
-        if (array_key_exists($key, $key_lst)) {
+        if (in_array($key, $key_lst)) {
             unset ($this->lst[$key]);
             $result = true;
         }

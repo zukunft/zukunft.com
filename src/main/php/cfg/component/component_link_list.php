@@ -157,7 +157,7 @@ class component_link_list extends sandbox_link_list
         $result = $cmp_lst->load_by_ids($ids, $db_con_given);
         if ($result) {
             foreach ($this->lst() as $lnk) {
-                $cmp = $cmp_lst->get_by_id($lnk->get_component()->id());
+                $cmp = $cmp_lst->get($lnk->get_component()->id());
                 if ($cmp != null) {
                     $lnk->set_component($cmp);
                 }

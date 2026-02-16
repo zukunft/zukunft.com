@@ -273,7 +273,7 @@ class element_list extends sandbox_list
     function add(?element $elm_to_add): bool
     {
         parent::add_direct($elm_to_add);
-        $this->set_lst_dirty();
+        $this->set_hash_dirty();
         return true;
     }
 

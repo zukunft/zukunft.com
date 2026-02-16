@@ -42,6 +42,7 @@ class phrase_types
     const string MATH_CONST = "constant"; // TODO add usage sample
     const string MATH_CONST_NAME = "math constant";
     const string TIME = "time";
+    const int TIME_ID = 2;
     const string TIME_NAME = "time";
     const string TIME_NUMBER = "time_number";
     const string TIME_NUMBER_NAME = "time number";
@@ -52,10 +53,12 @@ class phrase_types
     const string PERCENT = "percent";
     const string PERCENT_NAME = "format percent";
     const string MEASURE = "measure";
+    const int MEASURE_ID = 3;
     const string MEASURE_NAME = "measure type";
     const string MEASURE_DIVISOR = "measure_divisor";
     const string MEASURE_DIVISOR_NAME = "measure divisor";
     const string SCALING = "scaling";
+    const int SCALING_ID = 7;
     const string SCALING_NAME = "scaling";
     const string SCALING_HIDDEN = "scaling_hidden";
     const string SCALING_HIDDEN_NAME = "hidden scaling";

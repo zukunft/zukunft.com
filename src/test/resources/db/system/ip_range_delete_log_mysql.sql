@@ -20,6 +20,6 @@ END;
 SELECT ip_range_delete_log
        (1,
         3,
-        918,
+        859,
         'from 66.249.64.95 to 66.249.64.95',
         0);

@@ -1958,9 +1958,9 @@ class sql_creator
             $qp->sql .= ' ' . $qp_log->sql . ';';
 
             // add the user_id if needed
-            $log_usr_id = $fvt_lst->get_value(user_db::FLD_ID);
+            $log_usr_id = $usr->id;
             if ($log_usr_id == null) {
-                $log_usr_id = $usr->id;
+                $log_usr_id = $fvt_lst->get_value(user_db::FLD_ID);
             }
             $par_lst_out->add_field(
                 user_db::FLD_ID,

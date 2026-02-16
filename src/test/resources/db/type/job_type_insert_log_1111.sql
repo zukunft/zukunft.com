@@ -43,8 +43,8 @@ SELECT job_type_insert_log_1111
     ('update value'::text,
      1::bigint,
      1::smallint,
-     851::smallint,
-     852::smallint,
+     232::smallint,
+     233::smallint,
      'value_update'::text,
-     853::smallint,
+     234::smallint,
      'if a value is updated all the depending results should be calculated again'::text);

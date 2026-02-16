@@ -366,6 +366,39 @@ class test_types
     }
 
     /**
+     * @return phrase_type "time" type for unit testing
+     */
+    function phrase_type_time(): phrase_type
+    {
+        return new phrase_type(
+            phrase_types::TIME,
+            phrase_types::TIME_ID,
+            phrase_types::TIME_NAME);
+    }
+
+    /**
+     * @return phrase_type "measure" type for unit testing
+     */
+    function phrase_type_measure(): phrase_type
+    {
+        return new phrase_type(
+            phrase_types::MEASURE,
+            phrase_types::MEASURE_ID,
+            phrase_types::MEASURE_NAME);
+    }
+
+    /**
+     * @return phrase_type "scaling" type for unit testing
+     */
+    function phrase_type_scaling(): phrase_type
+    {
+        return new phrase_type(
+            phrase_types::SCALING,
+            phrase_types::SCALING_ID,
+            phrase_types::SCALING_NAME);
+    }
+
+    /**
      * @return source_type "xbrl" as the main source type for unit testing
      */
     function source_type(): source_type

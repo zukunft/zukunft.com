@@ -43,8 +43,8 @@ SELECT view_link_type_insert_log_1111
     ('main word'::text,
      1::bigint,
      1::smallint,
-     896::smallint,
-     897::smallint,
+     732::smallint,
+     733::smallint,
      'main_word'::text,
-     898::smallint,
+     734::smallint,
      'use the main word as start for the view'::text);

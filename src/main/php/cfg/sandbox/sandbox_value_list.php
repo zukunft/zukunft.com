@@ -179,10 +179,10 @@ class sandbox_value_list extends sandbox_list
      * to be called after the lists have been updated
      * but the index list have not yet been updated
      */
-    protected function set_lst_dirty(): void
+    protected function set_hash_dirty(): void
     {
         $this->name_hash_dirty = true;
-        parent::set_lst_dirty();
+        parent::set_hash_dirty();
     }
 
 
@@ -601,7 +601,7 @@ class sandbox_value_list extends sandbox_list
     {
         $msg = new user_message();
         foreach ($this->lst() as $val) {
-            $val_to_chk = $val_lst->get_by_id($val->id());
+            $val_to_chk = $val_lst->get($val->id());
             if ($val_to_chk == null) {
                 $vars = [msg_id::VAR_VAL_ID => $val->dsp_db()];
                 $msg->add($msg_missing, $vars);
@@ -611,7 +611,7 @@ class sandbox_value_list extends sandbox_list
             }
         }
         foreach ($val_lst->lst() as $val) {
-            $val_to_chk = $this->get_by_id($val->id());
+            $val_to_chk = $this->get($val->id());
             if ($val_to_chk == null) {
                 $vars = [msg_id::VAR_VAL_ID => $val->dsp_db()];
                 $msg->add($msg_additional, $vars);
@@ -668,7 +668,7 @@ class sandbox_value_list extends sandbox_list
         } else {
             $this->name_hash[] = $name;
             // assuming that in most cases either the id or the names has is needed for building up the list but not both
-            $this->set_lst_dirty();
+            $this->set_hash_dirty();
         }
     }
 

@@ -43,8 +43,8 @@ SELECT source_type_insert_log_1111
     ('XBRL'::text,
      1::bigint,
      1::smallint,
-     876::smallint,
-     877::smallint,
+     343::smallint,
+     344::smallint,
      'xbrl'::text,
-     878::smallint,
+     345::smallint,
      'eXtensible Business Reporting Language is a freely available global framework for exchanging business information'::text);

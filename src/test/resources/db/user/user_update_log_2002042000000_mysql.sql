@@ -44,7 +44,7 @@ PREPARE user_update_log_2002042000000_call FROM
     'SELECT user_update_log_2002042000000 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT user_update_log_2002042000000
-        (3,
+        (2,
          2,
          211,
          'zukunft.com system test',

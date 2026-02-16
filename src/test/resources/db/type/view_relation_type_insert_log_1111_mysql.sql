@@ -39,8 +39,8 @@ SELECT view_relation_type_insert_log_1111
     ('add components',
      1,
      1,
-     900,
-     901,
+     823,
+     824,
      'add_components',
-     902,
+     825,
      'add the components of the child view to the parent view at the start position');

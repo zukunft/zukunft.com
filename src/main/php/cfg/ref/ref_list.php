@@ -39,17 +39,16 @@ include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_HELPER . 'type_list.php';
 //include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
-//include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';
-//include_once paths::MODEL_VIEW . 'view.php';
-//include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::SHARED_CONST . 'refs.php';
 //include_once paths::SHARED_CONST . 'triples.php';
 //include_once paths::SHARED_CONST . 'words.php';
-//include_once paths::SHARED_ENUM . 'messages.php';
+//include_once paths::SHARED_ENUM . 'value_types.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -58,11 +57,13 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 // TODO Prio 2 check if not better based on the sandbox_link_list
@@ -231,9 +232,10 @@ class ref_list extends type_list
      */
 
     /**
+     * @param ?int $limit the max number of ids to show
      * @retur array the list of the ref ids
      */
-    function ids(): array
+    function ids(?int $limit = null): array
     {
         $result = array();
         if ($this->lst() != null) {
@@ -281,10 +283,10 @@ class ref_list extends type_list
         return $result;
     }
 
-    function add_direct(ref|type_object|view|null $item): void
+    function add_direct(ref|type_object|IdObject|TextIdObject|CombineObject|value_types|null $obj_to_add): void
     {
-        parent::add_direct($item);
-        $this->key_lst[] = $item->get_key();
+        parent::add_direct($obj_to_add);
+        $this->key_lst[] = $obj_to_add->get_key();
     }
 
     function del(user_message $usr_msg): void

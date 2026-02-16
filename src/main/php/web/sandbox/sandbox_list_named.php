@@ -98,9 +98,9 @@ class sandbox_list_named extends sandbox_list
      * to be called after the lists have been updated
      * but the index list have not yet been updated
      */
-    public function set_lst_dirty(): void
+    public function set_hash_dirty(): void
     {
-        parent::set_lst_dirty();
+        parent::set_hash_dirty();
         $this->lst_name_dirty = true;
     }
 
@@ -112,7 +112,7 @@ class sandbox_list_named extends sandbox_list
     function set_from_json(string $json_api_msg): user_message
     {
         $usr_msg = $this->api_mapper(json_decode($json_api_msg, true));
-        $this->set_lst_dirty();
+        $this->set_hash_dirty();
         return $usr_msg;
     }
 
@@ -120,7 +120,7 @@ class sandbox_list_named extends sandbox_list
      * to be called after the lists have been updated
      * but the index list have not yet been updated
      */
-    protected function set_lst_clean(): void
+    protected function set_hash_clean(): void
     {
         $this->lst_name_dirty = false;
     }
@@ -239,7 +239,7 @@ class sandbox_list_named extends sandbox_list
         if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             if ($to_add->id() == null) {
-                $this->set_lst_dirty();
+                $this->set_hash_dirty();
             }
             parent::add_obj($to_add, $allow_duplicates, $msg);
         }
@@ -275,7 +275,7 @@ class sandbox_list_named extends sandbox_list
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get_by_id($sbx_new->id());
+                $sbx_old = $this->get($sbx_new->id());
                 if ($sbx_old != null) {
                     $sbx_old->fill($sbx_new, $usr);
                 } else {
@@ -351,7 +351,7 @@ class sandbox_list_named extends sandbox_list
             $pos = $key_lst[$name];
         }
         if ($pos !== null) {
-            return $this->get($pos);
+            return $this->get_by_key($pos);
         } else {
             return null;
         }

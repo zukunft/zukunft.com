@@ -234,7 +234,7 @@ class triple_list extends sandbox_list_named
                         // fill to
                         $db_trp->set_tob(new phrase($this->get_user()));
                         $db_trp->tob()->row_mapper_sandbox($db_row, triple_db::FLD_TO, '2');
-                        $trp = $this->get_by_id($db_trp->id());
+                        $trp = $this->get($db_trp->id());
                         if ($trp == null) {
                             $this->add_obj($db_trp);
                         } else {

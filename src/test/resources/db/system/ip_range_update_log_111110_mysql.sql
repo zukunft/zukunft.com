@@ -44,7 +44,7 @@ PREPARE ip_range_update_log_111110_call FROM
 SELECT ip_range_update_log_111110
     (1,
      1,
-     918,
+     859,
      null,
      '66.249.64.95-66.249.64.95',
      0,

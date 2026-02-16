@@ -473,7 +473,7 @@ class data_object
      */
     function get_phrase_by_id(int $id, phrase $phr): phrase
     {
-        $phr_cac = $this->phrase_list()->get_by_id($id);
+        $phr_cac = $this->phrase_list()->get($id);
         if ($phr_cac == null) {
             $phr->set_id($id);
         } else {
@@ -520,7 +520,7 @@ class data_object
      */
     function get_formula_by_id(int $id, formula $frm): formula
     {
-        $frm_cac = $this->formula_list()->get_by_id($id);
+        $frm_cac = $this->formula_list()->get($id);
         if ($frm_cac == null) {
             $frm->id = $id;
         } else {

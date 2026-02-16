@@ -919,7 +919,7 @@ class word_list extends sandbox_list_named
             if ($del_wrd_id > 0) {
                 if (in_array($del_wrd_id, $this->ids())) {
                     $del_pos = array_search($del_wrd_id, $this->ids());
-                    log_debug('exclude (' . $this->get_by_id($del_pos)?->name() . ')');
+                    log_debug('exclude (' . $this->get_by_key($del_pos)?->name() . ')');
                     $this->unset($del_pos);
                 }
             }
@@ -984,9 +984,9 @@ class word_list extends sandbox_list_named
         }
         asort($name_lst);
         log_debug('sorted "' . implode('","', $name_lst) . '" (' . $lib->dsp_array(array_keys($name_lst)) . ')');
-        foreach (array_keys($name_lst) as $sorted_id) {
-            log_debug('get ' . $sorted_id);
-            $wrd_to_add = $this->get($sorted_id);
+        foreach (array_keys($name_lst) as $sorted_key) {
+            log_debug('get ' . $sorted_key);
+            $wrd_to_add = $this->get_by_key($sorted_key);
             log_debug('got ' . $wrd_to_add->name());
             $result[] = $wrd_to_add;
         }
