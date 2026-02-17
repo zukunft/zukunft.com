@@ -1247,7 +1247,7 @@ class db_object_seq_id extends db_object
     }
 
     /**
-     * create the sql statement to add an object e.g. word to the database
+     * create the sql statement to add a row to the database
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
@@ -1266,10 +1266,37 @@ class db_object_seq_id extends db_object
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'sql_insert_key_field',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        // set some var names to shorten the code lines
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
+
+        // list of parameters actually used in order of the function usage
+        $sql = '';
+        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+
+        // create the sql to insert the row
+        $fvt_insert_list = new sql_par_field_list();
+        $fvt_insert_list->add($fvt_insert);
+        $sc_insert = clone $sc;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
+        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        }
+        $qp_insert->sql = $sc_insert->create_sql_insert(
+            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+        $qp_insert->par = [$fvt_insert->value];
+
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_insert->sql . '; ';
+
+        // get the new row id for MySQL db
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+        }
+
+        $qp->sql = $sql;
+        $qp->par_fld = $fvt_insert;
+
         return $qp;
     }
 

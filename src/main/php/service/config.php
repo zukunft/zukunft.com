@@ -2,19 +2,23 @@
 
 /*
 
-    service/config.php - functions to handle the database based system configuration
+    service/config.php - functions to handle the core system configuration values
     ------------------
 
     TODO use single words with code_id for the system configuration
     TODO check on system start that the system configuration is complete
     TODO move all possible values to the phrase based configuration
 
-    the values in the config table can only be changed by the system admin
+    the values in the config table can only be changed by the system or the pod admin
     expose the config class functions as simple functions for simple coding
 
-    application.yaml vs config.yaml:
-    - the application.yaml contains the settings that cannot be changed without code change
+    .env vs config table/class vs config.yaml:
+    - the .env contains basic system environment pod and server settings
+      -> if e.g. a new postgres version is deployed the .env might need to be updated
+    - the .config table/class contains the settings that cannot be changed without code change
+      -> if e.g. a new version of the zukunft.com code is deployed the entries of the config table are used to detect if the database needs to be upgraded
     - the config.yaml contains all settings that the admin can adjust without code change
+      -> if e.g. an additional connection to other pods is configured that can be done via the admin gui and is stored within the graph database
 
 
     This file is part of zukunft.com - calc with words
@@ -59,9 +63,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class config extends db_object_seq_id
 {
@@ -77,6 +85,8 @@ class config extends db_object_seq_id
     // program configuration names
     const string SITE_NAME = 'site_name';                           // the name of the pod
     const string VERSION_DB = 'version_database';                   // the version of the database at the moment to trigger an update script if needed
+    const string VERSION_DB_NAME = 'Database version';
+    const string VERSION_DB_COM = 'version that the database has now; after the upgrade the new version number is written to the database';
     const string LAST_CONSISTENCY_CHECK = 'last_consistency_check'; // datetime of the last database consistency check
     const string AVG_CALC_TIME = 'average_calculation_time';        // the average time to calculate and update all results of one formula in milliseconds
     const string TEST_YEARS = 'test_years';                         // the number of years around the current year created automatically
@@ -95,6 +105,15 @@ class config extends db_object_seq_id
     const string FLD_VALUE = 'value';
     const string FLD_DESCRIPTION_COM = 'text to explain the config value to an admin user';
 
+    // all database field names excluding the id
+    // TODO review and sync with FLD_LST_ALL
+    const array FLD_NAMES = array(
+        self::FLD_NAME,
+        sql_db::FLD_CODE_ID,
+        sql_db::FLD_VALUE,
+        sql_db::FLD_DESCRIPTION,
+    );
+
     // field lists for the table creation
     const array FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
@@ -103,6 +122,34 @@ class config extends db_object_seq_id
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
+
+    /*
+     * object vars
+     */
+
+    // database fields
+    public ?string $name = null;                // the short name of the config entry
+    public ?string $code_id = null;             // the unique code_id to select the config entry from the program code
+    public string|int|float|null $value = null; // the configuration value
+    public ?string $description = null;         // the description of the value for the admin
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * reset the vars of this config
+     * @param bool $keep_user not used here
+     */
+    function reset(bool $keep_user = false): void
+    {
+        parent::reset();
+        $this->name = null;
+        $this->code_id = null;
+        $this->value = null;
+        $this->description = null;
+    }
 
     /*
      * sql create
@@ -393,5 +440,126 @@ class config extends db_object_seq_id
 
         return $result;
     }
+
+
+    /*
+     * sql fields
+     */
+
+    function name_field(): string
+    {
+        return sql_db::FLD_CODE_ID;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     *
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
+    {
+        return self::FLD_NAMES;
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param config|db_object_seq_id $obj the compare value to detect the changed fields
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        config|db_object_seq_id $obj,
+        user_message          $msg,
+        sql_type_list         $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
+    {
+        global $sys;
+
+        $lst = new sql_par_field_list();
+        $sc = new sql_creator();
+        $do_log = $sc_par_lst->incl_log();
+        if ($do_log) {
+            $table_id = $sc->table_id($this::class);
+        }
+
+        // the short name of the config entry
+        if ($obj->name !== $this->name) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME,
+                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_NAME),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_NAME,
+                $this->name,
+                sandbox_named::FLD_NAME_SQL_TYP,
+                $obj->name
+            );
+        }
+
+        // the unique code id that may only change in case of an upgrade
+        if ($obj->code_id !== $this->code_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_CODE_ID,
+                $this->code_id,
+                sql_field_type::CODE_ID,
+                $obj->code_id
+            );
+        }
+
+        // the configuration value itself
+        if ($obj->value !== $this->value) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_VALUE,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_VALUE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_VALUE,
+                $this->value,
+                sql_field_type::TEXT,
+                $obj->value
+            );
+        }
+
+        // the description is mainly used for system users
+        if ($obj->description !== $this->description) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_DESCRIPTION,
+                $this->description,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
+                $obj->description
+            );
+        }
+
+        return $lst;
+    }
+
 
 }
