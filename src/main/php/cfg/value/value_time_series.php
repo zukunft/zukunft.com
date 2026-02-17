@@ -290,7 +290,7 @@ class value_time_series extends sandbox_value
      */
     function load_by_id(
         int|string $id,
-        ?sql_type $typ = null
+        ?sql_type  $typ = null
     ): int
     {
         return parent::load_by_id($id);
@@ -325,33 +325,15 @@ class value_time_series extends sandbox_value
 
         global $db_con;
 
-        // log the insert attempt first
-        $log = $this->log_add();
-        if ($log->id() > 0) {
-            $db_con->set_class(value_time_series::class);
-            $this->id = $db_con->insert_old(
-                array(group_db::FLD_ID, user_db::FLD_ID, self::FLD_LAST_UPDATE),
-                array($this->grp()->id(), $this->get_user()->id(), sql::NOW));
-            if ($this->id() > 0) {
-                // update the reference in the log
-                if (!$log->add_ref($this->id())) {
-                    $usr_msg->add_id(msg_id::VALUE_TIME_SERIES_LOG_REF_FAILED);
-                }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg, false, true);
 
-                // update the phrase links for fast searching
-                /*
-                $upd_result = $this->upd_phr_links();
-                if ($upd_result != '') {
-                    $result->add_message_text('Adding the phrase links of the value time series failed because ' . $upd_result);
-                    $this->set_id(0);
-                }
-                */
-
-                // create an empty db_rec element to force saving of all set fields
-                //$db_vts = new value_time_series($this->get_user());
-                //$db_vts->id = $this->id();
-                // TODO add the data list saving
-            }
+        if ($this->id() > 0) {
+            // create an empty db_rec element to force saving of all set fields
+            $db_vts = new value_time_series($this->get_user());
+            //$db_vts->id = $this->id();
+            // TODO add the data list saving
         }
 
         return $usr_msg->is_ok();
@@ -380,7 +362,7 @@ class value_time_series extends sandbox_value
 
     /**
      * insert or update a time series in the database or save user-specific time series numbers
-     * @param user_message the message that should be shown to the user in case something went wrong
+     * @param user_message $msg the message that should be shown to the user in case something went wrong
      * @return bool true if everything has been fine
      */
     function save(user_message $msg): bool

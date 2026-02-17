@@ -1666,7 +1666,6 @@ class sandbox_multi extends db_object_multi_user
                 $db_con->set_usr($this->get_user()->id);
                 $qp = $this->sql_insert($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
                 $db_con->insert($qp, 'add user-specific value', $usr_msg);
-                $log_id = $db_con->insert_old(array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->get_user()->id));
                 if (!$usr_msg->is_ok()) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $class . ' failed.');
                     $result = false;

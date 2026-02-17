@@ -67,6 +67,7 @@ if ($db_con->is_open()) {
     // TODO Prio 2 create a session object and include the user in the prg_start return object
     $usr = new user;
     $html_str .= $usr->get();
+    // TODO Prio 1 set the user of the $msg and make the the only place where the requesting user is stored
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id() > 0) {
