@@ -4965,21 +4965,6 @@ class sql_db
 
 
     /**
-     * similar to zu_sql_add_id, but using a second ID field
-     */
-    function add_id_2key($name, $field2_name, $field2_value): int
-    {
-        log_debug($name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->class);
-
-        $this->set_name_field();
-        //zu_debug('sql_db->add_id_2key add "'.$this->name_field.','.$field2_name.'" "'.$name.','.$field2_value.'"');
-        $result = $this->insert_old(array($this->name_field, $field2_name), array($name, $field2_value));
-
-        log_debug('is "' . $result . '"');
-        return $result;
-    }
-
-    /**
      * update some values in a table
      * TODO separate the sql statement creation from the update statement execution
      *      e.g. to use the IDE check functionality for the created sql statements

@@ -39,22 +39,28 @@ namespace Zukunft\ZukunftCom\main\php\cfg\log;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
@@ -117,6 +123,52 @@ class change_field extends type_object
         return self::FLD_NAME;
     }
 
+
+    /*
+     * load
+     */
+
+    /**
+     * load the change log table field from the database selected by the table id and the field name
+     * @param string $name the name of the field
+     * @param int $tbl_id the database id of the table to which the field name belongs
+     * @return int the id of the type object found and zero if nothing is found
+     */
+    function load_by_name_and_table_id(string $name, int $tbl_id): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_name_and_table_id($sc, $name, $tbl_id);
+        return $this->load($qp);
+    }
+
+    /**
+     * create an SQL statement to retrieve a type object by code id from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $name the code id of the source
+     * @param int $tbl_id the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_name_and_table_id(
+        sql_creator $sc,
+        string      $name,
+        int         $tbl_id
+    ): sql_par
+    {
+        $typ_lst = new type_list();
+        $qp = $typ_lst->load_sql($sc, $this::class, 'by_name_and_id');
+        $sc->add_where(self::FLD_NAME, $name);
+        $sc->add_where(self::FLD_TABLE, $tbl_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+
     /*
      * sql write fields
      */
@@ -149,8 +201,8 @@ class change_field extends type_object
      */
     function db_fields_changed(
         change_field|db_object_seq_id $obj,
-        user_message          $msg,
-        sql_type_list         $sc_par_lst = new sql_type_list()
+        user_message                  $msg,
+        sql_type_list                 $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);

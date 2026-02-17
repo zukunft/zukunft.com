@@ -413,7 +413,7 @@ class type_object extends db_object_seq_id
     function load_sql_by_name(sql_creator $sc, string $name, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_NAME);
+        $qp = $typ_lst->load_sql($sc, $class, 'by_' . sql_db::FLD_NAME);
         $sc->add_where($this->name_field_typ($class), $name);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -432,7 +432,7 @@ class type_object extends db_object_seq_id
     function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($sc, $class, 'code_id');
+        $qp = $typ_lst->load_sql($sc, $class, 'by_' . sql_db::FLD_CODE_ID);
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

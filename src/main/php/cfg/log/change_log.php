@@ -361,7 +361,7 @@ class change_log extends db_object_seq_id_user
             $this->field_id = $sys->typ_lst->cng_fld->id($this->table_id . $field_name);
             if ($this->field_id <= 0) {
                 if ($used_db_con->connected()) {
-                    $this->add_field($used_db_con, $field_name);
+                    $this->add_field($field_name, $this->table_id);
                     if ($this->field_id <= 0) {
                         log_err("Cannot add field name " . $field_name);
                     } else {
@@ -773,6 +773,10 @@ class change_log extends db_object_seq_id_user
         }
         if ($tbl->id > 0) {
             $this->table_id = $tbl->id;
+        } else {
+            log_fatal_db(
+                "Insert to change log failed due to table id failure.",
+                "user_log->add");
         }
 
         return $msg->is_ok();
@@ -781,34 +785,35 @@ class change_log extends db_object_seq_id_user
     /**
      * save the field name as a reference id in the log table
      */
-    protected function add_field(sql_db $db_con, string $field_name = ''): int
+    protected function add_field(
+        string       $field_name = '',
+        int          $tbl_id = 0,
+        user_message $msg = new user_message()
+    ): int
     {
         // check parameter
-        if ($this->table_id <= 0) {
+        if ($tbl_id <= 0) {
             log_err("missing table_id", "user_log->set_field");
         }
         if ($field_name == "") {
             log_err("missing field name", "user_log->set_field");
         }
 
-        $db_type = $db_con->get_class();
-        $db_con->set_class(change_field::class);
-        $field_id = $db_con->get_id_2key($field_name, "table_id", $this->table_id);
-
-        // add new field name if needed
-        if ($field_id <= 0) {
-            // TODO use a "normal" insert statement
-            // TODO do not log NOW() field
-            $field_id = $db_con->add_id_2key($field_name, "table_id", $this->table_id);
+        $fld = new change_field();
+        $fld->load_by_name_and_table_id($field_name, $tbl_id);
+        if (!$fld->has_db_id()) {
+            $fld->tbl_id = $tbl_id;
+            $fld->name = $field_name;
+            $fld->code_id = $tbl_id . $field_name;
+            $fld->save($msg);
         }
-        if ($field_id > 0) {
-            $this->field_id = $field_id;
+        if ($fld->id > 0) {
+            $this->field_id = $fld->id;
         } else {
             log_fatal("Insert to change log failed due to field id failure.", "user_log->add");
         }
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-        return $field_id;
+
+        return $msg->is_ok();
     }
 
     protected function add_action(
