@@ -338,6 +338,137 @@ class type_object extends db_object_seq_id
 
 
     /*
+     * load (used if the user can request a new type via the GUI)
+     */
+
+    /**
+     * load a type from the database selected by the name
+     * @param string $name e.g. of the phrase type
+     * @return int the id of the type object found and zero if nothing is found
+     */
+    function load_by_name(string $name): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_name($sc, $name);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a type from the database selected by the name
+     * @param string $code_id e.g. of the phrase type
+     * @return int the id of the type object found and zero if nothing is found
+     */
+    function load_by_code_id(string $code_id): int
+    {
+        global $db_con;
+
+        log_debug($code_id);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_code_id($sc, $code_id);
+        return $this->load($qp);
+    }
+
+    /**
+     * create an SQL statement to retrieve a type object by id from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int $id the id of the type object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = ''): sql_par
+    {
+        $typ_lst = new type_list();
+        $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_ID);
+        $sc->add_where($this->id_field_typ($class), $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * synthetic creation of grandparent:: for verb
+     * @param sql_creator $sc with the target db_type set
+     * @param int $id the id of the type object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_id_fwd(sql_creator $sc, int $id, string $class = ''): sql_par
+    {
+        return parent::load_sql_by_id($sc, $id);
+    }
+
+    /**
+     * create an SQL statement to retrieve a type object by name from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $name the name of the source
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_name(sql_creator $sc, string $name, string $class = ''): sql_par
+    {
+        $typ_lst = new type_list();
+        $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_NAME);
+        $sc->add_where($this->name_field_typ($class), $name);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a type object by code id from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $code_id the code id of the source
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = ''): sql_par
+    {
+        $typ_lst = new type_list();
+        $qp = $typ_lst->load_sql($sc, $class, 'code_id');
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load a type object e.g. phrase type, language or language form from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @param string $class the type class name that should be filled
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load_typ_obj(sql_par $qp, string $class): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper_typ_obj($db_row, $class);
+        return $this->id();
+    }
+
+    private function id_field_typ(string $class): string
+    {
+        global $db_con;
+        return $db_con->get_id_field_name($class);
+    }
+
+    private function name_field_typ(string $db_type): string
+    {
+        global $db_con;
+        return $db_con->get_name_field($db_type);
+    }
+
+
+    /*
      * im- and export
      */
 
@@ -474,107 +605,6 @@ class type_object extends db_object_seq_id
         $sql = $sc->sql_separator();
         $sql .= $this->sql_index_create($sc);
         return $sql;
-    }
-
-
-    /*
-     * load (used if the user can request a new type via the GUI)
-     */
-
-    /**
-     * create an SQL statement to retrieve a type object by id from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param int $id the id of the type object
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = ''): sql_par
-    {
-        $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_ID);
-        $sc->add_where($this->id_field_typ($class), $id);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * synthetic creation of grandparent:: for verb
-     * @param sql_creator $sc with the target db_type set
-     * @param int $id the id of the type object
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_by_id_fwd(sql_creator $sc, int $id, string $class = ''): sql_par
-    {
-        return parent::load_sql_by_id($sc, $id);
-    }
-
-    /**
-     * create an SQL statement to retrieve a type object by name from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $name the name of the source
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class = ''): sql_par
-    {
-        $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_NAME);
-        $sc->add_where($this->name_field_typ($class), $name);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a type object by code id from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $code_id the code id of the source
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = ''): sql_par
-    {
-        $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($sc, $class, 'code_id');
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load a type object e.g. phrase type, language or language form from the database
-     * @param sql_par $qp the query parameters created by the calling function
-     * @param string $class the type class name that should be filled
-     * @return int the id of the object found and zero if nothing is found
-     */
-    protected function load_typ_obj(sql_par $qp, string $class): int
-    {
-        global $db_con;
-
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper_typ_obj($db_row, $class);
-        return $this->id();
-    }
-
-    private function id_field_typ(string $class): string
-    {
-        global $db_con;
-        return $db_con->get_id_field_name($class);
-    }
-
-    private function name_field_typ(string $db_type): string
-    {
-        global $db_con;
-        return $db_con->get_name_field($db_type);
     }
 
 

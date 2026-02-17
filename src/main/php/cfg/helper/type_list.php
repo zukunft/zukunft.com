@@ -341,6 +341,9 @@ class type_list extends ListOfIdNamedCodeObjects
     ): sql_par
     {
         $lib = new library();
+        if ($class == '') {
+            $class= $this::class;
+        }
         $db_type = $lib->class_to_name($class);
         $sc->set_class($class);
         $qp = new sql_par($db_type);

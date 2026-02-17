@@ -310,29 +310,21 @@ class change_log extends db_object_seq_id_user
     /**
      * set the table of this change log object and to add a new table to the database if needed
      * @param string $table_name the name of the new table
-     * @param sql_db|null $given_db_con the name of the new field
      * @return bool true if a new table has been added to the database
      */
-    function set_table(string $table_name, ?sql_db $given_db_con = null): bool
+    function set_table(string $table_name): bool
     {
         global $sys;
-        global $db_con;
-
-        $used_db_con = $db_con;
-        if ($given_db_con != null) {
-            $used_db_con = $given_db_con;
-        }
 
         $db_changed = false;
         $this->table_id = $sys->typ_lst->cng_tbl->id($table_name);
         if ($this->table_id <= 0) {
-            $this->add_table($used_db_con, $table_name);
-            if ($this->table_id <= 0) {
-                log_err("Cannot add table name " . $table_name);
-            } else {
+            if ($this->add_table($table_name)) {
                 $tbl = new type_object($table_name, $table_name, '', $this->table_id);
                 $sys->typ_lst->cng_tbl->add($tbl);
                 $db_changed = true;
+            } else {
+                log_err("Cannot add table name " . $table_name);
             }
         }
         return $db_changed;
@@ -759,39 +751,31 @@ class change_log extends db_object_seq_id_user
     /**
      * to save database space, the table name is saved as a reference id in the log table
      */
-    protected function add_table(sql_db $db_con, string $table_name = ''): int
+    protected function add_table(
+        string       $table_name = '',
+        user_message $msg = new user_message()
+    ): bool
     {
         // check parameter
         if ($table_name == "") {
             log_err("missing table name", "user_log->set_table");
         }
 
-        // if e.g. a "value" is changed $table_name is "values" and the reference 1 is saved in the log to save space
-        //$db_con = new mysql;
-        $db_type = $db_con->get_class();
-        $db_con->set_class(change_table::class);
-        $table_id = $db_con->get_id($table_name);
-
-        // add new table name if needed
-        if ($table_id <= 0) {
-            log_err('table name ' . $table_name . ' missing in main/resources/db_code_links/change_tables.csv');
-            $table_id = $db_con->add_id($table_name);
-            // save also the code_id
-            if ($table_id > 0) {
-                $db_con->set_class(change_table::class);
-                $db_con->update_old($table_id, array('code_id'), array($table_name));
+        $tbl = new change_table();
+        $tbl->load_by_code_id($table_name);
+        if (!$tbl->has_db_id()) {
+            $tbl->load_by_name($table_name);
+            if (!$tbl->has_db_id()) {
+                $tbl->name = $table_name;
+                $tbl->code_id = $table_name;
+                $tbl->save($msg);
             }
         }
-        if ($table_id > 0) {
-            $this->table_id = $table_id;
-        } else {
-            log_fatal_db(
-                "Insert to change log failed due to table id failure.",
-                "user_log->add");
+        if ($tbl->id > 0) {
+            $this->table_id = $tbl->id;
         }
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-        return $table_id;
+
+        return $msg->is_ok();
     }
 
     /**
@@ -827,7 +811,11 @@ class change_log extends db_object_seq_id_user
         return $field_id;
     }
 
-    protected function add_action(sql_db $db_con, string $action_name): void
+    protected function add_action(
+        sql_db       $db_con,
+        string       $action_name,
+        user_message $msg = new user_message()
+    ): void
     {
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
         $db_type = $db_con->get_class();
@@ -836,7 +824,11 @@ class change_log extends db_object_seq_id_user
 
         // add new action name if needed
         if ($action_id <= 0) {
-            $action_id = $db_con->add_id($action_name);
+            $act = new change_action();
+            $act->name = $action_name;
+            $act->code_id = $action_name;
+            $act->save($msg);
+            $action_id = $act->id;
         }
         if ($action_id > 0) {
             $this->action_id = $action_id;

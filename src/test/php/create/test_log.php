@@ -37,6 +37,8 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_table.php';
 include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change_values_big.php';
@@ -82,6 +84,8 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
@@ -158,6 +162,21 @@ class test_log
     /*
      * unit
      */
+
+    function log_table(): change_table
+    {
+        $tbl = new change_table('System Test Table');
+        $tbl->id = 3;
+        return $tbl;
+    }
+
+    function log_field(): change_field
+    {
+        $fld = new change_field('System Test Field');
+        $fld->id = 4;
+        $fld->tbl_id = $this->log_table()->id;
+        return $fld;
+    }
 
     private function log_entry(): change
     {

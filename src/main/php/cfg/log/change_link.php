@@ -309,36 +309,6 @@ class change_link extends change_log
         return $this->load($qp);
     }
 
-    // identical to the functions in user_log (maybe move to a common object??)
-    protected function add_table(sql_db $db_con, string $table_name = ''): int
-    {
-        // check parameter
-        if ($table_name == "") {
-            log_err("missing table name", "user_log_link->set_table");
-        }
-        if ($this->get_user()->id <= 0) {
-            log_err("missing user", "user_log_link->set_table");
-        }
-
-        // if e.g. a "value" is changed $table_name is "values" and the reference 1 is saved in the log to save space
-        $db_type = $db_con->get_class();
-        $db_con->set_class(change_table::class);
-        $table_id = $db_con->get_id($table_name);
-
-        // add new table name if needed
-        if ($table_id <= 0) {
-            $table_id = $db_con->add_id($table_name);
-        }
-        if ($table_id > 0) {
-            $this->table_id = $table_id;
-        } else {
-            log_fatal("Insert to change log failed due to table id failure.", "user_log->add");
-        }
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-        return $table_id;
-    }
-
     // functions used utils each call is done with the object instead of the id
     private function set_usr(): void
     {

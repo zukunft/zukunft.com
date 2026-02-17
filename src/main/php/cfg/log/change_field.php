@@ -38,17 +38,25 @@ namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class change_field extends type_object
 {
@@ -79,12 +87,82 @@ class change_field extends type_object
 
 
     /*
+     * object vars
+     */
+
+    public ?int $tbl_id = null;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * set the vars of this change field object to the default values
+     * @param bool $keep_user set to true to keep the original user
+     * @return void
+     */
+    function reset(bool $keep_user = false): void
+    {
+        parent::reset();
+        $this->tbl_id = null;
+    }
+
+    /*
      * sql fields
      */
 
     function name_field(): string
     {
         return self::FLD_NAME;
+    }
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
+    {
+        return array_merge(
+            parent::db_fields_all(),
+            [
+                self::FLD_TABLE,
+            ]
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param change_field|db_object_seq_id $obj the compare value to detect the changed fields
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        change_field|db_object_seq_id $obj,
+        user_message          $msg,
+        sql_type_list         $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
+    {
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
+        if ($obj->tbl_id !== $this->tbl_id) {
+            $lst->add_field(
+                self::FLD_TABLE,
+                $this->tbl_id,
+                sql_field_type::INT_SMALL,
+                $obj->tbl_id
+            );
+        }
+        return $lst;
     }
 
 }

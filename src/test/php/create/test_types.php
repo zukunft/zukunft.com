@@ -225,11 +225,13 @@ class test_types
      */
     function change_field(): change_field
     {
-        return new change_field(
+        $fld = new change_field(
             change_fields::FLD_WORD_NAME,
             change_fields::FLD_WORD_NAME,
             change_fields::FLD_WORD_NAME_COM,
             change_fields::FLD_WORD_NAME_ID);
+        $fld->tbl_id = change_tables::USER_ID;
+        return $fld;
     }
 
     /**

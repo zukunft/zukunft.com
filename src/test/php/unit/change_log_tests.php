@@ -150,6 +150,12 @@ class change_log_tests
         $t->assert_sql_index_create($log_lnk);
         $t->assert_sql_foreign_key_create($log_lnk);
 
+        $t->subheader($ts . 'table and field sql write');
+        $tbl = $t_log->log_table();
+        $t->assert_sql_insert($sc, $tbl);
+        $fld = $t_log->log_field();
+        $t->assert_sql_insert($sc, $fld);
+
         $t->subheader($ts . 'named sql write');
         $log = $t_log->log_word_add();
         $t->assert_sql_insert($sc, $log);

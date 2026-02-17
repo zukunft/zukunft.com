@@ -4965,20 +4965,6 @@ class sql_db
 
 
     /**
-     * add a new unique text to the database and return the id (similar to get_id)
-     */
-    function add_id($name): int
-    {
-        log_debug($name . ' to ' . $this->class);
-
-        $this->set_name_field();
-        $result = $this->insert_old($this->name_field, $name);
-
-        log_debug('is "' . $result . '"');
-        return $result;
-    }
-
-    /**
      * similar to zu_sql_add_id, but using a second ID field
      */
     function add_id_2key($name, $field2_name, $field2_value): int
