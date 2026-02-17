@@ -55,6 +55,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql.php';
+
 //include_once paths::MODEL_USER . 'user.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -97,6 +99,7 @@ class config extends db_object_seq_id
      */
 
     // comment used for the database creation
+    const string FLD_ID = 'config_id';
     const string TBL_COMMENT = 'for the core configuration of this pod e.g. the program version or pod url';
     const string FLD_NAME_COM = 'short name of the configuration entry to be shown to the admin';
     const string FLD_NAME = 'config_name';
@@ -150,6 +153,26 @@ class config extends db_object_seq_id
         $this->value = null;
         $this->description = null;
     }
+
+    /**
+     * map the database fields to the config db row to the object fields
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if the user sandbox object is loaded and valid
+     */
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    {
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
+            $this->name = $db_row[self::FLD_NAME];
+            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            $this->value = $db_row[sql_db::FLD_VALUE];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+        }
+        return $result;
+    }
+
 
     /*
      * sql create
@@ -241,17 +264,13 @@ class config extends db_object_seq_id
         $db_row = $db_con->get1($qp);
         if ($db_row == null) {
             // automatically create the config entry
-            if ($this->create($code_id, $db_con)) {
-                $db_value = $this->default_value($code_id);
-            }
+            $this->set($code_id, $this->default_value($code_id), $db_con, $this->default_description($code_id));
         } else {
             $db_code_id = $db_row[sql_db::FLD_CODE_ID];
             $db_value = $db_row[sql_db::FLD_VALUE];
             // if no value exists create it with the default value (a configuration value should never be empty)
             if ($db_code_id == '') {
-                if ($this->create($code_id, $db_con)) {
-                    $db_value = $this->default_value($code_id);
-                }
+                $this->set($code_id, $this->default_value($code_id), $db_con, $this->default_description($code_id));
             }
         }
 
@@ -270,17 +289,31 @@ class config extends db_object_seq_id
         global $debug;
 
         // init
+        $msg = new user_message();
         $result = false;
         log_debug('"' . $code_id . '" to ' . $value, $debug - 1);
 
+        // by default all changes are logged
+        $sc_par_lst = new sql_type_list([sql_type::LOG]);
+
+        // prepare object (to be moved to calling function
+        $cfg = new config();
+        $cfg->code_id = $code_id;
+        $cfg->value = $value;
+        $cfg->description = $description;
+
+        // check the database entry
         $qp = $this->get_sql($db_con, $code_id);
         $db_row = $db_con->get1($qp);
+
         if ($db_row == null) {
             // automatically add the config entry
-            $result = $this->add($code_id, $value, $description, $db_con);
+            $result = $cfg->db_add($msg, $db_con, $sc_par_lst);
         } else {
+            $cfg_db = new config();
+            $cfg_db->row_mapper($db_row);
             if ($value != $db_row[sql_db::FLD_VALUE] or $description != $db_row[sql_db::FLD_DESCRIPTION]) {
-                $result = $this->update($code_id, $value, $description, $db_con);
+                $result = $this->db_update_row($cfg_db, $msg, $db_con, $sc_par_lst);
             }
         }
         return $result;
@@ -300,88 +333,6 @@ class config extends db_object_seq_id
         $cfg_value = $this->get_db($code_id, $db_con);
         if ($cfg_value != $target_value) {
             $result = $this->set(config::SITE_NAME, def::POD_NAME, $db_con, $description);
-        }
-        return $result;
-    }
-
-    /**
-     * create configuration entry in the database for a new config item
-     * @param string $code_id the identification of the config item that is used in the code that should never be changed
-     * @param sql_db $db_con the open database connection that should be used
-     * @return bool true if adding the config item has been successful
-     */
-    private function create(string $code_id, sql_db $db_con): bool
-    {
-        $result = false;
-        log_debug('create "' . $code_id . '"');
-
-        $db_value = $this->default_value($code_id);
-        $db_description = $this->default_description($code_id);
-        $db_con->set_class(self::class);
-        $db_id = $db_con->insert_old(
-            array(
-                sql_db::FLD_CODE_ID,
-                sql_db::FLD_VALUE,
-                sql_db::FLD_DESCRIPTION),
-            array(
-                $code_id,
-                $db_value,
-                $db_description));
-        if ($db_id > 0) {
-            $result = true;
-        }
-        return $result;
-    }
-
-    /**
-     * add a configuration value to the database
-     * @param string $code_id the identification of the config item that is used in the code that should never be changed
-     * @param string $value the value that should be saved in the configuration table
-     * @param string $description used for the tooltip of the configuration value
-     * @param sql_db $db_con the open database connection that should be used
-     * @return bool if adding to the database was successful
-     */
-    private function add(string $code_id, string $value, string $description, sql_db $db_con): bool
-    {
-        $result = false;
-        $db_con->set_class(self::class);
-        $db_id = $db_con->insert_old(
-            array(
-                sql_db::FLD_CODE_ID,
-                sql_db::FLD_VALUE,
-                sql_db::FLD_DESCRIPTION),
-            array(
-                $code_id,
-                $value,
-                $description));
-        if ($db_id > 0) {
-            $result = true;
-        }
-        return $result;
-    }
-
-    /**
-     * update a configuration value to the database
-     * @param string $code_id the identification of the config item that is used in the code that should never be changed
-     * @param string $value the value that should be saved in the configuration table
-     * @param string $description used for the tooltip of the configuration value
-     * @param sql_db $db_con the open database connection that should be used
-     * @return bool if updating in the database was successful
-     */
-    private function update(string $code_id, string $value, string $description, sql_db $db_con): bool
-    {
-        $result = false;
-        $db_id = $db_con->update_old(
-            $code_id,
-            array(
-                sql_db::FLD_VALUE,
-                sql_db::FLD_DESCRIPTION),
-            array(
-                $value,
-                $description),
-            sql_db::FLD_CODE_ID);
-        if ($db_id > 0) {
-            $result = true;
         }
         return $result;
     }
@@ -441,6 +392,20 @@ class config extends db_object_seq_id
         return $result;
     }
 
+    /**
+     * get the name of the config
+     *
+     * @return string the name from the system configuration entry
+     */
+    function name(): string
+    {
+        if ($this->name == null) {
+            return '';
+        } else {
+            return $this->name;
+        }
+    }
+
 
     /*
      * sql fields
@@ -477,8 +442,8 @@ class config extends db_object_seq_id
      */
     function db_fields_changed(
         config|db_object_seq_id $obj,
-        user_message          $msg,
-        sql_type_list         $sc_par_lst = new sql_type_list()
+        user_message            $msg,
+        sql_type_list           $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
