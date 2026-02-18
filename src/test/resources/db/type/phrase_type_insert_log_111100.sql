@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION ref_type_insert_log_1111
+CREATE OR REPLACE FUNCTION phrase_type_insert_log_111100
     (_type_name               text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -8,43 +8,43 @@ CREATE OR REPLACE FUNCTION ref_type_insert_log_1111
      _field_id_description    smallint,
      _description             text) RETURNS bigint AS
 $$
-DECLARE new_ref_type_id bigint;
+DECLARE new_phrase_type_id bigint;
 BEGIN
 
-        INSERT INTO ref_types (type_name)
+        INSERT INTO phrase_types (type_name)
              SELECT              _type_name
-          RETURNING ref_type_id INTO new_ref_type_id;
+          RETURNING phrase_type_id INTO new_phrase_type_id;
 
         INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,  row_id)
-             SELECT          _user_id,_change_action_id,_field_id_type_name,  _type_name,  new_ref_type_id ;
+             SELECT          _user_id,_change_action_id,_field_id_type_name,  _type_name,  new_phrase_type_id ;
 
         INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,  row_id)
-             SELECT          _user_id,_change_action_id,_field_id_code_id,    _code_id,    new_ref_type_id ;
+             SELECT          _user_id,_change_action_id,_field_id_code_id,    _code_id,    new_phrase_type_id ;
 
         INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,  row_id)
-             SELECT          _user_id,_change_action_id,_field_id_description,_description,new_ref_type_id ;
+             SELECT          _user_id,_change_action_id,_field_id_description,_description,new_phrase_type_id ;
 
-             UPDATE ref_types
+             UPDATE phrase_types
                 SET code_id     = _code_id,
                     description = _description
-              WHERE ref_types.ref_type_id = new_ref_type_id;
+              WHERE phrase_types.phrase_type_id = new_phrase_type_id;
 
-             RETURN new_ref_type_id;
+             RETURN new_phrase_type_id;
 
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE ref_type_insert_log_1111_call
+PREPARE phrase_type_insert_log_111100_call
     (text,bigint,smallint,smallint,smallint,text,smallint,text) AS
-SELECT ref_type_insert_log_1111
+SELECT phrase_type_insert_log_111100
     ($1,$2,$3,$4,$5,$6,$7,$8);
 
-SELECT ref_type_insert_log_1111
-    ('wikidata'::text,
+SELECT phrase_type_insert_log_111100
+    ('standard'::text,
      1::bigint,
      1::smallint,
-     352::smallint,
-     353::smallint,
-     'wikidata'::text,
-     354::smallint,
-     'wikidata'::text);
+     835::smallint,
+     836::smallint,
+     'default'::text,
+     837::smallint,
+     '1'::text);

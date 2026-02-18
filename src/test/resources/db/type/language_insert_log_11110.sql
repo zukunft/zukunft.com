@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION language_insert_log_1111
+CREATE OR REPLACE FUNCTION language_insert_log_11110
     (_language_name           text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -34,12 +34,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE language_insert_log_1111_call
+PREPARE language_insert_log_11110_call
     (text,bigint,smallint,smallint,smallint,text,smallint,text) AS
-SELECT language_insert_log_1111
+SELECT language_insert_log_11110
     ($1,$2,$3,$4,$5,$6,$7,$8);
 
-SELECT language_insert_log_1111
+SELECT language_insert_log_11110
     ('English'::text,
      1::bigint,
      1::smallint,

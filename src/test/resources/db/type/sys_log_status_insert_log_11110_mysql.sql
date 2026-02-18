@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS sys_log_status_insert_log_1111;
-CREATE PROCEDURE sys_log_status_insert_log_1111
+DROP PROCEDURE IF EXISTS sys_log_status_insert_log_11110;
+CREATE PROCEDURE sys_log_status_insert_log_11110
     (_status_name             text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -32,10 +32,10 @@ BEGIN
 
 END;
 
-PREPARE sys_log_status_insert_log_1111_call
-    FROM 'SELECT sys_log_status_insert_log_1111 (?,?,?,?,?,?,?,?)';
+PREPARE sys_log_status_insert_log_11110_call
+    FROM 'SELECT sys_log_status_insert_log_11110 (?,?,?,?,?,?,?,?)';
 
-SELECT sys_log_status_insert_log_1111
+SELECT sys_log_status_insert_log_11110
     ('new',
      1,
      1,

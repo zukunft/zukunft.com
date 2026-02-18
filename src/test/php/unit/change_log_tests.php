@@ -150,6 +150,12 @@ class change_log_tests
         $t->assert_sql_index_create($log_lnk);
         $t->assert_sql_foreign_key_create($log_lnk);
 
+        $t->subheader($ts . 'table and field sql write');
+        $tbl = $t_log->log_table();
+        $t->assert_sql_insert($sc, $tbl);
+        $fld = $t_log->log_field();
+        $t->assert_sql_insert($sc, $fld);
+
         $t->subheader($ts . 'named sql write');
         $log = $t_log->log_word_add();
         $t->assert_sql_insert($sc, $log);
@@ -241,6 +247,15 @@ class change_log_tests
         // TODO add tests for all value types
         $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($usr));
 
+        // sql to load a field by field name and table id
+        $tbl = new change_table();
+        $t->assert_sql_by_name($sc, $tbl);
+        $t->assert_sql_by_code_id($sc, $tbl);
+
+        // sql to load a field by field name and table id
+        $fld = new change_field();
+        $this->assert_sql_field_by_name_and_id($t, $db_con, $fld);
+
         // sql to load a log entry by field and row id
         $log = new change_link($usr);
         $this->assert_sql_link_by_table($t, $db_con, $log);
@@ -279,6 +294,29 @@ class change_log_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, 2);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * check the load SQL statements to get a link log entry by table
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param change_field $fld the user sandbox object e.g. a word
+     */
+    private function assert_sql_field_by_name_and_id(test_cleanup $t, sql_db $db_con, change_field $fld): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $fld->load_sql_by_name_and_table_id($db_con->sql_creator(), 'system_test_field_name', 1);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $fld->load_sql_by_name_and_table_id($db_con->sql_creator(), 'system_test_field_name', 1);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

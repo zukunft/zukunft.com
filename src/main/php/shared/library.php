@@ -3047,6 +3047,9 @@ class library
         if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
+        if ($result == 'configs') {
+            $result = 'config';
+        }
         return $result;
     }
 

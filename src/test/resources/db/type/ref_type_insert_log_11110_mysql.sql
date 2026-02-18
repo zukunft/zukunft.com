@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS ref_type_insert_log_1111;
-CREATE PROCEDURE ref_type_insert_log_1111
+DROP PROCEDURE IF EXISTS ref_type_insert_log_11110;
+CREATE PROCEDURE ref_type_insert_log_11110
     (_type_name               text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -32,10 +32,10 @@ BEGIN
 
 END;
 
-PREPARE ref_type_insert_log_1111_call
-    FROM 'SELECT ref_type_insert_log_1111 (?,?,?,?,?,?,?,?)';
+PREPARE ref_type_insert_log_11110_call
+    FROM 'SELECT ref_type_insert_log_11110 (?,?,?,?,?,?,?,?)';
 
-SELECT ref_type_insert_log_1111
+SELECT ref_type_insert_log_11110
     ('wikidata',
      1,
      1,

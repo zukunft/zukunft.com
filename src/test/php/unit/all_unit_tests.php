@@ -108,6 +108,7 @@ class all_unit_tests extends test_cleanup
         new lib_tests()->run($all); // test functions not yet split into single unit tests
         new math_tests()->run($this);
         new system_tests()->run($this);
+        new config_tests()->run($this);
         new ip_range_tests()->run($this);
         new coding_rule_tests()->run($this);
         new sql_tests()->run($this);

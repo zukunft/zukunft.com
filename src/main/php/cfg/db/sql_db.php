@@ -58,6 +58,8 @@ include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_SANDBOX . 'protection_type.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
@@ -171,6 +173,8 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
@@ -1429,14 +1433,30 @@ class sql_db
         $this->seq_reset(change_action::class);
     }
 
-    function load_db_code_link_file(string $class, array $sc_par_lst_in = []): bool
+    function load_db_code_link_file(
+        string $class,
+        array $sc_par_lst_in = []
+    ): bool
     {
         global $debug;
 
         $result = false;
         $lib = new library();
+        $typ_lst = new type_list();
+        $msg = new user_message();
         $table_name = $lib->class_to_table($class);
+        $typ_obj = $typ_lst->class_to_type_object($class);
+        if ($typ_obj::class == type_object::class) {
+            log_err('probably mapping for ' . $class . ' is missing in function class_to_type_object');
+        }
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
+
+        // create a dummy system user for pre initial load
+        // TODO Prio 3 review
+        $usr_sys = new user;
+        $usr_sys->id = users::SYSTEM_ID;
+        $usr_sys->name = users::SYSTEM_NAME;
+        $msg->usr = $usr_sys;
 
         // load the csv
         $csv_path = files::CODE_LINK_PATH . $table_name . files::CODE_LINK_TYPE;
@@ -1476,15 +1496,20 @@ class sql_db
                         // check if the db row needs to be added
                         if ($db_row == null) {
                             // add the row
+                            $add_row = [];
                             for ($i = 0; $i < count($data); $i++) {
                                 $update_col_names[] = $col_names[$i];
                                 $update_col_values[] = trim($data[$i]);
+                                $add_row[$col_names[$i]] = trim($data[$i]);
                             }
-                            $this->set_class($class);
-                            $this->insert_old($update_col_names, $update_col_values);
+                            $typ_obj->row_mapper_typ_obj($add_row, $class);
+                            $typ_obj->db_add($msg, $this, $sc_par_lst);
                         } else {
-                            // check, which values need to be updates
+                            // build a db_row array from the csv line to use the row_mapper
+                            $upd_row = [];
                             for ($i = 1; $i < count($data); $i++) {
+                                $upd_row[$col_names[$i]] = trim($data[$i]);
+                                // check, which values need to be updates
                                 $col_name = $col_names[$i];
                                 if (array_key_exists($col_name, $db_row)) {
                                     $db_value = $db_row[$col_name];
@@ -1498,8 +1523,10 @@ class sql_db
                             }
                             // update the values is needed
                             if (count($update_col_names) > 0) {
-                                $this->set_class($class);
-                                $this->update_old($id, $update_col_names, $update_col_values);
+                                $typ_obj->row_mapper_typ_obj($upd_row, $class);
+                                $db_obj = $typ_obj->clone_reset();
+                                $typ_obj->row_mapper_typ_obj($db_row, $class);
+                                $typ_obj->db_update_row($db_obj, $msg, $this, $sc_par_lst);
                             }
                         }
                     }
@@ -4800,198 +4827,6 @@ class sql_db
         return $usr_msg;
     }
 
-    /**
-     * insert a new record in the database
-     * similar to exe, but returning the row id added to be able to update
-     * e.g. the log entry with the row id of the real row added
-     * writing the changes to the log table for history rollback is done
-     * at the calling function also because zu_log also uses this function
-     * TODO include the data retrieval part for creating this insert statement into the transaction statement
-     *      add the return type (allowed since php version 7.0, but array|string is allowed with 8.0 or higher
-     *      if $log_err is false, no further errors will reported to prevent endless looping from the error logging itself
-     */
-    function insert_old($fields, $values, bool $log_err = true): int
-    {
-        global $sys;
-
-        $result = null;
-        $is_valid = false;
-        $lib = new library();
-        $sys->times->switch(system_time_type::DB_WRITE);
-
-        // escape the fields and values and build the SQL statement
-        $sql = 'INSERT INTO ' . $this->name_sql_esc($this->table);
-
-        if (is_array($fields)) {
-            if (count($fields) <> count($values)) {
-                if ($log_err) {
-                    $lib = new library();
-                    log_fatal_db(
-                        'MySQL insert call with different number of fields (' . $lib->dsp_count($fields)
-                        . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values)
-                        . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
-                }
-            } else {
-                foreach (array_keys($fields) as $i) {
-                    $fields[$i] = $this->name_sql_esc($fields[$i]);
-                    $values[$i] = $this->sf($values[$i]);
-                }
-                $sql_fld = $lib->sql_array($fields, ' (', ') ');
-                $sql .= $lib->sql_array($values,
-                    $sql_fld . ' VALUES (', ') ');
-                $is_valid = true;
-            }
-        } else {
-            if ($fields != '') {
-                $sql .= ' (' . $this->name_sql_esc($fields) . ')
-             VALUES (' . $this->sf($values) . ')';
-                $is_valid = true;
-            }
-        }
-
-        if ($is_valid) {
-            if ($this->db_type == sql_db::POSTGRES) {
-                if ($this->postgres_link == null) {
-                    if ($log_err) {
-                        log_err('Database connection lost', 'insert');
-                    }
-                } else {
-                    // return the database row id if the value is not a time series number
-                    if (!in_array($this->class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
-                        $sql .= ' ' . sql::RETURNING . ' ' . $this->id_field . ';';
-                    }
-                    if ($this->id_field == 'official_type_id') {
-                        log_info('check');
-                    }
-
-                    /*
-                    try {
-                        $stmt = $this->link->prepare($sql);
-                        $this->link->beginTransaction();
-                        $stmt->execute();
-                        $this->link->commit();
-                        $result = $this->link->lastInsertId();
-                        log_debug('done "' . $result . '"');
-                    } catch (PDOException $e) {
-                        $this->link->rollback();
-                        log_debug('failed (' . $sql . ')');
-                    }
-                    */
-                    //$sql_result = $this->exe($sql);
-
-                    // TODO catch SQL errors and report them
-                    $sql_result = pg_query($this->postgres_link, $sql);
-                    if ($sql_result) {
-                        $sql_error = pg_result_error($sql_result);
-                        if ($sql_error != '') {
-                            if ($log_err) {
-                                log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
-                            }
-                        } else {
-                            if (!in_array($this->class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
-                                if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
-                                    try {
-                                        $result = pg_fetch_array($sql_result);
-                                        if ($result === false) {
-                                            $result = 0;
-                                        } else {
-                                            if (is_array($result)) {
-                                                $result = $result[0];
-                                            }
-                                        }
-                                    } catch (PDOException $e) {
-                                        log_err('failed result catch (' . $sql . ')');
-                                    }
-                                } else {
-                                    // TODO get the correct db number
-                                    $result = 0;
-                                }
-                            } else {
-                                $result = 1;
-                            }
-                        }
-                    } else {
-                        $sql_error = pg_last_error($this->postgres_link);
-                        if ($log_err) {
-                            log_err('Execution of ' . $sql . ' failed completely due to ' . $sql_error);
-                        }
-                    }
-
-                    //if ($result == false) {                        die(pg_last_error());                    }
-                }
-            } elseif ($this->db_type == sql_db::MYSQL) {
-                $sql = $sql . ';';
-                //$sql_result = $this->exe($sql, 'insert_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
-                try {
-                    $sql_result = $this->exe($sql, '', array(), sys_log_levels::FATAL);
-                    if ($sql_result) {
-                        $result = mysqli_insert_id($this->mysql);
-                        // user database row have a double unique index, but relevant
-                        if ($result == 0) {
-                            if (is_array($values)) {
-                                $result = $values[0];
-                            } else {
-                                $result = $values;
-                            }
-                        }
-                        log_debug('done "' . $result . '"');
-                    } else {
-                        $result = -1;
-                        log_debug('failed (' . $sql . ')');
-                    }
-                } catch (Exception $e) {
-                    $trace_link = log_err('Cannot insert with "' . $sql . '" because: ' . $e->getMessage());
-                    $result = -1;
-                }
-
-            } else {
-                log_err('Unknown database type "' . $this->db_type . '"', 'sql_db->fetch');
-            }
-        } else {
-            $result = -1;
-            log_debug('failed (' . $sql . ')');
-        }
-
-        if ($result === null) {
-            if ($log_err) {
-                log_warning('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
-            }
-            $result = 0;
-        }
-        $sys->times->switch();
-
-        return $result;
-    }
-
-
-    /**
-     * add a new unique text to the database and return the id (similar to get_id)
-     */
-    function add_id($name): int
-    {
-        log_debug($name . ' to ' . $this->class);
-
-        $this->set_name_field();
-        $result = $this->insert_old($this->name_field, $name);
-
-        log_debug('is "' . $result . '"');
-        return $result;
-    }
-
-    /**
-     * similar to zu_sql_add_id, but using a second ID field
-     */
-    function add_id_2key($name, $field2_name, $field2_value): int
-    {
-        log_debug($name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->class);
-
-        $this->set_name_field();
-        //zu_debug('sql_db->add_id_2key add "'.$this->name_field.','.$field2_name.'" "'.$name.','.$field2_value.'"');
-        $result = $this->insert_old(array($this->name_field, $field2_name), array($name, $field2_value));
-
-        log_debug('is "' . $result . '"');
-        return $result;
-    }
 
     /**
      * update some values in a table

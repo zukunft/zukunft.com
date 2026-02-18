@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION phrase_type_update_log_1002
+CREATE OR REPLACE FUNCTION phrase_type_update_log_100200
     (_user_id              bigint,
      _change_action_id     smallint,
      _field_id_description smallint,
@@ -20,12 +20,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE phrase_type_update_log_1002_call
+PREPARE phrase_type_update_log_100200_call
     (bigint,smallint,smallint,text,text,bigint,smallint,text) AS
-SELECT phrase_type_update_log_1002
+SELECT phrase_type_update_log_100200
     ($1,$2,$3,$4,$5,$6,$7,$8);
 
-SELECT phrase_type_update_log_1002
+SELECT phrase_type_update_log_100200
     (1::bigint,
      1::smallint,
      837::smallint,

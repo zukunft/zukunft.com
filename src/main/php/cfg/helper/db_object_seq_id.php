@@ -624,7 +624,7 @@ class db_object_seq_id extends db_object
         return $msg->is_ok();
     }
 
-    protected function db_add(
+    function db_add(
         user_message  $msg,
         sql_db        $db_con,
         sql_type_list $sc_par_lst
@@ -674,7 +674,7 @@ class db_object_seq_id extends db_object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return bool true is the database row has been updated
      */
-    protected function db_update(
+    function db_update(
         user_message  $msg,
         sql_db        $db_con,
         sql_type_list $sc_par_lst
@@ -687,6 +687,28 @@ class db_object_seq_id extends db_object
         $db_rec = $this->clone_all();
         $db_rec->reset(true);
         $db_rec->load_by_id($this->id());
+
+        return $this->db_update_row($db_rec, $msg, $db_con, $sc_par_lst);
+    }
+
+    /**
+     * updated all changed fields in the database with one sql function
+     * and log the changes if needed
+     *
+     * @param db_object_seq_id $db_rec the object as it is in the database before the update
+     * @param user_message $msg to collect the problem messages and solution for the requesting user
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return bool true is the database row has been updated
+     */
+    function db_update_row(
+        db_object_seq_id $db_rec,
+        user_message     $msg,
+        sql_db           $db_con,
+        sql_type_list    $sc_par_lst
+    ): bool
+    {
+        log_debug('update row ' . $this->dsp_id());
 
         // if the user has the right to change the database row ...
         if ($this->can_be_changed_by($msg, $db_rec)) {
@@ -1247,7 +1269,7 @@ class db_object_seq_id extends db_object
     }
 
     /**
-     * create the sql statement to add an object e.g. word to the database
+     * create the sql statement to add a row to the database
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
@@ -1266,10 +1288,37 @@ class db_object_seq_id extends db_object
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'sql_insert_key_field',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        // set some var names to shorten the code lines
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
+
+        // list of parameters actually used in order of the function usage
+        $sql = '';
+        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+
+        // create the sql to insert the row
+        $fvt_insert_list = new sql_par_field_list();
+        $fvt_insert_list->add($fvt_insert);
+        $sc_insert = clone $sc;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
+        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        }
+        $qp_insert->sql = $sc_insert->create_sql_insert(
+            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+        $qp_insert->par = [$fvt_insert->value];
+
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_insert->sql . '; ';
+
+        // get the new row id for MySQL db
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+        }
+
+        $qp->sql = $sql;
+        $qp->par_fld = $fvt_insert;
+
         return $qp;
     }
 

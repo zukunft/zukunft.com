@@ -1767,6 +1767,7 @@ class value_base extends sandbox_value
 
     /**
      * create a database record to save a user-specific value
+     * @param user_message $usr_msg to collect the problem and suggested solutions
      */
     protected function add_usr_cfg(user_message $usr_msg, string $class = self::class): bool
     {

@@ -306,6 +306,17 @@ class verb extends type_object
     }
 
     /**
+     * interface function for initial csv import
+     * @param array $db_row with the data from the database
+     * @param string $class the type class name that should be filled
+     * @return bool true if all expected object vars have been set
+     */
+    function row_mapper_typ_obj(array $db_row, string $class): bool
+    {
+        return $this->row_mapper_verb($db_row);
+    }
+
+    /**
      * set the class vars based on a database record
      *
      * @param array|null $db_row is an array with the database values

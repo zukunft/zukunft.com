@@ -859,3 +859,8 @@ change_field_id,change_field_name,table_id,description
 858,priority,117,
 859,ip_range_key,27,
 860,sys_log_update_time,31,
+861,system_time_type_id,118,
+862,type_name,118,
+863,code_id,118,
+864,description,118,
+865,symbol,112,
