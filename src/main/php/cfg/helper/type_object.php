@@ -56,11 +56,11 @@ include_once paths::DB . 'sql_type_list.php';
 // TODO avoid include loops
 //include_once paths::EXPORT . 'export_type_list.php';
 //include_once paths::MODEL_LANGUAGE . 'language.php';
-//include_once paths::MODEL_LANGUAGE . 'language_form.php';
 //include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_table.php';
 //include_once paths::MODEL_LOG . 'change_table_field.php';
+//include_once paths::MODEL_LOG . 'change_field.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_SYSTEM . 'pod.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -84,11 +84,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
-use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -189,25 +186,19 @@ class type_object extends db_object_seq_id
         if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
             $this->id = ($db_row[language::FLD_ID]);
         }
-        if ($this->id() > 0) {
+        if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
             $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
-            $type_name = '';
-            if ($class == change_action::class) {
-                $type_name = strval($db_row[self::FLD_ACTION]);
-            } elseif ($class == change_table::class) {
-                $type_name = strval($db_row[self::FLD_TABLE]);
-            } elseif ($class == change_table_field::class) {
-                $type_name = strval($db_row[self::FLD_FIELD]);
-            } elseif ($class == language_form::class) {
-                $type_name = strval($db_row[language_form::FLD_NAME]);
-            } elseif ($class == language::class) {
-                $type_name = strval($db_row[language::FLD_NAME]);
-            } else {
-                $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
-            }
-            $this->name = $type_name;
+        }
+        if (array_key_exists($this->name_field(), $db_row)) {
+            $this->name = strval($db_row[$this->name_field()]);
+        }
+        if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
             $this->description = strval($db_row[sql_db::FLD_DESCRIPTION]);
-            $result = true;
+        }
+        if (($this->code_id == null or $this->name == '')
+            and ($this->name == null or $this->name == '')) {
+            log_err('either the name of code_id must be set');
+            $result = false;
         }
         return $result;
     }
@@ -215,7 +206,7 @@ class type_object extends db_object_seq_id
     /**
      * fill the vars with this sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
@@ -328,7 +319,11 @@ class type_object extends db_object_seq_id
 
     function get_code_id(): string
     {
-        return $this->code_id;
+        if ($this->code_id == null) {
+            return '';
+        } else {
+            return $this->code_id;
+        }
     }
 
     function get_description(): ?string
@@ -774,6 +769,9 @@ class type_object extends db_object_seq_id
         // list of parameters actually used in order of the function usage
         $sql = '';
         $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+        if ($fvt_insert == null) {
+            log_err('name field is missing for ' . $this->dsp_id());
+        }
 
         // create the sql to insert the row
         $fvt_insert_list = new sql_par_field_list();

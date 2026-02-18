@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS formula_link_types
     type_name            varchar(255)     NOT NULL,
     code_id              varchar(255) DEFAULT NULL,
     description          text         DEFAULT NULL,
-    formula_id           bigint           NOT NULL,
-    phrase_type_id       smallint         NOT NULL
+    formula_id           bigint       DEFAULT NULL,
+    phrase_type_id       smallint     DEFAULT NULL
 );
 
 COMMENT ON TABLE formula_link_types IS 'to assign predefined behaviour to a formula link';

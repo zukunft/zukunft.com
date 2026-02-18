@@ -110,6 +110,23 @@ class user_profile extends type_object
     }
 
     /**
+     * fill the user profile object vars based on an array of fields from the database
+     * @param array $db_row with the data from the database
+     * @param string $class the type class name that should be filled
+     * @return bool true if all expected object vars have been set
+     */
+    function row_mapper_typ_obj(array $db_row, string $class): bool
+    {
+        $result = parent::row_mapper_typ_obj($db_row, $class);
+        if ($result) {
+            if (array_key_exists(user_profile::FLD_LEVEL, $db_row)) {
+                $this->right_level = ($db_row[user_profile::FLD_LEVEL]);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * map a user profile api json to this model user profile object
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
@@ -261,13 +278,13 @@ class user_profile extends type_object
         if ($obj->right_level !== $this->right_level) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_LEVEL,
-                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_LEVEL),
+                    sql::FLD_LOG_FIELD_PREFIX . user_profile::FLD_LEVEL,
+                    $sys->typ_lst->cng_fld->id($table_id . user_profile::FLD_LEVEL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_LEVEL,
+                user_profile::FLD_LEVEL,
                 $this->right_level,
                 sql_field_type::INT_SMALL,
                 $obj->right_level

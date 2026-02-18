@@ -114,6 +114,24 @@ class change_field extends type_object
         $this->tbl_id = null;
     }
 
+    /**
+     * fill the change field object vars based on an array of fields from the database
+     * @param array $db_row with the data from the database
+     * @param string $class the type class name that should be filled
+     * @return bool true if all expected object vars have been set
+     */
+    function row_mapper_typ_obj(array $db_row, string $class): bool
+    {
+        $result = parent::row_mapper_typ_obj($db_row, $class);
+        if ($result) {
+            if (array_key_exists(change_field::FLD_TABLE, $db_row)) {
+                $this->tbl_id = ($db_row[change_field::FLD_TABLE]);
+            }
+        }
+        return $result;
+    }
+
+
     /*
      * sql fields
      */

@@ -145,6 +145,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add a documentation how to add a phrase type (and make the process easier)
 
     TODO complete system view with: about, async_process, calculate
+    TODO create an admin page with the numbner of connected pods, the usage an the most likely and latest SPAM posts
 
     TODO object chart 
          - add legend with object types and that dotted line is inheritance   

@@ -14771,3 +14771,126 @@ trace
 #9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(61): Zukunft\ZukunftCom\test\php\test_app->start()
 #10 {main}
 by user 
+2026-02-17T22:09:28+00:00: FATAL ERROR! Insert to change log failed due to action id failure.
+2026-02-17T22:09:28+00:00: FATAL ERROR! Insert to change log failed due to action id failure.
+
+function user_log->set_action
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(841): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(272): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_action()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(528): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_action()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(186): Zukunft\ZukunftCom\main\php\cfg\log\change_log->create_log_references()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#6 {main}
+by user 
+2026-02-18T09:54:17+00:00: FATAL ERROR! Select failed due using "PREPARE user_profile_all (bigint, bigint) AS SELECT user_profile_id,  type_name,  description,  code_id FROM user_profiles ORDER BY user_profile_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_profiles« existiert nicht
+LINE 1: ...ofile_id,  type_name,  description,  code_id FROM user_profi...
+                                                             ^ when preparing PREPARE user_profile_all (bigint, bigint) AS SELECT user_profile_id,  type_name,  description,  code_id FROM user_profiles ORDER BY user_profile_id LIMIT $1 OFFSET $2;
+2026-02-18T09:54:17+00:00: FATAL ERROR! Select failed due using "PREPARE user_profile_all (bigint, bigint) AS SELECT user_profile_id,  type_name,  description,  code_id FROM user_profiles ORDER BY user_profile_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_profiles« existiert nicht
+LINE 1: ...ofile_id,  type_name,  description,  code_id FROM user_profi...
+                                                             ^ when preparing PREPARE user_profile_all (bigint, bigint) AS SELECT user_profile_id,  type_name,  description,  code_id FROM user_profiles ORDER BY user_profile_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3293): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3345): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3380): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(490): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(546): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_lists.php(235): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/system_object.php(124): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(181): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-02-18T09:54:41+00:00: FATAL ERROR! Select failed due using "PREPARE verb_all (bigint, bigint) AS SELECT verb_id,  verb_name,  code_id,  description,  name_plural,  name_reverse,  name_plural_reverse,  formula_name,  usage,  impact FROM verbs ORDER BY verb_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »verbs« existiert nicht
+LINE 1: ...ural_reverse,  formula_name,  usage,  impact FROM verbs ORDE...
+                                                             ^ when preparing PREPARE verb_all (bigint, bigint) AS SELECT verb_id,  verb_name,  code_id,  description,  name_plural,  name_reverse,  name_plural_reverse,  formula_name,  usage,  impact FROM verbs ORDER BY verb_id LIMIT $1 OFFSET $2;
+2026-02-18T09:54:41+00:00: FATAL ERROR! Select failed due using "PREPARE verb_all (bigint, bigint) AS SELECT verb_id,  verb_name,  code_id,  description,  name_plural,  name_reverse,  name_plural_reverse,  formula_name,  usage,  impact FROM verbs ORDER BY verb_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »verbs« existiert nicht
+LINE 1: ...ural_reverse,  formula_name,  usage,  impact FROM verbs ORDE...
+                                                             ^ when preparing PREPARE verb_all (bigint, bigint) AS SELECT verb_id,  verb_name,  code_id,  description,  name_plural,  name_reverse,  name_plural_reverse,  formula_name,  usage,  impact FROM verbs ORDER BY verb_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3293): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3345): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3380): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/verb/verb_list.php(225): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(546): Zukunft\ZukunftCom\main\php\cfg\verb\verb_list->load_list()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_lists.php(319): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/system_object.php(124): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(181): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-02-18T09:54:46+00:00: FATAL ERROR! Select failed due using "SELECT change_action_id FROM change_actions WHERE change_action_name = 'add' LIMIT 1;" because: Database error FEHLER:  Relation »change_actions« existiert nicht
+LINE 1: SELECT change_action_id FROM change_actions WHERE change_act...
+                                     ^ when querying SELECT change_action_id FROM change_actions WHERE change_action_name = 'add' LIMIT 1;
+2026-02-18T09:54:46+00:00: FATAL ERROR! Select failed due using "SELECT change_action_id FROM change_actions WHERE change_action_name = 'add' LIMIT 1;" because: Database error FEHLER:  Relation »change_actions« existiert nicht
+LINE 1: SELECT change_action_id FROM change_actions WHERE change_act...
+                                     ^ when querying SELECT change_action_id FROM change_actions WHERE change_action_name = 'add' LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3293): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3335): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3483): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3543): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get_value()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(828): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get_id()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(272): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_action()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(528): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_action()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(186): Zukunft\ZukunftCom\main\php\cfg\log\change_log->create_log_references()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-02-18T09:54:48+00:00: FATAL ERROR! Insert to change log failed due to action id failure.
+2026-02-18T09:54:48+00:00: FATAL ERROR! Insert to change log failed due to action id failure.
+
+function user_log->set_action
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(841): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(272): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_action()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(528): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_action()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(186): Zukunft\ZukunftCom\main\php\cfg\log\change_log->create_log_references()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#6 {main}
+by user 
+2026-02-18T09:54:51+00:00: FATAL ERROR! Select failed due using "SELECT change_action_id FROM change_actions WHERE change_action_name = 'update' LIMIT 1;" because: Database error FEHLER:  Relation »change_actions« existiert nicht
+LINE 1: SELECT change_action_id FROM change_actions WHERE change_act...
+                                     ^ when querying SELECT change_action_id FROM change_actions WHERE change_action_name = 'update' LIMIT 1;
+2026-02-18T09:54:51+00:00: FATAL ERROR! Select failed due using "SELECT change_action_id FROM change_actions WHERE change_action_name = 'update' LIMIT 1;" because: Database error FEHLER:  Relation »change_actions« existiert nicht
+LINE 1: SELECT change_action_id FROM change_actions WHERE change_act...
+                                     ^ when querying SELECT change_action_id FROM change_actions WHERE change_action_name = 'update' LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3293): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3335): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3483): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3543): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get_value()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(828): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get_id()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(272): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_action()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(528): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_action()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(186): Zukunft\ZukunftCom\main\php\cfg\log\change_log->create_log_references()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-02-18T09:54:52+00:00: FATAL ERROR! Insert to change log failed due to action id failure.
+2026-02-18T09:54:52+00:00: FATAL ERROR! Insert to change log failed due to action id failure.
+
+function user_log->set_action
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(841): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(272): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_action()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(528): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_action()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(186): Zukunft\ZukunftCom\main\php\cfg\log\change_log->create_log_references()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#6 {main}
+by user 

@@ -105,7 +105,11 @@ class json_fields
     // is needed in the json because the json format does not support ordered lists by definition
     const string POSITION = 'position';
 
+    // language
+    const string WIKI_CODE = 'wikimedia_code';
+
     // language forms
+    const string LANGUAGE = 'language_id';
     const string PLURAL = 'plural';
     const string NAME_PLURAL = 'name_plural';
     const string NAME_REVERSE = 'name_reverse';
@@ -120,6 +124,10 @@ class json_fields
 
     // user profiles
     const string RIGHT_LEVEL = 'right_level';
+
+    // phrase types
+    const string SCALE = 'scale';
+    const string SYMBOL = 'symbol';
 
 
     /*
@@ -365,6 +373,11 @@ class json_fields
     const string ASSIGNED_WORD = 'assigned_word';
     const string FORMULAS = 'formulas';
     const string FORMULA_LINKS = 'formula_links';
+    // TODO Prio 2 cleanup and use fields with *_id only for API messages and move const to this section
+    //             use phrase_type (without id) for im- and export where the name is used
+    //             if e.g. phrase_type (without id) is used in an API message all type vars are included
+    const string PHRASE_TYPE = 'phrase_type';
+    const string PHRASE_TYPE_ID = 'phrase_type_id';
 
 
     // for results

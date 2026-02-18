@@ -12,7 +12,7 @@
       "status": 1,
       "function_id": 1,
       "trace": "the technical trace back description for debugging",
-      "type_id": 4
+      "type_id": 3
     },
     {
       "id": 2,
@@ -21,7 +21,7 @@
       "status": 3,
       "function_id": 3,
       "trace": "the technical trace 2 back description for debugging",
-      "type_id": 8,
+      "type_id": 5,
       "description": "the error has been replicated and the fix will be deployed",
       "solver": 1
     }

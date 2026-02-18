@@ -2059,33 +2059,6 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * actually update a field in the main database record
-     * without user the user sandbox
-     * the usr id is taken into account in sql_db->update (maybe move outside)
-     * @param sql_db $db_con the active database connection that should be used
-     * @param change|change_link $log the log object to track the change and allow a rollback
-     * @return string an empty string if everything is fine or the message that should be shown to the user
-     */
-    function save_field(sql_db $db_con, change|change_link $log): string
-    {
-        $usr_msg = new user_message();
-
-        if ($log->new_id > 0) {
-            $new_value = $log->new_id;
-        } else {
-            $new_value = $log->new_value;
-        }
-        if ($log->add($usr_msg)) {
-            $db_con->set_class($this::class);
-            $db_con->set_usr($this->get_user()->id);
-            if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                $usr_msg->add_message_text('update of value for ' . $log->field() . ' to ' . $new_value . ' failed');
-            }
-        }
-        return $usr_msg->all_message_text();
-    }
-
-    /**
      * detects if this object has been changed compared to the given object,
      * excluding changes on internal fields like last_update
      *

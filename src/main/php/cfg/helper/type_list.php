@@ -80,7 +80,9 @@ include_once paths::MODEL_LOG . 'change_table_field.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';
 //include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_SANDBOX . 'protection_type.php';
 //include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
+//include_once paths::MODEL_SANDBOX . 'share_type.php';
 //include_once paths::MODEL_SANDBOX . 'share_type_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_function_list.php';
@@ -101,12 +103,17 @@ include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_relation_type.php';
 //include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_USER . 'user_type.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 include_once paths::SHARED_HELPER . 'ListOfIdNamedCodeObjects.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 //include_once paths::SHARED_TYPES . 'protection_types.php';
 //include_once paths::SHARED_TYPES . 'share_types.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
+//include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -135,6 +142,8 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
@@ -162,8 +171,10 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
@@ -176,13 +187,16 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdNamedCodeObjects;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class type_list extends ListOfIdNamedCodeObjects
 {
@@ -394,6 +408,50 @@ class type_list extends ListOfIdNamedCodeObjects
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+    /**
+     * get the type object for a given type class
+     *
+     * @param string $class a type class name
+     * @return type_object the corresponding type class object
+     */
+    function class_to_type_object(string $class): type_object
+    {
+        $lib = new library();
+        return match ($class) {
+            sys_log_function::class => new sys_log_function(),
+            sys_log_level::class => new sys_log_level(),
+            sys_log_status::class, sys_log_statuus::class => new sys_log_status(),
+            system_time_type::class => new system_time_type(),
+            user_profile::class => new user_profile(),
+            user_type::class => new user_type(),
+            user_official_type::class => new user_official_type(),
+            change_action::class => new change_action(),
+            change_table::class => new change_table(),
+            change_field::class => new change_field(),
+            share_types::class => new share_type(),
+            protection_types::class => new protection_type(),
+            job_status::class => new job_status(),
+            job_type::class => new job_type(),
+            language_form::class => new language_form(),
+            language::class => new language(),
+            verb::class => new verb(),
+            ref_type::class => new ref_type(),
+            source_type::class => new source_type(),
+            formula_type::class => new formula_type(),
+            formula_link_type::class => new formula_link_type(),
+            element_type::class => new element_type(),
+            phrase_types::class => new phrase_type(''),
+            view_type::class => new view_type(),
+            view_style::class => new view_style(),
+            view_link_type::class => new view_link_type(),
+            view_relation_type::class, view_relation_types::class => new view_relation_type(),
+            component_type::class => new component_type(),
+            component_link_type::class => new component_link_type(),
+            position_type::class => new position_type(),
+            default => new type_object(),
+        };
     }
 
     /**
@@ -763,6 +821,20 @@ class type_list extends ListOfIdNamedCodeObjects
             }
         }
         return $result;
+    }
+
+
+    /*
+     * info
+     */
+
+    function has(?int $id): bool
+    {
+        if ($this->get($id) == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 

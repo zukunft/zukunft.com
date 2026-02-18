@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS language_insert_log_1111;
-CREATE PROCEDURE language_insert_log_1111
+DROP PROCEDURE IF EXISTS language_insert_log_11110;
+CREATE PROCEDURE language_insert_log_11110
     (_language_name           text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -32,10 +32,10 @@ BEGIN
 
 END;
 
-PREPARE language_insert_log_1111_call
-    FROM 'SELECT language_insert_log_1111 (?,?,?,?,?,?,?,?)';
+PREPARE language_insert_log_11110_call
+    FROM 'SELECT language_insert_log_11110 (?,?,?,?,?,?,?,?)';
 
-SELECT language_insert_log_1111
+SELECT language_insert_log_11110
     ('English',
      1,
      1,

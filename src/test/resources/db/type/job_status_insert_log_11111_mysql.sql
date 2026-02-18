@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS job_status_insert_log_1111;
-CREATE PROCEDURE job_status_insert_log_1111
+DROP PROCEDURE IF EXISTS job_status_insert_log_11111;
+CREATE PROCEDURE job_status_insert_log_11111
     (_status_name             text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -7,7 +7,9 @@ CREATE PROCEDURE job_status_insert_log_1111
      _field_id_code_id        smallint,
      _code_id                 text,
      _field_id_description    smallint,
-     _description             text)
+     _description             text,
+     _field_id_priority       smallint,
+     _priority                smallint)
 BEGIN
 
     INSERT INTO job_statuus ( status_name)
@@ -25,17 +27,21 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_job_status_id ;
 
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_priority,   _priority,   @new_job_status_id ;
+
         UPDATE job_statuus
            SET code_id     = _code_id,
-               description = _description
+               description = _description,
+               priority    = _priority
          WHERE job_statuus.job_status_id = @new_job_status_id;
 
 END;
 
-PREPARE job_status_insert_log_1111_call
-    FROM 'SELECT job_status_insert_log_1111 (?,?,?,?,?,?,?,?)';
+PREPARE job_status_insert_log_11111_call
+    FROM 'SELECT job_status_insert_log_11111 (?,?,?,?,?,?,?,?,?,?)';
 
-SELECT job_status_insert_log_1111
+SELECT job_status_insert_log_11111
     ('created',
      1,
      1,
@@ -43,4 +49,6 @@ SELECT job_status_insert_log_1111
      856,
      'new',
      857,
-     'the job is not yet assigned to any calc engine');
+     'the job is not yet assigned to any calc engine',
+     858,
+     0);

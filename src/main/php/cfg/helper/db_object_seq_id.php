@@ -624,7 +624,7 @@ class db_object_seq_id extends db_object
         return $msg->is_ok();
     }
 
-    protected function db_add(
+    function db_add(
         user_message  $msg,
         sql_db        $db_con,
         sql_type_list $sc_par_lst
@@ -674,7 +674,7 @@ class db_object_seq_id extends db_object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return bool true is the database row has been updated
      */
-    protected function db_update(
+    function db_update(
         user_message  $msg,
         sql_db        $db_con,
         sql_type_list $sc_par_lst
@@ -701,7 +701,7 @@ class db_object_seq_id extends db_object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return bool true is the database row has been updated
      */
-    protected function db_update_row(
+    function db_update_row(
         db_object_seq_id $db_rec,
         user_message     $msg,
         sql_db           $db_con,

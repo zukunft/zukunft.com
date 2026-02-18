@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION sys_log_status_insert_log_1111
+CREATE OR REPLACE FUNCTION sys_log_status_insert_log_11110
     (_status_name             text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -34,12 +34,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE sys_log_status_insert_log_1111_call
+PREPARE sys_log_status_insert_log_11110_call
     (text,bigint,smallint,smallint,smallint,text,smallint,text) AS
-SELECT sys_log_status_insert_log_1111
+SELECT sys_log_status_insert_log_11110
     ($1,$2,$3,$4,$5,$6,$7,$8);
 
-SELECT sys_log_status_insert_log_1111
+SELECT sys_log_status_insert_log_11110
     ('new'::text,
      1::bigint,
      1::smallint,

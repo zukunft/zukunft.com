@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS formula_link_type_insert_log_1111;
-CREATE PROCEDURE formula_link_type_insert_log_1111
+DROP PROCEDURE IF EXISTS formula_link_type_insert_log_111100;
+CREATE PROCEDURE formula_link_type_insert_log_111100
     (_type_name               text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -32,10 +32,10 @@ BEGIN
 
 END;
 
-PREPARE formula_link_type_insert_log_1111_call
-    FROM 'SELECT formula_link_type_insert_log_1111 (?,?,?,?,?,?,?,?)';
+PREPARE formula_link_type_insert_log_111100_call
+    FROM 'SELECT formula_link_type_insert_log_111100 (?,?,?,?,?,?,?,?)';
 
-SELECT formula_link_type_insert_log_1111
+SELECT formula_link_type_insert_log_111100
     ('default',
      1,
      1,
