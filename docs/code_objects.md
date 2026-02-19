@@ -29,7 +29,7 @@ some sections are move to related classes to reduce the class size
 
 ## Object structure
 
-![zukunft.com Object Overview](zukunft_com_objects.svg)
+![](zukunft_com_objects_v2.webp)
 
 the target model object structure is:
 

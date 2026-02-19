@@ -1691,7 +1691,7 @@ class sandbox extends db_object_seq_id_user
      *
      * @param array $fld_lst all potential user-specific fields of the object
      * @param array $db_row the database record of the user table
-     * @return bool true if no field contain any user overwrite
+     * @return bool true if no field contains any user overwrites
      */
     protected function no_usr_fld_used(array $fld_lst, array $db_row): bool
     {
