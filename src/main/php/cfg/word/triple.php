@@ -2522,7 +2522,7 @@ class triple extends sandbox_link_named
                     // force including again
                     $this->include();
                     $db_rec->exclude();
-                    if ($this->save_field_excluded($db_con, $db_rec, $std_rec)) {
+                    if ($this->save($msg)) {
                         log_debug('triple->save_id_if_updated found a triple with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
                     }
                 }

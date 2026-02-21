@@ -2006,97 +2006,6 @@ class value_base extends sandbox_value
     }
 
     /**
-     * set the update parameters for the number
-     */
-    function save_field_number(sql_db $db_con, value_base $db_rec, value_base $std_rec): string
-    {
-        $result = '';
-        $updated = false;
-        if ($this->is_numeric()) {
-            if ($db_rec->number() <> $this->number()) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->number();
-                $log->new_value = $this->number();
-                $log->std_value = $std_rec->number();
-                $this->save_set_log_id($log);
-                $log->set_field($this::FLD_VALUE);
-                $result .= $this->save_field_user($db_con, $log);
-                $updated = true;
-            }
-        } elseif ($this->is_time_value()) {
-            if ($db_rec->get_value() <> $this->get_value()) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->get_value();
-                $log->new_value = $this->get_value();
-                $log->std_value = $std_rec->get_value();
-                $this->save_set_log_id($log);
-                $log->set_field($this::FLD_VALUE);
-                $result .= $this->save_field_user($db_con, $log);
-                $updated = true;
-            }
-        } elseif ($this->is_text_value()) {
-            if ($db_rec->get_value() <> $this->get_value()) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->get_value();
-                $log->new_value = $this->get_value();
-                $log->std_value = $std_rec->get_value();
-                $this->save_set_log_id($log);
-                $log->set_field(value_db::FLD_VALUE_TEXT);
-                $result .= $this->save_field_user($db_con, $log);
-                $updated = true;
-            }
-        } elseif ($this->is_geo_value()) {
-            if ($db_rec->get_value() <> $this->get_value()) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->get_value();
-                $log->new_value = $this->get_value();
-                $log->std_value = $std_rec->get_value();
-                $this->save_set_log_id($log);
-                $log->set_field(value_db::FLD_VALUE_GEO);
-                $result .= $this->save_field_user($db_con, $log);
-                $updated = true;
-            }
-        } else {
-            if ($db_rec->number() <> $this->number()) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->number();
-                $log->new_value = $this->number();
-                $log->std_value = $std_rec->number();
-                $this->save_set_log_id($log);
-                $log->set_field(value_db::FLD_VALUE);
-                $result .= $this->save_field_user($db_con, $log);
-            }
-        }
-        if ($updated) {
-            // updating the number is definitely relevant for calculation, so force to update the timestamp
-            log_debug('trigger update');
-            $result .= $this->save_field_trigger_update($db_con);
-        }
-        return $result;
-    }
-
-    /**
-     * set the update parameters for the source link
-     */
-    function save_field_source(sql_db $db_con, value_base $db_rec, value_base $std_rec): string
-    {
-        $result = '';
-        if ($db_rec->get_source_id() <> $this->get_source_id()) {
-            $log = $this->log_update_parameter();
-            $log->old_value = $db_rec->source_name();
-            $log->old_id = $db_rec->get_source_id();
-            $log->new_value = $this->source_name();
-            $log->new_id = $this->get_source_id();
-            $log->std_value = $std_rec->source_name();
-            $log->std_id = $std_rec->get_source_id();
-            $this->save_set_log_id($log);
-            $log->set_field(source_db::FLD_ID);
-            $result = $this->save_field_user($db_con, $log);
-        }
-        return $result;
-    }
-
-    /**
      * set to row id for the log
      * @param change_value|change_log $log
      * @return void
@@ -2109,27 +2018,6 @@ class value_base extends sandbox_value
         } else {
             $log->row_id = $id;
         }
-    }
-
-    /**
-     * save the value number and the source
-     * TODO combine the log and update sql to one statement
-     *
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param value_base|sandbox_multi $db_rec the database record before the saving
-     * @param value_base|sandbox_multi $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
-     */
-    function save_fields(sql_db $db_con, value_base|sandbox_multi $db_rec, value_base|sandbox_multi $std_rec): string
-    {
-        $usr_msg = new user_message();
-        $result = $this->save_field_number($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_source($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_share($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_protection($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec, $usr_msg);
-        log_debug('value->save_fields all fields for "' . $this->id() . '" has been saved');
-        return $result;
     }
 
     /**

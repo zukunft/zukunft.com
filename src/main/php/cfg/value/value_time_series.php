@@ -412,7 +412,7 @@ class value_time_series extends sandbox_value
             // TODO add function based db saving
             if ($msg->is_ok()) {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                $msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec, $msg));
+                $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
             }
 
         }

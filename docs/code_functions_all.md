@@ -2044,7 +2044,6 @@
     \-- db_fields_all - section for function db_fields_all is expected to be sql write fields in /sandbox/sandbox.php
     \-- no_diff - section for function no_diff not yet defined that it should be save fields in /sandbox/sandbox.php
     \-- save_field_excluded_log - section for function save_field_excluded_log is expected to be save in /sandbox/sandbox.php
-    \-- save_field_excluded - section for function save_field_excluded is expected to be save in /sandbox/sandbox.php
     \-- is_id_updated - section for function is_id_updated is expected to be info in /sandbox/sandbox.php
     \-- get_obj_with_same_id_fields - section for function get_obj_with_same_id_fields is expected to be set and get in /sandbox/sandbox.php
     \-- msg_id_already_used - section for function msg_id_already_used not yet defined that it should be save id in /sandbox/sandbox.php
@@ -2235,15 +2234,12 @@
     \-- usr_cfg_cleanup - section for function usr_cfg_cleanup not yet defined that it should be save helper - user sandbox in /sandbox/sandbox_multi.php
     \-- db_ready - section for function db_ready is expected to be check in /sandbox/sandbox_multi.php
     \-- save_fields - section for function save_fields is expected to be save in /sandbox/sandbox_multi.php
-    \-- save_field_user - section for function save_field_user is expected to be save in /sandbox/sandbox_multi.php
     \-- sql_update_multi - section for function sql_update_multi not yet defined that it should be save helper - save fields in /sandbox/sandbox_multi.php
     \-- sql_delete - section for function sql_delete not yet defined that it should be save helper - save fields in /sandbox/sandbox_multi.php
     \-- name_field - section for function name_field is expected to be sql fields in /sandbox/sandbox_multi.php
-    \-- save_field - section for function save_field is expected to be save in /sandbox/sandbox_multi.php
     \-- save_field_excluded_log - section for function save_field_excluded_log is expected to be save in /sandbox/sandbox_multi.php
     \-- save_field_excluded - section for function save_field_excluded is expected to be save in /sandbox/sandbox_multi.php
     \-- save_field_share - section for function save_field_share is expected to be save in /sandbox/sandbox_multi.php
-    \-- save_field_protection - section for function save_field_protection is expected to be save in /sandbox/sandbox_multi.php
     \-- save_set_log_id - section for function save_set_log_id is expected to be save in /sandbox/sandbox_multi.php
     \-- is_id_updated - section for function is_id_updated is expected to be info in /sandbox/sandbox_multi.php
     \-- get_obj_with_same_id_fields - section for function get_obj_with_same_id_fields is expected to be set and get in /sandbox/sandbox_multi.php
@@ -2555,10 +2551,7 @@
     \-- add_wrd - section for function add_wrd not yet defined that it should be Select functions in /value/value_base.php
     \-- del_wrd - section for function del_wrd is expected to be del in /value/value_base.php
     \-- save_field_trigger_update - section for function save_field_trigger_update is expected to be save in /value/value_base.php
-    \-- save_field_number - section for function save_field_number is expected to be save in /value/value_base.php
-    \-- save_field_source - section for function save_field_source is expected to be save in /value/value_base.php
     \-- save_set_log_id - section for function save_set_log_id is expected to be save in /value/value_base.php
-    \-- save_fields - section for function save_fields is expected to be save in /value/value_base.php
     \-- save_id_fields - section for function save_id_fields is expected to be save in /value/value_base.php
     \-- save_id_if_updated - section for function save_id_if_updated is expected to be save in /value/value_base.php
     \-- add - section for function add not yet defined that it should be Select functions in /value/value_base.php

@@ -2039,58 +2039,6 @@ class sandbox extends db_object_seq_id_user
         return $log;
     }
 
-    /**
-     * set the update parameters for the value excluded
-     * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox $db_rec the object as saved in the database before this field is updated
-     * @param sandbox $std_rec the default object without user-specific changes
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_field_excluded(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): user_message
-    {
-        log_debug($this->dsp_id());
-        $msg = new user_message();
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
-
-        if ($db_rec->is_excluded() <> $this->is_excluded()) {
-            $log = $this->save_field_excluded_log($db_rec);
-            $new_value = $this->is_excluded();
-            $std_value = $std_rec->is_excluded();
-            // similar to $this->save_field_do
-            if ($this->can_change()) {
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->get_user()->id);
-                if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                    $msg->add(msg_id::EXCLUDING_FAILED, [msg_id::VAR_CLASS_NAME => $class_name]);
-                }
-            } else {
-                if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
-                        $msg->add_id(msg_id::USER_SANDBOX_TO_EXCLUDE_FAILED);
-                    }
-                }
-                if ($msg->is_ok()) {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    if ($new_value == $std_value) {
-                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $msg->add(msg_id::INCLUDE_FOR_USER_FAILED, [msg_id::VAR_CLASS_NAME => $class_name]);
-                        }
-                    } else {
-                        if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                            $msg->add(msg_id::EXCLUDING_FOR_USER_FAILED, [msg_id::VAR_CLASS_NAME => $class_name]);
-                        }
-                    }
-                    if (!$this->del_usr_cfg_if_not_needed()) {
-                        $msg->add_id(msg_id::USER_SANDBOX_CANNOT_BE_CLEANED);
-                    }
-                }
-            }
-        }
-        return $msg;
-    }
-
 
     /*
      * save id

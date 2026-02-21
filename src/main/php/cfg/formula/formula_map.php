@@ -1539,7 +1539,7 @@ class formula_map extends sandbox_code_id
                         // force including again
                         $this->include();
                         $db_rec->exclude();
-                        $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                        $this->save($msg);
                         log_debug('->save_id_if_updated found a display component link with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
                     } else {
                         $msg->add(msg_id::COMPONENT_ALREADY_EXISTS, [msg_id::VAR_COMPONENT_NAME => $this->name()]);

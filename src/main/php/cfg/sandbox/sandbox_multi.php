@@ -2150,72 +2150,8 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * actually update a field in the main database record or the user sandbox
-     * the usr id is taken into account in sql_db->update (maybe move outside)
-     * @param sql_db $db_con the active database connection that should be used
-     * @param change|change_link $log the log object to track the change and allow a rollback
-     * @return string an empty string if everything is fine or the message that should be shown to the user
-     */
-    function save_field_user(sql_db $db_con, change|change_link $log): string
-    {
-        $result = '';
-        $usr_msg = new user_message();
-
-        if ($log->new_id > 0) {
-            $new_value = $log->new_id;
-            $std_value = $log->std_id;
-        } else {
-            $new_value = $log->new_value;
-            $std_value = $log->std_value;
-        }
-        if ($log->add($usr_msg)) {
-            if ($this->can_change()) {
-                if ($new_value == $std_value) {
-                    if ($this->has_usr_cfg()) {
-                        log_debug('remove user change');
-                        $db_con->set_class($this::class, true);
-                        $db_con->set_usr($this->get_user()->id);
-                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $result = 'remove of ' . $log->field() . ' failed';
-                        }
-                    }
-                    $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
-                } else {
-                    $db_con->set_class($this::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                        $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
-                    }
-                }
-            } else {
-                if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg($usr_msg)) {
-                        $result = 'creation of user sandbox for ' . $log->field() . ' failed';
-                    }
-                }
-                if ($result == '') {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    if ($new_value == $std_value) {
-                        log_debug('remove user change');
-                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $result = 'remove of user value for ' . $log->field() . ' failed';
-                        }
-                    } else {
-                        if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                            $result = 'update of user value for ' . $log->field() . ' to ' . $new_value . ' failed';
-                        }
-                    }
-                    $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * create the sql statement to update a value in the database
-     * to be overwritten by child object
+     * to be overwritten by a child object
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
@@ -2486,34 +2422,6 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * actually update a field in the main database record
-     * without user the user sandbox
-     * the usr id is taken into account in sql_db->update (maybe move outside)
-     * @param sql_db $db_con the active database connection that should be used
-     * @param change|change_link $log the log object to track the change and allow a rollback
-     * @return string an empty string if everything is fine or the message that should be shown to the user
-     */
-    function save_field(sql_db $db_con, change|change_link $log): string
-    {
-        $result = '';
-        $usr_msg = new user_message();
-
-        if ($log->new_id > 0) {
-            $new_value = $log->new_id;
-        } else {
-            $new_value = $log->new_value;
-        }
-        if ($log->add($usr_msg)) {
-            $db_con->set_class($this::class);
-            $db_con->set_usr($this->get_user()->id);
-            if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                $result = 'update of value for ' . $log->field() . ' to ' . $new_value . ' failed';
-            }
-        }
-        return $result;
-    }
-
-    /**
      * @param sandbox_multi $db_rec the object as saved in the database before the change
      * @return change_log the log object predefined for excluding
      */
@@ -2641,32 +2549,6 @@ class sandbox_multi extends db_object_multi_user
                     $usr_msg->get_message();
                 }
             }
-        }
-
-        log_debug($this->dsp_id());
-        return $result;
-    }
-
-    /**
-     * save the protection level in the database if allowed
-     * TODO is the setting of the standard needed?
-     */
-    function save_field_protection(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
-    {
-        $result = '';
-        log_debug($this->dsp_id());
-
-        if ($db_rec->protection_id <> $this->protection_id) {
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->protection_type_name();
-            $log->old_id = $db_rec->protection_id;
-            $log->new_value = $this->protection_type_name();
-            $log->new_id = $this->protection_id;
-            $log->std_value = $std_rec->protection_type_name();
-            $log->std_id = $std_rec->protection_id;
-            $this->save_set_log_id($log);
-            $log->set_field(self::FLD_PROTECT);
-            $result .= $this->save_field_user($db_con, $log);
         }
 
         log_debug($this->dsp_id());
