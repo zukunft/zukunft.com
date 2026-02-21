@@ -2042,7 +2042,6 @@
     \-- db_ready - section for function db_ready is expected to be check in /sandbox/sandbox.php
     \-- save_fields_func - section for function save_fields_func is expected to be save in /sandbox/sandbox.php
     \-- db_fields_all - section for function db_fields_all is expected to be sql write fields in /sandbox/sandbox.php
-    \-- save_field_user - section for function save_field_user is expected to be save in /sandbox/sandbox.php
     \-- no_diff - section for function no_diff not yet defined that it should be save fields in /sandbox/sandbox.php
     \-- save_field_excluded_log - section for function save_field_excluded_log is expected to be save in /sandbox/sandbox.php
     \-- save_field_excluded - section for function save_field_excluded is expected to be save in /sandbox/sandbox.php
