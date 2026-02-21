@@ -66,6 +66,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_id_object_non_sandbox.php';
@@ -202,8 +203,8 @@ class user extends db_id_object_non_sandbox
 
     // var used for the registration and logon process
     public ?string $activation_key = '';
-    public ?string $activation_timeout = '';
-    public ?string $db_now = '';
+    public ?DateTime $activation_timeout = null;
+    public ?DateTime $db_now = null;
 
     // TODO move to user config e.g. by using the key word "pod-user-config"
     public ?string $dec_point = null;     // the decimal point char for this user
@@ -270,8 +271,8 @@ class user extends db_id_object_non_sandbox
 
         // used only for the signup process
         $this->activation_key = '';
-        $this->activation_timeout = '';
-        $this->db_now = '';
+        $this->activation_timeout = null;
+        $this->db_now = null;
 
         // TODO Prio 2 move it to user config base on a value list
         $this->dec_point = null;
@@ -324,6 +325,7 @@ class user extends db_id_object_non_sandbox
     {
         global $debug;
 
+        $lib = new library();
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->name = $db_row[user_db::FLD_NAME];
@@ -350,10 +352,10 @@ class user extends db_id_object_non_sandbox
                 $this->activation_key = $db_row[user_db::FLD_ACTIVATION_KEY];
             }
             if (array_key_exists(user_db::FLD_ACTIVATION_TIMEOUT, $db_row)) {
-                $this->activation_timeout = $db_row[user_db::FLD_ACTIVATION_TIMEOUT];
+                $this->activation_timeout = $lib->get_datetime($db_row[user_db::FLD_ACTIVATION_TIMEOUT], $this->dsp_id());
             }
             if (array_key_exists(user_db::FLD_DB_NOW, $db_row)) {
-                $this->db_now = $db_row[user_db::FLD_DB_NOW];
+                $this->db_now = $lib->get_datetime($db_row[user_db::FLD_DB_NOW], $this->dsp_id());
             }
 
             $this->dec_point = shared_config::DEFAULT_DEC_POINT;
@@ -2945,9 +2947,9 @@ class user extends db_id_object_non_sandbox
         if ($obj->activation_timeout <> $this->activation_timeout) {
             $lst->add_field(
                 user_db::FLD_ACTIVATION_TIMEOUT,
-                $this->activation_timeout,
+                $this->activation_timeout?->format(sql_db::DATE_FORMAT),
                 sql_field_type::TIME,
-                $obj->activation_timeout
+                $this->activation_timeout?->format(sql_db::DATE_FORMAT)
             );
         }
 

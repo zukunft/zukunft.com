@@ -37,6 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -80,16 +81,24 @@ if ($db_con->is_open()) {
             // Lets search the database for the user name and password
             // don't use the sf shortcut here!
             // TODO prevent code injection
+            $usr_name = $_POST[url_var::USERNAME_HUMAN];
+            $usr_mail = $_POST[url_var::EMAIL_HUMAN];
             $db_usr = new user();
-            if ($db_usr->load_by_name_or_email($_POST['username'], $_POST['email'])) {
+            if ($db_usr->load_by_name_or_email($usr_name, $usr_mail)) {
 
                 // save activation key
                 $key = getRandomKey();
-                $db_con->set_class(user::class);
-                $db_con->set_usr($usr->id);
-                if (!$db_con->update_old($db_usr->id, array("activation_key", "activation_timeout"), array($db_con->sf($key), 'NOW() + INTERVAL 1 DAY'))) {
-                    log_err('Saving of activation key failed for user ' . $db_usr->id, 'login_reset');
+                $timeout = new DateTime();
+                try {
+                    // TODO Prio 1 get timeout duration from the system config
+                    $timeout->modify('+1 day');
+                } catch (DateMalformedStringException $e) {
+                    log_err('timeout setting failed due to ' . $e->getMessage());
                 }
+
+                $db_usr->activation_key = $key;
+                $db_usr->activation_timeout = $timeout;
+                $db_usr->save($usr_msg);
 
                 $mail_to = $db_usr->email;
                 $mail_subject = 'zukunft.com - password reset request';

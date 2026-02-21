@@ -13,6 +13,8 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.4
     TODO fix all prio 0 TODO including unit tests
+    TODO use the url_var class const for all url vars
+    TODO make sure the the save function always includes all fields e.g. if by the user the activation_timeout is included
     TODO finish the expression code review
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
     TODO review and create missing formula unit, read and write tests
@@ -89,6 +91,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO make main backend object vars private (pending: ref, value, formula, result, view, component, user)
     TODO complete and test the url mapper in the frontend
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
+    TODO check that all database datetime fields use a php DateTime var and that the db value is converted via $lib->get_datetime()
     TODO use only these global vars:
          - $sys to cache execution times, types and system configuration that change rarely
                 and is not user-specific and for easy check how many times the code writes
@@ -323,6 +326,13 @@ A proper issue ticket should be created for these TODOs notes:
             3. order the functions by importance
             4. remove unneeded overwrites
     TODO use list of most often used words for the prime word selection
+    TODO use a WAF to secure the pod to pod traffif e.g. https://github.com/chaitin/SafeLine
+    TODO use pods to create a continent delivery network (CDN) 
+    TODO can opentofu be used to create hot-standby postgres databases on offer zero downtime on upgrade
+    TODO add and test a database restore additinal to the hot standby tests
+    TODO add and test a point in time database restore 
+    TODO allow to use an openShift cluster for the pod as a server base
+    TODO use load balance on the top leven and within the pod
     TODO limit the number of arguments allowed per person and adjust the limit based on the previous number of destructive arguments
     TODO define a phrase range for global prime phrases (e.g. 5124)
          and a range for pot prime terms
