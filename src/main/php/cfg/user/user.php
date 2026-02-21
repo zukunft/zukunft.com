@@ -202,9 +202,13 @@ class user extends db_id_object_non_sandbox
     public ?bool $excluded = null;        // to deactivate users that have already a log entry and cannot be deleted any more
 
     // var used for the registration and logon process
+    // TODO Prio 0 check that all user vars are save and are included in the api message
     public ?string $activation_key = '';
     public ?DateTime $activation_timeout = null;
     public ?DateTime $db_now = null;
+    public ?DateTime $created = null;
+    public ?DateTime $last_login = null;
+    public ?DateTime $last_logoff = null;
 
     // TODO move to user config e.g. by using the key word "pod-user-config"
     public ?string $dec_point = null;     // the decimal point char for this user
@@ -273,6 +277,8 @@ class user extends db_id_object_non_sandbox
         $this->activation_key = '';
         $this->activation_timeout = null;
         $this->db_now = null;
+        $this->last_login = null;
+        $this->last_logoff = null;
 
         // TODO Prio 2 move it to user config base on a value list
         $this->dec_point = null;
@@ -356,6 +362,12 @@ class user extends db_id_object_non_sandbox
             }
             if (array_key_exists(user_db::FLD_DB_NOW, $db_row)) {
                 $this->db_now = $lib->get_datetime($db_row[user_db::FLD_DB_NOW], $this->dsp_id());
+            }
+            if (array_key_exists(user_db::FLD_LAST_LOGIN, $db_row)) {
+                $this->last_login = $lib->get_datetime($db_row[user_db::FLD_LAST_LOGIN], $this->dsp_id());
+            }
+            if (array_key_exists(user_db::FLD_LAST_LOGOUT, $db_row)) {
+                $this->last_logoff = $lib->get_datetime($db_row[user_db::FLD_LAST_LOGOUT], $this->dsp_id());
             }
 
             $this->dec_point = shared_config::DEFAULT_DEC_POINT;
@@ -2950,6 +2962,40 @@ class user extends db_id_object_non_sandbox
                 $this->activation_timeout?->format(sql_db::DATE_FORMAT),
                 sql_field_type::TIME,
                 $this->activation_timeout?->format(sql_db::DATE_FORMAT)
+            );
+        }
+
+        // the last_login is used mainly to log the login and logoff events
+        if ($obj->last_login <> $this->last_login) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_LOGIN,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_LAST_LOGIN),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_LAST_LOGIN,
+                $this->last_login?->format(sql_db::DATE_FORMAT),
+                sql_field_type::TIME,
+                $this->last_login?->format(sql_db::DATE_FORMAT)
+            );
+        }
+
+        // the last_logoff is used mainly to log the login and logoff events
+        if ($obj->last_logoff <> $this->last_logoff) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_LOGOUT,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_LAST_LOGOUT),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_LAST_LOGOUT,
+                $this->last_logoff?->format(sql_db::DATE_FORMAT),
+                sql_field_type::TIME,
+                $this->last_logoff?->format(sql_db::DATE_FORMAT)
             );
         }
 

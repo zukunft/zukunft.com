@@ -1434,27 +1434,6 @@ class formula_map extends sandbox_code_id
     }
 
     /**
-     * TODO Prio 0 add
-     * update the time stamp to trigger an update of the depending on results
-     */
-    function save_field_trigger_update(sql_db $db_con): user_message
-    {
-        $msg = new user_message();
-        $this->last_update = new DateTime();
-        $db_con->set_class(formula::class);
-        if (!$db_con->update_old($this->id(), formula_db::FLD_LAST_UPDATE, sql::NOW)) {
-            $msg->add(msg_id::FAILED_SAVE_FORMULA_TRIGGER, [msg_id::VAR_ID => $this->dsp_id()]);
-        }
-
-        log_debug('->save_field_trigger_update timestamp of ' .
-            $this->id() . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') .
-            '" with ' . $msg->get_last_message());
-
-        // save the pending update to the database for the batch calculation
-        return $msg;
-    }
-
-    /**
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
      * @param sql_db $db_con the active database connection

@@ -4913,15 +4913,6 @@ class sql_db
 
 
     /**
-     * @throws Exception
-     */
-    function update_name($id, $name): bool
-    {
-        $this->set_name_field();
-        return $this->update_old($id, $this->name_field, $name);
-    }
-
-    /**
      * delete action
      * @return string an empty string if the deletion has been successful
      *                or the error message that should be shown to the user

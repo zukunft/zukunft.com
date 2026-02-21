@@ -71,7 +71,6 @@
     \-- load_sql_user_changes_frm - section for function load_sql_user_changes_frm is expected to be load sql in /formula/formula_map.php
     \-- load_sql_user_changes - section for function load_sql_user_changes is expected to be load sql in /formula/formula_map.php
     \-- del_usr_cfg_exe - section for function del_usr_cfg_exe is expected to be del in /formula/formula_map.php
-    \-- save_field_trigger_update - section for function save_field_trigger_update is expected to be save in /formula/formula_map.php
     \-- save_id_fields - section for function save_id_fields is expected to be save in /formula/formula_map.php
     \-- is_term_the_same - section for function is_term_the_same is expected to be info in /formula/formula_map.php
     \-- save_id_if_updated - section for function save_id_if_updated is expected to be save in /formula/formula_map.php
@@ -817,8 +816,6 @@
         \-- formula_map - create an SQL statement to retrieve the user changes of the current formula
     \-- del_usr_cfg_exe
         \-- formula_map - overwrite of the user sandbox function to remove also the related elements
-    \-- save_field_trigger_update
-        \-- formula_map - TODO Prio 0 add
     \-- save_id_fields
         \-- formula_map - updated the view component name (which is the id field)
     \-- is_term_the_same
@@ -1064,7 +1061,6 @@
     \-- update - section for function update not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
     \-- delete - section for function delete is expected to be del in /db/sql_db.php
     \-- update_old - section for function update_old not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
-    \-- update_name - section for function update_name not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
     \-- delete_old - section for function delete_old is expected to be del in /db/sql_db.php
     \-- name_sql_esc - section for function name_sql_esc not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- sf - section for function sf not yet defined that it should be private supporting functions in /db/sql_db.php
@@ -1653,7 +1649,6 @@
     \-- add_link_ref - section for function add_link_ref not yet defined that it should be database link in /log/change_link.php
     \-- dsp_last - section for function dsp_last not yet defined that it should be database link in /log/change_link.php
     \-- add - section for function add not yet defined that it should be database link in /log/change_link.php
-    \-- add_ref - section for function add_ref not yet defined that it should be database link in /log/change_link.php
     \-- sql_insert_link - section for function sql_insert_link not yet defined that it should be sql write in /log/change_link.php
     \-- db_field_values_link_types - section for function db_field_values_link_types not yet defined that it should be sql write fields in /log/change_link.php
     \-- db_fields - section for function db_fields not yet defined that it should be sql write fields in /log/change_link.php
@@ -4094,8 +4089,6 @@
     \-- dsp_last
         \-- change_link - display the last change related to one object (word, formula, value, verb, ...)
     \-- add
-        \-- change_link - similar to add_link, but additional fix the references as a text for fast displaying
-    \-- add_ref
         \-- change_link - similar to add_link, but additional fix the references as a text for fast displaying
     \-- load_dummy
         \-- ref_type_list - adding the ref types used for unit tests to the dummy list
