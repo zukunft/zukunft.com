@@ -2657,7 +2657,7 @@ class sandbox_multi extends db_object_multi_user
                         // force the include again
                         $this->include();
                         $db_rec->exclude();
-                        $this->save_field_excluded($db_con, $db_rec, $std_rec, $usr_msg);
+                        $this->save_field_func($db_con, $db_rec, $std_rec, $usr_msg);
                         if (!$usr_msg->is_ok()) {
                             log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
                         } else {
