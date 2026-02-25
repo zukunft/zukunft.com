@@ -133,12 +133,30 @@ class api_type_list
     }
 
     /**
+     * @return bool true if the api message should include the details of the term
+     *              otherwise just the view id is included in the api message
+     */
+    public function include_terms(): bool
+    {
+        return in_array(api_types::INCL_TERMS, $this->lst);
+    }
+
+    /**
      * @return bool true if the api message should include the details of the view
-     *              otherwise just the view id is included in the apu message
+     *              otherwise just the view id is included in the api message
      */
     public function include_views(): bool
     {
         return in_array(api_types::INCL_VIEWS, $this->lst);
+    }
+
+    /**
+     * @return bool true if the api message should include the details of the view
+     *              otherwise just the view id is included in the api message
+     */
+    public function include_sources(): bool
+    {
+        return in_array(api_types::INCL_SOURCES, $this->lst);
     }
 
     /**

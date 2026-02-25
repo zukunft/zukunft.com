@@ -1,3 +1,6 @@
 {
-  "name": "test user"
+  "name": "test user",
+  "profile": "ip only",
+  "type_id": "Guest",
+  "status": "active"
 }

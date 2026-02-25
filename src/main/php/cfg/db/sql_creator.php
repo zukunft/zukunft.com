@@ -90,6 +90,7 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_USER . 'user_profile.php';
+//include_once paths::MODEL_USER . 'user_status.php';
 //include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_USER . 'user_official_type.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
@@ -146,6 +147,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
@@ -4906,9 +4908,10 @@ class sql_creator
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
+            and $class != user_profile::class
             and $class != user_type::class
             and $class != user_official_type::class
-            and $class != user_profile::class) {
+            and $class != user_status::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -5089,6 +5092,9 @@ class sql_creator
         if ($result == 'userss') {
             $result = 'users';
         }
+        if ($result == 'user_statuss') {
+            $result = 'user_statuus';
+        }
         if ($result == 'value_times') {
             $result = 'values_time';
         }
@@ -5109,6 +5115,9 @@ class sql_creator
         }
         if ($result == 'user_valuess') {
             $result = 'user_values';
+        }
+        if ($result == 'user_statuss') {
+            $result = 'user_statuus';
         }
         // for the database upgrade process only
         if ($result == 'job_statuss') {
@@ -5257,7 +5266,10 @@ class sql_creator
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = user_profile::FLD_NAME;
+        }
+        if ($result == 'status_name') {
+            $result = user_status::FLD_NAME;
         }
         if ($result == 'sys_log_level_name') {
             $result = sys_log_level::FLD_NAME;

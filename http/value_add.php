@@ -125,7 +125,8 @@ if ($usr->id() > 0) {
                 $val->set_source_id($_GET['source']);
                 if ($val->get_source_id() > 0) {
                     log_debug("save source" . $val->get_source_id() . ".");
-                    $usr->set_source($val->get_source_id());
+                    $usr->src = $val->get_source();
+                    $usr->save($usr_msg);
                     $upd_result = $val->save($usr_msg);
                     log_debug("save source done.");
                 }

@@ -77,8 +77,14 @@ class user_profile extends type_object
 
     // database fields additional to the standard field names
     const string FLD_ID = 'user_profile_id';
+    const string FLD_NAME = 'user_profile_name';
     const string FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
     const string FLD_LEVEL = 'right_level';
+
+    // field lists for the table creation to use status_name instead of type_name because type_name may not be a unique name
+    const array FLD_LST_NAME = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
 
     // additional fields for the table creation of user profiles
     const array FLD_LST_EXTRA = array(
@@ -149,7 +155,7 @@ class user_profile extends type_object
      * function to import the core user profile values from a json string
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add the code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
@@ -229,6 +235,16 @@ class user_profile extends type_object
             $vars[json_fields::RIGHT_LEVEL] = $this->right_level;
         }
         return $vars;
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
     }
 
 

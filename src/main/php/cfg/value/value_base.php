@@ -590,7 +590,7 @@ class value_base extends sandbox_value
 
         // add the source
         if ($this->source != null) {
-            $vars[json_fields::SOURCE] = $this->source->id();
+            $vars[json_fields::SOURCE_ID] = $this->source->id();
         }
 
         return $vars;

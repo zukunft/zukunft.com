@@ -1407,8 +1407,7 @@ class component_link extends sandbox_link
     {
         $result = new component_link($this->get_user());
 
-        $db_chk = clone $this;
-        $db_chk->reset();
+        $db_chk = $this->clone_reset(true);
         $db_chk->load_by_link_and_pos($this->get_view()->id(), $this->get_component()->id(), $this->order_nbr);
         if ($db_chk->id() > 0) {
             log_debug('a component link like ' . $this->dsp_id() . ' already exists');

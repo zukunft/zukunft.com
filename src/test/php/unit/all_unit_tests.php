@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -197,29 +198,35 @@ class all_unit_tests extends test_cleanup
      */
     private function users_for_unit_tests(): void
     {
-        global $usr;
+        global $sys;
+
         // TODO Prio 1 remove global system user for security reasons
+        global $usr;
         global $usr_sys;
+
+        // create a dummy admin user for unit testing
+        $usr_admin = new user;
+        $usr_admin->id = users::SYSTEM_ADMIN_ID;
+        $usr_admin->name = users::SYSTEM_ADMIN_NAME;
+        $usr_admin->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM);
+        $this->usr_admin = $usr_admin;
+
+        $msg = new user_message();
+        $msg->usr = $this->usr_admin;
 
         // create a dummy user for testing
         $usr = new user;
         $usr->id = users::SYSTEM_TEST_ID;
         $usr->name = users::SYSTEM_TEST_NAME;
-        $usr->set_profile(user_profiles::EMAIL);
+        $usr->set_profile(user_profiles::EMAIL, $msg);
         $this->usr1 = $usr;
 
         // create a second dummy user for testing
         $usr2 = new user;
         $usr2->id = users::SYSTEM_TEST_PARTNER_ID;
         $usr2->name = users::SYSTEM_TEST_PARTNER_NAME;
-        $usr2->set_profile(user_profiles::EMAIL);
+        $usr2->set_profile(user_profiles::EMAIL, $msg);
         $this->usr2 = $usr2;
-
-        // create a dummy admin user for unit testing
-        $usr_admin = new user;
-        $usr_admin->id = users::SYSTEM_ADMIN_ID;
-        $usr_admin->name = users::SYSTEM_ADMIN_NAME;
-        $this->usr_admin = $usr_admin;
 
         // create a dummy system user for unit testing
         $usr_sys = new user;
@@ -227,8 +234,8 @@ class all_unit_tests extends test_cleanup
         $usr_sys->name = users::SYSTEM_NAME;
         $this->usr_system = $usr_sys;
 
-        $t_usr = new test_users();
-        $this->usr_dev = $t_usr->user_dev();
+        $t_usr = new test_users($this);
+        $this->usr_dev = $t_usr->user_dev($msg);
         $this->usr_normal = $t_usr->user_filled();
 
     }

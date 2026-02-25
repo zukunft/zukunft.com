@@ -66,7 +66,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
-use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_id_object_non_sandbox.php';
@@ -104,6 +103,7 @@ include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
 //include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VIEW . 'view_db.php';
 //include_once paths::MODEL_VIEW . 'view_sys_list.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -113,6 +113,8 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_ENUM . 'user_types.php';
+include_once paths::SHARED_ENUM . 'user_statuus.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
@@ -132,6 +134,7 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\object_mapper;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
@@ -141,10 +144,10 @@ use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
-use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
-use Exception;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -152,11 +155,17 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use DateTimeInterface;
+use DateTime;
+use Exception;
 
 class user extends db_id_object_non_sandbox
 {
@@ -179,52 +188,54 @@ class user extends db_id_object_non_sandbox
     const string KEY_NAME = user_db::FLD_NAME;
     const string KEY_EMAIL = user_db::FLD_EMAIL;
 
+
     /*
      * object vars
      */
 
     // database fields
     // more unique keys
-    public ?string $name = null;          // simply the username, which is only empty if the user object is not yet saved to the database
-    public ?string $ip_addr = null;       // simply the ip address used if no username is given
-    public ?string $email = null;         // the email used for the signup process
-    public ?string $password = null;      // only used for the login and password change process
+    public ?string $name = null;           // simply the username, which is only empty if the user object is not yet saved to the database
+    public ?string $ip_addr = null;        // simply the ip address used if no username is given
+    public ?string $email = null;          // the email used for the signup process
 
-    // additional info
-    private ?string $description = null;  // used for system users to describe the target; can be used by users for a short introduction
-    public ?string $first_name = null;    //
-    public ?string $last_name = null;     //
-
-    // for the permission settings
-    public ?int $profile_id = null;       // id of the preloaded user profiles to define the base permissions of the user that should be used now
-    public ?string $code_id = null;       // the main id to detect system users
-    public ?int $type_id = null;          // the confirmation level / status of the user e.g. email checked or passport checked which might lead to a different profile id
-    public ?bool $excluded = null;        // to deactivate users that have already a log entry and cannot be deleted any more
-
-    // var used for the registration and logon process
+    // log in and sighup
     // TODO Prio 0 check that all user vars are save and are included in the api message
-    public ?string $activation_key = '';
+    public ?string $password = null;       // only used for the login and password change process
+    public ?string $activation_key = null; // var used for the registration and logon process
     public ?DateTime $activation_timeout = null;
-    public ?DateTime $db_now = null;
-    public ?DateTime $created = null;
+    public ?DateTime $db_now = null;       // timestamp of the database server to have a reference with time zone e.g. for the activation timeout
     public ?DateTime $last_login = null;
     public ?DateTime $last_logoff = null;
 
-    // TODO move to user config e.g. by using the key word "pod-user-config"
-    public ?string $dec_point = null;     // the decimal point char for this user
-    public ?string $thousand_sep = null;  // the thousand separator user for this user
-    public ?int $percent_decimals = null; // the number of decimals for this user
+    // for the permission settings
+    public ?int $profile_id = null;        // id of the preloaded user profiles to define the base permissions of the user that should be used now
+    public ?string $code_id = null;        // the main id to detect system users
+    public ?int $type_id = null;           // the confirmation level / status of the user e.g. email checked or passport checked which might lead to a different profile id
+    public ?int $right_level = null;       // can be used to reduce the right level of the profile
+    public ?int $status_id = null;         // id of the actual status of the user profiles to reduce temporary the user writes of the profile
+    public ?bool $excluded = null;         // to deactivate users that have already a log entry and cannot be deleted any more
 
-    // user setting parameters
-    // in memory only fields
-    // the last term used by the user
-    private ?term $trm = null;
-    // the last source used by the user
-    private ?source $source = null;
+    // additional info
+    public ?DateTime $created = null;
+    public ?string $description = null;    // used for system users to describe the target; can be used by users for a short introduction
+    public ?string $first_name = null;
+    public ?string $last_name = null;
+
+    // volatile user parameters to improve guessing of next step
+    public ?term $trm = null;              // the last term used by the user
+    public ?view $msk = null;              // the last view used by the user
+    public ?source $src = null;            // the last source used by the user
+
+    // TODO move to user config e.g. by using the key word "pod-user-config"
+    public ?string $dec_point = null;      // the decimal point char for this user
+    public ?string $thousand_sep = null;   // the thousand separator user for this user
+    public ?int $percent_decimals = null;  // the number of decimals for this user
+
 
     // TODO add set and get
     // e.g. only admin are allowed to see other user parameters
-    public ?user $viewer = null;          // the user who wants to access this user
+    public ?user $viewer = null;           // the user who wants to access this user
 
 
     /*
@@ -262,31 +273,37 @@ class user extends db_id_object_non_sandbox
         $this->ip_addr = null;
         $this->email = null;
 
-        // additional info
-        $this->description = null;
-        $this->first_name = null;
-        $this->last_name = null;
-
-        // for the permission settings
-        $this->profile_id = null;
-        $this->code_id = null;
-        $this->type_id = null;
-        $this->excluded = null;
-
-        // used only for the signup process
-        $this->activation_key = '';
+        // log in and sighup
+        $this->password = null;
+        $this->activation_key = null;
         $this->activation_timeout = null;
         $this->db_now = null;
         $this->last_login = null;
         $this->last_logoff = null;
 
+        // for the permission settings
+        $this->profile_id = null;
+        $this->code_id = null;
+        $this->type_id = null;
+        $this->right_level = null;
+        $this->status_id = null;
+        $this->excluded = null;
+
+        // additional info
+        $this->created = null;
+        $this->description = null;
+        $this->first_name = null;
+        $this->last_name = null;
+
+        // volatile parameter to make the workflow more smooth
+        $this->trm = null;
+        $this->msk = null;
+        $this->src = null;
+
         // TODO Prio 2 move it to user config base on a value list
         $this->dec_point = null;
         $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
         $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
-
-        $this->trm = null;
-        $this->source = null;
 
         $this->viewer = null;
 
@@ -316,7 +333,7 @@ class user extends db_id_object_non_sandbox
     {
         $obj_cpy = $this->clone_reset();
         $obj_cpy->id = $this->id;
-        $obj_cpy->set_name($name);
+        $obj_cpy->name = $name;
         return $obj_cpy;
     }
 
@@ -338,22 +355,9 @@ class user extends db_id_object_non_sandbox
             $this->ip_addr = $db_row[user_db::FLD_IP_ADDR];
             $this->email = $db_row[user_db::FLD_EMAIL];
 
-            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
-                $this->set_description($db_row[sql_db::FLD_DESCRIPTION]);
+            if (array_key_exists(user_db::FLD_PASSWORD, $db_row)) {
+                $this->password = $db_row[user_db::FLD_PASSWORD];
             }
-            if (array_key_exists(user_db::FLD_FIRST_NAME, $db_row)) {
-                $this->first_name = $db_row[user_db::FLD_FIRST_NAME];
-            }
-            if (array_key_exists(user_db::FLD_LAST_NAME, $db_row)) {
-                $this->last_name = $db_row[user_db::FLD_LAST_NAME];
-            }
-
-            $this->profile_id = $db_row[user_db::FLD_PROFILE];
-            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
-            if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
-                $this->excluded = $db_row[sql_db::FLD_EXCLUDED];
-            }
-
             if (array_key_exists(user_db::FLD_ACTIVATION_KEY, $db_row)) {
                 $this->activation_key = $db_row[user_db::FLD_ACTIVATION_KEY];
             }
@@ -370,23 +374,56 @@ class user extends db_id_object_non_sandbox
                 $this->last_logoff = $lib->get_datetime($db_row[user_db::FLD_LAST_LOGOUT], $this->dsp_id());
             }
 
-            $this->dec_point = shared_config::DEFAULT_DEC_POINT;
-            $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
-            $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
+            $this->profile_id = $db_row[user_db::FLD_PROFILE];
+            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            $this->type_id = $db_row[user_db::FLD_TYPE_ID];
+            if (array_key_exists(user_db::FLD_LEVEL, $db_row)) {
+                $this->right_level = $db_row[user_db::FLD_LEVEL];
+            }
+            $this->status_id = $db_row[user_db::FLD_STATUS];
+            if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                $this->excluded = $db_row[sql_db::FLD_EXCLUDED];
+            }
+
+            if (array_key_exists(user_db::FLD_CREATED, $db_row)) {
+                $this->created = $lib->get_datetime($db_row[user_db::FLD_CREATED], $this->dsp_id());
+            }
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            }
+            if (array_key_exists(user_db::FLD_FIRST_NAME, $db_row)) {
+                $this->first_name = $db_row[user_db::FLD_FIRST_NAME];
+            }
+            if (array_key_exists(user_db::FLD_LAST_NAME, $db_row)) {
+                $this->last_name = $db_row[user_db::FLD_LAST_NAME];
+            }
+
             if (array_key_exists(user_db::FLD_TERM, $db_row)) {
                 if ($db_row[user_db::FLD_TERM] != null) {
+                    // TODO Prio 1 get term from cache if it is in the cache already
                     $trm = new term($this);
                     $trm->set_id($db_row[user_db::FLD_TERM]);
                     $this->trm = $trm;
+                }
+            }
+            if (array_key_exists(user_db::FLD_VIEW, $db_row)) {
+                if ($db_row[user_db::FLD_VIEW] != null) {
+                    $msk = new view($this);
+                    $msk->id = $db_row[user_db::FLD_VIEW];
+                    $this->msk = $msk;
                 }
             }
             if (array_key_exists(user_db::FLD_SOURCE, $db_row)) {
                 if ($db_row[user_db::FLD_SOURCE] != null) {
                     $src = new source($this);
                     $src->id = $db_row[user_db::FLD_SOURCE];
-                    $this->source = $src;
+                    $this->src = $src;
                 }
             }
+
+            $this->dec_point = shared_config::DEFAULT_DEC_POINT;
+            $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
+            $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
 
             $result = true;
             log_debug($this->name, $debug - 25);
@@ -395,17 +432,57 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
-     * fill this db id object vars with the values from the given api json array
+     * fill these db id object vars with the values from the given api json array
      * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
+        global $sys;
+
         parent::api_mapper($api_json, $usr_msg);
 
         // map the fields that are common for import and api json messages
-        $this->json_mapper($api_json, $usr_msg->usr, $usr_msg);
+        $this->json_mapper($api_json, $usr_msg);
+
+        // map the api specific fields e.g. the json fields using the database id
+        // TODO Prio 1 check that the api, url and import mapper just map the fields
+        //             and the permission check of critical fields is done before the database save
+        if (key_exists(json_fields::PROFILE_ID, $api_json)) {
+            $this->profile_id = $api_json[json_fields::PROFILE_ID];
+        } else {
+            $this->profile_id = user_profiles::NORMAL_ID;
+        }
+        if (key_exists(json_fields::TYPE, $api_json)) {
+            $this->type_id = $api_json[json_fields::TYPE];
+        } else {
+            $this->type_id = $sys->typ_lst->usr_typ->id(user_types::GUEST);
+        }
+        if (key_exists(json_fields::STATUS_ID, $api_json)) {
+            $this->status_id = $api_json[json_fields::STATUS_ID];
+        } else {
+            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuus::ACTIVE);
+        }
+
+        if (key_exists(json_fields::TERM_ID, $api_json)) {
+            // TODO Prio 1 get term from cache if it is in the cache already
+            $trm = new term($this);
+            $trm->set_id($api_json[json_fields::TERM_ID]);
+            $this->trm = $trm;
+        }
+        if (key_exists(json_fields::VIEW_ID, $api_json)) {
+            // TODO Prio 1 get view from cache if it is in the cache already
+            $msk = new view($this);
+            $msk->id = $api_json[json_fields::VIEW_ID];
+            $this->msk = $msk;
+        }
+        if (key_exists(json_fields::SOURCE_ID, $api_json)) {
+            // TODO Prio 1 get source from cache if it is in the cache already
+            $src = new source($this);
+            $src->id = $api_json[json_fields::SOURCE_ID];
+            $this->src = $src;
+        }
 
         return $usr_msg->is_ok();
     }
@@ -425,8 +502,12 @@ class user extends db_id_object_non_sandbox
         ?data_object $dto = null
     ): bool
     {
+        global $sys;
+
+        $map = new object_mapper();
+
         // map the fields that are common for import and api json messages
-        $this->json_mapper($in_ex_json, $msg->usr, $msg);
+        $this->json_mapper($in_ex_json, $msg);
 
         // the code id should never be changed via api
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
@@ -436,24 +517,47 @@ class user extends db_id_object_non_sandbox
             }
         }
 
+        // map the api specific fields e.g. the json fields using the database id
+        if (key_exists(json_fields::PROFILE, $in_ex_json)) {
+            $this->set_profile($in_ex_json[json_fields::PROFILE], $msg);
+        } else {
+            $this->profile_id = user_profiles::NORMAL_ID;
+        }
+        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg);
+        } else {
+            $this->type_id = $sys->typ_lst->usr_typ->id(user_types::GUEST);
+        }
+        if (key_exists(json_fields::STATUS, $in_ex_json)) {
+            $this->status_id = $sys->typ_lst->usr_sta->id($in_ex_json[json_fields::STATUS]);
+        } else {
+            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuus::ACTIVE);
+        }
+
+        $this->trm = $map->get_term($in_ex_json, $msg, $dto);
+        $this->msk = $map->get_view($in_ex_json, $msg, $dto);
+        $this->src = $map->get_source($in_ex_json, $msg, $dto);
+
+        // TODO Prio 0 create and use an object mapper library (one for backend and one for the fromtend)
+        // TODO Prio 2 create the view if the json is an array with more information than just the view name
+
         return $msg->is_ok();
     }
 
     /**
      * the common mapping part for the api and import mapper
+     * TODO add api type to force to include the related objects in the json message
      *
      * @param array $json
-     * @param user|null $usr_req
-     * @param user_message $msg
+     * @param user_message $msg with the requesting user to collect the message for the user
      * @return void return value is not needed because the messages are written to the given user_message object
      */
     private function json_mapper(
         array        $json,
-        ?user        $usr_req,
         user_message $msg
     ): void
     {
-        global $sys;
+        $lib = new library();
 
         if (key_exists(json_fields::NAME, $json)) {
             $this->name = $json[json_fields::NAME];
@@ -464,9 +568,40 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::EMAIL, $json)) {
             $this->email = $json[json_fields::EMAIL];
         }
+
         // the password is not to be expected to be imported or exported
+        if (key_exists(json_fields::ACTIVATION_KEY, $json)) {
+            $this->activation_key = $json[json_fields::ACTIVATION_KEY];
+        }
+        if (key_exists(json_fields::ACTIVATION_TIMEOUT, $json)) {
+            $this->activation_timeout = $lib->get_datetime($json[json_fields::ACTIVATION_TIMEOUT], $this->dsp_id());
+        }
+        if (key_exists(json_fields::DB_NOW, $json)) {
+            $this->db_now = $lib->get_datetime($json[json_fields::DB_NOW], $this->dsp_id());
+        }
+        if (key_exists(json_fields::LAST_LOGIN, $json)) {
+            $this->last_login = $lib->get_datetime($json[json_fields::LAST_LOGIN], $this->dsp_id());
+        }
+        if (key_exists(json_fields::LAST_LOGOFF, $json)) {
+            $this->last_logoff = $lib->get_datetime($json[json_fields::LAST_LOGOFF], $this->dsp_id());
+        }
+
+        // TODO Prio 1 restrict changes to admin users
+        if (key_exists(json_fields::CODE_ID, $json)) {
+            $this->code_id = $json[json_fields::CODE_ID];
+        }
+        if (key_exists(json_fields::RIGHT_LEVEL, $json)) {
+            $this->right_level = $json[json_fields::RIGHT_LEVEL];
+        }
+        if (key_exists(json_fields::EXCLUDED, $json)) {
+            $this->excluded = $json[json_fields::EXCLUDED];
+        }
+
+        if (key_exists(json_fields::CREATED, $json)) {
+            $this->created = $lib->get_datetime($json[json_fields::CREATED], $this->dsp_id());
+        }
         if (key_exists(json_fields::DESCRIPTION, $json)) {
-            $this->set_description($json[json_fields::DESCRIPTION]);
+            $this->description = $json[json_fields::DESCRIPTION];
         }
         if (key_exists(json_fields::FIRST_NAME, $json)) {
             $this->first_name = $json[json_fields::FIRST_NAME];
@@ -474,24 +609,7 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::LAST_NAME, $json)) {
             $this->last_name = $json[json_fields::LAST_NAME];
         }
-        if ($usr_req != null) {
-            if (key_exists(json_fields::PROFILE, $json)) {
-                $profile_id_to_add = $sys->typ_lst->usr_pro->id($json[json_fields::PROFILE]);
-                if ($usr_req->can_set_profile($profile_id_to_add)) {
-                    $this->profile_id = $profile_id_to_add;
-                } else {
-                    $msg->add(msg_id::USER_NO_IMPORT_PRIVILEGES, [
-                        msg_id::VAR_USER_NAME => $this->name(),
-                        msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
-                    ]);
-                }
-            }
-        } else {
-            $this->profile_id = user_profiles::NORMAL_ID;
-        }
-        if (key_exists(json_fields::EXCLUDED, $json)) {
-            $this->excluded = $json[json_fields::EXCLUDED];
-        }
+
         // TODO Prio 2 report unexpected json field names
 
     }
@@ -512,23 +630,60 @@ class user extends db_id_object_non_sandbox
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = $this->api_json_array_core($typ_lst, $usr);
-        if ($this->get_description() != null) {
-            $vars[json_fields::DESCRIPTION] = $this->get_description();
-        }
+        $vars[json_fields::IP_ADDR] = $this->ip_addr;
+        $vars[json_fields::EMAIL] = $this->email;
+
+        $vars[json_fields::ACTIVATION_KEY] = $this->activation_key;
+        // TODO Prio 0 make sure that all DateTime to json use the DateTimeInterface::ATOM and the '?' for null
+        $vars[json_fields::ACTIVATION_TIMEOUT] = $this->activation_timeout?->format(DateTimeInterface::ATOM);
+        $vars[json_fields::DB_NOW] = $this->db_now?->format(DateTimeInterface::ATOM);
+        $vars[json_fields::LAST_LOGIN] = $this->last_login?->format(DateTimeInterface::ATOM);
+        $vars[json_fields::LAST_LOGOFF] = $this->last_logoff?->format(DateTimeInterface::ATOM);
+
         if ($this->profile_id > 0) {
             $vars[json_fields::PROFILE_ID] = $this->profile_id;
         }
-        if ($this->email != null) {
-            $vars[json_fields::EMAIL] = $this->email;
+        $vars[json_fields::CODE_ID] = $this->code_id;
+        if ($this->type_id > 0) {
+            $vars[json_fields::TYPE] = $this->type_id;
         }
-        if ($this->first_name != null) {
-            $vars[json_fields::FIRST_NAME] = $this->first_name;
+        $vars[json_fields::RIGHT_LEVEL] = $this->right_level;
+        if ($this->status_id > 0) {
+            $vars[json_fields::STATUS] = $this->status_id;
         }
-        if ($this->first_name != null) {
-            $vars[json_fields::LAST_NAME] = $this->last_name;
+        $vars[json_fields::EXCLUDED] = $this->excluded;
+
+        $vars[json_fields::CREATED] = $this->created?->format(DateTimeInterface::ATOM);
+        $vars[json_fields::DESCRIPTION] = $this->description;
+        $vars[json_fields::FIRST_NAME] = $this->first_name;
+        $vars[json_fields::LAST_NAME] = $this->last_name;
+
+        // the last objects used by the user to improve guessing of the next user actions
+        // TODO Prio 2 add a api type to include only the objects that are expected to be missing in the frontend
+        if ($this->trm != null) {
+            if ($typ_lst->include_terms()) {
+                $vars[json_fields::TERM] = $this->trm->api_json_array();
+            } else {
+                $vars[json_fields::TERM_ID] = $this->trm->id();
+            }
+        }
+        // TODO Prio 3 make sure that the var name for the view is always msk
+        if ($this->msk != null) {
+            if ($typ_lst->include_views()) {
+                $vars[json_fields::VIEW] = $this->msk->api_json_array();
+            } else {
+                $vars[json_fields::VIEW_ID] = $this->msk->id();
+            }
+        }
+        if ($this->src != null) {
+            if ($typ_lst->include_sources()) {
+                $vars[json_fields::SOURCE] = $this->src->api_json_array($typ_lst);
+            } else {
+                $vars[json_fields::SOURCE_ID] = $this->src->id();
+            }
         }
 
-        return $vars;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
     /**
@@ -575,23 +730,7 @@ class user extends db_id_object_non_sandbox
     function set(int $id = 0, string $name = '', string $email = ''): void
     {
         $this->id = $id;
-        $this->set_name($name);
-        $this->set_email($email);
-    }
-
-    /**
-     * @param string|null $name the unique username for this pod
-     */
-    function set_name(?string $name): void
-    {
         $this->name = $name;
-    }
-
-    /**
-     * @param string|null $email the unique email for the user
-     */
-    function set_email(?string $email): void
-    {
         $this->email = $email;
     }
 
@@ -617,11 +756,6 @@ class user extends db_id_object_non_sandbox
             ]);
         }
         return $msg;
-    }
-
-    function get_code_id(): ?string
-    {
-        return $this->code_id;
     }
 
     /**
@@ -662,35 +796,34 @@ class user extends db_id_object_non_sandbox
         return $result;
     }
 
-    /**
-     * @return string|null the unique email for this user
-     */
-    function email(): ?string
+    function profile_name(): ?string
     {
-        return $this->email;
+        global $sys;
+        if ($this->profile_id > 0) {
+            return $sys->typ_lst->usr_pro->name($this->profile_id);
+        } else {
+            return null;
+        }
     }
 
-    /**
-     * set the description of this user which explains the role of predefined users for the requesting user
-     *
-     * @param string|null $description the description from the user e.g. for system users
-     * @return void
-     */
-    function set_description(?string $description): void
+    function type_name(): ?string
     {
-        $this->description = $description;
+        global $sys;
+        if ($this->type_id > 0) {
+            return $sys->typ_lst->usr_typ->name($this->type_id);
+        } else {
+            return null;
+        }
     }
 
-    /**
-     * get the description of the user
-     * if the object is excluded null is returned
-     * to check the value before the exclusion access the var direct via $this->description
-     *
-     * @return string|null the description from the user e.g. for system users
-     */
-    function get_description(): ?string
+    function status_name(): ?string
     {
-        return $this->description;
+        global $sys;
+        if ($this->status_id > 0) {
+            return $sys->typ_lst->usr_sta->name($this->status_id);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -714,12 +847,12 @@ class user extends db_id_object_non_sandbox
      */
     function source_id(): ?int
     {
-        return $this->source?->id();
+        return $this->src?->id();
     }
 
     /**
      * get the most relevant unique value of this user
-     * e.g. the ip address if the username an email are missing
+     * e.g. the ip address if the username of an email is missing
      * must be corresponding with function key_field()
      *
      * @return string with the most relevant unique key
@@ -728,8 +861,8 @@ class user extends db_id_object_non_sandbox
     {
         if ($this->name_or_null() != null and $this->name() != '') {
             $key = $this->name();
-        } elseif ($this->email() != null and $this->email() != '') {
-            $key = $this->email();
+        } elseif ($this->email != null and $this->email != '') {
+            $key = $this->email;
         } elseif ($this->ip_addr != null and $this->ip_addr != '') {
             $key = $this->ip_addr;
         } else {
@@ -749,7 +882,7 @@ class user extends db_id_object_non_sandbox
     {
         if ($this->name_or_null() != null and $this->name() != '') {
             $key_fld = self::KEY_NAME;
-        } elseif ($this->email() != null and $this->email() != '') {
+        } elseif ($this->email != null and $this->email != '') {
             $key_fld = self::KEY_EMAIL;
         } elseif ($this->ip_addr != null and $this->ip_addr != '') {
             $key_fld = self::KEY_IP;
@@ -1086,7 +1219,7 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
-     * load the user-specific data that is not supposed to be changed very rarely user
+     * load the user-specific data not supposed to be changed very rarely user
      * so if changed all data is reloaded once
      */
     function load_usr_data(): void
@@ -1212,7 +1345,7 @@ class user extends db_id_object_non_sandbox
      * BUT only if the user table is empty
      * fixed code to create the initial system user
      * TODO move to system_user
-     * @param user_message $usr_msg ok if the system user have been created
+     * @param user_message $usr_msg OK if the system users have been created
      * @return bool true if the system users have been created
      */
     function create_system_user(user_message $usr_msg): bool
@@ -1228,13 +1361,21 @@ class user extends db_id_object_non_sandbox
                 if (!$sys->typ_lst->usr_pro->load($db_con)) {
                     $sys->typ_lst->usr_pro->load_dummy();
                 };
+                $sys->typ_lst->usr_typ = new user_type_list();
+                if (!$sys->typ_lst->usr_typ->load($db_con)) {
+                    $sys->typ_lst->usr_typ->load_dummy();
+                };
+                $sys->typ_lst->usr_sta = new user_status_list();
+                if (!$sys->typ_lst->usr_sta->load($db_con)) {
+                    $sys->typ_lst->usr_sta->load_dummy();
+                };
             }
 
             // add the system user to use it for the import
             $sys_usr = new user();
-            $sys_usr->set_name(users::SYSTEM_NAME);
-            $sys_usr->set_email(users::SYSTEM_EMAIL);
-            $sys_usr->set_description(users::SYSTEM_COM);
+            $sys_usr->name = users::SYSTEM_NAME;
+            $sys_usr->email = users::SYSTEM_EMAIL;
+            $sys_usr->description = users::SYSTEM_COM;
             $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
             $sys_usr->code_id = users::SYSTEM_CODE_ID;
             $sys_usr->excluded = false;
@@ -1244,13 +1385,16 @@ class user extends db_id_object_non_sandbox
             } elseif ($sys_usr->id != users::SYSTEM_ID) {
                 log_fatal('system user has not the expected database id of ' . users::SYSTEM_ID, 'sql_db->create_system_user');
             } else {
+                // use a temp user message with the system as requesting user to set the admin profile
+                $msg_sys = new user_message();
+                $msg_sys->usr = $sys_usr;
                 // add the local admin user to use it for the import
                 $local_usr = new user();
-                $local_usr->set_name(users::SYSTEM_ADMIN_NAME);
+                $local_usr->name = users::SYSTEM_ADMIN_NAME;
                 $local_usr->ip_addr = users::SYSTEM_ADMIN_IP;
-                $local_usr->set_email(users::SYSTEM_ADMIN_EMAIL);
-                $local_usr->set_description(users::SYSTEM_ADMIN_COM);
-                $local_usr->set_profile(user_profiles::ADMIN);
+                $local_usr->email = users::SYSTEM_ADMIN_EMAIL;
+                $local_usr->description = users::SYSTEM_ADMIN_COM;
+                $local_usr->set_profile(user_profiles::ADMIN, $msg_sys);
                 $local_usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
                 $local_usr->excluded = false;
                 $usr_msg->merge($local_usr->save_direct());
@@ -1392,16 +1536,18 @@ class user extends db_id_object_non_sandbox
         global $sys;
 
         $profile = $sys->typ_lst->usr_pro->get($profile_id);
-        // the system users can assign all profiles
-        if ($this->is_system()) {
-            $result = true;
-        }
-        // the admin users can change other users ...
-        if ($this->is_admin()) {
-            // ... but not system users
-            // if (!$profile->is_system()) {
-            if (!$profile->is_type(user_profiles::SYSTEM)) {
+        if ($profile != null) {
+            // the system users can assign all profiles
+            if ($this->is_system()) {
                 $result = true;
+            }
+            // the admin users can change other users ...
+            if ($this->is_admin()) {
+                // ... but not system users
+                // if (!$profile->is_system()) {
+                if (!$profile->is_type(user_profiles::SYSTEM)) {
+                    $result = true;
+                }
             }
         }
         return $result;
@@ -1497,6 +1643,7 @@ class user extends db_id_object_non_sandbox
 
     /**
      * import a user from a json data user object
+     * TODO Prio 2 add missing fields and user configuration
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param data_object|null $dto cache of the objects imported until now for the primary references
@@ -1523,41 +1670,35 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
+        // map the non critical fields
         $this->import_mapper($in_ex_json, $msg, $dto);
 
-        // reset all parameters of this user object
-        $this->reset();
-
-        // TODO Prio 1 move to import_mapper
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->name = $value;
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->set_description($value);
-            }
-            if ($key == user_db::FLD_EMAIL) {
-                $this->email = $value;
-            }
-            if ($key == user_db::FLD_FIRST_NAME) {
-                $this->first_name = $value;
-            }
-            if ($key == user_db::FLD_LAST_NAME) {
-                $this->last_name = $value;
-            }
-            if ($key == user_db::FLD_CODE_ID) {
-                $this->code_id = $value;
-            }
-            if ($key == json_fields::PROFILE) {
-                $this->profile_id = $sys->typ_lst->usr_pro->id($value);
-            }
-            if ($key == json_fields::CODE_ID) {
-                if ($profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)
-                    or $profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
-                    $this->code_id = $value;
-                }
-            }
+        // set the critical parameter
+        // TODO Prio 0 review
+        /*
+        if ($usr_req->is_admin() or $usr_req->is_system()) {
+            $trm = new term($this);
+            $trm->import_mapper($in_ex_json[json_fields::TERM], $msg, $dto);
+            $this->trm = $trm;
+            $msk = new view($this);
+            $msk->import_mapper($in_ex_json[json_fields::VIEW], $msg, $dto);
+            $this->msk = $msk;
+            $src = new source($this);
+            $src->import_mapper($in_ex_json[json_fields::SOURCE], $msg, $dto);
+            $this->src = $src;
+        } else {
+            // or remove the setting if the requesting user has no permission
+            $this->profile_id = user_profiles::NORMAL_ID;
+            $this->code_id = null;
+            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuus::ACTIVE);
+            $this->trm = null;
+            $this->msk = null;
+            $this->src = null;
         }
+        */
+
+
+        // the last used objects are not included in the im- and export because this is mot like not needed
 
         // save the user in the database
         if (!$test_obj) {
@@ -1588,29 +1729,48 @@ class user extends db_id_object_non_sandbox
      */
     function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
+        global $sys;
+
         $vars = [];
 
         $vars[json_fields::NAME] = $this->name;
-        if ($this->get_description() <> '') {
-            $vars[json_fields::DESCRIPTION] = $this->get_description();
+        $vars[json_fields::IP_ADDR] = $this->ip_addr;
+        $vars[json_fields::EMAIL] = $this->email;
+
+        $vars[json_fields::ACTIVATION_KEY] = $this->activation_key;
+        // TODO Prio 0 make sure that all DateTime to json use the DateTimeInterface::ATOM and the '?' for null
+        $vars[json_fields::ACTIVATION_TIMEOUT] = $this->activation_timeout?->format(DateTimeInterface::ATOM);
+        $vars[json_fields::DB_NOW] = $this->db_now?->format(DateTimeInterface::ATOM);
+        $vars[json_fields::LAST_LOGIN] = $this->last_login?->format(DateTimeInterface::ATOM);
+        $vars[json_fields::LAST_LOGOFF] = $this->last_logoff?->format(DateTimeInterface::ATOM);
+
+        $vars[json_fields::PROFILE] = $this->profile_name();
+        $vars[json_fields::CODE_ID] = $this->code_id;
+        $vars[json_fields::TYPE] = $this->type_name();
+        $vars[json_fields::RIGHT_LEVEL] = $this->right_level;
+        $vars[json_fields::STATUS] = $this->status_name();
+        $vars[json_fields::EXCLUDED] = $this->excluded;
+
+        $vars[json_fields::CREATED] = $this->created?->format(DateTimeInterface::ATOM);
+        $vars[json_fields::DESCRIPTION] = $this->description;
+        $vars[json_fields::FIRST_NAME] = $this->first_name;
+        $vars[json_fields::LAST_NAME] = $this->last_name;
+
+        // the last objects used by the user to improve guessing of the next user actions
+        if ($this->trm != null) {
+            $vars[json_fields::TERM] = $this->trm->export_json($exp_typ);
+            //$vars[json_fields::TERM] = $this->trm->name();
         }
-        if ($this->email <> '') {
-            $vars[json_fields::EMAIL] = $this->email;
+        if ($this->msk != null) {
+            $vars[json_fields::VIEW] = $this->msk->export_json($exp_typ);
+            //$vars[json_fields::VIEW] = $this->msk->name();
         }
-        if ($this->first_name <> '') {
-            $vars[json_fields::FIRST_NAME] = $this->first_name;
-        }
-        if ($this->last_name <> '') {
-            $vars[json_fields::LAST_NAME] = $this->last_name;
-        }
-        if ($this->code_id <> '') {
-            $vars[json_fields::CODE_ID] = $this->code_id;
-        }
-        if ($this->is_profile_valid()) {
-            $vars[json_fields::PROFILE] = $this->profile_code_id();
+        if ($this->src != null) {
+            $vars[json_fields::SOURCE] = $this->src->export_json($exp_typ);
+            //$vars[json_fields::SOURCE] = $this->src->name();
         }
 
-        return $vars;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 
@@ -1650,29 +1810,59 @@ class user extends db_id_object_non_sandbox
     function fill(user|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->name() != null) {
-            $this->set_name($obj->name());
+        if ($obj->name != null) {
+            $this->name = $obj->name;
         }
         if ($obj->ip_addr != null) {
             $this->ip_addr = $obj->ip_addr;
         }
+        if ($obj->email != null) {
+            $this->email = $obj->email;
+        }
+
         if ($obj->password != null) {
             $this->password = $obj->password;
         }
-        if ($obj->get_description() != null) {
-            $this->set_description($obj->get_description());
+        if ($obj->activation_key != null) {
+            $this->activation_key = $obj->activation_key;
+        }
+        if ($obj->activation_timeout != null) {
+            $this->activation_timeout = $obj->activation_timeout;
+        }
+        if ($obj->db_now != null) {
+            $this->db_now = $obj->db_now;
+        }
+        if ($obj->last_login != null) {
+            $this->last_login = $obj->last_login;
+        }
+        if ($obj->last_logoff != null) {
+            $this->last_logoff = $obj->last_logoff;
+        }
+
+        if ($obj->profile_id != null) {
+            $this->profile_id = $obj->profile_id;
         }
         if ($obj->code_id != null) {
             $this->code_id = $obj->code_id;
         }
-        if ($obj->profile_id != null) {
-            $this->profile_id = $obj->profile_id;
-        }
         if ($obj->type_id != null) {
             $this->type_id = $obj->type_id;
         }
-        if ($obj->email != null) {
-            $this->email = $obj->email;
+        if ($obj->right_level != null) {
+            $this->right_level = $obj->right_level;
+        }
+        if ($obj->status_id != null) {
+            $this->status_id = $obj->status_id;
+        }
+        if ($obj->excluded != null) {
+            $this->excluded = $obj->excluded;
+        }
+
+        if ($obj->created != null) {
+            $this->created = $obj->created;
+        }
+        if ($obj->description != null) {
+            $this->description = $obj->description;
         }
         if ($obj->first_name != null) {
             $this->first_name = $obj->first_name;
@@ -1680,9 +1870,17 @@ class user extends db_id_object_non_sandbox
         if ($obj->last_name != null) {
             $this->last_name = $obj->last_name;
         }
-        if ($obj->excluded != null) {
-            $this->excluded = $obj->excluded;
+
+        if ($obj->trm != null) {
+            $this->trm = $obj->trm;
         }
+        if ($obj->msk != null) {
+            $this->msk = $obj->msk;
+        }
+        if ($obj->src != null) {
+            $this->src = $obj->src;
+        }
+
         return $usr_msg;
     }
 
@@ -1907,17 +2105,6 @@ class user extends db_id_object_non_sandbox
     }
 
     // remember the last source that the user has used
-    function set_source($source_id): bool
-    {
-        log_debug('(' . $this->id . ',s' . $source_id . ')');
-        global $db_con;
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->id;
-        $db_con->set_class(user::class);
-        return $db_con->update_old($this->id, 'source_id', $source_id);
-    }
-
-    // remember the last source that the user has used
     // TODO add the database field
     function set_verb($vrb_id): bool
     {
@@ -1930,15 +2117,60 @@ class user extends db_id_object_non_sandbox
         return $result;
     }
 
-    function set_profile(string $profile_code_id): void
+    function set_profile(
+        string       $code_id,
+        user_message $msg
+    ): void
     {
         global $sys;
-        $this->profile_id = $sys->typ_lst->usr_pro->id($profile_code_id);
-        //$this->profile = $sys->typ_lst->usr_pro->lst[$this->profile_id];
+        $usr = $msg->usr;
+        if ($usr != null) {
+            $profile_id = $sys->typ_lst->usr_pro->id($code_id);
+            if ($profile_id <= 0) {
+                $profile_id = $sys->typ_lst->usr_pro->id_by_name($code_id);
+            }
+            if ($profile_id <= 0) {
+                $msg->add_info_text('default profile used because no profile found for ' . $code_id);
+                $this->profile_id = $sys->typ_lst->usr_pro->id_by_name(user_profiles::NORMAL);
+            } else {
+                if ($usr->can_set_profile($profile_id)) {
+                    $this->profile_id = $profile_id;
+                } else {
+                    $msg->add(msg_id::USER_NO_IMPORT_PRIVILEGES, [
+                        msg_id::VAR_USER_NAME => $this->name(),
+                        msg_id::VAR_USER_PROFILE => $usr->name_and_profile()
+                    ]);
+                }
+            }
+        } else {
+            $this->profile_id = user_profiles::NORMAL_ID;
+        }
+    }
+
+    function set_type(
+        string       $code_id,
+        user_message $msg
+    ): void
+    {
+        global $sys;
+        $usr = $msg->usr;
+        if ($usr != null) {
+            $type_id = $sys->typ_lst->usr_typ->id($code_id);
+            if ($usr->can_set_type_id()) {
+                $this->type_id = $type_id;
+            } else {
+                $msg->add(msg_id::USER_NO_IMPORT_PRIVILEGES, [
+                    msg_id::VAR_USER_NAME => $this->name(),
+                    msg_id::VAR_USER_PROFILE => $usr->name_and_profile()
+                ]);
+            }
+        } else {
+            $this->type_id = $sys->typ_lst->usr_typ->id(user_types::GUEST);
+        }
     }
 
     /**
-     * set the user profile id directly which is hopefully only used once to set the profile of the system user
+     * set the user profile id directly, which is hopefully only used once to set the profile of the system user
      * @param int $profile_id the id of the user profile
      * @return void
      */
@@ -1957,60 +2189,6 @@ class user extends db_id_object_non_sandbox
         $log->set_table(change_tables::USER);
 
         return $log;
-    }
-
-    /**
-     * check and update a single user parameter
-     *
-     * TODO check if name and email are unique and do the check within one transaction closed by a commit
-     */
-    private
-    function upd_par(sql_db $db_con, array $usr_par, string $db_value, string $fld_name, string $par_name): void
-    {
-        $result = '';
-        $usr_msg = new user_message();
-        if ($usr_par[$par_name] <> $db_value
-            and $usr_par[$par_name] <> '') {
-            $log = $this->log_upd();
-            $log->old_value = $db_value;
-            $log->new_value = $usr_par[$par_name];
-            $log->row_id = $this->id;
-            $log->set_field($fld_name);
-            if ($log->add($usr_msg)) {
-                $db_con->set_class(user::class);
-                $result = $db_con->update_old($this->id, $log->field(), $log->new_value);
-            }
-        }
-    }
-
-    /**
-     * check and update all user parameters
-     *
-     * @param array $usr_par the array of parameters as received with the URL
-     */
-    function upd_pars(array $usr_par): string
-    {
-        log_debug();
-
-        global $db_con;
-
-        $result = ''; // reset the html code var
-
-        // build the database object because the is anyway needed
-        $db_con->usr_id = $this->id;
-        $db_con->set_class(user::class);
-
-        $db_usr = new user;
-        $db_id = $db_usr->load_by_id($this->id);
-        log_debug('database user loaded "' . $db_id . '"');
-
-        $this->upd_par($db_con, $usr_par, $db_usr->name, user_db::FLD_NAME, 'name');
-        $this->upd_par($db_con, $usr_par, $db_usr->email, user_db::FLD_EMAIL, 'email');
-        $this->upd_par($db_con, $usr_par, $db_usr->first_name, user_db::FLD_FIRST_NAME, 'fname');
-        $this->upd_par($db_con, $usr_par, $db_usr->last_name, user_db::FLD_LAST_NAME, 'lname');
-
-        log_debug('done');
-        return $result;
     }
 
     /**
@@ -2201,12 +2379,12 @@ class user extends db_id_object_non_sandbox
     function get_similar(user_message $msg): user
     {
         $result = new user();
-        if ($this->name() != '' and $this->name() != null and $this->email() != '' and $this->email() != null) {
-            $result->load_by_name_or_email($this->name(), $this->email());
-        } elseif ($this->name() != '' and $this->name() != null) {
-            $result->load_by_name($this->name());
-        } elseif ($this->email() != '' and $this->email() != null) {
-            $result->load_by_email($this->email());
+        if ($this->name != '' and $this->name != null and $this->email != '' and $this->email != null) {
+            $result->load_by_name_or_email($this->name, $this->email);
+        } elseif ($this->name != '' and $this->name != null) {
+            $result->load_by_name($this->name);
+        } elseif ($this->email != '' and $this->email != null) {
+            $result->load_by_email($this->email);
         }
         return $result;
     }
@@ -2219,13 +2397,13 @@ class user extends db_id_object_non_sandbox
     function is_similar(user $similar): bool
     {
         $result = true;
-        if ($this->name() != null and $similar->name() != null) {
-            if ($this->name() != $similar->name()) {
+        if ($this->name != null and $similar->name != null) {
+            if ($this->name != $similar->name) {
                 $result = false;
             }
         }
-        if ($this->email() != null and $similar->email() != null) {
-            if ($this->email() != $similar->email()) {
+        if ($this->email != null and $similar->email != null) {
+            if ($this->email != $similar->email) {
                 $result = false;
             }
         }
@@ -2741,7 +2919,6 @@ class user extends db_id_object_non_sandbox
                 $obj->name_or_null()
             );
         }
-
         // the ip address should always be included
         if ($obj->ip_addr !== $this->ip_addr) {
             if ($do_log) {
@@ -2758,40 +2935,81 @@ class user extends db_id_object_non_sandbox
                 $obj->ip_addr
             );
         }
-
-        // the password is not part of the standard update process
-
-        // the description is mainly used for system users
-        if ($obj->get_description() !== $this->get_description()) {
+        // the is used as the name if no name is given
+        if ($obj->email !== $this->email) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_EMAIL,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_EMAIL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_DESCRIPTION,
-                $this->get_description(),
-                sql_db::FLD_DESCRIPTION_SQL_TYP,
-                $obj->get_description()
+                user_db::FLD_EMAIL,
+                $this->email,
+                sql_field_type::CODE_ID,
+                $obj->email
             );
         }
 
-        // the code_id to select users with predefined assigned functionality that can change their username
-        if ($obj->code_id !== $this->code_id) {
+        // password should not be part of the change log
+        if ($obj->password <> $this->password) {
+            $lst->add_field(
+                user_db::FLD_PASSWORD,
+                $this->password,
+                sql_field_type::NAME,
+                $obj->password
+            );
+        }
+        // the activation_key is used during the signup process and is not logged
+        if ($obj->activation_key <> $this->activation_key) {
+            $lst->add_field(
+                user_db::FLD_ACTIVATION_KEY,
+                $this->activation_key,
+                sql_field_type::NAME,
+                $obj->activation_key
+            );
+        }
+        // the activation_timeout is used during the signup process and is not logged
+        if ($obj->activation_timeout <> $this->activation_timeout) {
+            $lst->add_field(
+                user_db::FLD_ACTIVATION_TIMEOUT,
+                $this->activation_timeout?->format(sql_db::DATE_FORMAT),
+                sql_field_type::TIME,
+                $obj->activation_timeout?->format(sql_db::DATE_FORMAT)
+            );
+        }
+        // the db_now field is read only and never written
+        // the last_login is used mainly to log the login and logoff events
+        if ($obj->last_login <> $this->last_login) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_CODE_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_CODE_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_LOGIN,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_LAST_LOGIN),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                user_db::FLD_CODE_ID,
-                $this->code_id,
-                sql_field_type::CODE_ID,
-                $obj->code_id
+                user_db::FLD_LAST_LOGIN,
+                $this->last_login?->format(sql_db::DATE_FORMAT),
+                sql_field_type::TIME,
+                $obj->last_login?->format(sql_db::DATE_FORMAT)
+            );
+        }
+        // the last_logoff is used mainly to log the login and logoff events
+        if ($obj->last_logoff <> $this->last_logoff) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_LOGOUT,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_LAST_LOGOUT),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_LAST_LOGOUT,
+                $this->last_logoff?->format(sql_db::DATE_FORMAT),
+                sql_field_type::TIME,
+                $obj->last_logoff?->format(sql_db::DATE_FORMAT)
             );
         }
 
@@ -2815,16 +3033,31 @@ class user extends db_id_object_non_sandbox
                 }
                 $lst->add_type_field(
                     user_db::FLD_PROFILE,
-                    type_object::FLD_NAME,
+                    user_profile::FLD_NAME,
                     $this->profile_id(),
                     $obj->profile_id(),
                     $sys->typ_lst->usr_pro);
             }
         }
-
-        /* TODO the confirmation levels should created and be added
+        // the code_id to select users with predefined assigned functionality that can change their username
+        if ($obj->code_id !== $this->code_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_CODE_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_CODE_ID,
+                $this->code_id,
+                sql_field_type::CODE_ID,
+                $obj->code_id
+            );
+        }
+        // TODO the confirmation levels should created and be added
         // the confirmation type should only be changed by the system based on the confirmation process
-        if ($db_usr->type_id !== $this->type_id) {
+        if ($obj->type_id !== $this->type_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TYPE_ID,
@@ -2832,18 +3065,53 @@ class user extends db_id_object_non_sandbox
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $usr_cfm_cac;
             $lst->add_type_field(
                 user_db::FLD_TYPE_ID,
-                type_object::FLD_NAME,
-                $this->profile_code_id(),
-                $db_usr->profile_code_id(),
-                $usr_cfm_cac);
+                user_type::FLD_NAME,
+                $this->type_id,
+                $obj->type_id,
+                $sys->typ_lst->usr_typ);
         }
-        */
-
-        // TODO add user_db::FLD_LEVEL
-
+        if ($obj->right_level !== $this->right_level) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LEVEL,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_LEVEL),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_LEVEL,
+                $this->right_level,
+                sql_field_type::INT_SMALL,
+                $obj->right_level
+            );
+        }
+        if ($obj->status_id !== $this->status_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_STATUS,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_STATUS),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            if ($sys->typ_lst->usr_sta == null) {
+                log_fatal('no user status found', 'user->db_fields_changed');
+            } else {
+                if ($this->status_id < 0) {
+                    $msg->add(msg_id::USER_STATUS_MISSING, [
+                        msg_id::VAR_TYPE => $this->status_id,
+                        msg_id::VAR_NAME => $this->dsp_id()
+                    ]);
+                }
+                $lst->add_type_field(
+                    user_db::FLD_STATUS,
+                    user_status::FLD_NAME,
+                    $this->status_id,
+                    $obj->status_id,
+                    $sys->typ_lst->usr_sta);
+            }
+        }
         if ($obj->excluded !== $this->excluded) {
             if ($do_log) {
                 $lst->add_field(
@@ -2860,23 +3128,38 @@ class user extends db_id_object_non_sandbox
             );
         }
 
-        // the is used as the name if no name is given
-        if ($obj->email !== $this->email) {
+        // created ist the time when the user has been save the first time so actually a change log entry is never expeted
+        if ($obj->created <> $this->created) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_EMAIL,
-                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_EMAIL),
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_CREATED,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_CREATED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                user_db::FLD_EMAIL,
-                $this->email,
-                sql_field_type::CODE_ID,
-                $obj->email
+                user_db::FLD_CREATED,
+                $this->created?->format(sql_db::DATE_FORMAT),
+                sql_field_type::TIME,
+                $obj->created?->format(sql_db::DATE_FORMAT)
             );
         }
-
+        // the description is mainly used for system users
+        if ($obj->description !== $this->description) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_DESCRIPTION,
+                $this->description,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
+                $obj->description
+            );
+        }
         // in may be useful to move the name and other non-critical user parameters to a value_list
         if ($obj->first_name !== $this->first_name) {
             if ($do_log) {
@@ -2893,7 +3176,6 @@ class user extends db_id_object_non_sandbox
                 $obj->first_name
             );
         }
-
         // in may be useful to move the last name and other non-critical user parameters to a value_list
         if ($obj->last_name !== $this->last_name) {
             if ($do_log) {
@@ -2927,7 +3209,23 @@ class user extends db_id_object_non_sandbox
                 $obj->trm
             );
         }
-
+        // for the view id additional the view name is written to the log
+        if ($obj->msk?->id() !== $this->msk?->id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_VIEW,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_VIEW),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            // TODO Prio 3 check that always the add_link_field function is used to add a link field
+            $lst->add_link_field(
+                user_db::FLD_VIEW,
+                view_db::FLD_NAME,
+                $this->src,
+                $obj->src
+            );
+        }
         // for the source id additional the source name is written to the log
         if ($obj->source_id() !== $this->source_id()) {
             if ($do_log) {
@@ -2940,64 +3238,11 @@ class user extends db_id_object_non_sandbox
             $lst->add_link_field(
                 user_db::FLD_SOURCE,
                 source_db::FLD_NAME,
-                $this->source,
-                $obj->source
+                $this->src,
+                $obj->src
             );
         }
 
-        // the activation_key is used during the signup process and is not logged
-        if ($obj->activation_key <> $this->activation_key) {
-            $lst->add_field(
-                user_db::FLD_ACTIVATION_KEY,
-                $this->activation_key,
-                sql_field_type::NAME,
-                $obj->activation_key
-            );
-        }
-
-        // the activation_timeout is used during the signup process and is not logged
-        if ($obj->activation_timeout <> $this->activation_timeout) {
-            $lst->add_field(
-                user_db::FLD_ACTIVATION_TIMEOUT,
-                $this->activation_timeout?->format(sql_db::DATE_FORMAT),
-                sql_field_type::TIME,
-                $this->activation_timeout?->format(sql_db::DATE_FORMAT)
-            );
-        }
-
-        // the last_login is used mainly to log the login and logoff events
-        if ($obj->last_login <> $this->last_login) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_LOGIN,
-                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_LAST_LOGIN),
-                    change::FLD_FIELD_ID_SQL_TYP
-                );
-            }
-            $lst->add_field(
-                user_db::FLD_LAST_LOGIN,
-                $this->last_login?->format(sql_db::DATE_FORMAT),
-                sql_field_type::TIME,
-                $this->last_login?->format(sql_db::DATE_FORMAT)
-            );
-        }
-
-        // the last_logoff is used mainly to log the login and logoff events
-        if ($obj->last_logoff <> $this->last_logoff) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_LOGOUT,
-                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_LAST_LOGOUT),
-                    change::FLD_FIELD_ID_SQL_TYP
-                );
-            }
-            $lst->add_field(
-                user_db::FLD_LAST_LOGOUT,
-                $this->last_logoff?->format(sql_db::DATE_FORMAT),
-                sql_field_type::TIME,
-                $this->last_logoff?->format(sql_db::DATE_FORMAT)
-            );
-        }
 
         return $lst;
     }
@@ -3073,7 +3318,7 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
-     * name of log entry used shown to the user which entry has been deleted
+     * the name of the log entry used shown to the user which entry has been deleted
      * e.g. for the user it can be the name, the ip-address, or as fallback the database id
      * @return string the field name(s) of the prime database index of the object
      */
@@ -3098,8 +3343,8 @@ class user extends db_id_object_non_sandbox
     function dsp_id(): string
     {
         $result = $this->name();
-        if ($this->email() != '' and $this->email() != null and $this->email() != $this->name()) {
-            $result .= ' - ' . $this->email();
+        if ($this->email != '' and $this->email != null and $this->email != $this->name()) {
+            $result .= ' - ' . $this->email;
         }
         if ($this->ip_addr != '' and $this->ip_addr != null and $this->ip_addr != $this->name()) {
             $result .= ' - ip ' . $this->ip_addr;

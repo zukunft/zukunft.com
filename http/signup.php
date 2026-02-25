@@ -103,8 +103,8 @@ if ($db_con->is_open()) {
             $db_con->set_usr(users::SYSTEM_ID);
             // TODO use user object and prepared query
             $new_usr = new user();
-            $new_usr->set_name($usr_name);
-            $new_usr->set_email($usr_email);
+            $new_usr->name = $usr_name;
+            $new_usr->email = $usr_email;
             $new_usr->password = $pw_hash;
             $new_usr->save($usr_msg);
             $log_id = $new_usr->id();

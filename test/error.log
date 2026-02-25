@@ -14894,3 +14894,365 @@ trace
 #5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
 #6 {main}
 by user 
+2026-02-23T13:51:52+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
+LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;
+2026-02-23T13:51:52+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
+LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3366): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(517): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(573): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_lists.php(248): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/system_object.php(124): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(181): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-02-23T14:05:28+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
+LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;
+2026-02-23T14:05:28+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
+LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3366): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(517): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(573): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_lists.php(248): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/system_object.php(124): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(181): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-02-23T14:08:32+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
+LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;
+2026-02-23T14:08:32+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
+LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3366): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(517): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(573): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_lists.php(248): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/system_object.php(124): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(181): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-02-23T14:12:49+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
+LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;
+2026-02-23T14:12:49+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
+LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3366): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(517): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(573): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_lists.php(248): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/system_object.php(124): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(187): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-02-23T14:12:52+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+2026-02-23T14:12:52+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3356): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3459): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/db_object.php(322): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(310): Zukunft\ZukunftCom\main\php\cfg\helper\db_object->load_without_id_return()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_object.php(366): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(765): Zukunft\ZukunftCom\main\php\cfg\helper\type_object->load_by_code_id()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(322): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_table()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(531): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_table()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(190): Zukunft\ZukunftCom\main\php\cfg\log\change_log->create_log_references()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#11 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#12 {main}
+by user 
+2026-02-23T14:13:50+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
+LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;
+2026-02-23T14:13:50+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
+LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3366): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(517): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(573): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_lists.php(248): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/system_object.php(124): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(187): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-02-23T14:13:53+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+2026-02-23T14:13:53+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3356): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3459): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/db_object.php(322): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(310): Zukunft\ZukunftCom\main\php\cfg\helper\db_object->load_without_id_return()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_object.php(366): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(765): Zukunft\ZukunftCom\main\php\cfg\helper\type_object->load_by_code_id()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(322): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_table()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(531): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_table()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(190): Zukunft\ZukunftCom\main\php\cfg\log\change_log->create_log_references()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#11 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#12 {main}
+by user 
+2026-02-23T14:13:54+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_name (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE _name = $1 ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_name (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE _name = $1 ORDER BY type_list_id LIMIT 1;
+2026-02-23T14:13:54+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_name (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE _name = $1 ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_name (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE _name = $1 ORDER BY type_list_id LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3356): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3459): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/db_object.php(322): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(310): Zukunft\ZukunftCom\main\php\cfg\helper\db_object->load_without_id_return()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_object.php(351): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(767): Zukunft\ZukunftCom\main\php\cfg\helper\type_object->load_by_name()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(322): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_table()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(531): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_table()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(190): Zukunft\ZukunftCom\main\php\cfg\log\change_log->create_log_references()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#11 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#12 {main}
+by user 
+2026-02-23T20:36:35+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Spalte »status_name« existiert nicht
+LINE 1: ...s_all (bigint, bigint) AS SELECT user_status_id,  status_nam...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;
+2026-02-23T20:36:35+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Spalte »status_name« existiert nicht
+LINE 1: ...s_all (bigint, bigint) AS SELECT user_status_id,  status_nam...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3366): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(517): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(573): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(5930): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(5965): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->load_user_profiles()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1191): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->import_system_users()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/db_check.php(113): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#11 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#12 {main}
+by user 
+2026-02-23T20:36:37+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Spalte »status_name« existiert nicht
+LINE 1: ...s_all (bigint, bigint) AS SELECT user_status_id,  status_nam...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;
+2026-02-23T20:36:37+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Spalte »status_name« existiert nicht
+LINE 1: ...s_all (bigint, bigint) AS SELECT user_status_id,  status_nam...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3366): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(517): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(573): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_lists.php(370): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(5986): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load_log()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1191): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->import_system_users()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/db_check.php(113): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#11 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#12 {main}
+by user 
+2026-02-23T20:36:38+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Spalte »status_name« existiert nicht
+LINE 1: ...s_all (bigint, bigint) AS SELECT user_status_id,  status_nam...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;
+2026-02-23T20:36:38+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Spalte »status_name« existiert nicht
+LINE 1: ...s_all (bigint, bigint) AS SELECT user_status_id,  status_nam...
+                                                             ^ when preparing PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_statuus ORDER BY user_status_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3366): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(517): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_list.php(573): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_lists.php(248): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/system_object.php(124): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1203): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/db_check.php(113): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#11 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#12 {main}
+by user 
+2026-02-23T20:52:47+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+2026-02-23T20:52:47+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3356): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3459): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(264): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(333): Zukunft\ZukunftCom\main\php\service\config->get_db()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/db_check.php(123): Zukunft\ZukunftCom\main\php\service\config->check_cfg()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#9 {main}
+by user 
+2026-02-23T20:53:31+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+2026-02-23T20:53:31+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3356): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3459): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(307): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(267): Zukunft\ZukunftCom\main\php\service\config->set()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(333): Zukunft\ZukunftCom\main\php\service\config->get_db()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/db_check.php(123): Zukunft\ZukunftCom\main\php\service\config->check_cfg()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-02-23T20:53:39+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+2026-02-23T20:53:39+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3356): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3459): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(307): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(335): Zukunft\ZukunftCom\main\php\service\config->set()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/db_check.php(123): Zukunft\ZukunftCom\main\php\service\config->check_cfg()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#9 {main}
+by user 
+2026-02-23T20:53:41+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+2026-02-23T20:53:41+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3356): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3459): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(264): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/db_check.php(126): Zukunft\ZukunftCom\main\php\service\config->get_db()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#8 {main}
+by user 
+2026-02-23T20:53:42+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+2026-02-23T20:53:42+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3356): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3459): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(307): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(267): Zukunft\ZukunftCom\main\php\service\config->set()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/db_check.php(126): Zukunft\ZukunftCom\main\php\service\config->get_db()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#9 {main}
+by user 
+2026-02-23T20:53:44+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+2026-02-23T20:53:44+00:00: FATAL ERROR! Select failed due using "PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;" because: Database error FEHLER:  Relation »config« existiert nicht
+LINE 1: ... config_name,  code_id,  value,  description FROM config WHE...
+                                                             ^ when preparing PREPARE config_by_get (text) AS SELECT config_id,  config_name,  code_id,  value,  description FROM config WHERE code_id = $1 AND code_id IS NOT NULL LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3314): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3356): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3459): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/service/config.php(307): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/db_check.php(128): Zukunft\ZukunftCom\main\php\service\config->set()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#8 {main}
+by user 

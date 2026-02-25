@@ -479,8 +479,11 @@ class test_base
         $this->usr_signup = new user();
         $this->usr_signup->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID);
 
+        $msg = new user_message();
+        $msg->usr = $this->usr_admin;
+
         $t_usr = new test_users();
-        $this->usr_dev = $t_usr->user_dev();
+        $this->usr_dev = $t_usr->user_dev($msg);
 
     }
 
@@ -4442,7 +4445,7 @@ class test_base
     {
         $usr = new user();
         $usr->set(users::SYSTEM_ID, users::SYSTEM_NAME, users::SYSTEM_EMAIL);
-        $usr->set_profile(user_profiles::SYSTEM);
+        $usr->profile_id = user_profiles::SYSTEM_ID;
         return $usr;
     }
 

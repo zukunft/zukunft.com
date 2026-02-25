@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION user_update_log_1200040000000
+CREATE OR REPLACE FUNCTION user_update_log_120000004000000000000
     (_user_id                  bigint,
      _change_action_id         smallint,
      _field_id_user_name       smallint,
@@ -8,9 +8,9 @@ CREATE OR REPLACE FUNCTION user_update_log_1200040000000
      _ip_address_old           text,
      _ip_address               text,
      _field_id_user_profile_id smallint,
-     _type_name_old            text,
+     _user_profile_name_old    text,
      _user_profile_id_old      smallint,
-     _type_name                text,
+     _user_profile_name        text,
      _user_profile_id          smallint) RETURNS void AS
 $$
 
@@ -22,8 +22,8 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,     old_value,      new_value,  row_id)
          SELECT          _user_id,_change_action_id,_field_id_ip_address,_ip_address_old,_ip_address,_user_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,          old_value,     new_value, old_id,              new_id,          row_id)
-         SELECT          _user_id,_change_action_id,_field_id_user_profile_id,_type_name_old,_type_name,_user_profile_id_old,_user_profile_id,_user_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          old_value,             new_value,         old_id,              new_id,          row_id)
+         SELECT          _user_id,_change_action_id,_field_id_user_profile_id,_user_profile_name_old,_user_profile_name,_user_profile_id_old,_user_profile_id,_user_id ;
 
          UPDATE users
             SET user_name       = _user_name,
@@ -34,12 +34,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE user_update_log_1200040000000_call
+PREPARE user_update_log_120000004000000000000_call
     (bigint, smallint, smallint, text, text, smallint, text, text, smallint, text, smallint, text, smallint) AS
-SELECT user_update_log_1200040000000
+SELECT user_update_log_120000004000000000000
     ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);
 
-SELECT user_update_log_1200040000000
+SELECT user_update_log_120000004000000000000
         (2::bigint,
          2::smallint,
          211::smallint,

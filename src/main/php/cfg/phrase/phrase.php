@@ -256,6 +256,11 @@ class phrase extends combine_named
 
     }
 
+    function clone_reset(bool $keep_user): word|triple|phrase|TextIdObject
+    {
+        return $this->obj->clone_reset($keep_user);
+    }
+
     /**
      * map the common word and triple database fields to the phrase fields
      *

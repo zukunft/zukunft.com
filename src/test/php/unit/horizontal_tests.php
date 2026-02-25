@@ -95,7 +95,7 @@ class horizontal_tests
         // init
         $lib = new library();
         $tl = new test_lib();
-        $t_usr = new test_users();
+        $t_usr = new test_users($t);
         $t_map = new test_mappers($t);
         $sc = new sql_creator();
 

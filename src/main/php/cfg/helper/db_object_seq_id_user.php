@@ -123,6 +123,21 @@ class db_object_seq_id_user extends db_object_seq_id
     }
 
     /**
+     * create a fresh copy of this object
+     * used to avoid detecting again which object is used
+     *
+     * @return $this a cloned object including a clone of all child objects
+     *               with all vars set to the default value
+     *               except the owner if requested
+     */
+    function clone_reset(bool $keep_user = false): db_object_seq_id_user
+    {
+        $obj_cpy = $this->clone_all();
+        $obj_cpy->reset($keep_user);
+        return $obj_cpy;
+    }
+
+    /**
      * set the user based on the id from the database row array
      * to be extended by the child functions
      *
@@ -141,7 +156,7 @@ class db_object_seq_id_user extends db_object_seq_id
                     . ' does not match db row user id ' . $db_usr_id);
                 if ($obj_usr_id == 0) {
                     global $sys;
-                    $usr = $sys->usr_sys->get_by_id($db_usr_id);
+                    $usr = $sys->sys_usr_lst->get_by_id($db_usr_id);
                     if ($usr != null) {
                         $this->set_user($usr);
                     } else {

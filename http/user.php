@@ -95,7 +95,8 @@ if ($usr->id > 0) {
     $msk->load_by_code_id(views::USER);
 
     // do user change
-    $result .= $usr->upd_pars($_GET);
+    // use frontend user url_mapper function
+    //$result .= $usr->upd_pars($_GET);
 
     // undo user changes for values
     if ($undo_val > 0) {

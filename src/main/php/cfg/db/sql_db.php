@@ -123,11 +123,14 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
-include_once paths::MODEL_USER . 'user_profile.php';
-include_once paths::MODEL_USER . 'user_type.php';
 include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_USER . 'user_type.php';
+include_once paths::MODEL_USER . 'user_type_list.php';
+include_once paths::MODEL_USER . 'user_status.php';
+include_once paths::MODEL_USER . 'user_status_list.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_time.php';
@@ -176,6 +179,9 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -378,8 +384,9 @@ class sql_db
         job_type::class,
         job_time::class,
         job::class,
-        user_type::class,
         user_profile::class,
+        user_type::class,
+        user_status::class,
         user_official_type::class,
         user::class,
         ip_range::class,
@@ -498,6 +505,8 @@ class sql_db
         share_type::class,
         protection_type::class,
         user::class,
+        user_status::class,
+        user_type::class,
         user_profile::class
     ];
 
@@ -513,10 +522,13 @@ class sql_db
         value::class,
         result::class,
         language_form::class,
-        user_official_type::class,
-        user_type::class,
         user_profile_list::class,
-        user_profile::class
+        user_profile::class,
+        user_type_list::class,
+        user_type::class,
+        user_status_list::class,
+        user_status::class,
+        user_official_type::class,
     ];
 
     // classes that use the prepared sql write statement
@@ -2375,6 +2387,9 @@ class sql_db
         if ($result == 'configs') {
             $result = 'config';
         }
+        if ($result == 'user_statuss') {
+            $result = 'user_statuus';
+        }
         if ($result == 'user_valuess') {
             $result = 'user_values';
         }
@@ -2449,9 +2464,10 @@ class sql_db
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
+            and $class != user_profile::class
+            and $class != user_status::class
             and $class != user_type::class
-            and $class != user_official_type::class
-            and $class != user_profile::class) {
+            and $class != user_official_type::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -4871,8 +4887,9 @@ class sql_db
         if (substr($this->class, 0, 4) == 'user') {
             // ... but not for the user table itself
             if ($this->class <> user::class
+                and $this->class <> user_profile::class
                 and $this->class <> user_type::class
-                and $this->class <> user_profile::class) {
+                and $this->class <> user_status::class) {
                 $sql_where .= ' AND user_id = ' . $this->usr_id;
             }
         }
@@ -5907,6 +5924,10 @@ class sql_db
         }
         $sys->typ_lst->usr_pro = new user_profile_list();
         $sys->typ_lst->usr_pro->load($this);
+        $sys->typ_lst->usr_typ = new user_type_list();
+        $sys->typ_lst->usr_typ->load($this);
+        $sys->typ_lst->usr_sta = new user_status_list();
+        $sys->typ_lst->usr_sta->load($this);
         return $result;
     }
 

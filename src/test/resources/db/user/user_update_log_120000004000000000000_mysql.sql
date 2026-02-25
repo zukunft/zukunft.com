@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS user_update_log_1200040000000;
-CREATE PROCEDURE user_update_log_1200040000000
+DROP PROCEDURE IF EXISTS user_update_log_120000004000000000000;
+CREATE PROCEDURE user_update_log_120000004000000000000
     (_user_id                  bigint,
      _change_action_id         smallint,
      _field_id_user_name       smallint,
@@ -9,9 +9,9 @@ CREATE PROCEDURE user_update_log_1200040000000
      _ip_address_old           text,
      _ip_address               text,
      _field_id_user_profile_id smallint,
-     _type_name_old            text,
+     _user_profile_name_old    text,
      _user_profile_id_old      smallint,
-     _type_name                text,
+     _user_profile_name        text,
      _user_profile_id          smallint)
 
 BEGIN
@@ -22,8 +22,8 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,     old_value,      new_value,  row_id)
          SELECT          _user_id,_change_action_id,_field_id_ip_address,_ip_address_old,_ip_address,_user_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,          old_value,     new_value, old_id,              new_id,          row_id)
-         SELECT          _user_id,_change_action_id,_field_id_user_profile_id,_type_name_old,_type_name,_user_profile_id_old,_user_profile_id,_user_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          old_value,             new_value,         old_id,              new_id,          row_id)
+         SELECT          _user_id,_change_action_id,_field_id_user_profile_id,_user_profile_name_old,_user_profile_name,_user_profile_id_old,_user_profile_id,_user_id ;
 
     UPDATE users
        SET user_name       = _user_name,
@@ -33,10 +33,10 @@ BEGIN
 
 END;
 
-PREPARE user_update_log_1200040000000_call FROM
-    'SELECT user_update_log_1200040000000 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+PREPARE user_update_log_120000004000000000000_call FROM
+    'SELECT user_update_log_120000004000000000000 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT user_update_log_1200040000000
+SELECT user_update_log_120000004000000000000
         (2,
          2,
          211,

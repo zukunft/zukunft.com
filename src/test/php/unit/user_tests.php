@@ -48,12 +48,10 @@ class user_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
-        $t_usr = new test_users();
+        $t_usr = new test_users($t);
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
         $t->usr_admin = $t_usr->user_sys_admin();

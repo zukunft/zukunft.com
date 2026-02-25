@@ -234,7 +234,7 @@ class import_write_tests
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $test_name = 'test if the description has been added in the database';
         $sbx->load_by_name($add_name);
-        $t->assert($test_name, $sbx->get_description(), $description);
+        $t->assert($test_name, $sbx->description, $description);
 
         $test_name = 'remove the test ' . $name . ' via import';
         $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT . test_files::JSON, $usr_req, false);

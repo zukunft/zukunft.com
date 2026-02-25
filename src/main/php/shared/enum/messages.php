@@ -996,6 +996,11 @@ enum messages: string
         . ' for '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not found';
+    case USER_STATUS_MISSING = 'user status '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
     case VERB_MISSING = 'verb '
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
         . ' for '

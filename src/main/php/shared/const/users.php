@@ -107,10 +107,15 @@ class users
     // a test user for db write tests
     const string TEST_USER_NAME = 'zukunft.com system write test user';
     const string TEST_USER_NAME_UPDATED = 'zukunft.com system write test user changed';
+    const string TEST_USER_LAST_NAME = 'zukunft.com system write test user last name';
     const string TEST_USER_COM = 'test description if it can be added to the user via import';
     const string TEST_USER_MAIL = 'test@zukunft.com';
     // invalid address used to test creating a new user
     const string TEST_USER_IP = '258.257.256.255';
+    const string TEST_USER_PASSWORD = 'password123';
+    const string TEST_USER_ACTIVATION_KEY = '376913';
+    CONST string TEST_USER_LOGIN_TIME = '2026-02-2T17:59:59+0100'; // fixed test login time
+    CONST string TEST_USER_LOGOFF_TIME = '2026-02-2T18:59:59+0100'; // fixed test logoff time
 
     // list of predefined usernames used for the system and for testing that are expected to be never used or changed
     const array RESERVED_NAMES = array(

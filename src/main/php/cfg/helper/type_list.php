@@ -92,6 +92,10 @@ include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 //include_once paths::MODEL_USER . 'user_profile_list.php';
+//include_once paths::MODEL_USER . 'user_type.php';
+//include_once paths::MODEL_USER . 'user_type_list.php';
+//include_once paths::MODEL_USER . 'user_status.php';
+//include_once paths::MODEL_USER . 'user_status_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
@@ -174,7 +178,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
@@ -427,6 +434,7 @@ class type_list extends ListOfIdNamedCodeObjects
             user_profile::class => new user_profile(),
             user_type::class => new user_type(),
             user_official_type::class => new user_official_type(),
+            user_status::class => new user_status(),
             change_action::class => new change_action(),
             change_table::class => new change_table(),
             change_field::class => new change_field(),
@@ -467,6 +475,8 @@ class type_list extends ListOfIdNamedCodeObjects
             sys_log_level_list::class => sys_log_level::class,
             sys_log_status_list::class => sys_log_status::class,
             user_profile_list::class => user_profile::class,
+            user_type_list::class => user_type::class,
+            user_status_list::class => user_status::class,
             change_action_list::class => change_action::class,
             change_table_list::class => change_table::class,
             change_field_list::class => change_table_field::class,
@@ -522,6 +532,10 @@ class type_list extends ListOfIdNamedCodeObjects
                     $type_name = strval($db_row[sys_log_level::FLD_NAME]);
                 } elseif ($class == sys_log_status::class) {
                     $type_name = strval($db_row[sys_log_status::FLD_NAME]);
+                } elseif ($class == user_profile::class) {
+                    $type_name = strval($db_row[user_profile::FLD_NAME]);
+                } elseif ($class == user_status::class) {
+                    $type_name = strval($db_row[user_status::FLD_NAME]);
                 } elseif ($class == language_form::class) {
                     $type_name = strval($db_row[language_form::FLD_NAME]);
                 } elseif ($class == language::class) {
@@ -640,6 +654,7 @@ class type_list extends ListOfIdNamedCodeObjects
                 while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
                     if ($row == 1) {
                         $col_names = $lib->array_trim($data);
+                        // TODO Prio 2 try to avoid these exception and use e.g. name_field() function
                         if (in_array(json_fields::ID, $col_names)) {
                             $id_col = array_search(json_fields::ID, $col_names);
                         } elseif (in_array(change_table::FLD_ID, $col_names)) {
@@ -656,6 +671,8 @@ class type_list extends ListOfIdNamedCodeObjects
                             $name_col = array_search(change_table::FLD_NAME, $col_names);
                         } elseif (in_array(change_field::FLD_NAME, $col_names)) {
                             $name_col = array_search(change_field::FLD_NAME, $col_names);
+                        } elseif (in_array(user_profile::FLD_NAME, $col_names)) {
+                            $name_col = array_search(user_profile::FLD_NAME, $col_names);
                         } elseif (in_array(language_form::FLD_NAME, $col_names)) {
                             $name_col = array_search(language_form::FLD_NAME, $col_names);
                         }

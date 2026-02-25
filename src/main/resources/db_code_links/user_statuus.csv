@@ -1,0 +1,8 @@
+user_status_id, user_status_name, code_id, description
+1, 'active', 'active', 'no restrictions are applied'
+2, 'read-only', 'read-only', 'the write permission is switched off for the user'
+3, 'local read and write', 'geo-fenced', 'the user can only be seen and write within a given geo fence'
+4, 'write only with an area', 'write-geo', 'the user can only change data within a geo fence'
+5, 'local read-only ', 'read-geo', 'change of the user can only be seen within a geo fence'
+6, 'excluded', 'excluded', 'all changes of the user are excluded from the results for other users'
+7, 'admin only', 'admin-only', 'the user is excluded and even the change log can only be seen by an admin e.g. because the user has published something illegal'

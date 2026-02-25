@@ -88,13 +88,14 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_REF . 'source.php';
 //include_once paths::MODEL_REF . 'source_list.php';
 //include_once paths::MODEL_REF . 'source_type.php';
-//include_once paths::MODEL_USER . 'user_db.php';
-//include_once paths::MODEL_USER . 'user_official_type.php';
 //include_once paths::MODEL_RESULT . 'result.php';
-//include_once paths::MODEL_USER . 'user_profile.php';
 //include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_list.php';
+//include_once paths::MODEL_USER . 'user_profile.php';
+//include_once paths::MODEL_USER . 'user_status.php';
 //include_once paths::MODEL_USER . 'user_type.php';
+//include_once paths::MODEL_USER . 'user_official_type.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
@@ -175,6 +176,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -404,6 +406,7 @@ class def
         user_official_type::class,
         user_profile::class,
         user_type::class,
+        user_status::class,
         position_type::class,
         component_link_type::class,
         component_type::class,
@@ -439,7 +442,8 @@ class def
     // list of classes that have a csv with the code id for the initial user profile and type setup
     const array CLASS_WITH_USER_CODE_LINK_CSV = [
         user_profile::class,
-        user_type::class
+        user_type::class,
+        user_status::class,
     ];
 
     // list of classes that use the user sandbox
@@ -686,6 +690,7 @@ class def
         'users',
         'user_types',
         'user_profiles',
+        'user_statuus',
         'view_types',
         'view_styles',
         'component_types',

@@ -586,8 +586,8 @@ class user_list
                 } else {
                     $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                 }
-            } elseif ($usr_to_add->email() != '') {
-                if (!array_key_exists($usr_to_add->email(), $this->emails())) {
+            } elseif ($usr_to_add->email != '') {
+                if (!array_key_exists($usr_to_add->email, $this->emails())) {
                     $this->add_direct($usr_to_add);
                 } else {
                     $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);

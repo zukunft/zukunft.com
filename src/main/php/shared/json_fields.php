@@ -147,7 +147,8 @@ class json_fields
     const string PHRASE = 'phrase'; // the phrase object as a sub array
     const string TERM_ID = 'term_id';
     const string TERM = 'term'; // the term object as a sub array
-    const string SOURCE = 'source_id';
+    const string SOURCE_ID = 'source_id';
+    const string SOURCE = 'source'; // the source object as a sub array
     const string USER_ID = 'user_id';
     //const string GROUP_ID = 'group_id';
     const string FORMULA_ID = 'formula_id';
@@ -199,7 +200,8 @@ class json_fields
     const string TIME_START = 'start_time'; // e.g. the timestamp of a log entry
     const string TIME_UPDATE = 'update_time'; // e.g. the timestamp of the last system error update
     const string TIME_END = 'end_time'; // e.g. the timestamp of a log entry
-    const string STATUS = 'status'; // of the job and also used for the sys log
+    const string STATUS = 'status'; // name or code id of the user or job status and also used for the sys log
+    const string STATUS_ID = 'status_id'; // database id of the user or job status and also used for the sys log
 
     // change log fields
     const string TIME = 'time'; // e.g. the timestamp of a log entry
@@ -276,6 +278,8 @@ class json_fields
 
     //const string TYPE_LISTS = 'type_lists';
     const string LIST_USER_PROFILES = 'user_profiles';
+    const string LIST_USER_TYPES = 'user_types';
+    const string LIST_USER_STATUUS = 'user_statuus';
     const string LIST_PHRASE_TYPES = 'phrase_types';
     const string LIST_FORMULA_TYPES = 'formula_types';
     const string LIST_FORMULA_LINK_TYPES = 'formula_link_types';
@@ -343,6 +347,12 @@ class json_fields
     const string LAST_NAME = 'last_name';
     const string PROFILE = 'profile';
     const string PROFILE_ID = 'profile_id';
+    const string ACTIVATION_KEY = 'activation_key';
+    const string ACTIVATION_TIMEOUT = 'activation_timeout';
+    const string DB_NOW = 'db_now';
+    const string LAST_LOGIN = 'last_login';
+    const string LAST_LOGOFF = 'last_logoff';
+    const string CREATED = 'created';
 
     const string PHRASE_VALUES = 'phrase-values';
     const string SOURCES = 'sources';

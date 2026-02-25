@@ -1622,7 +1622,9 @@ class triple extends sandbox_link_named
 
         $db_row = $db_con->get1($qp);
         $this->row_mapper_sandbox($db_row);
-        $this->reload_generated_name();
+        // TODO Prio 1 add the original $msg as parameter to all functions that might create a message to the user
+        $msg = new user_message();
+        $this->reload_generated_name($msg);
         return $this->id();
     }
 
@@ -1865,19 +1867,16 @@ class triple extends sandbox_link_named
     /**
      * set the generated triple name base on the view
      */
-    private function reload_generated_name(): void
+    private function reload_generated_name(user_message $msg): void
     {
-        global $db_con;
-
         if ($this->id() > 0) {
             // automatically update the generic name
             $this->reload_objects();
             $new_name = $this->name_generated();
             log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
             if ($new_name <> $this->name_generated) {
-                $db_con->set_class(triple::class);
-                $db_con->update_old($this->id(), triple_db::FLD_NAME_AUTO, $new_name);
-                $this->set_name_generated($new_name);
+                $this->name_generated = $new_name;
+                $this->save($msg);
             }
         }
     }

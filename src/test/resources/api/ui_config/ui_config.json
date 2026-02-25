@@ -115,6 +115,76 @@
         "id": 18
       }
     ],
+    "user_types": [
+      {
+        "name": "Guest",
+        "code_id": "guest",
+        "description": "read only",
+        "id": 1
+      },
+      {
+        "name": "IP address",
+        "code_id": "ip_address",
+        "description": "identified only by IP address",
+        "id": 2
+      },
+      {
+        "name": "Verified",
+        "code_id": "verified",
+        "description": "verified by email or mobile",
+        "id": 3
+      },
+      {
+        "name": "Secured",
+        "code_id": "secured",
+        "description": "verified with a high security e.g. via passport of a trusted country",
+        "id": 4
+      }
+    ],
+    "user_statuus": [
+      {
+        "name": "active",
+        "code_id": "active",
+        "description": "no restrictions are applied",
+        "id": 1
+      },
+      {
+        "name": "read-only",
+        "code_id": "read-only",
+        "description": "the write permission is switched off for the user",
+        "id": 2
+      },
+      {
+        "name": "local read and write",
+        "code_id": "geo-fenced",
+        "description": "the user can only be seen and write within a given geo fence",
+        "id": 3
+      },
+      {
+        "name": "write only with an area",
+        "code_id": "write-geo",
+        "description": "the user can only change data within a geo fence",
+        "id": 4
+      },
+      {
+        "name": "local read-only",
+        "code_id": "read-geo",
+        "description": "change of the user can only be seen within a geo fence",
+        "id": 5
+      },
+      {
+        "name": "excluded",
+        "code_id": "excluded",
+        "description": "all changes of the user are excluded from the results for other users",
+        "id": 6
+      },
+      {
+        "name": "admin only",
+        "code_id": "admin-only",
+        "description": "the user is excluded and even the change log can only be seen by an admin e.g. because the user has published something illegal",
+        "id": 7
+      }
+    ],
     "sys_log_functions": [
       {
         "name": "Import system configuration",
@@ -927,6 +997,12 @@
         "code_id": "system_time_types",
         "description": "",
         "id": 118
+      },
+      {
+        "name": "user_statuus",
+        "code_id": "user_statuus",
+        "description": "",
+        "id": 119
       }
     ],
     "change_field_list": [
@@ -2425,8 +2501,8 @@
         "id": 249
       },
       {
-        "name": "34type_name",
-        "code_id": "34type_name",
+        "name": "34user_profile_name",
+        "code_id": "34user_profile_name",
         "description": "",
         "id": 250
       },
@@ -6119,6 +6195,30 @@
         "code_id": "112symbol",
         "description": "",
         "id": 865
+      },
+      {
+        "name": "119user_status_id",
+        "code_id": "119user_status_id",
+        "description": "",
+        "id": 866
+      },
+      {
+        "name": "119user_status_name",
+        "code_id": "119user_status_name",
+        "description": "",
+        "id": 867
+      },
+      {
+        "name": "119code_id",
+        "code_id": "119code_id",
+        "description": "",
+        "id": 868
+      },
+      {
+        "name": "119description",
+        "code_id": "119description",
+        "description": "",
+        "id": 869
       }
     ],
     "job_types": [

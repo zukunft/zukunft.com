@@ -33,7 +33,6 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
@@ -68,6 +67,7 @@ include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_USER . 'user_official_type.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_type.php';
+include_once paths::MODEL_USER . 'user_status.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::MODEL_VIEW . 'view_relation_type.php';
@@ -85,6 +85,7 @@ include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'user_official_types.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_types.php';
+include_once paths::SHARED_ENUM . 'user_statuus.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
@@ -133,11 +134,13 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
@@ -155,6 +158,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_official_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuus;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
@@ -295,18 +299,6 @@ class test_types
     }
 
     /**
-     * @return user_type "verified" as the user type for unit testing
-     */
-    function user_type(): user_type
-    {
-        return new user_type(
-            user_types::VERIFIED,
-            user_types::VERIFIED_NAME,
-            user_types::VERIFIED_COM,
-            user_types::VERIFIED_ID);
-    }
-
-    /**
      * @return user_profile "ip only" as the main user profile for unit testing
      */
     function user_profile(): user_profile
@@ -321,6 +313,18 @@ class test_types
     }
 
     /**
+     * @return user_type "verified" as the user type for unit testing
+     */
+    function user_type(): user_type
+    {
+        return new user_type(
+            user_types::VERIFIED,
+            user_types::VERIFIED_NAME,
+            user_types::VERIFIED_COM,
+            user_types::VERIFIED_ID);
+    }
+
+    /**
      * @return user_official_type "EU passport" as the main external user trust level
      */
     function user_official_type(): user_official_type
@@ -330,6 +334,18 @@ class test_types
             user_official_types::PASSPORT_EU_NAME,
             user_official_types::PASSPORT_EU_COM,
             user_official_types::PASSPORT_EU_ID);
+    }
+
+    /**
+     * @return user_status "read-only" as the user type for unit testing
+     */
+    function user_status(): user_status
+    {
+        return new user_status(
+            user_statuus::READ_ONLY_ID,
+            user_statuus::READ_ONLY_NAME,
+            user_statuus::READ_ONLY_COM,
+            user_statuus::READ_ONLY_ID);
     }
 
     /**

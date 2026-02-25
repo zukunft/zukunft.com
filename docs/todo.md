@@ -7,6 +7,7 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO add horitontal write test that includes all cases of changing any unique key e.g. the name, code_id, linked object and group_id for values
     TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
     TODO finish the frontend component tests
     TODO create the frontend page reaction flow tests
@@ -14,6 +15,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.4
     TODO fix all prio 0 TODO including unit tests
     TODO use the url_var class const for all url vars
+    TODO check that the api, url and import mapper just map the fields
+         and the permission check of critical fields is done before the database save
     TODO make sure the the save function always includes all fields e.g. if by the user the activation_timeout is included
     TODO finish the expression code review
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
