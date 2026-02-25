@@ -80,12 +80,12 @@ include_once paths::SHARED_ENUM . 'languages.php';
 include_once paths::SHARED_ENUM . 'language_forms.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
-include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'user_official_types.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_types.php';
-include_once paths::SHARED_ENUM . 'user_statuus.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
@@ -93,7 +93,7 @@ include_once paths::SHARED_TYPES . 'component_link_types.php';
 include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED_TYPES . 'formula_types.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
-include_once paths::SHARED_TYPES . 'job_statuus.php';
+include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -153,12 +153,12 @@ use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_forms;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_official_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
-use Zukunft\ZukunftCom\main\php\shared\enum\user_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
@@ -166,7 +166,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\component_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
-use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_types;
@@ -256,10 +256,10 @@ class test_types
     function sys_log_status(): sys_log_status
     {
         return new sys_log_status(
-            sys_log_statuus::OPEN,
-            sys_log_statuus::OPEN_NAME,
-            sys_log_statuus::OPEN_COM,
-            sys_log_statuus::OPEN_ID);
+            sys_log_statuum::OPEN,
+            sys_log_statuum::OPEN_NAME,
+            sys_log_statuum::OPEN_COM,
+            sys_log_statuum::OPEN_ID);
     }
 
     /**
@@ -280,10 +280,10 @@ class test_types
     function job_status(): job_status
     {
         return new job_status(
-            job_statuus::STATUS_NEW,
-            job_statuus::STATUS_NEW_NAME,
-            job_statuus::STATUS_NEW_COM,
-            job_statuus::STATUS_NEW_ID);
+            job_statuum::STATUS_NEW,
+            job_statuum::STATUS_NEW_NAME,
+            job_statuum::STATUS_NEW_COM,
+            job_statuum::STATUS_NEW_ID);
     }
 
     /**
@@ -342,10 +342,10 @@ class test_types
     function user_status(): user_status
     {
         return new user_status(
-            user_statuus::READ_ONLY_ID,
-            user_statuus::READ_ONLY_NAME,
-            user_statuus::READ_ONLY_COM,
-            user_statuus::READ_ONLY_ID);
+            user_statuum::READ_ONLY_ID,
+            user_statuum::READ_ONLY_NAME,
+            user_statuum::READ_ONLY_COM,
+            user_statuum::READ_ONLY_ID);
     }
 
     /**

@@ -4,7 +4,7 @@
 -- table structure to reduce short-term the internal permissions for a user without changing the profile
 --
 
-CREATE TABLE IF NOT EXISTS user_statuus
+CREATE TABLE IF NOT EXISTS user_statuum
 (
     user_status_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
     user_status_name varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS user_statuus
     COMMENT 'to reduce short-term the internal permissions for a user without changing the profile';
 
 --
--- AUTO_INCREMENT for table user_statuus
+-- AUTO_INCREMENT for table user_statuum
 --
-ALTER TABLE user_statuus
+ALTER TABLE user_statuum
     MODIFY user_status_id smallint NOT NULL AUTO_INCREMENT;

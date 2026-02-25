@@ -165,7 +165,7 @@ class user_message extends Message
             if (!in_array($msg_id, $this->msg_id_lst)) {
                 $this->msg_id_lst[] = $msg_id;
             }
-            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuum are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
             }
@@ -224,7 +224,7 @@ class user_message extends Message
     {
         if ($txt != '') {
             $this->add_message_text($txt);
-            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuum are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
             }

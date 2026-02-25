@@ -40,7 +40,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_types.php';
-include_once paths::SHARED_ENUM . 'user_statuus.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
@@ -49,7 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
-use Zukunft\ZukunftCom\main\php\shared\enum\user_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateMalformedStringException;
@@ -138,7 +138,7 @@ class test_users
         $usr->code_id = users::TEST_USER_ACTIVATION_KEY;
         $usr->type_id = $sys->typ_lst->usr_typ->id(user_types::GUEST);
         $usr->right_level = user_profiles::NORMAL_LEVEL;
-        $usr->status_id = $sys->typ_lst->usr_sta->id(user_statuus::ACTIVE);
+        $usr->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
         $usr->excluded = true;
 
         $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);

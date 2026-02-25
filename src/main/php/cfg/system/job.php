@@ -102,7 +102,7 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'job_statuus.php';
+include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -131,7 +131,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use DateTime;
 use DateTimeInterface;
@@ -191,8 +191,8 @@ class job extends db_object_seq_id_user
     {
         parent::__construct($usr);
         $this->request_time = $request_time;
-        $this->status_id = job_statuus::STATUS_NEW_ID;
-        $this->priority = job_statuus::PRIO_LOWEST;
+        $this->status_id = job_statuum::STATUS_NEW_ID;
+        $this->priority = job_statuum::PRIO_LOWEST;
         $this->type_id = null;
     }
 

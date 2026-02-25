@@ -134,7 +134,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
@@ -3035,19 +3035,19 @@ class library
             $result = 'values_geo';
         }
         if ($result == 'user_statuss') {
-            $result = 'user_statuus';
+            $result = 'user_statuum';
         }
-        if ($result == 'user_statuuss') {
-            $result = 'user_statuus';
+        if ($result == 'user_statuums') {
+            $result = 'user_statuum';
         }
         if ($result == 'job_statuss') {
-            $result = 'job_statuus';
+            $result = 'job_statuum';
         }
         if ($result == 'sys_log_statuss') {
-            $result = 'sys_log_statuus';
+            $result = 'sys_log_statuum';
         }
-        if ($result == 'sys_log_statuuss') {
-            $result = 'sys_log_statuus';
+        if ($result == 'sys_log_statuums') {
+            $result = 'sys_log_statuum';
         }
         if ($result == 'sys_logs') {
             $result = 'sys_log';

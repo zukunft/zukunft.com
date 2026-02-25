@@ -38,12 +38,12 @@ include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::DB . 'db_check.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
-include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -71,8 +71,8 @@ class system_read_tests
         $t->assert('load status', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::OPEN);
-        $t->assert('check status ' . sys_log_statuus::OPEN, $result, 1);
+        $result = $sys->typ_lst->sys_log_sta->id(sys_log_statuum::OPEN);
+        $t->assert('check status ' . sys_log_statuum::OPEN, $result, 1);
 
         $t->subheader($ts . 'batch job type');
 

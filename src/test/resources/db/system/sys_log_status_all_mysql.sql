@@ -4,7 +4,7 @@ PREPARE sys_log_status_all FROM
             status_name,
             description,
             code_id
-       FROM sys_log_statuus
+       FROM sys_log_statuum
    ORDER BY sys_log_status_id
       LIMIT ?
      OFFSET ?';

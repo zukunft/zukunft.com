@@ -89,7 +89,7 @@ class user_read_tests
         $lst = new user_type_list();
         $result = $lst->load($db_con);
         $t->assert($test_name, $result, true);
-        $test_name = 'load the user_statuus';
+        $test_name = 'load the user_statuum';
         $lst = new user_status_list();
         $result = $lst->load($db_con);
         $t->assert($test_name, $result, true);

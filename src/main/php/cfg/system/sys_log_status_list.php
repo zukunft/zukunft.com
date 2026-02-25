@@ -2,7 +2,7 @@
 
 /*
 
-    model/system/sys_log_status_list.php - list of the system log statuus
+    model/system/sys_log_status_list.php - list of the system log statuum
     ------------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -38,45 +38,45 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::DB . 'sql_db.php';
-include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 
 class sys_log_status_list extends type_list
 {
 
     /**
-     * adding the system log statuus used for unit tests to the dummy list
+     * adding the system log statuum used for unit tests to the dummy list
      *  TODO Prio 3: load from csv
      */
     function load_dummy(): void
     {
         parent::load_dummy();
         $type = new type_object(
-            sys_log_statuus::OPEN,
-            sys_log_statuus::OPEN,
-            sys_log_statuus::OPEN_COM,
-            sys_log_statuus::OPEN_ID);
+            sys_log_statuum::OPEN,
+            sys_log_statuum::OPEN,
+            sys_log_statuum::OPEN_COM,
+            sys_log_statuum::OPEN_ID);
         $this->add($type);
         $type = new type_object(
-            sys_log_statuus::ASSIGNED,
-            sys_log_statuus::ASSIGNED,
-            sys_log_statuus::ASSIGNED_COM,
-            sys_log_statuus::ASSIGNED_ID);
+            sys_log_statuum::ASSIGNED,
+            sys_log_statuum::ASSIGNED,
+            sys_log_statuum::ASSIGNED_COM,
+            sys_log_statuum::ASSIGNED_ID);
         $this->add($type);
         $type = new type_object(
-            sys_log_statuus::RESOLVED,
-            sys_log_statuus::RESOLVED,
-            sys_log_statuus::RESOLVED_COM,
-            sys_log_statuus::RESOLVED_ID);
+            sys_log_statuum::RESOLVED,
+            sys_log_statuum::RESOLVED,
+            sys_log_statuum::RESOLVED_COM,
+            sys_log_statuum::RESOLVED_ID);
         $this->add($type);
         $type = new type_object(
-            sys_log_statuus::CLOSED,
-            sys_log_statuus::CLOSED,
-            sys_log_statuus::CLOSED_COM,
-            sys_log_statuus::CLOSED_ID);
+            sys_log_statuum::CLOSED,
+            sys_log_statuum::CLOSED,
+            sys_log_statuum::CLOSED_COM,
+            sys_log_statuum::CLOSED_ID);
         $this->add($type);
     }
 
@@ -85,7 +85,7 @@ class sys_log_status_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(sys_log_statuus::OPEN);
+        return parent::id(sys_log_statuum::OPEN);
     }
 
 }

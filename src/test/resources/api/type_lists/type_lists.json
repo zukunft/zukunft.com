@@ -141,7 +141,7 @@
         "id": 4
       }
     ],
-    "user_statuus": [
+    "user_statuum": [
       {
         "name": "active",
         "code_id": "active",
@@ -243,7 +243,7 @@
         "id": 6
       }
     ],
-    "sys_log_statuus": [
+    "sys_log_statuum": [
       {
         "name": "new",
         "code_id": "new",
@@ -969,8 +969,8 @@
         "id": 113
       },
       {
-        "name": "sys_log_statuus",
-        "code_id": "sys_log_statuus",
+        "name": "sys_log_statuum",
+        "code_id": "sys_log_statuum",
         "description": "",
         "id": 114
       },
@@ -987,8 +987,8 @@
         "id": 116
       },
       {
-        "name": "job_statuus",
-        "code_id": "job_statuus",
+        "name": "job_statuum",
+        "code_id": "job_statuum",
         "description": "",
         "id": 117
       },
@@ -999,8 +999,8 @@
         "id": 118
       },
       {
-        "name": "user_statuus",
-        "code_id": "user_statuus",
+        "name": "user_statuum",
+        "code_id": "user_statuum",
         "description": "",
         "id": 119
       }
@@ -6367,7 +6367,7 @@
         "id": 24
       }
     ],
-    "job_statuus": [
+    "job_statuum": [
       {
         "name": "created",
         "code_id": "new",

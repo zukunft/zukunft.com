@@ -279,7 +279,7 @@ class json_fields
     //const string TYPE_LISTS = 'type_lists';
     const string LIST_USER_PROFILES = 'user_profiles';
     const string LIST_USER_TYPES = 'user_types';
-    const string LIST_USER_STATUUS = 'user_statuus';
+    const string LIST_USER_STATUUS = 'user_statuum';
     const string LIST_PHRASE_TYPES = 'phrase_types';
     const string LIST_FORMULA_TYPES = 'formula_types';
     const string LIST_FORMULA_LINK_TYPES = 'formula_link_types';
@@ -300,8 +300,8 @@ class json_fields
     const string LIST_LANGUAGE_FORMS = 'language_forms';
     const string LIST_SYS_LOG_FUNCTIONS = 'sys_log_functions';
     const string LIST_SYS_LOG_LEVELS = 'sys_log_levels';
-    const string LIST_SYS_LOG_STATUUS = 'sys_log_statuus';
-    const string LIST_JOB_STATUUS = 'job_statuus';
+    const string LIST_SYS_LOG_STATUUS = 'sys_log_statuum';
+    const string LIST_JOB_STATUUS = 'job_statuum';
     const string LIST_JOB_TYPES = 'job_types';
     const string LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const string LIST_CHANGE_LOG_TABLES = 'change_table_list';

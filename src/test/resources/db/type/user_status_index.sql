@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
 
 --
--- indexes for table user_statuus
+-- indexes for table user_statuum
 --
 
-CREATE INDEX user_statuus_user_status_name_idx ON user_statuus (user_status_name);
+CREATE INDEX user_statuum_user_status_name_idx ON user_statuum (user_status_name);

@@ -2731,16 +2731,16 @@
         \-- formula_type_list - adding the formula types used for unit tests to the dummy list
         \-- language_form_list - create dummy type list for the unit tests without database connection
         \-- language_list - create dummy type list for the unit tests without database connection
-        \-- change_action_list - adding the system log statuus used for unit tests to the dummy list
-        \-- change_field_list - adding the system log statuus used for unit tests to the dummy list
-        \-- change_table_list - adding the system log statuus used for unit tests to the dummy list
+        \-- change_action_list - adding the system log statuum used for unit tests to the dummy list
+        \-- change_field_list - adding the system log statuum used for unit tests to the dummy list
+        \-- change_table_list - adding the system log statuum used for unit tests to the dummy list
         \-- protection_type_list - create dummy type list for the unit tests without database connection
         \-- share_type_list - create dummy type list for the unit tests without database connection
         \-- job_status_list - adding the job type used for unit tests to a dummy list
         \-- job_type_list - adding the job type used for unit tests to a dummy list
         \-- sys_log_function_list - adding the system log functions used for unit tests to the dummy list
-        \-- sys_log_level_list - adding the system log statuus used for unit tests to the dummy list
-        \-- sys_log_status_list - adding the system log statuus used for unit tests to the dummy list
+        \-- sys_log_level_list - adding the system log statuum used for unit tests to the dummy list
+        \-- sys_log_status_list - adding the system log statuum used for unit tests to the dummy list
         \-- user_profile_list - create a dummy type list for the unit tests without database connection
         \-- user_status_list - create a dummy type list for the unit tests without database connection
         \-- user_type_list - create a dummy type list for the unit tests without database connection
@@ -5246,7 +5246,7 @@
     \-- set_languages - section for function set_languages is expected to be set and get in /types/type_lists.php
     \-- set_language_forms - section for function set_language_forms is expected to be set and get in /types/type_lists.php
     \-- set_verbs - section for function set_verbs is expected to be set and get in /types/type_lists.php
-    \-- set_sys_log_statuus - section for function set_sys_log_statuus is expected to be set and get in /types/type_lists.php
+    \-- set_sys_log_statuum - section for function set_sys_log_statuum is expected to be set and get in /types/type_lists.php
     \-- set_job_types - section for function set_job_types is expected to be set and get in /types/type_lists.php
     \-- set_change_action_list - section for function set_change_action_list is expected to be set and get in /types/type_lists.php
     \-- set_change_table_list - section for function set_change_table_list is expected to be set and get in /types/type_lists.php
@@ -6905,7 +6905,7 @@
         \-- type_lists - set the vars of this log html object bases on the api json array
     \-- set_verbs
         \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_sys_log_statuus
+    \-- set_sys_log_statuum
         \-- type_lists - set the vars of this log html object bases on the api json array
     \-- set_job_types
         \-- type_lists - set the vars of this log html object bases on the api json array

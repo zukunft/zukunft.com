@@ -109,8 +109,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_WORD . 'triple_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
-//include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
-//include_once paths::SHARED_ENUM . 'user_statuus.php';
+//include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
+//include_once paths::SHARED_ENUM . 'user_statuum.php';
 //include_once paths::SHARED_TYPES . 'system_time_type.php';
 //include_once paths::SHARED_TYPES . 'protection_types.php';
 //include_once paths::SHARED_TYPES . 'share_types.php';
@@ -193,8 +193,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
-use Zukunft\ZukunftCom\main\php\shared\enum\user_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -389,7 +389,7 @@ class def
     const array BASE_CODE_LINK_FILES = [
         sys_log_function::class,
         sys_log_level::class,
-        sys_log_statuus::class,
+        sys_log_statuum::class,
         job_status::class,
         job_type::class,
         change_action::class,
@@ -408,7 +408,7 @@ class def
         user_official_type::class,
         user_profile::class,
         user_type::class,
-        user_statuus::class,
+        user_statuum::class,
         position_type::class,
         component_link_type::class,
         component_type::class,
@@ -533,13 +533,13 @@ class def
         'config',
         'sys_log_functions',
         'sys_log_levels',
-        'sys_log_statuus',
+        'sys_log_statuum',
         'sys_log',
         'system_times',
         'system_time_types',
         'job_times',
         'jobs',
-        'job_statuus',
+        'job_statuum',
         'job_types',
         'user_official_types',
         'ip_ranges',
@@ -692,7 +692,7 @@ class def
         'users',
         'user_types',
         'user_profiles',
-        'user_statuus',
+        'user_statuum',
         'view_types',
         'view_styles',
         'component_types',
@@ -745,7 +745,7 @@ class def
         'change_fields_change_field_id_seq',
         'change_tables_change_table_id_seq',
         'config_config_id_seq',
-        'job_statuus_job_status_id_seq',
+        'job_statuum_job_status_id_seq',
         'job_types_job_type_id_seq',
         'jobs_job_id_seq',
         'sys_log_status_sys_log_status_id_seq',

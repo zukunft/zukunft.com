@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
 
 --
--- indexes for table sys_log_statuus
+-- indexes for table sys_log_statuum
 --
 
-ALTER TABLE sys_log_statuus
-    ADD KEY sys_log_statuus_status_name_idx (status_name);
+ALTER TABLE sys_log_statuum
+    ADD KEY sys_log_statuum_status_name_idx (status_name);

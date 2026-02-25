@@ -35,14 +35,14 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'job_list.php';
-include_once paths::SHARED_TYPES . 'job_statuus.php';
+include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
-use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\test\php\create\test_jobs;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -101,7 +101,7 @@ class job_tests
 
         $t_job = new test_jobs($t);
         $job = $t_job->job();
-        $job->priority = job_statuus::PRIO_HIGHEST;
+        $job->priority = job_statuum::PRIO_HIGHEST;
         $t->assert_api($job);
 
         $job_lst = $t_job->job_list();

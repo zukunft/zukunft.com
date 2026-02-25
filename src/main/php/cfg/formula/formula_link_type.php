@@ -100,9 +100,9 @@ class formula_link_type extends type_object
      * object vars
      */
 
-    // this formula link type only applies to this formula (id only because all statuus are always in the $sys object)
+    // this formula link type only applies to this formula (id only because all statuum are always in the $sys object)
     public ?int $frm_id = null;
-    // this formula link type only applies to phrases of this type (id only because all statuus are always in the $sys object)
+    // this formula link type only applies to phrases of this type (id only because all statuum are always in the $sys object)
     public ?int $phr_id = null;
 
 

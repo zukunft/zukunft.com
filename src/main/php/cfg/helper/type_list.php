@@ -110,8 +110,8 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_official_type.php';
 include_once paths::MODEL_USER . 'user_type.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
-include_once paths::SHARED_ENUM . 'user_statuus.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_HELPER . 'ListOfIdNamedCodeObjects.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
@@ -195,8 +195,8 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
-use Zukunft\ZukunftCom\main\php\shared\enum\user_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdNamedCodeObjects;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -430,12 +430,12 @@ class type_list extends ListOfIdNamedCodeObjects
         return match ($class) {
             sys_log_function::class => new sys_log_function(),
             sys_log_level::class => new sys_log_level(),
-            sys_log_status::class, sys_log_statuus::class => new sys_log_status(),
+            sys_log_status::class, sys_log_statuum::class => new sys_log_status(),
             system_time_type::class => new system_time_type(),
             user_profile::class => new user_profile(),
             user_type::class => new user_type(),
             user_official_type::class => new user_official_type(),
-            user_status::class, user_statuus::class => new user_status(),
+            user_status::class, user_statuum::class => new user_status(),
             change_action::class => new change_action(),
             change_table::class => new change_table(),
             change_field::class => new change_field(),

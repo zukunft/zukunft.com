@@ -41,7 +41,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
-include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
@@ -50,7 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use DateTime;
 
@@ -84,7 +84,7 @@ class test_sys_log extends test_objects
         $slg->level_id = $sys->typ_lst->sys_log_lvl->id(sys_log_levels::INFO);
         $slg->log_trace = sys_log_tests::TV_LOG_TRACE;
         $slg->log_text = sys_log_tests::TV_LOG_TEXT;
-        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::OPEN);
+        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuum::OPEN);
         return $slg;
     }
 
@@ -103,7 +103,7 @@ class test_sys_log extends test_objects
         $slg->log_trace = sys_log_tests::T2_LOG_TRACE;
         $slg->log_text = sys_log_tests::T2_LOG_TEXT;
         $slg->solver = $this->env->usr_admin;
-        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::ASSIGNED);
+        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuum::ASSIGNED);
         return $slg;
     }
 
@@ -117,7 +117,7 @@ class test_sys_log extends test_objects
         $slg->update_time = new DateTime(sys_log_tests::TV_TIME_ASSIGNED);
         $slg->log_description = sys_log_tests::TV_DESCRIPTION;
         $slg->solver = $this->env->usr_system;
-        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::RESOLVED);
+        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuum::RESOLVED);
         return $slg;
     }
 
@@ -128,7 +128,7 @@ class test_sys_log extends test_objects
     {
         global $sys;
         $slg = $this->sys_log_filled();
-        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
+        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
         return $slg;
     }
 

@@ -49,7 +49,7 @@ include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
-include_once paths::SHARED_TYPES . 'job_statuus.php';
+include_once paths::SHARED_TYPES . 'job_statuum.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
@@ -62,7 +62,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
-use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 
 class job_db
 {

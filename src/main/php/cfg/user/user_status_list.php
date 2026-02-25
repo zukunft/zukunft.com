@@ -2,7 +2,7 @@
 
 /*
 
-    model/user/user_status_list.php - a list of possible user statuus with the database id
+    model/user/user_status_list.php - a list of possible user statuum with the database id
     -------------------------------
 
 
@@ -35,10 +35,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\user;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
-include_once paths::SHARED_ENUM . 'user_statuus.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
-use Zukunft\ZukunftCom\main\php\shared\enum\user_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 
 class user_status_list extends type_list
 {
@@ -58,7 +58,7 @@ class user_status_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(user_statuus::ACTIVE);
+        return parent::id(user_statuum::ACTIVE);
     }
 
 }

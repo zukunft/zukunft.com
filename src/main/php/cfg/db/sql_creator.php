@@ -5068,11 +5068,11 @@ class sql_creator
         if ($result == 'change_values_geo_bigs') {
             $result = 'change_values_geo_big';
         }
-        if ($result == 'sys_log_statuuss') {
-            $result = 'sys_log_statuus';
+        if ($result == 'sys_log_statuums') {
+            $result = 'sys_log_statuum';
         }
         if ($result == 'sys_log_statuss') {
-            $result = 'sys_log_statuus';
+            $result = 'sys_log_statuum';
         }
         if ($result == 'sys_logs') {
             $result = 'sys_log';
@@ -5093,7 +5093,7 @@ class sql_creator
             $result = 'users';
         }
         if ($result == 'user_statuss') {
-            $result = 'user_statuus';
+            $result = 'user_statuum';
         }
         if ($result == 'value_times') {
             $result = 'values_time';
@@ -5117,11 +5117,11 @@ class sql_creator
             $result = 'user_values';
         }
         if ($result == 'user_statuss') {
-            $result = 'user_statuus';
+            $result = 'user_statuum';
         }
         // for the database upgrade process only
         if ($result == 'job_statuss') {
-            $result = 'job_statuus';
+            $result = 'job_statuum';
         }
         if ($result == 'job_typess') {
             $result = 'job_types';

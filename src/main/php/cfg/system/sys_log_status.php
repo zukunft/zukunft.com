@@ -94,7 +94,7 @@ class sys_log_status extends type_object
      * object vars
      */
 
-    // the status of the fixing of this issue (id only because all statuus are always in the $sys object)
+    // the status of the fixing of this issue (id only because all statuum are always in the $sys object)
     public ?int $status_id = null;
 
 

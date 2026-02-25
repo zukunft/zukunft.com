@@ -39,7 +39,7 @@ include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
-include_once paths::SHARED_TYPES . 'job_statuus.php';
+include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once test_paths::CREATE . 'test_users.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -47,7 +47,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
-use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
@@ -83,7 +83,7 @@ class test_jobs
         $job->id = 1;
         $job->set_type(job_types::BASE_IMPORT, $sys_usr);
         $job->start_time = new DateTime(sys_log_tests::TV_TIME);
-        $job->priority = job_statuus::PRIO_HIGHEST;
+        $job->priority = job_statuum::PRIO_HIGHEST;
         return $job;
     }
 
@@ -107,7 +107,7 @@ class test_jobs
         $job->row_id = 3;
         $job->src = $t_src->source();
         $job->ref = $t_ref->reference();
-        $job->priority = job_statuus::PRIO_HIGHEST;
+        $job->priority = job_statuum::PRIO_HIGHEST;
         return $job;
     }
 

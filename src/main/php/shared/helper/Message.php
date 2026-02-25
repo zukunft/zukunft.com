@@ -138,7 +138,7 @@ class Message
                 $key_lst)) {
                 $this->msg_var_lst[] = [$msg_id, $var_lst];
             }
-            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuum are not changed
             if ($this->is_ok() and !$ok) {
                 $this->set_not_ok();
             }
@@ -162,7 +162,7 @@ class Message
             if (!in_array($msg_id, $this->msg_id_lst)) {
                 $this->msg_id_lst[] = $msg_id;
             }
-            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuum are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
             }

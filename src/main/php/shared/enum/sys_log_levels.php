@@ -39,7 +39,7 @@ use ReflectionException;
 enum sys_log_levels: string
 {
 
-    // list of all possible log statuus
+    // list of all possible log statuum
     const string UNDEFINED = "undefined";
     const string DEBUG = "log_debug";
     const int DEBUG_ID = 2;

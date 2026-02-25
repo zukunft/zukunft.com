@@ -66,7 +66,7 @@ ALTER TABLE sys_log_levels
 -- table structure to define the status of internal errors
 --
 
-CREATE TABLE IF NOT EXISTS sys_log_statuus
+CREATE TABLE IF NOT EXISTS sys_log_statuum
 (
     sys_log_status_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     status_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
@@ -80,9 +80,9 @@ CREATE TABLE IF NOT EXISTS sys_log_statuus
     COMMENT 'to define the status of internal errors';
 
 --
--- AUTO_INCREMENT for table sys_log_statuus
+-- AUTO_INCREMENT for table sys_log_statuum
 --
-ALTER TABLE sys_log_statuus
+ALTER TABLE sys_log_statuum
     MODIFY sys_log_status_id smallint NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -195,7 +195,7 @@ ALTER TABLE system_times
 -- table structure predefined status of batch task as a database table e.g. so that admin can change the description
 --
 
-CREATE TABLE IF NOT EXISTS job_statuus
+CREATE TABLE IF NOT EXISTS job_statuum
 (
     job_status_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     status_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
@@ -209,9 +209,9 @@ CREATE TABLE IF NOT EXISTS job_statuus
     COMMENT 'predefined status of batch task as a database table e.g. so that admin can change the description';
 
 --
--- AUTO_INCREMENT for table job_statuus
+-- AUTO_INCREMENT for table job_statuum
 --
-ALTER TABLE job_statuus
+ALTER TABLE job_statuum
     MODIFY job_status_id smallint NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -376,7 +376,7 @@ ALTER TABLE user_official_types
 -- table structure to reduce short-term the internal permissions for a user without changing the profile
 --
 
-CREATE TABLE IF NOT EXISTS user_statuus
+CREATE TABLE IF NOT EXISTS user_statuum
 (
     user_status_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
     user_status_name varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
@@ -389,9 +389,9 @@ CREATE TABLE IF NOT EXISTS user_statuus
     COMMENT 'to reduce short-term the internal permissions for a user without changing the profile';
 
 --
--- AUTO_INCREMENT for table user_statuus
+-- AUTO_INCREMENT for table user_statuum
 --
-ALTER TABLE user_statuus
+ALTER TABLE user_statuum
     MODIFY user_status_id smallint NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -4502,11 +4502,11 @@ ALTER TABLE sys_log_levels
 -- --------------------------------------------------------
 
 --
--- indexes for table sys_log_statuus
+-- indexes for table sys_log_statuum
 --
 
-ALTER TABLE sys_log_statuus
-    ADD KEY sys_log_statuus_status_name_idx (status_name);
+ALTER TABLE sys_log_statuum
+    ADD KEY sys_log_statuum_status_name_idx (status_name);
 
 -- --------------------------------------------------------
 
@@ -4555,11 +4555,11 @@ ALTER TABLE system_times
 -- --------------------------------------------------------
 
 --
--- indexes for table job_statuus
+-- indexes for table job_statuum
 --
 
-ALTER TABLE job_statuus
-    ADD KEY job_statuus_status_name_idx (status_name);
+ALTER TABLE job_statuum
+    ADD KEY job_statuum_status_name_idx (status_name);
 
 -- --------------------------------------------------------
 
@@ -4631,11 +4631,11 @@ ALTER TABLE user_official_types
 -- --------------------------------------------------------
 
 --
--- indexes for table user_statuus
+-- indexes for table user_statuum
 --
 
-ALTER TABLE user_statuus
-    ADD KEY user_statuus_user_status_name_idx (user_status_name);
+ALTER TABLE user_statuum
+    ADD KEY user_statuum_user_status_name_idx (user_status_name);
 
 -- --------------------------------------------------------
 
@@ -6294,7 +6294,7 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_sys_log_function_fk FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
     ADD CONSTRAINT sys_log_sys_log_level_fk FOREIGN KEY (sys_log_level_id) REFERENCES sys_log_levels (sys_log_level_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
-    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_statuus (sys_log_status_id);
+    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_statuum (sys_log_status_id);
 
 --
 -- constraints for table job_times
@@ -6311,7 +6311,7 @@ ALTER TABLE job_times
 ALTER TABLE jobs
     ADD CONSTRAINT jobs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id),
-    ADD CONSTRAINT jobs_job_status_fk FOREIGN KEY (job_status_id) REFERENCES job_statuus (job_status_id),
+    ADD CONSTRAINT jobs_job_status_fk FOREIGN KEY (job_status_id) REFERENCES job_statuum (job_status_id),
     ADD CONSTRAINT jobs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT jobs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id);
 
@@ -6326,7 +6326,7 @@ ALTER TABLE users
     ADD CONSTRAINT users_triple2_fk FOREIGN KEY (geo_triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT users_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
     ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT users_user_status_fk FOREIGN KEY (user_status_id) REFERENCES user_statuus (user_status_id);
+    ADD CONSTRAINT users_user_status_fk FOREIGN KEY (user_status_id) REFERENCES user_statuum (user_status_id);
 
 --
 -- constraints for table change_fields

@@ -2,7 +2,7 @@
 
 /*
 
-    shared/types/job_statuus.php - ENUM of the used job statuus
+    shared/types/job_statuum.php - ENUM of the used job statuum
     ----------------------------
 
     This file is part of zukunft.com - calc with words
@@ -31,10 +31,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\types;
 
-class job_statuus
+class job_statuum
 {
 
-    // list of the job statuus that have a coded functionality
+    // list of the job statuum that have a coded functionality
     const string STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine
     const int STATUS_NEW_ID = 1; // id of the job status used for unit testing
     const string STATUS_NEW_NAME = 'created'; // name of the job status used for unit testing

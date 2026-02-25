@@ -101,7 +101,7 @@ class api
     const string JSON_LIST_PROTECTION_TYPES = 'protection_types';
     const string JSON_LIST_LANGUAGES = 'languages';
     const string JSON_LIST_LANGUAGE_FORMS = 'language_forms';
-    const string JSON_LIST_SYS_LOG_STATUUS = 'sys_log_statuus';
+    const string JSON_LIST_SYS_LOG_STATUUS = 'sys_log_statuum';
     const string JSON_LIST_JOB_TYPES = 'job_types';
     const string JSON_LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const string JSON_LIST_CHANGE_LOG_TABLES = 'change_table_list';
