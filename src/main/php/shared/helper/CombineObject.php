@@ -108,6 +108,20 @@ class CombineObject
 
 
     /*
+     * info
+     */
+
+    function has_id(): bool
+    {
+        $result = false;
+        if ($this->id() != 0) {
+            $result = true;
+        }
+        return $result;
+    }
+
+
+    /*
      * debug
      */
 

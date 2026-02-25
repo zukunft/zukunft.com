@@ -7,6 +7,10 @@
 
     the user type is the basic thrust level of a user similar to https://en.wikipedia.org/wiki/Wikipedia:User_groups#Registered_user_accounts
 
+    the user_type is based on external sources
+    whereas the user_profile defines the long-term internal permissions,
+    which can be adjusted by the short term user_status
+
 
     This file is part of zukunft.com - calc with words
 
@@ -25,7 +29,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -46,12 +50,12 @@ enum user_types: string
     // - each user can have one oor more profiles to which a list of concrete coded permissions are assigned
     // - each user has a type which is the internal trust level and is the main profile used for fallback so that each user has at least one profile
     // - each user can have one or more official types which are the external trust levels
-    const string GUEST = "Guest"; // a read only access
-    const string IP_ADDR = "IP address"; // identified only by IP address
+    const string GUEST = "guest"; // a read only access
+    const string IP_ADDR = "ip_address"; // identified only by IP address
     const string VERIFIED = "verified"; // verified by email or mobile
     const int VERIFIED_ID = 3;
     const string VERIFIED_NAME = 'Verified';
     const string VERIFIED_COM = 'verified by email or mobile';
-    const string SECURED = "Secured"; // verified with a high security e.g. via passport of a trusted country
+    const string SECURED = "secured"; // verified with a high security e.g. via passport of a trusted country
 
 }

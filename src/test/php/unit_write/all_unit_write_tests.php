@@ -244,8 +244,9 @@ class all_unit_write_tests extends all_unit_read_tests
         if ($db_con->has_table($ip_tbl_name)) {
             $usr->get();
         } else {
+            // TODO Prio 2 avoid setting the system user profile directly
             $usr->id = users::SYSTEM_ID;
-            $usr->set_profile(user_profiles::ADMIN);
+            $usr->profile_id = user_profiles::SYSTEM_ID;
         }
 
         // remember the user
@@ -255,8 +256,9 @@ class all_unit_write_tests extends all_unit_read_tests
         if ($db_con->has_table($ip_tbl_name)) {
             $usr->load_by_id(users::SYSTEM_ID);
         } else {
+            // TODO Prio 2 avoid setting the system user profile directly
             $usr->id = users::SYSTEM_ID;
-            $usr->set_profile(user_profiles::ADMIN);
+            $usr->profile_id = user_profiles::SYSTEM_ID;
         }
 
         // drop all old database tables (the least dependent tables first)

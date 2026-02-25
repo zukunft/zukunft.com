@@ -2,7 +2,7 @@
 
 /*
 
-    model/user/user_type.php - the superclass for word, formula and view types
+    model/user/user_type.php - the user thrust level base on external sources
     ------------------------
 
     the user type is the basic thrust level of a user similar to https://en.wikipedia.org/wiki/Wikipedia:User_groups#Registered_user_accounts

@@ -215,8 +215,8 @@ class ref extends sandbox
         } else {
             $this->phr = null;
         }
-        if (array_key_exists(json_fields::SOURCE, $json_array)) {
-            $this->set_source_by_id($json_array[json_fields::SOURCE]);
+        if (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
+            $this->set_source_by_id($json_array[json_fields::SOURCE_ID]);
         } else {
             $this->source = null;
         }
@@ -366,7 +366,7 @@ class ref extends sandbox
     {
         $vars = parent::api_array();
         $vars[json_fields::PHRASE_ID] = $this->phr?->id();
-        $vars[json_fields::SOURCE] = $this->source?->id();
+        $vars[json_fields::SOURCE_ID] = $this->source?->id();
         $vars[json_fields::URL] = $this->url();
         $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
         $vars[json_fields::PREDICATE_ID] = $this->predicate_id();

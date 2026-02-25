@@ -411,7 +411,7 @@ class ref extends sandbox_link
                 }
             }
             if ($this->get_source()?->id() != null) {
-                $vars[json_fields::SOURCE] = $this->get_source()?->id();
+                $vars[json_fields::SOURCE_ID] = $this->get_source()?->id();
             }
             $vars[json_fields::DESCRIPTION] = $this->description;
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
@@ -1213,8 +1213,7 @@ class ref extends sandbox_link
         $result = new ref($this->get_user());
         log_debug('ref->get_similar ' . $this->dsp_id());
 
-        $db_chk = clone $this;
-        $db_chk->reset();
+        $db_chk = $this->clone_reset(true);
         $db_chk->load_by_link_ids($this->phrase_id(), $this->predicate_id());
         if ($db_chk->id() > 0) {
             log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists');
@@ -1268,8 +1267,7 @@ class ref extends sandbox_link
 
             // read the database values to be able to check if something has been changed;
             // done first, because it needs to be done for user and general object values
-            $db_rec = clone $this;
-            $db_rec->reset();
+            $db_rec = $this->clone_reset(true);
             $db_rec->load_by_id($this->id());
             log_debug('ref->save reloaded from db');
             $std_rec = new ref($this->get_user()); // must also be set to allow to take the ownership

@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -39,6 +39,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_LOG . 'change.php';
@@ -50,7 +51,6 @@ include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 include_once paths::SHARED_HELPER . 'Message.php';
@@ -64,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -71,7 +72,6 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -203,12 +203,13 @@ class sys_log extends db_object_seq_id
 
     /**
      * set the main system-log vars and prepare database writing
-     * @param int $usr_id
-     * @param string $func_name
-     * @param string $trace
-     * @param int $level_id
-     * @param string $text
-     * @param string $description
+     * @param int $usr_id id of the user who has cause the system log entry
+     * @param string $func_name name of the function which has caused the issue
+     * @param string $trace the calling function before the issue
+     * @param int $level_id predefined the criticality as defined in the code
+     * @param string $text the unique short description of the error used to prevent double entries
+     * @param string $description the changeable long description of the issue
+     * @param user_message $msg use to collect any issue during the issue log process
      * @return void
      */
     function set(
@@ -346,27 +347,19 @@ class sys_log extends db_object_seq_id
      */
 
     /**
-     * create the SQL statement to load one system log entry
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name extension to make the query name unique
-     * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the database depending on sql statement to load a system error from the log table
-     *                 and the unique name for the query
+     * load a system error from the database e.g. to be able to display more details
+     * @param int $id the id of the system log entry that should be loaded
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_sql(sql_creator $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
+    function load_by_id(int $id): int
     {
-        $qp = parent::load_sql($sc, $query_name);
-        $sc->set_class(sys_log::class);
+        log_debug();
 
-        $sc->set_name($qp->name);
-        $sc->set_fields(sys_log_db::FLD_NAMES);
-        $sc->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
-        $sc->set_join_fields(array(sys_log_status::FLD_NAME), sys_log_statuus::class, sys_log_status::FLD_ID, sys_log_status::FLD_ID);
-        $sc->set_join_fields(array(sandbox::FLD_USER_NAME), user::class);
-        $sc->set_join_fields(array(sandbox::FLD_USER_NAME . ' AS ' . sys_log_db::FLD_SOLVER_NAME), user::class, sys_log_db::FLD_SOLVER);
+        global $db_con;
 
-        return $qp;
+        // at the moment it is only possible to select the error by the id
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
+        return $this->row_mapper($db_con->get1($qp));
     }
 
     /**
@@ -389,35 +382,27 @@ class sys_log extends db_object_seq_id
     }
 
     /**
-     * load a system error from the database e.g. to be able to display more details
-     * @param int $id the id of the system log entry that should be loaded
-     * @return int the id of the object found and zero if nothing is found
+     * create the SQL statement to load one system log entry
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @param string $class the name of this class from where the call has been triggered
+     * @return sql_par the database depending on sql statement to load a system error from the log table
+     *                 and the unique name for the query
      */
-    function load_by_id(int $id): int
+    function load_sql(sql_creator $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
     {
-        log_debug();
+        $qp = parent::load_sql($sc, $query_name);
+        $sc->set_class(sys_log::class);
 
-        global $db_con;
+        $sc->set_name($qp->name);
+        $sc->set_fields(sys_log_db::FLD_NAMES);
+        $sc->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
+        $sc->set_join_fields(array(sys_log_status::FLD_NAME), sys_log_statuus::class, sys_log_status::FLD_ID, sys_log_status::FLD_ID);
+        $sc->set_join_fields(array(sandbox::FLD_USER_NAME), user::class);
+        $sc->set_join_fields(array(sandbox::FLD_USER_NAME . ' AS ' . sys_log_db::FLD_SOLVER_NAME), user::class, sys_log_db::FLD_SOLVER);
 
-        // at the moment it is only possible to select the error by the id
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
-        return $this->row_mapper($db_con->get1($qp));
-    }
-
-    /**
-     * set the main log entry parameters for updating one error field
-     * @return change the log object with the update presets
-     */
-    private function log_upd(): change
-    {
-        log_debug();
-        $lib = new library();
-        $tbl_name = $lib->class_to_name(sys_log::class);
-        $log = new change($this->get_user());
-        $log->set_action(change_actions::UPDATE);
-        $log->set_table($tbl_name);
-
-        return $log;
+        return $qp;
     }
 
     /**
@@ -460,48 +445,10 @@ class sys_log extends db_object_seq_id
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
-    /**
-     * actually update an error field in the main database record or the user sandbox
-     * @param sql_db $db_con the active database connection
-     * @param change $log the log object with the update presets
-     * @return bool true if the field has been updated
-     */
-    private function save_field_do(sql_db $db_con, change $log): bool
-    {
-        log_debug();
-        $result = true;
-        $usr_msg = new user_message();
-        if ($log->add($usr_msg)) {
-            $db_con->set_class(sys_log::class);
-            $result = $db_con->update_old($this->id(), $log->field(), $log->new_id);
-        }
-        return $result;
-    }
 
-    /**
-     * set the update parameters for the error status
-     * @param sql_db $db_con the active database connection
-     * @param sys_log $db_rec the system log entry as saved in the database before the change
-     * @return bool true if the status field has been updated
+    /*
+     * save
      */
-    private function save_field_status(sql_db $db_con, sys_log $db_rec): bool
-    {
-        log_debug();
-        global $sys;
-
-        $result = false;
-        if ($db_rec->status_id <> $this->status_id) {
-            $log = $this->log_upd();
-            $log->old_value = $sys->typ_lst->sys_log_sta->name($db_rec->status_id);
-            $log->old_id = $db_rec->status_id;
-            $log->new_value = $this->status_name();
-            $log->new_id = $this->status_id;
-            $log->row_id = $this->id();
-            $log->set_field(sys_log_status::FLD_ID);
-            $result = $this->save_field_do($db_con, $log);
-        }
-        return $result;
-    }
 
     /**
      * add a new system log entry to the stdio text log and the database
@@ -518,6 +465,7 @@ class sys_log extends db_object_seq_id
     }
 
     /**
+     * overwrite because insert sys_log should not be logged, but an update should be logged
      * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
@@ -527,28 +475,33 @@ class sys_log extends db_object_seq_id
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
-        log_debug();
-
         global $db_con;
 
-        // build the database object because the is anyway needed
-        $db_con->set_usr($this->get_user()->id);
-        $db_con->set_class(sys_log::class);
+        log_debug($this->dsp_id());
 
-        if ($this->id() > 0) {
-            $db_rec = new sys_log;
-            $db_rec->set_user($this->get_user());
-            if ($db_rec->load_by_id($this->id())) {
-                log_debug("database entry loaded");
-            }
-
-            if (!$this->save_field_status($db_con, $db_rec)) {
-                $msg->add_message_text('saving the error log failed');
+        // by default changes are logged only if an existing sys log entry is updated
+        if (is_array($sc_par_lst)) {
+            if ($sc_par_lst == []) {
+                if ($this->has_db_id()) {
+                    $sc_par_lst = new sql_type_list([sql_type::LOG]);
+                } else {
+                    $sc_par_lst = new sql_type_list([sql_type::NO_LOG]);
+                }
+            } else {
+                $sc_par_lst = new sql_type_list($sc_par_lst);
             }
         }
 
-        if (!$msg->is_ok()) {
-            log_err($msg->get_last_message());
+        // check e.g. if another unique key is already exists or a preserved name is used
+        $this->check($msg);
+
+        // create a new database row or update an existing
+        if ($msg->is_ok()) {
+            if (!$this->has_db_id()) {
+                $this->db_add($msg, $db_con, $sc_par_lst);
+            } else {
+                $this->db_update($msg, $db_con, $sc_par_lst);
+            }
         }
 
         return $msg->is_ok();
@@ -757,8 +710,8 @@ class sys_log extends db_object_seq_id
 
 
     /*
-      * debug
-      */
+     * debug
+     */
 
     /**
      * @return string with the unique database id mainly for child dsp_id() functions

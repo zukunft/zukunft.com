@@ -329,11 +329,11 @@ ALTER TABLE user_types
 
 CREATE TABLE IF NOT EXISTS user_profiles
 (
-    user_profile_id smallint      NOT NULL COMMENT 'the internal unique primary index',
-    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
-    right_level  smallint     DEFAULT NULL COMMENT 'the access right level to prevent not permitted right gaining',
+    user_profile_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
+    user_profile_name varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id           varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description       text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    right_level       smallint     DEFAULT NULL COMMENT 'the access right level to prevent not permitted right gaining',
     PRIMARY KEY (user_profile_id)
 )
     ENGINE = InnoDB
@@ -369,6 +369,30 @@ CREATE TABLE IF NOT EXISTS user_official_types
 --
 ALTER TABLE user_official_types
     MODIFY user_official_type_id smallint NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure to reduce short-term the internal permissions for a user without changing the profile
+--
+
+CREATE TABLE IF NOT EXISTS user_statuus
+(
+    user_status_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
+    user_status_name varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id          varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description      text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    PRIMARY KEY (user_status_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to reduce short-term the internal permissions for a user without changing the profile';
+
+--
+-- AUTO_INCREMENT for table user_statuus
+--
+ALTER TABLE user_statuus
+    MODIFY user_status_id smallint NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -4593,7 +4617,7 @@ ALTER TABLE user_types
 --
 
 ALTER TABLE user_profiles
-    ADD KEY user_profiles_type_name_idx (type_name);
+    ADD KEY user_profiles_user_profile_name_idx (user_profile_name);
 
 -- --------------------------------------------------------
 
@@ -4603,6 +4627,15 @@ ALTER TABLE user_profiles
 
 ALTER TABLE user_official_types
     ADD KEY user_official_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table user_statuus
+--
+
+ALTER TABLE user_statuus
+    ADD KEY user_statuus_user_status_name_idx (user_status_name);
 
 -- --------------------------------------------------------
 
@@ -6292,7 +6325,8 @@ ALTER TABLE users
     ADD CONSTRAINT users_triple_fk FOREIGN KEY (name_triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT users_triple2_fk FOREIGN KEY (geo_triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT users_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+    ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT users_user_status_fk FOREIGN KEY (user_status_id) REFERENCES user_statuus (user_status_id);
 
 --
 -- constraints for table change_fields

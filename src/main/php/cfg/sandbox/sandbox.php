@@ -1691,7 +1691,7 @@ class sandbox extends db_object_seq_id_user
      *
      * @param array $fld_lst all potential user-specific fields of the object
      * @param array $db_row the database record of the user table
-     * @return bool true if no field contain any user overwrite
+     * @return bool true if no field contains any user overwrites
      */
     protected function no_usr_fld_used(array $fld_lst, array $db_row): bool
     {
@@ -1990,75 +1990,6 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * actually update a field in the main database record or the user sandbox
-     * the usr id is taken into account in sql_db->update (maybe move outside)
-     * @param sql_db $db_con the active database connection that should be used
-     * @param change|change_link $log the log object to track the change and allow a rollback
-     * @return user_message if anything fails the message for the user to fix the issue
-     */
-    function save_field_user(sql_db $db_con, change|change_link $log): user_message
-    {
-        $msg = new user_message();
-
-        if ($log->new_id > 0) {
-            $new_value = $log->new_id;
-            $std_value = $log->std_id;
-        } else {
-            $new_value = $log->new_value;
-            $std_value = $log->std_value;
-        }
-        if ($log->add($msg)) {
-            if ($this->can_change()) {
-                if ($new_value == $std_value) {
-                    if ($this->has_usr_cfg()) {
-                        log_debug('remove user change');
-                        $db_con->set_class($this::class, true);
-                        $db_con->set_usr($this->get_user()->id);
-                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $msg->add(msg_id::REMOVE_FIELD_FAILED, [msg_id::VAR_NAME => $log->field()]);
-                        }
-                    }
-                    $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
-                } else {
-                    $db_con->set_class($this::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                        $msg->add(msg_id::DATABASE_UPDATE_FIELD_TO_VALUE_FAILED, [
-                            msg_id::VAR_NAME => $log->field(),
-                            msg_id::VAR_VALUE => $new_value
-                        ]);
-                    }
-                }
-            } else {
-                if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
-                        $msg->add(msg_id::USER_SANDBOX_CREATION_FAILED, [msg_id::VAR_ID => $log->field()]);
-                    }
-                }
-                if ($msg->is_ok()) {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    if ($new_value == $std_value) {
-                        log_debug('remove user change');
-                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $msg->add(msg_id::REMOVE_FIELD_FAILED, [msg_id::VAR_NAME => 'user value for ' . $log->field()]);
-                        }
-                    } else {
-                        if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                            $msg->add(msg_id::DATABASE_UPDATE_FIELD_TO_VALUE_FAILED, [
-                                msg_id::VAR_NAME => 'user value for ' . $log->field(),
-                                msg_id::VAR_VALUE => $new_value
-                            ]);
-                        }
-                    }
-                    $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
-                }
-            }
-        }
-        return $msg;
-    }
-
-    /**
      * detects if this object has been changed compared to the given object,
      * excluding changes on internal fields like last_update
      *
@@ -2106,58 +2037,6 @@ class sandbox extends db_object_seq_id_user
         }
         $log->set_field(sql_db::FLD_EXCLUDED);
         return $log;
-    }
-
-    /**
-     * set the update parameters for the value excluded
-     * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox $db_rec the object as saved in the database before this field is updated
-     * @param sandbox $std_rec the default object without user-specific changes
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_field_excluded(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): user_message
-    {
-        log_debug($this->dsp_id());
-        $msg = new user_message();
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
-
-        if ($db_rec->is_excluded() <> $this->is_excluded()) {
-            $log = $this->save_field_excluded_log($db_rec);
-            $new_value = $this->is_excluded();
-            $std_value = $std_rec->is_excluded();
-            // similar to $this->save_field_do
-            if ($this->can_change()) {
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->get_user()->id);
-                if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                    $msg->add(msg_id::EXCLUDING_FAILED, [msg_id::VAR_CLASS_NAME => $class_name]);
-                }
-            } else {
-                if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
-                        $msg->add_id(msg_id::USER_SANDBOX_TO_EXCLUDE_FAILED);
-                    }
-                }
-                if ($msg->is_ok()) {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    if ($new_value == $std_value) {
-                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $msg->add(msg_id::INCLUDE_FOR_USER_FAILED, [msg_id::VAR_CLASS_NAME => $class_name]);
-                        }
-                    } else {
-                        if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                            $msg->add(msg_id::EXCLUDING_FOR_USER_FAILED, [msg_id::VAR_CLASS_NAME => $class_name]);
-                        }
-                    }
-                    if (!$this->del_usr_cfg_if_not_needed()) {
-                        $msg->add_id(msg_id::USER_SANDBOX_CANNOT_BE_CLEANED);
-                    }
-                }
-            }
-        }
-        return $msg;
     }
 
 

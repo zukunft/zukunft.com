@@ -430,49 +430,6 @@ class change extends change_log
 
 
     /*
-     * save
-     */
-
-    /**
-     * add the row id to an existing log entry
-     * e.g. because the row id is known after the adding of the real record,
-     * but the log entry has been created upfront to make sure that logging is complete
-     * TODO: accept also strings as row_id for values and results
-     */
-    function add_ref($row_id): bool
-    {
-        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->get_user()->dsp_id() . ")");
-
-        global $db_con;
-        $result = false;
-
-        $db_type = $db_con->get_class();
-        if ($this::class == changes_big::class) {
-            $db_con->set_class(changes_big::class);
-        } elseif ($this::class == changes_norm::class) {
-            $db_con->set_class(changes_norm::class);
-        } else {
-            $db_con->set_class(change::class);
-        }
-        $db_con->set_usr($this->get_user()->id());
-        if ($db_con->update_old($this->id(), self::FLD_ROW_ID, $row_id)) {
-            // restore the type before saving the log
-            $db_con->set_class($db_type);
-            $result = True;
-        } else {
-            // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->get_user() == null) {
-                log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
-            } else {
-                log_fatal("Update of reference in the change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
-                log_fatal("Update of reference in the change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
-            }
-        }
-        return $result;
-    }
-
-
-    /*
      * sql write
      */
 

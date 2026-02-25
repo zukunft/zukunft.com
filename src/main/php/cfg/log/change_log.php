@@ -647,7 +647,7 @@ class change_log extends db_object_seq_id_user
             } else {
                 $sys_usr = new user();
                 $sys_usr->id = users::SYSTEM_ID;
-                $sys_usr->set_name(users::SYSTEM_NAME);
+                $sys_usr->name = users::SYSTEM_NAME;
                 log_warning('Log field settings for table ' . $table_name . ' are missing',
                     '', '', '', $sys_usr, $db_con);
             }

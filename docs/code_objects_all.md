@@ -42,6 +42,7 @@ the object structure is:
 \-- db_object_no_id
     \-- value_ts_data - for a single time series value data entry
 +-- id_list - a base object for a list of database IDs
++-- object_mapper - a library class to collect the backend object mappings
 +-- system_object - a header object for the system data cache and execution time tracking
 +-- type_lists - helper class to combine all preloaded types in one class for the API
 +-- convert_wikipedia_table - convert a wikipedia table to a
@@ -179,7 +180,8 @@ the object structure is:
                 \-- sys_log_status - to link coded functionality to a system log status
                 \-- user_official_type - the superclass for word, formula and view types
                 \-- user_profile - a database based enum for the user profiles
-                \-- user_type - the superclass for word, formula and view types
+                \-- user_status - to reduce short-term the internal permissions for a user without changing the profile
+                \-- user_type - the user thrust level base on external sources
                 \-- verb - predicate object to link two words
                 \-- view_link_type - to define the behaviour of the link between a term and a view
                 \-- view_relation_type - to define the relation between two views
@@ -252,6 +254,8 @@ the object structure is:
                     \-- sys_log_level_list - list of the system log types
                     \-- sys_log_status_list - list of the system log statuus
                     \-- user_profile_list - a list of possible user profiles with the database id
+                    \-- user_status_list - a list of possible user statuus with the database id
+                    \-- user_type_list - a list of possible user types with the database id
                     \-- verb_list - al list of verb objects
                     \-- view_link_type_list - to defined how a term is linked to a view
                     \-- view_relation_type_list - to defined how a term is related to a view

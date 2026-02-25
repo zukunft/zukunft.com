@@ -79,6 +79,8 @@ include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_field_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_USER . 'user_type_list.php';
+include_once paths::MODEL_USER . 'user_status_list.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -109,6 +111,8 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
@@ -127,6 +131,8 @@ class type_lists
 
     // system users
     public user_profile_list $usr_pro;
+    public user_type_list $usr_typ;
+    public user_status_list $usr_sta;
     public user_list $system_users;
 
     // system log
@@ -176,6 +182,8 @@ class type_lists
     {
         // system users
         $this->usr_pro = new user_profile_list();
+        $this->usr_typ = new user_type_list();
+        $this->usr_sta = new user_status_list();
         $this->system_users = new user_list();
 
         // system log
@@ -233,6 +241,12 @@ class type_lists
 
         // user
         $result = $this->usr_pro->load($db_con);
+        if ($result) {
+            $result = $this->usr_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->usr_sta->load($db_con);
+        }
 
         // log
         if ($result) {
@@ -349,6 +363,12 @@ class type_lists
         if ($result) {
             $result = $this->usr_pro->load($db_con);
         }
+        if ($result) {
+            $result = $this->usr_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->usr_sta->load($db_con);
+        }
 
         return $result;
     }
@@ -421,6 +441,8 @@ class type_lists
         $vars = [];
 
         $vars[json_fields::LIST_USER_PROFILES] = $this->usr_pro->api_json_array();
+        $vars[json_fields::LIST_USER_TYPES] = $this->usr_typ->api_json_array();
+        $vars[json_fields::LIST_USER_STATUUS] = $this->usr_sta->api_json_array();
 
         $vars[json_fields::LIST_SYS_LOG_FUNCTIONS] = $this->sys_log_fnc->api_json_array();
         $vars[json_fields::LIST_SYS_LOG_LEVELS] = $this->sys_log_lvl->api_json_array();
@@ -466,6 +488,8 @@ class type_lists
     {
         // system users
         $this->usr_pro->load_dummy();
+        $this->usr_typ->load_dummy();
+        $this->usr_sta->load_dummy();
         $this->system_users->load_dummy();
 
         // system log

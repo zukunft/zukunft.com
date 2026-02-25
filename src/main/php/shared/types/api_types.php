@@ -41,8 +41,14 @@ enum api_types: string
     // include only the phrase names for a short list that is at least somehow user human-readable
     case PHRASE_NAMES = 'phrase_names';
 
+    // include the term details in the api message e.g. for the last term used by the user
+    case INCL_TERMS = 'incl_terms';
+
     // include the view details with the components in the api message
     case INCL_VIEWS = 'incl_views';
+
+    // include the source details in the api message e.g. for the last source used by the user
+    case INCL_SOURCES = 'incl_sources';
 
     // include the components details with the view or component_link api message
     case INCL_COMPONENTS = 'incl_components';

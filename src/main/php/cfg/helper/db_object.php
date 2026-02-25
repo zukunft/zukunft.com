@@ -320,7 +320,11 @@ class db_object extends IdObject
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        return $this->row_mapper($db_row);
+        if ($db_row != null) {
+            return $this->row_mapper($db_row);
+        } else {
+            return false;
+        }
     }
 
 

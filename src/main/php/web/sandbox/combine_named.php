@@ -87,11 +87,19 @@ class combine_named extends combine_object
     }
 
     /**
-     * @return string|null the name of the word, triple, formula or verb
+     * @return string the name of the word, triple, formula or verb
      */
-    function name(): ?string
+    function name(): string
     {
         return $this->obj()?->name();
+    }
+
+    /**
+     * @return string|null the name of the word, triple, formula or verb
+     */
+    function name_or_null(): string
+    {
+        return $this->obj()?->name_or_null();
     }
 
     /**

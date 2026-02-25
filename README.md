@@ -33,7 +33,7 @@ the logical order of the main objects is
 - view - named display mask
 - component - parts of a display mask
 
-More in the detailed [object description](docs/code_objects.md)
+More in the detailed [object description](docs/code_objects.md) and [functions](docs/main_functions.md)
 
 ## Development installation
 

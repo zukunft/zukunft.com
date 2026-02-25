@@ -102,7 +102,8 @@ if ($usr->id() > 0) {
             // if update was successful ...
             if ($usr_msg->is_ok()) {
                 // remember the source for the next values to add
-                $usr->set_source($src->id());
+                $usr->src = $src;
+                $usr->save($usr_msg);
 
                 // ... and display the calling view
                 $result .= $html->dsp_go_back($back, $usr);

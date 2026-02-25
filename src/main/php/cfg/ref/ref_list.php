@@ -315,6 +315,10 @@ class ref_list extends type_list
 
         // TODO replace this slow solution
         foreach ($this->lst() as $ref) {
+            // TODO Prio 1 avoid this workaround
+            if ($ref->get_user()->id <= 0) {
+                $ref->set_user($this->get_user());
+            }
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
             $ref_usr_msg = $usr_msg->clone_reset();

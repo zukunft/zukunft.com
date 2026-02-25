@@ -38,6 +38,8 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -79,10 +81,18 @@ class user_read_tests
 
         $t->subheader($ts . 'profile');
 
-        // load the user_profile types
+        $test_name = 'load the user_profiles';
         $lst = new user_profile_list();
         $result = $lst->load($db_con);
-        $t->assert('user profile load types', $result, true);
+        $t->assert($test_name, $result, true);
+        $test_name = 'load the user_types';
+        $lst = new user_type_list();
+        $result = $lst->load($db_con);
+        $t->assert($test_name, $result, true);
+        $test_name = 'load the user_statuus';
+        $lst = new user_status_list();
+        $result = $lst->load($db_con);
+        $t->assert($test_name, $result, true);
 
         // ... and check if at least the most critical is loaded
         global $sys;

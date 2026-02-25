@@ -67,9 +67,11 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -2959,20 +2961,17 @@ class library
      */
     function class_to_empty_json(string $class): string
     {
-        switch ($class) {
-            case verb::class:
-            case triple::class:
-            case ref::class;
-            case formula_link::class;
-            case view_relation::class;
-            case term_view::class;
-            case component_link::class;
-                $json = test_api::JSON_ARRAY_ONLY;
-                break;
-            default:
-                $json = test_api::JSON_NAME_ONLY;
-        }
-        return $json;
+        return match ($class) {
+            user::class,
+            verb::class,
+            triple::class,
+            ref::class,
+            formula_link::class,
+            view_relation::class,
+            term_view::class,
+            component_link::class => test_api::JSON_ARRAY_ONLY,
+            default => test_api::JSON_NAME_ONLY,
+        };
     }
 
     /**
@@ -3034,6 +3033,12 @@ class library
         }
         if ($result == 'value_geos') {
             $result = 'values_geo';
+        }
+        if ($result == 'user_statuss') {
+            $result = 'user_statuus';
+        }
+        if ($result == 'user_statuuss') {
+            $result = 'user_statuus';
         }
         if ($result == 'job_statuss') {
             $result = 'job_statuus';
@@ -3153,9 +3158,10 @@ class library
             case $this->class_to_name(sys_log_function::class):
             case $this->class_to_name(job_status::class):
             case $this->class_to_name(job_type::class):
-            case $this->class_to_name(user_type::class):
             case $this->class_to_name(user_profile::class):
+            case $this->class_to_name(user_type::class):
             case $this->class_to_name(user_official_type::class):
+            case $this->class_to_name(user_status::class):
             case $this->class_to_name(protection_type::class):
             case $this->class_to_name(share_type::class):
             case $this->class_to_name(phrase_type::class):

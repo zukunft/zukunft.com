@@ -117,3 +117,4 @@ change_table_id, change_table_name, description, code_id
 116,'change_actions',,'change_actions'
 117,'job_statuus',,'job_statuus'
 118,'system_time_types',,'system_time_types'
+119,'user_statuus',,'user_statuus'

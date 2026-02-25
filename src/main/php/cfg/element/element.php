@@ -145,7 +145,7 @@ class element extends db_object_seq_id_user
      */
     function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         if ($keep_user) {
             $this->frm = new formula($this->get_user());
         } else {

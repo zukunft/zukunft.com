@@ -52,6 +52,7 @@ class ref_tests
     function run(test_cleanup $t): void
     {
 
+        // TODO Prio 1 use the users of $t->env->usr_... instead
         global $usr;
         global $usr_sys;
 

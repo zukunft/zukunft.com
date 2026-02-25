@@ -180,8 +180,7 @@ class test_log
 
     private function log_entry(): change
     {
-        global $usr_sys;
-        $chg = new change($usr_sys);
+        $chg = new change($this->env->usr_system);
         $chg->id = $this->chg_log_seq();
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         return $chg;

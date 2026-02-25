@@ -1,4 +1,4 @@
-user_profile_id, right_level, type_name, code_id, description
+user_profile_id, right_level, user_profile_name, code_id, description
 1, 1, 'ip only', 'ip', 'if only the ip of the request is known'
 2, 10, 'username selected', 'name', 'the user has selected and reserved a unique username'
 3, 10, 'email verified', 'email', 'the email of the account has been confirmed'

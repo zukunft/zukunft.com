@@ -10,6 +10,7 @@ PREPARE word_by_user_list (bigint, bigint) AS
             l.first_name,
             l.last_name,
             l.term_id,
+            l.view_id,
             l.source_id,
             l.user_profile_id
        FROM user_words s

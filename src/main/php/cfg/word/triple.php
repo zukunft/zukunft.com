@@ -1622,7 +1622,9 @@ class triple extends sandbox_link_named
 
         $db_row = $db_con->get1($qp);
         $this->row_mapper_sandbox($db_row);
-        $this->reload_generated_name();
+        // TODO Prio 1 add the original $msg as parameter to all functions that might create a message to the user
+        $msg = new user_message();
+        $this->reload_generated_name($msg);
         return $this->id();
     }
 
@@ -1865,19 +1867,16 @@ class triple extends sandbox_link_named
     /**
      * set the generated triple name base on the view
      */
-    private function reload_generated_name(): void
+    private function reload_generated_name(user_message $msg): void
     {
-        global $db_con;
-
         if ($this->id() > 0) {
             // automatically update the generic name
             $this->reload_objects();
             $new_name = $this->name_generated();
             log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
             if ($new_name <> $this->name_generated) {
-                $db_con->set_class(triple::class);
-                $db_con->update_old($this->id(), triple_db::FLD_NAME_AUTO, $new_name);
-                $this->set_name_generated($new_name);
+                $this->name_generated = $new_name;
+                $this->save($msg);
             }
         }
     }
@@ -2442,110 +2441,6 @@ class triple extends sandbox_link_named
      */
 
     /**
-     * set the update parameters for the triple name
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_field_name(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-
-        // the name field is a generic created field, so update it before saving
-        // the generic name of $this is saved to the database for faster uniqueness check (TODO to be checked if this is really faster)
-        $this->set_names();
-
-        if ($db_rec->name() <> $this->name() and !$this->is_excluded()) {
-            $usr_msg->merge($this->is_name_used_msg());
-            if ($usr_msg->is_ok()) {
-                $log = $this->log_upd_field();
-                // TODO review
-                if ($db_rec->name() != '') {
-                    $log->old_value = $db_rec->name();
-                } else {
-                    $log->old_value = null;
-                }
-                // ignore excluded to not overwrite an existing name
-                $log->new_value = $this->name(true);
-                $log->std_value = $std_rec->name();
-                $log->row_id = $this->id();
-                $log->set_field(triple_db::FLD_NAME);
-                $usr_msg->merge($this->save_field_user($db_con, $log));
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the triple given name
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private
-    function save_field_name_given(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-        if ($db_rec->name_given() <> $this->name_given()) {
-            if ($this->name_given() != null) {
-                $result = $this->is_name_used_msg($this->name_given());
-            }
-            if ($usr_msg->is_ok()) {
-                $log = $this->log_upd_field();
-                $log->old_value = $db_rec->name_given();
-                $log->new_value = $this->name_given();
-                $log->std_value = $std_rec->name_given();
-                $log->row_id = $this->id();
-                $log->set_field(triple_db::FLD_NAME_GIVEN);
-                $usr_msg->merge($this->save_field_user($db_con, $log));
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the triple generated name
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private
-    function save_field_name_generated(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-        // only write the generated name if no name is given
-        if ($this->name_given == null and $this->name == '') {
-            if ($db_rec->name_generated <> $this->name_generated()) {
-                $usr_msg->merge($this->is_name_used_msg($this->name_generated()));
-                if ($usr_msg->is_ok()) {
-                    $log = $this->log_upd_field();
-                    if ($db_rec->name_generated == '') {
-                        $log->old_value = null;
-                    } else {
-                        $log->old_value = $db_rec->name_generated;
-                    }
-                    $log->new_value = $this->name_generated();
-                    $log->std_value = $std_rec->name_generated;
-                    $log->row_id = $this->id();
-                    $log->set_field(triple_db::FLD_NAME_AUTO);
-                    $usr_msg->merge($this->save_field_user($db_con, $log));
-                }
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * save all updated triple fields excluding id fields (from, verb and to), because already done when adding a triple
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_name_fields(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
-    {
-        $usr_msg = $this->save_field_name($db_con, $db_rec, $std_rec);
-        if ($usr_msg->is_ok()) {
-            $usr_msg->merge($this->save_field_name_given($db_con, $db_rec, $std_rec));
-        }
-        if ($usr_msg->is_ok()) {
-            $usr_msg->merge($this->save_field_name_generated($db_con, $db_rec, $std_rec));
-        }
-        return $usr_msg;
-    }
-
-    /**
      * save updated the triple id fields (from, verb and to)
      * should only be called if the user is the owner and nobody has used the triple
      * @param sql_db $db_con the active database connection
@@ -2626,7 +2521,7 @@ class triple extends sandbox_link_named
                     // force including again
                     $this->include();
                     $db_rec->exclude();
-                    if ($this->save_field_excluded($db_con, $db_rec, $std_rec)) {
+                    if ($this->save($msg)) {
                         log_debug('triple->save_id_if_updated found a triple with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
                     }
                 }

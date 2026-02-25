@@ -316,6 +316,18 @@ class term extends combine_named
         return $result;
     }
 
+    function clone_reset(bool $keep_user): word|verb|triple|formula|phrase|term
+    {
+        $obj = $this->obj->clone_reset($keep_user);
+        if ($obj::class == word::class
+            or $obj::class == verb::class
+            or $obj::class == triple::class
+            or $obj::class == formula::class) {
+            $obj = $obj->term();
+        }
+        return $obj;
+    }
+
 
     /*
      * set and get
@@ -541,17 +553,21 @@ class term extends combine_named
      */
     function id(): int
     {
-        if ($this->is_word()) {
-            return ($this->obj_id() * 2) - 1;
-        } elseif ($this->is_triple()) {
-            return ($this->obj_id() * -2) + 1;
-        } elseif ($this->is_formula()) {
-            return ($this->obj_id() * 2);
-        } elseif ($this->is_verb()) {
-            return ($this->obj_id() * -2);
-        } else {
-            return 0;
+        $id = 0;
+        if ($this->obj_id() != 0) {
+            if ($this->is_word()) {
+                $id = ($this->obj_id() * 2) - 1;
+            } elseif ($this->is_triple()) {
+                $id = ($this->obj_id() * -2) + 1;
+            } elseif ($this->is_formula()) {
+                $id = ($this->obj_id() * 2);
+            } elseif ($this->is_verb()) {
+                $id = ($this->obj_id() * -2);
+            } else {
+                return 0;
+            }
         }
+        return $id;
     }
 
     /**

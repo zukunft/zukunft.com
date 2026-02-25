@@ -295,15 +295,15 @@ COMMENT ON COLUMN user_types.description IS 'text to explain the type to the use
 CREATE TABLE IF NOT EXISTS user_profiles
 (
     user_profile_id SERIAL PRIMARY KEY,
-    type_name    varchar(255) NOT NULL,
-    code_id      varchar(255) DEFAULT NULL,
-    description  text         DEFAULT NULL,
-    right_level  smallint     DEFAULT NULL
+    user_profile_name varchar(255) NOT NULL,
+    code_id           varchar(255) DEFAULT NULL,
+    description       text         DEFAULT NULL,
+    right_level       smallint     DEFAULT NULL
 );
 
 COMMENT ON TABLE user_profiles IS 'to define the user roles and read and write rights';
 COMMENT ON COLUMN user_profiles.user_profile_id IS 'the internal unique primary index';
-COMMENT ON COLUMN user_profiles.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN user_profiles.user_profile_name IS 'the unique type name as shown to the user and used for the selection';
 COMMENT ON COLUMN user_profiles.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN user_profiles.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 COMMENT ON COLUMN user_profiles.right_level IS 'the access right level to prevent not permitted right gaining';
@@ -327,6 +327,26 @@ COMMENT ON COLUMN user_official_types.user_official_type_id IS 'the internal uni
 COMMENT ON COLUMN user_official_types.type_name IS 'the unique type name as shown to the user and used for the selection';
 COMMENT ON COLUMN user_official_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN user_official_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to reduce short-term the internal permissions for a user without changing the profile
+--
+
+CREATE TABLE IF NOT EXISTS user_statuus
+(
+    user_status_id SERIAL PRIMARY KEY,
+    user_status_name varchar(255) NOT NULL,
+    code_id          varchar(255) DEFAULT NULL,
+    description      text         DEFAULT NULL
+);
+
+COMMENT ON TABLE user_statuus IS 'to reduce short-term the internal permissions for a user without changing the profile';
+COMMENT ON COLUMN user_statuus.user_status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN user_statuus.user_status_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN user_statuus.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN user_statuus.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 -- --------------------------------------------------------
 
@@ -5397,7 +5417,7 @@ CREATE INDEX user_types_type_name_idx ON user_types (type_name);
 -- indexes for table user_profiles
 --
 
-CREATE INDEX user_profiles_type_name_idx ON user_profiles (type_name);
+CREATE INDEX user_profiles_user_profile_name_idx ON user_profiles (user_profile_name);
 
 -- --------------------------------------------------------
 
@@ -5406,6 +5426,14 @@ CREATE INDEX user_profiles_type_name_idx ON user_profiles (type_name);
 --
 
 CREATE INDEX user_official_types_type_name_idx ON user_official_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table user_statuus
+--
+
+CREATE INDEX user_statuus_user_status_name_idx ON user_statuus (user_status_name);
 
 -- --------------------------------------------------------
 
@@ -7015,7 +7043,8 @@ ALTER TABLE users
     ADD CONSTRAINT users_triple_fk FOREIGN KEY (name_triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT users_triple2_fk FOREIGN KEY (geo_triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT users_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+    ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT users_user_status_fk FOREIGN KEY (user_status_id) REFERENCES user_statuus (user_status_id);
 
 --
 -- constraints for table change_fields

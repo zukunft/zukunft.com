@@ -1026,8 +1026,7 @@ class sandbox_link extends sandbox
         if (!isset($this->fob) or !isset($this->tob)) {
             log_err('The linked objects for ' . $this->dsp_id() . ' are missing.', '_sandbox->get_similar');
         } else {
-            $db_chk = clone $this;
-            $db_chk->reset();
+            $db_chk = $this->clone_reset(true);
             $db_chk->set_fob($this->fob());
             $db_chk->set_tob($this->tob());
             $db_chk->set_predicate_id($this->predicate_id());

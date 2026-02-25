@@ -42,7 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 // open database
 $app = new frontend();
@@ -78,24 +78,25 @@ if ($db_con->is_open()) {
 
             // check the user input
             $error = '';
-            if (empty($_POST['password'])) {
+            if (empty($_POST[url_var::USER_PASSWORD_HUMAN])) {
                 $error .= 'password can\'t be empty<br>';
             }
-            if (empty($_POST['re_password'])) {
+            if (empty($_POST[url_var::USER_PASSWORD_RETYPE_HUMAN])) {
                 $error .= 'You must re-type your password<br>';
             }
-            if ($_POST['password'] != $_POST['re_password']) {
+            if ($_POST[url_var::USER_PASSWORD_HUMAN] != $_POST[url_var::USER_PASSWORD_RETYPE_HUMAN]) {
                 $error .= 'passwords don\'t match<br>';
             }
 
             if ($error == '') {
                 // If all fields are not empty, and the passwords match,
                 // create a session, and session variables,
-                $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
-                //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
-                $db_con->set_class(user::class);
-                $db_con->set_usr(users::SYSTEM_ID);
-                $db_con->update_old($usr_id, array('password', 'activation_key', 'activation_timeout'), array($pw_hash, '', 'NOW()'));
+                $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST[url_var::USER_PASSWORD_HUMAN]));
+                //$pw_hash = password_hash($_POST[url_var::USER_PASSWORD_HUMAN], password_DEFAULT);
+                $usr->password = $pw_hash;
+                $usr->activation_key = '';
+                $usr->activation_timeout = new DateTime();
+                $usr->save($usr_msg);
                 /*
                 $sql = sprintf("UPDATE users
                               SET password       = '%s',

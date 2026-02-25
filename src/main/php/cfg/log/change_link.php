@@ -515,32 +515,6 @@ class change_link extends change_log
         return $result;
     }
 
-    // add the row id to an existing log entry
-    // e.g. because the row id is known after the adding of the real record,
-    // but the log entry has been created upfront to make sure that logging is complete
-    function add_ref($row_id): bool
-    {
-        log_debug($row_id . " to " . $this->id() . " for user " . $this->get_user()->dsp_id());
-
-        global $db_con;
-
-        $result = true;
-        $db_type = $db_con->get_class();
-        $db_con->set_class(change_link::class);
-        $db_con->set_usr($this->get_user()->id());
-        if (!$db_con->update_old($this->id(), 'row_id', $row_id)) {
-            // write the error message in steps to get at least some message if the parameters causes an additional the error
-            $func_name = 'user_log_link->add_ref';
-            $msg_text = 'Insert to change ref log failed';
-            $traceback = (new Exception)->getTraceAsString();
-            $msg_description = $msg_text . ' with ' . $this->dsp_id();
-            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->get_user());
-            $result = False;
-        }
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-        return $result;
-    }
 
     /*
      * debug

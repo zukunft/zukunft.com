@@ -92,7 +92,7 @@ class test_jobs
      */
     function job_filled(): job
     {
-        $t_usr = new test_users();
+        $t_usr = new test_users($this->env);
         $t_src = new test_sources($this->env);
         $t_ref = new test_refs($this->env);
         $sys_usr = $t_usr->system_user();
@@ -116,7 +116,7 @@ class test_jobs
      */
     function job_list(): job_list
     {
-        $t_usr = new test_users();
+        $t_usr = new test_users($this->env);
         $sys_usr = $t_usr->system_user();
         $job_lst = new job_list($sys_usr);
         $job_lst->add($this->job());

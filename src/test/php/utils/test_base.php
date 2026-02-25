@@ -54,6 +54,7 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -479,8 +480,11 @@ class test_base
         $this->usr_signup = new user();
         $this->usr_signup->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID);
 
+        $msg = new user_message();
+        $msg->usr = $this->usr_admin;
+
         $t_usr = new test_users();
-        $this->usr_dev = $t_usr->user_dev();
+        $this->usr_dev = $t_usr->user_dev($msg);
 
     }
 
@@ -1020,6 +1024,10 @@ class test_base
             $ui->load_cache();
             $cfg = new data_object_ui();
             $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
+        }
+        if ($cfg->usr->id() == 0) {
+            $ui_map = new MapObject();
+            $cfg->usr = $ui_map->convertToUi($usr, $usr_msg_ui);
         }
         $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
 
@@ -4442,7 +4450,7 @@ class test_base
     {
         $usr = new user();
         $usr->set(users::SYSTEM_ID, users::SYSTEM_NAME, users::SYSTEM_EMAIL);
-        $usr->set_profile(user_profiles::SYSTEM);
+        $usr->profile_id = user_profiles::SYSTEM_ID;
         return $usr;
     }
 

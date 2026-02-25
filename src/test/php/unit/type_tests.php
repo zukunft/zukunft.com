@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
@@ -99,15 +100,20 @@ class type_tests
         $t->assert_sql_table_create($job_typ);
         $t->assert_sql_index_create($job_typ);
 
+        $t->subheader($ts . 'user profile sql setup');
+        $usr_prf = new user_profile('');
+        $t->assert_sql_table_create($usr_prf);
+        $t->assert_sql_index_create($usr_prf);
+
         $t->subheader($ts . 'user type sql setup');
         $usr_typ = new user_type('');
         $t->assert_sql_table_create($usr_typ);
         $t->assert_sql_index_create($usr_typ);
 
-        $t->subheader($ts . 'user profile sql setup');
-        $usr_prf = new user_profile('');
-        $t->assert_sql_table_create($usr_prf);
-        $t->assert_sql_index_create($usr_prf);
+        $t->subheader($ts . 'user status sql setup');
+        $usr_sta = new user_status('');
+        $t->assert_sql_table_create($usr_sta);
+        $t->assert_sql_index_create($usr_sta);
 
         $t->subheader($ts . 'user identification sql setup');
         $usr_idt = new user_official_type('');

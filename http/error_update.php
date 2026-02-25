@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
@@ -69,6 +70,7 @@ $back = $_GET[url_var::BACK] = '';
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
+$msg = new user_message();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
@@ -88,7 +90,7 @@ if ($usr->id > 0) {
             $err_entry->set_user($usr);
             $err_entry->id = $log_id;
             $err_entry->status_id = $status_id;
-            $err_entry->save();
+            $err_entry->save($msg);
         }
 
         // display all program issues if the user is an admin

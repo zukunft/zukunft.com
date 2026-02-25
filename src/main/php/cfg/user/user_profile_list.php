@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -44,7 +44,7 @@ class user_profile_list extends type_list
 {
 
     /**
-     * create dummy type list for the unit tests without database connection
+     * create a dummy type list for the unit tests without database connection
      */
     function load_dummy(): void
     {

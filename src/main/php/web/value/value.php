@@ -149,8 +149,8 @@ class value extends sandbox_value
     {
         parent::api_mapper($json_array, $msg);
 
-        if (array_key_exists(json_fields::SOURCE, $json_array)) {
-            $this->set_source_id($json_array[json_fields::SOURCE]);
+        if (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
+            $this->set_source_id($json_array[json_fields::SOURCE_ID]);
         }
 
         return $msg->is_ok();
@@ -249,7 +249,7 @@ class value extends sandbox_value
         $vars[json_fields::PHRASES] = $this->grp->phr_lst()->api_array();
         $vars[json_fields::NUMBER] = $this->number();
         if ($this->src != null) {
-            $vars[json_fields::SOURCE] = $this->source_id();
+            $vars[json_fields::SOURCE_ID] = $this->source_id();
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

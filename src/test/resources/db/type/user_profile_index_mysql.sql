@@ -5,4 +5,4 @@
 --
 
 ALTER TABLE user_profiles
-    ADD KEY user_profiles_type_name_idx (type_name);
+    ADD KEY user_profiles_user_profile_name_idx (user_profile_name);

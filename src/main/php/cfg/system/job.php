@@ -502,7 +502,7 @@ class job extends db_object_seq_id_user
         $vars[json_fields::JOB_PARAMETER] = $this->parameter;
         $vars[json_fields::FIELD_ID] = $this->change_field;
         $vars[json_fields::ROW_ID] = $this->row_id;
-        $vars[json_fields::SOURCE] = $this->src?->id();
+        $vars[json_fields::SOURCE_ID] = $this->src?->id();
         $vars[json_fields::REFERENCE] = $this->ref?->id();
         $vars[json_fields::PRIORITY] = $this->priority;
 
