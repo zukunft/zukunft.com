@@ -54,6 +54,7 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -1023,6 +1024,10 @@ class test_base
             $ui->load_cache();
             $cfg = new data_object_ui();
             $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
+        }
+        if ($cfg->usr->id() == 0) {
+            $ui_map = new MapObject();
+            $cfg->usr = $ui_map->convertToUi($usr, $usr_msg_ui);
         }
         $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
 

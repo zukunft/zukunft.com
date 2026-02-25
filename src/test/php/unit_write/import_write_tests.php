@@ -81,7 +81,7 @@ class import_write_tests
         global $db_con;
 
         // init
-        $t_usr = new test_users();
+        $t_usr = new test_users($t);
         $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)

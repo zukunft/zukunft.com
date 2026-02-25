@@ -85,6 +85,7 @@ class user_tests
 
         $t->subheader($ts . 'sql write update');
         $usr_changed = $usr_test->cloned(users::SYSTEM_TEST_PARTNER_NAME);
+        $usr_changed->created = $usr_test->created;
         $t->assert_sql_update($sc, $usr_changed, $usr_test, [sql_type::LOG]);
         $t->assert_sql_update($sc, $usr_changed, $usr_test);
 

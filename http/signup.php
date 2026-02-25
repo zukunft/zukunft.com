@@ -151,9 +151,9 @@ if ($db_con->is_open()) {
     $result .= '<br><br>';
     $result .= '<p>Please signup for <b>alpha testing</b> of zukunft.com.</p>';
     $result .= '<p>' . $html->dsp_err('Be aware that during this phase your <b>data may get lost</b> or is changed due to program errors or updates.') . '</p>';
-    $result .= '<form action="' . $_SERVER[rest_ctrl::PHP_SELF] . '" method="post"> ';
-    $result .= '<p>User Name:<br><input type="' . html_base::INPUT_TEXT . '" name="user_name" value="' . $_POST['user_name'] . '"></p> ';
-    $result .= '<p>Email:<br><input type="' . html_base::INPUT_TEXT . '" name="email" value="' . $_POST['email'] . '"></p>  ';
+    $result .= '<form action="' . htmlspecialchars($_SERVER[rest_ctrl::PHP_SELF], ENT_QUOTES, 'UTF-8') . '" method="post"> ';
+    $result .= '<p>User Name:<br><input type="' . html_base::INPUT_TEXT . '" name="user_name" value="' . htmlspecialchars($_POST['user_name'] ?? '', ENT_QUOTES, 'UTF-8') . '"></p> ';
+    $result .= '<p>Email:<br><input type="' . html_base::INPUT_TEXT . '" name="email" value="' . htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8') . '"></p>  ';
     $result .= '<p>password:<br><input type="' . html_base::INPUT_PASSWORD . '" name="password"></p>  ';
     $result .= '<p>Re-Type password:<br><input type="' . html_base::INPUT_PASSWORD . '" name="re_password"></p>  ';
     $result .= '<p><input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Sign Up"></p>  ';

@@ -110,6 +110,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
 //include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+//include_once paths::SHARED_ENUM . 'user_statuus.php';
 //include_once paths::SHARED_TYPES . 'system_time_type.php';
 //include_once paths::SHARED_TYPES . 'protection_types.php';
 //include_once paths::SHARED_TYPES . 'share_types.php';
@@ -193,6 +194,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuus;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -406,7 +408,7 @@ class def
         user_official_type::class,
         user_profile::class,
         user_type::class,
-        user_status::class,
+        user_statuus::class,
         position_type::class,
         component_link_type::class,
         component_type::class,

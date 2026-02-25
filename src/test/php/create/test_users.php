@@ -98,6 +98,7 @@ class test_users
     {
         $usr = new user();
         $usr->ip_addr = users::TEST_USER_IP;
+        $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
         return $usr;
     }
 
@@ -163,6 +164,7 @@ class test_users
         $usr->set(users::SYSTEM_TEST_ID, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::TEST);
         $usr->description = users::SYSTEM_TEST_COM;
+        $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
         return $usr;
     }
 

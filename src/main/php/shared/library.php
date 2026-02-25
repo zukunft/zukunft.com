@@ -3037,6 +3037,9 @@ class library
         if ($result == 'user_statuss') {
             $result = 'user_statuus';
         }
+        if ($result == 'user_statuuss') {
+            $result = 'user_statuus';
+        }
         if ($result == 'job_statuss') {
             $result = 'job_statuus';
         }

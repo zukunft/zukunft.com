@@ -40,6 +40,7 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -427,7 +428,7 @@ class test_api extends test_base
 
     /**
      * check if the REST GET call returns the expected JSON message
-     * for testing the local deployments needs to be updated using an external script
+     * for testing the local deployments need to be updated using an external script
      *
      * @param string $class the class name of the object to test
      * @param int $id the database id of the db row that should be used for testing
@@ -472,6 +473,9 @@ class test_api extends test_base
         if ($class == value::class) {
             $filename = 'value_non_std';
         }
+        if ($class == user::class) {
+            $filename = 'user_via_api';
+        }
         if ($levels > 0) {
             $filename = $class_api . '_with_component_id';
         }
@@ -480,7 +484,7 @@ class test_api extends test_base
 
     /**
      * check if the REST GET call by name returns the expected JSON message
-     * for testing the local deployments needs to be updated using an external script
+     * for testing the local deployments need to be updated using an external script
      *
      * @param string $class the class name of the object to test
      * @param string $name the unique name (or any other unique text) of the db row that should be used for testing
@@ -489,22 +493,26 @@ class test_api extends test_base
      */
     function assert_api_get_by_text(string $class, string $name = '', string $field = url_var::NAME): bool
     {
+        $filename = '';
+        if ($class == user::class) {
+            $filename = 'user_via_api';
+        }
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array($field => $name);
         $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
-        return $this->assert_api_compare($class, $actual);
+        return $this->assert_api_compare($class, $actual, null, $filename);
     }
 
     /**
      * check if the REST GET call of a user sandbox objects returns the expected JSON message
-     * for testing the local deployments needs to be updated using an external script
+     * for testing the local deployments need to be updated using an external script
      *
      * @param string $class the class name of the object to test
      * @param array|string $ids the database ids of the db rows that should be used for testing
      * @param string $id_fld the field name for the object id e.g. word_id
-     * @param string $filename to overwrite the class based filename to get the standard expected result
+     * @param string $filename to overwrite the class-based filename to get the standard expected result
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
      * @return bool true if the json has no relevant differences
      */
@@ -548,7 +556,7 @@ class test_api extends test_base
 
     /**
      * check if the REST GET call of user changes returns the expected JSON message
-     * for testing the local deployments needs to be updated using an external script
+     * for testing the local deployments need to be updated using an external script
      *
      * @param string $class the class name of the object to test
      * @param int|string $id the database id of the object to which the changes should be listed
@@ -662,7 +670,7 @@ class test_api extends test_base
     }
 
     /**
-     * check if the REST DELETE call returns an empty JSON message if the excusion has been successful
+     * check if the REST DELETE call returns an empty JSON message if the exclusion has been successful
      * for testing the local deployments needs to be updated using an external script
      * TODO Prio 1 add user_message as parameter
      *
@@ -699,12 +707,12 @@ class test_api extends test_base
      */
 
     /**
-     * for testing the local deployments needs to be updated using an external script
+     * for testing the local deployments need to be updated using an external script
      *
      * @param string $class the class name of the object to test
      * @param ?array $actual the actual received json array
      * @param ?array $expected if not null, the expected result
-     * @param string $filename to overwrite the class based filename to get the standard expected result
+     * @param string $filename to overwrite the class-based filename to get the standard expected result
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
      * @param bool $ignore_id true if the ids should be ignored e.g. because test records have been created
      * @return bool true if the json has no relevant differences
@@ -749,7 +757,7 @@ class test_api extends test_base
      * get the expected api json message of a user sandbox object
      *
      * @param string $class the class name of the object to test
-     * @param string $file to overwrite the class based filename
+     * @param string $file to overwrite the class-based filename
      * @return string with the expected json message
      */
     function api_json_expected(string $class, string $file = ''): string
@@ -762,7 +770,7 @@ class test_api extends test_base
     }
 
     /**
-     * adjust the class name to the api name if they does not (yet) match
+     * adjust the class name to the api name if they do not (yet) match
      * @param string $class the class name that should be converted
      * @return string the api name
      */
@@ -898,6 +906,11 @@ class test_api extends test_base
         $json = $this->json_remove_volatile_time_field($json, job_db::FLD_TIME_REQUEST);
         $json = $this->json_remove_volatile_time_field($json, job_db::FLD_TIME_START);
         $json = $this->json_remove_volatile_time_field($json, job_db::FLD_TIME_END);
+        $json = $this->json_remove_volatile_time_field($json, user_db::FLD_ACTIVATION_TIMEOUT);
+        $json = $this->json_remove_volatile_time_field($json, user_db::FLD_DB_NOW);
+        $json = $this->json_remove_volatile_time_field($json, user_db::FLD_LAST_LOGIN);
+        $json = $this->json_remove_volatile_time_field($json, user_db::FLD_LAST_LOGOUT);
+        $json = $this->json_remove_volatile_time_field($json, user_db::FLD_CREATED);
 
         // remove the id fields if requested
         // for tests with base load dataset the id fields should not be ignored
@@ -934,7 +947,7 @@ class test_api extends test_base
      * remove a time value and key from a json that should not be used for a compare
      *
      * @param array $json a json array with volatile fields
-     * @param string $fld_name the field name, that should be removed
+     * @param string $fld_name the field name that should be removed
      * @return array the main json without the volatile id fields
      */
     private function json_remove_volatile_time_field(array $json, string $fld_name): array
@@ -952,7 +965,7 @@ class test_api extends test_base
                 $json = $this->json_remove_volatile_unset_field($json, $fld_name);
                 unset($json[$fld_name]);
             } else {
-                $new_value = (new DateTime(sys_log_tests::TV_TIME))->format('Y-m-d H:i:s');
+                $new_value = new DateTime(sys_log_tests::TV_TIME)->format('Y-m-d H:i:s');
                 $json = $this->json_remove_volatile_replace_field($json, $fld_name, $new_value);
             }
         }
@@ -963,7 +976,7 @@ class test_api extends test_base
      * remove a value and key from a json that should not be used for a compare
      *
      * @param array $json a json array with volatile fields
-     * @param string $fld_name the field name, that should be removed
+     * @param string $fld_name the field name that should be removed
      * @return array the main json without the volatile id fields
      */
     private function json_remove_volatile_unset_field(
@@ -980,7 +993,7 @@ class test_api extends test_base
      * remove a value and key from a json that should not be used for a compare
      *
      * @param array $json a json array with volatile fields
-     * @param string $fld_name the field name, that should be removed
+     * @param string $fld_name the field name that should be removed
      * @param string $new_value the new field value that the field should have
      * @return array the main json without the volatile id fields
      */
@@ -999,7 +1012,7 @@ class test_api extends test_base
      * remove a value and key from a json that should not be used for a compare
      *
      * @param array $json a json array with volatile fields
-     * @param string $fld_name the field name, that should be removed
+     * @param string $fld_name the field name that should be removed
      * @param int $new_value the new field value that the field should have
      * @return array the main json without the volatile id fields
      */

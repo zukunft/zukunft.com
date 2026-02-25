@@ -2,6 +2,13 @@
   "id": 3,
   "name": "zukunft.com system test",
   "email": "test@zukunft.com",
+  "activation_timeout": "2026-02-25T16:18:35+00:00",
+  "last_login": "2026-02-25T16:18:35+00:00",
+  "last_logoff": "2026-02-25T16:18:35+00:00",
   "profile_id": 16,
+  "code_id": "test",
+  "type_id": 1,
+  "status": 1,
+  "created": "2026-02-25T17:12:40+00:00",
   "description": "the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests"
 }

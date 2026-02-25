@@ -258,7 +258,11 @@ class phrase extends combine_named
 
     function clone_reset(bool $keep_user): word|triple|phrase|TextIdObject
     {
-        return $this->obj->clone_reset($keep_user);
+        $obj = $this->obj->clone_reset($keep_user);
+        if ($obj::class == word::class or $obj::class == triple::class) {
+            $obj = $obj->phrase();
+        }
+        return $obj;
     }
 
     /**

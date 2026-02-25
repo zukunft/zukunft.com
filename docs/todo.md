@@ -11,6 +11,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
     TODO finish the frontend component tests
     TODO create the frontend page reaction flow tests
+    TODO activate password_hash() and migrate the existing passwords
 
     TODO Release 0.0.4
     TODO fix all prio 0 TODO including unit tests
@@ -19,6 +20,8 @@ A proper issue ticket should be created for these TODOs notes:
          and the permission check of critical fields is done before the database save
     TODO make sure the the save function always includes all fields e.g. if by the user the activation_timeout is included
     TODO finish the expression code review
+    TODO limit the requests per IP to have a second line of defence for DDoS attac 
+    TODO add an increasing login retry delay to avoid brute force attacts
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
     TODO review and create missing formula unit, read and write tests
     TODO m2 should be the formula meter * meter in unit.jsom import message

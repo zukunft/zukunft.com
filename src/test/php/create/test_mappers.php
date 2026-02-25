@@ -185,7 +185,7 @@ class test_mappers
     function class_to_base_object(string $class): sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox
     {
         $obj = null;
-        $t_usr = new test_users();
+        $t_usr = new test_users($this->env);
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $t_trp = new test_triples($this->env);
@@ -323,9 +323,9 @@ class test_mappers
     /**
      * get the filled test object related to the given class
      * @param string $class the given main class name
-     * @return triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_multi|type_object|db_id_object_non_sandbox with only a few vars filled
+     * @return user|triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_multi|type_object|db_id_object_non_sandbox with only a few vars filled
      */
-    function class_to_filled_object(string $class): triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_multi|type_object|db_id_object_non_sandbox
+    function class_to_filled_object(string $class): user|triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_multi|type_object|db_id_object_non_sandbox
     {
         $obj = null;
         $t_usr = new test_users($this->env);
@@ -403,7 +403,7 @@ class test_mappers
     function class_to_add_object(string $class): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
     {
         $obj = null;
-        $t_usr = new test_users();
+        $t_usr = new test_users($this->env);
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $t_trp = new test_triples($this->env);
@@ -582,7 +582,7 @@ class test_mappers
     ): string
     {
         $url_array[] = [url_var::MASK => $msk_id];
-        $t_usr = new test_users();
+        $t_usr = new test_users($this->env);
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $t_trp = new test_triples($this->env);
@@ -678,7 +678,7 @@ class test_mappers
     ): string
     {
         $url_array[] = [url_var::MASK, $msk_id];
-        $t_usr = new test_users();
+        $t_usr = new test_users($this->env);
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $t_trp = new test_triples($this->env);
@@ -806,7 +806,7 @@ class test_mappers
     ): string
     {
         $url_array[] = [url_var::MASK, $msk_id];
-        $t_usr = new test_users();
+        $t_usr = new test_users($this->env);
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $t_trp = new test_triples($this->env);
@@ -910,7 +910,7 @@ class test_mappers
     {
         $url_array = [];
         $url_array[] = [url_var::MASK, $msk_id];
-        $t_usr = new test_users();
+        $t_usr = new test_users($this->env);
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $t_trp = new test_triples($this->env);

@@ -86,6 +86,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 //include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_HELPER . 'object_mapper.php';
 //include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
@@ -374,9 +375,15 @@ class user extends db_id_object_non_sandbox
                 $this->last_logoff = $lib->get_datetime($db_row[user_db::FLD_LAST_LOGOUT], $this->dsp_id());
             }
 
-            $this->profile_id = $db_row[user_db::FLD_PROFILE];
-            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
-            $this->type_id = $db_row[user_db::FLD_TYPE_ID];
+            if (array_key_exists(user_db::FLD_PROFILE, $db_row)) {
+                $this->profile_id = $db_row[user_db::FLD_PROFILE];
+            }
+            if (array_key_exists(user_db::FLD_CODE_ID, $db_row)) {
+                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            }
+            if (array_key_exists(user_db::FLD_TYPE_ID, $db_row)) {
+                $this->type_id = $db_row[user_db::FLD_TYPE_ID];
+            }
             if (array_key_exists(user_db::FLD_LEVEL, $db_row)) {
                 $this->right_level = $db_row[user_db::FLD_LEVEL];
             }
@@ -756,6 +763,14 @@ class user extends db_id_object_non_sandbox
             ]);
         }
         return $msg;
+    }
+
+    /**
+     * @return string|null the unique key or null if the word is not used by the system
+     */
+    function get_code_id(): ?string
+    {
+        return $this->code_id;
     }
 
     /**
@@ -3129,6 +3144,9 @@ class user extends db_id_object_non_sandbox
         }
 
         // created ist the time when the user has been save the first time so actually a change log entry is never expeted
+        if ($this->created === null) {
+            $this->created = new DateTime();
+        }
         if ($obj->created <> $this->created) {
             if ($do_log) {
                 $lst->add_field(

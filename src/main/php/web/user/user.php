@@ -349,9 +349,18 @@ class user extends db_object
      * set and get
      */
 
-    function name(): string
+    function name_or_null(): ?string
     {
         return $this->name;
+    }
+
+    function name(): string
+    {
+        if ($this->name === null) {
+            return '';
+        } else {
+            return $this->name;
+        }
     }
 
     function get_description(): string

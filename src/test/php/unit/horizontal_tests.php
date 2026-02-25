@@ -46,6 +46,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -148,6 +149,10 @@ class horizontal_tests
             $obj_changed = $obj->clone_reset(true);
             $obj_changed = $t_map->change_base_object($obj_changed);
             $obj_changed->id = $id;
+            // TODO Prio 3 remove exception by using one_time_fields
+            if ($obj::class == user::class) {
+                $obj_changed->created = $obj->created;
+            }
             $t->assert_sql_update($sc, $obj_changed, $obj, $sql_typ_lst);
             $t->assert_sql_delete($sc, $obj, $sql_typ_lst);
 
@@ -205,7 +210,11 @@ class horizontal_tests
             // remember the db id, because the db id is never included in the export
             $id = $filled_obj->id();
             // fill up cache to avoid db access in unit tests
-            if ($class == triple::class) {
+            if ($class == user::class) {
+                $dto->add_term($filled_obj->trm);
+                $dto->add_view($filled_obj->msk);
+                $dto->add_source($filled_obj->src);
+            } elseif ($class == triple::class) {
                 $dto->add_phrase($filled_obj->get_from());
                 $dto->add_phrase($filled_obj->get_to());
             } elseif ($class == ref::class) {
