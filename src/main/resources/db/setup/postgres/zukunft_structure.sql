@@ -50,7 +50,7 @@ COMMENT ON COLUMN sys_log_levels.description IS 'text to explain the type to the
 -- table structure to define the status of internal errors
 --
 
-CREATE TABLE IF NOT EXISTS sys_log_statuus
+CREATE TABLE IF NOT EXISTS sys_log_statuum
 (
     sys_log_status_id SERIAL PRIMARY KEY,
     status_name varchar(255)     NOT NULL,
@@ -59,12 +59,12 @@ CREATE TABLE IF NOT EXISTS sys_log_statuus
     action      varchar(255) DEFAULT NULL
 );
 
-COMMENT ON TABLE sys_log_statuus IS 'to define the status of internal errors';
-COMMENT ON COLUMN sys_log_statuus.sys_log_status_id IS 'the internal unique primary index';
-COMMENT ON COLUMN sys_log_statuus.status_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN sys_log_statuus.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN sys_log_statuus.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-COMMENT ON COLUMN sys_log_statuus.action IS 'description of the action to get to this status';
+COMMENT ON TABLE sys_log_statuum IS 'to define the status of internal errors';
+COMMENT ON COLUMN sys_log_statuum.sys_log_status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN sys_log_statuum.status_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN sys_log_statuum.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN sys_log_statuum.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON COLUMN sys_log_statuum.action IS 'description of the action to get to this status';
 
 
 -- --------------------------------------------------------
@@ -168,7 +168,7 @@ COMMENT ON COLUMN system_times.milliseconds IS 'the execution time in millisecon
 -- table structure predefined status of batch task as a database table e.g. so that admin can change the description
 --
 
-CREATE TABLE IF NOT EXISTS job_statuus
+CREATE TABLE IF NOT EXISTS job_statuum
 (
     job_status_id SERIAL PRIMARY KEY,
     status_name varchar(255) NOT NULL,
@@ -177,12 +177,12 @@ CREATE TABLE IF NOT EXISTS job_statuus
     priority    smallint     DEFAULT NULL
 );
 
-COMMENT ON TABLE job_statuus IS 'predefined status of batch task as a database table e.g. so that admin can change the description';
-COMMENT ON COLUMN job_statuus.job_status_id IS 'the internal unique primary index';
-COMMENT ON COLUMN job_statuus.status_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN job_statuus.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN job_statuus.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-COMMENT ON COLUMN job_statuus.priority IS 'execution priority offset based on the job status';
+COMMENT ON TABLE job_statuum IS 'predefined status of batch task as a database table e.g. so that admin can change the description';
+COMMENT ON COLUMN job_statuum.job_status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN job_statuum.status_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN job_statuum.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN job_statuum.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON COLUMN job_statuum.priority IS 'execution priority offset based on the job status';
 
 -- --------------------------------------------------------
 
@@ -334,7 +334,7 @@ COMMENT ON COLUMN user_official_types.description IS 'text to explain the type t
 -- table structure to reduce short-term the internal permissions for a user without changing the profile
 --
 
-CREATE TABLE IF NOT EXISTS user_statuus
+CREATE TABLE IF NOT EXISTS user_statuum
 (
     user_status_id SERIAL PRIMARY KEY,
     user_status_name varchar(255) NOT NULL,
@@ -342,11 +342,11 @@ CREATE TABLE IF NOT EXISTS user_statuus
     description      text         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_statuus IS 'to reduce short-term the internal permissions for a user without changing the profile';
-COMMENT ON COLUMN user_statuus.user_status_id IS 'the internal unique primary index';
-COMMENT ON COLUMN user_statuus.user_status_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN user_statuus.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN user_statuus.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON TABLE user_statuum IS 'to reduce short-term the internal permissions for a user without changing the profile';
+COMMENT ON COLUMN user_statuum.user_status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN user_statuum.user_status_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN user_statuum.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN user_statuum.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 -- --------------------------------------------------------
 
@@ -5313,10 +5313,10 @@ CREATE INDEX sys_log_levels_level_name_idx ON sys_log_levels (level_name);
 -- --------------------------------------------------------
 
 --
--- indexes for table sys_log_statuus
+-- indexes for table sys_log_statuum
 --
 
-CREATE INDEX sys_log_statuus_status_name_idx ON sys_log_statuus (status_name);
+CREATE INDEX sys_log_statuum_status_name_idx ON sys_log_statuum (status_name);
 
 -- --------------------------------------------------------
 
@@ -5361,10 +5361,10 @@ CREATE INDEX system_times_system_time_type_idx ON system_times (system_time_type
 -- --------------------------------------------------------
 
 --
--- indexes for table job_statuus
+-- indexes for table job_statuum
 --
 
-CREATE INDEX job_statuus_status_name_idx ON job_statuus (status_name);
+CREATE INDEX job_statuum_status_name_idx ON job_statuum (status_name);
 
 -- --------------------------------------------------------
 
@@ -5430,10 +5430,10 @@ CREATE INDEX user_official_types_type_name_idx ON user_official_types (type_name
 -- --------------------------------------------------------
 
 --
--- indexes for table user_statuus
+-- indexes for table user_statuum
 --
 
-CREATE INDEX user_statuus_user_status_name_idx ON user_statuus (user_status_name);
+CREATE INDEX user_statuum_user_status_name_idx ON user_statuum (user_status_name);
 
 -- --------------------------------------------------------
 
@@ -7012,7 +7012,7 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_sys_log_function_fk FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
     ADD CONSTRAINT sys_log_sys_log_level_fk FOREIGN KEY (sys_log_level_id) REFERENCES sys_log_levels (sys_log_level_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
-    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_statuus (sys_log_status_id);
+    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_statuum (sys_log_status_id);
 
 --
 -- constraints for table job_times
@@ -7029,7 +7029,7 @@ ALTER TABLE job_times
 ALTER TABLE jobs
     ADD CONSTRAINT jobs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id),
-    ADD CONSTRAINT jobs_job_status_fk FOREIGN KEY (job_status_id) REFERENCES job_statuus (job_status_id),
+    ADD CONSTRAINT jobs_job_status_fk FOREIGN KEY (job_status_id) REFERENCES job_statuum (job_status_id),
     ADD CONSTRAINT jobs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT jobs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id);
 
@@ -7044,7 +7044,7 @@ ALTER TABLE users
     ADD CONSTRAINT users_triple2_fk FOREIGN KEY (geo_triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT users_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
     ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT users_user_status_fk FOREIGN KEY (user_status_id) REFERENCES user_statuus (user_status_id);
+    ADD CONSTRAINT users_user_status_fk FOREIGN KEY (user_status_id) REFERENCES user_statuum (user_status_id);
 
 --
 -- constraints for table change_fields

@@ -102,7 +102,7 @@ class language_form extends type_object
      * object vars
      */
 
-    // the language of this language form (id only because all statuus are always in the $sys object)
+    // the language of this language form (id only because all statuum are always in the $sys object)
     public ?int $lng_id = null;
 
 

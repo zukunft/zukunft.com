@@ -13,7 +13,7 @@ $$
 DECLARE new_job_status_id bigint;
 BEGIN
 
-        INSERT INTO job_statuus (status_name)
+        INSERT INTO job_statuum (status_name)
              SELECT             _status_name
           RETURNING job_status_id INTO new_job_status_id;
 
@@ -29,11 +29,11 @@ BEGIN
         INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
              SELECT          _user_id,_change_action_id,_field_id_priority,   _priority,    new_job_status_id ;
 
-             UPDATE job_statuus
+             UPDATE job_statuum
                 SET code_id     = _code_id,
                     description = _description,
                     priority    = _priority
-              WHERE job_statuus.job_status_id = new_job_status_id;
+              WHERE job_statuum.job_status_id = new_job_status_id;
 
              RETURN new_job_status_id;
 

@@ -107,7 +107,7 @@ class type_lists
     public ?language_list $html_languages = null;
     public ?language_form_list $html_language_forms = null;
     public ?verbs $html_verbs = null;
-    public ?sys_log_status_list $html_sys_log_statuus = null;
+    public ?sys_log_status_list $html_sys_log_statuum = null;
     public ?job_type_list $html_job_types = null;
     public ?change_action_list $html_change_action_list = null;
     public ?change_table_list $html_change_table_list = null;
@@ -282,10 +282,10 @@ class type_lists
             $this->set_system_views([]);
         }
         if (array_key_exists(api::JSON_LIST_SYS_LOG_STATUUS, $json_array)) {
-            $this->set_sys_log_statuus($json_array[api::JSON_LIST_SYS_LOG_STATUUS]);
+            $this->set_sys_log_statuum($json_array[api::JSON_LIST_SYS_LOG_STATUUS]);
         } else {
-            $usr_msg->add_error_text('Mandatory sys_log_statuus missing in API JSON ' . json_encode($json_array));
-            $this->set_sys_log_statuus([]);
+            $usr_msg->add_error_text('Mandatory sys_log_statuum missing in API JSON ' . json_encode($json_array));
+            $this->set_sys_log_statuum([]);
         }
         if (array_key_exists(api::JSON_LIST_JOB_TYPES, $json_array)) {
             $this->set_job_types($json_array[api::JSON_LIST_JOB_TYPES]);
@@ -422,10 +422,10 @@ class type_lists
         $this->html_verbs->set_from_json_array($json_array, verb::class);
     }
 
-    function set_sys_log_statuus(?array $json_array = null): void
+    function set_sys_log_statuum(?array $json_array = null): void
     {
-        $this->html_sys_log_statuus = new sys_log_status_list();
-        $this->html_sys_log_statuus->set_from_json_array($json_array);
+        $this->html_sys_log_statuum = new sys_log_status_list();
+        $this->html_sys_log_statuum->set_from_json_array($json_array);
     }
 
     function set_job_types(?array $json_array = null): void

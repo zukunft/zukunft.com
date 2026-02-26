@@ -93,6 +93,9 @@ class application
 
         // resume session (based on cookies)
         session_start();
+        if (empty($_SESSION['token'])) {
+            $_SESSION['token'] = bin2hex(random_bytes(32));
+        }
 
         // link to database
         $db_con = new sql_db;
@@ -126,6 +129,9 @@ class application
 
         // resume session (based on cookies)
         session_start();
+        if (empty($_SESSION['token'])) {
+            $_SESSION['token'] = bin2hex(random_bytes(32));
+        }
 
         // link to database
         $db_con = new sql_db;
@@ -180,6 +186,9 @@ class application
         // resume session (based on cookies)
         if (!$restart) {
             session_start();
+            if (empty($_SESSION['token'])) {
+                $_SESSION['token'] = bin2hex(random_bytes(32));
+            }
         }
 
         /*

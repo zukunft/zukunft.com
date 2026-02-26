@@ -79,7 +79,6 @@ include_once paths::MODEL_LANGUAGE . 'language_form.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
-include_once paths::MODEL_LOG . 'change_values_big.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change_values_big.php';
@@ -161,7 +160,7 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
-include_once paths::SHARED_TYPES . 'job_statuus.php';
+include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -280,7 +279,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
-use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
@@ -1209,7 +1208,7 @@ class sql_db
             // TODO Prio 3 review
             $job = new job($usr);
             $job->set_type(job_types::BASE_IMPORT, $usr);
-            $job->priority = job_statuus::PRIO_HIGHEST;
+            $job->priority = job_statuum::PRIO_HIGHEST;
             $job->save($usr_msg);
 
             $import = new import_file();
@@ -2388,17 +2387,17 @@ class sql_db
             $result = 'config';
         }
         if ($result == 'user_statuss') {
-            $result = 'user_statuus';
+            $result = 'user_statuum';
         }
         if ($result == 'user_valuess') {
             $result = 'user_values';
         }
-        if ($result == 'sys_log_statuuss') {
-            $result = 'sys_log_statuus';
+        if ($result == 'sys_log_statuums') {
+            $result = 'sys_log_statuum';
         }
         // for the database upgrade process only
         if ($result == 'job_statuss') {
-            $result = 'job_statuus';
+            $result = 'job_statuum';
         }
         if ($result == 'job_typess') {
             $result = 'job_types';
@@ -2489,7 +2488,7 @@ class sql_db
             $this->id_field = $this->get_id_field_name($this->class);
         }
         // exceptions to be adjusted
-        if ($this->id_field == 'sys_log_statuus_id') {
+        if ($this->id_field == 'sys_log_statuum_id') {
             $this->id_field = 'sys_log_status_id';
         }
         if ($this->id_field == 'blocked_ips_id') {

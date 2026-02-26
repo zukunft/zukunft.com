@@ -365,7 +365,7 @@ class user_message extends Message
             } else {
                 $this->typ_lst[$type] = [$msg_text];
             }
-            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuum are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
             }
@@ -387,7 +387,7 @@ class user_message extends Message
             if (!in_array($msg_text, $this->msg_text)) {
                 $this->msg_text[] = $msg_text;
             }
-            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuum are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
             }

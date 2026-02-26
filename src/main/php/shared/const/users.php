@@ -113,6 +113,7 @@ class users
     // invalid address used to test creating a new user
     const string TEST_USER_IP = '258.257.256.255';
     const string TEST_USER_PASSWORD = 'password123';
+    const string TEST_USER_PASSWORD_FIX_HASH = '$2y$12$ptUFPCd9OihCWBlz4.3daOcLAVDFp8tnbRHVJg42915QeTHnAZiQy'; // a fixed sample password hash just for testing
     const string TEST_USER_ACTIVATION_KEY = '376913';
     CONST string TEST_USER_LOGIN_TIME = '2026-02-2T17:59:59+0100'; // fixed test login time
     CONST string TEST_USER_LOGOFF_TIME = '2026-02-2T18:59:59+0100'; // fixed test logoff time

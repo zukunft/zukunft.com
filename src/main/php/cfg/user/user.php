@@ -115,7 +115,7 @@ include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_types.php';
-include_once paths::SHARED_ENUM . 'user_statuus.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
@@ -156,7 +156,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
-use Zukunft\ZukunftCom\main\php\shared\enum\user_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
@@ -387,7 +387,9 @@ class user extends db_id_object_non_sandbox
             if (array_key_exists(user_db::FLD_LEVEL, $db_row)) {
                 $this->right_level = $db_row[user_db::FLD_LEVEL];
             }
-            $this->status_id = $db_row[user_db::FLD_STATUS];
+            if (array_key_exists(user_db::FLD_STATUS, $db_row)) {
+                $this->status_id = $db_row[user_db::FLD_STATUS];
+            }
             if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
                 $this->excluded = $db_row[sql_db::FLD_EXCLUDED];
             }
@@ -469,7 +471,7 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::STATUS_ID, $api_json)) {
             $this->status_id = $api_json[json_fields::STATUS_ID];
         } else {
-            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuus::ACTIVE);
+            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
         }
 
         if (key_exists(json_fields::TERM_ID, $api_json)) {
@@ -538,7 +540,7 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::STATUS, $in_ex_json)) {
             $this->status_id = $sys->typ_lst->usr_sta->id($in_ex_json[json_fields::STATUS]);
         } else {
-            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuus::ACTIVE);
+            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
         }
 
         $this->trm = $map->get_term($in_ex_json, $msg, $dto);
@@ -1705,7 +1707,7 @@ class user extends db_id_object_non_sandbox
             // or remove the setting if the requesting user has no permission
             $this->profile_id = user_profiles::NORMAL_ID;
             $this->code_id = null;
-            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuus::ACTIVE);
+            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
             $this->trm = null;
             $this->msk = null;
             $this->src = null;

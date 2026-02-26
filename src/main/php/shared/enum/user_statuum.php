@@ -2,7 +2,7 @@
 
 /*
 
-    shared/enum/user_statuus.php - a shared database based enum for the user status
+    shared/enum/user_statuum.php - a shared database based enum for the user status
     ----------------------------
 
     the user status is used to temporary reduce the permissions defined by the user_profile
@@ -38,10 +38,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
-enum user_statuus: string
+enum user_statuum: string
 {
 
-    // list of the user statuus that have a coded functionality
+    // list of the user statuum that have a coded functionality
     const string ACTIVE = "active"; // no restrictions are applied
     const string READ_ONLY = "read-only"; // the write permission is switched off for the user
     const int READ_ONLY_ID = 3;

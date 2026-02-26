@@ -58,6 +58,7 @@ $back = $_GET[url_var::BACK] ?? ''; // the original calling page that should be 
 
 // load the requesting user
 $usr = new user;
+$usr->get();
 $usr_id = $_GET[url_var::USER] ?? 0; // to force another user view for testing the formula calculation
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)

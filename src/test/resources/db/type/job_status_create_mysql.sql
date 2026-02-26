@@ -4,7 +4,7 @@
 -- table structure predefined status of batch task as a database table e.g. so that admin can change the description
 --
 
-CREATE TABLE IF NOT EXISTS job_statuus
+CREATE TABLE IF NOT EXISTS job_statuum
 (
     job_status_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     status_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS job_statuus
     COMMENT 'predefined status of batch task as a database table e.g. so that admin can change the description';
 
 --
--- AUTO_INCREMENT for table job_statuus
+-- AUTO_INCREMENT for table job_statuum
 --
-ALTER TABLE job_statuus
+ALTER TABLE job_statuum
     MODIFY job_status_id smallint NOT NULL AUTO_INCREMENT;

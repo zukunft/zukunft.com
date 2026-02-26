@@ -52,7 +52,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -73,7 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -398,7 +398,7 @@ class sys_log extends db_object_seq_id
         $sc->set_name($qp->name);
         $sc->set_fields(sys_log_db::FLD_NAMES);
         $sc->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
-        $sc->set_join_fields(array(sys_log_status::FLD_NAME), sys_log_statuus::class, sys_log_status::FLD_ID, sys_log_status::FLD_ID);
+        $sc->set_join_fields(array(sys_log_status::FLD_NAME), sys_log_statuum::class, sys_log_status::FLD_ID, sys_log_status::FLD_ID);
         $sc->set_join_fields(array(sandbox::FLD_USER_NAME), user::class);
         $sc->set_join_fields(array(sandbox::FLD_USER_NAME . ' AS ' . sys_log_db::FLD_SOLVER_NAME), user::class, sys_log_db::FLD_SOLVER);
 

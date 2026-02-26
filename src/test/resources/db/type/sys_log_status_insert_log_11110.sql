@@ -11,7 +11,7 @@ $$
 DECLARE new_sys_log_status_id bigint;
 BEGIN
 
-        INSERT INTO sys_log_statuus (status_name)
+        INSERT INTO sys_log_statuum (status_name)
              SELECT                 _status_name
           RETURNING sys_log_status_id INTO new_sys_log_status_id;
 
@@ -24,10 +24,10 @@ BEGIN
         INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,    row_id)
              SELECT          _user_id,_change_action_id,_field_id_description,_description,  new_sys_log_status_id ;
 
-             UPDATE sys_log_statuus
+             UPDATE sys_log_statuum
                 SET code_id     = _code_id,
                     description = _description
-              WHERE sys_log_statuus.sys_log_status_id = new_sys_log_status_id;
+              WHERE sys_log_statuum.sys_log_status_id = new_sys_log_status_id;
 
              RETURN new_sys_log_status_id;
 

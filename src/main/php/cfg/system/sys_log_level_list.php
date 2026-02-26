@@ -47,7 +47,7 @@ class sys_log_level_list extends type_list
 {
 
     /**
-     * adding the system log statuus used for unit tests to the dummy list
+     * adding the system log statuum used for unit tests to the dummy list
      *  TODO Prio 3: load from csv
      */
     function load_dummy(): void

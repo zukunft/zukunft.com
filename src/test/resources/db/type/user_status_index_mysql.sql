@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
 
 --
--- indexes for table user_statuus
+-- indexes for table user_statuum
 --
 
-ALTER TABLE user_statuus
-    ADD KEY user_statuus_user_status_name_idx (user_status_name);
+ALTER TABLE user_statuum
+    ADD KEY user_statuum_user_status_name_idx (user_status_name);

@@ -11,7 +11,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
     TODO finish the frontend component tests
     TODO create the frontend page reaction flow tests
-    TODO activate password_hash() and migrate the existing passwords
 
     TODO Release 0.0.4
     TODO fix all prio 0 TODO including unit tests

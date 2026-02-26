@@ -252,9 +252,9 @@ the object structure is:
                     \-- job_type_list - list of predefined system batch jobs
                     \-- sys_log_function_list - to group the system log entries by function
                     \-- sys_log_level_list - list of the system log types
-                    \-- sys_log_status_list - list of the system log statuus
+                    \-- sys_log_status_list - list of the system log statuum
                     \-- user_profile_list - a list of possible user profiles with the database id
-                    \-- user_status_list - a list of possible user statuus with the database id
+                    \-- user_status_list - a list of possible user statuum with the database id
                     \-- user_type_list - a list of possible user types with the database id
                     \-- verb_list - al list of verb objects
                     \-- view_link_type_list - to defined how a term is linked to a view
@@ -349,7 +349,7 @@ the object structure is:
 +-- file_typesShared - ENUM of the used file types
 +-- formula_link_typesShared - db based ENUM of the formula link types
 +-- formula_typesShared - db based ENUM of the formula types
-+-- job_statuusShared - ENUM of the used job statuus
++-- job_statuumShared - ENUM of the used job statuum
 +-- job_typesShared - ENUM of the used job types
 +-- phrase_typesShared - the phrase code_ids used in back- and frontend
 +-- position_typesShared - how view components can be placed for the user

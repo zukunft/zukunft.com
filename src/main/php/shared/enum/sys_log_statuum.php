@@ -2,7 +2,7 @@
 
 /*
 
-    shared/enum/sys_log_statuus.php - enum of all possible log statuus
+    shared/enum/sys_log_statuum.php - enum of all possible log statuum
     -------------------------------
 
 
@@ -32,10 +32,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
-enum sys_log_statuus: string
+enum sys_log_statuum: string
 {
 
-    // list of all possible log statuus
+    // list of all possible log statuum
     const string OPEN = "new";
     const int OPEN_ID = 1;
     const string OPEN_NAME = "new";

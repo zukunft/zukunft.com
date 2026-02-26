@@ -4,7 +4,7 @@
 -- table structure to define the status of internal errors
 --
 
-CREATE TABLE IF NOT EXISTS sys_log_statuus
+CREATE TABLE IF NOT EXISTS sys_log_statuum
 (
     sys_log_status_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     status_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS sys_log_statuus
     COMMENT 'to define the status of internal errors';
 
 --
--- AUTO_INCREMENT for table sys_log_statuus
+-- AUTO_INCREMENT for table sys_log_statuum
 --
-ALTER TABLE sys_log_statuus
+ALTER TABLE sys_log_statuum
     MODIFY sys_log_status_id smallint NOT NULL AUTO_INCREMENT;

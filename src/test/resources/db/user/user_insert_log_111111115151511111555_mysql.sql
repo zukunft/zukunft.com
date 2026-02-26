@@ -160,7 +160,7 @@ SELECT user_insert_log_111111115151511111555
          76,
          'test@zukunft.com',
          null,
-         'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f',
+         '$2y$12$ptUFPCd9OihCWBlz4.3daOcLAVDFp8tnbRHVJg42915QeTHnAZiQy',
          null,
          '376913',
          null,
