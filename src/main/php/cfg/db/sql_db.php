@@ -79,7 +79,6 @@ include_once paths::MODEL_LANGUAGE . 'language_form.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
-include_once paths::MODEL_LOG . 'change_values_big.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change_values_big.php';

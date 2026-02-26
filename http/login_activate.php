@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Random\RandomException;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -91,8 +92,7 @@ if ($db_con->is_open()) {
             if ($error == '') {
                 // If all fields are not empty, and the passwords match,
                 // create a session, and session variables,
-                $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST[url_var::USER_PASSWORD_HUMAN]));
-                //$pw_hash = password_hash($_POST[url_var::USER_PASSWORD_HUMAN], password_DEFAULT);
+                $pw_hash = password_hash($_POST[url_var::USER_PASSWORD_HUMAN], PASSWORD_BCRYPT);
                 $usr->password = $pw_hash;
                 $usr->activation_key = '';
                 $usr->activation_timeout = new DateTime();
@@ -115,6 +115,13 @@ if ($db_con->is_open()) {
                 if ($usr_id > 0 and $usr_name <> '') {
                     // auto login
                     session_start();
+                    if (empty($_SESSION['token'])) {
+                        try {
+                            $_SESSION['token'] = bin2hex(random_bytes(32));
+                        } catch (RandomException $e) {
+                            log_err('RandomException ' . $e->getMessage());
+                        }
+                    }
                     $_SESSION['usr_id'] = $usr_id;
                     $_SESSION['user_name'] = $usr_name;
                     $_SESSION['logged'] = TRUE;

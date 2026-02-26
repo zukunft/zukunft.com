@@ -79,8 +79,9 @@ if ($db_con->is_open()) {
 
             // Let's search the database for the username and password
             // don't use the sf shortcut here!
+            // TODO Prio 0 use the user object and password_verify
             $usr = mysqli_real_escape_string($db_con->mysql, $_POST['username']);
-            $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
+            $pw_hash = password_hash($_POST[url_var::USER_PASSWORD_HUMAN], PASSWORD_BCRYPT);
             $sql = "SELECT * FROM users  
                   WHERE user_name='$usr'
                     AND password='$pw_hash'
@@ -89,6 +90,9 @@ if ($db_con->is_open()) {
             if (mysqli_num_rows($sql_result) == 1) {
                 $row = mysqli_fetch_array($sql_result);
                 session_start();
+                if (empty($_SESSION['token'])) {
+                    $_SESSION['token'] = bin2hex(random_bytes(32));
+                }
                 $_SESSION['usr_id'] = $row[user_db::FLD_ID];
                 $_SESSION['user_name'] = $row[user_db::FLD_NAME];
                 $_SESSION['logged'] = TRUE;

@@ -36,8 +36,10 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Random\RandomException;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -65,12 +67,15 @@ if ($db_con->is_open()) {
         $sql_result = mysqli_query($db_con->mysql, $sql);
         $row = mysqli_fetch_array($sql_result);
         #check to see what fields have been left empty, and if the passwords match
-        $usr_name = $_POST['user_name'];
+        $usr_name = htmlspecialchars($_POST['user_name'] ?? '', ENT_QUOTES, 'UTF-8');
+        $email = htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8');
+        $password = htmlspecialchars($_POST['password'] ?? '', ENT_QUOTES, 'UTF-8');
+        $re_password = htmlspecialchars($_POST['re_password'] ?? '', ENT_QUOTES, 'UTF-8');
         if ($row || empty($_POST['user_name'])
             || empty($_POST['email'])
             || empty($_POST['password'])
             || empty($_POST['re_password'])
-            || $_POST['password'] != $_POST['re_password']) {
+            || $password != $re_password) {
             # if a field is empty, or the passwords don't match make a message
             $error = '<p>';
             if (empty($_POST['email'])) {
@@ -97,8 +102,7 @@ if ($db_con->is_open()) {
             # If all fields are not empty, and the passwords match,
             # create a session, and session variables,
             $usr_email = $_POST['email'];
-            $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
-            //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
+            $pw_hash = password_hash($_POST[url_var::USER_PASSWORD_HUMAN], PASSWORD_BCRYPT);
             $db_con->set_class(user::class);
             $db_con->set_usr(users::SYSTEM_ID);
             // TODO use user object and prepared query
@@ -126,6 +130,13 @@ if ($db_con->is_open()) {
             if ($usr_id > 0) {
                 // auto login
                 session_start();
+                if (empty($_SESSION['token'])) {
+                    try {
+                        $_SESSION['token'] = bin2hex(random_bytes(32));
+                    } catch (RandomException $e) {
+                        log_err('RandomException ' . $e->getMessage());
+                    }
+                }
                 $_SESSION['usr_id'] = $usr_id;
                 $_SESSION['user_name'] = $usr_name;
                 $_SESSION['logged'] = TRUE;

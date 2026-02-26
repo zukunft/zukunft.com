@@ -128,7 +128,7 @@ if ($usr->id > 0) {
                 $cmp->reload_row_phrase($_GET[json_fields::PHRASE_ROW]);
             } //
             if (isset($_GET[json_fields::PHRASE_COL])) {
-                $cmp->reload_col_phrase($_GET[json_fields::PHRASE_ROW]);
+                $cmp->reload_col_phrase($_GET[json_fields::PHRASE_COL]);
             } //
 
             // save the changes

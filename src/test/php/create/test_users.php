@@ -119,8 +119,7 @@ class test_users
         $usr->ip_addr = users::TEST_USER_IP;
         $usr->email = users::TEST_USER_MAIL;
 
-        $pw_hash = hash('sha256',users::TEST_USER_PASSWORD);
-        $usr->password = $pw_hash;
+        $usr->password = users::TEST_USER_PASSWORD_FIX_HASH;
         $usr->activation_key = users::TEST_USER_ACTIVATION_KEY;
         $timeout = new DateTime(users::TEST_USER_LOGIN_TIME);
         try {

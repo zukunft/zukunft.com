@@ -31,6 +31,7 @@
 
 namespace Zukunft\ZukunftCom\test\php;
 
+use Random\RandomException;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'db_check.php';
@@ -72,6 +73,7 @@ class test_app
      * @param string $code_name the place that is displayed to the user e.g. add word
      * @param bool $echo_env if true log the environment
      * @return sql_db the open database connection
+     * @throws RandomException
      */
     function start(
         string $code_name,
@@ -87,6 +89,9 @@ class test_app
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
         session_start();
+        if (empty($_SESSION['token'])) {
+            $_SESSION['token'] = bin2hex(random_bytes(32));
+        }
 
         /*
         require __DIR__ . '/vendor/autoload.php';

@@ -159,6 +159,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
+use Random\RandomException;
 use Exception;
 
 class frontend
@@ -231,8 +232,9 @@ class frontend
      * TODO to be deprecated
      * start a frontend session with direct db access
      *
-     * @param string $title
+     * @param string $code_name
      * @return sql_db
+     * @throws RandomException
      */
     function start(string $code_name): sql_db
     {
@@ -244,7 +246,19 @@ class frontend
 
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
+        $session_is_fine = true;
         session_start();
+        if (empty($_SESSION['token'])) {
+            $_SESSION['token'] = bin2hex(random_bytes(32));
+        } elseif (!empty($_POST['token'])) {
+            // TODO Prio 0 add the session token to each frontend form
+            if (!hash_equals($_SESSION['token'], $_POST['token'])) {
+                $msg_txt = 'Suspect request. Please close browser, delete cache and login again.';
+                log_fatal($msg_txt, 'view.php');
+                log_fatal('session token is' . $_SESSION['token'] . ' but POST token is ' . $_POST['token'], 'view.php' );
+                $session_is_fine = false;
+            }
+        }
 
         /*
         require __DIR__ . '/vendor/autoload.php';
@@ -276,7 +290,11 @@ class frontend
         }
         */
 
-        return $this->open_db($code_name);
+        if ($session_is_fine) {
+            return $this->open_db($code_name);
+        } else {
+            return new sql_db();
+        }
     }
 
     /**
@@ -369,6 +387,9 @@ class frontend
         // resume session (based on cookies)
         // TODO review session start and end calls
         session_start();
+        if (empty($_SESSION['token'])) {
+            $_SESSION['token'] = bin2hex(random_bytes(32));
+        }
 
         // just for cache loading
         // TODO Prio 2 switch to user setting later

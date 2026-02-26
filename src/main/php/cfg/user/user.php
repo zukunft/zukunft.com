@@ -387,7 +387,9 @@ class user extends db_id_object_non_sandbox
             if (array_key_exists(user_db::FLD_LEVEL, $db_row)) {
                 $this->right_level = $db_row[user_db::FLD_LEVEL];
             }
-            $this->status_id = $db_row[user_db::FLD_STATUS];
+            if (array_key_exists(user_db::FLD_STATUS, $db_row)) {
+                $this->status_id = $db_row[user_db::FLD_STATUS];
+            }
             if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
                 $this->excluded = $db_row[sql_db::FLD_EXCLUDED];
             }
