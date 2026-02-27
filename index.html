@@ -1,26 +1,67 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html lang="en"><head>
-	<meta charset="UTF-8">
-	<title>zukunft.com - calc with words</title>
-	<link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zukunft.com - calc with words</title>
+    <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
 </head>
-<body lang="en">
-<div class="center_form">
-	<br><br>
-	<img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 30%;">
-	<br><br>
-	<p align="CENTER">
-		<style style="font-size: 20pt" size="5">
-			To have a look at the prototype please <a href="/signup">signup</a> or <a href="/http/login.php">login</a>
-		</style>
-		<br><br>
-	</p>
-</div>
-	<div class="footer">
-		<a href="/http/about.php" title="About">About</a> &middot;
-		<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot;
-		All structured data is available under the <a href="//creativecommons.org/publicdomain/zero/1.0/" title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License unless otherwise stated
-		and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License
-	</div>
+<body>
+
+<main class="main-container">
+    <div class="logo-section">
+        <a href="/http/view.php">
+            <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="brand-logo">
+        </a>
+    </div>
+
+    <div class="search-section">
+        <label for="search-input" class="search-label"></label>
+
+        <input type="text"
+               id="search-input"
+               name="q"
+               list="search-suggestions"
+               placeholder="e.g. decision, raking, global, problem, solution ..."
+               class="standard-input">
+        <button type="submit" class="btn btn-search">Search</button>
+
+        <datalist id="search-suggestions">
+            <option value="decision">
+            <option value="raking">
+            <option value="global">
+            <option value="problem">
+            <option value="solution">
+            <option value="words">
+            <option value="climate">
+            <option value="health">
+        </datalist>
+    </div>
+
+    <div class="cta-section">
+        <p>To be able to change data in this version 0.0.3, please</p>
+        <div class="auth-links">
+            <a href="/http/signup.php" class="btn">signup</a>
+            <span>or</span>
+            <a href="/http/login.php" class="btn">login</a>
+        </div>
+    </div>
+
+</main>
+
+<footer class="site-footer">
+    <nav>
+        <a href="/http/about.php" title="About">About</a> &middot;
+        <a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a>
+    </nav>
+    <p>
+        All structured data is available under the
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a>
+        Licence unless otherwise stated and the
+        <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a>
+        under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence.
+    </p>
+</footer>
+
 </body>
 </html>

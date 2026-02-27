@@ -113,7 +113,7 @@ if ($usr->id > 0) {
             $result .= $html->dsp_text_h3("There are no open errors left.");
         }
 
-        if ($_SESSION['logged']) {
+        if ($_SESSION[url_var::SESSION_LOGGED]) {
             $result .= '<br><br><a href="/http/logout.php">logout</a>';
         }
     } else {

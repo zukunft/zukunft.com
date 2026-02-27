@@ -35,7 +35,6 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 //include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
-//include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';
@@ -45,14 +44,15 @@ include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
@@ -343,7 +343,7 @@ function log_msg(string  $msg_text,
             $user_id = $usr->id;
         }
         if ($user_id <= 0) {
-            $user_id = $_SESSION['usr_id'] ?? users::SYSTEM_ID;
+            $user_id = $_SESSION[url_var::SESSION_USER_ID] ?? users::SYSTEM_ID;
         }
 
         // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries

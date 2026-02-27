@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -48,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -236,7 +238,7 @@ class controller
         // required headers
         if (!headers_sent()) {
             header("Access-Control-Allow-Origin: *");
-            header("Content-Type: application/json; charset=UTF-8");
+            header("Content-Type: application/json; charset=" . def::ENCODING);
             header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
         }
 
@@ -282,7 +284,7 @@ class controller
         // required headers
         if (!headers_sent()) {
             header("Access-Control-Allow-Origin: *");
-            header("Content-Type: application/json; charset=UTF-8");
+            header("Content-Type: application/json; charset=" . def::ENCODING);
             header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
         }
 

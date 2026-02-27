@@ -55,9 +55,9 @@ if ($db_con->is_open()) {
     $result = ''; // reset the html code var
     $usr_msg = new user_message();
 
-    $_SESSION['logged'] = FALSE;
+    $_SESSION[url_var::SESSION_LOGGED] = FALSE;
 
-    if (isset($_POST['submit'])) {
+    if (isset($_POST[url_var::POST_SUBMIT])) {
         $html = new html_base();
         $msg = '';
 
@@ -74,8 +74,8 @@ if ($db_con->is_open()) {
         $db_key = $usr->activation_key;
         $db_time_limit = $usr->activation_timeout; // TODO check if and when the conversion to time should be done
         $db_now = $usr->db_now; // get the server now
-        log_debug("login_activate (db: " . $db_key . ", post: " . $_POST['key'] . ", limit: " . $db_time_limit . ", db now:" . $db_now . ")");
-        if ($db_key == $_POST['key'] and $db_time_limit > $db_now) {
+        log_debug("login_activate (db: " . $db_key . ", post: " . $_POST[url_var::POST_KEY] . ", limit: " . $db_time_limit . ", db now:" . $db_now . ")");
+        if ($db_key == $_POST[url_var::POST_KEY] and $db_time_limit > $db_now) {
 
             // check the user input
             $error = '';
@@ -115,16 +115,16 @@ if ($db_con->is_open()) {
                 if ($usr_id > 0 and $usr_name <> '') {
                     // auto login
                     session_start();
-                    if (empty($_SESSION['token'])) {
+                    if (empty($_SESSION[url_var::SESSION_TOKEN])) {
                         try {
-                            $_SESSION['token'] = bin2hex(random_bytes(32));
+                            $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
                         } catch (RandomException $e) {
                             log_err('RandomException ' . $e->getMessage());
                         }
                     }
-                    $_SESSION['usr_id'] = $usr_id;
-                    $_SESSION['user_name'] = $usr_name;
-                    $_SESSION['logged'] = TRUE;
+                    $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
+                    $_SESSION[url_var::USERNAME_HUMAN] = $usr_name;
+                    $_SESSION[url_var::SESSION_LOGGED] = TRUE;
                 } else {
                     log_err("Cannot find id for " . $usr_name . " after password change.", "login_activate.php");
                 }
@@ -137,7 +137,7 @@ if ($db_con->is_open()) {
             }
         } else {
             if ($db_key <> "") {
-                //$msg .= dsp_err ('Error: activation key ('.$db_key.'/'.$_POST['key'].' for '.$usr_id.') does not match. Please request the password reset again.').'<br>';
+                //$msg .= dsp_err ('Error: activation key ('.$db_key.'/'.$_POST[url_var::POST_KEY].' for '.$usr_id.') does not match. Please request the password reset again.').'<br>';
                 $msg .= $html->dsp_err('Error: activation key does not match. Please request the password reset again.') . '<br>';
             } else {
                 $msg .= $html->dsp_err('Activation key is not valid any more. Please request the password reset again.') . '<br>';
@@ -145,10 +145,10 @@ if ($db_con->is_open()) {
         }
     }
 
-    if (!$_SESSION['logged']) {
+    if (!$_SESSION[url_var::SESSION_LOGGED]) {
         $usr_id = $_GET[url_var::ID];
         if ($usr_id <= 0) {
-            if (isset($_POST['submit'])) {
+            if (isset($_POST[url_var::POST_SUBMIT])) {
                 $usr_id = $_POST[url_var::ID];
             }
         }

@@ -390,6 +390,23 @@ class url_var
 
 
     /*
+     * session
+     */
+
+    const string SESSION_LOGGED = 'logged';
+    const string SESSION_TOKEN = 'token';
+    const string SESSION_USER_ID = 'usr_id';
+
+
+    /*
+     * curl
+     */
+
+    const string POST_SUBMIT = 'submit';
+    const string POST_KEY = 'key';
+
+
+    /*
      * pod exchangeable url
      */
 

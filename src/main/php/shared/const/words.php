@@ -273,7 +273,7 @@ class words
     const string SPEED = 'speed';
     const int SPEED_ID = 87;
     const string METER = 'meter';
-    const int METER_ID = 1147;
+    const int METER_ID = 1151;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 131;
     const string TRANSITION = 'transition';

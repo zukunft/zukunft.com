@@ -60,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class test_app
@@ -89,8 +90,12 @@ class test_app
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
         session_start();
-        if (empty($_SESSION['token'])) {
-            $_SESSION['token'] = bin2hex(random_bytes(32));
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
         }
 
         /*

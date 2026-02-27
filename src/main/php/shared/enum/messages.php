@@ -783,6 +783,18 @@ enum messages: string
     case VIEW_IMPORT_ERROR = ' when importing '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case VIEW_NAME_MISSING = 'name in view missing';
+
+    case FORM_NAME_USER_NAME = 'username or email';
+    case FORM_NAME_PASSWORD = 'password';
+    case FORM_NAME_LOGIN = 'Login';
+    case PASSWORD_WRONG = 'Forgot password?';
+    case PASSWORD_WRONG_TITLE = 'Request to reset the password';
+    case SIGN_UP = 'Sign Up';
+    case LOGIN_FAILED = 'Login failed';
+    case USER_NAME_NOT_FOUND = 'no user with the username '
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . ' found';
+
     case NOT_YET_IMPLEMENTED = 'not yet implemented';
     case CANNOT_ADD_TIMESTAMP = 'Cannot add timestamp "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
