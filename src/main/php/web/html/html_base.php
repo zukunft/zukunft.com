@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::WEB . 'frontend.php';
 //include_once paths::SHARED_CONST . 'def.php';
+//include_once paths::SHARED_CONST . 'files.php';
 //include_once paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once paths::SHARED_ENUM . 'messages.php';
 //include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -49,6 +50,7 @@ include_once html_paths::WEB . 'frontend.php';
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -103,7 +105,9 @@ class html_base
     const string DOC_HTML = '<!DOCTYPE html>';
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
+    const string CLASS_INPUT_SECTION = 'search-section';
     const string CLASS_INPUT = 'standard-input';
+    const string CLASS_BUTTON = 'btn';
 
 
     /*
@@ -837,6 +841,11 @@ class html_base
         return $result;
     }
 
+    function button_submit(string $submit_name): string
+    {
+        return $this->button($submit_name, html_base::INPUT_SUBMIT);
+    }
+
     function form_submit(string $submit_name): string
     {
         return $this->form_input(html_base::INPUT_SUBMIT, url_var::POST_SUBMIT, $submit_name);
@@ -1427,19 +1436,6 @@ class html_base
      * base elements - functions for all html elements used in zukunft.com
      */
 
-    function button(string $text, string $style = '', string $type = ''): string
-    {
-        if ($style == '') {
-            $style = self::BS_BTN_SUCCESS;
-        }
-        $class = ' class="' . self::BS_BTN . ' ' . $style . '"';
-        if ($type == '') {
-            $type = self::INPUT_SUBMIT;
-        }
-        $type = ' type="' . $type . '"';
-        return '<button' . $class . $type . '>' . $text . '</button>';
-    }
-
     /**
      * create the html code for a label
      * TODO Prio 1
@@ -1515,27 +1511,19 @@ class html_base
 
     function div_form(string $text, string $style = ''): string
     {
-        return $this->div($text, 'form-group ' . $style);
+        return $this->div_bs($text, 'form-group ' . $style);
     }
 
     function div_row(string $text, string $style = ''): string
     {
-        return $this->div($text, 'row ' . $style);
-    }
-
-    function div(string $text, string $style = ''): string
-    {
-        if ($style == '') {
-            $style = view_styles::DEFAULT;
-        }
-        return '<div class="' . $style . '">' . $text . '</div>';
+        return $this->div_bs($text, 'row ' . $style);
     }
 
     function add_style(string $text, ?int $style_id = null): string
     {
         if ($style_id != null and $text != '') {
             $style_txt = $this->get_style_code($style_id);
-            $text = $this->div($text, $style_txt);
+            $text = $this->div_bs($text, $style_txt);
         }
         return $text;
     }
@@ -1766,9 +1754,37 @@ class html_base
     }
 
     /**
-     * wrap the nav tag around html nav code
-     * @param string $txt the html nav code
-     * @return string the warped nav code
+     * wrap the div tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the warped html code
+     */
+    function div(string $txt, string $style = ''): string
+    {
+        if ($style != '') {
+            $style = ' class="' . $style . '"';
+        }
+        return '<div' . $style . '>' . $txt . '</div>';
+    }
+
+    /**
+     * wrap the div tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the warped html code
+     */
+    function div_bs(string $txt, string $style = ''): string
+    {
+        if ($style == '') {
+            $style = view_styles::DEFAULT;
+        }
+        return '<div class="' . $style . '">' . $txt . '</div>';
+    }
+
+    /**
+     * wrap the nav tag around html code
+     * @param string $txt the html code
+     * @return string the warped html code
      */
     private function nav(string $txt): string
     {
@@ -1780,9 +1796,37 @@ class html_base
      * @param string $txt the html code
      * @return string the warped paragraph code
      */
-    private function p(string $txt): string
+    public function p(string $txt): string
     {
         return '<p>' . $txt . '</p>';
+    }
+
+    /**
+     * wrap the paragraph button around html code
+     * @param string $txt the html code
+     * @return string the warped paragraph code
+     */
+    private function button(string $txt, string $typ, string $class = ''): string
+    {
+        if ($class != '') {
+            $class = self::CLASS_BUTTON . ' ' . $class;
+        } else {
+            $class = self::CLASS_BUTTON;
+        }
+        return '<button type="' . $typ . '" class="' . $class . '">' . $txt . '</button>';
+    }
+
+    function button_bs(string $text, string $style = '', string $type = ''): string
+    {
+        if ($style == '') {
+            $style = self::BS_BTN_SUCCESS;
+        }
+        $class = ' class="' . self::BS_BTN . ' ' . $style . '"';
+        if ($type == '') {
+            $type = self::INPUT_SUBMIT;
+        }
+        $type = ' type="' . $type . '"';
+        return '<button' . $class . $type . '>' . $text . '</button>';
     }
 
     /**
@@ -1812,9 +1856,9 @@ class html_base
      */
     private function foot_text(): string
     {
-        $txt = 'All structured data is available under the';
-        $txt .= '<a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a>';
-        $txt .= '<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a>';
+        $txt = 'All structured data is available under the ';
+        $txt .= '<a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> ';
+        $txt .= '<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> ';
         $txt .= 'under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence';
         return $txt;
     }
@@ -1857,7 +1901,7 @@ class html_base
      */
     private function stylesheet(): string
     {
-        return '<link rel="stylesheet" href="/src/main/resources/style/style_html.css">';
+        return '<link rel="stylesheet" href="' . files::STYLE_HTML . '">';
     }
 
 }

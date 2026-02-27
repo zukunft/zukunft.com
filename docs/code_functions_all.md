@@ -4835,6 +4835,7 @@
     \-- form_text - section for function form_text not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_hidden - section for function form_hidden not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_end_with_submit - section for function form_end_with_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
+    \-- button_submit - section for function button_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_submit - section for function form_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_input - section for function form_input not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- about_page - section for function about_page not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
@@ -4867,13 +4868,11 @@
     \-- dsp_form_text_big - section for function dsp_form_text_big not yet defined that it should be to dismiss / replace in /html/html_base.php
     \-- dsp_form_fld_checkbox - section for function dsp_form_fld_checkbox not yet defined that it should be to dismiss / replace in /html/html_base.php
     \-- dsp_form_file_select - section for function dsp_form_file_select not yet defined that it should be to dismiss / replace in /html/html_base.php
-    \-- button - section for function button not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- label - section for function label not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- label_lan - section for function label_lan not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- input - section for function input not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- div_form - section for function div_form not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- div_row - section for function div_row not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
-    \-- div - section for function div not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- add_style - section for function add_style not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- get_style_code - section for function get_style_code is expected to be set and get in /html/html_base.php
     \-- form_start - section for function form_start not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
@@ -4888,6 +4887,9 @@
     \-- echo_html - section for function echo_html not yet defined that it should be display interface in /html/html_base.php
     \-- echo - section for function echo not yet defined that it should be display interface in /html/html_base.php
     \-- ui_progress - section for function ui_progress not yet defined that it should be display interface in /html/html_base.php
+    \-- div - section for function div not yet defined that it should be internal in /html/html_base.php
+    \-- div_bs - section for function div_bs not yet defined that it should be internal in /html/html_base.php
+    \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
 \-- html_selector
     \-- display - section for function display missing in /html/html_selector.php
     \-- end_selector - section for function end_selector missing in /html/html_selector.php
@@ -6603,6 +6605,12 @@
 \-- internal
     \-- view_id_to_dbo_ui
         \-- frontend - get an api json as a string from the backend
+    \-- div
+        \-- html_base - wrap the div tag around html code
+    \-- div_bs
+        \-- html_base - wrap the div tag around html code
+    \-- button_bs
+        \-- html_base - wrap the paragraph button around html code
 \-- get functions
     \-- common_phrases
         \-- group_list - return all phrases that are part of each phrase group of the list
@@ -6746,6 +6754,8 @@
         \-- html_base - add the hidden field
     \-- form_end_with_submit
         \-- html_base - end a html form
+    \-- button_submit
+        \-- html_base - end a html form
     \-- form_submit
         \-- html_base - end a html form
     \-- form_input
@@ -6813,8 +6823,6 @@
     \-- dsp_form_file_select
         \-- html_base - display a file selector form
 \-- base elements - functions for all html elements used in zukunft.com
-    \-- button
-        \-- html_base - display a file selector form
     \-- label
         \-- html_base - create the html code for a label
     \-- label_lan
@@ -6824,8 +6832,6 @@
     \-- div_form
         \-- html_base - create the HTML code for an input field
     \-- div_row
-        \-- html_base - create the HTML code for an input field
-    \-- div
         \-- html_base - create the HTML code for an input field
     \-- add_style
         \-- html_base - create the HTML code for an input field

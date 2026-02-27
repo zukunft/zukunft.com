@@ -137,7 +137,7 @@ if ($db_con->is_open()) {
 
     $html = new html_base();
     if (!$_SESSION[url_var::SESSION_LOGGED]) {
-        $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME) . $html->br();
+        $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME_OR_EMAIL) . $html->br();
         $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
         $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
         $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN) . $html->br2();
@@ -145,12 +145,13 @@ if ($db_con->is_open()) {
         $form_str .= $msg_txt;
         $form_str .= $html->form_hidden(url_var::BACK, $back);
         $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
-        $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN));
+        $form_str .= $html->button_submit($mtr->txt(msg_id::FORM_NAME_LOGIN));
+        $form_str = $html->form_simple($this_script . def::FILE_PHP, html_base::METHOD_POST, $form_str);
 
         // TODO Prio 3 use a changing logo to show something positive of today or a person that has done something positive and is somehow linked to today
         $html_str = $html->logo_flex();
         $html_str .= $html->br2();
-        $html_str .= $html->form_simple($this_script . def::FILE_PHP, html_base::METHOD_POST, $form_str);
+        $html_str .= $html->div($form_str, html_base::CLASS_INPUT_SECTION);
     }
 
     // create the page

@@ -179,28 +179,29 @@ if ($db_con->is_open()) {
     $email = htmlspecialchars($_POST[url_var::EMAIL_HUMAN] ?? '', ENT_QUOTES, def::ENCODING);
 
     $html = new html_base();
-    $form_str = '<p>User Name:<br>';
-    $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN, $usr_name);
-    $form_str .= '</p>';
-    $form_str .= '<p>Email:<br>';
-    $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::EMAIL_HUMAN, $email);
-    $form_str .= '</p>';
-    $form_str .= '<p>password:<br>';
-    $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN);
-    $form_str .= '</p>';
-    $form_str .= '<p>Re-Type password:<br>';
-    $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE_HUMAN);
-    $form_str .= '</p>';
+    $form_usr = $mtr->txt(msg_id::FORM_NAME_USER_NAME) . $html->br();
+    $form_usr .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN, $usr_name);
+    $form_str = $html->p($form_usr);
+    $form_mail = $mtr->txt(msg_id::FORM_NAME_USER_EMAIL) . $html->br();
+    $form_mail .= $html->form_input(html_base::INPUT_TEXT, url_var::EMAIL_HUMAN, $email);
+    $form_str .= $html->p($form_mail);
+    $form_pw = $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
+    $form_pw .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN);
+    $form_str .= $html->p($form_pw);
+    $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
+    $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE_HUMAN);
+    $form_str .= $html->p($form_pwr);
     $form_str .= $html->form_hidden(url_var::BACK, $back);
     $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
-    $form_str .= $html->form_submit($mtr->txt(msg_id::SIGN_UP));
+    $form_str .= $html->button_submit($mtr->txt(msg_id::SIGN_UP));
+    $form_str = $html->form_simple($this_script . def::FILE_PHP, html_base::METHOD_POST, $form_str);
 
     // TODO Prio 3 use a changing logo to show something positive of today or a person that has done something positive and is somehow linked to today
     $html_str = '<p>Please signup for <b>alpha testing</b> of zukunft.com.</p>';
     $html_str .= '<p>' . $html->dsp_err('Be aware that during this phase your <b>data may get lost</b> or is changed due to program errors or updates.') . '</p>';
     $html_str .= $html->logo_flex();
     $html_str .= $html->br2();
-    $html_str .= $html->form_simple($this_script . def::FILE_PHP, html_base::METHOD_POST, $form_str);
+    $html_str .= $html->div($form_str, html_base::CLASS_INPUT_SECTION);
 
     // create the page
     $html_str = $html->page_html(

@@ -42,6 +42,7 @@ class files
      */
 
     const string JSON = '.json';
+    const string CSS = '.css';
 
 
     /*
@@ -50,6 +51,10 @@ class files
 
     const string RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
+    const string REL_SOURCE_PATH = DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR;
+    const string REL_MAIN_PATH = self::REL_SOURCE_PATH . 'main' . DIRECTORY_SEPARATOR;
+    const string REL_RESOURCE_PATH = self::REL_MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
+    const string STYLE_PATH = self::REL_RESOURCE_PATH . 'style' . DIRECTORY_SEPARATOR;
 
 
     /*
@@ -63,4 +68,6 @@ class files
     const string BASE_VIEWS = self::MESSAGE_PATH . self::BASE_VIEWS_FILE;
     const string TRANSLATION_PATH = self::RESOURCE_PATH . 'translations' . DIRECTORY_SEPARATOR;
 
+    // for html
+    const string STYLE_HTML = self::STYLE_PATH . 'style_html' . self::CSS;
 }
