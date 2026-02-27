@@ -4799,6 +4799,10 @@
     \-- btn_add_value - section for function btn_add_value not yet defined that it should be HTML code in /html/button.php
     \-- btn_add_value_fast - section for function btn_add_value_fast not yet defined that it should be HTML code in /html/button.php
 \-- html_base
+    \-- page_html - section for function page_html not yet defined that it should be page in /html/html_base.php
+    \-- header_html - section for function header_html not yet defined that it should be header & footer in /html/html_base.php
+    \-- main_body - section for function main_body not yet defined that it should be header & footer in /html/html_base.php
+    \-- footer_html - section for function footer_html not yet defined that it should be header & footer in /html/html_base.php
     \-- header - section for function header not yet defined that it should be header & footer in /html/html_base.php
     \-- header_test - section for function header_test not yet defined that it should be header & footer in /html/html_base.php
     \-- footer - section for function footer not yet defined that it should be header & footer in /html/html_base.php
@@ -4813,6 +4817,7 @@
     \-- text_h3 - section for function text_h3 not yet defined that it should be text formatting in /html/html_base.php
     \-- logo - section for function logo not yet defined that it should be images in /html/html_base.php
     \-- logo_big - section for function logo_big not yet defined that it should be images in /html/html_base.php
+    \-- logo_flex - section for function logo_flex not yet defined that it should be images in /html/html_base.php
     \-- th - section for function th not yet defined that it should be the HTML table functions used in zukunft.com in /html/html_base.php
     \-- lf - section for function lf not yet defined that it should be the HTML table functions used in zukunft.com in /html/html_base.php
     \-- th_row - section for function th_row not yet defined that it should be the HTML table functions used in zukunft.com in /html/html_base.php
@@ -4830,7 +4835,9 @@
     \-- form_text - section for function form_text not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_hidden - section for function form_hidden not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_end_with_submit - section for function form_end_with_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
-    \-- about - section for function about not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
+    \-- form_submit - section for function form_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
+    \-- form_input - section for function form_input not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
+    \-- about_page - section for function about_page not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- about_body - section for function about_body not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- edit_url - section for function edit_url not yet defined that it should be output device specific support functions for the pure HTML version in /html/html_base.php
     \-- list_sort - section for function list_sort not yet defined that it should be output device specific support functions for the pure HTML version in /html/html_base.php
@@ -4852,6 +4859,7 @@
     \-- dsp_tbl_end - section for function dsp_tbl_end not yet defined that it should be to dismiss / replace in /html/html_base.php
     \-- dsp_form_start - section for function dsp_form_start not yet defined that it should be to dismiss / replace in /html/html_base.php
     \-- dsp_form_end - section for function dsp_form_end not yet defined that it should be to dismiss / replace in /html/html_base.php
+    \-- div_center - section for function div_center not yet defined that it should be to dismiss / replace in /html/html_base.php
     \-- dsp_form_center - section for function dsp_form_center not yet defined that it should be to dismiss / replace in /html/html_base.php
     \-- dsp_form_id - section for function dsp_form_id not yet defined that it should be to dismiss / replace in /html/html_base.php
     \-- dsp_form_hidden - section for function dsp_form_hidden not yet defined that it should be to dismiss / replace in /html/html_base.php
@@ -4869,11 +4877,14 @@
     \-- add_style - section for function add_style not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- get_style_code - section for function get_style_code is expected to be set and get in /html/html_base.php
     \-- form_start - section for function form_start not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
+    \-- form_simple - section for function form_simple not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- form_field - section for function form_field not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- form_end - section for function form_end not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- row_start - section for function row_start not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- row_right - section for function row_right not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
     \-- row_end - section for function row_end not yet defined that it should be base elements - functions for all html elements used in zukunft.com in /html/html_base.php
+    \-- br2 - section for function br2 not yet defined that it should be base in /html/html_base.php
+    \-- br - section for function br not yet defined that it should be base in /html/html_base.php
     \-- echo_html - section for function echo_html not yet defined that it should be display interface in /html/html_base.php
     \-- echo - section for function echo not yet defined that it should be display interface in /html/html_base.php
     \-- ui_progress - section for function ui_progress not yet defined that it should be display interface in /html/html_base.php
@@ -5129,7 +5140,7 @@
     \-- fill_by_name - section for function fill_by_name not yet defined that it should be modify in /sandbox/sandbox_list_named.php
     \-- sort_by_name - section for function sort_by_name not yet defined that it should be modify in /sandbox/sandbox_list_named.php
     \-- get_by_name - section for function get_by_name is expected to be set and get in /sandbox/sandbox_list_named.php
-    \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names
+    \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names
 \-- sandbox_named
     \-- name - section for function name is expected to be debug in /sandbox/sandbox_named.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /sandbox/sandbox_named.php
@@ -5138,7 +5149,7 @@
     \-- name_tip - section for function name_tip not yet defined that it should be base in /sandbox/sandbox_named.php
     \-- name_link - section for function name_link not yet defined that it should be base in /sandbox/sandbox_named.php
     \-- calc_view_id - section for function calc_view_id is expected to be ui support in /sandbox/sandbox_named.php
-    \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names
+    \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names
 \-- sandbox_typed
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/sandbox_typed.php
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox_typed.php
@@ -5185,7 +5196,7 @@
     \-- api_array - section for function api_array not yet defined that it should be api in /system/language.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /system/language.php
     \-- name_link - section for function name_link not yet defined that it should be base in /system/language.php
-    \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names
+    \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names
 \-- sys_log
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /system/sys_log.php
     \-- trace - section for function trace not yet defined that it should be set and get in /system/sys_log.php
@@ -5334,7 +5345,7 @@
     \-- dsp_samples - section for function dsp_samples not yet defined that it should be TODO recreate based on the group in /value/value.php
     \-- dsp_add_fast - section for function dsp_add_fast not yet defined that it should be TODO recreate based on the group in /value/value.php
     \-- dsp_edit - section for function dsp_edit not yet defined that it should be TODO recreate based on the group in /value/value.php
-    \-- order error - order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names
+    \-- order error - order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip, val_formatted should be before name_tip of value,value_link,value_edit,with_unit_and_info,warning_text,name,get_description,name_tip,name_link,val_formatted,source_selector,ref_selector does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names
 \-- value_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /value/value_list.php
     \-- get_by_names - section for function get_by_names is expected to be set and get in /value/value_list.php
@@ -5406,7 +5417,7 @@
     \-- only_type - section for function only_type not yet defined that it should be filter in /view/view_list.php
     \-- selector - section for function selector not yet defined that it should be select in /view/view_list.php
     \-- selector_page - section for function selector_page not yet defined that it should be select in /view/view_list.php
-    \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,term_by_obj_id,name_tip,names
+    \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names
 \-- view_relation
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/view_relation.php
     \-- api_array - section for function api_array not yet defined that it should be api in /view/view_relation.php
@@ -5557,6 +5568,10 @@
     \-- names_linked
         \-- figure_list - @param string $back the back trace url for the undo functionality
         \-- list_named - @param string $back the back trace url for the undo functionality
+    \-- br2
+        \-- html_base - @return string html code to end a form
+    \-- br
+        \-- html_base - @return string html code to end a form
     \-- term_by_obj_id
         \-- term_list - get a term from the term list selected by the word, triple, formula or verb id
     \-- name_tip
@@ -6651,7 +6666,16 @@
         \-- button - display a button to exclude a value
     \-- btn_add_value_fast
         \-- button - display a button to exclude a value
+\-- page
+    \-- page_html
+        \-- html_base - create a simple html page based on header, body and footer html code
 \-- header & footer
+    \-- header_html
+        \-- html_base - the page header for simple html pages like the login page
+    \-- main_body
+        \-- html_base - wrap the main body tag around html body code
+    \-- footer_html
+        \-- html_base - the page footer for simple html pages like the login page
     \-- header
         \-- html_base - @param string $title simple the HTML title used
     \-- header_test
@@ -6683,6 +6707,8 @@
     \-- logo
         \-- html_base - @returns string the zukunft.com logo with a link to the home page
     \-- logo_big
+        \-- html_base - @returns string the increased zukunft.com logo to display it in the center
+    \-- logo_flex
         \-- html_base - @returns string the increased zukunft.com logo to display it in the center
 \-- the HTML table functions used in zukunft.com
     \-- th
@@ -6720,7 +6746,11 @@
         \-- html_base - add the hidden field
     \-- form_end_with_submit
         \-- html_base - end a html form
-    \-- about
+    \-- form_submit
+        \-- html_base - end a html form
+    \-- form_input
+        \-- html_base - end a html form
+    \-- about_page
         \-- html_base - @return string the HTML code of the about page
     \-- about_body
         \-- html_base - @return string the HTML code of the about page
@@ -6766,10 +6796,12 @@
         \-- html_base - display a list of elements
     \-- dsp_form_end
         \-- html_base - display a list of elements
+    \-- div_center
+        \-- html_base - centre a html page
     \-- dsp_form_center
-        \-- html_base - display a list of elements
+        \-- html_base - centre a html page
     \-- dsp_form_id
-        \-- html_base - display a list of elements
+        \-- html_base - centre a html page
     \-- dsp_form_hidden
         \-- html_base - html hidden field
     \-- dsp_form_text
@@ -6800,6 +6832,8 @@
     \-- get_style_code
         \-- html_base - create the HTML code for an input field
     \-- form_start
+        \-- html_base - start a html form; the form name must be identical with the php script name
+    \-- form_simple
         \-- html_base - start a html form; the form name must be identical with the php script name
     \-- form_field
         \-- html_base - create the HTML code for an input field including the label

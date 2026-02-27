@@ -22,80 +22,106 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
+  Copyright (c) 1995-2026 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
   
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'init.php';
+$start_time = microtime(true);
 
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
-use Zukunft\ZukunftCom\main\php\web\frontend;
+include_once 'const.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-include_once paths::MODEL_USER . 'user_db.php';
+// load the main frontend class
+include_once paths::WEB . 'frontend.php';
+
+use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Random\RandomException;
+
+// reset the html code var
+$html_str = '';
+$msg_txt = '';
+$back = '';
+$msg = new Message();
 
 // open database
 $app = new frontend();
-$db_con = $app->start("login", "center_form");
-$html = new html_base();
-$msg_txt = '';
+$this_script = 'login';
+$db_con = $app->start($this_script, $msg);
+
+global $debug;
+global $sys;
+global $cfg;
 
 if ($db_con->is_open()) {
 
     // load the session user parameters
     $usr = new user;
-    $result = $usr->get();
+    $html_str = $usr->get();
+
+    $mtr = new Translator($cfg->language());
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
-        $result = ''; // reset the html code var
-        $usr_msg = new user_message();
-
-        $_SESSION['logged'] = FALSE;
+        $_SESSION[url_var::SESSION_LOGGED] = FALSE;
         // the original calling page that should be shown after the login is finished
         if (isset($_POST[url_var::BACK])) {
-            $back = $_POST[url_var::BACK];
+            $back = filter_var($_POST[url_var::BACK] ?? '', FILTER_SANITIZE_URL);
         } else {
-            $back = $_GET[url_var::BACK] = '';
+            $back = filter_var($_GET[url_var::BACK] ?? '', FILTER_SANITIZE_URL);
         }
 
-        if (isset($_POST['submit'])) {
+        if (isset($_POST[url_var::POST_SUBMIT])) {
 
             $html = new html_base();
 
+            // secure the vars
+            $usr_name = htmlspecialchars($_POST[url_var::USERNAME_HUMAN] ?? '', ENT_QUOTES, def::ENCODING);
+            $pw = htmlspecialchars($_POST[url_var::USER_PASSWORD_HUMAN] ?? '', ENT_QUOTES, def::ENCODING);
+
             // Let's search the database for the username and password
-            // don't use the sf shortcut here!
-            // TODO Prio 0 use the user object and password_verify
-            $usr = mysqli_real_escape_string($db_con->mysql, $_POST['username']);
-            $pw_hash = password_hash($_POST[url_var::USER_PASSWORD_HUMAN], PASSWORD_BCRYPT);
-            $sql = "SELECT * FROM users  
-                  WHERE user_name='$usr'
-                    AND password='$pw_hash'
-                        LIMIT 1";
-            $sql_result = mysqli_query($db_con->mysql, $sql);
-            if (mysqli_num_rows($sql_result) == 1) {
-                $row = mysqli_fetch_array($sql_result);
-                session_start();
-                if (empty($_SESSION['token'])) {
-                    $_SESSION['token'] = bin2hex(random_bytes(32));
+            $db_usr = new user;
+            $db_usr->load_by_name($usr_name);
+            if ($db_usr->has_db_id()) {
+                if (!password_verify($pw, $db_usr->password)) {
+                    $msg->add_id(msg_id::PASSWORD_WRONG);
+                    $url = $html->url(rest_ctrl::LOGIN_RESET);
+                    $ref = $html->ref($url, $mtr->txt(msg_id::PASSWORD_WRONG),
+                        $mtr->txt(msg_id::PASSWORD_WRONG_TITLE));
+                    $msg_txt .= $html->dsp_err($mtr->txt(msg_id::LOGIN_FAILED). ' ' . $ref);
                 }
-                $_SESSION['usr_id'] = $row[user_db::FLD_ID];
-                $_SESSION['user_name'] = $row[user_db::FLD_NAME];
-                $_SESSION['logged'] = TRUE;
+            } else {
+                $msg->add(msg_id::USER_NAME_NOT_FOUND, [
+                    msg_id::VAR_USER_NAME => $usr_name
+                ]);
+                $msg_txt .= $html->dsp_err($mtr->txt(msg_id::LOGIN_FAILED) . ' '
+                    . $msg->get_last_message_translated());
+            }
+
+            if ($msg->is_ok()) {
+                session_start();
+                if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                    try {
+                        $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                    } catch (RandomException $e) {
+                        log_err('RandomException ' . $e->getMessage());
+                    }
+                }
+                $_SESSION[url_var::SESSION_USER_ID] = $db_usr->id();
+                $_SESSION[url_var::USERNAME_HUMAN] = $db_usr->name();
+                $_SESSION[url_var::SESSION_LOGGED] = TRUE;
                 // TODO ask if cookies are allowed: if yes, the session id does not need to be forwarded
                 // if no, use the session id
                 if ($back <> '') {
@@ -105,37 +131,41 @@ if ($db_con->is_open()) {
                 }
                 //header("Location: ../view.php?sid=".SID."");
                 exit;
-            } else {
-                $url = $html->url(rest_ctrl::LOGIN_RESET);
-                $ref = $html->ref($url, 'Forgot password?', 'Send a new password via email.');
-                $msg_txt .= $html->dsp_err('Login failed. ' . $ref);
             }
         }
     }
 
-    if (!$_SESSION['logged']) {
-        $html = new html_base();
-        $result .= $html->dsp_form_center();
-        $result .= $html->logo_big();
-        $result .= '<br><br>';
-        $result .= '<form action="login.php" method="post">';
-        $result .= '  User Name:<br> ';
-        $result .= '  <input type="' . html_base::INPUT_TEXT . '" name="username"><br><br> ';
-        $result .= '  password:<br> ';
-        $result .= '  <input type="' . html_base::INPUT_PASSWORD . '" name="password"><br><br> ';
-        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '"> ';
-        $result .= $msg_txt;
-        $result .= '  <input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Login"> ';
-        $result .= '</form>   ';
-        $result .= '</div>   ';
+    $html = new html_base();
+    if (!$_SESSION[url_var::SESSION_LOGGED]) {
+        $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME) . $html->br();
+        $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
+        $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
+        $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN) . $html->br2();
+        // TODO Prio 2 highlight message e.g. using color red
+        $form_str .= $msg_txt;
+        $form_str .= $html->form_hidden(url_var::BACK, $back);
+        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN));
+
+        // TODO Prio 3 use a changing logo to show something positive of today or a person that has done something positive and is somehow linked to today
+        $html_str = $html->logo_flex();
+        $html_str .= $html->br2();
+        $html_str .= $html->form_simple($this_script . def::FILE_PHP, html_base::METHOD_POST, $form_str);
     }
 
-    // separate the footer, because this is a short page
-    $result .= '<br><br>';
+    // create the page
+    $html_str = $html->page_html(
+        'en',
+        $html->header_html($this_script, ''),
+        $html->main_body($html_str),
+        $html->footer_html(),
+    );
 
     // display the view
-    echo $result;
+    echo $html_str;
 
     // close the database
     $app->end($db_con);
+} else {
+    echo 'cannot connect to database because' . $msg->text();
 }

@@ -56,6 +56,7 @@ include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -71,6 +72,8 @@ use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Random\RandomException;
 
 class application
 {
@@ -93,8 +96,12 @@ class application
 
         // resume session (based on cookies)
         session_start();
-        if (empty($_SESSION['token'])) {
-            $_SESSION['token'] = bin2hex(random_bytes(32));
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
         }
 
         // link to database
@@ -129,8 +136,12 @@ class application
 
         // resume session (based on cookies)
         session_start();
-        if (empty($_SESSION['token'])) {
-            $_SESSION['token'] = bin2hex(random_bytes(32));
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
         }
 
         // link to database
@@ -186,8 +197,12 @@ class application
         // resume session (based on cookies)
         if (!$restart) {
             session_start();
-            if (empty($_SESSION['token'])) {
-                $_SESSION['token'] = bin2hex(random_bytes(32));
+            if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                try {
+                    $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                } catch (RandomException $e) {
+                    log_err('RandomException ' . $e->getMessage());
+                }
             }
         }
 

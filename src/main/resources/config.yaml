@@ -339,6 +339,14 @@ zukunft.com:
       point: 2025-06-07
       limits:
         tooltip-comment: "limits per pod that, like all other pod settings, can only be changed by an admin user and that are used as a second line of defence to prevent unwanted behavior"
+        max login:
+          per day:
+            by ip-address:
+              sys-conf-value: 5
+              tooltip-comment: "the max number of login creation from one ip per day"
+            by location:
+              sys-conf-value: 10
+              tooltip-comment: "the max number of login creation from one location per day"
         max changes:
           per day:
             tooltip-comment: "the max number of insert or update changes that a normal user can do per days to prevent vandalism"

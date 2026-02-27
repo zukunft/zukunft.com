@@ -1,0 +1,117 @@
+/* base design */
+body {
+   font-family: sans-serif; /* Sets the font to a clean, no-serif style */
+   margin: 0; /* Removes the default browser margin from the edges */
+   display: flex; /* Enables flexbox layout for the entire page body */
+   flex-direction: column; /* Stacks the body content (main and footer) vertically */
+   min-height: 100vh; /* Ensures the page is at least as tall as the full screen */
+   color: #9ea09e; /* Sets the default text color to the zukunft.com specific grey */
+   text-align: center; /* Centers all inline text content globally */
+}
+
+.main-container {
+    flex: 1; /* Makes this section expand to fill all available vertical space */
+    display: flex; /* Enables flexbox to center content within this container */
+    flex-direction: column; /* Stacks the logo, search, and login sections vertically */
+    justify-content: center; /* Centers content vertically within the available space */
+    align-items: center; /* Centers content horizontally */
+    padding: 20px; /* Adds space inside the container so content doesn't hit the edges */
+}
+
+/* logo section */
+.logo-section {
+    width: 40%; /* Sets the container for the logo to 60% of the screen width */
+    max-width: 800px; /* Prevents the logo section from becoming too huge on wide monitors */
+    margin-bottom: 3rem; /* Adds a large gap (approx. 48px) below the logo section */
+}
+
+/* search section */
+.search-section {
+    width: 60%; /* Sets the container for the logo to 60% of the screen width */
+    flex-wrap: wrap; /* Allows items to jump to the next line if the screen is too narrow */
+    gap: 10px 20px; /* Adds a 10px space between the input and the button */
+    margin: 1rem 0; /* Adds vertical space (16px) above and below these sections */
+}
+
+/* signup and login section */
+.cta-section {
+    width: 50%; /* Sets the container for the logo to 60% of the screen width */
+    flex-wrap: wrap; /* Allows items to jump to the next line if the screen is too narrow */
+    gap: 10px; /* Adds a 10px space between the input and the button */
+    margin: 1rem 0; /* Adds vertical space (16px) above and below these sections */
+}
+
+/* logo within the section */
+.brand-logo {
+    width: 60%; /* Makes the logo image take up 60% of its parent container's width */
+    height: auto; /* Keeps the original proportions (aspect ratio) of the image */
+    display: block; /* Removes any extra whitespace below the image */
+    margin: 0 auto; /* Centers the logo image within the logo-section */
+}
+
+/* logo size adjustments for different screens */
+@media (max-width: 1200px) {
+    .brand-logo { width: 60%; } /* Increase logo width to 70% on laptops */
+}
+
+@media (max-width: 900px) {
+    .brand-logo { width: 80%; } /* Increase logo width to 80% on tablets */
+}
+
+@media (max-width: 600px) {
+    .brand-logo { width: 90%; } /* Increase logo width to 90% on mobile phones */
+}
+
+/* search input field */
+.standard-input {
+    padding: 10px; /* Adds space inside the text box for better readability */
+    border: 1px solid #ccc; /* Adds a light grey border around the input */
+    border-radius: 4px; /* Rounds the corners of the input field slightly */
+    width: 70%; /* Sets a width to half of the flew container for the search and login inputs */
+}
+
+/* buttons */
+.btn {
+    background: #9ea09e; /* Sets the button background to zukunft.com specific grey */
+    color: white !important; /* Forces the text color to white, overriding link defaults */
+    padding: 10px 20px; /* Adds space inside the button (top/bottom and left/right) */
+    border-radius: 4px; /* Matches the rounded corners of the input fields */
+    text-decoration: none; /* Removes the underline typically found on links */
+    border: none; /* Removes the default browser button border */
+    cursor: pointer; /* Changes the mouse cursor to a hand to show it is clickable */
+    transition: 0.3s; /* Smoothly fades the color change over 0.3 seconds */
+    font-size: 1rem; /* Default font size for buttons */
+}
+
+/* specific search button Bold text */
+.btn-search {
+    font-weight: bold; /* Makes the search button text bold */
+    margin: 10px; /* so that the search button is not directly below the input field */
+}
+
+/* auth Buttons: 20% smaller overall and smaller font */
+.auth-links .btn {
+    padding: 8px 16px; /* Reduced padding (approx 20% smaller area) */
+    font-size: 0.85rem; /* Smaller font size as requested */
+}
+
+.btn:hover {
+    background: #7a9fbf; /* Changes background to a subtle blue when the mouse is over it */
+}
+
+/* links & footer */
+a {
+    color: #385eb7; /* Sets all links to a specific blue color */
+    text-decoration: none; /* Removes underlines from all links */
+    transition: 0.3s; /* Smoothly fades link color changes */
+}
+
+a:hover {
+    opacity: 0.8; /* Slightly fades the link color on hover for a subtle effect */
+}
+
+.site-footer {
+    padding: 20px; /* Adds space inside the footer */
+    font-size: 0.8rem; /* Makes the footer text slightly smaller than main text */
+    border-top: 1px solid #eee; /* Adds a very faint line to separate the footer from content */
+}

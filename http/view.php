@@ -26,7 +26,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -39,7 +39,7 @@ include_once 'const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-// load the mian frontend class
+// load the main frontend class
 include_once paths::WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;

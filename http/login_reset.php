@@ -74,9 +74,9 @@ if ($db_con->is_open()) {
 
         $result = ''; // reset the html code var
 
-        $_SESSION['logged'] = FALSE;
+        $_SESSION[url_var::SESSION_LOGGED] = FALSE;
 
-        if (isset($_POST['submit'])) {
+        if (isset($_POST[url_var::POST_SUBMIT])) {
 
             // Lets search the database for the user name and password
             // don't use the sf shortcut here!
@@ -119,7 +119,7 @@ if ($db_con->is_open()) {
         }
     }
 
-    if (!$_SESSION['logged']) {
+    if (!$_SESSION[url_var::SESSION_LOGGED]) {
         $html = new html_base();
         $result .= $html->dsp_form_center();
         $result .= $html->logo_big();

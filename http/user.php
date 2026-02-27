@@ -209,7 +209,7 @@ if ($usr->id > 0) {
         }
     }
 
-    if ($_SESSION['logged']) {
+    if ($_SESSION[url_var::SESSION_LOGGED]) {
         $result .= '<br><br><a href="/http/logout.php">logout</a>';
     }
 }

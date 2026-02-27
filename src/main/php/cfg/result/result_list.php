@@ -836,7 +836,7 @@ class result_list extends sandbox_value_list
 
             // build the single calculation request
             $calc_row = array();
-            $calc_row['usr_id'] = $this->get_user()->id();
+            $calc_row[url_var::SESSION_USER_ID] = $this->get_user()->id();
             $calc_row['frm_id'] = $frm_row[formula_db::FLD_ID];
             $calc_row['frm_name'] = $frm_row[formula_db::FLD_NAME];
             $calc_row['frm_text'] = $frm_row[formula_db::FLD_FORMULA_TEXT];

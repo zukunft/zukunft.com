@@ -121,6 +121,7 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -167,6 +168,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTimeInterface;
 use DateTime;
 use Exception;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class user extends db_id_object_non_sandbox
 {
@@ -1326,9 +1328,9 @@ class user extends db_id_object_non_sandbox
 
         if ($result == '') {
             // if the user has logged in use the logged in account
-            if (isset($_SESSION['logged'])) {
-                if ($_SESSION['logged']) {
-                    $this->load_by_id($_SESSION['usr_id']);
+            if (isset($_SESSION[url_var::SESSION_LOGGED])) {
+                if ($_SESSION[url_var::SESSION_LOGGED]) {
+                    $this->load_by_id($_SESSION[url_var::SESSION_USER_ID]);
                     log_debug('use (' . $this->id . ')');
                 }
             } else {

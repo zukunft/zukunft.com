@@ -98,6 +98,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
@@ -145,6 +146,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -233,10 +235,10 @@ class frontend
      * start a frontend session with direct db access
      *
      * @param string $code_name
+     * @param Message $msg to collect any messages and suggested solutions for the user
      * @return sql_db
-     * @throws RandomException
      */
-    function start(string $code_name): sql_db
+    function start(string $code_name, Message $msg = new Message()): sql_db
     {
         global $sys;
         global $errors;
@@ -248,14 +250,18 @@ class frontend
         // resume session (based on cookies)
         $session_is_fine = true;
         session_start();
-        if (empty($_SESSION['token'])) {
-            $_SESSION['token'] = bin2hex(random_bytes(32));
-        } elseif (!empty($_POST['token'])) {
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
+        } elseif (!empty($_POST[url_var::SESSION_TOKEN])) {
             // TODO Prio 0 add the session token to each frontend form
-            if (!hash_equals($_SESSION['token'], $_POST['token'])) {
+            if (!hash_equals($_SESSION[url_var::SESSION_TOKEN], $_POST[url_var::SESSION_TOKEN])) {
                 $msg_txt = 'Suspect request. Please close browser, delete cache and login again.';
                 log_fatal($msg_txt, 'view.php');
-                log_fatal('session token is' . $_SESSION['token'] . ' but POST token is ' . $_POST['token'], 'view.php' );
+                log_fatal('session token is' . $_SESSION[url_var::SESSION_TOKEN] . ' but POST token is ' . $_POST[url_var::SESSION_TOKEN], 'view.php' );
                 $session_is_fine = false;
             }
         }
@@ -387,8 +393,12 @@ class frontend
         // resume session (based on cookies)
         // TODO review session start and end calls
         session_start();
-        if (empty($_SESSION['token'])) {
-            $_SESSION['token'] = bin2hex(random_bytes(32));
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
         }
 
         // just for cache loading

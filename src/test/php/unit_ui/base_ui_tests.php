@@ -103,7 +103,7 @@ class base_ui_tests
 
         $t->subheader($ts . 'login');
 
-        $created_html = $html->about();
+        $created_html = $html->about_page();
         $expected_html = $t->file(test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'about.html');
         $t->assert('about', $lib->trim_html($expected_html), $lib->trim_html($created_html));
 
