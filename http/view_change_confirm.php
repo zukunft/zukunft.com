@@ -32,6 +32,7 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -49,7 +50,8 @@ $db_con = $app->start("view_confirm");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$back = $_GET[url_var::BACK] = ''; // the word id from which this value change has been called (maybe later any page)
+$lib = new library();
+$back = $lib->filter_var($_GET[url_var::BACK]); // the word id from which this value change has been called (maybe later any page)
 $word_id = $back;
 $view_id = 0;
 

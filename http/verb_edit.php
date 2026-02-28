@@ -36,6 +36,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -74,7 +75,8 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(views::VERB_EDIT);
-    $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change is finished
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); // the original calling page that should be shown after the change is finished
 
     // create the verb object to have an place to update the parameters
     $vrb = new verb;

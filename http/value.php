@@ -35,6 +35,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -71,7 +72,8 @@ if ($usr->id > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::VALUE);
-    $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); // the page (or phrase id) from which formula testing has been called
 
     $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();

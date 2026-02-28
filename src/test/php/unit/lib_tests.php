@@ -577,6 +577,48 @@ class lib_tests
         $target = '2//-2023-01-03 20:59:59zukunft.com system test////+2023-01-03T20:59:59+00:000//96//-////+2//197//-2////+0//';
         $t->assert($test_name, $result, $target);
 
+        $t->subheader($ts . 'var filter');
+
+        $test_name = $tb . 'test valid local paths that should be allowed';
+        $result = $lib->filter_var('/home');
+        $target = '/home';
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'test deep path with query parameters';
+        $result = $lib->filter_var('/products/view?id=123');
+        $target = '/products/view?id=123';
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'block protocol-relative urls (double slash)';
+        $result = $lib->filter_var('//malicious-site.com');
+        $target = '';
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'block full external urls with protocol';
+        $result = $lib->filter_var('https://malicious-site.com/login');
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'block strings not starting with a slash';
+        $result = $lib->filter_var('dashboard');
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'block single slash (root) if regex requires following char';
+        $result = $lib->filter_var('/');
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'handle null input by returning default';
+        $result = $lib->filter_var(null);
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'handle empty string input';
+        $result = $lib->filter_var('');
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'ensure illegal url characters are stripped';
+        $result = $lib->filter_var('/path with spaces');
+        $target = '/pathwithspaces';
+        $t->assert($test_name, $result, $target);
+
 
         $t->subheader($ts . 'json');
 

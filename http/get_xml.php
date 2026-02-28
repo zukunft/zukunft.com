@@ -30,6 +30,7 @@
 
 */
 
+use Zukunft\ZukunftCom\main\php\cfg\export\xml;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -71,10 +72,8 @@ if ($usr->id() > 0) {
         $phr_lst = $phr_lst->are();
 
         log_debug("get_xml.php ... phrase loaded.");
-        $xml_export = new xml_io;
-        $xml_export->usr = $usr;
-        $xml_export->phr_lst = $phr_lst;
-        $xml = $xml_export->export();
+        $xml_export = new xml($usr);
+        $xml = $xml_export->export_by_phrase_list($phr_lst);
     } else {
         $result .= log_info('No XML can be created, because no word or triple is given.', '', (new Exception)->getTraceAsString(), $this->usr);
     }

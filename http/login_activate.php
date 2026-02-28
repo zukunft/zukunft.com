@@ -74,7 +74,9 @@ if ($db_con->is_open()) {
         $db_key = $usr->activation_key;
         $db_time_limit = $usr->activation_timeout; // TODO check if and when the conversion to time should be done
         $db_now = $usr->db_now; // get the server now
-        log_debug("login_activate (db: " . $db_key . ", post: " . $_POST[url_var::POST_KEY] . ", limit: " . $db_time_limit . ", db now:" . $db_now . ")");
+        log_debug("login_activate (db: " . $db_key . ", post: " . $_POST[url_var::POST_KEY]
+            . ", limit: " . $db_time_limit->format(DateTimeInterface::ATOM)
+            . ", db now:" . $db_now->format(DateTimeInterface::ATOM) . ")");
         if ($db_key == $_POST[url_var::POST_KEY] and $db_time_limit > $db_now) {
 
             // check the user input

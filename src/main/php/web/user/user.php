@@ -41,8 +41,11 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 // get the pure html frontend objects
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
@@ -54,9 +57,12 @@ include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -522,6 +528,38 @@ class user extends db_object
                 . '<br>';
         }
 
+        return $result;
+    }
+
+    /**
+     * display the latest changes of the user
+     * TODO add display the latest changes by a user
+     */
+    function dsp_changes(int $size, int $page, ?back_trace $back = null): string
+    {
+        $log_dsp = new user_log_display();
+        return $log_dsp->dsp_hist(user::class, $this->id(), $size, $page, '', $back);
+    }
+
+    // display the error that are related to the user, so that he can track when they are closed
+    // or display the error that are related to the user, so that he can track when they are closed
+    function dsp_errors($dsp_type, $size, $page, $back): string
+    {
+        log_debug($dsp_type . ' errors for user ' . $this->name);
+
+        $result = '';
+        $err_lst = new sys_log_list;
+        //$err_lst->set_user($this);
+        //$err_lst->page = $page;
+        //$err_lst->size = $size;
+        //$err_lst->dsp_type = $dsp_type;
+        //$err_lst->back = $back;
+        if ($err_lst->load()) {
+            $err_lst_dsp = new sys_log_list($err_lst->api_json());
+            $result = $err_lst_dsp->get_html();
+        }
+
+        log_debug('done');
         return $result;
     }
 

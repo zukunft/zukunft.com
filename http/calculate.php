@@ -53,9 +53,6 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 $app = new frontend();
 $db_con = $app->start("calculate");
 
-// get the parameters
-$back = $_GET[url_var::BACK] ?? ''; // the original calling page that should be shown after the change if finished
-
 // load the requesting user
 $usr = new user;
 $usr->get();
@@ -65,10 +62,16 @@ $usr_id = $_GET[url_var::USER] ?? 0; // to force another user view for testing t
 if ($usr->id > 0) {
 
     global $cfg;
+
+    $lib = new library();
+
     $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR], def::FALLBACK_RESPONSE_TIME);
 
     $usr->load_usr_data();
-    $lib = new library();
+
+    // get the parameters
+    // the original calling page that should be shown after the change if finished
+    $back = $lib->filter_var($_GET[url_var::BACK]);
 
     // start displaying while calculating
     $calc_pos = 0;

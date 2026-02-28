@@ -784,8 +784,11 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case VIEW_NAME_MISSING = 'name in view missing';
 
-    case FORM_NAME_USER_NAME = 'username or email';
+    case FORM_NAME_USER_NAME = 'username';
+    case FORM_NAME_USER_EMAIL = 'email';
+    case FORM_NAME_USER_NAME_OR_EMAIL = 'username or email';
     case FORM_NAME_PASSWORD = 'password';
+    case FORM_NAME_PASSWORD_RE = 're-type password';
     case FORM_NAME_LOGIN = 'Login';
     case PASSWORD_WRONG = 'Forgot password?';
     case PASSWORD_WRONG_TITLE = 'Request to reset the password';

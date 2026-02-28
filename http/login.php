@@ -100,7 +100,7 @@ if ($db_con->is_open()) {
                     $url = $html->url(rest_ctrl::LOGIN_RESET);
                     $ref = $html->ref($url, $mtr->txt(msg_id::PASSWORD_WRONG),
                         $mtr->txt(msg_id::PASSWORD_WRONG_TITLE));
-                    $msg_txt .= $html->dsp_err($mtr->txt(msg_id::LOGIN_FAILED). ' ' . $ref);
+                    $msg_txt .= $html->dsp_err($mtr->txt(msg_id::LOGIN_FAILED) . ' ' . $ref);
                 }
             } else {
                 $msg->add(msg_id::USER_NAME_NOT_FOUND, [
@@ -112,6 +112,7 @@ if ($db_con->is_open()) {
 
             if ($msg->is_ok()) {
                 session_start();
+                session_regenerate_id(true);
                 if (empty($_SESSION[url_var::SESSION_TOKEN])) {
                     try {
                         $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
@@ -137,7 +138,7 @@ if ($db_con->is_open()) {
 
     $html = new html_base();
     if (!$_SESSION[url_var::SESSION_LOGGED]) {
-        $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME) . $html->br();
+        $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME_OR_EMAIL) . $html->br();
         $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
         $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
         $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN) . $html->br2();
@@ -145,12 +146,13 @@ if ($db_con->is_open()) {
         $form_str .= $msg_txt;
         $form_str .= $html->form_hidden(url_var::BACK, $back);
         $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
-        $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN));
+        $form_str .= $html->button_submit($mtr->txt(msg_id::FORM_NAME_LOGIN));
+        $form_str = $html->form_simple($this_script . def::FILE_PHP, html_base::METHOD_POST, $form_str);
 
         // TODO Prio 3 use a changing logo to show something positive of today or a person that has done something positive and is somehow linked to today
         $html_str = $html->logo_flex();
         $html_str .= $html->br2();
-        $html_str .= $html->form_simple($this_script . def::FILE_PHP, html_base::METHOD_POST, $form_str);
+        $html_str .= $html->div($form_str, html_base::CLASS_INPUT_SECTION);
     }
 
     // create the page

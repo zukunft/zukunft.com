@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -64,7 +65,6 @@ $usr_msg = new user_message(); // to collect all messages that should be shown t
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
-$back = $_GET[url_var::BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
@@ -95,6 +95,9 @@ if ($usr->id > 0) {
 
         $html = new html_base();
         $msk_dsp = new view_ui($msk->api_json());
+        // the word id from which this value change has been called (maybe later any page)
+        $lib = new library();
+        $back = $lib->filter_var($_GET[url_var::BACK]);
         $html->echo($msk_dsp->dsp_navbar($dto, $back));
 
         $html->echo("loading of base configuration started<br>");

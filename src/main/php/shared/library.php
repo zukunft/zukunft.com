@@ -5,6 +5,8 @@
     shared/library.php - some useful function e.g. for string handling
     ------------------
 
+    TODO Prio 2 move the functions that use project objects to object_mapper class
+
 
     This file is part of zukunft.com - calc with words
 
@@ -3238,6 +3240,22 @@ class library
         $url_part = parse_url($url);
         parse_str($url_part["query"], $url_array);
         return $url_array;
+    }
+
+    /**
+     * makes sure that the var text used in a url is not misused for unwanted redirections
+     * @param string|null $var the text as received from the user
+     * @return string the var without unwanted redirects so that it can be used as url
+     */
+    function filter_var(?string $var): string
+    {
+        $var = filter_var($var ?? '', FILTER_SANITIZE_URL);
+        // allow only path with '/', but not with '//'
+        if (!preg_match('#^/[^/]#', $var)) {
+            // the default value as fallback
+            $var = '';
+        }
+        return $var;
     }
 
     /**
