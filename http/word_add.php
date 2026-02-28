@@ -51,6 +51,7 @@ Delete a word (check if nothing is depending on the word to delete)
 
 */
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -92,7 +93,8 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(views::WORD_ADD);
-    $back = $_GET[url_var::BACK] = ''; // the calling page which should be displayed after saving
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);

@@ -100,7 +100,7 @@ if ($db_con->is_open()) {
                     $url = $html->url(rest_ctrl::LOGIN_RESET);
                     $ref = $html->ref($url, $mtr->txt(msg_id::PASSWORD_WRONG),
                         $mtr->txt(msg_id::PASSWORD_WRONG_TITLE));
-                    $msg_txt .= $html->dsp_err($mtr->txt(msg_id::LOGIN_FAILED). ' ' . $ref);
+                    $msg_txt .= $html->dsp_err($mtr->txt(msg_id::LOGIN_FAILED) . ' ' . $ref);
                 }
             } else {
                 $msg->add(msg_id::USER_NAME_NOT_FOUND, [
@@ -112,6 +112,7 @@ if ($db_con->is_open()) {
 
             if ($msg->is_ok()) {
                 session_start();
+                session_regenerate_id(true);
                 if (empty($_SESSION[url_var::SESSION_TOKEN])) {
                     try {
                         $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));

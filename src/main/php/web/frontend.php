@@ -261,7 +261,7 @@ class frontend
             if (!hash_equals($_SESSION[url_var::SESSION_TOKEN], $_POST[url_var::SESSION_TOKEN])) {
                 $msg_txt = 'Suspect request. Please close browser, delete cache and login again.';
                 log_fatal($msg_txt, 'view.php');
-                log_fatal('session token is' . $_SESSION[url_var::SESSION_TOKEN] . ' but POST token is ' . $_POST[url_var::SESSION_TOKEN], 'view.php' );
+                log_fatal('session token is' . $_SESSION[url_var::SESSION_TOKEN] . ' but POST token is ' . $_POST[url_var::SESSION_TOKEN], 'view.php');
                 $session_is_fine = false;
             }
         }
@@ -627,6 +627,7 @@ class frontend
         data_object  $dto = new data_object()
     ): string
     {
+        $lib = new library();
 
         // init the view
         $result = ''; // reset the html code var
@@ -647,7 +648,11 @@ class frontend
 
         $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
         $view_words = $url_array[url_var::WORDS] ?? '';
-        $back = $url_array[url_var::BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
+        if (array_key_exists(url_var::BACK, $url_array)) {
+            $back = $lib->filter_var($url_array[url_var::BACK]); // the word id from which this value change has been called (maybe later any page)
+        } else {
+            $back = '';
+        }
 
         // TODO move to the frontend __construct
         // get the fixed frontend config

@@ -37,6 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
@@ -65,7 +66,8 @@ $result = ''; // reset the html code var
 // get the parameters
 $log_id = $_GET[url_var::ID];
 $status_id = $_GET['status'];
-$back = $_GET[url_var::BACK] = '';
+$lib = new library();
+$back = $lib->filter_var($_GET[url_var::BACK]);
 
 // load the session user parameters
 $usr = new user;

@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -76,7 +77,8 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(views::VALUE_DEL);
-    $back = $_GET[url_var::BACK] = '';  // the page from which the value deletion has been called
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]);  // the page from which the value deletion has been called
 
     // get the parameters
     $val_id = $_GET[url_var::ID];

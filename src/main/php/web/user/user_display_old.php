@@ -98,16 +98,6 @@ class user_display_old extends user
         return $this->viewer;
     }
 
-    /**
-     * display the latest changes of the user
-     * TODO add display the latest changes by a user
-     */
-    function dsp_changes($call, $size, $page, $back): string
-    {
-        $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(user::class, $this->id(), $size, $page, '', $back);
-    }
-
     // display the error that are related to the user, so that he can track when they are closed
     // or display the error that are related to the user, so that he can track when they are closed
     function dsp_errors($dsp_type, $size, $page, $back): string

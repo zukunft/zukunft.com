@@ -32,6 +32,7 @@
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
@@ -50,7 +51,8 @@ $db_con = $app->start("triple");
 if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
-    $back = $_GET[url_var::BACK] = '';
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]);
     $id = $_GET['triples'];
 
     // load the session user parameters

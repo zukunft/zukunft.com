@@ -85,7 +85,8 @@ if ($session_usr->id > 0) {
     // show the header even if all parameters are wrong
     $msk = new view($session_usr);
     $msk->id = $sys_msk_cac->id(views::FORMULA_TEST);
-    $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     echo $msk_dsp->dsp_navbar($dto, $back);
@@ -176,7 +177,7 @@ if ($session_usr->id > 0) {
             ob_end_flush();
             log_debug("create the calculation queue ... ");
             $calc_pos = 0;
-            $last_msg_time =microtime(true);
+            $last_msg_time = microtime(true);
 
             // build the calculation queue
             // the standard value will always be checked first
