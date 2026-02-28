@@ -71,10 +71,9 @@ class test_app
      * return null if the db connection fails or the db is not compatible
      * TODO create a separate class for starting the backend and frontend
      *
-     * @param string $code_name the place that is displayed to the user e.g. add word
-     * @param bool $echo_env if true log the environment
+     * @param string $code_name the place that is displayed to the user e.g. add a word
+     * @param bool $echo_env if true, log the environment
      * @return sql_db the open database connection
-     * @throws RandomException
      */
     function start(
         string $code_name,
@@ -131,7 +130,7 @@ class test_app
 
     /**
      * open the database connection and load the base cache
-     * @param string $code_name the place that is displayed to the user e.g. add word
+     * @param string $code_name the place that is displayed to the user e.g. add a word
      * @return sql_db the open database connection
      */
     function open_db(string $code_name): sql_db

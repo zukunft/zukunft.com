@@ -17406,4 +17406,4 @@ trace
 #10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
 #11 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
 #12 {main}
-by user 
+by user

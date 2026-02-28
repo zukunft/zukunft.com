@@ -113,6 +113,13 @@ class test_views
         return $msk;
     }
 
+    function view_add(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set_name(views::TEST_ADD);
+        return $msk;
+    }
+
     /**
      * used to test the view relation where the log components are added to the parent view
      * @return view with the parent view to change a word

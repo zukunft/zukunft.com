@@ -2973,6 +2973,14 @@ class user extends db_id_object_non_sandbox
 
         // password should not be part of the change log
         if ($obj->password <> $this->password) {
+            // TODO Prio 3 log the password hash change in a admin only log for security reasons
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_PASSWORD,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_PASSWORD),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
             $lst->add_field(
                 user_db::FLD_PASSWORD,
                 $this->password,
@@ -2982,6 +2990,14 @@ class user extends db_id_object_non_sandbox
         }
         // the activation_key is used during the signup process and is not logged
         if ($obj->activation_key <> $this->activation_key) {
+            // the change of the activation_key if logged e.g. to be able to limit the number of login attempts
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ACTIVATION_KEY,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_ACTIVATION_KEY),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
             $lst->add_field(
                 user_db::FLD_ACTIVATION_KEY,
                 $this->activation_key,
@@ -2991,6 +3007,14 @@ class user extends db_id_object_non_sandbox
         }
         // the activation_timeout is used during the signup process and is not logged
         if ($obj->activation_timeout <> $this->activation_timeout) {
+            // the change of the activation_timeout if logged e.g. to be able to limit the number of login attempts
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ACTIVATION_TIMEOUT,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_ACTIVATION_TIMEOUT),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
             $lst->add_field(
                 user_db::FLD_ACTIVATION_TIMEOUT,
                 $this->activation_timeout?->format(sql_db::DATE_FORMAT),

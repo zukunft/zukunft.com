@@ -190,6 +190,13 @@ class test_formulas extends test_objects
         return $frm;
     }
 
+    function formula_add(): formula
+    {
+        $frm = new formula($this->env->usr1);
+        $frm->set_name(formulas::SYSTEM_TEST_ADD);
+        return $frm;
+    }
+
     /**
      * @return formula to test the "increase" calculations
      */

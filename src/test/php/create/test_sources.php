@@ -131,6 +131,13 @@ class test_sources
         return $src;
     }
 
+    function source_add(): source
+    {
+        $src = new source($this->env->usr1);
+        $src->set_name(sources::SYSTEM_TEST_ADD);
+        return $src;
+    }
+
     /**
      * @return source used for the reference
      */

@@ -55,6 +55,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\formula_calc_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
@@ -241,6 +242,10 @@ class a_selected_test extends test_cleanup
             /*
              * db write
              */
+
+            // cleanup - fallback delete
+            $t_wrd = new test_words($this);
+            $t_wrd->cleanup($ts);
 
             // run the selected db write tests
             //new user_write_tests()->run($this);

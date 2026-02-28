@@ -167,6 +167,16 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word to test the sql insert via function
+     */
+    function word_add(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set_name(words::TEST_ADD);
+        return $wrd;
+    }
+
+    /**
      * @return word with all fields set and a reserved test name for testing the db write function
      */
     function word_filled_add(): word

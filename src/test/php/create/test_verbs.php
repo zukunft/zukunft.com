@@ -99,6 +99,13 @@ class test_verbs extends test_objects
         return $vrb;
     }
 
+    function verb_add(): verb
+    {
+        $vrb = new verb();
+        $vrb->set_name(verbs::TEST_ADD_NAME);
+        return $vrb;
+    }
+
     /**
      * @return verb a standard verb with user null
      */

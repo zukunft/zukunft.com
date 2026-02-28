@@ -70,56 +70,103 @@ class horizontal_write_tests
 
         $t->subheader($ts . 'insert');
         foreach (def::MAIN_CLASSES as $class) {
-            $test_name = 'insert ' . $lib->class_to_name($class) . ' via SQL function';
-            $obj = $t_map->class_to_base_object($class);
-            $sc_par_lst = [];
-            if (!in_array($class, def::CLASSES_NO_CHANGE_LOG)) {
-                $sc_par_lst = [sql_type::LOG];
-            }
-            $t->assert_insert($test_name, $obj, $msg, $sc_par_lst);
 
-            $test_name = 'reload ' . $lib->class_to_name($class) . ' and check differences';
-            $id = $obj->id();
-            $check_obj = $obj->clone_reset();
-            $check_obj->load_by_id($id);
-            $diff = $check_obj->diff_msg($obj);
-            $t->assert_true($test_name, $diff->is_ok());
-
+            // TODO Prio 1 add link and value classes
             if (in_array($class, def::NAME_CLASSES)) {
+
+                // set the sql creation types
+                $sc_par_lst = [];
+                if (!in_array($class, def::CLASSES_NO_CHANGE_LOG)) {
+                    $sc_par_lst = [sql_type::LOG];
+                }
+
+                $test_name = 'insert ' . $lib->class_to_name($class) . ' via SQL function';
+                $obj = $t_map->class_to_add_object($class);
+                $t->assert_insert($test_name, $obj, $msg, $sc_par_lst);
+
+                $test_name = 'reload ' . $lib->class_to_name($class) . ' and check differences';
+                $id = $obj->id();
+                $check_obj = $obj->clone_reset(true);
+                $check_obj->load_by_id($id);
+                $diff = $check_obj->diff_msg($obj);
+                $t->assert_true($test_name, $diff->is_ok());
+
                 $test_name = 'reload ' . $lib->class_to_name($class) . ' by name and check differences';
                 $check_obj->reset(true);
-                $check_obj->load_by_id($obj->name());
+                $check_obj->load_by_name($obj->name());
                 $diff = $check_obj->diff_msg($obj);
                 $t->assert_true($test_name, $diff->is_ok());
             }
+        }
 
-            $test_name = 'update ' . $lib->class_to_name($class) . ' via SQL function';
-            $obj->fill($t_map->class_to_filled_object($class), $t->usr1);
-            $t->assert_update($test_name, $obj, $msg, $sc_par_lst);
+        $t->subheader($ts . 'update');
+        foreach (def::MAIN_CLASSES as $class) {
 
-            $test_name = 'reload filled ' . $lib->class_to_name($class) . ' and check differences';
-            $check_obj = $obj->clone_reset();
-            $check_obj->load_by_id($id);
-            $diff = $check_obj->diff_msg($obj);
-            $t->assert_true($test_name, $diff->is_ok());
+            // TODO Prio 1 add link and value classes
+            if (in_array($class, def::NAME_CLASSES)) {
+                // reload the object
+                $obj = $t_map->class_to_add_object($class);
+                $check_obj = $obj->clone_reset(true);
+                $check_obj->load_by_name($obj->name());
+                $id = $check_obj->id();
 
-            if (in_array($class, def::NO_DELETE_CLASSES)) {
-                $msg->usr = $t->usr_system;
+                // set the sql creation types
+                $sc_par_lst = [];
+                if (!in_array($class, def::CLASSES_NO_CHANGE_LOG)) {
+                    $sc_par_lst = [sql_type::LOG];
+                }
+
+                $test_name = 'update ' . $lib->class_to_name($class) . ' via SQL function';
+                $obj->fill($t_map->class_to_filled_object($class), $t->usr1);
+                $t->assert_update($test_name, $obj, $msg, $sc_par_lst);
+
+                $test_name = 'reload filled ' . $lib->class_to_name($class) . ' and check differences';
+                $check_obj = $obj->clone_reset(true);
+                $check_obj->load_by_id($id);
+                $diff = $check_obj->diff_msg($obj);
+                $t->assert_true($test_name, $diff->is_ok());
+
+                if (in_array($class, def::NO_DELETE_CLASSES)) {
+                    $msg->usr = $t->usr_system;
+                }
             }
+        }
 
-            // TODO Prio 2 delete changes caused by the test before deleting the test row
+        $t->subheader($ts . 'delete');
+        foreach (def::MAIN_CLASSES as $class) {
 
-            $test_name = 'delete ' . $lib->class_to_name($class) . ' via SQL function';
-            $t->assert_delete($test_name, $obj, $msg, $sc_par_lst);
+            // TODO Prio 1 add link and value classes
+            if (in_array($class, def::NAME_CLASSES)) {
+                // reload the object
+                $obj = $t_map->class_to_add_object($class);
+                $check_obj = $obj->clone_reset(true);
+                $check_obj->load_by_name($obj->name());
+                $id = $check_obj->id();
 
-            $test_name = 'reload ' . $lib->class_to_name($class) . ' and check that it has been remove';
-            $t->assert_false($test_name, $check_obj->load_by_id($id));
+                // set the sql creation types
+                $sc_par_lst = [];
+                if (!in_array($class, def::CLASSES_NO_CHANGE_LOG)) {
+                    $sc_par_lst = [sql_type::LOG];
+                }
 
+                // TODO Prio 2 delete changes caused by the test before deleting the test row
+
+                $test_name = 'delete ' . $lib->class_to_name($class) . ' via SQL function';
+                $t->assert_delete($test_name, $obj, $msg, $sc_par_lst);
+
+                $test_name = 'reload ' . $lib->class_to_name($class) . ' and check that it has been remove';
+                $t->assert_false($test_name, $check_obj->load_by_id($id));
+
+            }
         }
 
         $t->subheader($ts . 'save');
         $t->subheader($ts . 'remove');
 
+        $t->subheader($ts . 'name exists');
+        foreach (def::MAIN_CLASSES as $class) {
+            log_info('do do for ' . $class);
+        }
 
         // test if there are any test leftovers in the database and report which
         $t->check_cleanup($msg);

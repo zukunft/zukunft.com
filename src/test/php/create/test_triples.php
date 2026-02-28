@@ -182,6 +182,13 @@ class test_triples extends test_objects
         return $trp;
     }
 
+    function triple_add(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set_name(triples::SYSTEM_TEST_ADD);
+        return $trp;
+    }
+
     /**
      * @return triple "mathematical constant" with only the link names set as it may be created by the import
      */

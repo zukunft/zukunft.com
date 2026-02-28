@@ -400,7 +400,7 @@ class test_mappers
      * @param string $class the given main class name
      * @return triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
      */
-    function class_to_add_object(string $class): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
+    function class_to_add_filled_object(string $class): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
     {
         $obj = null;
         $t_usr = new test_users($this->env);
@@ -453,6 +453,82 @@ class test_mappers
                 break;
             default:
                 log_err('no add object defined for ' . $class);
+        }
+        return $obj;
+    }
+
+    /**
+     * get an object related to the given class that can be used for insert db tests
+     * @param string $class the given main class name
+     * @return sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox
+     *         with only a few vars filled and with a name, that will be cleaned up after testing
+     */
+    function class_to_add_object(string $class): sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox
+    {
+        $obj = null;
+        $t_usr = new test_users($this->env);
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $t_trp = new test_triples($this->env);
+        $t_src = new test_sources($this->env);
+        $t_ref = new test_refs($this->env);
+        $t_val = new test_values($this->env);
+        $t_grp = new test_groups($this->env);
+        $t_frm = new test_formulas($this->env);
+        $t_res = new test_results($this->env);
+        $t_msk = new test_views($this->env);
+        $t_cmp = new test_components($this->env);
+        switch ($class) {
+            case user::class;
+                $obj = $t_usr->user_add();
+                break;
+            case word::class;
+                $obj = $t_wrd->word_add();
+                break;
+            case verb::class;
+                $obj = $t_vrb->verb_add();
+                break;
+            case triple::class;
+                $obj = $t_trp->triple_add();
+                break;
+            case source::class;
+                $obj = $t_src->source_add();
+                break;
+            case ref::class;
+                $obj = $t_ref->reference_add();
+                break;
+            case value::class;
+                $obj = $t_val->value_add();
+                break;
+            case group::class;
+                $obj = $t_grp->group_add();
+                break;
+            case formula::class;
+                $obj = $t_frm->formula_add();
+                break;
+            case formula_link::class;
+                $obj = $t_frm->formula_link_add();
+                break;
+            case result::class;
+                $obj = $t_res->result_add();
+                break;
+            case view::class;
+                $obj = $t_msk->view_add();
+                break;
+            case view_relation::class;
+                $obj = $t_msk->view_relation_add();
+                break;
+            case term_view::class;
+                $obj = $t_msk->term_view_add();
+                break;
+            case component::class;
+                $obj = $t_cmp->component_add();
+                break;
+            case component_link::class;
+                $obj = $t_cmp->component_link_add();
+                break;
+            default:
+                log_err('no base object defined for ' . $class);
         }
         return $obj;
     }

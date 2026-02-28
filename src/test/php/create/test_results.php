@@ -190,6 +190,16 @@ class test_results
         return $res;
     }
 
+    function result_add(): result
+    {
+        $t_grp = new test_groups($this->env);
+        $res = new result($this->env->usr1);
+        $res->set_grp($t_grp->group_add());
+        $res->set_number(results::TV_FLOAT);
+        return $res;
+    }
+
+
     function result_list(): result_list
     {
         $lst = new result_list($this->env->usr1);

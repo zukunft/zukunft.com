@@ -153,6 +153,18 @@ class test_users
     }
 
     /**
+     * @return user a user that can be used for database write testing and that will be removed after testing
+     */
+    function user_add(): user
+    {
+        $usr = new user();
+        $usr->ip_addr = users::TEST_USER_IP;
+        $usr->name = users::TEST_USER_NAME;
+        $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
+        return $usr;
+    }
+
+    /**
      * @return user a user used for unit testing with the test profile
      */
     function user_sys_test(): user

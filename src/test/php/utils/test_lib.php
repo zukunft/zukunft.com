@@ -36,7 +36,6 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -72,7 +71,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
@@ -345,6 +344,8 @@ class test_lib
         global $usr_sys;
         global $usr;
 
+        $msg = new backend_user_message();
+
         // create a dummy system user for unit testing
         $usr_sys = new user;
         $usr_sys->id = users::SYSTEM_ID;
@@ -354,7 +355,7 @@ class test_lib
         $usr = new user;
         $usr->id = users::SYSTEM_TEST_ID;
         $usr->name = users::SYSTEM_TEST_NAME;
-        $usr->set_profile(user_profiles::EMAIL);
+        $usr->set_profile(user_profiles::EMAIL, $msg);
 
         return $usr;
     }

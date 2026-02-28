@@ -104,6 +104,13 @@ class test_components
         return $lst;
     }
 
+    function component_add(): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set_name(components::TEST_ADD_NAME);
+        return $cmp;
+    }
+
     /**
      * @return formula_list_ui a sample frontend formula list
      */

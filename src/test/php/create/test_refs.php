@@ -115,6 +115,13 @@ class test_refs
         return $ref;
     }
 
+    function reference_add(): ref
+    {
+        $ref = new ref($this->env->usr1);
+        $ref->set_name(refs::SYSTEM_TEST_ADD);
+        return $ref;
+    }
+
     /**
      * @return ref with the most often used fields set for unit testing
      */

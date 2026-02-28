@@ -2275,7 +2275,7 @@
       {
         "name": "1password",
         "code_id": "1password",
-        "description": "",
+        "description": "the final solution should be to log only the time of the password change without saving the hash in the log due to security reasons",
         "id": 212
       },
       {
