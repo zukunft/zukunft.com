@@ -167,6 +167,7 @@ class verbs
 
     // persevered verb names for unit and integration tests based on the database
     const string TEST_ADD_NAME = "System Test Verb";
+    const string TEST_ADD_CODE_ID = "System Test Verb code id";
     const string TEST_ADD_COM = "test description if it can be added to the verb via import";
     const string TEST_ADD_RENAMED = "System Test Verb Renamed";
 

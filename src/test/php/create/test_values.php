@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
@@ -53,6 +54,7 @@ include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -187,11 +189,10 @@ class test_values
         return $val_upd;
     }
 
-    function value_add(): value
+    function value_add(phrase $phr): value
     {
-        $t_wrd = new test_words($this->env);
         $lst = new phrase_list($this->env->usr1);
-        $lst->add($t_wrd->word_add()->phrase());
+        $lst->add($phr);
         $grp = $lst->get_grp_id(false);
         return new value($this->env->usr1, values::SAMPLE_FLOAT, $grp);
     }

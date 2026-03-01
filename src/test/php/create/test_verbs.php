@@ -103,6 +103,7 @@ class test_verbs extends test_objects
     {
         $vrb = new verb();
         $vrb->set_name(verbs::TEST_ADD_NAME);
+        $vrb->code_id = verbs::TEST_ADD_CODE_ID;
         return $vrb;
     }
 

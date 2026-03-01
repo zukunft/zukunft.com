@@ -56,6 +56,7 @@ include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once test_paths::CREATE . 'test_const.php';
+include_once test_paths::CREATE . 'test_objects.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -65,7 +66,6 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
@@ -76,26 +76,29 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
-use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_components
+class test_components extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test components for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, components::TEST_COMPONENTS, new component($this->env->usr1));
     }
 
 
+    /*
+     * unit
+     */
+
     /**
-     * @return component_list with a list of suggested component for a word
+     * @return component_list with a list of suggested components for a word
      */
     function component_list_word(): component_list
     {

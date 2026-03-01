@@ -54,7 +54,7 @@ class Translator
     private array $msg_file = [];
     private string $lan = '';
 
-    function __construct(string $lan)
+    function __construct(string $lan = language_codes::SYS)
     {
         $this->msg_file = $this->read($lan);
         $this->lan = $lan;

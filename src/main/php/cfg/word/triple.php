@@ -928,7 +928,7 @@ class triple extends sandbox_link_named
             if ($vrb != null) {
                 return $vrb->name();
             } else {
-                $msg = 'verb with id ' . $id . ' is missing';
+                $msg = 'name for verb id ' . $id . ' of a triple ' . $this->dsp_id() . ' is missing in system cache';
                 log_err($msg);
                 return $msg;
             }
@@ -937,7 +937,7 @@ class triple extends sandbox_link_named
             if ($vrb != null) {
                 return $vrb->reverse();
             } else {
-                $msg = 'verb with id ' . $id . ' is missing';
+                $msg = 'name for reverse verb id ' . $id . ' of a triple ' . $this->dsp_id() . ' is missing in system cache';
                 log_err($msg);
                 return $msg;
             }
@@ -958,7 +958,7 @@ class triple extends sandbox_link_named
             if ($vrb != null) {
                 return $vrb->get_code_id();
             } else {
-                $msg = 'verb with id ' . $id . ' is missing';
+                $msg = 'code id for verb of triple ' . $this->dsp_id() . ' is missing in system cache';
                 log_err($msg);
                 return $msg;
             }
@@ -967,7 +967,7 @@ class triple extends sandbox_link_named
             if ($vrb != null) {
                 return $vrb->get_code_id();
             } else {
-                $msg = 'verb with id ' . $id . ' is missing';
+                $msg = 'code id for reverse verb of triple ' . $this->dsp_id() . ' is missing in system cache';
                 log_err($msg);
                 return $msg;
             }
@@ -2495,7 +2495,7 @@ class triple extends sandbox_link_named
         sql_db         $db_con,
         triple|sandbox $db_rec,
         triple|sandbox $std_rec,
-        user_message $msg
+        user_message   $msg
     ): bool
     {
         if ($db_rec->from_id() <> $this->from_id()
@@ -3104,16 +3104,40 @@ class triple extends sandbox_link_named
 
     /**
      * @return string with the unique id fields
+     * TODO Prio 1 never use functions in dsp_id t avoid endless loops
      * TODO check if $this->load_objects(); needs to be called from the calling function upfront
      */
     function dsp_id(): string
     {
+        global $sys;
+
         $result = '';
 
-        if ($this->get_from()->name() <> '' and $this->get_verb_name() <> '' and $this->get_to()->name() <> '') {
-            $result .= '"' . $this->get_from()->name() . '" "'; // e.g. Australia
-            $result .= $this->get_verb_name() . '" "'; // e.g. is a
-            $result .= $this->get_to()->name() . '"';       // e.g. Country
+        $vrb_name = '';
+        if ($this->predicate_id != null) {
+            $vrb = $sys->typ_lst->vrb->get($this->predicate_id);
+            if ($vrb != null) {
+                $vrb_name = $vrb->name;
+            }
+        }
+
+        $from = $this->fob;
+        if ($from::class == phrase::class) {
+            $from = $from->obj;
+        }
+        $to = $this->tob;
+        if ($to::class == phrase::class) {
+            $to = $to->obj;
+        }
+
+        if ($from?->name <> '' and $vrb_name <> '' and $to?->name <> '') {
+            $result .= '"' . $from?->name . '" "'; // e.g. Australia
+            $result .= $vrb_name . '" "'; // e.g. is a
+            $result .= $to?->name . '"';       // e.g. Country
+        } elseif ($from?->name <> '' and $to?->name <> '') {
+            $result .= '"' . $from?->name . '" "'; // e.g. Australia
+            $result .= 'id ' . $this->predicate_id . '" "'; // e.g. is a
+            $result .= $to?->name . '"';       // e.g. Country
         } elseif ($this->name_given() != '') {
             $result .= $this->name_given(); // e.g. Canton Zurich
         } elseif ($this->name() != '') {

@@ -750,6 +750,23 @@ enum messages: string
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
         . ' is not valid and cannot be linked to '
         . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case MANDATORY_LINK_ID_MISSING = 'the link id for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' are missing';
+
+    case LOAD_PHRASE_BY_ID_FAILED = 'cannot get phrase '
+        . self::VAR_START . self::VAR_PHRASE . self::VAR_END
+        . ' from database';
+    case LOAD_FORMULA_BY_ID_FAILED = 'cannot get formula '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . ' from database';
+    case LOAD_VIEW_BY_ID_FAILED = 'cannot get view '
+        . self::VAR_START . self::VAR_VIEW . self::VAR_END
+        . ' from database';
+    case LOAD_COMPONENT_BY_ID_FAILED = 'cannot get component '
+        . self::VAR_START . self::VAR_COMPONENT . self::VAR_END
+        . ' from database';
+
 
     case DB_SQL_TYPE_UNKNOWN = 'database type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
@@ -1173,6 +1190,7 @@ enum messages: string
         . '" already exists. Please use another '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' name.';
+    case ALREADY_EXISTS = 'already exists';
     case CLASS_LIST_UNEXPECTED = 'Cannot create type for the list class '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' because no matching type has been assigned in the code';

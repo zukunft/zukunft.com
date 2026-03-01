@@ -78,7 +78,7 @@ class sources
     const string TEST_URL_CHANGED = 'https://api.zukunft.com/';
     const string TEST_DESCRIPTION_CHANGED = 'System Test Source Description Changed';
 
-    // array of source names that used for testing and remove them after the test
+    // array of source names that used for testing and should be removed or renamed by a user
     const array RESERVED_NAMES = array(
         self::WIKIDATA, // the source for all data imported from wikidata that does not yet have a source defined in wikidata
         self::SIB,
@@ -92,6 +92,7 @@ class sources
         self::SIB
     );
 
+    // array of test source names that used for testing that should be removed after the test
     const array TEST_SOURCES = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_ADD_API,

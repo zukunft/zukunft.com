@@ -65,18 +65,20 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_views
+class test_views extends test_objects
 {
 
+
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test views for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, views::TEST_VIEWS, new view($this->env->usr1));
     }
 
 
@@ -116,7 +118,7 @@ class test_views
     function view_add(): view
     {
         $msk = new view($this->env->usr1);
-        $msk->set_name(views::TEST_ADD);
+        $msk->set_name(views::TEST_ADD_NAME);
         return $msk;
     }
 

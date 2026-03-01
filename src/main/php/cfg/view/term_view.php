@@ -588,22 +588,29 @@ class term_view extends sandbox_link
      * TODO add a bool var "is_loaded" to db_object
      *      to indicate is the object has just been created and might be incomplete
      *      or if loaded from the db and is expected to have all vars in line with the db
-     * @return bool true if all the related objects has been loaded
+     * @param user_message $msg to collect the message due to missing links
+     * @return bool true if all the related objects have been loaded
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
-        $result = true;
-
         $msk = $this->get_view();
         if ($msk->id() == 0) {
             if ($msk->name() != '') {
-                $result = $msk->load_by_name($msk->name());
+                if(!$msk->load_by_name($msk->name())) {
+                    $msg->add(msg_id::LOAD_VIEW_BY_ID_FAILED, [
+                        msg_id::VAR_VIEW => $this->get_view()->dsp_id()
+                    ]);
+                }
             } else {
                 log_warning('Cannot load view because neither id nor name is set');
             }
         } else {
             if ($msk->name() == '') {
-                $result = $msk->load_by_id($msk->id());
+                if(!$msk->load_by_id($msk->id())) {
+                    $msg->add(msg_id::LOAD_VIEW_BY_ID_FAILED, [
+                        msg_id::VAR_VIEW => $this->get_view()->dsp_id()
+                    ]);
+                }
             }
         }
 
@@ -619,8 +626,7 @@ class term_view extends sandbox_link
                 $result = $trm->load_by_id($trm->id());
             }
         }
-
-        return $result;
+        return parent::reload_objects($msg);
     }
 
     /**

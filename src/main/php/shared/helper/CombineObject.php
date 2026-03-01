@@ -45,7 +45,7 @@ class CombineObject
      * object vars
      */
 
-    protected IdObject|TextIdObject|null $obj;
+    public IdObject|TextIdObject|null $obj;
 
 
     /*

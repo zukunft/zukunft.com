@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::SHARED_CONST . 'refs.php';
@@ -47,6 +48,7 @@ include_once html_paths::REF . 'ref_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
@@ -58,18 +60,19 @@ use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_refs
+class test_refs extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test source for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, refs::TEST_REF_KEYS, new ref($this->env->usr1));
     }
 
 
@@ -115,10 +118,12 @@ class test_refs
         return $ref;
     }
 
-    function reference_add(): ref
+    function reference_add(phrase $phr): ref
     {
+        global $sys;
         $ref = new ref($this->env->usr1);
-        $ref->set_name(refs::SYSTEM_TEST_ADD);
+        $ref->set(1,
+            $phr, $sys->typ_lst->ref_typ->id(ref_types::WIKIDATA), refs::SYSTEM_TEST_ADD);
         return $ref;
     }
 

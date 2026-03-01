@@ -72,4 +72,17 @@ class refs
         self::SYSTEM_TEST_ADD_COM,
     );
 
+    // array of external keys for references that used for testing and remove them after the test
+    const array RESERVED_REFERENCES_KEYS = array(
+        self::SYSTEM_TEST_ADD,
+        self::SYSTEM_TEST_API_ADD_KEY,
+        self::SYSTEM_TEST_RENAMED
+    );
+
+    const array TEST_REF_KEYS = array(
+        self::SYSTEM_TEST_ADD,
+        self::SYSTEM_TEST_API_ADD_KEY,
+        self::SYSTEM_TEST_RENAMED
+    );
+
 }

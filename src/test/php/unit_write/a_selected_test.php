@@ -244,8 +244,7 @@ class a_selected_test extends test_cleanup
              */
 
             // cleanup - fallback delete
-            $t_wrd = new test_words($this);
-            $t_wrd->cleanup($ts);
+            $this->cleanup_objects();
 
             // run the selected db write tests
             //new user_write_tests()->run($this);

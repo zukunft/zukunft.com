@@ -145,7 +145,7 @@ class sandbox_named extends sandbox
 
     // database fields only used for objects that have a name
     // simply the object name, which is only null if the object has not yet been written to the database
-    protected ?string $name = null;
+    public ?string $name = null;
     // the object description that is shown as a mouseover explain to the user
     // if description is NULL the database value should not be updated
     public ?string $description = null;

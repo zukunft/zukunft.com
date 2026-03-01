@@ -172,6 +172,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -700,7 +701,7 @@ class sandbox extends db_object_seq_id_user
     {
         $msg = parent::diff_msg($obj);
         $lib = new library();
-        if ($this->owner_id() != $obj->owner_id()) {
+        if ($this->owner_id() != $obj->owner_id() and $obj->owner_id() != null) {
             $msg->add(msg_id::DIFF_OWNER, [
                 msg_id::VAR_USER => $obj->owner_id(),
                 msg_id::VAR_USER_CHK => $this->owner_id(),
@@ -1133,13 +1134,21 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * dummy function to get the missing objects from the database that is always overwritten by the child class
+     * check if the objects have been loaded
+     * @param user_message $msg to collect the message due to missing links
      * @returns bool  false if the loading has failed
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
-        log_err('The dummy parent method load_objects has been called for ' . $this::class . ', which should never happen');
-        return true;
+        if ($this->is_link_obj()) {
+            // check if the required parameters are set
+            if (($this->fob()->id() == 0 or $this->tob()->id() == 0) and $this->id() == 0) {
+                $msg->add(msg_id::MANDATORY_LINK_ID_MISSING, [
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
+        }
+        return $msg->is_ok();
     }
 
 
@@ -2424,6 +2433,7 @@ class sandbox extends db_object_seq_id_user
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
+        // save to database is always time consuming so a log entry might help to detect duplicate save calls
         log_debug($this->dsp_id());
 
         global $db_con;
@@ -2432,30 +2442,26 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
-        // check the preserved names
+        // check e.g. if a preserved name is used and if yes add a message and solution to $msg
         if ($this->check_save($msg)) {
-            // load the objects if needed e.g. to log the names of the link
-            if ($this->is_link_obj()) {
-                $this->reload_objects();
-
-                // check if the required parameters are set
-                if (($this->fob()->id() == 0 or $this->tob()->id() == 0) and $this->id() == 0) {
-                    log_err('Either the id or the link ids must be set to save a link');
-                }
-            }
-
-            // configure the global database connection object for the select, insert, update and delete queries
-            $db_con->set_class($this::class);
-            $db_con->set_usr($this->get_user()->id);
+            $this->reload_objects($msg);
         }
 
-        // create an object to check possible duplicates
-        $similar = null;
+        // read the database
+        $db_rec = $this->clone_reset(true);
+        if ($msg->is_ok()) {
+            if ($this->has_id()) {
+                $db_rec = $this->load_db($msg);
+            }
+        }
 
-        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
-        if ($this->id() == 0) {
+        // check possible duplicates
+        $similar = null;
+        if ($msg->is_ok()) {
             log_debug('check possible duplicates before adding ' . $this->dsp_id());
             $similar = $this->get_similar($msg);
+
+            // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
             if ($similar->id() <> 0) {
                 // check that the get_similar function has really found a similar object and report potential program errors
                 if (!$this->is_similar($similar)) {
@@ -2476,10 +2482,7 @@ class sandbox extends db_object_seq_id_user
                         }
                     }
                 }
-            } else {
-                $similar = null;
             }
-
         }
 
         // create a new object if nothing similar has been found
@@ -2503,35 +2506,6 @@ class sandbox extends db_object_seq_id_user
                 // update the existing object
                 if ($msg->is_ok()) {
                     log_debug('update ' . $this->dsp_id());
-
-                    // read the database values to be able to check if something has been changed;
-                    // done first, because it needs to be done for user and general object values
-                    $db_rec = clone $this;
-                    $db_rec->reset();
-                    $db_rec->set_user($this->get_user());
-                    if ($db_rec->load_by_id($this->id()) != $this->id()) {
-                        $msg->add(msg_id::FAILED_RELOAD_CLASS, [
-                            msg_id::VAR_CLASS_NAME => $class_name
-                        ]);
-                    } else {
-                        log_debug('reloaded from db');
-                        if ($this->is_link_obj()) {
-                            if (!$db_rec->reload_objects()) {
-                                $msg->add(msg_id::FAILED_RELOAD_CLASS, [
-                                    msg_id::VAR_CLASS_NAME => $class_name
-                                ]);
-                            }
-                            // configure the global database connection object again to overwrite any changes from load_objects
-                            $db_con->set_class($this::class);
-                            $db_con->set_usr($this->get_user()->id);
-                        }
-                        // relevant is if there is a user config in the database
-                        // so use this information to prevent
-                        // the need to forward the db_rec to all functions
-                        if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
-                            $this->usr_cfg_id = $db_rec->usr_cfg_id;
-                        }
-                    }
 
                     // load the common object
                     $std_rec = clone $this;
@@ -2568,7 +2542,7 @@ class sandbox extends db_object_seq_id_user
                 }
             }
             if (!$msg->is_ok()) {
-                log_warning($msg->get_last_message(), 'user_sandbox_' . $class_name . '->save');
+                log_warning($msg->get_last_message(), 'save');
             }
         }
 
@@ -2587,6 +2561,51 @@ class sandbox extends db_object_seq_id_user
     function save_related(user_message $usr_msg): bool
     {
         return true;
+    }
+
+
+    /*
+     * save parts
+     */
+
+    /**
+     * read the database values to be able to check if something has been changed;
+     * done first, because it needs to be done for user and general object values
+     * @param user_message $msg
+     * @return sandbox
+     */
+    private function load_db(user_message $msg): sandbox
+    {
+        // prepare
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
+        // read the database values to be able to check if something has been changed;
+        // done first, because it needs to be done for user and general object values
+        $db_rec = clone $this;
+        $db_rec->reset();
+        $db_rec->set_user($this->get_user());
+        if ($db_rec->load_by_id($this->id()) != $this->id()) {
+            $msg->add(msg_id::FAILED_RELOAD_CLASS, [
+                msg_id::VAR_CLASS_NAME => $class_name
+            ]);
+        } else {
+            log_debug('reloaded from db');
+            if ($this->is_link_obj()) {
+                if (!$db_rec->reload_objects()) {
+                    $msg->add(msg_id::FAILED_RELOAD_CLASS, [
+                        msg_id::VAR_CLASS_NAME => $class_name
+                    ]);
+                }
+            }
+            // relevant is if there is a user config in the database
+            // so use this information to prevent
+            // the need to forward the db_rec to all functions
+            if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
+                $this->usr_cfg_id = $db_rec->usr_cfg_id;
+            }
+        }
+        return $db_rec;
     }
 
     /*

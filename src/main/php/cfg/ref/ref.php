@@ -943,12 +943,11 @@ class ref extends sandbox_link
 
     /**
      * TODO add the missing objects like the source
-     * @return bool true if all the related objects has been loaded
+     * @param user_message $msg to collect the message due to missing links
+     * @return bool true if all the related objects have been loaded
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
-        $result = true;
-
         if ($this->phrase()?->name() == null or $this->phrase()?->name() == '') {
             if ($this->phrase_id() <> 0) {
                 $phr = new phrase($this->get_user());
@@ -956,13 +955,13 @@ class ref extends sandbox_link
                     $this->set_phrase($phr);
                     log_debug('phrase ' . $phr->dsp_id() . ' loaded');
                 } else {
-                    $result = false;
+                    $msg->add(msg_id::LOAD_PHRASE_BY_ID_FAILED, [
+                        msg_id::VAR_PHRASE => $this->phrase()->dsp_id()
+                    ]);
                 }
             }
         }
-
-        log_debug('done');
-        return $result;
+        return parent::reload_objects($msg);
     }
 
     /**

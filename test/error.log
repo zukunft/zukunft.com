@@ -17407,3 +17407,71 @@ trace
 #11 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
 #12 {main}
 by user
+2026-03-01T13:55:12+00:00: FATAL ERROR! Insert to change log failed with (zukunft.com system test - test@zukunft.com (3),del,verbs,verb_name)
+2026-03-01T13:55:12+00:00: FATAL ERROR! Insert to change log failed with (zukunft.com system test - test@zukunft.com (3),del,verbs,verb_name)
+
+function user_log->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(1056): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/verb/verb.php(905): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/verb/verb.php(1091): Zukunft\ZukunftCom\main\php\cfg\verb\verb->log_del()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_base.php(3363): Zukunft\ZukunftCom\main\php\cfg\verb\verb->del()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_base.php(3332): Zukunft\ZukunftCom\test\php\utils\test_base->write_named_cleanup_one()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_objects.php(90): Zukunft\ZukunftCom\test\php\utils\test_base->write_named_cleanup()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_verbs.php(59): Zukunft\ZukunftCom\test\php\create\test_objects->cleanup_objects()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_cleanup.php(120): Zukunft\ZukunftCom\test\php\create\test_verbs->cleanup()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/a_selected_test.php(247): Zukunft\ZukunftCom\test\php\utils\test_cleanup->cleanup_objects()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test_part.php(72): Zukunft\ZukunftCom\test\php\unit_write\a_selected_test->run()
+#10 {main}
+by user 
+2026-03-01T13:55:13+00:00: FATAL ERROR! Insert to change log failed with (zukunft.com system test - test@zukunft.com (3),del,verbs,verb_name,System Test Verb,,35)
+2026-03-01T13:55:13+00:00: FATAL ERROR! Insert to change log failed with (zukunft.com system test - test@zukunft.com (3),del,verbs,verb_name,System Test Verb,,35)
+
+function user_log->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(1057): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/verb/verb.php(905): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/verb/verb.php(1091): Zukunft\ZukunftCom\main\php\cfg\verb\verb->log_del()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_base.php(3363): Zukunft\ZukunftCom\main\php\cfg\verb\verb->del()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_base.php(3332): Zukunft\ZukunftCom\test\php\utils\test_base->write_named_cleanup_one()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_objects.php(90): Zukunft\ZukunftCom\test\php\utils\test_base->write_named_cleanup()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_verbs.php(59): Zukunft\ZukunftCom\test\php\create\test_objects->cleanup_objects()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_cleanup.php(120): Zukunft\ZukunftCom\test\php\create\test_verbs->cleanup()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/a_selected_test.php(247): Zukunft\ZukunftCom\test\php\utils\test_cleanup->cleanup_objects()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test_part.php(72): Zukunft\ZukunftCom\test\php\unit_write\a_selected_test->run()
+#10 {main}
+by user 
+2026-03-01T13:55:15+00:00: FATAL ERROR! Insert to change log failed with (zukunft.com system test - test@zukunft.com (3),del,verbs,verb_name)
+2026-03-01T13:55:15+00:00: FATAL ERROR! Insert to change log failed with (zukunft.com system test - test@zukunft.com (3),del,verbs,verb_name)
+
+function user_log->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(1056): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/verb/verb.php(905): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/verb/verb.php(1091): Zukunft\ZukunftCom\main\php\cfg\verb\verb->log_del()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_base.php(3363): Zukunft\ZukunftCom\main\php\cfg\verb\verb->del()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_base.php(3333): Zukunft\ZukunftCom\test\php\utils\test_base->write_named_cleanup_one()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_objects.php(90): Zukunft\ZukunftCom\test\php\utils\test_base->write_named_cleanup()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_verbs.php(59): Zukunft\ZukunftCom\test\php\create\test_objects->cleanup_objects()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_cleanup.php(120): Zukunft\ZukunftCom\test\php\create\test_verbs->cleanup()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/a_selected_test.php(247): Zukunft\ZukunftCom\test\php\utils\test_cleanup->cleanup_objects()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test_part.php(72): Zukunft\ZukunftCom\test\php\unit_write\a_selected_test->run()
+#10 {main}
+by user 
+2026-03-01T13:55:15+00:00: FATAL ERROR! Insert to change log failed with (zukunft.com system test - test@zukunft.com (3),del,verbs,verb_name,System Test Verb,,35)
+2026-03-01T13:55:15+00:00: FATAL ERROR! Insert to change log failed with (zukunft.com system test - test@zukunft.com (3),del,verbs,verb_name,System Test Verb,,35)
+
+function user_log->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(1057): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/verb/verb.php(905): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/verb/verb.php(1091): Zukunft\ZukunftCom\main\php\cfg\verb\verb->log_del()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_base.php(3363): Zukunft\ZukunftCom\main\php\cfg\verb\verb->del()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_base.php(3333): Zukunft\ZukunftCom\test\php\utils\test_base->write_named_cleanup_one()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_objects.php(90): Zukunft\ZukunftCom\test\php\utils\test_base->write_named_cleanup()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_verbs.php(59): Zukunft\ZukunftCom\test\php\create\test_objects->cleanup_objects()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/test_cleanup.php(120): Zukunft\ZukunftCom\test\php\create\test_verbs->cleanup()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/a_selected_test.php(247): Zukunft\ZukunftCom\test\php\utils\test_cleanup->cleanup_objects()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test_part.php(72): Zukunft\ZukunftCom\test\php\unit_write\a_selected_test->run()
+#10 {main}
+by user 

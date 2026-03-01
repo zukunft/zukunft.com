@@ -36,7 +36,9 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -50,7 +52,9 @@ include_once html_paths::WORD . 'triple_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -182,10 +186,13 @@ class test_triples extends test_objects
         return $trp;
     }
 
-    function triple_add(): triple
+    function triple_add(phrase $wrd_from, verb $vrb, phrase $phr_to): triple
     {
         $trp = new triple($this->env->usr1);
         $trp->set_name(triples::SYSTEM_TEST_ADD);
+        $trp->set_from($wrd_from);
+        $trp->set_verb($vrb);
+        $trp->set_to($phr_to);
         return $trp;
     }
 

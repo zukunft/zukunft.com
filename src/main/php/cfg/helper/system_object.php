@@ -45,6 +45,7 @@ include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::SHARED_CONST . 'users.php';
 
@@ -52,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 
@@ -84,7 +86,8 @@ class system_object
     public type_lists $typ_lst;
 
     // the system users as a private var to restrict the access
-    private user_list $sys_usr_lst;
+    // TODO Prio check where this is used and make sure it is only used for system testing
+    public user_list $sys_usr_lst;
 
 
     /*
@@ -156,6 +159,16 @@ class system_object
     function system_users(): user_list
     {
         return $this->sys_usr_lst;
+    }
+
+
+    /*
+     * modify
+     */
+
+    function add_verb(verb $vrb): void
+    {
+        $this->typ_lst->vrb->add($vrb);
     }
 
 }

@@ -67,7 +67,19 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
+use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 
 class test_cleanup extends test_api
 {
@@ -75,6 +87,41 @@ class test_cleanup extends test_api
     /*
      * execute
      */
+
+
+    /**
+     * simple clean-up of the standard objects
+     * @return bool
+     */
+    function cleanup_objects(): bool
+    {
+        $ts = 'cleanup all ';
+        $t_cmp = new test_components($this);
+        $t_msk = new test_views($this);
+        $t_res = new test_results($this);
+        $t_frm = new test_formulas($this);
+        $t_grp = new test_groups($this);
+        $t_val = new test_values($this);
+        $t_ref = new test_refs($this);
+        $t_src = new test_sources($this);
+        $t_trp = new test_triples($this);
+        $t_vrb = new test_verbs($this);
+        $t_wrd = new test_words($this);
+        $t_usr = new test_users($this);
+        $t_cmp->cleanup($ts);
+        $t_msk->cleanup($ts);
+        //$t_res->cleanup($ts);
+        $t_frm->cleanup($ts);
+        //$t_grp->cleanup($ts);
+        //$t_val->cleanup($ts);
+        $t_ref->cleanup($ts);
+        $t_src->cleanup($ts);
+        $t_trp->cleanup($ts);
+        $t_vrb->cleanup($ts);
+        $t_wrd->cleanup($ts);
+        $t_usr->cleanup($ts);
+        return true;
+    }
 
     /**
      * TODO use the user message object instead of a string

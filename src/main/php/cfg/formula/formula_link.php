@@ -785,32 +785,36 @@ class formula_link extends sandbox_link
     /**
      * to load the formula and the phase object
      * if the link object is loaded by an external query like in user_display to show the sandbox
+     * @param user_message $msg to collect the message due to missing links
      * @return bool true if the loading of the linked objects has been successful
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
-        $result = true;
         if ($this->formula_id() > 0) {
             $frm = new formula($this->get_user());
             $frm->load_by_id($this->formula_id());
             if ($frm->id() > 0) {
                 $this->set_formula($frm);
             } else {
-                $result = false;
+                $msg->add(msg_id::LOAD_FORMULA_BY_ID_FAILED, [
+                    msg_id::VAR_FORMULA => $this->formula()->dsp_id()
+                ]);
             }
         }
-        if ($result) {
+        if ($msg->is_ok()) {
             if ($this->phrase_id() <> 0) {
                 $phr = new phrase($this->get_user());
                 $phr->load_by_id($this->phrase_id());
                 if ($phr->id() != 0) {
                     $this->set_phrase($phr);
                 } else {
-                    $result = false;
+                    $msg->add(msg_id::LOAD_PHRASE_BY_ID_FAILED, [
+                        msg_id::VAR_PHRASE => $this->phrase()->dsp_id()
+                    ]);
                 }
             }
         }
-        return $result;
+        return parent::reload_objects($msg);
     }
 
     function from_field(): string

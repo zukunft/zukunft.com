@@ -33,32 +33,32 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::SHARED_CONST . 'groups.php';
-include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_groups
+class test_groups extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test groups for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, groups::TEST_GROUPS_CREATE, new group($this->env->usr1));
     }
 
 
@@ -98,11 +98,10 @@ class test_groups
         return $ref;
     }
 
-    function group_add(): group
+    function group_add(phrase $phr): group
     {
-        $t_wrd = new test_words($this->env);
         $lst = new phrase_list($this->env->usr1);
-        $lst->add($t_wrd->word_add()->phrase());
+        $lst->add($phr);
         return $lst->get_grp_id(false);
     }
 

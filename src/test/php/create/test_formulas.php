@@ -192,8 +192,11 @@ class test_formulas extends test_objects
 
     function formula_add(): formula
     {
+        $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set_name(formulas::SYSTEM_TEST_ADD);
+        $frm->set_user_text(formulas::INCREASE_EXP, $t_trm->term_list_increase());
+        $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }
 

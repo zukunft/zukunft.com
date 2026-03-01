@@ -36,17 +36,23 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::SHARED . 'library.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_objects
@@ -73,12 +79,13 @@ class test_objects
      * delete any remaining test objects for a clean test start of each test
      */
     function cleanup_objects(
-        string                                                   $ts,
-        array                                                    $obj_names,
-        sandbox_named|sandbox_link_named|verb|phrase|type_object $obj
+        string                                                             $ts,
+        array                                                              $obj_names,
+        sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $obj
     ): void
     {
-        $this->env->subheader($ts . 'cleanup');
+        $lib = new library();
+        $this->env->subheader($ts . 'cleanup ' . $lib->class_to_name($obj::class));
         foreach ($obj_names as $obj_name) {
             $this->env->write_named_cleanup($obj, $obj_name);
         }

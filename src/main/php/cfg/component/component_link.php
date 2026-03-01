@@ -1116,18 +1116,20 @@ class component_link extends sandbox_link
 
     /**
      * to load the related objects if the link object is loaded by an external query like in user_display to show the sandbox
+     * @param user_message $msg to collect the message due to missing links
      * @returns bool true if a link has been loaded
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
-        $result = true;
         if ($this->get_view() != null) {
             if ($this->get_view()->id() > 0 and $this->get_view()->name() == '') {
                 $msk = new view($this->get_user());
                 if ($msk->load_by_id($this->get_view()->id())) {
                     $this->set_view($msk);
                 } else {
-                    $result = false;
+                    $msg->add(msg_id::LOAD_VIEW_BY_ID_FAILED, [
+                        msg_id::VAR_VIEW => $this->get_view()->dsp_id()
+                    ]);
                 }
             }
         }
@@ -1137,11 +1139,13 @@ class component_link extends sandbox_link
                 if ($cmp->load_by_id($this->get_component()->id())) {
                     $this->set_component($cmp);
                 } else {
-                    $result = false;
+                    $msg->add(msg_id::LOAD_COMPONENT_BY_ID_FAILED, [
+                        msg_id::VAR_COMPONENT => $this->get_component()->dsp_id()
+                    ]);
                 }
             }
         }
-        return $result;
+        return parent::reload_objects($msg);
     }
 
 

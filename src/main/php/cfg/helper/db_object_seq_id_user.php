@@ -155,11 +155,15 @@ class db_object_seq_id_user extends db_object_seq_id
                 log_warning('object user id ' . $obj_usr_id
                     . ' does not match db row user id ' . $db_usr_id);
                 if ($obj_usr_id == 0) {
+                    $usr = null;
                     global $sys;
-                    $usr = $sys->sys_usr_lst->get_by_id($db_usr_id);
-                    if ($usr != null) {
-                        $this->set_user($usr);
-                    } else {
+                    if (!$sys->sys_usr_lst->is_empty()) {
+                        $usr = $sys->sys_usr_lst->get_by_id($db_usr_id);
+                        if ($usr != null) {
+                            $this->set_user($usr);
+                        }
+                    }
+                    if ($usr == null) {
                         // TODO Prio 2 try to get the user from cache
                         $usr = new user();
                         if ($usr->load_by_id($db_usr_id)) {

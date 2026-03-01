@@ -2605,25 +2605,29 @@ class test_base
      * and if based on this statement, a database id is returned
      *
      * @param string $test_name the description of the test for the log
-     * @param db_object_seq_id $dbo the database object
+     * @param sandbox_multi|db_object_seq_id $dbo the database object
      * @param array $sc_par_lst list of parameters for the SQL creation
      * @return int the database id of the row just created
      */
     function assert_insert(
-        string           $test_name,
-        db_object_seq_id $dbo,
-        user_message     $msg,
-        array            $sc_par_lst = []
+        string                         $test_name,
+        sandbox_multi|db_object_seq_id $dbo,
+        user_message                   $msg,
+        array                          $sc_par_lst = []
     ): int
     {
         global $db_con;
 
+        $is_val = false;
+        if (in_array($dbo::class, def::DB_TYPES_NO_SEQ)) {
+            $is_val = true;
+        }
         $db_id = 0;
         $sc = $db_con->sql_creator();
         $qp = $dbo->sql_insert($sc, $msg, new sql_type_list($sc_par_lst));
         if ($msg->is_ok()) {
             $msg_txt = 'add ' . $dbo->dsp_id() . ' for system testing';
-            if ($db_con->insert($qp, $msg_txt, $msg)) {
+            if ($db_con->insert($qp, $msg_txt, $msg, false, $is_val)) {
                 $db_id = $msg->get_row_id();
                 if ($db_id <= 0) {
                     $msg->add(msg_id::DB_INSERT_ID_MISSING, [
@@ -3317,13 +3321,13 @@ class test_base
     /**
      * remove all remaining test rows of a named user sandbox object
      *
-     * @param sandbox_named|sandbox_link_named|phrase|verb|type_object $sbx the named user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx the named user sandbox object e.g. a word
      * @param string $name the name of the user sandbox object that should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
      *                    e.g. to detect incomplete clean-up of previous tests
      * @return void
      */
-    function write_named_cleanup(sandbox_named|sandbox_link_named|phrase|verb|type_object $sbx, string $name, bool $check = false): void
+    function write_named_cleanup(sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx, string $name, bool $check = false): void
     {
         $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
         $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
@@ -3334,7 +3338,7 @@ class test_base
     /**
      * remove remaining test rows for one name and one user
      *
-     * @param sandbox_named|sandbox_link_named|phrase|verb|type_object $sbx the named user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx the named user sandbox object e.g. a word
      * @param string $name the name of the user sandbox object that should be removed
      * @param user $usr the user configuration of this user should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
@@ -3343,10 +3347,10 @@ class test_base
      */
     private
     function write_named_cleanup_one(
-        sandbox_named|sandbox_link_named|phrase|verb|type_object $sbx,
-        user                                                     $usr,
-        string                                                   $name,
-        bool                                                     $check = false
+        sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx,
+        user                                                               $usr,
+        string                                                             $name,
+        bool                                                               $check = false
     ): void
     {
         $usr_msg = new user_message($usr);

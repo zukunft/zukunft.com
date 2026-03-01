@@ -162,8 +162,8 @@ class sandbox_link extends sandbox
      * object vars
      */
 
-    private sandbox_named|combine_named|null $fob = null; // the (F)rom (OB)ject which this linked object is creating the connection
-    private sandbox_named|combine_named|string|null $tob = null; // the (T)o (OB)ject which this linked object is creating the connection (can be a string for external keys)
+    public sandbox_named|combine_named|null $fob = null; // the (F)rom (OB)ject which this linked object is creating the connection
+    public sandbox_named|combine_named|string|null $tob = null; // the (T)o (OB)ject which this linked object is creating the connection (can be a string for external keys)
 
     // database id of the type used for named link user sandbox objects with predefined functionality
     // which is formula link and view component link

@@ -212,12 +212,6 @@ class sql_creator
         job::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
-    // classes where the tables have no auto increase id
-    const array DB_TYPES_NO_SEQ = [
-        group::class,
-        value::class,
-        result::class
-    ];
 
     // name the positions in the field definition array
     private const int FLD_POS_NAME = 0;

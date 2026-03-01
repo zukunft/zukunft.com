@@ -97,6 +97,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_USER . 'user_official_type.php';
 //include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_time_series.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
@@ -181,6 +185,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -338,6 +346,26 @@ class def
         formula::class,
         view::class,
         component::class,
+    ];
+
+    // list of value classes
+    const array VALUE_CLASSES = [
+        value::class,
+        value_time::class,
+        value_text::class,
+        value_geo::class,
+        value_time_series::class,
+    ];
+
+    // list of classes where the tables have no auto increase id instead the id is based on a phrase list based database id
+    const array DB_TYPES_NO_SEQ = [
+        value::class,
+        value_time::class,
+        value_text::class,
+        value_geo::class,
+        value_time_series::class,
+        result::class,
+        group::class,
     ];
 
     // list of classes where the link of two objects is the main unique key beside the database id
