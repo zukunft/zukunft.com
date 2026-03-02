@@ -140,14 +140,14 @@ if ($usr->id() > 0) {
             $trp = new triple($usr);
             $trp->load_by_link_id($phr_id, $vrb_id, $phr_to);
             if ($trp->id() > 0) {
-                $trp->reload_objects();
+                $trp->reload_objects($usr_msg);
                 log_debug('forward link ' . $phr_id . ' ' . $vrb_id . ' ' . $phr_to . '');
                 $msg .= '"' . $trp->from_name . ' ' . $trp->get_verb_name() . ' ' . $trp->to_name . '" already exists. ';
             }
             $trp_rev = new triple($usr);
             $trp_rev->load_by_link_id($phr_to, $vrb_id, $phr_id);
             if ($trp_rev->id() > 0) {
-                $trp_rev->reload_objects();
+                $trp_rev->reload_objects($usr_msg);
                 $msg .= 'The reverse of "' . $trp_rev->from_name . ' ' . $trp_rev->get_verb_name() . ' ' . $trp_rev->to_name . '" already exists. Do you really want to add both sides? ';
             }
         }

@@ -14771,6 +14771,112 @@ trace
 #9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(61): Zukunft\ZukunftCom\test\php\test_app->start()
 #10 {main}
 by user 
+2026-02-12T23:08:26+00:00: FATAL ERROR! Database column sys_log_level_id,level_name,code_id,description missing in sys_log_levels
+2026-02-12T23:08:26+00:00: FATAL ERROR! Database column sys_log_level_id,level_name,code_id,description missing in sys_log_levels
+
+function sql_db/check_column_names
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(5900): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(1456): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->check_column_names()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(1401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->load_db_code_link_file()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/db_check.php(157): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->db_fill_code_links()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#6 /home/timonz/PhpstormProjects/zukunft.com/test/reset_db.php(61): Zukunft\ZukunftCom\test\php\test_app->start()
+#7 {main}
+by user 
+2026-02-12T23:08:26+00:00: FATAL ERROR! Database column sys_log_status_id,status_name,code_id,description,action missing in sys_log_statuus
+2026-02-12T23:08:26+00:00: FATAL ERROR! Database column sys_log_status_id,status_name,code_id,description,action missing in sys_log_statuus
+
+function sql_db/check_column_names
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(5900): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(1456): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->check_column_names()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(1401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->load_db_code_link_file()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/db_check.php(157): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->db_fill_code_links()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#6 /home/timonz/PhpstormProjects/zukunft.com/test/reset_db.php(61): Zukunft\ZukunftCom\test\php\test_app->start()
+#7 {main}
+by user 
+2026-02-12T23:08:26+00:00: FATAL ERROR! Database column status_name missing in job_statuus
+2026-02-12T23:08:26+00:00: FATAL ERROR! Database column status_name missing in job_statuus
+
+function sql_db/check_column_names
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(5900): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(1456): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->check_column_names()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(1401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->load_db_code_link_file()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/db_check.php(157): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->db_fill_code_links()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#6 /home/timonz/PhpstormProjects/zukunft.com/test/reset_db.php(61): Zukunft\ZukunftCom\test\php\test_app->start()
+#7 {main}
+by user 
+2026-02-12T23:08:27+00:00: FATAL ERROR! Select failed due using "PREPARE sys_log_level_all (bigint, bigint) AS SELECT sys_log_level_id,  level_name,  description,  code_id FROM sys_log_levels ORDER BY sys_log_level_id LIMIT $1 OFFSET $2;" because: Database error ERROR:  relation "sys_log_levels" does not exist
+LINE 1: ...evel_id,  level_name,  description,  code_id FROM sys_log_le...
+                                                             ^ when preparing PREPARE sys_log_level_all (bigint, bigint) AS SELECT sys_log_level_id,  level_name,  description,  code_id FROM sys_log_levels ORDER BY sys_log_level_id LIMIT $1 OFFSET $2;
+2026-02-12T23:08:27+00:00: FATAL ERROR! Select failed due using "PREPARE sys_log_level_all (bigint, bigint) AS SELECT sys_log_level_id,  level_name,  description,  code_id FROM sys_log_levels ORDER BY sys_log_level_id LIMIT $1 OFFSET $2;" because: Database error ERROR:  relation "sys_log_levels" does not exist
+LINE 1: ...evel_id,  level_name,  description,  code_id FROM sys_log_le...
+                                                             ^ when preparing PREPARE sys_log_level_all (bigint, bigint) AS SELECT sys_log_level_id,  level_name,  description,  code_id FROM sys_log_levels ORDER BY sys_log_level_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3271): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3323): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3358): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_list.php(437): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_list.php(528): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_lists.php(373): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_lists.php(239): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load_backend_only()
+#7 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/system_object.php(124): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#8 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(181): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#9 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#10 /home/timonz/PhpstormProjects/zukunft.com/test/reset_db.php(61): Zukunft\ZukunftCom\test\php\test_app->start()
+#11 {main}
+by user 
+2026-02-12T23:08:27+00:00: FATAL ERROR! Select failed due using "PREPARE sys_log_level_all (bigint, bigint) AS SELECT sys_log_level_id,  level_name,  description,  code_id FROM sys_log_levels ORDER BY sys_log_level_id LIMIT $1 OFFSET $2;" because: Database error ERROR:  relation "sys_log_levels" does not exist
+LINE 1: ...evel_id,  level_name,  description,  code_id FROM sys_log_le...
+                                                             ^ when preparing PREPARE sys_log_level_all (bigint, bigint) AS SELECT sys_log_level_id,  level_name,  description,  code_id FROM sys_log_levels ORDER BY sys_log_level_id LIMIT $1 OFFSET $2;
+2026-02-12T23:08:27+00:00: FATAL ERROR! Select failed due using "PREPARE sys_log_level_all (bigint, bigint) AS SELECT sys_log_level_id,  level_name,  description,  code_id FROM sys_log_levels ORDER BY sys_log_level_id LIMIT $1 OFFSET $2;" because: Database error ERROR:  relation "sys_log_levels" does not exist
+LINE 1: ...evel_id,  level_name,  description,  code_id FROM sys_log_le...
+                                                             ^ when preparing PREPARE sys_log_level_all (bigint, bigint) AS SELECT sys_log_level_id,  level_name,  description,  code_id FROM sys_log_levels ORDER BY sys_log_level_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3271): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3323): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3358): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_list.php(437): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_list.php(528): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_lists.php(373): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_lists.php(239): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load_backend_only()
+#7 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/system_object.php(124): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#8 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(191): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#9 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#10 /home/timonz/PhpstormProjects/zukunft.com/test/reset_db.php(61): Zukunft\ZukunftCom\test\php\test_app->start()
+#11 {main}
+by user 
+2026-02-12T23:08:27+00:00: FATAL ERROR! Select failed due using "PREPARE ip_range_list_by_active (bigint) AS SELECT ip_range_id,  ip_range_key,  ip_from,  ip_to,  reason,  is_active FROM ip_ranges WHERE is_active = $1;" because: Database error ERROR:  column "ip_range_key" does not exist
+LINE 1: ...e_list_by_active (bigint) AS SELECT ip_range_id,  ip_range_k...
+                                                             ^
+HINT:  Perhaps you meant to reference the column "ip_ranges.ip_range_id". when preparing PREPARE ip_range_list_by_active (bigint) AS SELECT ip_range_id,  ip_range_key,  ip_from,  ip_to,  reason,  is_active FROM ip_ranges WHERE is_active = $1;
+2026-02-12T23:08:27+00:00: FATAL ERROR! Select failed due using "PREPARE ip_range_list_by_active (bigint) AS SELECT ip_range_id,  ip_range_key,  ip_from,  ip_to,  reason,  is_active FROM ip_ranges WHERE is_active = $1;" because: Database error ERROR:  column "ip_range_key" does not exist
+LINE 1: ...e_list_by_active (bigint) AS SELECT ip_range_id,  ip_range_k...
+                                                             ^
+HINT:  Perhaps you meant to reference the column "ip_ranges.ip_range_id". when preparing PREPARE ip_range_list_by_active (bigint) AS SELECT ip_range_id,  ip_range_key,  ip_from,  ip_to,  reason,  is_active FROM ip_ranges WHERE is_active = $1;
+
+function fetch
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3271): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3323): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3358): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/system/ip_range_list.php(118): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/user/user.php(1121): Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list->load()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/user/user.php(1161): Zukunft\ZukunftCom\main\php\cfg\user\user->ip_check()
+#6 /home/timonz/PhpstormProjects/zukunft.com/test/reset_db.php(67): Zukunft\ZukunftCom\main\php\cfg\user\user->get()
+#7 {main}
+by user 
 2026-02-17T22:09:28+00:00: FATAL ERROR! Insert to change log failed due to action id failure.
 2026-02-17T22:09:28+00:00: FATAL ERROR! Insert to change log failed due to action id failure.
 
@@ -14893,6 +14999,68 @@ trace
 #4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
 #5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
 #6 {main}
+by user 
+2026-02-19T16:09:53+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error ERROR:  relation "type_lists" does not exist
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+2026-02-19T16:09:53+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error ERROR:  relation "type_lists" does not exist
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3298): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3340): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3443): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/db_object.php(322): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(310): Zukunft\ZukunftCom\main\php\cfg\helper\db_object->load_without_id_return()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_object.php(366): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->load()
+#6 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/log/change_log.php(765): Zukunft\ZukunftCom\main\php\cfg\helper\type_object->load_by_code_id()
+#7 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/log/change_log.php(322): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_table()
+#8 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/log/change_log.php(306): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_table()
+#9 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_creator.php(1780): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_class()
+#10 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(1120): Zukunft\ZukunftCom\main\php\cfg\db\sql_creator->sql_func_log()
+#11 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_object.php(714): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->sql_write_log()
+#12 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(785): Zukunft\ZukunftCom\main\php\cfg\helper\type_object->sql_write()
+#13 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(638): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->sql_insert()
+#14 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(1506): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->db_add()
+#15 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(1405): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->load_db_code_link_file()
+#16 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/db_check.php(157): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->db_fill_code_links()
+#17 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#18 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#19 /home/timonz/PhpstormProjects/zukunft.com/test/test.php(59): Zukunft\ZukunftCom\test\php\test_app->start()
+#20 {main}
+by user 
+2026-02-19T16:10:07+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error ERROR:  relation "type_lists" does not exist
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+2026-02-19T16:10:07+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error ERROR:  relation "type_lists" does not exist
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3298): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3340): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3443): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/db_object.php(322): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(310): Zukunft\ZukunftCom\main\php\cfg\helper\db_object->load_without_id_return()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_object.php(366): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->load()
+#6 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/log/change_log.php(765): Zukunft\ZukunftCom\main\php\cfg\helper\type_object->load_by_code_id()
+#7 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/log/change_log.php(322): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_table()
+#8 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/log/change_log.php(306): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_table()
+#9 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_creator.php(1780): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_class()
+#10 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(1120): Zukunft\ZukunftCom\main\php\cfg\db\sql_creator->sql_func_log()
+#11 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_object.php(714): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->sql_write_log()
+#12 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(785): Zukunft\ZukunftCom\main\php\cfg\helper\type_object->sql_write()
+#13 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(638): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->sql_insert()
+#14 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(1506): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->db_add()
+#15 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(1405): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->load_db_code_link_file()
+#16 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/db_check.php(157): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->db_fill_code_links()
+#17 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(157): Zukunft\ZukunftCom\main\php\cfg\db\db_check->db_check()
+#18 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(119): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#19 /home/timonz/PhpstormProjects/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#20 {main}
 by user 
 2026-02-23T13:51:52+00:00: FATAL ERROR! Select failed due using "PREPARE user_status_all (bigint, bigint) AS SELECT user_status_id,  status_name,  description,  code_id FROM user_status ORDER BY user_status_id LIMIT $1 OFFSET $2;" because: Database error FEHLER:  Relation »user_status« existiert nicht
 LINE 1: ...tus_id,  status_name,  description,  code_id FROM user_statu...

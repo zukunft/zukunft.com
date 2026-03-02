@@ -597,7 +597,7 @@ class term_view extends sandbox_link
         if ($msk->id() == 0) {
             if ($msk->name() != '') {
                 if(!$msk->load_by_name($msk->name())) {
-                    $msg->add(msg_id::LOAD_VIEW_BY_ID_FAILED, [
+                    $msg->add(msg_id::LOAD_VIEW_BY_NAME_FAILED, [
                         msg_id::VAR_VIEW => $this->get_view()->dsp_id()
                     ]);
                 }
@@ -617,13 +617,21 @@ class term_view extends sandbox_link
         $trm = $this->term();
         if ($trm->id() == 0) {
             if ($trm->name() != '') {
-                $result = $trm->load_by_name($trm->name());
+                if(!$trm->load_by_name($trm->name())) {
+                    $msg->add(msg_id::LOAD_TERM_BY_NAME_FAILED, [
+                        msg_id::VAR_TERM => $this->term()->dsp_id()
+                    ]);
+                }
             } else {
                 log_warning('Cannot load term because neither id nor name is set');
             }
         } else {
             if ($trm->name() == '') {
-                $result = $trm->load_by_id($trm->id());
+                if(!$trm->load_by_id($trm->id())) {
+                    $msg->add(msg_id::LOAD_TERM_BY_ID_FAILED, [
+                        msg_id::VAR_TERM => $this->term()->dsp_id()
+                    ]);
+                }
             }
         }
         return parent::reload_objects($msg);

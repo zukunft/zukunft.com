@@ -1096,7 +1096,7 @@ class sandbox_named extends sandbox
                 $similar_trp = new triple($this->get_user());
                 $similar_trp->load_by_name_generated($this->name());
                 if ($similar_trp->id() > 0) {
-                    $similar_trp->reload_objects();
+                    $similar_trp->reload_objects($msg);
                     log_debug($this->dsp_id() . ' has the same name is the standard name of the triple "' . $similar_trp->dsp_id() . '"');
                     $result = $similar_trp;
                 }

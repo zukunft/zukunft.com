@@ -250,6 +250,7 @@ class ref extends sandbox_link
         string $id_fld = ''
     ): bool
     {
+        $msg = new user_message();
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
@@ -258,7 +259,7 @@ class ref extends sandbox_link
             $this->set_url($db_row[ref_db::FLD_URL]);
             $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->set_source_by_id($db_row[source_db::FLD_ID]);
-            if ($this->reload_objects()) {
+            if ($this->reload_objects($msg)) {
                 $result = true;
                 log_debug('done ' . $this->dsp_id());
             }

@@ -1637,6 +1637,7 @@ class triple extends sandbox_link_named
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
+        $msg = new user_message();
 
         // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
@@ -1650,7 +1651,7 @@ class triple extends sandbox_link_named
 
             // automatically update the generic name
             if ($result) {
-                $this->reload_objects();
+                $this->reload_objects($msg);
                 $new_name = $this->name();
                 log_debug('triple->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
@@ -1871,7 +1872,7 @@ class triple extends sandbox_link_named
     {
         if ($this->id() > 0) {
             // automatically update the generic name
-            $this->reload_objects();
+            $this->reload_objects($msg);
             $new_name = $this->name_generated();
             log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
             if ($new_name <> $this->name_generated) {
@@ -1884,8 +1885,10 @@ class triple extends sandbox_link_named
     /**
      * load the triple without the linked objects, because in many cases the object are already loaded by the caller
      * similar to term->load, but with a different use of verbs
+     * @param user_message $msg to collect the message due to missing links
+     * @returns bool  false if the loading has failed
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
         log_debug($this->dsp_id());
         $result = true;
@@ -1905,8 +1908,10 @@ class triple extends sandbox_link_named
                         $this->set_from($wrd->phrase());
                         $this->get_from()->set_name($wrd->name());
                     } else {
-                        log_err('Failed to load first word of phrase ' . $this->dsp_id());
-                        $result = false;
+                        $msg->add(msg_id::LOAD_WORD_BY_ID_FAILED, [
+                            msg_id::VAR_SIDE => msg_id::SIDE_FROM->text(),
+                            msg_id::VAR_WORD => $this->get_from()->dsp_id()
+                        ]);
                     }
                 } elseif ($this->from_id() < 0) {
                     $lnk = new triple($this->get_user());
@@ -1915,8 +1920,10 @@ class triple extends sandbox_link_named
                         $this->set_from($lnk->phrase());
                         $this->get_from()->set_name($lnk->name());
                     } else {
-                        log_err('Failed to load first phrase of phrase ' . $this->dsp_id());
-                        $result = false;
+                        $msg->add(msg_id::LOAD_TRIPLE_BY_ID_FAILED, [
+                            msg_id::VAR_SIDE => msg_id::SIDE_FROM->text(),
+                            msg_id::VAR_WORD => $this->get_from()->dsp_id()
+                        ]);
                     }
                 } else {
                     // if type is not (yet) set, create a dummy object to enable the selection
@@ -1948,8 +1955,10 @@ class triple extends sandbox_link_named
                         $this->set_to($wrd_to->phrase());
                         $this->get_to()->set_name($wrd_to->name());
                     } else {
-                        log_err('Failed to load second word of phrase ' . $this->dsp_id());
-                        $result = false;
+                        $msg->add(msg_id::LOAD_WORD_BY_ID_FAILED, [
+                            msg_id::VAR_SIDE => msg_id::SIDE_TO->text(),
+                            msg_id::VAR_WORD => $this->get_from()->dsp_id()
+                        ]);
                     }
                 } elseif ($this->to_id() < 0) {
                     $lnk = new triple($this->get_user());
@@ -1958,8 +1967,10 @@ class triple extends sandbox_link_named
                         $this->set_to($lnk->phrase());
                         $this->get_to()->set_name($lnk->name());
                     } else {
-                        log_err('Failed to load second phrase of phrase ' . $this->dsp_id());
-                        $result = false;
+                        $msg->add(msg_id::LOAD_TRIPLE_BY_ID_FAILED, [
+                            msg_id::VAR_SIDE => msg_id::SIDE_TO->text(),
+                            msg_id::VAR_WORD => $this->get_from()->dsp_id()
+                        ]);
                     }
                 } else {
                     // if type is not (yet) set, create a dummy object to enable the selection
@@ -1969,7 +1980,7 @@ class triple extends sandbox_link_named
                 log_debug('to ' . $this->get_to()->name());
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -2529,7 +2540,7 @@ class triple extends sandbox_link_named
                 if ($this->can_change() and $this->not_used()) {
                     // in this case change is allowed and done
                     log_debug('triple->save_id_if_updated change the existing triple ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
-                    $this->reload_objects();
+                    $this->reload_objects($msg);
                     $this->save_id_fields($db_con, $db_rec, $std_rec, $msg);
                 } else {
                     // if the target link has not yet been created
@@ -2644,7 +2655,7 @@ class triple extends sandbox_link_named
         if ($this->check_save($msg)) {
 
             // load the objects if needed
-            $this->reload_objects();
+            $this->reload_objects($msg);
 
             // build the database object because the is anyway needed
             $db_con->set_usr($this->get_user()->id);
@@ -3215,9 +3226,10 @@ class triple extends sandbox_link_named
         log_debug("triple->dsp " . $this->id() . ".");
 
         $result = ''; // reset the html code var
+        $msg = new user_message();
 
         // get the link from the database
-        $this->reload_objects();
+        $this->reload_objects($msg);
 
         // prepare to show the triple
         $result .= $this->get_from()->name() . ' '; // e.g. Australia
@@ -3236,9 +3248,10 @@ class triple extends sandbox_link_named
         log_debug("triple->dsp_r " . $this->id() . ".");
 
         $result = ''; // reset the html code var
+        $msg = new user_message();
 
         // get the link from the database
-        $this->reload_objects();
+        $this->reload_objects($msg);
 
         // prepare to show the triple
         $result .= $this->get_to()->name() . ' ';   // e.g. Countries

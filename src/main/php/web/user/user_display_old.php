@@ -436,7 +436,7 @@ class user_display_old extends user
                 $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
                 $frm_usr->predicate_id = $sbx_row['usr_type'];
                 $frm_usr->set_excluded($sbx_row['usr_excluded']);
-                $frm_usr->reload_objects();
+                $frm_usr->reload_objects($msg);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -496,7 +496,7 @@ class user_display_old extends user
                         $frm_lnk_other->set_user($usr_other);
                         $frm_lnk_other->predicate_id = $frm_lnk_other_row['link_type_id'];
                         $frm_lnk_other->set_excluded($frm_lnk_other_row[sql_db::FLD_EXCLUDED]);
-                        $frm_lnk_other->reload_objects();
+                        $frm_lnk_other->reload_objects($msg);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }

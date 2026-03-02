@@ -172,7 +172,6 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -1142,10 +1141,12 @@ class sandbox extends db_object_seq_id_user
     {
         if ($this->is_link_obj()) {
             // check if the required parameters are set
-            if (($this->fob()->id() == 0 or $this->tob()->id() == 0) and $this->id() == 0) {
-                $msg->add(msg_id::MANDATORY_LINK_ID_MISSING, [
-                    msg_id::VAR_NAME => $this->dsp_id()
-                ]);
+            if ($this::class != ref::class) {
+                if (($this->fob()->id() == 0 or $this->tob()->id() == 0) and $this->id() == 0) {
+                    $msg->add(msg_id::MANDATORY_LINK_ID_MISSING, [
+                        msg_id::VAR_NAME => $this->dsp_id()
+                    ]);
+                }
             }
         }
         return $msg->is_ok();
@@ -2592,7 +2593,7 @@ class sandbox extends db_object_seq_id_user
         } else {
             log_debug('reloaded from db');
             if ($this->is_link_obj()) {
-                if (!$db_rec->reload_objects()) {
+                if (!$db_rec->reload_objects($msg)) {
                     $msg->add(msg_id::FAILED_RELOAD_CLASS, [
                         msg_id::VAR_CLASS_NAME => $class_name
                     ]);
@@ -2677,7 +2678,7 @@ class sandbox extends db_object_seq_id_user
             } else {
                 // reload the objects if needed
                 if ($this->is_link_obj()) {
-                    if (!$this->reload_objects()) {
+                    if (!$this->reload_objects($msg)) {
                         $msg_txt .= 'Reloading of linked objects ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
                     }
                 }
@@ -2731,7 +2732,7 @@ class sandbox extends db_object_seq_id_user
                         if ($db_rec->load_by_id($this->id())) {
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
                             if ($this->is_link_obj()) {
-                                if (!$db_rec->reload_objects()) {
+                                if (!$db_rec->reload_objects($msg)) {
                                     $msg_txt .= 'Reloading of linked objects ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
                                 }
                             }

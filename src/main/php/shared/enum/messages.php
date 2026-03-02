@@ -114,6 +114,8 @@ enum messages: string
     const string VAR_NAME_FROM = 'VarFromName';
     // the name of the destination object of a link
     const string VAR_NAME_TO = 'VarToName';
+    // to describe the side of a link so either from or to
+    const string VAR_SIDE = 'VarToSide';
     // the name of a phrase
     const string VAR_PHRASE_NAME = 'VarPhraseName';
     // the name of a term
@@ -194,6 +196,8 @@ enum messages: string
     const string VAR_URL_KEY = 'VarUrlKey';
 
     // for the object main parameters created by the dsp_id function
+    const string VAR_WORD = 'VarObjWord';
+    const string VAR_TRIPLE = 'VarObjTriple';
     const string VAR_PHRASE = 'VarObjPhrase';
     const string VAR_FORMULA = 'VarObjFormula';
     const string VAR_TERM = 'VarObjTerm';
@@ -228,6 +232,10 @@ enum messages: string
     // special message id placeholders
     case ERROR_TEXT = 'error';
     case NONE = '';
+    case SIDE_FROM = 'from';
+    case SIDE_TO = 'to';
+    case SIDE_PARENT = 'parent';
+    case SIDE_CHILD = 'child';
 
     // messages with vars
 
@@ -754,15 +762,59 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' are missing';
 
+    case LOAD_WORD_BY_ID_FAILED = 'cannot get '
+        . self::VAR_START . self::VAR_SIDE . self::VAR_END
+        . ' word '
+        . self::VAR_START . self::VAR_WORD . self::VAR_END
+        . ' from database';
+    case LOAD_WORD_BY_NAME_FAILED = 'cannot get '
+        . self::VAR_START . self::VAR_SIDE . self::VAR_END
+        . ' word '
+        . self::VAR_START . self::VAR_WORD . self::VAR_END
+        . ' by name from database';
+    case LOAD_TRIPLE_BY_ID_FAILED = 'cannot get '
+        . self::VAR_START . self::VAR_SIDE . self::VAR_END
+        . ' triple '
+        . self::VAR_START . self::VAR_WORD . self::VAR_END
+        . ' from database';
+    case LOAD_TRIPLE_BY_NAME_FAILED = 'cannot get '
+        . self::VAR_START . self::VAR_SIDE . self::VAR_END
+        . ' triple '
+        . self::VAR_START . self::VAR_WORD . self::VAR_END
+        . ' by name from database';
     case LOAD_PHRASE_BY_ID_FAILED = 'cannot get phrase '
         . self::VAR_START . self::VAR_PHRASE . self::VAR_END
         . ' from database';
     case LOAD_FORMULA_BY_ID_FAILED = 'cannot get formula '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . ' from database';
+    case LOAD_TERM_BY_ID_FAILED = 'cannot get term '
+        . self::VAR_START . self::VAR_TERM . self::VAR_END
+        . ' from database';
+    case LOAD_TERM_BY_NAME_FAILED = 'cannot get term '
+        . self::VAR_START . self::VAR_TERM . self::VAR_END
+        . ' by name from database';
     case LOAD_VIEW_BY_ID_FAILED = 'cannot get view '
         . self::VAR_START . self::VAR_VIEW . self::VAR_END
         . ' from database';
+    case LOAD_VIEW_BY_NAME_FAILED = 'cannot get view '
+        . self::VAR_START . self::VAR_VIEW . self::VAR_END
+        . ' by name from database';
+    case LOAD_VIEW_SIDE_BY_ID_FAILED = 'cannot get '
+        . self::VAR_START . self::VAR_SIDE . self::VAR_END
+        . ' view '
+        . self::VAR_START . self::VAR_VIEW . self::VAR_END
+        . ' from database';
+    case LOAD_VIEW_SIDE_BY_NAME_FAILED = 'cannot get '
+        . self::VAR_START . self::VAR_SIDE . self::VAR_END
+        . ' view '
+        . self::VAR_START . self::VAR_VIEW . self::VAR_END
+        . ' by name from database';
+    case LOAD_VIEW_SIDE_NAME_MISSING = 'cannot get '
+        . self::VAR_START . self::VAR_SIDE . self::VAR_END
+        . ' view '
+        . self::VAR_START . self::VAR_VIEW . self::VAR_END
+        . ' because name and id missing';
     case LOAD_COMPONENT_BY_ID_FAILED = 'cannot get component '
         . self::VAR_START . self::VAR_COMPONENT . self::VAR_END
         . ' from database';
@@ -1263,7 +1315,7 @@ enum messages: string
     case LOG_UPDATE = 'changed';
     case LOG_DEL = 'deleted';
     case LOG_LINK = 'linked';
-    case LOG_TO = 'to';
+    case LOG_TO = 'log to';
 
     // import
     case IMPORT_JSON = 'import';

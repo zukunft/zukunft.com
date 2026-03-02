@@ -87,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -581,39 +582,65 @@ class view_relation extends sandbox_link
      * TODO add a bool var "is_loaded" to db_object
      *      to indicate is the object has just been created and might be incomplete
      *      or if loaded from the db and is expected to have all vars in line with the db
+     * @param user_message $msg to collect the message due to missing links
      * @return bool true if all the related objects has been loaded
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
         $result = true;
 
         $prt = $this->parent();
         if ($prt->id() == 0) {
             if ($prt->name() != '') {
-                $result = $prt->load_by_name($prt->name());
+                if (!$prt->load_by_name($prt->name())) {
+                    $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
+                        msg_id::VAR_SIDE => msg_id::SIDE_PARENT->text(),
+                        msg_id::VAR_VIEW => $this->parent()->dsp_id()
+                    ]);
+                }
             } else {
-                log_warning('Cannot load the parent view because neither id nor name is set');
+                $msg->add(msg_id::LOAD_VIEW_SIDE_NAME_MISSING, [
+                    msg_id::VAR_SIDE => msg_id::SIDE_PARENT->text(),
+                    msg_id::VAR_VIEW => $this->dsp_id()
+                ]);
             }
         } else {
             if ($prt->name() == '') {
-                $result = $prt->load_by_id($prt->id());
+                if (!$prt->load_by_id($prt->id())) {
+                    $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
+                        msg_id::VAR_SIDE => msg_id::SIDE_PARENT->text(),
+                        msg_id::VAR_VIEW => $this->parent()->dsp_id()
+                    ]);
+                }
             }
         }
 
         $cld = $this->child();
         if ($cld->id() == 0) {
             if ($cld->name() != '') {
-                $result = $cld->load_by_name($cld->name());
+                if (!$cld->load_by_name($cld->name())) {
+                    $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
+                        msg_id::VAR_SIDE => msg_id::SIDE_CHILD->text(),
+                        msg_id::VAR_VIEW => $this->child()->dsp_id()
+                    ]);
+                }
             } else {
-                log_warning('Cannot load the child view because neither id nor name is set');
+                $msg->add(msg_id::LOAD_VIEW_SIDE_NAME_MISSING, [
+                    msg_id::VAR_SIDE => msg_id::SIDE_CHILD->text(),
+                    msg_id::VAR_VIEW => $this->dsp_id()
+                ]);
             }
         } else {
             if ($cld->name() == '') {
-                $result = $cld->load_by_id($cld->id());
+                if (!$cld->load_by_id($cld->id())) {
+                    $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
+                        msg_id::VAR_SIDE => msg_id::SIDE_CHILD->text(),
+                        msg_id::VAR_VIEW => $this->child()->dsp_id()
+                    ]);
+                }
             }
         }
-
-        return $result;
+        return $msg->is_ok();
     }
 
     /**

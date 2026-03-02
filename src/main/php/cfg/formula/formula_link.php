@@ -973,7 +973,7 @@ class formula_link extends sandbox_link
         }
 
         // load the objects if needed
-        $this->reload_objects();
+        $this->reload_objects($msg);
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->get_user()->id);
@@ -1003,7 +1003,7 @@ class formula_link extends sandbox_link
             // because it needs to be done for user and general formulas
             $db_rec = new formula_link($this->get_user());
             $db_rec->load_by_id($this->id());
-            $db_rec->reload_objects();
+            $db_rec->reload_objects($msg);
             $db_con->set_class(formula_link::class);
             // relevant is if there is a user config in the database
             // so use this information to prevent
@@ -1033,7 +1033,7 @@ class formula_link extends sandbox_link
             }
 
             // check if the id parameters are supposed to be changed
-            $this->reload_objects();
+            $this->reload_objects($msg);
             if ($msg->is_ok()) {
                 $this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
             }
@@ -1195,8 +1195,9 @@ class formula_link extends sandbox_link
     function name_linked(string $back = ''): string
     {
         $result = '';
+        $msg = new user_message();
 
-        $this->reload_objects();
+        $this->reload_objects($msg);
         if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
             $result = $this->formula()->name_linked($back) . ' to ' . $this->phrase()->display_linked();
         } else {

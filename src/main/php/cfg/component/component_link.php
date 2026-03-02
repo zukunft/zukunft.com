@@ -1266,7 +1266,7 @@ class component_link extends sandbox_link
         } elseif ($this->get_view()->id() != 0 and $this->get_component()->id() != 0) {
             $this->load_by_link_id($this->get_view()->id(), 0, $this->get_component()->id(), self::class);
         }
-        $this->reload_objects();
+        $this->reload_objects($usr_msg);
 
         // check the all minimal input parameters
         if ($this->id() <= 0) {
