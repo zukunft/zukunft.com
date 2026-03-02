@@ -304,7 +304,7 @@ class type_list extends ListOfIdNamedCodeObjects
         return $typ;
     }
 
-    function add(type_object|ref|view $item): void
+    function add(type_object|ref|view $item, bool $log = true): void
     {
         if ($item->id() <= 0) {
             if ($this::class == sys_log_level_list::class) {
@@ -313,7 +313,9 @@ class type_list extends ListOfIdNamedCodeObjects
                 log_err('Type id ' . $item->name . ' (' . $item::class . ' ' . $item->id() . ') not expected');
             }
         } elseif ($item->get_code_id() == '' and !$this->usr_can_add) {
-            log_err('Type code id for ' . $item->name . ' (' . $item::class . ' ' . $item->id() . ') cannot be empty');
+            if ($log) {
+                log_err('Type code id for ' . $item->name . ' (' . $item::class . ' ' . $item->id() . ') cannot be empty');
+            }
         } else {
             parent::add_obj($item);
         }

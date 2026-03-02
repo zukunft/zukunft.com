@@ -17643,3 +17643,52 @@ trace
 #9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test_part.php(72): Zukunft\ZukunftCom\test\php\unit_write\a_selected_test->run()
 #10 {main}
 by user 
+2026-03-02T15:20:59+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+2026-03-02T15:33:44+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+2026-03-02T15:33:44+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3313): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3355): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3458): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/db_object.php(322): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(310): Zukunft\ZukunftCom\main\php\cfg\helper\db_object->load_without_id_return()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_object.php(366): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(765): Zukunft\ZukunftCom\main\php\cfg\helper\type_object->load_by_code_id()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(322): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_table()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(531): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_table()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(199): Zukunft\ZukunftCom\main\php\cfg\log\change_log->create_log_references()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(128): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#11 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#12 {main}
+by user 
+2026-03-02T15:33:44+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_name (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE _name = $1 ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_name (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE _name = $1 ORDER BY type_list_id LIMIT 1;
+2026-03-02T15:33:44+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_name (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE _name = $1 ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
+LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
+                                                             ^ when preparing PREPARE type_list_by_name (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE _name = $1 ORDER BY type_list_id LIMIT 1;
+
+function fetch
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3313): log_fatal()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3355): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(3458): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_first()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/db_object.php(322): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get1()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/db_object_seq_id.php(310): Zukunft\ZukunftCom\main\php\cfg\helper\db_object->load_without_id_return()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/type_object.php(351): Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id->load()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(767): Zukunft\ZukunftCom\main\php\cfg\helper\type_object->load_by_name()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(322): Zukunft\ZukunftCom\main\php\cfg\log\change_log->add_table()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/log/change_log.php(531): Zukunft\ZukunftCom\main\php\cfg\log\change_log->set_table()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(199): Zukunft\ZukunftCom\main\php\cfg\log\change_log->create_log_references()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/test_app.php(128): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#11 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(62): Zukunft\ZukunftCom\test\php\test_app->start()
+#12 {main}
+by user 

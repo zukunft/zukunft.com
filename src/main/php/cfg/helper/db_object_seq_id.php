@@ -1479,7 +1479,7 @@ class db_object_seq_id extends db_object
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      * @returns db_object|null a filled object that has the same name or links the same objects
-     *                         or a sandbox object with id() = 0 if nothing similar has been found
+     *                         or null if nothing similar has been found
      */
     function get_similar(user_message $msg): db_object|null
     {

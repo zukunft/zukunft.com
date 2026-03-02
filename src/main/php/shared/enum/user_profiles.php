@@ -46,7 +46,7 @@ enum user_profiles: string
     const string IP_ONLY = "ip";         // if only the ip of the request is known
     const string NORMAL = self::IP_ONLY; // the default profile for new users
     const int NORMAL_ID = 1;             // fixed id used as default for new users
-    const int NORMAL_LEVEL = 1;             // fixed id used as default for new users
+    const int NORMAL_LEVEL = 1;          // fixed id used as default for new users
     const string NORMAL_NAME = 'ip only';
     const string NORMAL_COM = 'if only the ip of the request is known';
     const string NAME_ONLY = "name";     // the user has selected and reserved a unique username
@@ -56,7 +56,8 @@ enum user_profiles: string
     const string ADMIN = "admin";        // administrator that can add and change verbs and sees the code_id
     const string DEV = "dev";            // reserved for developers which are supposed to code the verb functionality
     const string TEST = "test";          // reserved for the system test user e.g. for internal unit and integration tests
+    const string LOG = "log";            // reserved for the system log user
     const string SYSTEM = "system";      // reserved for the system user which is executing cleanup tasks
-    const int SYSTEM_ID = 18;         // only used for the initial setup
+    const int SYSTEM_ID = 19;            // only used for the initial setup
 
 }

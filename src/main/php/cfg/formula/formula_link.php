@@ -1035,7 +1035,9 @@ class formula_link extends sandbox_link
             // check if the id parameters are supposed to be changed
             $this->reload_objects($msg);
             if ($msg->is_ok()) {
-                $this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
+                if ($this->is_key_updated($db_rec)) {
+                    $this->delete_old_key_row($db_rec, $msg);
+                }
             }
 
             // if a problem has appeared up to here, don't try to save the values

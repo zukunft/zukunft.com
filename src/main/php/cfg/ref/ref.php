@@ -1207,20 +1207,26 @@ class ref extends sandbox_link
     /**
      * get a similar reference
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return ref|null a filled reference that links the same objects
+     *                  or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): ref
+    function get_similar(user_message $msg): ?ref
     {
-        $result = new ref($this->get_user());
+        $sim = null;
         log_debug('ref->get_similar ' . $this->dsp_id());
 
         $db_chk = $this->clone_reset(true);
         $db_chk->load_by_link_ids($this->phrase_id(), $this->predicate_id());
         if ($db_chk->id() > 0) {
-            log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists');
-            $result = $db_chk;
+            $msg->add(msg_id::REF_ALREADY_EXISTS, [
+                msg_id::VAR_TYPE => $this->predicate_name(),
+                msg_id::VAR_PHRASE => $this->phrase_name(),
+                msg_id::VAR_URL_KEY => $this->get_external_key(),
+            ]);
+            $sim = $db_chk;
         }
 
-        return $result;
+        return $sim;
     }
 
     /**
@@ -1236,22 +1242,23 @@ class ref extends sandbox_link
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
-        log_debug();
+        // saving to database is always time consuming so a log entry might help to detect duplicate save calls
+        log_debug($this->dsp_id());
 
         global $db_con;
 
-        // build the database object because the is anyway needed
-        if ($this->get_user() != null) {
-            $db_con->set_usr($this->get_user()->id);
+        // check e.g. if a preserved name is used and if yes add a message and solution to $msg
+        if ($this->check_save($msg)) {
+            $this->reload_objects($msg);
         }
-        $db_con->set_class(ref::class);
 
         // check if the external reference is supposed to be added
         if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar($msg);
-            if (isset($similar)) {
+            $sim_msg = new user_message();
+            $similar = $this->get_similar($sim_msg);
+            if ($similar != null) {
                 if ($similar->id() != 0) {
                     $this->id = $similar->id();
                 }

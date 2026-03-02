@@ -2038,6 +2038,7 @@ class user extends db_id_object_non_sandbox
 
         if ($this->is_profile_valid()) {
             if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::LOG)
                 or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
@@ -2292,22 +2293,24 @@ class user extends db_id_object_non_sandbox
                 // if a new user is supposed to be added check upfront for a similar object to prevent adding duplicates
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar($msg);
-                if ($similar->id <> 0) {
-                    log_debug('got similar ' . $similar->dsp_id());
-                    // check that the get_similar function has really found a similar object and report potential program errors
-                    if (!$this->is_similar($similar)) {
-                        $msg->add(msg_id::NOT_SIMILAR_OBJECTS, [
-                            msg_id::VAR_NAME => $this->dsp_id(),
-                            msg_id::VAR_NAME_CHK => $similar->dsp_id()
-                        ]);
+                if ($similar != null) {
+                    if ($similar->id <> 0) {
+                        log_debug('got similar ' . $similar->dsp_id());
+                        // check that the get_similar function has really found a similar object and report potential program errors
+                        if (!$this->is_similar($similar)) {
+                            $msg->add(msg_id::NOT_SIMILAR_OBJECTS, [
+                                msg_id::VAR_NAME => $this->dsp_id(),
+                                msg_id::VAR_NAME_CHK => $similar->dsp_id()
+                            ]);
+                        } else {
+                            // if similar is found set the id to trigger the updating instead of adding
+                            $similar->load_by_id($similar->id); // e.g. to get the type_id
+                            $this->id = $similar->id;
+                        }
                     } else {
-                        // if similar is found set the id to trigger the updating instead of adding
-                        $similar->load_by_id($similar->id); // e.g. to get the type_id
-                        $this->id = $similar->id;
+                        log_debug('no similar to ' . $this->dsp_id() . ' found');
+                        $similar = null;
                     }
-                } else {
-                    log_debug('no similar to ' . $this->dsp_id() . ' found');
-                    $similar = null;
                 }
             }
         }
@@ -2392,20 +2395,23 @@ class user extends db_id_object_non_sandbox
     /**
      * check if a user with the name or email already exists
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @return user a filled object that has the same name
-     *                 or a sandbox object with id() = 0 if nothing similar has been found
+     * @return user|null a filled object that has the same name
+     *                 or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): user
+    function get_similar(user_message $msg): user|null
     {
-        $result = new user();
+        $sim = new user();
         if ($this->name != '' and $this->name != null and $this->email != '' and $this->email != null) {
-            $result->load_by_name_or_email($this->name, $this->email);
+            $sim->load_by_name_or_email($this->name, $this->email);
         } elseif ($this->name != '' and $this->name != null) {
-            $result->load_by_name($this->name);
+            $sim->load_by_name($this->name);
         } elseif ($this->email != '' and $this->email != null) {
-            $result->load_by_email($this->email);
+            $sim->load_by_email($this->email);
         }
-        return $result;
+        if ($sim->id() == 0) {
+            return null;
+        }
+        return $sim;
     }
 
     /**

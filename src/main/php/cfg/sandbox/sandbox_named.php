@@ -945,7 +945,7 @@ class sandbox_named extends sandbox
      * @param sandbox $db_rec the object data as it is now in the database
      * @return bool true if one of the object id fields have been changed
      */
-    function is_id_updated(sandbox $db_rec): bool
+    function is_key_updated(sandbox $db_rec): bool
     {
         $result = False;
         log_debug($this->dsp_id());
@@ -967,60 +967,6 @@ class sandbox_named extends sandbox
     {
         $lib = new library();
         return 'A ' . $lib->class_to_name($this::class) . ' with the name "' . $this->name() . '" already exists. Please use another name.';
-    }
-
-    /**
-     * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
-     * should only be called if the user is the owner and nobody has used the display component link
-     * @param sql_db $db_con the active database connection
-     * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
-     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
-     * @return bool true if the id fields have been saved
-     * @throws Exception
-     */
-    function save_id_fields(
-        sql_db       $db_con,
-        sandbox      $db_rec,
-        sandbox      $std_rec,
-        user_message $usr_msg
-    ): bool
-    {
-        $result = '';
-        log_debug($this->dsp_id());
-        $lib = new library();
-        $tbl_name = $lib->class_to_name($this::class);
-
-        if ($this->is_id_updated($db_rec)) {
-            log_debug('to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
-
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->name();
-            $log->new_value = $this->name();
-            $log->std_value = $std_rec->name();
-            $log->set_field($tbl_name . '_name');
-
-            $log->row_id = $this->id();
-            if ($log->add($usr_msg)) {
-                // TODO Prio 2 activate when the prepared SQL is ready to use
-                // only do the update here if the update is not done with one sql statement at the end
-                if ($this->sql_write_prepared()) {
-                    $qp = $this->sql_update($db_con->sql_creator(), $db_rec, $usr_msg, new sql_type_list());
-                    $db_con->update($qp, $this::class . ' update name', $usr_msg);
-                    $result = $usr_msg->get_message();
-                } else {
-                    $db_con->set_class($this::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    if (!$db_con->update_old($this->id(),
-                        array($tbl_name . '_name'),
-                        array($this->name))) {
-                        $result .= 'update of name to ' . $this->name() . 'failed';
-                    }
-                }
-            }
-        }
-        log_debug('for ' . $this->dsp_id() . ' done');
-        return $result;
     }
 
     /**
@@ -1072,12 +1018,14 @@ class sandbox_named extends sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @return sandbox a filled object that has the same name
-     *                 or a sandbox object with id() = 0 if nothing similar has been found
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return sandbox|null a filled object that has the same name
+     *                      or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): sandbox
+    function get_similar(user_message $msg): ?sandbox
     {
-        $result = new sandbox_named($this->get_user());
+        log_debug('check possible duplicates before adding ' . $this->dsp_id());
+        $sim = null;
 
         // check potential duplicate by name
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
@@ -1088,9 +1036,9 @@ class sandbox_named extends sandbox
             or $this::class == formula::class) {
             $similar_trm = $this->get_term();
             if ($similar_trm->id_obj() > 0) {
-                $result = $similar_trm->obj();
-                if (!$this->is_similar_named($result)) {
-                    log_err($this->dsp_id() . ' is supposed to be similar to ' . $result->dsp_id() . ', but it seems not');
+                $sim = $similar_trm->obj();
+                if (!$this->is_similar_named($sim)) {
+                    log_err($this->dsp_id() . ' is supposed to be similar to ' . $sim->dsp_id() . ', but it seems not');
                 }
             } else {
                 $similar_trp = new triple($this->get_user());
@@ -1098,7 +1046,7 @@ class sandbox_named extends sandbox
                 if ($similar_trp->id() > 0) {
                     $similar_trp->reload_objects($msg);
                     log_debug($this->dsp_id() . ' has the same name is the standard name of the triple "' . $similar_trp->dsp_id() . '"');
-                    $result = $similar_trp;
+                    $sim = $similar_trp;
                 }
             }
         } else {
@@ -1111,7 +1059,7 @@ class sandbox_named extends sandbox
             if ($db_chk->load_standard()) {
                 if ($db_chk->id() > 0) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
-                    $result = $db_chk;
+                    $sim = $db_chk;
                 }
             }
             // check with the user namespace
@@ -1121,7 +1069,7 @@ class sandbox_named extends sandbox
                 if ($db_chk->load_by_id($this->id())) {
                     if ($db_chk->id() > 0) {
                         log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                        $result = $db_chk;
+                        $sim = $db_chk;
                     }
                 }
             } else {
@@ -1129,7 +1077,7 @@ class sandbox_named extends sandbox
                     if ($db_chk->load_by_name($this->name())) {
                         if ($db_chk->id() > 0) {
                             log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                            $result = $db_chk;
+                            $sim = $db_chk;
                         }
                     }
                 } else {
@@ -1138,7 +1086,32 @@ class sandbox_named extends sandbox
             }
         }
 
-        return $result;
+        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
+        if ($sim != null) {
+            if ($sim->id() <> 0) {
+                // check that the get_similar function has really found a similar object and report potential program errors
+                if (!$this->is_similar($sim)) {
+                    $msg->add(msg_id::NOT_SIMILAR_OBJECTS, [
+                        msg_id::VAR_NAME => $this->dsp_id(),
+                        msg_id::VAR_NAME_CHK => $sim->dsp_id()
+                    ]);
+                } else {
+                    // if similar is found set the id to trigger the updating instead of adding
+                    $sim->load_by_id($sim->id()); // e.g. to get the type_id
+                    // prevent that the id of a formula is used for the word with the type formula link
+                    if (get_class($this) == get_class($sim)) {
+                        $this->id = $sim->id();
+                    } else {
+                        if (!((get_class($this) == word::class and get_class($sim) == formula::class)
+                            or (get_class($this) == triple::class and get_class($sim) == formula::class))) {
+                            $msg->merge($sim->id_used_msg($this));
+                        }
+                    }
+                }
+            }
+        }
+
+        return $sim;
     }
 
 

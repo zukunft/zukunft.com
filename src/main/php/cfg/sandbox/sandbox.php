@@ -2060,7 +2060,7 @@ class sandbox extends db_object_seq_id_user
      * @param sandbox $db_rec the object data as it is now in the database
      * @return bool true if one of the object id fields have been changed
      */
-    function is_id_updated(sandbox $db_rec): bool
+    function is_key_updated(sandbox $db_rec): bool
     {
         $usr_msg = new user_message();
         $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
@@ -2087,7 +2087,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * @return string text that request the user to use another name
+     * @return string text that requests the user to use another name
      * overwritten in the word class for formula link words
      */
     function msg_id_already_used(): string
@@ -2107,16 +2107,12 @@ class sandbox extends db_object_seq_id_user
      * 3. the new name is     used by the user but not used for the standard -> send a warning to the user and offer join
      * 4. the new name is     used by the user and     used for the standard -> send a warning to the user and offer join
      *
-     * @param sql_db $db_con the active database connection
      * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
-     * @param user_message $msg a messages for the user what should be changed if something failed
+     * @param user_message $msg a message for the user what should be changed if something failed
      * @return bool true if everything has been fine
      */
-    function save_id_if_updated(
-        sql_db       $db_con,
+    function delete_old_key_row(
         sandbox      $db_rec,
-        sandbox      $std_rec,
         user_message $msg
     ): bool
     {
@@ -2124,61 +2120,41 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
-        if ($this->is_id_updated($db_rec)) {
 
-            // check the preserved names
-            if ($this->check_save($msg)) {
-                $db_chk = $this->get_obj_with_same_id_fields();
-                if ($db_chk->id() != 0) {
-                    log_debug('target already exists');
-                    if ($this->rename_can_switch) {
-                        // ... if yes request to delete or exclude the record with the id parameters before the change
-                        $to_del = clone $db_rec;
-                        if (!$to_del->del($msg)) {
-                            $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [msg_id::VAR_CLASS_NAME => $class_name]);
-                        }
-                        if ($msg->is_ok()) {
-                            // .. and use it for the update
-                            // TODO review the logging: from the user view this is a change not a delete and update
-                            $this->id = $db_chk->id();
-                            $this->set_owner_id($db_chk->owner_id());
-                            // TODO check which links needs to be updated, because this is a kind of combine objects
-                            // force the include again
-                            $this->include();
-                            $db_rec->exclude();
-                            $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
-                            if ($msg->is_ok()) {
-                                log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
-                            } else {
-                                //$usr_msg = 'Failed to exclude the unused ' . $this-::class;
-                                $msg->add(msg_id::OBJECT_NAME_ALREADY_EXISTS, [
-                                    msg_id::VAR_CLASS_NAME => $class_name,
-                                    msg_id::VAR_NAME => $this->name()
-                                ]);
-                            }
-                        }
-                    } else {
-                        $msg->add_message_text($this->msg_id_already_used());
+        // check the preserved names
+        if ($this->check_save($msg)) {
+            $db_chk = $this->get_obj_with_same_id_fields();
+            if ($db_chk->id() != 0) {
+                log_debug('target already exists');
+                if ($this->rename_can_switch) {
+                    // ... if yes request to delete or exclude the record with the id parameters before the change
+                    $to_del = clone $db_rec;
+                    if (!$to_del->del($msg)) {
+                        $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [
+                            msg_id::VAR_CLASS_NAME => $class_name
+                        ]);
+                    }
+                    if ($msg->is_ok()) {
+                        // .. and use it for the update
+                        // TODO review the logging: from the user view this is a change not a delete and update
+                        $this->id = $db_chk->id();
+                        $this->set_owner_id($db_chk->owner_id());
+                        // TODO check which links needs to be updated, because this is a kind of combine objects
+                        // force the include again
+                        $this->include();
+                        $db_rec->exclude();
                     }
                 } else {
-                    log_debug('target does not yet exist');
-                    // TODO check if e.g. for word links and formula links "and $this->not_used()" needs to be added
-                    if ($this->can_change()) {
-                        // in this case change is allowed and done
-                        log_debug('change the existing ' . $class_name . ' ' . $this->dsp_id() . ' (db ' . $db_rec->dsp_id() . ', standard ' . $std_rec->dsp_id() . ')');
-                        // TODO check if next line is needed
-                        //$this->load_objects();
-                        if ($this->is_link_obj()) {
-                            $this->save_id_fields_link($db_con, $db_rec, $std_rec, $msg);
-                        } elseif ($this->is_named_obj()) {
-                            $this->save_id_fields($db_con, $db_rec, $std_rec, $msg);
-                        } else {
-                            log_info('Save of id field for ' . $class_name . ' not expected');
-                        }
-                    } else {
+                    $msg->add_message_text($this->msg_id_already_used());
+                }
+            } else {
+                log_debug('target does not yet exist');
+                // TODO check if e.g. for word links and formula links "and $this->not_used()" needs to be added
+                if (!$this->can_change()) {
+                    $to_del = clone $db_rec;
+                    if (!$this->not_used()) {
                         // if the target link has not yet been created
                         // ... request to delete the old
-                        $to_del = clone $db_rec;
                         if (!$to_del->del($msg)) {
                             $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [
                                 msg_id::VAR_CLASS_NAME => $this::class
@@ -2191,6 +2167,13 @@ class sandbox extends db_object_seq_id_user
                             $this->id = 0;
                             $this->set_owner_id($this->get_user()->id);
                             $this->add($msg);
+                        }
+                    } else {
+                        $to_del->exclude();
+                        if (!$to_del->save($msg)) {
+                            $msg->add(msg_id::FAILED_TO_EXCLUDE_UNUSED, [
+                                msg_id::VAR_CLASS_NAME => $this::class
+                            ]);
                         }
                     }
                 }
@@ -2346,23 +2329,49 @@ class sandbox extends db_object_seq_id_user
      *
      * check if an object with the unique key already exists
      * returns null if no similar object is found
-     * or returns the object with the same unique key that is not the actual object
+     * or returns the object with the same unique key that is not the actual object;
      * any warning or error message needs to be created in the calling function
      * e.g. if the user tries to create a formula named "millions"
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
      * @returns sandbox|db_object|null a filled object that has the same name or links the same objects
-     *                  or a sandbox object with id() = 0 if nothing similar has been found
+     *                  or null if nothing similar has been found
      */
     function get_similar(user_message $msg): sandbox|db_object|null
     {
-        $msg = new user_message();
         $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'get_similar',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return new sandbox($this->get_user());
+        return null;
+    }
+
+    private function get_standard(user_message $msg): sandbox|db_object|null
+    {
+        $std_rec = clone $this;
+        $std_rec->reset();
+        $std_rec->id = $this->id();
+        $std_rec->set_user($this->get_user()); // must also be set to allow to take the ownership
+        if ($msg->is_ok()) {
+            if (!$std_rec->load_standard()) {
+                $lib = new library();
+                $class_name = $lib->class_to_name($this::class);
+                $msg->add(msg_id::FAILED_RELOAD_DEFAULT_VALUES, [
+                    msg_id::VAR_CLASS_NAME => $class_name
+                ]);
+            }
+        }
+        // for a correct user setting detection (function can_change) set the owner even if the object has not been loaded before the save
+        if ($msg->is_ok()) {
+            log_debug('standard loaded');
+
+            if ($this->owner_id() <= 0) {
+                $this->set_owner_id($std_rec->owner_id());
+            }
+        }
+
+        return $std_rec;
     }
 
 
@@ -2434,21 +2443,17 @@ class sandbox extends db_object_seq_id_user
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
-        // save to database is always time consuming so a log entry might help to detect duplicate save calls
+        // saving to database is always time consuming so a log entry might help to detect duplicate save calls
         log_debug($this->dsp_id());
 
         global $db_con;
-
-        // init
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
 
         // check e.g. if a preserved name is used and if yes add a message and solution to $msg
         if ($this->check_save($msg)) {
             $this->reload_objects($msg);
         }
 
-        // read the database
+        // read the database row
         $db_rec = $this->clone_reset(true);
         if ($msg->is_ok()) {
             if ($this->has_id()) {
@@ -2457,50 +2462,35 @@ class sandbox extends db_object_seq_id_user
         }
 
         // check possible duplicates
-        $similar = null;
+        $sim = null;
         if ($msg->is_ok()) {
-            log_debug('check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar($msg);
-
-            // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
-            if ($similar->id() <> 0) {
-                // check that the get_similar function has really found a similar object and report potential program errors
-                if (!$this->is_similar($similar)) {
-                    $msg->add(msg_id::NOT_SIMILAR_OBJECTS, [
-                        msg_id::VAR_NAME => $this->dsp_id(),
-                        msg_id::VAR_NAME_CHK => $similar->dsp_id()
-                    ]);
-                } else {
-                    // if similar is found set the id to trigger the updating instead of adding
-                    $similar->load_by_id($similar->id()); // e.g. to get the type_id
-                    // prevent that the id of a formula is used for the word with the type formula link
-                    if (get_class($this) == get_class($similar)) {
-                        $this->id = $similar->id();
-                    } else {
-                        if (!((get_class($this) == word::class and get_class($similar) == formula::class)
-                            or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                            $msg->merge($similar->id_used_msg($this));
-                        }
-                    }
-                }
+            if (!$this->has_id() or $this->is_key_updated($db_rec)) {
+                // get similar database row but ignore the duplicate messages for the moment
+                $sim_msg = new user_message();
+                $sim = $this->get_similar($sim_msg);
             }
         }
 
         // create a new object if nothing similar has been found
         if ($msg->is_ok()) {
-            if ($this->id() == 0) {
+            if (!$this->has_id() and $sim == null) {
 
                 log_debug('add ' . $this->dsp_id());
                 $this->add($msg);
 
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
-                if ($similar != null) {
+                if ($sim != null) {
+                    // reload the similar database row
+                    if (!$this->has_id() and $sim->has_id()) {
+                        $this->id = $sim->id();
+                        $db_rec = $this->load_db($msg);
+                    }
                     log_debug('got similar and suggest renaming or merge');
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
-                    if (!$this->is_same($similar)) {
-                        $msg->merge($similar->id_used_msg($this));
+                    if (!$this->is_same($sim)) {
+                        $msg->merge($sim->id_used_msg($this));
                     }
                 }
 
@@ -2509,30 +2499,13 @@ class sandbox extends db_object_seq_id_user
                     log_debug('update ' . $this->dsp_id());
 
                     // load the common object
-                    $std_rec = clone $this;
-                    $std_rec->reset();
-                    $std_rec->id = $this->id();
-                    $std_rec->set_user($this->get_user()); // must also be set to allow to take the ownership
-                    if ($msg->is_ok()) {
-                        if (!$std_rec->load_standard()) {
-                            $msg->add(msg_id::FAILED_RELOAD_DEFAULT_VALUES, [
-                                msg_id::VAR_CLASS_NAME => $class_name
-                            ]);
-                        }
-                    }
-
-                    // for a correct user setting detection (function can_change) set the owner even if the object has not been loaded before the save
-                    if ($msg->is_ok()) {
-                        log_debug('standard loaded');
-
-                        if ($this->owner_id() <= 0) {
-                            $this->set_owner_id($std_rec->owner_id());
-                        }
-                    }
+                    $std_rec = $this->get_standard($msg);
 
                     // check if the id parameters are supposed to be changed
                     if ($msg->is_ok()) {
-                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
+                        if ($this->is_key_updated($db_rec)) {
+                            $this->delete_old_key_row($db_rec, $msg);
+                        }
                     }
 
                     // if a problem has appeared up to here, don't try to save the values

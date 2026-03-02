@@ -5981,7 +5981,7 @@ class sql_db
 
                 // load the types needed for logging into the system environment $sys
                 global $sys;
-                $sys_typ_lst = new type_lists($usr);
+                $sys_typ_lst = new type_lists();
                 $sys_typ_lst->load_log($this);
                 $sys->typ_lst = $sys_typ_lst;
 

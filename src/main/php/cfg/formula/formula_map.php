@@ -730,7 +730,7 @@ class formula_map extends sandbox_code_id
      * @return term_list the additional terms that have been loaded
      */
     function load_missing_terms(
-        user_message $usr_msg,
+        user_message  $usr_msg,
         ?term_list    $trm_lst = null,
         ?formula_list $frm_lst = null
     ): term_list
@@ -768,8 +768,8 @@ class formula_map extends sandbox_code_id
      * @return term_list
      */
     function load_terms(
-        user_message $usr_msg,
-        term_list|null $trm_lst_in = null,
+        user_message    $usr_msg,
+        term_list|null  $trm_lst_in = null,
         expression|null $exp = null
     ): term_list
     {
@@ -790,8 +790,8 @@ class formula_map extends sandbox_code_id
      * @return term_list
      */
     function load_exp_terms(
-        user_message $usr_msg,
-        term_list|null $trm_lst_in = null,
+        user_message    $usr_msg,
+        term_list|null  $trm_lst_in = null,
         expression|null $exp = null
     ): term_list
     {
@@ -824,8 +824,8 @@ class formula_map extends sandbox_code_id
      * @return phrase_list with the phrases that should be added to the result of a formula
      */
     function load_phrases(
-        user_message $usr_msg,
-        term_list|null $trm_lst_in = null,
+        user_message    $usr_msg,
+        term_list|null  $trm_lst_in = null,
         expression|null $exp = null
     ): phrase_list
     {
@@ -1433,45 +1433,6 @@ class formula_map extends sandbox_code_id
         return $result;
     }
 
-    /**
-     * updated the view component name (which is the id field)
-     * should only be called if the user is the owner and nobody has used the display component link
-     * @param sql_db $db_con the active database connection
-     * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
-     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
-     * @return bool true if the id fields have been saved
-     */
-    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): bool
-    {
-        $result = '';
-        if ($db_rec->name() <> $this->name()) {
-            log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
-            // in case a word link exist, change also the name of the word
-            if (!$this->wrd_rename($db_rec->name(), $usr_msg)) {
-                $result .= 'formula ' . $db_rec->name() . ' cannot ba renamed to ' . $this->name() . ', because ...';
-            }
-
-            // change the formula name
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->name();
-            $log->new_value = $this->name();
-            $log->std_value = $std_rec->name();
-            $log->row_id = $this->id();
-            $log->set_field(formula_db::FLD_NAME);
-            if ($log->add($usr_msg)) {
-                $db_con->set_class(formula::class);
-                if (!$db_con->update_old($this->id(),
-                    array(formula_db::FLD_NAME),
-                    array($this->name()))) {
-                    $result .= 'formula ' . $db_rec->name() . ' cannot be renamed to ' . $this->name();
-                }
-            }
-        }
-        log_debug('->save_id_fields for ' . $this->dsp_id() . ' has been done');
-        return $result;
-    }
-
     private
     function is_term_the_same(term $trm): bool
     {
@@ -1497,16 +1458,12 @@ class formula_map extends sandbox_code_id
     /**
      * check if the id parameters are supposed to be changed
      * and check if the name is already used
-     * @param sql_db $db_con the active database connection
      * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
-     * @param user_message $msg a messages for the user what should be changed if something failed
+     * @param user_message $msg a message for the user what should be changed if something failed
      * @return bool true if everything has been fine
      */
-    function save_id_if_updated(
-        sql_db       $db_con,
+    function delete_old_key_row(
         sandbox      $db_rec,
-        sandbox      $std_rec,
         user_message $msg
     ): bool
     {
@@ -1539,32 +1496,34 @@ class formula_map extends sandbox_code_id
                         // force including again
                         $this->include();
                         $db_rec->exclude();
-                        $this->save($msg);
-                        log_debug('->save_id_if_updated found a display component link with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
                     } else {
                         $msg->add(msg_id::COMPONENT_ALREADY_EXISTS, [msg_id::VAR_COMPONENT_NAME => $this->name()]);
                     }
                 } else {
                     // the formula can be renamed (either for this user or for all users)
                     log_debug('->save_id_if_updated target formula name does not yet exists ' . $db_chk->dsp_id());
-                    if ($this->can_change() and $this->not_used()) {
-                        // in this case change is allowed and done
-                        log_debug('->save_id_if_updated change the existing display component link ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
-                        //$this->load_objects();
-                        $this->save_id_fields($db_con, $db_rec, $std_rec, $msg);
-                    } else {
-                        // if the target link has not yet been created
-                        // ... request to delete the old
+                    if (!$this->can_change() and $this->not_used()) {
                         $to_del = clone $db_rec;
-                        $to_del->del($msg);
-                        // ... and create a deletion request for all users ???
+                        if (!$this->not_used()) {
+                            // if the target link has not yet been created
+                            // ... request to delete the old
+                            $to_del->del($msg);
+                            // ... and create a deletion request for all users ???
 
-                        // ... and create a new display component link
-                        $this->id = 0;
-                        $this->set_owner_id($this->get_user()->id);
-                        // TODO check the usr_msg values and if the id is needed
-                        $this->add($msg);
-                        log_debug('->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
+                            // ... and create a new display component link
+                            $this->id = 0;
+                            $this->set_owner_id($this->get_user()->id);
+                            // TODO check the usr_msg values and if the id is needed
+                            $this->add($msg);
+                            log_debug('->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
+                        } else {
+                            $to_del->exclude();
+                            if (!$to_del->save($msg)) {
+                                $msg->add(msg_id::FAILED_TO_EXCLUDE_UNUSED, [
+                                    msg_id::VAR_CLASS_NAME => $this::class
+                                ]);
+                            }
+                        }
                     }
                 }
             }
@@ -1632,6 +1591,7 @@ class formula_map extends sandbox_code_id
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
+        // saving to database is always time consuming so a log entry might help to detect duplicate save calls
         log_debug($this->dsp_id());
 
         global $db_con;
@@ -1640,10 +1600,6 @@ class formula_map extends sandbox_code_id
 
         // check the preserved names
         if ($this->check_save($msg)) {
-
-            // build the database object because the is anyway needed
-            $db_con->set_class(formula::class);
-            $db_con->set_usr($this->get_user()->id);
 
             // check if a new formula is supposed to be added
             if ($this->id() <= 0) {
@@ -1670,37 +1626,40 @@ class formula_map extends sandbox_code_id
         }
 
         // create an object to check possible duplicates
-        $similar = null;
+        $sim = null;
 
         // if a new object is supposed to be added, check upfront for a similar object to prevent adding duplicates
         if ($this->id() == 0) {
             log_debug('check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar($msg);
-            if ($similar->id() <> 0) {
-                // check that the get_similar function has really found a similar object and report potential program errors
-                if (!$this->is_similar($similar)) {
-                    $msg_not = $mtr->txt(msg_id::NOT_SIMILAR);
+            $sim_msg = new user_message();
+            $sim = $this->get_similar($sim_msg);
+            if ($sim != null) {
+                if ($sim->has_id()) {
+                    // check that the get_similar function has really found a similar object and report potential program errors
+                    if (!$this->is_similar($sim)) {
+                        $msg_not = $mtr->txt(msg_id::NOT_SIMILAR);
 
-                    $msg->add(msg_id::FORMULA_NOT_SIMILAR, [
-                        msg_id::VAR_ID => $this->dsp_id(),
-                        msg_id::VAR_VALUE => $msg_not,
-                        msg_id::VAR_VAL_ID => $similar->dsp_id()
-                    ]);
-                } else {
-                    // if similar is found, set the id to trigger the updating instead of adding
-                    $similar->load_by_id($similar->id()); // e.g. to get the type_id
-                    // to prevent that the id of a formula is used for the word with the type formula link
-                    if (get_class($this) == get_class($similar)) {
-                        $this->id = $similar->id();
+                        $msg->add(msg_id::FORMULA_NOT_SIMILAR, [
+                            msg_id::VAR_ID => $this->dsp_id(),
+                            msg_id::VAR_VALUE => $msg_not,
+                            msg_id::VAR_VAL_ID => $sim->dsp_id()
+                        ]);
                     } else {
-                        if (!((get_class($this) == word::class and get_class($similar) == formula::class)
-                            or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                            $msg->merge($similar->id_used_msg($this));
+                        // if similar is found, set the id to trigger the updating instead of adding
+                        $sim->load_by_id($sim->id()); // e.g. to get the type_id
+                        // to prevent that the id of a formula is used for the word with the type formula link
+                        if (get_class($this) == get_class($sim)) {
+                            $this->id = $sim->id();
+                        } else {
+                            if (!((get_class($this) == word::class and get_class($sim) == formula::class)
+                                or (get_class($this) == triple::class and get_class($sim) == formula::class))) {
+                                $msg->merge($sim->id_used_msg($this));
+                            }
                         }
                     }
+                } else {
+                    $sim = null;
                 }
-            } else {
-                $similar = null;
             }
 
         }
@@ -1717,12 +1676,12 @@ class formula_map extends sandbox_code_id
                 }
             } else {
                 // if the similar object is different from $this object, suggest renaming $this object
-                if ($similar != null) {
+                if ($sim != null) {
                     log_debug('got similar and suggest renaming or merge');
                     // e.g. if a source already exists, update the source
                     // but if a word with the same name of a formula already exists, suggest a new formula name
-                    if (!$this->is_same($similar)) {
-                        $msg->merge($similar->id_used_msg($this));
+                    if (!$this->is_same($sim)) {
+                        $msg->merge($sim->id_used_msg($this));
                     }
                 }
 
@@ -1757,11 +1716,20 @@ class formula_map extends sandbox_code_id
                     if ($msg->is_ok()) {
 
                         // check if the id parameters are supposed to be changed
-                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
+                        $this->delete_old_key_row($db_rec, $msg);
 
                         // if a problem has appeared up to here, don't try to save the values
                         // the problem is shown to the user by the calling interactive script
                         if ($msg->is_ok()) {
+
+                            if ($db_rec->name() <> $this->name()) {
+                                log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
+                                // in case a word link exist, change also the name of the word
+                                if (!$this->wrd_rename($db_rec->name(), $msg)) {
+                                    $msg->all_info_text('formula ' . $db_rec->name() . ' cannot ba renamed to ' . $this->name() . ', because ...');
+                                }
+                            }
+
                             $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
                         }
                     }

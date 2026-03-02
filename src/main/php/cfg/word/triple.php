@@ -2502,7 +2502,7 @@ class triple extends sandbox_link_named
      * @param user_message $msg a message for the user what should be changed if something failed
      * @return bool true if everything has been fine
      */
-    function save_id_if_updated(
+    function save_id_if_updated_old(
         sql_db         $db_con,
         triple|sandbox $db_rec,
         triple|sandbox $std_rec,
@@ -2537,27 +2537,31 @@ class triple extends sandbox_link_named
                     }
                 }
             } else {
-                if ($this->can_change() and $this->not_used()) {
-                    // in this case change is allowed and done
-                    log_debug('triple->save_id_if_updated change the existing triple ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
-                    $this->reload_objects($msg);
-                    $this->save_id_fields($db_con, $db_rec, $std_rec, $msg);
-                } else {
-                    // if the target link has not yet been created
-                    // ... request to delete the old
+                if (!$this->can_change() and $this->not_used()) {
                     $to_del = clone $db_rec;
-                    $to_del->del($msg);
-                    $msg->merge($msg);
-                    if (!$msg->is_ok()) {
-                        $msg->add_id(msg_id::FAILED_TO_DELETE_UNUSED_WORK_LINK);
-                    }
-                    // ... and create a deletion request for all users ???
+                    if (!$this->not_used()) {
+                        // if the target link has not yet been created
+                        // ... request to delete the old
+                        $to_del->del($msg);
+                        $msg->merge($msg);
+                        if (!$msg->is_ok()) {
+                            $msg->add_id(msg_id::FAILED_TO_DELETE_UNUSED_WORK_LINK);
+                        }
+                        // ... and create a deletion request for all users ???
 
-                    // ... and create a new triple
-                    $this->id = 0;
-                    $this->set_owner_id($this->get_user()->id);
-                    $this->add($msg);
-                    log_debug('triple->save_id_if_updated recreate the triple del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
+                        // ... and create a new triple
+                        $this->id = 0;
+                        $this->set_owner_id($this->get_user()->id);
+                        $this->add($msg);
+                        log_debug('triple->save_id_if_updated recreate the triple del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
+                    } else {
+                        $to_del->exclude();
+                        if (!$to_del->save($msg)) {
+                            $msg->add(msg_id::FAILED_TO_EXCLUDE_UNUSED, [
+                                msg_id::VAR_CLASS_NAME => $this::class
+                            ]);
+                        }
+                    }
                 }
             }
         }
@@ -2597,9 +2601,10 @@ class triple extends sandbox_link_named
     /**
      * check additional if the opposite triple already exists and if yes, ask for confirmation
      *
-     * @returns triple|sandbox a filled object that has the same name, links or reverse links
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @returns triple|sandbox|null a filled object that has the same name, links or reverse links
      */
-    function get_similar(user_message $msg): triple|sandbox
+    function get_similar(user_message $msg): triple|sandbox|null
     {
         $sim = parent::get_similar($msg);
 

@@ -430,6 +430,7 @@ class ip_range extends db_object_seq_id
     /**
      * get a similar or overlapping ip range
      *
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      * @return ip_range|db_object|null the ip range that matches e.g. to update the reason
      */
     function get_similar(user_message $msg): ip_range|db_object|null

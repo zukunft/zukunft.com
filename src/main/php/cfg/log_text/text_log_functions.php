@@ -30,12 +30,12 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 
 //include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -49,6 +49,7 @@ include_once paths::SHARED . 'url_var.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -350,11 +351,19 @@ function log_msg(string  $msg_text,
         $msg_type_text = $user_id . substr($msg_text, 0, 200);
         if (!in_array($msg_type_text, $sys->log_msg_lst)) {
             $msg = new user_message();
-            $msg->usr = $usr;
             $sys_log = new sys_log();
 
             $sys->log_msg_lst[] = $msg_type_text;
             if ($msg_log_level > text_log::LOG_LEVEL or $force_log) {
+
+                $fnc = $sys->typ_lst->sys_log_fnc->get_by_name($function_name);
+                if ($fnc == null) {
+                    $sys_log_fnc = new sys_log_function();
+                    $sys_log_fnc->name = $function_name;
+                    $msg->usr = $sys->user_log();
+                    $sys_log_fnc->save($msg);
+                    $sys->typ_lst->sys_log_fnc->add($sys_log_fnc, false);
+                }
 
                 $sys_log->set($user_id, $function_name, $trace, $msg_log_level, $msg_text, $msg_description, $msg);
                 $sys_log->insert($msg);

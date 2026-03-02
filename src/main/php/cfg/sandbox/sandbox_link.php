@@ -1007,19 +1007,19 @@ class sandbox_link extends sandbox
     /**
      * check if an object with the unique key already exists
      * returns null if no similar object is found
-     * or returns the object with the same unique key that is not the actual object
+     * or returns the object with the same unique key that is not the actual object;
      * any warning or error message needs to be created in the calling function
      * e.g. if the user tries to create a formula named "millions"
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @returns string a filled object that links the same objects
-     *                 or a sandbox object with id() = 0 if nothing similar has been found
+     * @return sandbox|null a filled object that links the same objects
+     *                      or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): sandbox
+    function get_similar(user_message $msg): ?sandbox
     {
-        $result = new sandbox($this->get_user());
+        $sim = null;
 
         // check potential duplicate by name
         // check for linked objects
@@ -1033,7 +1033,7 @@ class sandbox_link extends sandbox
             if ($db_chk->load_standard()) {
                 if ($db_chk->id() > 0) {
                     log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard link space');
-                    $result = $db_chk;
+                    $sim = $db_chk;
                 }
             }
             // check with the user link space
@@ -1041,12 +1041,12 @@ class sandbox_link extends sandbox
             if ($db_chk->load_by_link_id($this->fob->id(), 0, $this->tob->id(), $this::class)) {
                 if ($db_chk->id() > 0) {
                     log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space');
-                    $result = $db_chk;
+                    $sim = $db_chk;
                 }
             }
         }
 
-        return $result;
+        return $sim;
     }
 
 

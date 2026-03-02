@@ -175,9 +175,9 @@ class test_db_load
     /**
      * save the just created word object in the database
      *
-     * @param string $wrd_name the name of the word which should be loaded
+     * @param string $wrd_name the name of the word, which should be loaded
      * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
-     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @param user|null $test_usr if not null, the user for whom the word should be created to test the user sandbox
      * @return word the word that is saved in the database by name
      */
     function add_word(
@@ -195,7 +195,7 @@ class test_db_load
         if ($wrd->id() == 0) {
             $wrd->set_name($wrd_name);
             if (!$wrd->save($usr_msg)) {
-                log_err('add formula failed due to: ' . $usr_msg->get_last_message());
+                log_err('add word failed due to: ' . $usr_msg->text());
             }
         }
         if ($wrd->id <= 0) {
@@ -205,14 +205,14 @@ class test_db_load
             if ($wrd->excluded) {
                 $wrd->include();
                 if (!$wrd->save($usr_msg)) {
-                    log_err('cannot include word ' . $wrd->dsp_id() . ' due to ' . $usr_msg->get_last_message());
+                    log_err('cannot include word ' . $wrd->dsp_id() . ' due to ' . $usr_msg->text());
                 }
             }
         }
         if ($wrd_type_code_id != null) {
             $wrd->type_id = $sys->typ_lst->phr_typ->id($wrd_type_code_id);
             if (!$wrd->save($usr_msg)) {
-                log_err('add formula failed due to: ' . $usr_msg->get_last_message());
+                log_err('add formula failed due to: ' . $usr_msg->text());
             }
         }
         return $wrd;
@@ -626,7 +626,7 @@ class test_db_load
             // TODO add this check to all add functions
             if (!$usr_msg->is_ok()) {
                 $reason = $usr_msg->all_message_text();
-                log_err('add formula failed due to: ' . $reason);
+                log_warning('add formula failed due to: ' . $reason);
             }
         }
         return $frm;
@@ -634,6 +634,8 @@ class test_db_load
 
     function test_formula(string $frm_name, string $frm_text, user_message $usr_msg): formula
     {
+        // reset the message for each test
+        $usr_msg->reset();
         $frm = $this->add_formula($frm_name, $frm_text, $usr_msg);
         $this->env->assert('formula', $frm->name(), $frm_name);
         return $frm;

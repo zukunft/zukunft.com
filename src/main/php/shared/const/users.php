@@ -100,6 +100,11 @@ class users
     const string DEV_CODE_ID = 'developer'; // unique id to select the user
     const string DEV_EMAIL = 'developer@zukunft.com';
 
+    // to get the internal user used for logging
+    const int SYSTEM_LOG_ID = 8;
+    const string SYSTEM_LOG_NAME = 'zukunft.com system log';
+    const string SYSTEM_LOG_CODE_ID = 'log';
+
     // system testing
     const string TEST_NAME = 'standard user view for all users';
     const string TEST_IP = '66.249.64.95'; // used to check the blocking of an IP address

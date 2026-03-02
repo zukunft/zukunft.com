@@ -1406,19 +1406,26 @@ class component_link extends sandbox_link
     /**
      * get a similar reference
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return component_link|sandbox|null a filled object that links the same objects
+     *                                     or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): component_link
+    function get_similar(user_message $msg): component_link|sandbox|null
     {
-        $result = new component_link($this->get_user());
+        $sim = null;
 
         $db_chk = $this->clone_reset(true);
         $db_chk->load_by_link_and_pos($this->get_view()->id(), $this->get_component()->id(), $this->order_nbr);
         if ($db_chk->id() > 0) {
+            $msg->add(msg_id::COMPONENT_LINK_ALREADY_EXISTS, [
+                msg_id::VAR_COMPONENT => $this->get_component()->name(),
+                msg_id::VAR_VIEW => $this->get_view()->name(),
+                msg_id::VAR_TYPE => $this->type_name(),
+            ]);
             log_debug('a component link like ' . $this->dsp_id() . ' already exists');
-            $result = $db_chk;
+            $sim = $db_chk;
         }
 
-        return $result;
+        return $sim;
     }
 
 

@@ -97,22 +97,28 @@
         "id": 15
       },
       {
+        "name": "system log",
+        "code_id": "log",
+        "description": "profile that can add everything but cannot update or delete anything",
+        "id": 16
+      },
+      {
         "name": "system test",
         "code_id": "test",
         "description": "for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
-        "id": 16
+        "id": 17
       },
       {
         "name": "benevolent dictator",
         "code_id": "bdfl",
         "description": "a fallback admin user for unexpected cases; hopefully never used",
-        "id": 17
+        "id": 18
       },
       {
         "name": "system",
         "code_id": "system",
         "description": "User to log internal tasks not directly initiated by an user like system testing and cleanup",
-        "id": 18
+        "id": 19
       }
     ],
     "user_types": [

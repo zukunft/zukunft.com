@@ -1522,12 +1522,13 @@ class group extends sandbox_multi
      * returns null if no similar group is found
      * or returns the group with the same unique key that is not the actual object
      *
-     * @return group a filled object that has the same name
-     *                 or a sandbox object with id() = 0 if nothing similar has been found
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return group|null a filled object that has the same name
+     *                    or null if nothing similar has been found
      */
-    function get_similar(): group
+    function get_similar(user_message $msg): group|null
     {
-        $result = new group($this->get_user());
+        $sim = null;
 
         // check potential duplicate by name
         $db_chk = clone $this;
@@ -1536,7 +1537,7 @@ class group extends sandbox_multi
         if ($db_chk->load_standard_by_name($this->name())) {
             if ($db_chk->id() > 0) {
                 log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
-                $result = $db_chk;
+                $sim = $db_chk;
             }
         }
         // check with the user namespace
@@ -1545,14 +1546,14 @@ class group extends sandbox_multi
             if ($db_chk->load_by_name($this->name())) {
                 if ($db_chk->id() > 0) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                    $result = $db_chk;
+                    $sim = $db_chk;
                 }
             }
         } else {
             log_err('The name must be set to check if a similar object exists');
         }
 
-        return $result;
+        return $sim;
     }
 
     /**

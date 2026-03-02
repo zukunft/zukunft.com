@@ -2832,19 +2832,19 @@ class sandbox_multi extends db_object_multi_user
      *
      * check if an object with the unique key already exists
      * returns null if no similar object is found
-     * or returns the object with the same unique key that is not the actual object
+     * or returns the object with the same unique key that is not the actual object;
      * any warning or error message needs to be created in the calling function
      * e.g. if the user tries to create a formula named "millions"
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @returns sandbox a filled object that has the same name or links the same objects
-     *                  or a sandbox object with id() = 0 if nothing similar has been found
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @returns sandbox_multi|null a filled object that has the same name or links the same objects
+     *                  or null if nothing similar has been found
      */
-    function get_similar(): sandbox_multi
+    function get_similar(user_message $msg): sandbox_multi|null
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'get_similar',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);

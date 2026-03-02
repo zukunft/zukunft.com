@@ -233,7 +233,7 @@ enum messages: string
     case ERROR_TEXT = 'error';
     case NONE = '';
     case SIDE_FROM = 'from';
-    case SIDE_TO = 'to';
+    case SIDE_TO = 'linked to';
     case SIDE_PARENT = 'parent';
     case SIDE_CHILD = 'child';
 
@@ -915,6 +915,8 @@ enum messages: string
     case USER_SANDBOX_CANNOT_BE_CLEANED = ' and user sandbox cannot be cleaned';
     case FAILED_TO_DELETE_UNUSED = 'Failed to delete the unused '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
+    case FAILED_TO_EXCLUDE_UNUSED = 'Failed to exclude the unused '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
     case IMPORT_COUNT_DIFF = 'import of "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" failed because only '
@@ -1017,6 +1019,20 @@ enum messages: string
         . ' '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" already exists. Do you really want to create both sides?';
+    case REF_ALREADY_EXISTS = 'reference  "'
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' from '
+        . self::VAR_START . self::VAR_PHRASE . self::VAR_END
+        . ' to '
+        . self::VAR_START . self::VAR_URL_KEY . self::VAR_END
+        . '" already exists';
+    case COMPONENT_LINK_ALREADY_EXISTS = 'component '
+        . self::VAR_START . self::VAR_COMPONENT . self::VAR_END
+        . ' is already connected to '
+        . self::VAR_START . self::VAR_VIEW . self::VAR_END
+        . ' as '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . '" already exists';
     case FAILED_RELOAD_CLASS = 'Reload "'
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '" failed';
@@ -1315,7 +1331,7 @@ enum messages: string
     case LOG_UPDATE = 'changed';
     case LOG_DEL = 'deleted';
     case LOG_LINK = 'linked';
-    case LOG_TO = 'log to';
+    case LOG_TO = 'to';
 
     // import
     case IMPORT_JSON = 'import';

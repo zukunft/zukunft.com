@@ -590,10 +590,10 @@ class library
      *
      * @param string $msg_txt the message text before the variable replacement
      * @param string $key the variable name
-     * @param string $var the value to be used
+     * @param string|null $var the value to be used
      * @return string the message text after the variable replacement
      */
-    function msg_var_replace(string $msg_txt, string $key, string $var): string
+    function msg_var_replace(string $msg_txt, string $key, ?string $var): string
     {
         // avoid using escaped var makers (probably not 100% correct)
         $msg_txt = str_replace(
