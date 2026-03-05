@@ -2056,6 +2056,7 @@
     \-- save_id_fields - section for function save_id_fields is expected to be save in /sandbox/sandbox.php
     \-- save_id_fields_link - section for function save_id_fields_link is expected to be save in /sandbox/sandbox.php
     \-- is_same_std - section for function is_same_std is expected to be info in /sandbox/sandbox.php
+    \-- is_formula_word - section for function is_formula_word is expected to be info in /sandbox/sandbox.php
     \-- is_same - section for function is_same is expected to be info in /sandbox/sandbox.php
     \-- is_similar - section for function is_similar is expected to be info in /sandbox/sandbox.php
     \-- get_similar - section for function get_similar is expected to be save in /sandbox/sandbox.php

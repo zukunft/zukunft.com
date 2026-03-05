@@ -80,18 +80,12 @@ class horizontal_write_tests
         $t->subheader($ts . 'insert');
         foreach (def::MAIN_CLASSES as $class) {
 
-            // set the sql creation types
-            $sc_par_lst = [];
-            if (!in_array($class, def::CLASSES_NO_CHANGE_LOG)) {
-                $sc_par_lst = [sql_type::LOG];
-            }
-
             // TODO Prio 1 add link and value classes
             if (in_array($class, def::NAME_CLASSES)) {
 
                 $test_name = 'insert ' . $lib->class_to_name($class) . ' via SQL function';
                 $obj = $t_map->class_to_add_object($class, $msg, $cac);
-                $t->assert_insert($test_name, $obj, $msg, $sc_par_lst);
+                $t->assert_save($test_name, $obj, $msg);
 
                 // remember the word to be able to use it for a proper triple
                 if ($obj::class == word::class) {
@@ -143,7 +137,7 @@ class horizontal_write_tests
 
                 $test_name = 'update ' . $lib->class_to_name($class) . ' via SQL function';
                 $obj->fill($t_map->class_to_add_filled_object($class), $t->usr1);
-                $t->assert_update($test_name, $obj, $msg, $sc_par_lst);
+                $t->assert_save($test_name, $obj, $msg, $sc_par_lst);
 
                 $test_name = 'reload filled ' . $lib->class_to_name($class) . ' and check differences';
                 $check_obj = $obj->clone_reset(true);
@@ -192,10 +186,10 @@ class horizontal_write_tests
                 // TODO Prio 2 delete changes caused by the test before deleting the test row
 
                 $test_name = 'delete ' . $lib->class_to_name($class) . ' via SQL function';
-                $t->assert_delete($test_name, $check_obj, $msg, $sc_par_lst);
+                $t->assert_delete($test_name, $obj, $msg, $sc_par_lst);
 
                 $test_name = 'reload ' . $lib->class_to_name($class) . ' and check that it has been remove';
-                $t->assert_false($test_name, $check_obj->load_by_id($ids[$class]));
+                $t->assert_false($test_name, $obj->load_by_id($ids[$class]));
 
                 // delete the second word used for a proper triple creation
                 if ($class == word::class) {

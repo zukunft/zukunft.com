@@ -5942,7 +5942,7 @@ class sql_db
 
     /**
      * import the system users
-     * @return bool true if the system users has actually been imported
+     * @return bool true if the system users have actually been imported
      */
     function import_system_users(): bool
     {

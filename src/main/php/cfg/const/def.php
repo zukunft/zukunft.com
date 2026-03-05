@@ -368,6 +368,22 @@ class def
         group::class,
     ];
 
+    // list of classes that can be the object of a phrase
+    // TODO Prio 1 use this for all phrase checks
+    const array PHRASE_CLASSES = [
+        word::class,
+        triple::class,
+    ];
+
+    // list of classes that can be the object of a phrase
+    // TODO Prio 1 use this for all term checks
+    const array TERM_CLASSES = [
+        word::class,
+        verb::class,
+        triple::class,
+        formula::class,
+    ];
+
     // list of classes where the link of two objects is the main unique key beside the database id
     const array LINK_CLASSES = [
         element::class,

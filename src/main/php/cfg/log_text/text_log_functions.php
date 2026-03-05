@@ -360,6 +360,7 @@ function log_msg(string  $msg_text,
                 if ($fnc == null) {
                     $sys_log_fnc = new sys_log_function();
                     $sys_log_fnc->name = $function_name;
+                    $sys_log_fnc->code_id = $function_name;
                     $msg->usr = $sys->user_log();
                     $sys_log_fnc->save($msg);
                     $sys->typ_lst->sys_log_fnc->add($sys_log_fnc, false);

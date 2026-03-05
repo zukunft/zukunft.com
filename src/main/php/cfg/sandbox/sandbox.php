@@ -2248,11 +2248,11 @@ class sandbox extends db_object_seq_id_user
     /**
      * check that the given object is by the unique keys the same as the actual object
      * handles the specials case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
-     * so if a formula word "millions" is not the same as the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
+     * so if a formula word "millions" is different from the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
      * in short: if two objects are the same by this definition, they are supposed to be merged
      * @return bool true if the given object is exactly the same as this object
      */
-    function is_same($obj_to_check): bool
+    function is_formula_word(word|sandbox $obj_to_check): bool
     {
         global $sys;
 
@@ -2270,37 +2270,61 @@ class sandbox extends db_object_seq_id_user
         if ($this::class == word::class) {
             // special case a word should not be combined with a word that is representing a formulas
             if ($this->name() == $obj_to_check->name()) {
-                if (isset($this->type_id) and isset($obj_to_check->type_id)) {
-                    if ($this->type_id == $obj_to_check->type_id) {
-                        $result = true;
-                    } else {
-                        if ($obj_to_check::class == formula::class
-                            and $this->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
-                            // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
-                            $result = true;
-                        } elseif ($this->type_id != $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)
-                            and $obj_to_check->type_id != $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
-                            // if not one of the two words is a formula link and not both, the user should ge no suggestion to combine them
-                            // a measure word can be combined with a measure scale word
-                            $result = true;
-                        }
-                    }
-                } else {
-                    log_debug('The type_id of the two objects to compare are not set');
+                if ($obj_to_check::class == formula::class
+                    and $this->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
+                    // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
+                    $result = true;
+                } elseif ($obj_to_check::class == word::class
+                    and $this->type_id != $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)
+                    and $obj_to_check->type_id != $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
+                    // if not one of the two words is a formula link and not both, the user should ge no suggestion to combine them
+                    // a measure word can be combined with a measure scale word
+                    $result = true;
                 }
             }
-        } elseif ($this::class == $obj_to_check::class) {
-            $result = $this->is_same_std($obj_to_check);
         }
+
         return $result;
     }
 
     /**
-     * just to double-check if the get similar function is working correctly
+     * can merge
+     * check that the given object is by the unique keys the same as the actual object
+     * handles the specials case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
+     * so if a formula word "millions" is different from the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
+     * in short: if two objects are the same by this definition, they are supposed to be merged
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
+     */
+    function is_same(word|sandbox $obj_to_check): bool
+    {
+        $result = false;
+        if ($obj_to_check != null) {
+            //
+            if ($this::class == $obj_to_check::class) {
+                $result = $this->is_same_std($obj_to_check);
+                if (in_array($this::class, def::NAME_CLASSES)) {
+                    if ($this->name() != $obj_to_check->name()) {
+                        $result = false;
+                    }
+                }
+                if (in_array($this::class, def::CODE_ID_CLASSES)) {
+                    if ($this->code_id != $obj_to_check->code_id) {
+                        $result = false;
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * avoid duplicates,
      * so if the formulas "millions" is compared with the word "millions" this function returns true
+     * just to double-check if the get similar function is working correctly,
      * in short: if two objects are similar by this definition, they should not be both in the database
      * @param null|object $obj_to_check the object used for the comparison
-     * @return bool true if the objects represent the same
+     * @return bool true if the objects should not be in the database at the same time
      */
     function is_similar(?object $obj_to_check): bool
     {
@@ -2311,10 +2335,8 @@ class sandbox extends db_object_seq_id_user
                 $result = $this->is_same_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
-                if ($this::class == word::class
-                    or $this::class == triple::class
-                    or $this::class == formula::class
-                    or $this::class == verb::class) {
+                if (in_array($this::class, def::TERM_CLASSES)
+                    and in_array($obj_to_check::class, def::TERM_CLASSES)) {
                     if ($this->name() == $obj_to_check->name()) {
                         $result = true;
                     }
@@ -2473,7 +2495,8 @@ class sandbox extends db_object_seq_id_user
 
         // create a new object if nothing similar has been found
         if ($msg->is_ok()) {
-            if (!$this->has_id() and $sim == null) {
+            // is_same is used to be able to create the formula words
+            if (!$this->has_id() and ($sim == null or $this->is_formula_word($sim))) {
 
                 log_debug('add ' . $this->dsp_id());
                 $this->add($msg);
@@ -2481,16 +2504,17 @@ class sandbox extends db_object_seq_id_user
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($sim != null) {
-                    // reload the similar database row
-                    if (!$this->has_id() and $sim->has_id()) {
-                        $this->id = $sim->id();
-                        $db_rec = $this->load_db($msg);
-                    }
                     log_debug('got similar and suggest renaming or merge');
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
                     if (!$this->is_same($sim)) {
                         $msg->merge($sim->id_used_msg($this));
+                    } else {
+                        // reload the similar database row
+                        if (!$this->has_id() and $sim->has_id()) {
+                            $this->id = $sim->id();
+                            $db_rec = $this->load_db($msg);
+                        }
                     }
                 }
 

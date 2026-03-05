@@ -185,6 +185,7 @@ class test_words extends test_objects
         $wrd->include();
         $wrd->id = 0;
         $wrd->set_name(words::TEST_ADD);
+        $wrd->set_code_id(words::TEST_ADD_CODE_ID, $this->env->usr_system);
         return $wrd;
     }
 

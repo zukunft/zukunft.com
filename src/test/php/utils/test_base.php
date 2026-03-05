@@ -799,7 +799,7 @@ class test_base
     }
 
     /**
-     * check if the test results contains at least all expected results
+     * check if the test for results contains at least all expected results
      * or in other words if all needles can be found in the haystack
      *
      * @param string $msg (unique) description of the test
@@ -2601,6 +2601,51 @@ class test_base
      */
 
     /**
+     * test if a database save correctly saves to object for the requesting user
+     *
+     * @param string $test_name the description of the test for the log
+     * @param sandbox_multi|db_object_seq_id $dbo the database object
+     * @param user_message $msg
+     * @return bool true if the test was fine
+     */
+    function assert_save(
+        string                         $test_name,
+        sandbox_multi|db_object_seq_id $dbo,
+        user_message                   $msg
+    ): bool
+    {
+        if ($dbo->save($msg)) {
+            $db_obj = $dbo->clone_reset();
+            $db_obj->load_by_id($dbo->id());
+            $diff = $db_obj->diff_msg($dbo);
+            $this->assert_true($test_name, $diff->is_ok());
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * test if a database delete correctly removes to object for the requesting user
+     *
+     * @param string $test_name the description of the test for the log
+     * @param sandbox_multi|db_object_seq_id $dbo the database object
+     * @param user_message $msg
+     * @return bool true if the test was fine
+     */
+    function assert_del(
+        string                         $test_name,
+        sandbox_multi|db_object_seq_id $dbo,
+        user_message                   $msg
+    ): int
+    {
+        if ($dbo->del($msg)) {
+            $db_obj = $dbo->clone_reset();
+            $db_obj->load_by_id($dbo->id());
+            $this->assert_false($test_name, $db_obj->load_by_id($dbo->id()));
+        }
+        return $msg->is_ok();
+    }
+
+    /**
      * test if a database insert statement could be created for the given object,
      * and if based on this statement, a database id is returned
      *
@@ -2647,6 +2692,7 @@ class test_base
     /**
      * test if a database update statement could be created for the given object,
      * and if based on this statement, a database row updated
+     * TODO Prio 2 make it private to force to use the save function whereever possible
      *
      * @param string $test_name the description of the test for the log
      * @param db_object_seq_id $dbo the database object

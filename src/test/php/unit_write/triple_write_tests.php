@@ -235,8 +235,7 @@ class triple_write_tests
         $usr_msg = new user_message($t->usr1);
         $wrd->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
-        $target = 'Reload "word" failed, A triple with the name "System Test Triple" already exists. '
-            . 'Please use another word name.';
+        $target = 'A triple with the name "System Test Triple" already exists. Please use another word name.';
         $t->assert('word cannot have a standard triple name', $result, $target);
 
         // ... and no verb either

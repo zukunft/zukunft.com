@@ -443,6 +443,7 @@ class words
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
     const string TEST_ADD = 'System Test Word';
+    const string TEST_ADD_CODE_ID = 'System Test Word code id';
     const string TEST_ADD_COM = 'test description added to the word via import';
     const string TEST_ADD_TO = 'System Test Word To';
     const string TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';

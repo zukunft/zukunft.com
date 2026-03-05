@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
@@ -241,7 +242,11 @@ class test_app
             $db_con->set_class(system_time_type::class);
             $sys_script_id = $db_con->get_id($sys->script);
             if ($sys_script_id <= 0) {
-                $sys_script_id = $db_con->add_id($sys->script);
+                $sys_script = new system_time_type();
+                $sys_script->name = $sys->script;
+                $sys_script->code_id = $sys->script;
+                $msg = new user_message();
+                $sys_script->save($msg);
             }
             $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
             $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);
