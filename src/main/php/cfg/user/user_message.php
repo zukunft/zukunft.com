@@ -595,7 +595,11 @@ class user_message extends Message
      */
     function get_last_message_translated(): string
     {
-        return $this->get_message_translated(count($this->msg_var_lst));
+        if ($this->has_msg()) {
+            return $this->get_message_translated(count($this->msg_var_lst));
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -604,6 +608,17 @@ class user_message extends Message
     function get_row_id(): int|string
     {
         return $this->db_row_id;
+    }
+
+    /**
+     * @return bool true if any message has been added to this user message
+     */
+    function has_msg(): bool
+    {
+        return count($this->msg_text) > 0
+            || count($this->msg_id_lst) > 0
+            || count($this->msg_var_lst) > 0
+            || count($this->typ_lst) > 0;
     }
 
     /**

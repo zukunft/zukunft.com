@@ -695,11 +695,13 @@ class triple extends sandbox_link_named
                 // if there is no word or triple with the name yet, automatically create a word
                 $wrd = new word($this->get_user());
                 $wrd->set_name($name);
-                $wrd->save($usr_msg);
-                if ($wrd->id() == 0) {
-                    log_err('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), 'triple->import_obj');
-                } else {
-                    $result = $wrd->phrase();
+                if ($usr_msg->is_ok()) {
+                    $wrd->save($usr_msg);
+                    if ($wrd->id() == 0) {
+                        log_err('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), 'triple->import_obj');
+                    } else {
+                        $result = $wrd->phrase();
+                    }
                 }
             }
         } else {

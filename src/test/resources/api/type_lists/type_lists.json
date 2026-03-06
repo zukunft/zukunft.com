@@ -193,22 +193,34 @@
     ],
     "sys_log_functions": [
       {
+        "name": "no function name detected",
+        "code_id": "no function name detected",
+        "description": "fallback value if the function name is missing",
+        "id": 1
+      },
+      {
+        "name": "cfg\/system\/sys_log",
+        "code_id": "cfg\/system\/sys_log",
+        "description": "for errors on the system log functions itself",
+        "id": 2
+      },
+      {
         "name": "Import system configuration",
         "code_id": "import_base_config",
         "description": "Import the default system and user configuration",
-        "id": 1
+        "id": 3
       },
       {
         "name": "Import pod configuration",
         "code_id": "import_pod_config",
         "description": "Import the default pod configuration",
-        "id": 2
+        "id": 4
       },
       {
         "name": "Import test configuration",
         "code_id": "import_test_config",
         "description": "Import the configuration for system consistency tests",
-        "id": 3
+        "id": 5
       }
     ],
     "sys_log_levels": [

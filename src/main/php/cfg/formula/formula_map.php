@@ -1515,7 +1515,8 @@ class formula_map extends sandbox_code_id
                             $this->set_owner_id($this->get_user()->id);
                             // TODO check the usr_msg values and if the id is needed
                             $this->add($msg);
-                            log_debug('->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
+                            log_debug('->save_id_if_updated recreate the display component link del "'
+                                . $db_rec->dsp_id() . '" add ' . $this->dsp_id());
                         } else {
                             $to_del->exclude();
                             if (!$to_del->save($msg)) {
@@ -1726,7 +1727,7 @@ class formula_map extends sandbox_code_id
                                 log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
                                 // in case a word link exist, change also the name of the word
                                 if (!$this->wrd_rename($db_rec->name(), $msg)) {
-                                    $msg->all_info_text('formula ' . $db_rec->name() . ' cannot ba renamed to ' . $this->name() . ', because ...');
+                                    $msg->all_info_text('formula ' . $db_rec->name() . ' cannot be renamed to ' . $this->name() . ', because ...');
                                 }
                             }
 

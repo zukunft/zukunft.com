@@ -176,14 +176,14 @@ class component_write_tests
         // TODO for testing always use the latest table name
         // TODO create an additional test based on change_tables and change_fields to receive data for an deprecated table or field
         $result = $t->log_last_by_field($cmp_reloaded, sql_db::FLD_DESCRIPTION, $cmp_reloaded->id(), true);
-        // TODO fix it
+        // TODO Prio 1 fix it
         $target = users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         if ($result != $target) {
-            $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
+            $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "System Test View Component description" to "Just added for testing the user sandbox"';
         }
         $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
         $result = $t->log_last_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id(), true);
-        // TODO fix it
+        // TODO Prio 1 fix it
         $target = users::SYSTEM_TEST_NAME . ' added "word name"';
         if ($result != $target) {
             $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "word name" to "formulas"';

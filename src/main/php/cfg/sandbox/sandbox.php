@@ -1925,6 +1925,13 @@ class sandbox extends db_object_seq_id_user
                 // check if some user overwrites can be removed
                 $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
             }
+            /*
+            // check if renaming this object breaks any user's sandbox
+            if ($usr_msg->is_ok() and $this->is_key_updated($db_obj)) {
+                $this->fix_user_overwrites_after_rename($db_obj, $usr_msg);
+            }
+            */
+
         } else {
             $sc_par_lst->add(sql_type::USER);
             // make sure that the code id never differs between the standard row and the user row
@@ -1987,6 +1994,25 @@ class sandbox extends db_object_seq_id_user
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $usr_msg->is_ok();
     }
+
+    /*
+    function fix_user_overwrites_after_rename(
+        sandbox $old_rec, user_message $msg
+    ): void {
+        // find all user overwrites where the user-specific name
+        // now collides with the new standard name of this object
+        $conflicts = $this->load_usr_cfg_by_name($this->name(), $msg);
+        foreach ($conflicts as $usr_cfg) {
+            // if the user had renamed something else to what
+            // this object is now called, their overwrite is
+            // redundant or conflicting — remove it
+            if ($usr_cfg->id() !== $this->id()) {
+                $usr_cfg->del_usr_cfg_exe($db_con);
+                // optionally notify the affected user
+            }
+        }
+    }
+    */
 
     /**
      * dummy function to save all updated word fields, which is always overwritten by the child class
@@ -2297,6 +2323,7 @@ class sandbox extends db_object_seq_id_user
      */
     function is_same(word|sandbox $obj_to_check): bool
     {
+        global $sys;
         $result = false;
         if ($obj_to_check != null) {
             //
@@ -2309,6 +2336,17 @@ class sandbox extends db_object_seq_id_user
                 }
                 if (in_array($this::class, def::CODE_ID_CLASSES)) {
                     if ($this->code_id != $obj_to_check->code_id) {
+                        $result = false;
+                    }
+                }
+            }
+        }
+        // check the exception case that formula link words are similar to the formula, but are not the same
+        if ($this::class == word::class) {
+            if ($this->name() == $obj_to_check->name()) {
+                if ($this->type_id !== $obj_to_check->type_id) {
+                    if ($this->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)
+                        or $obj_to_check->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
                         $result = false;
                     }
                 }
@@ -2433,6 +2471,49 @@ class sandbox extends db_object_seq_id_user
      * time words are separated from the word groups to reduce the number of word groups
      * for daily data or shorter a normal date or time field is used
      * a time word can also describe a period
+     *
+     *
+        assume I have five database tables with these fields
+
+        table user with user_id and name
+        table word with fields word_id, owner_id, name and type; word_id is the prime index
+        table formula with fields formula_id, owner_id, name and type; formula_id is the prime index
+        table user_word with fields word_id, user_id, name and type; word_id and user_id are together the prime index
+        table user_formula with fields formula_id, user_id, name and type; formula_id and user_id are together the prime index
+        the owner_id references to the user_id
+
+        Beside the prime index the restrictions are:
+        1. a word cannot have the same name as a formula
+        1b. but a word can have the type "formula_link" which means that the word is representing a formula in this exception case the word must have the same name as the linked formula
+        2. a user can change the name of a word or formula, which leads to an overwrite record in user_word or user_formula with the user_id of the user and the word_id or formula_id of the object that is overwritten
+        3. within the "user sandbox" based on the standard names and the user overwrites from user_word and user_formula the names must be unique
+        3b. the only exception within the "user sandbox" is that a user_word with the type "formula_link" must have the same name as the corresponding formula or user_formula
+
+        There should be a function save that decides:
+
+        if the word (or formula) should be added
+        if the word (or formula) is updated
+        if the user should get a message to select another name
+        if a new user overwrite in user_word should be created
+        if a user overwrite in user_word should be updated
+        if an existing user_overwrite should be "moved" to the user overwrite of the renamed word
+        if an existing user_overwrite should be removed
+
+        What could be the code of the save function, if these subfunctions are used:
+
+        has_id - true if this row has been added to the database earlier
+        get_standard - get the db row from word or formula even if the user is not the owner
+        get_similar - get a db row with teh same name
+        is_same - true if the given object is by the unique keys the same as the actual object, so if it can be merged
+        is_similar - if the formulas "millions" is compared with the word "millions" this function returns true
+        is_formula_word - ture if the given object is the formula link word for this formula or the other way round
+        is_key_updated - true if the id parameters are supposed to be changed
+        delete_old_key_row - true if the id parameters are supposed to be changed
+        add - insert to word or formula
+        add_user - insert to user_word or user_formula
+        update - update user_word or user_formula
+        update_user - update user_word or user_formula
+
      */
 
     /**
@@ -2493,27 +2574,36 @@ class sandbox extends db_object_seq_id_user
             }
         }
 
-        // create a new object if nothing similar has been found
         if ($msg->is_ok()) {
-            // is_same is used to be able to create the formula words
-            if (!$this->has_id() and ($sim == null or $this->is_formula_word($sim))) {
 
+            // create a new object if nothing similar has been found
+            if (!$this->has_id() and $sim == null) {
                 log_debug('add ' . $this->dsp_id());
+                $this->add($msg);
+
+            } elseif (!$this->has_id() and $sim != null and $this->is_formula_word($sim)) {
+                // rule 1b: formula_link word is allowed — add it
+                log_debug('add formula_link ' . $this->dsp_id());
                 $this->add($msg);
 
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($sim != null) {
-                    log_debug('got similar and suggest renaming or merge');
-                    // e.g. if a source already exists update the source
-                    // but if a word with the same name of a formula already exists suggest a new formula name
-                    if (!$this->is_same($sim)) {
+                    if ($this->is_formula_word($sim)) {
+                        // if a word with the same name of a formula already exists suggest a new formula name
+                        // never merge a formula word with a formula
                         $msg->merge($sim->id_used_msg($this));
                     } else {
-                        // reload the similar database row
-                        if (!$this->has_id() and $sim->has_id()) {
-                            $this->id = $sim->id();
-                            $db_rec = $this->load_db($msg);
+                        log_debug('got similar and suggest renaming or merge');
+                        // e.g. if a source already exists update the source
+                        if ($this->is_same($sim)) {
+                            // reload the similar database row to update it
+                            if ($sim->has_id()) {
+                                $this->id = $sim->id();
+                                $db_rec = $this->load_db($msg);
+                            }
+                        } else {
+                            $msg->merge($sim->id_used_msg($this));
                         }
                     }
                 }

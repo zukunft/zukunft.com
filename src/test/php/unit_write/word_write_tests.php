@@ -306,7 +306,7 @@ class word_write_tests
         $usr_msg = new user_message($t->usr1);
         $wrd_add->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
-        $target = 'user message translation for position -1 not found';
+        $target = '';
         $t->assert('word->save for "' . words::TEST_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(words::TEST_ADD);
