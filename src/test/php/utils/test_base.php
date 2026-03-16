@@ -1700,6 +1700,36 @@ class test_base
     }
 
     /**
+     * check the SQL statement to load the default object by the link ids
+     * for all allowed SQL database dialects
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox_named|sandbox_link_named $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_standard_by_type_link(sql_creator $sc, sandbox_link|sandbox_link_named $usr_obj): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->load_sql_standard_by_type_link(
+            $usr_obj->from_field(), $usr_obj->from_id(),
+            $usr_obj->type_field(), $usr_obj->predicate_id,
+            $usr_obj->to_field(), $usr_obj->to_id(), $sc);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_obj->load_sql_standard_by_type_link(
+                $usr_obj->from_field(), $usr_obj->from_id(),
+                $usr_obj->type_field(), $usr_obj->predicate_id,
+                $usr_obj->to_field(), $usr_obj->to_id(), $sc);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
      * check the SQL statements to get the user sandbox changes
      * e.g. the value a user has changed of word, triple, value or formulas
      *

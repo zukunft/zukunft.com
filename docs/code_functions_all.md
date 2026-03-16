@@ -2286,6 +2286,7 @@
     \-- is_link_type_obj - section for function is_link_type_obj is expected to be info in /sandbox/sandbox_link.php
     \-- load_sql_by_link - section for function load_sql_by_link is expected to be load sql in /sandbox/sandbox_link.php
     \-- load_sql_standard_by_link - section for function load_sql_standard_by_link is expected to be load sql in /sandbox/sandbox_link.php
+    \-- load_sql_standard_by_type_link - section for function load_sql_standard_by_type_link is expected to be load sql in /sandbox/sandbox_link.php
     \-- can_be_ready - section for function can_be_ready is expected to be check in /sandbox/sandbox_link.php
     \-- needs_from - section for function needs_from not yet defined that it should be info in /sandbox/sandbox_link.php
     \-- needs_to - section for function needs_to not yet defined that it should be info in /sandbox/sandbox_link.php

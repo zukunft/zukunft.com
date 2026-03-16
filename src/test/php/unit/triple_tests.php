@@ -61,7 +61,7 @@ class triple_tests
 
         $t->subheader($ts . 'sql read standard by link');
         $trp = $t_trp->triple();
-        $t->assert_sql_standard_by_link($sc, $trp);
+        $t->assert_sql_standard_by_type_link($sc, $trp);
 
         $t->subheader($ts . 'sql write insert');
         $trp = $t_trp->triple();
