@@ -90,7 +90,7 @@ class component_tests
         $cmp = new component($usr);
         $cmp->set_name(views::START_NAME);
         //$t->assert_sql_all($db_con, $cmp);
-        $t->assert_sql_standard($sc, $cmp);
+        $t->assert_sql_standard_by_name($sc, $cmp);
 
         $t->subheader($ts . 'component sql write insert');
         $cmp = $t_cmp->component();

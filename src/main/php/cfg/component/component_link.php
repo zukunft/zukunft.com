@@ -919,29 +919,6 @@ class component_link extends sandbox_link
     }
 
     /**
-     * load the view component link parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard view component link has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-
-        if ($qp->has_par()) {
-            $db_dsl = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_dsl, true);
-            if ($result) {
-                $result = $this->load_owner();
-            }
-        }
-        return $result;
-    }
-
-    /**
      * load the component_link by the link id
      *
      * @param int $view_id the id of the view
@@ -967,51 +944,30 @@ class component_link extends sandbox_link
         }
     }
 
+    /**
+     * load the object parameters for all users by the link id
+     *
+     * @param int $from_id the id of the from link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_link(
+        int $from_id,
+        int $to_id,
+        user_message $msg
+    ): bool
+    {
+        return parent::load_standard_by_link_parent(
+            view_db::FLD_ID, $from_id,
+            component::FLD_ID, $to_id, $msg
+        );
+    }
+
 
     /*
      * load sql
      */
-
-    /**
-     * create an SQL statement to retrieve the parameters of the standard view component link from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        // try to get the search values from the objects
-        if ($this->id() <= 0) {
-            $this->id = 0;
-        }
-
-        $sc->set_class($this::class);
-        $qp = new sql_par($this::class);
-        if ($this->id() != 0) {
-            $qp->name .= 'std_id';
-        } else {
-            $qp->name .= 'std_link_ids';
-        }
-        $sc->set_name($qp->name);
-        //TODO check if $db_con->set_usr($this->get_user()->id()); is needed
-        $sc->set_fields(array(user_db::FLD_ID));
-        $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)));
-        if ($this->id() > 0) {
-            $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->get_view()->id() > 0 and $this->get_component()->id() > 0) {
-            $sc->add_where(view_db::FLD_ID, $this->get_view()->id());
-            $sc->add_where(component::FLD_ID, $this->get_component()->id());
-        } else {
-            log_err('Cannot load default component link because id is missing');
-        }
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component link from the database
@@ -1174,6 +1130,17 @@ class component_link extends sandbox_link
     function name_field(): string
     {
         return '';
+    }
+
+    /**
+     * @return array with all fields names of this component_link object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
     function all_sandbox_fields(): array

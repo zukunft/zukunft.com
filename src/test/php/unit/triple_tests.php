@@ -57,7 +57,11 @@ class triple_tests
         $t->subheader($ts . 'sql read standard by name');
         $trp = new triple($usr);
         $trp->set_name(triples::PI);
-        $t->assert_sql_standard($sc, $trp);
+        $t->assert_sql_standard_by_name($sc, $trp);
+
+        $t->subheader($ts . 'sql read standard by link');
+        $trp = $t_trp->triple();
+        $t->assert_sql_standard_by_link($sc, $trp);
 
         $t->subheader($ts . 'sql write insert');
         $trp = $t_trp->triple();

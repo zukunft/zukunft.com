@@ -719,6 +719,15 @@ enum messages: string
         . self::VAR_START . self::VAR_REQUEST . self::VAR_END
         . ' has not returned any response';
     case API_MESSAGE = self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case LOAD_STANDARD_ID_MISSING = 'mandatory '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' id missing of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' in load standard';
+    case LOAD_STANDARD_MAPPING_FAILED =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' mapping failed of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
     case MANDATORY_FIELD_MISSING = 'Mandatory field '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' missing in "'

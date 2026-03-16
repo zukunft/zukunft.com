@@ -146,7 +146,6 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
@@ -158,14 +157,12 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -260,7 +257,7 @@ class sandbox extends db_object_seq_id_user
 
     // database fields that are used in all objects and that have a specific behavior
     public ?int $usr_cfg_id = null;    // the database id if there is already some user-specific configuration for this object
-    private ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
+    public ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     private ?int $share_id = null;      // id for public, personal, group or private
     private ?int $protection_id = null; // id for no, user, admin or full protection
     public ?bool $excluded = null;     // the user sandbox for object is implemented, but can be switched off for the complete instance
@@ -1010,36 +1007,55 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * load the object parameters for all users
-     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
+     * TODO Prio 0 check to which function call the removed load_owner needs to be added
+     * TODO Prio 0 for component additional reload_phrases needs to be called
+     * TODO Prio 1 create load_standard_by_name function if needed
+     * @param int $id the database row id to select the standard row
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
      * @return bool true if the standard object has been loaded
      */
-    function load_standard(?sql_par $qp = null): bool
+    function load_standard(int $id, user_message $msg): bool
     {
         global $db_con;
-        $result = false;
 
-        if ($this->id() <= 0) {
-            log_err('The ' . $this::class . ' id must be set to load ' . $this::class, $this::class . '->load_standard');
+        if ($id == 0) {
+            $lib = new library();
+            $msg->add(msg_id::LOAD_STANDARD_ID_MISSING, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
         } else {
-            $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_row, true, false);
+            $sc = $db_con->sql_creator();
+            $qp = $this->load_sql_standard($id, $sc);
+
+            $db_row = $db_con->get1($qp, $msg);
+            if (!$this->row_mapper_sandbox(
+                $db_row, true, false)) {
+                $lib = new library();
+                $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_NAME => $this->dsp_id(),
+                ]);
+            }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * create the SQL to load the single default value always by the id
+     * @param int $id the database row id to select the standard row
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_standard(sql_creator $sc): sql_par
+    function load_sql_standard(int $id, sql_creator $sc): sql_par
     {
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         $qp->name .= sql_db::FLD_ID;
 
+        $sc->set_class($this::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->get_user()->id);
-        $sc->add_where($this->id_field(), $this->id());
+        $sc->set_fields($this->all_fields());
+        $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1106,7 +1122,7 @@ class sandbox extends db_object_seq_id_user
         return array();
     }
 
-    function load_owner(): bool
+    function load_owner(user_message $msg): bool
     {
         global $db_con;
         $result = false;
@@ -1121,12 +1137,11 @@ class sandbox extends db_object_seq_id_user
                     $result = true;
                 }
             } else {
+                // TODO Prio 0 move to each calling function after the load_standard call
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->get_user()->id);
-                if ($db_con->update_old($this->id(), user_db::FLD_ID, $this->get_user()->id)) {
-                    $result = true;
-                }
+                $std_rec = $this->get_standard($msg);
+                $std_rec->owner_id = $this->get_user()->id;
+                $this->update_standard_fields($db_con, $std_rec, $msg);
             }
         }
         return $result;
@@ -1217,7 +1232,7 @@ class sandbox extends db_object_seq_id_user
      * if the user is an admin the user can force to be the owner of this object
      * TODO review
      */
-    function take_ownership(user $usr): bool
+    function take_ownership(user $usr, user_message $msg): bool
     {
         $result = false;
         log_debug($this->dsp_id());
@@ -1226,7 +1241,7 @@ class sandbox extends db_object_seq_id_user
             // create a user db row for the current owner
             // TODO Prio 3 activate $result .= $this->usr_cfg_create_all();
             // take over the ownership by an admin
-            $result = $this->set_owner($usr->id); // TODO remove double getting of the user object
+            $result = $this->set_owner($usr->id, $msg); // TODO remove double getting of the user object
             // set the protection to avoid that the admin is losing the ownership
             // TODO Prio 3 activate $result .= $this->usr_cfg_cleanup();
         }
@@ -1241,7 +1256,10 @@ class sandbox extends db_object_seq_id_user
      * and that all user values
      * TODO review sql and object field compare of user and standard
      */
-    function set_owner(int $new_owner_id): bool
+    function set_owner(
+        int          $new_owner_id,
+        user_message $msg
+    ): bool
     {
         log_debug($this->dsp_id() . ' to ' . $new_owner_id);
 
@@ -1250,18 +1268,10 @@ class sandbox extends db_object_seq_id_user
 
         if ($this->id() > 0 and $new_owner_id > 0) {
             // to recreate the calling object
-            $std = clone $this;
-            $std->reset();
-            $std->id = $this->id();
-            $std->set_user($this->get_user());
-            $std->load_standard();
-
-            $db_con->set_class($this::class);
-            $db_con->set_usr($this->get_user()->id);
-            if (!$db_con->update_old($this->id(), user_db::FLD_ID, $new_owner_id)) {
-                $result = false;
-            }
-
+            $std = $this->clone_reset(true);
+            $std->load_standard($this->id(), $msg);
+            $std->owner_id = $new_owner_id;
+            $std->update_standard_fields($db_con, $std, $msg);
             $this->set_owner_id($new_owner_id);
             $new_owner = new user;
             if ($new_owner->load_by_id($new_owner_id)) {
@@ -2015,6 +2025,44 @@ class sandbox extends db_object_seq_id_user
     */
 
     /**
+     * save all updated fields on the standard db row with one sql function
+     * similar to save_fields_func function but for only for the norm not the user sandbox table
+     * TODO Prio 0 create unit test
+     *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @return bool true if everything has been fine
+     */
+    function update_standard_fields(
+        sql_db       $db_con,
+        sandbox      $norm_obj,
+        user_message $usr_msg = new user_message()
+    ): bool
+    {
+        // the sql creator is used more than once, so create it upfront
+        $sc = $db_con->sql_creator();
+        // the sql function should include the log of the changes
+        $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        // get a list of all fields that could potentially be updated
+        $all_fields = $this->db_fields_all();
+        // get the object name for the log messages
+        $lib = new library();
+        $obj_name = $lib->class_to_name($this::class);
+
+        // apply the changes directly to the norm db record
+        // TODO maybe check of other user have used the object and if yes keep or inform
+        $fvt_lst = $this->db_fields_changed($norm_obj, $usr_msg, $sc_par_lst);
+        if (!$fvt_lst->is_empty_except_internal_fields()) {
+            $sc_par_lst->add(sql_type::UPDATE);
+            $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
+            $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $usr_msg);
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
      * dummy function to save all updated word fields, which is always overwritten by the child class
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
@@ -2106,7 +2154,7 @@ class sandbox extends db_object_seq_id_user
     function get_obj_with_same_id_fields(): sandbox
     {
         log_debug('check if target already exists ' . $this->dsp_id());
-        $db_chk = clone $this;
+        $db_chk = $this->clone_reset();
         $db_chk->id = 0; // to force the load by the id fields
         $db_chk->load_standard(); // TODO should not ADDITIONAL the user-specific load be called
         return $db_chk;
@@ -2409,12 +2457,10 @@ class sandbox extends db_object_seq_id_user
 
     private function get_standard(user_message $msg): sandbox|db_object|null
     {
-        $std_rec = clone $this;
-        $std_rec->reset();
-        $std_rec->id = $this->id();
+        $std_rec = $this->clone_reset(true);
         $std_rec->set_user($this->get_user()); // must also be set to allow to take the ownership
         if ($msg->is_ok()) {
-            if (!$std_rec->load_standard()) {
+            if (!$std_rec->load_standard($this->id(), $msg)) {
                 $lib = new library();
                 $class_name = $lib->class_to_name($this::class);
                 $msg->add(msg_id::FAILED_RELOAD_DEFAULT_VALUES, [
@@ -2786,7 +2832,7 @@ class sandbox extends db_object_seq_id_user
                             // TODO change the original object, so that it uses the configuration of the new owner
 
                             // set owner
-                            if (!$this->set_owner($new_owner_id)) {
+                            if (!$this->set_owner($new_owner_id, $msg)) {
                                 $msg_txt .= 'Setting of owner while deleting ' . $class_name . ' failed';
                                 log_err($msg_txt, $class_name . '->del');
 
@@ -2825,11 +2871,8 @@ class sandbox extends db_object_seq_id_user
                             }
                         }
                         if ($msg_txt == '') {
-                            $std_rec = clone $this;
-                            $std_rec->reset();
-                            $std_rec->id = $this->id();
-                            $std_rec->set_user($this->get_user()); // must also be set to allow to take the ownership
-                            if (!$std_rec->load_standard()) {
+                            $std_rec = $this->clone_reset(true);
+                            if (!$std_rec->load_standard($this->id(), $msg)) {
                                 $msg_txt .= 'Reloading of standard ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
                             }
                         }
@@ -3962,6 +4005,19 @@ class sandbox extends db_object_seq_id_user
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
         return new sql_par_field_list();
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this object
+     */
+    protected function all_fields(): array
+    {
+        return $this::FLD_NAMES;
     }
 
 

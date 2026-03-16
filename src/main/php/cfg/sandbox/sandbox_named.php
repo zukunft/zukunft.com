@@ -568,25 +568,6 @@ class sandbox_named extends sandbox
         return 0;
     }
 
-    /**
-     * load the object parameters for all users
-     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
-     * @return bool true if the standard object has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $result = false;
-
-        if ($this->id() == 0 and $this->name() == '') {
-            log_err('The ' . $this::class . ' id or name must be set to load ' . $this::class, $this::class . '->load_standard');
-        } else {
-            $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_row, true);
-        }
-        return $result;
-    }
-
 
     /*
      * load sql
@@ -610,28 +591,44 @@ class sandbox_named extends sandbox
     }
 
     /**
+     * load the object parameters for all users by the name
+     *
+     * @param string $name the unique database name to select the standard row
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_name(string $name, user_message $msg): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_standard_by_name($name, $sc);
+
+        $db_row = $db_con->get1($qp, $msg);
+        if (!$this->row_mapper_sandbox(
+            $db_row, true, false)) {
+            $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
      * create the SQL to load the single default value always by the id or name
+     * @param string $name the database row id to select the standard row
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_standard(sql_creator $sc): sql_par
+    function load_sql_standard_by_name(string $name, sql_creator $sc): sql_par
     {
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
-        if ($this->id() != 0) {
-            $qp->name .= sql_db::FLD_ID;
-        } elseif ($this->name() != '') {
-            $qp->name .= sql_db::FLD_NAME;
-        } else {
-            log_err('Either the id or name must be set to get a named user sandbox object');
-        }
+        $qp->name .= sql_db::FLD_NAME;
 
+        $sc->set_class($this::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->get_user()->id);
-        if ($this->id() != 0) {
-            $sc->add_where($this->id_field(), $this->id());
-        } else {
-            $sc->add_where($this->name_field(), $this->name());
-        }
+        $sc->set_fields($this->all_fields());
+        $sc->add_where($this->name_field(), $name);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

@@ -84,7 +84,7 @@ class source_tests
         $t->subheader($ts . 'sql read standard by name');
         $src = new source($usr);
         $src->set_name(sources::WIKIDATA);
-        $t->assert_sql_standard($sc, $src);
+        $t->assert_sql_standard_by_name($sc, $src);
 
         $t->subheader($ts . 'sql write insert');
         // TODO test the log version for db write

@@ -91,7 +91,7 @@ class view_tests
         $msk = new view($usr);
         $msk->set_name(views::START_NAME);
         //$t->assert_load_sql($db_con, $msk);
-        $t->assert_sql_standard($sc, $msk);
+        $t->assert_sql_standard_by_name($sc, $msk);
 
         $t->subheader($ts . 'sql write insert');
         $msk = $t_msk->view_added();

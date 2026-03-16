@@ -712,58 +712,6 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * create an SQL statement to retrieve the parameters of the standard formula link from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        $sc->set_class($this::class);
-        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
-        $qp->name .= $this->load_sql_name_extension();
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->get_user()->id);
-        $sc->set_fields(self::FLD_NAMES);
-        if ($this->id() != 0) {
-            $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            $sc->add_where(formula_db::FLD_ID, $this->formula_id());
-            $sc->add_where(phrase::FLD_ID, $this->phrase_id());
-        } else {
-            log_err('Cannot load default formula link because no unique field is set');
-        }
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load the standard formula link to check if the user has done some personal changes
-     * e.g. switched off a formula assignment
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the loading of the standard formula link been successful
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        if ($this->is_unique()) {
-            $qp = $this->load_sql_standard($db_con->sql_creator());
-
-            if ($qp->name <> '') {
-                $db_frm = $db_con->get1($qp);
-                $this->row_mapper_sandbox($db_frm, true, false);
-                $result = $this->load_owner();
-            }
-        }
-        return $result;
-    }
-
-    /**
      * load a named user sandbox object by name
      * @param formula|formula_map $frm the formula that is supposed to be linked
      * @param phrase $phr the phrase that is linked to the formula
@@ -780,6 +728,26 @@ class formula_link extends sandbox_link
             $this->set_phrase($phr);
         }
         return $id;
+    }
+
+    /**
+     * load the object parameters for all users by the standard formula link from the database
+     *
+     * @param int $from_id the id of the from link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_link(
+        int $from_id,
+        int $to_id,
+        user_message $msg
+    ): bool
+    {
+        return parent::load_standard_by_link_parent(
+            formula_db::FLD_ID, $from_id,
+            phrase::FLD_ID, $to_id, $msg
+        );
     }
 
     /**
@@ -986,7 +954,7 @@ class formula_link extends sandbox_link
             $db_chk = new formula_link($this->get_user());
             $db_chk->set_formula($this->formula());
             $db_chk->set_phrase($this->phrase());
-            $db_chk->load_standard();
+            $db_chk->load_standard_by_link();
             if ($db_chk->id() > 0) {
                 $this->id = $db_chk->id();
             }
@@ -1013,13 +981,12 @@ class formula_link extends sandbox_link
             }
             log_debug("database formula loaded (" . $db_rec->id() . ")");
             $std_rec = new formula_link($this->get_user()); // must also be set to allow to take the ownership
-            $std_rec->id = $this->id();
-            $std_rec->load_standard();
+            $std_rec->load_standard($this->id(), $msg);
             log_debug("standard formula settings loaded (" . $std_rec->id() . ")");
 
             // for a correct user formula link detection (function can_change) set the owner even if the formula link has not been loaded before the save
-            if ($this->owner_id() <= 0) {
-                $this->set_owner_id($std_rec->owner_id());
+            if ($this->owner_id <= 0) {
+                $this->owner_id = $std_rec->owner_id;
             }
 
             // it should not be possible to change the formula or the word, but nevertheless check

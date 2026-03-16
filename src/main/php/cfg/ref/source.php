@@ -342,49 +342,8 @@ class source extends sandbox_code_id
 
 
     /*
-     * load
-     */
-
-    /**
-     * load the source parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard source has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        $result = parent::load_standard($qp);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        return $result;
-    }
-
-
-    /*
      * load sql
      */
-
-    /**
-     * create the SQL to load the default source always by the id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        $sc->set_class($this::class);
-        $sc->set_fields(array_merge(
-            source_db::FLD_NAMES,
-            source_db::FLD_NAMES_USR,
-            source_db::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)
-        ));
-
-        return parent::load_sql_standard($sc);
-    }
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a source from the database
@@ -451,6 +410,18 @@ class source extends sandbox_code_id
     function name_field(): string
     {
         return source_db::FLD_NAME;
+    }
+
+    /**
+     * @return array with all fields names of this source object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            source_db::FLD_NAMES,
+            source_db::FLD_NAMES_USR,
+            source_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
     function all_sandbox_fields(): array

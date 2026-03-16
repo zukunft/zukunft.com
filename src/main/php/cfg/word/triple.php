@@ -1630,44 +1630,6 @@ class triple extends sandbox_link_named
         return $this->id();
     }
 
-    /**
-     * load the triple parameters for all users
-     *
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard triple has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $msg = new user_message();
-
-        // after every load call from outside the class the order should be checked and reversed if needed
-        $this->check_order();
-
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-
-        $db_lnk = $db_con->get1($qp);
-        $result = $this->row_mapper_sandbox($db_lnk, true);
-        if ($result) {
-            $result = $this->load_owner();
-
-            // automatically update the generic name
-            if ($result) {
-                $this->reload_objects($msg);
-                $new_name = $this->name();
-                log_debug('triple->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
-                if ($new_name <> $this->name) {
-                    $db_con->set_class(triple::class);
-                    $result = $db_con->update_old($this->id(), triple_db::FLD_NAME_GIVEN, $new_name);
-                    $this->name = $new_name;
-                }
-            }
-            log_debug('triple->load_standard ... done (' . $this->description . ')');
-        }
-
-        return $result;
-    }
-
 
     /*
      * load sql
@@ -1733,10 +1695,11 @@ class triple extends sandbox_link_named
     /**
      * create the SQL to load the default triple always by the id
      *
+     * @param int $name the database row id to select the standard row
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_standard(sql_creator $sc): sql_par
+    function load_sql_standard_by_name(string $name, sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
@@ -1752,6 +1715,27 @@ class triple extends sandbox_link_named
         ));
 
         return $this->load_sql_select_qp($sc, $qp);
+    }
+
+    /**
+     * load the object parameters for all users by the standard formula link from the database
+     * TODO Prio 0 add unit test
+     *
+     * @param int $from_id the id of the from link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_link(
+        int $from_id,
+        int $to_id,
+        user_message $msg
+    ): bool
+    {
+        return parent::load_standard_by_link_parent(
+            triple_db::FLD_FROM, $from_id,
+            triple_db::FLD_TO, $to_id, $msg
+        );
     }
 
     /**
@@ -1855,6 +1839,19 @@ class triple extends sandbox_link_named
     function name_field(): string
     {
         return triple_db::FLD_NAME;
+    }
+
+    /**
+     * @return array with all fields names of this view_relation object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            triple_db::FLD_NAMES_LINK,
+            triple_db::FLD_NAMES,
+            triple_db::FLD_NAMES_USR,
+            triple_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
     function all_sandbox_fields(): array
@@ -2681,14 +2678,9 @@ class triple extends sandbox_link_named
             if ($this->id() == 0) {
                 log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
                 // check if the reverse triple is already in the database
-                $db_chk_rev = clone $this;
-                $db_chk_rev->set_from($this->get_to());
-                $db_chk_rev->get_from()->id = $this->to_id();
-                $db_chk_rev->set_to($this->get_from());
-                $db_chk_rev->get_to()->id = $this->from_id();
-                // remove the name in the object to prevent loading by name
-                $db_chk_rev->name = '';
-                $db_chk_rev->load_standard();
+                $db_chk_rev = clone $this->clone_reset();
+                $db_chk_rev->load_standard_by_link(
+                    $this->to_id(), $this->from_id(), $msg);
                 if ($db_chk_rev->id() > 0) {
                     $this->id = $db_chk_rev->id();
 
@@ -2705,7 +2697,7 @@ class triple extends sandbox_link_named
                 log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
                 // check if the same triple is already in the database
                 $db_chk = clone $this;
-                $db_chk->load_standard();
+                $db_chk->load_standard_by_link();
                 if ($db_chk->id() > 0) {
                     $this->id = $db_chk->id();
                 }
@@ -2744,8 +2736,7 @@ class triple extends sandbox_link_named
 
                 log_debug('database triple "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
                 $std_rec = new triple($this->get_user()); // the user must also be set to allow to take the ownership
-                $std_rec->id = $this->id();
-                if (!$std_rec->load_standard()) {
+                if (!$std_rec->load_standard($this->id(), $msg)) {
                     $msg->add(msg_id::FAILED_RELOAD_CLASS, [msg_id::VAR_CLASS_NAME => $class_name]);
                     if (!$msg->is_ok()) {
                         log_err($msg->get_last_message());

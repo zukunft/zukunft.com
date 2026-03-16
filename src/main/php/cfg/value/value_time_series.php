@@ -184,14 +184,20 @@ class value_time_series extends sandbox_value
 
     /**
      * create the SQL to load the default time series always by the id
+     *
+     * @param int|string $id the unique result id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
+    function load_sql_standard(
+        int|string  $id,
+        sql_creator $sc,
+        array $fld_lst = []
+    ): sql_par
     {
         $fld_lst = array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR);
-        return parent::load_sql_standard($sc, $fld_lst);
+        return parent::load_sql_standard($id, $sc, $fld_lst);
     }
 
     /**
@@ -225,7 +231,7 @@ class value_time_series extends sandbox_value
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
+        $qp = $this->load_sql_standard($this->id(), $db_con->sql_creator());
         return parent::load_standard($qp);
     }
 

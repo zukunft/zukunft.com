@@ -534,31 +534,6 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * load the link parameters for all users
-     * TODO remove from the child objects
-     *
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard view component link has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-
-        if ($qp->has_par()) {
-            $db_dsl = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_dsl, true);
-            if ($result) {
-                $result = $this->load_owner();
-            }
-        }
-        return $result;
-    }
-
-    /**
      * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -579,6 +554,69 @@ class sandbox_link extends sandbox
             $sc->add_where($this->from_field(), $from);
         }
         $sc->add_where($this->to_field(), $to);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the object parameters for all users by the link id
+     *
+     * @param string $from_fld the id field name of the from link object
+     * @param int $from_id the id of the from link object
+     * @param string $to_fld the id field name of the to link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_link_parent(
+        string $from_fld,
+        int $from_id,
+        string $to_fld,
+        int $to_id,
+        user_message $msg
+    ): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_standard_by_link($from_fld, $from_id, $to_fld, $to_id, $sc);
+
+        $db_row = $db_con->get1($qp, $msg);
+        if (!$this->row_mapper_sandbox(
+            $db_row, true, false)) {
+            $lib = new library();
+            $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * create an SQL statement to retrieve the parameters of the standard formula link from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_standard_by_link(
+        string $from_fld,
+        int $from_id,
+        string $to_fld,
+        int $to_id,
+        sql_creator $sc
+    ): sql_par
+    {
+        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
+        $qp->name .= 'link_ids';
+
+        $sc->set_class($this::class);
+        $sc->set_name($qp->name);
+        $sc->set_fields($this->all_fields());
+        $sc->add_where($from_fld, $from_id);
+        $sc->add_where($to_fld, $to_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1030,7 +1068,7 @@ class sandbox_link extends sandbox
             $db_chk->set_fob($this->fob());
             $db_chk->set_tob($this->tob());
             $db_chk->set_predicate_id($this->predicate_id());
-            if ($db_chk->load_standard()) {
+            if ($db_chk->load_standard_by_link()) {
                 if ($db_chk->id() > 0) {
                     log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard link space');
                     $sim = $db_chk;

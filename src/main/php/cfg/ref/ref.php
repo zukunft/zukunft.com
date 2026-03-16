@@ -125,7 +125,6 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -856,42 +855,6 @@ class ref extends sandbox_link
     }
 
     /**
-     * create the SQL to load the default ref always by the id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        $sc->set_class($this::class);
-        $sc->set_fields(array_merge(
-            ref_db::FLD_NAMES,
-            ref_db::FLD_NAMES_USR,
-            ref_db::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)
-        ));
-
-        return parent::load_sql_standard($sc);
-    }
-
-    /**
-     * load the ref parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard ref has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        $result = parent::load_standard($qp);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        return $result;
-    }
-
-    /**
      * create the common part of an SQL statement to retrieve the parameters of a ref from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -1278,8 +1241,8 @@ class ref extends sandbox_link
             $db_rec->load_by_id($this->id());
             log_debug('ref->save reloaded from db');
             $std_rec = new ref($this->get_user()); // must also be set to allow to take the ownership
-            $std_rec->id = $this->id();
-            $std_rec->load_standard();
+            $std_rec->load_standard($this->id(), $msg);
+            // TODO Prio 1 check and set owner
             log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
 
             // if everything has been fine until here
@@ -1454,6 +1417,24 @@ class ref extends sandbox_link
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
+
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this formula object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            ref_db::FLD_NAMES,
+            ref_db::FLD_NAMES_USR,
+            ref_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
+    }
+
 
     /*
       * debug

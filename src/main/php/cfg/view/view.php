@@ -676,24 +676,6 @@ class view extends sandbox_code_id
         return $this->row_mapper_sandbox($db_view);
     }
 
-    /**
-     * load the view parameters for all users including the user id to know the owner of the standard
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard view has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        $result = parent::load_standard($qp);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        return $result;
-    }
-
 
     /*
      * load sql
@@ -741,25 +723,6 @@ class view extends sandbox_code_id
             view_db::FLD_NAMES_USR,
             view_db::FLD_NAMES_NUM_USR
         );
-    }
-
-    /**
-     * create the SQL to load the default view always by the id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        $sc->set_class($this::class);
-        $sc->set_fields(array_merge(
-            view_db::FLD_NAMES,
-            view_db::FLD_NAMES_USR,
-            view_db::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)
-        ));
-
-        return parent::load_sql_standard($sc);
     }
 
 
@@ -1267,6 +1230,23 @@ class view extends sandbox_code_id
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this view object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            view_db::FLD_NAMES,
+            view_db::FLD_NAMES_USR,
+            view_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
 

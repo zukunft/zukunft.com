@@ -616,49 +616,8 @@ class formula_map extends sandbox_code_id
 
 
     /*
-     * load
-     */
-
-    /**
-     * load the formula parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard formula has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        $result = parent::load_standard($qp);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        return $result;
-    }
-
-
-    /*
      * load sql
      */
-
-    /**
-     * create the SQL to load the default formula always by the id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        $sc->set_class($this::class);
-        $sc->set_fields(array_merge(
-            formula_db::FLD_NAMES,
-            formula_db::FLD_NAMES_USR,
-            formula_db::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)
-        ));
-
-        return parent::load_sql_standard($sc);
-    }
 
     /**
      * create the common part of an SQL statement to retrieve
@@ -847,6 +806,18 @@ class formula_map extends sandbox_code_id
     function name_field(): string
     {
         return formula_db::FLD_NAME;
+    }
+
+    /**
+     * @return array with all fields names of this formula object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            formula_db::FLD_NAMES,
+            formula_db::FLD_NAMES_USR,
+            formula_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
     function all_sandbox_fields(): array
@@ -1481,9 +1452,8 @@ class formula_map extends sandbox_code_id
 
                 // check if target formula name already exists
                 log_debug('->save_id_if_updated check if target formula already exists ' . $this->dsp_id() . ' (has been ' . $db_rec->dsp_id() . ')');
-                $db_chk = clone $this;
-                $db_chk->id = 0; // to force the load by the id fields
-                $db_chk->load_standard();
+                $db_chk = $this->clone_reset();
+                $db_chk->load_standard_by_name($this->name(), $msg);
                 if ($db_chk->id() > 0) {
                     log_debug('->save_id_if_updated target formula name already exists ' . $db_chk->dsp_id());
                     if (def::UI_CAN_CHANGE_FORMULA_NAME) {
@@ -1703,8 +1673,7 @@ class formula_map extends sandbox_code_id
                     }
 
                     $std_rec = new formula($this->get_user()); // must also be set to allow to take the ownership
-                    $std_rec->id = $this->id();
-                    $std_rec->load_standard();
+                    $std_rec->load_standard($this->id(), $msg);
                     log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id . ') loaded');
 
                     // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save

@@ -784,7 +784,7 @@ class value_base extends sandbox_value
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
+        $qp = $this->load_sql_standard($this->id(), $db_con->sql_creator());
         return parent::load_standard($qp);
     }
 
@@ -841,11 +841,17 @@ class value_base extends sandbox_value
 
     /**
      * create the SQL to load the single default value always by the id
+     *
+     * @param int|string $id the unique value id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
+    function load_sql_standard(
+        int|string  $id,
+        sql_creator $sc,
+        array $fld_lst = []
+    ): sql_par
     {
         if ($this->is_numeric()) {
             $fld_lst = array_merge(
@@ -881,7 +887,7 @@ class value_base extends sandbox_value
                 array(user_db::FLD_ID)
             );
         }
-        return parent::load_sql_standard($sc, $fld_lst);
+        return parent::load_sql_standard($id, $sc, $fld_lst);
     }
 
 

@@ -988,49 +988,10 @@ class component extends sandbox_code_id
         return $id;
     }
 
-    /**
-     * load the view component parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard view component has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        $result = parent::load_standard($qp);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        if ($result) {
-            $result = $this->reload_phrases();
-        }
-        return $result;
-    }
-
 
     /*
      * load sql
      */
-
-    /**
-     * create the SQL to load the default view always by the id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        $sc->set_class($this::class);
-        $sc->set_fields(array_merge(
-            component_db::FLD_NAMES,
-            component_db::FLD_NAMES_USR,
-            component_db::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)
-        ));
-
-        return parent::load_sql_standard($sc);
-    }
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component from the database
@@ -1073,6 +1034,18 @@ class component extends sandbox_code_id
     function name_field(): string
     {
         return component_db::FLD_NAME;
+    }
+
+    /**
+     * @return array with all fields names of this object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            component_db::FLD_NAMES,
+            component_db::FLD_NAMES_USR,
+            component_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
     function all_sandbox_fields(): array

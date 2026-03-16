@@ -561,6 +561,26 @@ class term_view extends sandbox_link
      */
 
     /**
+     * load the object parameters for all users by the link id
+     *
+     * @param int $from_id the id of the from link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_link(
+        int $from_id,
+        int $to_id,
+        user_message $msg
+    ): bool
+    {
+        return parent::load_standard_by_link_parent(
+            view_db::FLD_ID, $from_id,
+            term::FLD_ID, $to_id, $msg
+        );
+    }
+
+    /**
      * create the common part of an SQL statement to retrieve a view term link from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -635,50 +655,6 @@ class term_view extends sandbox_link
             }
         }
         return parent::reload_objects($msg);
-    }
-
-    /**
-     * create an SQL statement to retrieve the parameters of the standard view term link from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        // try to get the search values from the objects
-        if ($this->id() <= 0) {
-            $this->id = 0;
-        }
-
-        $sc->set_class($this::class);
-        $qp = new sql_par($this::class);
-        if ($this->id() != 0) {
-            $qp->name .= 'std_id';
-        } else {
-            $qp->name .= 'std_link_ids';
-        }
-        $sc->set_name($qp->name);
-        $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)));
-        if ($this->id() > 0) {
-            $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->get_view()->id() > 0 and $this->term()->id() != 0) {
-            $sc->add_where(view_db::FLD_ID, $this->get_view()->id());
-            $sc->add_where(term::FLD_ID, $this->term()->id());
-        } else {
-            if ($this->get_view()->id() > 0) {
-                log_err('Cannot load default view term link because term id for ' . $this->term()->dsp_id() . 'is missing');
-            } else {
-                log_err('Cannot load default view term link because term id for ' . $this->get_view()->dsp_id() . 'is missing');
-            }
-        }
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
     }
 
 
@@ -797,6 +773,23 @@ class term_view extends sandbox_link
                 $sys->typ_lst->msk_lnk_typ);
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this word object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
 

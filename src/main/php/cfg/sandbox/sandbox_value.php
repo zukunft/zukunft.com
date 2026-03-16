@@ -1082,11 +1082,13 @@ class sandbox_value extends sandbox_multi
      * create the SQL to load the single default value or result always by the id
      * the $sc fields must be set by the child function
      *
+     * @param int|string $id the unique group id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(
+        int|string  $id,
         sql_creator $sc,
         array       $fld_lst = []
     ): sql_par

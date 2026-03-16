@@ -644,47 +644,23 @@ class view_relation extends sandbox_link
     }
 
     /**
-     * create an SQL statement to retrieve the parameters of the standard view relation from the database
-     * TODO move to the highest object level
+     * load the object parameters for all users by the link id
      *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     * @param int $from_id the id of the from link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
      */
-    function load_sql_standard(sql_creator $sc): sql_par
+    function load_standard_by_link(
+        int $from_id,
+        int $to_id,
+        user_message $msg
+    ): bool
     {
-        // try to get the search values from the objects
-        if ($this->id() <= 0) {
-            $this->id = 0;
-        }
-
-        $sc->set_class($this::class);
-        $qp = new sql_par($this::class);
-        if ($this->id() != 0) {
-            $qp->name .= 'std_id';
-        } else {
-            $qp->name .= 'std_link_ids';
-        }
-        $sc->set_name($qp->name);
-        $sc->set_fields(array_merge(
-            view_relation_db::FLD_NAMES,
-            view_relation_db::FLD_NAMES_USR,
-            array(user_db::FLD_ID)));
-        if ($this->id() > 0) {
-            $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->parent()->id() > 0 and $this->child()->id() != 0) {
-            $sc->add_where(view_db::FLD_ID, $this->parent()->id());
-            $sc->add_where(term::FLD_ID, $this->child()->id());
-        } else {
-            if ($this->parent()->id() > 0) {
-                log_err('Cannot load default view relation because term id for ' . $this->child()->dsp_id() . 'is missing');
-            } else {
-                log_err('Cannot load default view relation because term id for ' . $this->parent()->dsp_id() . 'is missing');
-            }
-        }
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        return parent::load_standard_by_link_parent(
+            view_relation_db::FLD_PARENT, $from_id,
+            view_relation_db::FLD_CHILD, $to_id, $msg
+        );
     }
 
 
@@ -789,6 +765,22 @@ class view_relation extends sandbox_link
         }
 
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this view_relation object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            view_relation_db::FLD_NAMES,
+            view_relation_db::FLD_NAMES_USR,
+            array(user_db::FLD_ID));
     }
 
 

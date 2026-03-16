@@ -767,25 +767,13 @@ class group extends sandbox_multi
 
     /**
      * load the standard group use by most users for the given phrase group and time
-     *
-     * @return bool true if the standard value has been loaded
-     */
-    function load_standard_by_id(): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        return parent::load_standard($qp);
-    }
-
-    /**
-     * load the standard group use by most users for the given phrase group and time
      * @param string $name the name given by the user for the group
      * @return bool true if the standard value has been loaded
      */
     function load_standard_by_name(string $name): bool
     {
         global $db_con;
-        $qp = $this->load_standard_by_name_sql($db_con->sql_creator(), $name);
+        $qp = $this->load_sql_standard_by_name($name, $db_con->sql_creator());
         return parent::load_standard($qp);
     }
 
@@ -898,25 +886,32 @@ class group extends sandbox_multi
 
     /**
      * create the SQL to load the default group always by the id
+     * @param int|string $id the unique group id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
+    function load_sql_standard(
+        int|string  $id,
+        sql_creator $sc,
+        array       $fld_lst = []
+    ): sql_par
     {
         $fld_lst = array_merge(
             group_db::FLD_NAMES,
             array(user_db::FLD_ID)
         );
-        return parent::load_sql_standard($sc, $fld_lst);
+        return parent::load_sql_standard($id, $sc, $fld_lst);
     }
 
     /**
-     * create the SQL to load the single default value always by the id
+     * create the SQL to load the single default value always by the name
+     *
+     * @param string $name the unique name of the object
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_standard_by_name_sql(sql_creator $sc, string $name): sql_par
+    function load_sql_standard_by_name(string $name, sql_creator $sc): sql_par
     {
         $sc_par_lst = new sql_type_list();
         $sc_par_lst->add($this->table_type());

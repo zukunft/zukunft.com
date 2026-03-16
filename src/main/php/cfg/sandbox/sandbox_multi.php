@@ -680,11 +680,14 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create the SQL to load the single default value always by the id
+     *
+     * @param int|string $id the unique group id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields for the value, result or group
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(
+        int|string  $id,
         sql_creator $sc,
         array       $fld_lst = []
     ): sql_par
@@ -853,7 +856,7 @@ class sandbox_multi extends db_object_multi_user
         return new sql_par($class);
     }
 
-    function load_owner(): bool
+    function load_owner(user_message $msg): bool
     {
         global $db_con;
         $result = false;

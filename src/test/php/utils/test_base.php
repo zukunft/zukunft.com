@@ -1635,37 +1635,65 @@ class test_base
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->load_sql_standard($sc);
+        $qp = $usr_obj->load_sql_standard($usr_obj->id(), $sc);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->load_sql_standard($sc);
+            $qp = $usr_obj->load_sql_standard($usr_obj->id(), $sc);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }
 
     /**
-     * check the SQL statement to load the default object by id
+     * check the SQL statement to load the default object by the name
      * for all allowed SQL database dialects
      *
      * @param sql_creator $sc a sql creator object that can be empty
-     * @param group $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|group $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_standard_by_name(sql_creator $sc, group $usr_obj): bool
+    function assert_sql_standard_by_name(sql_creator $sc, sandbox_named|sandbox_link_named|group $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->load_standard_by_name_sql($sc, $usr_obj->name());
+        $qp = $usr_obj->load_sql_standard_by_name($usr_obj->name(), $sc);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->load_standard_by_name_sql($sc, $usr_obj->name());
+            $qp = $usr_obj->load_sql_standard_by_name($usr_obj->name(), $sc);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to load the default object by the link ids
+     * for all allowed SQL database dialects
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param sandbox_named|sandbox_link_named $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_standard_by_link(sql_creator $sc, sandbox_link|sandbox_link_named $usr_obj): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->load_sql_standard_by_link(
+            $usr_obj->from_field(), $usr_obj->from_id(),
+            $usr_obj->to_field(), $usr_obj->to_id(), $sc);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_obj->load_sql_standard_by_link(
+                $usr_obj->from_field(), $usr_obj->from_id(),
+                $usr_obj->to_field(), $usr_obj->to_id(), $sc);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -2967,7 +2995,8 @@ class test_base
 
         if ($result) {
             // check if an admin can force to take over ownership
-            $result = $this->write_named_ownership($sbx, $this->usr_admin, $this->usr1);
+            $msg = new user_message($this->usr1);
+            $result = $this->write_named_ownership($sbx, $this->usr_admin, $this->usr1, $msg);
         }
 
 
@@ -3926,15 +3955,16 @@ class test_base
     function write_named_ownership(
         sandbox_named|sandbox_link_named $sbx,
         user                             $admin,
-        user                             $usr
+        user                             $usr,
+        user_message                     $msg
     ): bool
     {
         // check if an admin can force to take over ownership
-        $result = $sbx->take_ownership($admin);
+        $result = $sbx->take_ownership($admin, $msg);
 
         // check if taking ownership is rejected for normal user
         if ($result) {
-            $result = !$sbx->take_ownership($usr);
+            $result = !$sbx->take_ownership($usr, $msg);
         }
 
         return $result;
