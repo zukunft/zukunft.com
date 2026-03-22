@@ -141,6 +141,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Exception;
+use Zukunft\ZukunftCom\test\php\unit\component_link_list_tests;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::DB . 'sql_type.php';
@@ -1628,7 +1629,7 @@ class test_base
      * for all allowed SQL database dialects
      *
      * @param sql_creator $sc a sql creator object that can be empty
-     * @param sandbox|sandbox_multi $usr_obj the user sandbox object e.g. a word
+     * @param sandbox|sandbox_multi $usr_obj the user sandbox object is e.g. a word
      * @return bool true if all tests are fine
      */
     function assert_sql_standard(sql_creator $sc, sandbox|sandbox_multi $usr_obj): bool
@@ -1676,7 +1677,7 @@ class test_base
      * for all allowed SQL database dialects
      *
      * @param sql_creator $sc a sql creator object that can be empty
-     * @param sandbox_named|sandbox_link_named $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named $usr_obj the user sandbox object is e.g. a word
      * @return bool true if all tests are fine
      */
     function assert_sql_standard_by_link(sql_creator $sc, sandbox_link|sandbox_link_named $usr_obj): bool
@@ -1704,7 +1705,7 @@ class test_base
      * for all allowed SQL database dialects
      *
      * @param sql_creator $sc a sql creator object that can be empty
-     * @param sandbox_named|sandbox_link_named $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named $usr_obj the user sandbox object is e.g. a word
      * @return bool true if all tests are fine
      */
     function assert_sql_standard_by_type_link(sql_creator $sc, sandbox_link|sandbox_link_named $usr_obj): bool
@@ -2796,6 +2797,9 @@ class test_base
         global $db_con;
 
         $sc = $db_con->sql_creator();
+        if ($dbo::class == formula::class) {
+            $dbo->delete_elements($msg);
+        }
         $qp = $dbo->sql_delete($sc, $msg, new sql_type_list($sc_par_lst));
         if ($msg->is_ok()) {
             $msg_txt = 'delete ' . $dbo->dsp_id() . ' of system testing';
@@ -4127,6 +4131,42 @@ class test_base
         } else {
             return false;
         }
+    }
+
+    /**
+     * check if the filled object can get empty using the delta function
+     * @param sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $filled the object filled with all vars
+     * @return bool true if the api message matches
+     */
+    function assert_delta(
+        sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $base,
+        sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $filled
+    ): bool
+    {
+        $lib = new library();
+        $usr_msg = new user_message();
+        $class = $lib->class_to_name($filled::class);
+        $msg_txt = '';
+
+        $test_name = 'empty delta ' . $class . ' does not differ from empty';
+        $empty = $filled->clone_reset();
+        $delta = $filled->clone_all();
+        $delta = $empty->delta($filled, $delta);
+        if (!$empty->no_non_id_diff($delta, $usr_msg)) {
+            $diff_msg = $empty->diff_msg($delta);
+            $msg_txt = 'diff: ' . $diff_msg->text();
+        }
+        $this->assert($test_name, $msg_txt, '');
+
+        $test_name = 'base delta ' . $class . ' does not differ from base object';
+        $empty = $filled->clone_reset();
+        $delta = $filled->clone_all();
+        $delta = $base->delta($filled, $delta);
+        if (!$base->no_non_id_diff($delta, $usr_msg)) {
+            $diff_msg = $empty->diff_msg($delta);
+            $msg_txt = 'diff: ' . $diff_msg->text();
+        }
+        return $this->assert($test_name, $msg_txt, '');
     }
 
 

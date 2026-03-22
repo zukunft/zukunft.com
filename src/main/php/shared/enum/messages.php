@@ -228,6 +228,7 @@ enum messages: string
     case DONE = 'done';
     case TOTAL = 'total';
     case EXAMPLE_SHORT = 'e.g.';
+    case NO_PRIVILEGES = 'cannot be changed';
 
     // special message id placeholders
     case ERROR_TEXT = 'error';
@@ -719,6 +720,15 @@ enum messages: string
         . self::VAR_START . self::VAR_REQUEST . self::VAR_END
         . ' has not returned any response';
     case API_MESSAGE = self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case LOAD_USER_CHANGES_ID_MISSING = 'mandatory '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' id missing of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' in load user changes';
+    case LOAD_USER_CHANGES_MAPPING_FAILED =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' mapping user changes failed of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
     case LOAD_STANDARD_ID_MISSING = 'mandatory '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' id missing of '
@@ -1189,10 +1199,12 @@ enum messages: string
 
     case NO_UPDATE_PRIVILEGES =
         self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
-        . '  '
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
-        . ' cannot be changed by user '
-        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END;
+        . '" ' . self::NO_PRIVILEGES->value . ' by user '
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . ' with profile '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END;
 
     case USER_NO_IMPORT_PRIVILEGES = 'user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
@@ -1264,10 +1276,13 @@ enum messages: string
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' with the name "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
-        . '" already exists. Please use another '
+        . '" ' . self::ALREADY_EXISTS->value . '. Please use another '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' name.';
     case ALREADY_EXISTS = 'already exists';
+    case KEY_TYPE_NAME = 'name';
+    case KEY_TYPE_LINK = 'link';
+    case KEY_TYPE_EXTERNAL_KEY = 'external key';
     case CLASS_LIST_UNEXPECTED = 'Cannot create type for the list class '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' because no matching type has been assigned in the code';

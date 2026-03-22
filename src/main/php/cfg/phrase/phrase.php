@@ -581,6 +581,18 @@ class phrase extends combine_named
     }
 
     /**
+     * @return string the name of the word or triple type
+     */
+    function type_name(): string
+    {
+        if ($this->obj == null) {
+            return '';
+        } else {
+            return $this->obj()->type_name();
+        }
+    }
+
+    /**
      * @return user the person who wants to see the phrase
      */
     function get_user(): user

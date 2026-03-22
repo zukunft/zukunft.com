@@ -827,6 +827,46 @@ class formula_map extends sandbox_code_id
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param formula_map|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param formula_map|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return formula_map|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        formula_map|CombineObject|db_object_seq_id $std_obj,
+        formula_map|CombineObject|db_object_seq_id $result
+    ): formula_map|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->ref_text !== $this->ref_text) {
+            $result->ref_text = $this->ref_text;
+        }
+        if ($std_obj->usr_text !== $this->usr_text) {
+            $result->usr_text = $this->usr_text;
+        }
+        if ($std_obj->need_all_val !== $this->need_all_val) {
+            $result->need_all_val = $this->need_all_val;
+        }
+        if ($std_obj->last_update !== $this->last_update) {
+            $result->last_update = $this->last_update;
+        }
+        if ($std_obj->view !== $this->view) {
+            $result->view = $this->view;
+        }
+        if ($std_obj->impact !== $this->impact) {
+            $result->impact = $this->impact;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1761,6 +1801,19 @@ class formula_map extends sandbox_code_id
         $del_lst = $db_lst->diff($elm_lst);
         $del_lst->db_delete_no_log($usr_msg, $imp, element::class);
 
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * delete all elements related to this formula e.g. if the formula is supposed to be deleted
+     * @param user_message $usr_msg to collect any error message for the requesting user
+     * @return bool true is alle elements related to the formula have been deleted
+     */
+    function delete_elements(user_message $usr_msg): bool
+    {
+        $imp = new import();
+        $lst = $this->load_element_list();
+        $lst->db_delete_no_log($usr_msg, $imp, element::class);
         return $usr_msg->is_ok();
     }
 

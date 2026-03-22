@@ -1066,19 +1066,6 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * load the value parameters for all users
-     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
-     * @return bool true if the standard object has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-
-        $db_row = $db_con->get1($qp);
-        return $this->row_mapper_sandbox_multi($db_row, $qp->ext, true, false);
-    }
-
-    /**
      * create the SQL to load the single default value or result always by the id
      * the $sc fields must be set by the child function
      *
@@ -1132,6 +1119,31 @@ class sandbox_value extends sandbox_multi
         $sc->set_fields(array(user_db::FLD_ID));
 
         return $this->load_sql_set_where($qp, $sc, $id_ext);
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param sandbox_value|sandbox_multi|db_object_multi $std_obj the norm object as saved in the database
+     * @param sandbox_value|sandbox_multi|db_object_multi $result empty clone of the target user object
+     * @return sandbox_value|sandbox_multi|db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        sandbox_value|sandbox_multi|db_object_multi $std_obj,
+        sandbox_value|sandbox_multi|db_object_multi $result
+    ): sandbox_value|sandbox_multi|db_object_multi
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->last_update !== $this->last_update) {
+            $result->last_update = $this->last_update;
+        }
+        return $result;
     }
 
 

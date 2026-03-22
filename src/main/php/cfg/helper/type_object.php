@@ -536,6 +536,54 @@ class type_object extends db_object_seq_id
         return $fvt_lst->is_empty_except_internal_fields();
     }
 
+    /**
+     * detects if this object has been changed compared to the given object,
+     * excluding changes on internal fields like last_update
+     *
+     * @param type_object $db_typ the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_non_id_diff(
+        type_object   $db_typ,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
+    {
+        $fvt_lst = $this->db_fields_changed($db_typ, $usr_msg, $sc_par_lst);
+        return $fvt_lst->is_empty_except_id_and_internal_fields();
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param type_object|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param type_object|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return type_object|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        type_object|CombineObject|db_object_seq_id $std_obj,
+        type_object|CombineObject|db_object_seq_id $result
+    ): type_object|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->code_id !== $this->code_id) {
+            $result->code_id = $this->code_id;
+        }
+        if ($std_obj->name !== $this->name) {
+            $result->name = $this->name;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
 
     /*
      * modify

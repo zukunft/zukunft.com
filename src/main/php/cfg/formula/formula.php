@@ -56,6 +56,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_FORMULA . 'formula_map.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -73,6 +74,7 @@ include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -411,19 +413,17 @@ class formula extends formula_map
 
     /**
      * delete all results for this formula
-     * @return string an empty string if the deletion has been successful
-     *                or the error message that should be shown to the user
-     *                which may include a link for error tracing
+     * @param user_message $msg to collect the problem reports and suggested solutions for the user
+     * @return bool true if all results related to this formula could be deleted
      */
-    function res_del(): string
+    function delete_results(user_message $msg): bool
     {
-        log_debug("formula->res_del (" . $this->id() . ")");
-
-        global $db_con;
-
-        $db_con->set_class(result::class);
-        $db_con->set_usr($this->get_user()->id());
-        return $db_con->delete_old(formula_db::FLD_ID, $this->id());
+        log_debug('delete_results of ' . $this->dsp_id());
+        $res_lst = new result_list($this->get_user());
+        $res_lst->load_by_frm($this);
+        $imp = new import();
+        $res_lst->db_delete_no_log($msg, $imp, result::class);
+        return $msg->is_ok();
     }
 
     /**

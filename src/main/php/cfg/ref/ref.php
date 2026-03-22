@@ -855,6 +855,28 @@ class ref extends sandbox_link
     }
 
     /**
+     * load the object parameters for all users by the link id
+     *
+     * @param int $from_id the id of the from link object
+     * @param int $typ_id the id of the link type
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_type_link(
+        int          $from_id,
+        int          $typ_id,
+        int|string   $to_id,
+        user_message $msg
+    ): bool
+    {
+        return parent::load_standard_by_type_link_parent(
+            phrase::FLD_ID, $from_id,
+            ref_db::FLD_TYPE, $typ_id,
+            '', 0, $msg
+        );
+    }
+
+    /**
      * create the common part of an SQL statement to retrieve the parameters of a ref from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -1097,6 +1119,46 @@ class ref extends sandbox_link
         $log->add($usr_msg);
 
         return $log;
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param ref|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param ref|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return ref|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        ref|CombineObject|db_object_seq_id $std_obj,
+        ref|CombineObject|db_object_seq_id $result
+    ): ref|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->url !== $this->url) {
+            $result->url = $this->url;
+        }
+        if ($std_obj->external_key !== $this->external_key) {
+            $result->external_key = $this->external_key;
+        }
+        if ($std_obj->phrase_id() !== $this->phrase_id()) {
+            $result->set_phrase($this->phrase());
+        }
+        if ($std_obj->source_id() !== $this->source_id()) {
+            $result->set_source($this->get_source());
+        }
+        if ($std_obj->predicate_id() !== $this->predicate_id()) {
+            $result->set_predicate_id($this->predicate_id());
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
     }
 
 

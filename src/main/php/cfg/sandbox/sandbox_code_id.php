@@ -325,32 +325,28 @@ class sandbox_code_id extends sandbox_typed
 
 
     /*
-     * modify
+     * info
      */
 
     /**
-     * fill this object based on the given object
-     * if the id is set in the given object loaded from the database but this import object does not yet have the db id, set the id
-     * if the given description is not set (null) the description is not remove
-     * if the given description is an empty string the description is removed
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
      *
-     * @param sandbox|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
-     * @param user $usr_req the user who has requested the fill
-     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     * @param sandbox_code_id|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param sandbox_code_id|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return sandbox_code_id|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
      */
-    function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    function delta(
+        sandbox_code_id|CombineObject|db_object_seq_id $std_obj,
+        sandbox_code_id|CombineObject|db_object_seq_id $result
+    ): sandbox_code_id|CombineObject|db_object_seq_id
     {
-        $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_code_id() != null) {
-            $usr_msg->merge($this->set_code_id($obj->get_code_id(), $usr_req));
+        parent::delta($std_obj, $result);
+        if ($std_obj->code_id !== $this->code_id) {
+            $result->code_id = $this->code_id;
         }
-        return $usr_msg;
+        return $result;
     }
-
-
-    /*
-     * info
-     */
 
     /**
      * create human-readable messages of the differences between the objects
@@ -387,6 +383,30 @@ class sandbox_code_id extends sandbox_typed
             }
         }
         return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this object based on the given object
+     * if the id is set in the given object loaded from the database but this import object does not yet have the db id, set the id
+     * if the given description is not set (null) the description is not remove
+     * if the given description is an empty string the description is removed
+     *
+     * @param sandbox|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->get_code_id() != null) {
+            $usr_msg->merge($this->set_code_id($obj->get_code_id(), $usr_req));
+        }
+        return $usr_msg;
     }
 
 

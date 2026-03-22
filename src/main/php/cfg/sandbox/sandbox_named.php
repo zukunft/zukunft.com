@@ -470,13 +470,44 @@ class sandbox_named extends sandbox
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param sandbox_named|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param sandbox_named|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return sandbox_named|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        sandbox_named|CombineObject|db_object_seq_id $std_obj,
+        sandbox_named|CombineObject|db_object_seq_id $result
+    ): sandbox_named|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->name() !== $this->name()) {
+            $result->set_name($this->name());
+        }
+        if ($std_obj->get_description() !== $this->get_description()) {
+            $result->set_description($this->get_description());
+        }
+        if ($std_obj->get_usage() != $this->get_usage()) {
+            $result->set_usage($this->get_usage());
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
     /**
      * fill this sandbox object based on the given object
      * if the given description is not set (null) the description is not removed
-     * if the given description is an empty string (not null) the description is removed
+     * if the given description is an empty string (not null), the description is removed
      *
      * @param sandbox_named|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
      * @param user $usr_req the user who has requested the fill
@@ -1048,12 +1079,10 @@ class sandbox_named extends sandbox
             }
         } else {
             // used for view, component, source, ...
-            $db_chk = clone $this;
-            $db_chk->reset();
-            $db_chk->set_user($this->get_user());
-            $db_chk->name = $this->name();
+            $db_chk = $this->clone_reset(true);
+            $chk_msg = $msg->clone_reset();
             // check with the standard namespace
-            if ($db_chk->load_standard()) {
+            if ($db_chk->load_standard_by_name($this->name(), $chk_msg)) {
                 if ($db_chk->id() > 0) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
                     $sim = $db_chk;
@@ -1093,15 +1122,24 @@ class sandbox_named extends sandbox
                         msg_id::VAR_NAME_CHK => $sim->dsp_id()
                     ]);
                 } else {
-                    // if similar is found set the id to trigger the updating instead of adding
-                    $sim->load_by_id($sim->id()); // e.g. to get the type_id
-                    // prevent that the id of a formula is used for the word with the type formula link
-                    if (get_class($this) == get_class($sim)) {
-                        $this->id = $sim->id();
+                    if (!$this->is_same($sim)) {
+                        $lib = new library();
+                        $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+                            msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                            msg_id::VAR_NAME => $this->name(),
+                            msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
+                        ]);
                     } else {
-                        if (!((get_class($this) == word::class and get_class($sim) == formula::class)
-                            or (get_class($this) == triple::class and get_class($sim) == formula::class))) {
-                            $msg->merge($sim->id_used_msg($this));
+                        // if similar is found set the id to trigger the updating instead of adding
+                        $sim->load_by_id($sim->id()); // e.g. to get the type_id
+                        // prevent that the id of a formula is used for the word with the type formula link
+                        if (get_class($this) == get_class($sim)) {
+                            $this->id = $sim->id();
+                        } else {
+                            if (!((get_class($this) == word::class and get_class($sim) == formula::class)
+                                or (get_class($this) == triple::class and get_class($sim) == formula::class))) {
+                                $msg->merge($sim->id_used_msg($this));
+                            }
                         }
                     }
                 }
@@ -1109,6 +1147,23 @@ class sandbox_named extends sandbox
         }
 
         return $sim;
+    }
+
+    /**
+     * check if target key value already exists
+     * overwritten in the word class for formula link words
+     * TODO load the user value not the standard value but also check the standard value
+     * TODO should not ADDITIONAL the user-specific load be called
+     *
+     * @return sandbox object with id zero if no object with the same id is found
+     */
+    function get_obj_with_same_id_fields(user_message $msg): sandbox
+    {
+        log_debug('check if target with the name already exists ' . $this->dsp_id());
+        $db_chk = $this->clone_reset();
+        $chk_msg = $msg->clone_reset(); // it is in this case ok if no db row a found so an error should not influence the later process steps
+        $db_chk->load_standard_by_name($this->name(), $chk_msg);
+        return $db_chk;
     }
 
 

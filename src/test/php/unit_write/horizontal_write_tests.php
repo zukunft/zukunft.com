@@ -145,11 +145,21 @@ class horizontal_write_tests
                 $diff = $check_obj->diff_msg($obj);
                 $t->assert_true($test_name, $diff->is_ok());
 
+                $msg_upd = $msg->clone_reset();
+                if (in_array($obj::class, def::ONLY_ADMIN_CAN_RENAME_CLASSES)) {
+                    $test_name = 'rename ' . $lib->class_to_name($class) . ' without privileges returns error';
+                    $existing_name = $t_map->class_to_base_object($class)->name();
+                    $obj->set_name($existing_name);
+                    $t->assert_false($test_name, $obj->save($msg));
+                    $t->assert_text_contains($test_name, $msg->text(), msg_id::NO_PRIVILEGES->value);
+                    $msg_upd->usr = $t->user_system();
+                }
+
                 $test_name = 'rename ' . $lib->class_to_name($class) . ' to existing name returns error';
                 $existing_name = $t_map->class_to_base_object($class)->name();
                 $obj->set_name($existing_name);
-                $t->assert_false($test_name, $obj->save($msg));
-                $t->assert_text_contains($test_name, $msg->get_last_message_translated(), msg_id::ALREADY_EXISTS->value);
+                $t->assert_false($test_name, $obj->save($msg_upd));
+                $t->assert_text_contains($test_name, $msg->text(), msg_id::ALREADY_EXISTS->value);
 
                 // reset the message for the next test
                 $msg->reset();

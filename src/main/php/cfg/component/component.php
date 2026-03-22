@@ -1159,6 +1159,58 @@ class component extends sandbox_code_id
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param component|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param component|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return component|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        component|CombineObject|db_object_seq_id $std_obj,
+        component|CombineObject|db_object_seq_id $result
+    ): component|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->ui_msg_code_id !== $this->ui_msg_code_id) {
+            $result->ui_msg_code_id = $this->ui_msg_code_id;
+        }
+        if ($std_obj->ui_msg_code_id_vars !== $this->ui_msg_code_id_vars) {
+            $result->ui_msg_code_id_vars = $this->ui_msg_code_id_vars;
+        }
+        if ($std_obj->ui_msg_code_id_exception !== $this->ui_msg_code_id_exception) {
+            $result->ui_msg_code_id_exception = $this->ui_msg_code_id_exception;
+        }
+        if ($std_obj->ui_msg_value_exception !== $this->ui_msg_value_exception) {
+            $result->ui_msg_value_exception = $this->ui_msg_value_exception;
+        }
+        if ($std_obj->row_phrase !== $this->row_phrase) {
+            $result->row_phrase = $this->row_phrase;
+        }
+        if ($std_obj->col_phrase !== $this->col_phrase) {
+            $result->col_phrase = $this->col_phrase;
+        }
+        if ($std_obj->col_sub_phrase !== $this->col_sub_phrase) {
+            $result->col_sub_phrase = $this->col_sub_phrase;
+        }
+        if ($std_obj->get_formula_id() !== $this->get_formula_id()) {
+            $result->set_formula($this->get_formula());
+        }
+        if ($std_obj->get_style_id() != $this->get_style_id()) {
+            $result->set_style_by_id($this->get_style_id());
+        }
+        if ($std_obj->link_type_id !== $this->link_type_id) {
+            $result->link_type_id = $this->link_type_id;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 

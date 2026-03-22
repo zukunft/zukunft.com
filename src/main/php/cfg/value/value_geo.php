@@ -51,6 +51,7 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_LOG . 'change_value_geo.php';
 include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
 include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
@@ -71,6 +72,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
@@ -284,6 +286,54 @@ class value_geo extends value_base
         } else {
             return new change_values_geo_norm($this->get_user());
         }
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param value_geo|sandbox_multi|db_object_multi $std_obj the norm object as saved in the database
+     * @param value_geo|sandbox_multi|db_object_multi $result empty clone of the target user object
+     * @return value_geo|sandbox_multi|db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        value_geo|sandbox_multi|db_object_multi $std_obj,
+        value_geo|sandbox_multi|db_object_multi $result
+    ): value_geo|sandbox_multi|db_object_multi
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->geo_val !== $this->geo_val) {
+            $result->geo_val = $this->geo_val;
+        }
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     * if the given description is not set (null) the description is not removed
+     * if the given description is an empty string (not null), the description is removed
+     *
+     * @param value_geo|sandbox_multi|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(value_geo|sandbox_multi|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->geo_val != null) {
+            $this->geo_val = $obj->geo_val;
+        }
+        return $usr_msg;
     }
 
 

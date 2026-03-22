@@ -74,6 +74,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -105,6 +106,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -844,6 +846,58 @@ class formula_link extends sandbox_link
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param formula_link|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param formula_link|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return formula_link|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        formula_link|CombineObject|db_object_seq_id $std_obj,
+        formula_link|CombineObject|db_object_seq_id $result
+    ): formula_link|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->formula_id() !== $this->formula_id()) {
+            $result->set_formula($this->formula());
+        }
+        if ($std_obj->phrase_id() !== $this->phrase_id()) {
+            $result->set_phrase($this->phrase());
+        }
+        if ($std_obj->order_nbr !== $this->order_nbr) {
+            $result->order_nbr = $this->order_nbr;
+        }
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this formula_link object based on the given object
+     *
+     * @param formula_link|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(formula_link|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->order_nbr != null) {
+            $this->order_nbr = $obj->order_nbr;
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * save
      */
 
@@ -951,10 +1005,10 @@ class formula_link extends sandbox_link
         if ($this->id() <= 0) {
             log_debug('check if a new formula_link for "' . $this->formula()->name() . '" and "' . $this->phrase()->name() . '" needs to be created');
             // check if a formula_link with the same formula and word is already in the database
-            $db_chk = new formula_link($this->get_user());
-            $db_chk->set_formula($this->formula());
-            $db_chk->set_phrase($this->phrase());
-            $db_chk->load_standard_by_link();
+            // TODO Prio 0 use $chk_msg
+            $db_chk = $this->clone_reset(true);
+            $chk_msg = $msg->clone_reset();
+            $db_chk->load_standard_by_link($this->formula()->id(), $this->phrase()->id(), $chk_msg);
             if ($db_chk->id() > 0) {
                 $this->id = $db_chk->id();
             }

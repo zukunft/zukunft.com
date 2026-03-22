@@ -75,7 +75,6 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
 //include_once paths::MODEL_COMPONENT . 'component.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
-//include_once paths::MODEL_COMPONENT . 'component_link_type.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -130,7 +129,6 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
-use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -258,8 +256,8 @@ class sandbox extends db_object_seq_id_user
     // database fields that are used in all objects and that have a specific behavior
     public ?int $usr_cfg_id = null;    // the database id if there is already some user-specific configuration for this object
     public ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
-    private ?int $share_id = null;      // id for public, personal, group or private
-    private ?int $protection_id = null; // id for no, user, admin or full protection
+    public ?int $share_id = null;      // id for public, personal, group or private
+    public ?int $protection_id = null; // id for no, user, admin or full protection
     public ?bool $excluded = null;     // the user sandbox for object is implemented, but can be switched off for the complete instance
     // but for calculation, use and display an excluded should not be used
     // when loading the word and saving the excluded field is handled as a normal user sandbox field,
@@ -757,6 +755,40 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param sandbox|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param sandbox|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return sandbox|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        sandbox|CombineObject|db_object_seq_id $std_obj,
+        sandbox|CombineObject|db_object_seq_id $result
+    ): sandbox|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->owner_id() !== $this->owner_id()) {
+            $result->set_owner_id($this->owner_id());
+        }
+        if ($std_obj->share_id !== $this->share_id) {
+            $result->share_id = $this->share_id;
+        }
+        if ($std_obj->protection_id !== $this->protection_id) {
+            $result->protection_id = $this->protection_id;
+        }
+        if ($std_obj->excluded !== $this->excluded) {
+            $result->excluded = $this->excluded;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1042,6 +1074,41 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * load the object parameters that this user has overwritten until now
+     *
+     * @param int $id the database row id to select the standard row
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_user_changes(int $id, user_message $msg): bool
+    {
+        global $db_con;
+
+        if ($id == 0) {
+            $lib = new library();
+            $msg->add(msg_id::LOAD_USER_CHANGES_ID_MISSING, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        } else {
+            $sc = $db_con->sql_creator();
+            $this->id = $id;
+            $qp = $this->load_sql_user_changes($sc);
+
+            $db_row = $db_con->get1($qp, $msg);
+            if (!$this->row_mapper_sandbox(
+                $db_row, true, false)) {
+                $lib = new library();
+                $msg->add(msg_id::LOAD_USER_CHANGES_MAPPING_FAILED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_NAME => $this->dsp_id(),
+                ]);
+            }
+        }
+        return $msg->is_ok();
+    }
+
+    /**
      * create the SQL to load the single default value always by the id
      * @param int $id the database row id to select the standard row
      * @param sql_creator $sc with the target db_type set
@@ -1059,6 +1126,32 @@ class sandbox extends db_object_seq_id_user
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve the user changes of the current object
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_user_changes(
+        sql_creator   $sc,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        $qp = new sql_par($this::class);
+        $qp->name .= sql::NAME_EXT_USER_CONFIG;
+        $sc_par_lst->add(sql_type::USER);
+        $sc->set_class($this::class, $sc_par_lst);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->get_user()->id);
+        $sc->set_fields($this->all_sandbox_fields());
+        $sc->add_where($this->id_field(), $this->id());
+        $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
@@ -1508,10 +1601,10 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * simply remove a user adjustment without check
+     * remove a user adjustment without check
      * log a system error if a technical error has occurred
      *
-     * @return bool true if user sandbox row has successfully been deleted
+     * @return bool true if the user sandbox row has successfully been deleted
      */
     function del_usr_cfg_exe($db_con): bool
     {
@@ -1620,32 +1713,6 @@ class sandbox extends db_object_seq_id_user
             }
         }
         return $result;
-    }
-
-    /**
-     * create an SQL statement to retrieve the user changes of the current object
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_user_changes(
-        sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par
-    {
-        $qp = new sql_par($this::class);
-        $qp->name .= sql::NAME_EXT_USER_CONFIG;
-        $sc_par_lst->add(sql_type::USER);
-        $sc->set_class($this::class, $sc_par_lst);
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->get_user()->id);
-        $sc->set_fields($this->all_sandbox_fields());
-        $sc->add_where($this->id_field(), $this->id());
-        $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        return $qp;
     }
 
     /**
@@ -1982,10 +2049,25 @@ class sandbox extends db_object_seq_id_user
                     // force logging the deletion
                     if ($this->is_excluded()) {
                         $sc_par_lst->add(sql_type::EXCLUDE);
+                        // to check which fields needs to be updated in the user db_row
+                        $fvt_lst = $this->db_fields_changed($norm_obj, $usr_msg, $sc_par_lst);
+                        // for a new user record compare with the norm db_row
+                        $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
+                    } else {
+                        // to update the user sandbox db row
+                        // create the user overwrite object
+                        $usr_chg_obj = $this->clone_reset(true);
+                        // set the target db row by comparing the user sandbox db_row with the norm db_row
+                        $usr_chg_obj = $this->delta($norm_obj, $usr_chg_obj);
+                        // create the user database object
+                        $usr_db = $this->clone_reset(true);
+                        // load the user db_row
+                        $usr_db->load_user_changes($this->id(), $usr_msg);
+                        // to check which fields needs to be updated in the user db_row
+                        $fvt_lst = $usr_chg_obj->db_fields_changed($usr_db, $usr_msg, $sc_par_lst);
+                        // for a new user record compare with the norm db_row
+                        $qp = $usr_db->sql_update_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
                     }
-                    // for a new user record compare with the norm db_row
-                    $fvt_lst = $this->db_fields_changed($norm_obj, $usr_msg, $sc_par_lst);
-                    $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
                     $db_con->update($qp, 'update user ' . $obj_name, $usr_msg);
                 }
             } else {
@@ -2098,6 +2180,23 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * detects if this object has been changed compared to the given object,
+     * excluding changes on internal fields like last_update
+     *
+     * @param sandbox|sandbox_named|sandbox_link $db_obj the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_non_id_diff(
+        sandbox|sandbox_named|sandbox_link $db_obj,
+        user_message                       $usr_msg,
+        sql_type_list                      $sc_par_lst = new sql_type_list()
+    ): bool
+    {
+        $fvt_lst = $this->db_fields_changed($db_obj, $usr_msg, $sc_par_lst);
+        return $fvt_lst->is_empty_except_id_and_internal_fields();
+    }
+
+    /**
      * @param sandbox $db_rec the object as saved in the database before the change
      * @return change_log the log object predefined for excluding
      */
@@ -2151,12 +2250,11 @@ class sandbox extends db_object_seq_id_user
      *
      * @return sandbox object with id zero if no object with the same id is found
      */
-    function get_obj_with_same_id_fields(): sandbox
+    function get_obj_with_same_id_fields(user_message $msg): sandbox
     {
         log_debug('check if target already exists ' . $this->dsp_id());
         $db_chk = $this->clone_reset();
-        $db_chk->id = 0; // to force the load by the id fields
-        $db_chk->load_standard(); // TODO should not ADDITIONAL the user-specific load be called
+        $db_chk->load_standard($this->id(), $msg); // TODO should not ADDITIONAL the user-specific load be called
         return $db_chk;
     }
 
@@ -2172,14 +2270,14 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * check if the id parameters are supposed to be changed
+     * Check if the id parameters are supposed to be changed
      * and change the id (which can start a longer lasting confirmation process)
      *
      * The possible cases are
-     * 1. the new name is not used by the user and not used for the standard -> simply rename it
-     * 2. the new name is not used by the user but     used for the standard -> join with the standard word
-     * 3. the new name is     used by the user but not used for the standard -> send a warning to the user and offer join
-     * 4. the new name is     used by the user and     used for the standard -> send a warning to the user and offer join
+     * 1. The new name is not used by the user and not used for the standard -> rename it
+     * 2. The new name is not used by the user but     used for the standard -> join with the standard word
+     * 3. The new name is     used by the user but not used for the standard -> send a warning to the user and offer to join
+     * 4. The new name is     used by the user and     used for the standard -> send a warning to the user and offer to join
      *
      * @param sandbox $db_rec the database record before the saving
      * @param user_message $msg a message for the user what should be changed if something failed
@@ -2197,7 +2295,7 @@ class sandbox extends db_object_seq_id_user
 
         // check the preserved names
         if ($this->check_save($msg)) {
-            $db_chk = $this->get_obj_with_same_id_fields();
+            $db_chk = $this->get_obj_with_same_id_fields($msg);
             if ($db_chk->id() != 0) {
                 log_debug('target already exists');
                 if ($this->rename_can_switch) {
@@ -2326,7 +2424,7 @@ class sandbox extends db_object_seq_id_user
      * in short: if two objects are the same by this definition, they are supposed to be merged
      * @return bool true if the given object is exactly the same as this object
      */
-    function is_formula_word(word|sandbox $obj_to_check): bool
+    function is_formula_word(word|sandbox $obj_to_check, user_message $msg): bool
     {
         global $sys;
 
@@ -2349,11 +2447,16 @@ class sandbox extends db_object_seq_id_user
                     // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                     $result = true;
                 } elseif ($obj_to_check::class == word::class
-                    and $this->type_id != $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)
-                    and $obj_to_check->type_id != $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
-                    // if not one of the two words is a formula link and not both, the user should ge no suggestion to combine them
-                    // a measure word can be combined with a measure scale word
-                    $result = true;
+                    and $this->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)
+                    and $obj_to_check->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
+                    // if two words are a formula link something has gone wrong
+                    $lib = new library();
+                    $class = $lib->class_to_name($this::class);
+                    $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+                        msg_id::VAR_CLASS_NAME => $class,
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_VALUE => $lib->class_to_name($obj_to_check::class)
+                    ]);
                 }
             }
         }
@@ -2622,12 +2725,19 @@ class sandbox extends db_object_seq_id_user
 
         if ($msg->is_ok()) {
 
+            $is_formula_link = false;
+            if ($sim !== null) {
+                if ($this->is_formula_word($sim, $msg)) {
+                    $is_formula_link = true;
+                }
+            }
+
             // create a new object if nothing similar has been found
             if (!$this->has_id() and $sim == null) {
                 log_debug('add ' . $this->dsp_id());
                 $this->add($msg);
 
-            } elseif (!$this->has_id() and $sim != null and $this->is_formula_word($sim)) {
+            } elseif (!$this->has_id() and $is_formula_link) {
                 // rule 1b: formula_link word is allowed — add it
                 log_debug('add formula_link ' . $this->dsp_id());
                 $this->add($msg);
@@ -2635,7 +2745,7 @@ class sandbox extends db_object_seq_id_user
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($sim != null) {
-                    if ($this->is_formula_word($sim)) {
+                    if ($this->is_formula_word($sim, $msg)) {
                         // if a word with the same name of a formula already exists suggest a new formula name
                         // never merge a formula word with a formula
                         $msg->merge($sim->id_used_msg($this));
@@ -2649,6 +2759,7 @@ class sandbox extends db_object_seq_id_user
                                 $db_rec = $this->load_db($msg);
                             }
                         } else {
+                            // suggest to use a different name
                             $msg->merge($sim->id_used_msg($this));
                         }
                     }

@@ -51,8 +51,11 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
@@ -71,8 +74,11 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -456,6 +462,32 @@ class sandbox_link_named extends sandbox_link
      */
 
     /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param sandbox_link_named|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param sandbox_link_named|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return sandbox_link_named|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        sandbox_link_named|CombineObject|db_object_seq_id $std_obj,
+        sandbox_link_named|CombineObject|db_object_seq_id $result
+    ): sandbox_link_named|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->name !== $this->name) {
+            $result->name = $this->name;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        if ($std_obj->type_id !== $this->type_id) {
+            $result->type_id = $this->type_id;
+        }
+        return $result;
+    }
+
+    /**
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_link_named|sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database
@@ -491,6 +523,47 @@ class sandbox_link_named extends sandbox_link
             }
         }
         return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this named link object based on the given object
+     * if the id is set in the given word loaded from the database, but this import word does not yet have the db id, set the id.
+     * if the given name is not set (null) the given name is not remove.
+     * if the given name is an empty string the given name is removed.
+     *
+     * @param sandbox_link_named|CombineObject|db_object_seq_id $obj word with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox_link_named|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $msg = parent::fill($obj, $usr_req);
+
+        if ($this->type_id() != $obj->type_id()) {
+            $lib = new library();
+            $msg->add(msg_id::DIFF_TYPE, [
+                msg_id::VAR_TYPE => $obj->type_name(),
+                msg_id::VAR_TYPE_CHK => $this->type_name(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
+            ]);
+        }
+        if ($obj::class == phrase::class or $obj::class == term::class) {
+            $obj = $obj->obj();
+        }
+        if ($obj->name != null) {
+            $this->name = $obj->name;
+        }
+        if ($obj->description != '') {
+            $this->description = $obj->description;
+        }
+
+        return $msg;
     }
 
 

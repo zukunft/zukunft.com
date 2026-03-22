@@ -1377,6 +1377,62 @@ class triple extends sandbox_link_named
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param triple|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param triple|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return triple|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        triple|CombineObject|db_object_seq_id $std_obj,
+        triple|CombineObject|db_object_seq_id $result
+    ): triple|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->from_id() !== $this->from_id()) {
+            $result->set_from($this->get_from());
+        }
+        if ($std_obj->predicate_id !== $this->predicate_id) {
+            $result->predicate_id = $this->predicate_id;
+        }
+        if ($std_obj->to_id() !== $this->to_id()) {
+            $result->set_to($this->get_to());
+        }
+
+        if ($std_obj->code_id !== $this->code_id) {
+            $result->code_id = $this->code_id;
+        }
+
+        if ($std_obj->name_given !== $this->name_given) {
+            $result->name_given = $this->name_given;
+        }
+        if ($std_obj->name_generated !== $this->name_generated) {
+            $result->name_generated = $this->name_generated;
+        }
+
+        if ($std_obj->weight !== $this->weight) {
+            $result->weight = $this->weight;
+        }
+        if ($std_obj->view !== $this->view) {
+            $result->view = $this->view;
+        }
+
+        if ($std_obj->usage !== $this->usage) {
+            $result->usage = $this->usage;
+        }
+        if ($std_obj->impact !== $this->impact) {
+            $result->impact = $this->impact;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1734,6 +1790,30 @@ class triple extends sandbox_link_named
     {
         return parent::load_standard_by_link_parent(
             triple_db::FLD_FROM, $from_id,
+            triple_db::FLD_TO, $to_id, $msg
+        );
+    }
+
+    /**
+     * load the object parameters for all users by the standard formula link from the database
+     * TODO Prio 0 add unit test
+     *
+     * @param int $from_id the id of the from link object
+     * @param int $typ_id the id of the verb object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_type_link(
+        int          $from_id,
+        int          $typ_id,
+        int          $to_id,
+        user_message $msg
+    ): bool
+    {
+        return parent::load_standard_by_type_link_parent(
+            triple_db::FLD_FROM, $from_id,
+            triple_db::FLD_PREDICATE, $typ_id,
             triple_db::FLD_TO, $to_id, $msg
         );
     }
@@ -2513,9 +2593,9 @@ class triple extends sandbox_link_named
             or $db_rec->to_id() <> $this->to_id()) {
             // check if target link already exists
             log_debug('triple->save_id_if_updated check if target link already exists ' . $this->dsp_id() . ' (has been "' . $db_rec->dsp_id() . '")');
-            $db_chk = clone $this;
-            $db_chk->id = 0; // to force the load by the id fields
-            $db_chk->load_standard();
+            $db_chk = $this->clone_reset(true);
+            $chk_msg = $msg->clone_reset();
+            $db_chk->load_standard_by_type_link($this->from_id(), $this->predicate_id(), $this->to_id(), $chk_msg);
             if ($db_chk->id() > 0) {
                 // ... if yes request to delete or exclude the record with the id parameters before the change
                 $to_del = clone $db_rec;
@@ -2611,14 +2691,9 @@ class triple extends sandbox_link_named
         if ($this->id() == 0) {
             log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
             // check if the reverse triple is already in the database
-            $db_chk_rev = clone $this;
-            $db_chk_rev->set_from($this->get_to());
-            $db_chk_rev->get_from()->id = $this->to_id();
-            $db_chk_rev->set_to($this->get_from());
-            $db_chk_rev->get_to()->id = $this->from_id();
-            // remove the name in the object to prevent loading by name
-            $db_chk_rev->name = '';
-            $db_chk_rev->load_standard();
+            $db_chk_rev = $this->clone_reset();
+            $chk_msg = $msg->clone_reset();
+            $db_chk_rev->load_standard_by_type_link($this->to_id(), $this->predicate_id(), $this->from_id(), $chk_msg);
             if ($db_chk_rev->id() > 0) {
                 $sim = $db_chk_rev;
 
@@ -2679,8 +2754,10 @@ class triple extends sandbox_link_named
                 log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
                 // check if the reverse triple is already in the database
                 $db_chk_rev = clone $this->clone_reset();
+                // use a copy of the message object because not finding an opposite triple is fine
+                $chk_msg = $msg->clone_reset();
                 $db_chk_rev->load_standard_by_link(
-                    $this->to_id(), $this->from_id(), $msg);
+                    $this->to_id(), $this->from_id(), $chk_msg);
                 if ($db_chk_rev->id() > 0) {
                     $this->id = $db_chk_rev->id();
 
@@ -2697,7 +2774,8 @@ class triple extends sandbox_link_named
                 log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
                 // check if the same triple is already in the database
                 $db_chk = clone $this;
-                $db_chk->load_standard_by_link();
+                $chk_msg = $msg->clone_reset();
+                $db_chk->load_standard_by_type_link($this->from_id(), $this->predicate_id(), $this->to_id(), $chk_msg);
                 if ($db_chk->id() > 0) {
                     $this->id = $db_chk->id();
                 }

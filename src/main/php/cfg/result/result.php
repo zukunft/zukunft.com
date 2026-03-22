@@ -1135,6 +1135,37 @@ class result extends sandbox_value
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param result|sandbox_multi|db_object_multi $std_obj the norm object as saved in the database
+     * @param result|sandbox_multi|db_object_multi $result empty clone of the target user object
+     * @return result|sandbox_multi|db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        result|sandbox_multi|db_object_multi $std_obj,
+        result|sandbox_multi|db_object_multi $result
+    ): result|sandbox_multi|db_object_multi
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->src_grp_id() !== $this->src_grp_id()) {
+            $result->set_src_grp($this->source_group());
+        }
+        if ($std_obj->formula_id() !== $this->formula_id()) {
+            $result->set_formula($this->frm);
+        }
+        if ($std_obj->number !== $this->number) {
+            $result->number = $this->number;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 

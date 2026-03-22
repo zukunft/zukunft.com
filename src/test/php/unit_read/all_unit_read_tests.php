@@ -149,14 +149,14 @@ class all_unit_read_tests extends all_unit_tests
         $t_db = new test_db_load($t);
         // add functional test rows to the database for read testing e.g. exclude sandbox entries
         $t_db->test_triple(
-            triples::PI, verbs::IS, words::MATH,
+            words::PI, verbs::IS, triples::MATH_CONST,
             triples::PI_NAME, triples::PI_NAME
         );
         $phr_grp = $t_db->add_phrase_group(array(triples::PI_NAME), groups::TN_READ);
         $t_db->test_value_by_phr_grp($phr_grp, values::PI_LONG);
 
         $t_db->test_triple(
-            triples::E, verbs::IS, words::MATH,
+            words::E_SYMBOL, verbs::ALIAS, words::E,
             triples::E, triples::E
         );
         $phr_grp = $t_db->add_phrase_group(array(triples::E), groups::TN_READ);

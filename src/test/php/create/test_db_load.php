@@ -443,7 +443,7 @@ class test_db_load
                             $trp->set_name($name_given);
                         }
                         if (!$trp->save($usr_msg)) {
-                            log_err('save triple failed due to: ' . $usr_msg->get_last_message());
+                            log_err('save triple failed due to: ' . $usr_msg->text());
                         }
                         $trp->load_by_id($trp->id());
                     }

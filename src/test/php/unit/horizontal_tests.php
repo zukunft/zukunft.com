@@ -112,6 +112,13 @@ class horizontal_tests
             $t->assert_fill($base_obj, $filled_obj);
         }
 
+        $t->subheader($ts . 'delta');
+        foreach (def::MAIN_CLASSES as $class) {
+            $base_obj = $t_map->class_to_base_object($class);
+            $filled_obj = $t_map->class_to_filled_object($class);
+            $t->assert_delta($base_obj, $filled_obj);
+        }
+
         $t->subheader($ts . 'reset');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'reset ' . $lib->class_to_name($class) . ' lead to an empty api_json';

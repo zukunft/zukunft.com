@@ -776,18 +776,6 @@ class value_base extends sandbox_value
         log_debug('got ' . $this->get_value() . ' for ' . $this->dsp_id());
     }
 
-    /**
-     * load the standard value use by most users for the given phrase group and time
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard value has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($this->id(), $db_con->sql_creator());
-        return parent::load_standard($qp);
-    }
-
 
     /*
      * sql
@@ -978,6 +966,34 @@ class value_base extends sandbox_value
         }
 
         log_debug('done');
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param value_base|sandbox_multi|db_object_multi $std_obj the norm object as saved in the database
+     * @param value_base|sandbox_multi|db_object_multi $result empty clone of the target user object
+     * @return value_base|sandbox_multi|db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        value_base|sandbox_multi|db_object_multi $std_obj,
+        value_base|sandbox_multi|db_object_multi $result
+    ): value_base|sandbox_multi|db_object_multi
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->source_id() !== $this->source_id()) {
+            $result->set_source($this->source);
+        }
+        if ($std_obj->usr_value !== $this->usr_value) {
+            $result->usr_value = $this->usr_value;
+        }
+        return $result;
     }
 
 
@@ -2241,8 +2257,8 @@ class value_base extends sandbox_value
                 $std_rec = $this->clone_all();
                 $std_rec->reset();
                 $std_rec->set_user($this->get_user()); // user must also be set to allow to take the ownership
-                $std_rec->set_grp($this->grp());
-                $std_rec->load_standard();
+                $std_msg = $msg->clone_reset();
+                $std_rec->load_standard($this->id(), $std_msg);
                 log_debug("standard value settings loaded (" . $std_rec->get_value() . ")");
 
                 // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
@@ -2271,7 +2287,7 @@ class value_base extends sandbox_value
             }
 
             if (!$msg->is_ok()) {
-                log_err($msg->get_last_message());
+                log_err($msg->text());
             }
         }
 

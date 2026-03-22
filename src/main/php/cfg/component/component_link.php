@@ -823,6 +823,37 @@ class component_link extends sandbox_link
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param component_link|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param component_link|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return component_link|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        component_link|CombineObject|db_object_seq_id $std_obj,
+        component_link|CombineObject|db_object_seq_id $result
+    ): component_link|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->order_nbr !== $this->order_nbr) {
+            $result->order_nbr = $this->order_nbr;
+        }
+        if ($std_obj->pos_type !== $this->pos_type) {
+            $result->pos_type = $this->pos_type;
+        }
+        if ($std_obj->style !== $this->style) {
+            $result->style = $this->style;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 

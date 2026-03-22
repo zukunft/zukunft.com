@@ -493,13 +493,41 @@ class view_relation extends sandbox_link
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param view_relation|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param view_relation|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return view_relation|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        view_relation|CombineObject|db_object_seq_id $std_obj,
+        view_relation|CombineObject|db_object_seq_id $result
+    ): view_relation|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->start_pos !== $this->start_pos) {
+            $result->start_pos = $this->start_pos;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
     /**
      * fill this view relation object based on the given object
      * if the given type is not set (null) the type is not removed
-     * if the given type is zero (not null) the type is removed
+     * if the given type is zero (not null), the type is removed
      *
      * @param view_relation|sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
      * @param user $usr_req the user who has requested the fill

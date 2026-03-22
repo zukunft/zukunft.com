@@ -170,6 +170,7 @@ class view extends sandbox_code_id
     private ?term_view_list $trm_msk_lst;
 
     // the default display style for this component which can be overwritten by the link
+    // TODO Prio 1 change to style_id because the style objects are part of the $sys object
     private ?type_object $style = null;
 
     // the parent view so that this view is either overwrites some component of the parent view
@@ -951,6 +952,31 @@ class view extends sandbox_code_id
         // TODO implement
         $usr_msg->add_id(msg_id::NOT_YET_IMPLEMENTED);
         return $usr_msg;
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param view|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param view|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return view|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        view|CombineObject|db_object_seq_id $std_obj,
+        view|CombineObject|db_object_seq_id $result
+    ): view|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->get_style_id() !== $this->get_style_id()) {
+            $result->set_style_by_id($this->get_style_id());
+        }
+        return $result;
     }
 
 

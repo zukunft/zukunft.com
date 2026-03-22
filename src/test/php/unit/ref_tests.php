@@ -81,6 +81,8 @@ class ref_tests
         $ref = new ref($usr);
         $ref->id = 3;
         $t->assert_sql_standard($sc, $ref);
+        $ref = $t_ref->reference();
+        $t->assert_sql_standard_by_type_link($sc, $ref);
 
         $t->subheader($ts . 'sql read all type');
         $ref_type_list = new ref_type_list();

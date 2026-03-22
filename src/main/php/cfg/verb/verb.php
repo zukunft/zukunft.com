@@ -763,6 +763,46 @@ class verb extends type_object
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param verb|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param verb|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return verb|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        verb|CombineObject|db_object_seq_id $std_obj,
+        verb|CombineObject|db_object_seq_id $result
+    ): verb|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->plural !== $this->plural) {
+            $result->plural = $this->plural;
+        }
+        if ($std_obj->reverse !== $this->reverse) {
+            $result->reverse = $this->reverse;
+        }
+        if ($std_obj->rev_plural !== $this->rev_plural) {
+            $result->rev_plural = $this->rev_plural;
+        }
+        if ($std_obj->frm_name !== $this->frm_name) {
+            $result->frm_name = $this->frm_name;
+        }
+        if ($std_obj->usage !== $this->usage) {
+            $result->usage = $this->usage;
+        }
+        if ($std_obj->impact !== $this->impact) {
+            $result->impact = $this->impact;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1050,7 +1090,7 @@ class verb extends type_object
 
         // TODO log internal errors as errors but user warnings as info
         if (!$msg->is_ok()) {
-            log_info($msg->get_last_message());
+            log_info($msg->text());
         }
 
         return $msg->is_ok();

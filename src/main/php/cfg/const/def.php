@@ -348,6 +348,11 @@ class def
         component::class,
     ];
 
+    // list of classes that have a unique name
+    const array ONLY_ADMIN_CAN_RENAME_CLASSES = [
+        verb::class,
+    ];
+
     // list of value classes
     const array VALUE_CLASSES = [
         value::class,
@@ -387,6 +392,11 @@ class def
     // list of classes where the link of two objects is the main unique key beside the database id
     const array LINK_CLASSES = [
         element::class,
+    ];
+
+    // list of classes where the link of two objects and the predicate/type is the main unique key beside the database id
+    const array LINK_TYPE_CLASSES = [
+        triple::class,
     ];
 
     // classes that have a frontend and backend object but are not user-specific

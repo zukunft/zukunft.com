@@ -61,7 +61,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 60,43,26,-36,1,radian per second squared,,,,,,3,,,,,,,,3
 61,,18,-60,1,rad/s2,,,,,,3,,,,,,,,3
 62,125,18,124,1,l (unit symbol),,,,,,,,,,,,,,
-63,1151,18,24,1,m/s,,,,,,,,,,,,,,3
+63,1151,18,24,1,m/s,,,The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.,,,,,,,,,,,3
 64,98,19,99,1,frequency drift,,,,,,3,,,,,,,,3
 65,41,26,24,1,hertz per second,,,,,,3,,,,,,,,3
 66,,18,-65,1,Hz/s,,,,,,3,,,,,,,,3

@@ -6021,7 +6021,7 @@ class sql_db
     /**
      * create the words used for the system configuration
      * @param user $usr the user how has called this function which mus be and admin of the system itself
-     * @return user_message ok if the words has been created successfully of an error message
+     * @return user_message OK if the words have been created successfully of an error message
      */
     function create_internal_words(user $usr): user_message
     {

@@ -431,6 +431,49 @@ class db_object_seq_id extends db_object
      */
 
     /**
+     * @return bool true if the object has a valid database id
+     */
+    function is_loaded(): bool
+    {
+        if ($this->id() == null) {
+            return false;
+        } else {
+            if ($this->id() != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     * Used to get the database fields that need to be updated in the user sandbox row
+     * E.g. if the user has renamed a word and changes the name now back to the standard name,
+     *      the name of the user sandbox row is supposed to be null
+     * $this is usually the target user object
+     * $obj is the norm object as saved in the database
+     * $result is the user object that should be used to write the user sandbox db row
+     *
+     *
+     * @param CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        CombineObject|db_object_seq_id $std_obj,
+        CombineObject|db_object_seq_id $result
+    ): CombineObject|db_object_seq_id
+    {
+        // TODO move to the calling function
+        // $result = $this->clone_reset(true);
+        // the database id mus always be identical to the original db row
+        $result->id = $std_obj->id();
+        return $result;
+    }
+
+    /**
      * create human-readable messages of the differences between the db id objects
      * @param CombineObject|db_object_seq_id $obj which might be different to this db id object
      * @return user_message the human-readable messages of the differences between the db id objects
@@ -481,27 +524,6 @@ class db_object_seq_id extends db_object
             }
         }
         return $msg;
-    }
-
-
-    /*
-     * info
-     */
-
-    /**
-     * @return bool true if the object has a valid database id
-     */
-    function is_loaded(): bool
-    {
-        if ($this->id() == null) {
-            return false;
-        } else {
-            if ($this->id() != 0) {
-                return true;
-            } else {
-                return false;
-            }
-        }
     }
 
 
@@ -651,7 +673,8 @@ class db_object_seq_id extends db_object
             $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_PROFILE => $msg->usr?->name()
+                msg_id::VAR_USER_NAME => $msg->usr?->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr?->profile_name()
             ]);
         }
 
@@ -725,7 +748,8 @@ class db_object_seq_id extends db_object
             $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_PROFILE => $msg->usr->name()
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr?->profile_name()
             ]);
         }
 

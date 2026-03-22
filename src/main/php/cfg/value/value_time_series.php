@@ -224,18 +224,6 @@ class value_time_series extends sandbox_value
     }
 
     /**
-     * load the standard value use by most users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if a time series has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($this->id(), $db_con->sql_creator());
-        return parent::load_standard($qp);
-    }
-
-    /**
      * create the common part of an SQL statement to retrieve the parameters of a value time series
      *
      * @param sql_creator $sc with the target db_type set
@@ -402,8 +390,7 @@ class value_time_series extends sandbox_value
             $db_rec = new value_time_series($this->get_user());
             $db_rec->load_by_id($this->id());
             $std_rec = new value_time_series($this->get_user()); // user must also be set to allow to take the ownership
-            $std_rec->id = $this->id();
-            $std_rec->load_standard();
+            $std_rec->load_standard($this->id(), $msg);
 
             // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
             if ($this->owner_id() <= 0) {

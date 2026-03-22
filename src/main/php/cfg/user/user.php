@@ -1457,6 +1457,23 @@ class user extends db_id_object_non_sandbox
         return $fvt_lst->is_empty_except_internal_fields();
     }
 
+    /**
+     * detects if this object has been changed compared to the given object,
+     * excluding changes on internal fields like last_update
+     *
+     * @param user $db_usr the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_non_id_diff(
+        user          $db_usr,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
+    {
+        $fvt_lst = $this->db_fields_changed($db_usr, $usr_msg, $sc_par_lst);
+        return $fvt_lst->is_empty_except_id_and_internal_fields();
+    }
+
 
     /*
      * owner and access
@@ -1810,6 +1827,98 @@ class user extends db_id_object_non_sandbox
                 [msg_id::VAR_USER_NAME => $this->dsp_id()]);
         }
         return $msg->is_ok();
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param user|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param user|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return user|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        user|CombineObject|db_object_seq_id $std_obj,
+        user|CombineObject|db_object_seq_id $result
+    ): user|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->name !== $this->name) {
+            $result->name = $this->name;
+        }
+        if ($std_obj->ip_addr !== $this->ip_addr) {
+            $result->ip_addr = $this->ip_addr;
+        }
+        if ($std_obj->email !== $this->email) {
+            $result->email = $this->email;
+        }
+
+        if ($std_obj->password !== $this->password) {
+            $result->password = $this->password;
+        }
+        if ($std_obj->activation_key !== $this->activation_key) {
+            $result->activation_key = $this->activation_key;
+        }
+        if ($std_obj->activation_timeout !== $this->activation_timeout) {
+            $result->activation_timeout = $this->activation_timeout;
+        }
+        if ($std_obj->db_now !== $this->db_now) {
+            $result->db_now = $this->db_now;
+        }
+        if ($std_obj->last_login !== $this->last_login) {
+            $result->last_login = $this->last_login;
+        }
+        if ($std_obj->last_logoff !== $this->last_logoff) {
+            $result->last_logoff = $this->last_logoff;
+        }
+
+        if ($std_obj->profile_id !== $this->profile_id) {
+            $result->profile_id = $this->profile_id;
+        }
+        if ($std_obj->code_id !== $this->code_id) {
+            $result->code_id = $this->code_id;
+        }
+        if ($std_obj->type_id !== $this->type_id) {
+            $result->type_id = $this->type_id;
+        }
+        if ($std_obj->right_level !== $this->right_level) {
+            $result->right_level = $this->right_level;
+        }
+        if ($std_obj->status_id !== $this->status_id) {
+            $result->status_id = $this->status_id;
+        }
+        if ($std_obj->excluded !== $this->excluded) {
+            $result->excluded = $this->excluded;
+        }
+
+        if ($std_obj->created !== $this->created) {
+            $result->created = $this->created;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        if ($std_obj->first_name !== $this->first_name) {
+            $result->first_name = $this->first_name;
+        }
+        if ($std_obj->last_name !== $this->last_name) {
+            $result->last_name = $this->last_name;
+        }
+
+        if ($std_obj->trm !== $this->trm) {
+            $result->trm = $this->trm;
+        }
+        if ($std_obj->msk !== $this->msk) {
+            $result->msk = $this->msk;
+        }
+        if ($std_obj->src !== $this->src) {
+            $result->src = $this->src;
+        }
+        return $result;
     }
 
 

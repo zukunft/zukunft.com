@@ -577,6 +577,29 @@ class group extends sandbox_multi
         $this->is_saved = true;
     }
 
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param group|sandbox_multi|db_object_multi $std_obj the norm object as saved in the database
+     * @param group|sandbox_multi|db_object_multi $result empty clone of the target user object
+     * @return group|sandbox_multi|db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        group|sandbox_multi|db_object_multi $std_obj,
+        group|sandbox_multi|db_object_multi $result
+    ): group|sandbox_multi|db_object_multi
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->name !== $this->name) {
+            $result->name = $this->name;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
 
     /*
      * sql create
@@ -770,11 +793,33 @@ class group extends sandbox_multi
      * @param string $name the name given by the user for the group
      * @return bool true if the standard value has been loaded
      */
-    function load_standard_by_name(string $name): bool
+    function load_standard_by_name(string $name, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_standard_by_name($name, $db_con->sql_creator());
-        return parent::load_standard($qp);
+        return $this->load_standard_qp($qp, $msg);
+    }
+
+    /**
+     * load the value parameters for all users
+     * @param sql_par $qp
+     * @param user_message $msg to collect the user messages
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_qp(sql_par $qp, user_message $msg): bool
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        if (!$this->row_mapper_sandbox_multi(
+            $db_row, $qp->ext, true, false)) {
+            $lib = new library();
+            $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $msg->is_ok();
     }
 
     /**

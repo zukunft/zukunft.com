@@ -890,6 +890,42 @@ class word extends sandbox_code_id
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param word|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param word|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return word|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        word|CombineObject|db_object_seq_id $std_obj,
+        word|CombineObject|db_object_seq_id $result
+    ): word|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+
+        if ($std_obj->view !== $this->view) {
+            $result->view = $this->view;
+        }
+        if ($std_obj->plural !== $this->plural) {
+            $result->plural = $this->plural;
+        }
+
+        if ($std_obj->impact !== $this->impact) {
+            $result->impact = $this->impact;
+        }
+        if ($std_obj->view !== $this->view) {
+            $result->view = $this->view;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1680,7 +1716,7 @@ class word extends sandbox_code_id
     /**
      * return the name (just because all objects should have a name function)
      */
-    function name_dsp(): string
+    function name_dsp(): ?string
     {
         if ($this->is_excluded()) {
             return '';

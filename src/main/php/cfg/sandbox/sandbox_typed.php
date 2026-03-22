@@ -395,6 +395,26 @@ class sandbox_typed extends sandbox_named
      */
 
     /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param sandbox_typed|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param sandbox_typed|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return sandbox_typed|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        sandbox_typed|CombineObject|db_object_seq_id $std_obj,
+        sandbox_typed|CombineObject|db_object_seq_id $result
+    ): sandbox_typed|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->type_id !== $this->type_id) {
+            $result->type_id = $this->type_id;
+        }
+        return $result;
+    }
+
+    /**
      * create human-readable messages of the differences between the named sandbox objects
      * @param sandbox_typed|CombineObject|db_object_seq_id $obj which might be different to this named sandbox
      * @return user_message the human-readable messages of the differences between the named sandbox objects

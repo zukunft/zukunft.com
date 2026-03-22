@@ -248,6 +248,31 @@ class db_object_seq_id_user extends db_object_seq_id
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param db_object_seq_id_user|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param db_object_seq_id_user|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return db_object_seq_id_user|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        db_object_seq_id_user|CombineObject|db_object_seq_id $std_obj,
+        db_object_seq_id_user|CombineObject|db_object_seq_id $result
+    ): db_object_seq_id_user|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->get_user_id() !== $this->get_user_id()) {
+            $result->set_user($this->get_user());
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 

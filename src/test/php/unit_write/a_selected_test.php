@@ -254,7 +254,7 @@ class a_selected_test extends test_cleanup
             //new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
             //new verb_write_tests()->run($t);
-            //new triple_write_tests()->run($this);
+            new triple_write_tests()->run($this);
             //new phrase_write_tests()->run($t);
             //new phrase_list_write_tests()->run($t);
             //new group_write_tests()->run($this);
@@ -270,7 +270,7 @@ class a_selected_test extends test_cleanup
             //new element_write_tests()->run($this);
             //new element_write_tests()->run_list($this);
             //new element_group_write_tests()->run($this);
-            //new formula_write_tests()->run($this);
+            new formula_write_tests()->run($this);
             //new formula_write_tests()->run_list($this);
             //new formula_link_write_tests()->run($this);
             //new formula_link_write_tests()->run_list($this);

@@ -460,6 +460,31 @@ class term_view extends sandbox_link
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param term_view|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param term_view|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return term_view|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        term_view|CombineObject|db_object_seq_id $std_obj,
+        term_view|CombineObject|db_object_seq_id $result
+    ): term_view|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -468,11 +493,11 @@ class term_view extends sandbox_link
      * if the given type is not set (null) the type is not removed
      * if the given type is zero (not null) the type is removed
      *
-     * @param view_relation|sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param term_view|sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
      * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(view_relation|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    function fill(term_view|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
         if ($obj->description != null) {
