@@ -251,7 +251,7 @@ class a_selected_test extends test_cleanup
             //new sys_log_write_tests()->run($t);
             new horizontal_write_tests()->run($this);
 
-            //new word_write_tests()->run($this);
+            new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
             //new verb_write_tests()->run($t);
             new triple_write_tests()->run($this);

@@ -492,6 +492,160 @@ class type_object extends db_object_seq_id
 
 
     /*
+     * similar
+     */
+
+    /**
+     * TODO Prio 1 call this check also if a named sandbox object is renamed
+     * check if an object with the unique key already exists
+     * returns null if no similar object is found
+     * or returns the object with the same unique key that is not the actual object
+     * any warning or error message needs to be created in the calling function
+     * e.g. if the user tries to create a formula named "millions"
+     *      but a word with the same name already exists, a term with the word "millions" is returned
+     *      in this case the calling function should suggest the user to name the formula "scale millions"
+     *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return type_object|null a filled object that has the same name
+     *                      or null if nothing similar has been found
+     */
+    function get_similar(user_message $msg): ?type_object
+    {
+        log_debug('check possible duplicates before adding ' . $this->dsp_id());
+        $sim = null;
+
+        // check potential duplicate by name
+        $db_chk = $this->clone_reset(true);
+        if ($this->name() != '') {
+            if ($db_chk->load_by_name($this->name())) {
+                if ($db_chk->id() > 0) {
+                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                    $sim = $db_chk;
+                }
+            }
+        } else {
+            log_err('The name must be set to check if a similar object exists');
+        }
+
+        // check potential duplicate by code id
+        if ($sim == null) {
+            if ($this->code_id != '') {
+                if ($db_chk->load_by_code_id($this->code_id)) {
+                    if ($db_chk->id() > 0) {
+                        log_debug($this->dsp_id() . ' has the same code id is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                        $sim = $db_chk;
+                    }
+                }
+            } else {
+                log_err('The code id must be set to check if a similar object exists');
+            }
+        }
+
+        return $sim;
+    }
+
+    /**
+     * create a message for the user to use another name oder code id
+     * @param type_object|null $sim the object with a least one matching key
+     * @param user_message $msg to collect the messages and suggested solutions for the user
+     * @return bool true if no critical error occured
+     */
+    function similar_message(?type_object $sim, user_message $msg): bool
+    {
+        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
+        if ($sim != null) {
+            if ($sim->id() <> 0) {
+                // check that the get_similar function has really found a similar object and report potential program errors
+                if (!$this->is_similar($sim)) {
+                    $msg->add(msg_id::NOT_SIMILAR_OBJECTS, [
+                        msg_id::VAR_NAME => $this->dsp_id(),
+                        msg_id::VAR_NAME_CHK => $sim->dsp_id()
+                    ]);
+                } else {
+                    if (!$this->is_same($sim)) {
+                        $lib = new library();
+                        $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+                            msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                            msg_id::VAR_NAME => $this->name(),
+                            msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
+                        ]);
+                    } else {
+                        // if similar is found set the id to trigger the updating instead of adding
+                        $sim->load_by_id($sim->id()); // e.g. to get the type_id
+                        // prevent that the id of a formula is used for the word with the type formula link
+                        if (get_class($this) != get_class($sim)) {
+                            $msg->merge($sim->id_used_msg($this));
+                        }
+                    }
+                }
+            }
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * returns true if any of the unique keys matches
+     * if two types are similar by this definition, they should not be both in the database
+     *
+     * @param null|type_object $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_similar(?type_object $obj_to_check): bool
+    {
+        $result = false;
+        if ($obj_to_check != null) {
+            if ($this->name() == $obj_to_check->name()) {
+                $result = true;
+            }
+            if ($this->code_id != '') {
+                if ($this->code_id == $obj_to_check->code_id) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * suggest to the user to use a different name
+     * @param type_object $obj_to_add the type object that the user wanted to add
+     * @return user_message a message to use a different name
+     */
+    function id_used_msg(type_object $obj_to_add): user_message
+    {
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
+        $msg = new user_message();
+        $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+            msg_id::VAR_CLASS_NAME => $class_name,
+            msg_id::VAR_NAME => $obj_to_add->name(),
+            msg_id::VAR_VALUE => $obj_to_add_name
+        ]);
+        return $msg;
+    }
+
+    /**
+     * can merge
+     * returns true if all the unique keys match
+     * if two objects are the same by this definition, they are supposed to be merged
+     *
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
+     */
+    function is_same(type_object $obj_to_check): bool
+    {
+        $result = true;
+        if ($this->name() !== $obj_to_check->name()) {
+            $result = false;
+        }
+        if ($this->code_id !== $obj_to_check->code_id) {
+            $result = false;
+        }
+        return $result;
+    }
+
+
+    /*
      * info
      */
 
@@ -510,6 +664,27 @@ class type_object extends db_object_seq_id
     function is_used(): bool
     {
         return true;
+    }
+
+    /**
+     * check if any unique key beside the database id has been changed
+     * for type objects the unique keys are the name and the code id
+     *
+     * @param type_object|db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(type_object|db_object_seq_id $db_rec): bool
+    {
+        $result = False;
+
+        if ($db_rec->name() <> $this->name()) {
+            $result = True;
+        }
+        if ($db_rec->code_id <> $this->code_id) {
+            $result = True;
+        }
+
+        return $result;
     }
 
 

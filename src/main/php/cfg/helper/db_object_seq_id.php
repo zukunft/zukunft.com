@@ -430,6 +430,31 @@ class db_object_seq_id extends db_object
      * info
      */
 
+    function has_id(): bool
+    {
+        if ($this->id() !== null and $this->id() !== 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * dummy function definition that will be overwritten by the child objects
+     * check if the id parameters are supposed to be changed
+     * @param db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(db_object_seq_id $db_rec): bool
+    {
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'is_key_updated',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return false;
+    }
+
     /**
      * @return bool true if the object has a valid database id
      */
@@ -707,11 +732,33 @@ class db_object_seq_id extends db_object
 
         // read the database values to be able to check if something has been changed
         // TODO Prio 2 to be added also to the prepared SQL statement
-        $db_rec = $this->clone_all();
-        $db_rec->reset(true);
-        $db_rec->load_by_id($this->id());
+        $db_rec = $this->load_db($msg);
 
         return $this->db_update_row($db_rec, $msg, $db_con, $sc_par_lst);
+    }
+
+    /**
+     * read the database values to be able to check if something has been changed;
+     * done first, because it needs to be done for user and general object values
+     * @param user_message $msg
+     * @return db_object_seq_id
+     */
+    protected function load_db(user_message $msg): db_object_seq_id
+    {
+        // prepare
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
+        // read the database values to be able to check if something has been changed;
+        // done first, because it needs to be done for user and general object values
+        $db_rec = clone $this;
+        $db_rec->reset();
+        if ($db_rec->load_by_id($this->id()) != $this->id()) {
+            $msg->add(msg_id::FAILED_RELOAD_CLASS, [
+                msg_id::VAR_CLASS_NAME => $class_name
+            ]);
+        }
+        return $db_rec;
     }
 
     /**

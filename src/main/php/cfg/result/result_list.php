@@ -44,6 +44,8 @@ include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
+// formula_map.php always includes result_list.php, so including it here would create a circular dependency
+//include_once paths::MODEL_FORMULA . 'formula_map.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
@@ -76,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
@@ -145,10 +148,10 @@ class result_list extends sandbox_value_list
      *      -> measure it based on real life data
      *      -> a solution could be to include the source group and the formula in the result group id
      *
-     * @param formula $frm a named object used for selection e.g. a formula
+     * @param formula|formula_map $frm a named object used for selection e.g. a formula
      * @return bool true if loading has been successful
      */
-    function load_by_frm(formula $frm): bool
+    function load_by_frm(formula|formula_map $frm): bool
     {
         global $db_con;
 

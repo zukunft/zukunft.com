@@ -2531,185 +2531,6 @@ class triple extends sandbox_link_named
      */
 
     /**
-     * save updated the triple id fields (from, verb and to)
-     * should only be called if the user is the owner and nobody has used the triple
-     * @param sql_db $db_con the active database connection
-     * @param sandbox|triple $db_rec the database record before the saving
-     * @param sandbox|triple $std_rec the database record defined as standard because it is used by most users
-     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
-     * @return bool true if the id fields have been saved
-     */
-    function save_id_fields(sql_db $db_con, sandbox|triple $db_rec, sandbox|triple $std_rec, user_message $usr_msg): bool
-    {
-        $result = '';
-        if ($db_rec->from_id() <> $this->from_id()
-            or $db_rec->get_verb_id() <> $this->get_verb_id()
-            or $db_rec->to_id() <> $this->to_id()) {
-            log_debug('triple->save_id_fields to "' . $this->get_to()->name() . '" (' . $this->to_id() . ') from "' . $db_rec->get_to()->name() . '" (' . $db_rec->to_id() . ') standard ' . $std_rec->get_to()->name() . '" (' . $std_rec->to_id() . ')');
-            $log = $this->log_upd();
-            $log->old_from = $db_rec->get_from();
-            $log->new_from = $this->get_from();
-            $log->std_from = $std_rec->get_from();
-            $log->old_link = $db_rec->get_verb();
-            $log->new_link = $this->get_verb();
-            $log->std_link = $std_rec->get_verb();
-            $log->old_to = $db_rec->get_to();
-            $log->new_to = $this->get_to();
-            $log->std_to = $std_rec->get_to();
-            $log->row_id = $this->id();
-            //$log->set_field(triple_db::FLD_FROM);
-            if ($log->add($usr_msg)) {
-                $db_con->set_class(triple::class);
-                if (!$db_con->update_old($this->id(),
-                    array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO),
-                    array($this->from_id(), $this->get_verb_id(), $this->to_id()))) {
-                    $result = msg_id::FAILED_UPDATE_WORK_LINK_NAME;
-                }
-            }
-        }
-        log_debug('triple->save_id_fields for ' . $this->dsp_id() . ' has been done');
-        return $usr_msg->is_ok();
-    }
-
-    /**
-     * check if the id parameters are supposed to be changed
-     * TODO try to move to sandbox or sandbox link object
-     *
-     * @param sql_db $db_con the active database connection
-     * @param triple|sandbox $db_rec the database record before the saving
-     * @param triple|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @param user_message $msg a message for the user what should be changed if something failed
-     * @return bool true if everything has been fine
-     */
-    function save_id_if_updated_old(
-        sql_db         $db_con,
-        triple|sandbox $db_rec,
-        triple|sandbox $std_rec,
-        user_message   $msg
-    ): bool
-    {
-        if ($db_rec->from_id() <> $this->from_id()
-            or $db_rec->get_verb_id() <> $this->get_verb_id()
-            or $db_rec->to_id() <> $this->to_id()) {
-            // check if target link already exists
-            log_debug('triple->save_id_if_updated check if target link already exists ' . $this->dsp_id() . ' (has been "' . $db_rec->dsp_id() . '")');
-            $db_chk = $this->clone_reset(true);
-            $chk_msg = $msg->clone_reset();
-            $db_chk->load_standard_by_type_link($this->from_id(), $this->predicate_id(), $this->to_id(), $chk_msg);
-            if ($db_chk->id() > 0) {
-                // ... if yes request to delete or exclude the record with the id parameters before the change
-                $to_del = clone $db_rec;
-                $to_del->del($msg);
-                $msg->merge($msg);
-                if (!$msg->is_ok()) {
-                    $msg->add_id(msg_id::FAILED_TO_DELETE_UNUSED_WORK_LINK);
-                }
-                if ($msg->is_ok()) {
-                    // ... and use it for the update
-                    $this->id = $db_chk->id();
-                    $this->set_owner_id($db_chk->owner_id());
-                    // force including again
-                    $this->include();
-                    $db_rec->exclude();
-                    if ($this->save($msg)) {
-                        log_debug('triple->save_id_if_updated found a triple with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
-                    }
-                }
-            } else {
-                if (!$this->can_change() and $this->not_used()) {
-                    $to_del = clone $db_rec;
-                    if (!$this->not_used()) {
-                        // if the target link has not yet been created
-                        // ... request to delete the old
-                        $to_del->del($msg);
-                        $msg->merge($msg);
-                        if (!$msg->is_ok()) {
-                            $msg->add_id(msg_id::FAILED_TO_DELETE_UNUSED_WORK_LINK);
-                        }
-                        // ... and create a deletion request for all users ???
-
-                        // ... and create a new triple
-                        $this->id = 0;
-                        $this->set_owner_id($this->get_user()->id);
-                        $this->add($msg);
-                        log_debug('triple->save_id_if_updated recreate the triple del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
-                    } else {
-                        $to_del->exclude();
-                        if (!$to_del->save($msg)) {
-                            $msg->add(msg_id::FAILED_TO_EXCLUDE_UNUSED, [
-                                msg_id::VAR_CLASS_NAME => $this::class
-                            ]);
-                        }
-                    }
-                }
-            }
-        }
-
-        log_debug('triple->save_id_if_updated for ' . $this->dsp_id() . ' has been done');
-        return $msg->is_ok();
-    }
-
-    /**
-     * add a new triple to the database
-     * @param user_message $msg with status ok
-     *                              or if something went wrong
-     *                              the message that should be shown to the user
-     *                              including suggested solutions
-     * @return bool true if everything has been fine
-     */
-    function add(user_message $msg): bool
-    {
-        log_debug('triple->add new triple for "' . $this->get_from()->name() . '" ' . $this->get_verb_name() . ' "' . $this->get_to()->name() . '"');
-
-        global $db_con;
-
-        // TODO review: do not set the generated name if it matches the name
-        $this->set_names();
-        $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
-        if ($msg->is_ok()) {
-            $msg_txt = 'add and log ' . $this->dsp_id();
-            if ($db_con->insert($qp, $msg_txt, $msg)) {
-                $this->id = $msg->get_row_id();
-            }
-        }
-
-        return $msg->is_ok();
-    }
-
-    /**
-     * check additional if the opposite triple already exists and if yes, ask for confirmation
-     *
-     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @returns triple|sandbox|null a filled object that has the same name, links or reverse links
-     */
-    function get_similar(user_message $msg): triple|sandbox|null
-    {
-        $sim = parent::get_similar($msg);
-
-        // check if the opposite triple already exists and if yes, ask for confirmation
-        if ($this->id() == 0) {
-            log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
-            // check if the reverse triple is already in the database
-            $db_chk_rev = $this->clone_reset();
-            $chk_msg = $msg->clone_reset();
-            $db_chk_rev->load_standard_by_type_link($this->to_id(), $this->predicate_id(), $this->from_id(), $chk_msg);
-            if ($db_chk_rev->id() > 0) {
-                $sim = $db_chk_rev;
-
-                $msg->add(msg_id::REVERSE_ALREADY_EXISTS, [
-                    msg_id::VAR_SOURCE_NAME => $this->get_from()->name(),
-                    msg_id::VAR_VERB_NAME => $this->get_verb_name(),
-                    msg_id::VAR_NAME => $this->get_to()->name(),
-                ]);
-            }
-        }
-
-        return $sim;
-    }
-
-
-    /**
      * add or update a triple in the database or create a user triple
      * overwrite the sandbox save because for triple the reverse order should be checked
      *
@@ -2839,6 +2660,65 @@ class triple extends sandbox_link_named
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * add a new triple to the database
+     * @param user_message $msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
+     * @return bool true if everything has been fine
+     */
+    function add(user_message $msg): bool
+    {
+        log_debug('triple->add new triple for "' . $this->get_from()->name() . '" ' . $this->get_verb_name() . ' "' . $this->get_to()->name() . '"');
+
+        global $db_con;
+
+        // TODO review: do not set the generated name if it matches the name
+        $this->set_names();
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
+        if ($msg->is_ok()) {
+            $msg_txt = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg_txt, $msg)) {
+                $this->id = $msg->get_row_id();
+            }
+        }
+
+        return $msg->is_ok();
+    }
+
+    /**
+     * check additional if the opposite triple already exists and if yes, ask for confirmation
+     *
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @returns triple|sandbox|null a filled object that has the same name, links or reverse links
+     */
+    function get_similar(user_message $msg): triple|sandbox|null
+    {
+        $sim = parent::get_similar($msg);
+
+        // check if the opposite triple already exists and if yes, ask for confirmation
+        if ($this->id() == 0) {
+            log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
+            // check if the reverse triple is already in the database
+            $db_chk_rev = $this->clone_reset();
+            $chk_msg = $msg->clone_reset();
+            $db_chk_rev->load_standard_by_type_link($this->to_id(), $this->predicate_id(), $this->from_id(), $chk_msg);
+            if ($db_chk_rev->id() > 0) {
+                $sim = $db_chk_rev;
+
+                $msg->add(msg_id::REVERSE_ALREADY_EXISTS, [
+                    msg_id::VAR_SOURCE_NAME => $this->get_from()->name(),
+                    msg_id::VAR_VERB_NAME => $this->get_verb_name(),
+                    msg_id::VAR_NAME => $this->get_to()->name(),
+                ]);
+            }
+        }
+
+        return $sim;
     }
 
 

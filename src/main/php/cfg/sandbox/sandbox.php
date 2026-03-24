@@ -345,7 +345,9 @@ class sandbox extends db_object_seq_id_user
             if (!$load_std) {
                 $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
             }
-            $this->set_owner_id($db_row[user_db::FLD_ID]);
+            if (array_key_exists(user_db::FLD_ID, $db_row)) {
+                $this->set_owner_id($db_row[user_db::FLD_ID]);
+            }
             if ($allow_usr_protect) {
                 $this->row_mapper_usr($db_row);
             } else {
@@ -533,7 +535,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * set the vars of this object based on json string from the frontend object
      * @param string $api_json
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg OK or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
     function set_from_api(string $api_json, user_message $usr_msg): bool
@@ -1021,7 +1023,7 @@ class sandbox extends db_object_seq_id_user
     */
 
     /**
-     * load one database row e.g. word, triple, formula, view or component from the database
+     * load one database row e.g. word, triple, formula, view or component from the database.
      * for values and result the db key might be an 512-bit id or even a string
      * so for values and results the load_non_int_db_key function is used instead of this load function
      *
@@ -2196,52 +2198,10 @@ class sandbox extends db_object_seq_id_user
         return $fvt_lst->is_empty_except_id_and_internal_fields();
     }
 
-    /**
-     * @param sandbox $db_rec the object as saved in the database before the change
-     * @return change_log the log object predefined for excluding
-     */
-    function save_field_excluded_log(sandbox $db_rec): change_log
-    {
-        $log = new change_log($this->get_user());
-        if ($db_rec->is_excluded() <> $this->is_excluded()) {
-            if ($this->is_excluded()) {
-                if ($this->is_link_obj()) {
-                    $log = $this->log_del_link();
-                } else {
-                    $log = $this->log_del();
-                }
-            } else {
-                if ($this->is_link_obj()) {
-                    $log = $this->log_link_add();
-                } else {
-                    $log = $this->log_add();
-                }
-            }
-        }
-        $log->set_field(sql_db::FLD_EXCLUDED);
-        return $log;
-    }
-
 
     /*
      * save id
      */
-
-    /**
-     * dummy function definition that will be overwritten by the child objects
-     * check if the id parameters are supposed to be changed
-     * @param sandbox $db_rec the object data as it is now in the database
-     * @return bool true if one of the object id fields have been changed
-     */
-    function is_key_updated(sandbox $db_rec): bool
-    {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'is_id_updated',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return false;
-    }
 
     /**
      * check if target key value already exists
@@ -2700,6 +2660,15 @@ class sandbox extends db_object_seq_id_user
 
         global $db_con;
 
+        // by default all changes are logged
+        if (is_array($sc_par_lst)) {
+            if ($sc_par_lst == []) {
+                $sc_par_lst = new sql_type_list([sql_type::LOG]);
+            } else {
+                $sc_par_lst = new sql_type_list($sc_par_lst);
+            }
+        }
+
         // check e.g. if a preserved name is used and if yes add a message and solution to $msg
         if ($this->check_save($msg)) {
             $this->reload_objects($msg);
@@ -2757,6 +2726,7 @@ class sandbox extends db_object_seq_id_user
                             if ($sim->has_id()) {
                                 $this->id = $sim->id();
                                 $db_rec = $this->load_db($msg);
+                                $this->merged_info_message($this, $msg);
                             }
                         } else {
                             // suggest to use a different name
@@ -2819,7 +2789,7 @@ class sandbox extends db_object_seq_id_user
      * @param user_message $msg
      * @return sandbox
      */
-    private function load_db(user_message $msg): sandbox
+    protected function load_db(user_message $msg): sandbox
     {
         // prepare
         $lib = new library();
@@ -2888,7 +2858,7 @@ class sandbox extends db_object_seq_id_user
      * TODO check if all have deleted the object
      *      does not remove the user excluding if no one else is using it
      *
-     * @param user_message $msg with status ok
+     * @param user_message $msg with status OK
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
@@ -3003,6 +2973,22 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * add a message for the user that the new object has been merged with a standard object with the same name or unique key
+     *
+     * @param sandbox $obj_to_add the object that the user wants to add to the database
+     * @param user_message $msg to collect the messages and suggested solutions for the user
+     * @return bool true if the merge is fine
+     */
+    function merged_info_message(sandbox $obj_to_add, user_message $msg): bool
+    {
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'merged_info_message',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return false;
+    }
+
+    /**
      * @return user_message a message to use a different name
      */
     function id_used_msg(sandbox $obj_to_add): user_message
@@ -3023,7 +3009,7 @@ class sandbox extends db_object_seq_id_user
      * needs to be overwritten by the child class if needed
      *
      * @param user_message $usr_msg the message for the user why deleting the object links has failed and a suggested solution
-     * @return bool true if the object links has been deleted
+     * @return bool true if the object links have been deleted
      */
     function del_links(user_message $usr_msg): bool
     {

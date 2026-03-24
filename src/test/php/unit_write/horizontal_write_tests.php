@@ -159,7 +159,7 @@ class horizontal_write_tests
                 $existing_name = $t_map->class_to_base_object($class)->name();
                 $obj->set_name($existing_name);
                 $t->assert_false($test_name, $obj->save($msg_upd));
-                $t->assert_text_contains($test_name, $msg->text(), msg_id::ALREADY_EXISTS->value);
+                $t->assert_text_contains($test_name, $msg_upd->text(), msg_id::ALREADY_EXISTS->value);
 
                 // reset the message for the next test
                 $msg->reset();

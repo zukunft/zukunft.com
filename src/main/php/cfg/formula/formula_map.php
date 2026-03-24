@@ -133,6 +133,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -2007,6 +2008,7 @@ class formula_map extends sandbox_code_id
             // TODO add del function with test
             //$usr_msg->add($elm_lst->del_without_log());
 
+            // TODO Prio 0 use element list delete function
             $db_con->set_class(element::class);
             $db_con->set_usr($this->get_user()->id);
             $msg = $db_con->delete_old($this->id_field(), $this->id());
@@ -2015,10 +2017,11 @@ class formula_map extends sandbox_code_id
 
         // and the corresponding results
         if ($usr_msg_del->is_ok()) {
-            $db_con->set_class(result::class);
-            $db_con->set_usr($this->get_user()->id);
-            $msg = $db_con->delete_old($this->id_field(), $this->id());
-            $usr_msg_del->add_message_text($msg);
+            $imp = new import();
+            $res_lst = new result_list($this->get_user());
+            $res_lst->load_by_frm($this);
+            $res_lst->db_delete_no_log($usr_msg, $imp, result::class);
+            $usr_msg_del->merge($usr_msg);
         }
 
         // and the corresponding word if possible

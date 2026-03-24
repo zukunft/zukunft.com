@@ -85,6 +85,7 @@ class triple_tests
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG]);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_update($sc, $trp_excl, $trp, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $trp_excl, $trp, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql delete');
         // TODO Prio 0 activate db write

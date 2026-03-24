@@ -1113,46 +1113,6 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
-     * should only be called if the user is the owner and nobody has used the display component link
-     * @param sql_db $db_con the active database connection
-     * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
-     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
-     * @throws Exception
-     */
-    function save_id_fields_link(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): string
-    {
-        $result = '';
-        log_debug($this->dsp_id());
-
-        if ($this->is_id_updated_link($db_rec)) {
-            log_debug('to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
-
-            $log = $this->log_upd_link();
-            $log->old_from = $db_rec->fob();
-            $log->new_from = $this->fob();
-            $log->std_from = $std_rec->fob();
-            $log->old_to = $db_rec->tob();
-            $log->new_to = $this->tob();
-            $log->std_to = $std_rec->tob();
-
-            $log->row_id = $this->id();
-            if ($log->add($usr_msg)) {
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->get_user()->id);
-                if (!$db_con->update_old($this->id(),
-                    array($this->from_name . sql_db::FLD_EXT_ID, $this->from_name . sql_db::FLD_EXT_ID),
-                    array($this->fob()->id(), $this->tob()->id()))) {
-                    $result .= 'update from link to ' . $this->from_name . 'failed';
-                }
-            }
-        }
-        log_debug('for ' . $this->dsp_id() . ' done');
-        return $result;
-    }
-
-    /**
      * check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
      * @param object $obj_to_check the object used for the comparison
      * @return bool true if the objects represent the same link
@@ -1465,6 +1425,27 @@ class sandbox_link extends sandbox
             );
         }
         return $fvt_lst_out;
+    }
+
+    /**
+     * add a message for the user that the new object has been merged with a standard object with the same name or unique key
+     *
+     * @param sandbox_link|sandbox $obj_to_add the object that the user wants to add to the database
+     * @param user_message $msg to collect the messages and suggested solutions for the user
+     * @return bool true if the merge is fine
+     */
+    function merged_info_message(sandbox_link|sandbox $obj_to_add, user_message $msg): bool
+    {
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
+        $msg->add_info_with_vars(msg_id::MERGED_BY_LINK_WITH_STANDARD_OBJECT, [
+            msg_id::VAR_CLASS_NAME => $class_name,
+            msg_id::VAR_NAME => $this->link_id(),
+            msg_id::VAR_VALUE => $obj_to_add_name,
+            msg_id::VAR_NAME_CHK => $obj_to_add->link_id()
+        ]);
+        return $msg->is_ok();
     }
 
     /**

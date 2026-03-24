@@ -970,10 +970,10 @@ class sandbox_named extends sandbox
     /**
      * check if the id parameters are supposed to be changed
      * TODO add the link type for word links
-     * @param sandbox $db_rec the object data as it is now in the database
-     * @return bool true if one of the object id fields have been changed
+     * @param sandbox_named|db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
      */
-    function is_key_updated(sandbox $db_rec): bool
+    function is_key_updated(sandbox_named|db_object_seq_id $db_rec): bool
     {
         $result = False;
         log_debug($this->dsp_id());
@@ -1130,12 +1130,10 @@ class sandbox_named extends sandbox
                             msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
                         ]);
                     } else {
-                        // if similar is found set the id to trigger the updating instead of adding
+                        // if similar is found reload to have the full data
                         $sim->load_by_id($sim->id()); // e.g. to get the type_id
                         // prevent that the id of a formula is used for the word with the type formula link
-                        if (get_class($this) == get_class($sim)) {
-                            $this->id = $sim->id();
-                        } else {
+                        if (get_class($this) != get_class($sim)) {
                             if (!((get_class($this) == word::class and get_class($sim) == formula::class)
                                 or (get_class($this) == triple::class and get_class($sim) == formula::class))) {
                                 $msg->merge($sim->id_used_msg($this));
@@ -1164,6 +1162,27 @@ class sandbox_named extends sandbox
         $chk_msg = $msg->clone_reset(); // it is in this case ok if no db row a found so an error should not influence the later process steps
         $db_chk->load_standard_by_name($this->name(), $chk_msg);
         return $db_chk;
+    }
+
+    /**
+     * add a message for the user that the new object has been merged with a standard object with the same name or unique key
+     *
+     * @param sandbox_named|sandbox $obj_to_add the object that the user wants to add to the database
+     * @param user_message $msg to collect the messages and suggested solutions for the user
+     * @return bool true if the merge is fine
+     */
+    function merged_info_message(sandbox_named|sandbox $obj_to_add, user_message $msg): bool
+    {
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
+        $msg->add_info_with_vars(msg_id::MERGED_BY_NAME_WITH_STANDARD_OBJECT, [
+            msg_id::VAR_CLASS_NAME => $class_name,
+            msg_id::VAR_NAME => $this->name(),
+            msg_id::VAR_VALUE => $obj_to_add_name,
+            msg_id::VAR_NAME_CHK => $obj_to_add->name()
+        ]);
+        return $msg->is_ok();
     }
 
 
