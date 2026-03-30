@@ -1836,9 +1836,9 @@ class sandbox_link extends sandbox
         // for a new component link the owner should be set, so remove the user id to force writing the user
         $lnk_empty->set_user($this->get_user()->clone_reset());
         // for linked user db rows, use the link fields of the standard row, because the link itself cannot be changed by the user
-        if ($sc_par_lst_used->is_usr_tbl()) {
-            $lnk_empty = $this->set_link_objects($lnk_empty);
-        }
+        // if ($sc_par_lst_used->is_usr_tbl()) {
+        // for the other insert cases use also the
+        $lnk_empty = $this->set_link_objects($lnk_empty);
         // get the list of the changed fields
         $fvt_lst = $this->db_fields_changed($lnk_empty, $usr_msg, $sc_par_lst_used);
         // get the list of all fields that can be changed by the user

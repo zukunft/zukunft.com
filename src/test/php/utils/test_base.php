@@ -4116,6 +4116,7 @@ class test_base
         $test_name = 'empty ' . $class . ' differs from filled object and the no_diff function works';
         $this->assert_false($test_name, $base->no_diff($filled, $usr_msg));
         $original_json = $filled->api_json([api_types::TEST_MODE], $usr_sys);
+        $empty = $base->clone_reset();
         $empty->fill($filled, $usr_sys);
         $test_name = 'no_diff finds no difference in the filled ' . $class . ' compared to the original';
         if (!$empty->no_diff($filled, $usr_msg)) {

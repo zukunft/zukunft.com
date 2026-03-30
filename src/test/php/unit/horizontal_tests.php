@@ -151,6 +151,10 @@ class horizontal_tests
             if (!in_array($class,def::MAIN_CLASSES_NO_CHANGE_LOG)) {
                 $sql_typ_lst[] = sql_type::LOG;
             }
+            // TODO Prio 0 remove temp
+            if ($class == component_link::class) {
+                log_info('component_link');
+            }
             $t->assert_sql_insert($sc, $obj, $sql_typ_lst);
             $id = $obj->id();
             $obj_changed = $obj->clone_reset(true);
