@@ -1161,10 +1161,10 @@ class sandbox_value extends sandbox_multi
     function fill(sandbox_value|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->grp() != null) {
+        if ($this->grp() === null and $obj->grp() != null) {
             $this->set_grp($obj->grp());
         }
-        if ($obj->last_update() != null) {
+        if ($this->last_update() === null and $obj->last_update() != null) {
             $this->set_last_update($obj->last_update());
         }
         return $usr_msg;

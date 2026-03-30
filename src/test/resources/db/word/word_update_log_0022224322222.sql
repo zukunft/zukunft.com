@@ -121,7 +121,7 @@ SELECT word_update_log_0022224322222
         null::numeric,
         14::smallint,
         1::smallint,
-        0::smallint,
+        null::smallint,
         86::smallint,
         3::smallint,
         null::smallint,

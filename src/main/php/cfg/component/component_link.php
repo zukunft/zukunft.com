@@ -227,6 +227,9 @@ class component_link extends sandbox_link
         $this->rename_can_switch = def::UI_CAN_CHANGE_VIEW_COMPONENT_LINK;
 
         $this->reset_objects($usr);
+
+        $this->set_predicate(component_link_type::ALWAYS);
+        $this->set_pos_type(position_types::BELOW);
     }
 
     /**
@@ -246,9 +249,9 @@ class component_link extends sandbox_link
         $this->reset_objects($usr);
 
         // set the default values
-        $this->set_predicate(component_link_type::ALWAYS);
+        $this->predicate_id = null;
         $this->set_pos(null);
-        $this->set_pos_type(position_types::BELOW);
+        $this->pos_type = null;
         $this->set_style(null);
 
         $this->order_nbr = null;
@@ -667,17 +670,18 @@ class component_link extends sandbox_link
     }
 
     /**
+     * TODO Prio 3 maybe use only position_type_id instead of the position type object as var
      * @return int|null the database id of the component position type
      */
     function get_pos_type_id(): ?int
     {
-        return $this->pos_type->id();
+        return $this->pos_type?->id();
     }
 
     /**
-     * @return type_object the position type for the component in the linked view by the database id
+     * @return type_object|null the position type for the component in the linked view by the database id
      */
-    function get_pos_type(): type_object
+    function get_pos_type(): ?type_object
     {
         return $this->pos_type;
     }
@@ -687,7 +691,7 @@ class component_link extends sandbox_link
      */
     function get_pos_type_code_id(): ?string
     {
-        return $this->pos_type->get_code_id();
+        return $this->pos_type?->get_code_id();
     }
 
     /**
@@ -869,13 +873,13 @@ class component_link extends sandbox_link
     function fill(component_link|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->order_nbr != null) {
+        if ($this->order_nbr === null and $obj->order_nbr != null) {
             $this->order_nbr = $obj->order_nbr;
         }
-        if ($obj->pos_type != null) {
+        if ($this->pos_type === null and $obj->pos_type != null) {
             $this->pos_type = $obj->pos_type;
         }
-        if ($obj->style != null) {
+        if ($this->style === null and $obj->style != null) {
             $this->style = $obj->style;
         }
         return $usr_msg;

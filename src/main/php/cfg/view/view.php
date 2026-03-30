@@ -996,7 +996,7 @@ class view extends sandbox_code_id
     function fill(view|sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_style_id() != null) {
+        if ($this->get_style_id() === null and $obj->get_style_id() != null) {
             $this->set_style_by_id($obj->get_style_id());
         }
         return $usr_msg;

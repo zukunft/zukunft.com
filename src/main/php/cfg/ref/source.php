@@ -438,7 +438,7 @@ class source extends sandbox_code_id
     function fill(source|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->url != null) {
+        if ($this->url === null and $obj->url != null) {
             $this->url = $obj->url;
         }
         return $usr_msg;

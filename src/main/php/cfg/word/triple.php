@@ -1479,23 +1479,23 @@ class triple extends sandbox_link_named
             }
 
             // fill the names
-            if ($trp->name_given != null) {
+            if ($this->name_given === null and $trp->name_given != null) {
                 $this->name_given = $trp->name_given;
             }
-            if ($trp->name_generated != '') {
+            if ($this->name_generated === null and $trp->name_generated != '') {
                 $this->name_generated = $trp->name_generated;
             }
 
             // fill the parameters
-            if ($obj->weight != null) {
+            if ($this->weight === null and $obj->weight != null) {
                 $this->weight = $obj->weight;
             }
-            if ($obj->view != null) {
+            if ($this->view === null and $obj->view != null) {
                 $this->view = $obj->view;
             }
         }
         if ($obj::class == phrase::class) {
-            if ($obj->get_usage() != null) {
+            if ($this->get_usage() === null and $obj->get_usage() != null) {
                 if ($this::class == phrase::class) {
                     $this->set_usage($obj->get_usage());
                 } else {
@@ -1503,7 +1503,7 @@ class triple extends sandbox_link_named
                 }
             }
         } else {
-            if ($obj->usage != null) {
+            if ($this->usage === null and $obj->usage != null) {
                 if ($this::class == phrase::class) {
                     $this->set_usage($obj->usage);
                 } else {
@@ -1512,7 +1512,7 @@ class triple extends sandbox_link_named
             }
         }
         if ($obj::class == phrase::class) {
-            if ($obj->get_impact() != null) {
+            if ($this->get_impact() === null and $obj->get_impact() != null) {
                 if ($this::class == phrase::class) {
                     $this->set_impact($obj->get_impact());
                 } else {
@@ -1520,7 +1520,7 @@ class triple extends sandbox_link_named
                 }
             }
         } else {
-            if ($obj->impact != null) {
+            if ($this->impact === null and $obj->impact != null) {
                 if ($this::class == phrase::class) {
                     $this->set_impact($obj->impact);
                 } else {
@@ -2946,7 +2946,7 @@ class triple extends sandbox_link_named
             }
         }
         // TODO check if the excluded field is not already added by the sandbox function
-        if ($obj->is_excluded() !== $this->is_excluded()) {
+        if ($obj->excluded !== $this->excluded) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
@@ -2954,15 +2954,11 @@ class triple extends sandbox_link_named
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            if ($this->is_excluded()) {
-                $new_excl = 1;
-            } else {
-                $new_excl = 0;
-            }
             $lst->add_field(
                 sql_db::FLD_EXCLUDED,
-                $new_excl,
-                sql_db::FLD_EXCLUDED_SQL_TYP
+                $this->excluded,
+                sql_db::FLD_EXCLUDED_SQL_TYP,
+                $obj->excluded,
             );
         }
         if ($obj->name_given() !== $this->name_given()) {

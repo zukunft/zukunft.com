@@ -1543,10 +1543,10 @@ class group extends sandbox_multi
     function fill(group|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->name() != null) {
+        if ($this->name === null and $obj->name() != null) {
             $this->set_name($obj->name());
         }
-        if ($obj->get_description() != null) {
+        if ($this->get_description() === null and $obj->get_description() != null) {
             $this->set_description($obj->get_description());
         }
         return $usr_msg;

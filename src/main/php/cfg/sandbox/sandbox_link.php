@@ -303,6 +303,22 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * @return int|string the id of the linked object
+     */
+    function from_id_or_name(): int|string
+    {
+        if ($this->fob == null) {
+            return 0;
+        } else {
+            if ($this->fob->id() == 0) {
+                return $this->fob->name();
+            } else {
+                return $this->fob->id();
+            }
+        }
+    }
+
+    /**
      * @return bool true if the from object is not set
      */
     function from_empty(): bool
@@ -378,10 +394,10 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * @return int|string the id of the linked object
+     * @return int|string|null the id of the linked object
      * or in case of an external reference the external key as a string
      */
-    function to_id(): int|string
+    function to_id(): int|string|null
     {
         if ($this->tob == null) {
             return 0;
@@ -396,6 +412,22 @@ class sandbox_link extends sandbox
     function to_name(): string
     {
         return $this->tob()?->name();
+    }
+
+    /**
+     * @return int|string the id of the linked object
+     */
+    function to_id_or_name(): int|string
+    {
+        if ($this->tob == null) {
+            return 0;
+        } else {
+            if ($this->tob->id() == 0) {
+                return $this->tob->name();
+            } else {
+                return $this->tob->id();
+            }
+        }
     }
 
     /**
@@ -572,8 +604,8 @@ class sandbox_link extends sandbox
      * @return bool true if the standard object has been loaded
      */
     function load_standard_by_link(
-        int $from_id,
-        int $to_id,
+        int          $from_id,
+        int          $to_id,
         user_message $msg
     ): bool
     {
@@ -619,10 +651,10 @@ class sandbox_link extends sandbox
      * @return bool true if the standard object has been loaded
      */
     function load_standard_by_link_parent(
-        string $from_fld,
-        int $from_id,
-        string $to_fld,
-        int $to_id,
+        string       $from_fld,
+        int          $from_id,
+        string       $to_fld,
+        int          $to_id,
         user_message $msg
     ): bool
     {
@@ -650,10 +682,10 @@ class sandbox_link extends sandbox
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard_by_link(
-        string $from_fld,
-        int $from_id,
-        string $to_fld,
-        int $to_id,
+        string      $from_fld,
+        int         $from_id,
+        string      $to_fld,
+        int         $to_id,
         sql_creator $sc
     ): sql_par
     {
@@ -682,12 +714,12 @@ class sandbox_link extends sandbox
      * @return bool true if the standard object has been loaded
      */
     function load_standard_by_type_link_parent(
-        string $from_fld,
-        int $from_id,
-        string $type_fld,
-        int $type_id,
-        string $to_fld,
-        int $to_id,
+        string       $from_fld,
+        int          $from_id,
+        string       $type_fld,
+        int          $type_id,
+        string       $to_fld,
+        int          $to_id,
         user_message $msg
     ): bool
     {
@@ -715,12 +747,12 @@ class sandbox_link extends sandbox
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard_by_type_link(
-        string $from_fld,
-        int $from_id,
-        string $type_fld,
-        int $type_id,
-        string $to_fld,
-        int|string $to_id,
+        string      $from_fld,
+        int         $from_id,
+        string      $type_fld,
+        int         $type_id,
+        string      $to_fld,
+        int|string  $to_id,
         sql_creator $sc
     ): sql_par
     {
@@ -959,9 +991,26 @@ class sandbox_link extends sandbox
     function fill(sandbox|sandbox_link|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->predicate_id() != null) {
+        // fill to link objects
+        if ($this->from_empty()) {
+            if (!$obj->from_empty()) {
+                $this->set_fob($obj->fob());
+            }
+        } else {
+            $this->fob()->fill($obj->fob(), $usr_req);
+        }
+        if ($this->predicate_id() === null and $obj->predicate_id() != null) {
             $this->set_predicate_id($obj->predicate_id());
         }
+        if ($this->to_empty()) {
+            if (!$obj->to_empty()) {
+                $this->set_tob($obj->tob());
+            }
+        } else {
+            $this->tob()->fill($obj->tob(), $usr_req);
+        }
+
+
         return $usr_msg;
     }
 
@@ -1530,7 +1579,7 @@ class sandbox_link extends sandbox
                     $this->message_from_invalid($msg);
                 }
             }
-            if ($obj->from_id() !== $this->from_id()) {
+            if (($obj->from_id_or_name() !== $this->from_id_or_name()) or $sc_par_lst->is_insert()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1556,7 +1605,7 @@ class sandbox_link extends sandbox
                     }
                 }
             }
-            if ($obj->to_id() !== $this->to_id()) {
+            if (($obj->to_id_or_name() !== $this->to_id_or_name()) or $sc_par_lst->is_insert()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
@@ -1620,7 +1669,7 @@ class sandbox_link extends sandbox
                     $to_fld = sql::TO_FLD_PREFIX . $to_fld;
                 }
                 // TODO check how to handle if the standard
-                if ($this->is_excluded() and !$obj->is_excluded() or $is_delete) {
+                if (($this->is_excluded() and !$obj->is_excluded()) or $is_delete) {
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1660,7 +1709,7 @@ class sandbox_link extends sandbox
                             $obj->tob()
                         );
                     }
-                } elseif (!$this->is_excluded() and $obj->is_excluded()) {
+                } elseif ((!$this->is_excluded() and $obj->is_excluded()) or $is_delete) {
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1770,6 +1819,20 @@ class sandbox_link extends sandbox
         $sc_par_lst_used->add(sql_type::INSERT);
         // fields and values that the word has additional to the standard named user sandbox object
         $lnk_empty = $this->clone_reset();
+        // if a user has deleted or excluded a link fill the empty object with the link id so that the link id can be used for the log
+        if ($this->is_excluded()) {
+            if (in_array($this::class, def::LINK_CLASSES)) {
+                $lnk_empty->set_fob($this->fob());
+                if ($this::class == ref::class) {
+                    $lnk_empty->external_key = $this->external_key;
+                } else {
+                    $lnk_empty->set_tob($this->tob());
+                }
+                if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+                    $lnk_empty->set_predicate_id($this->predicate_id());
+                }
+            }
+        }
         // for a new component link the owner should be set, so remove the user id to force writing the user
         $lnk_empty->set_user($this->get_user()->clone_reset());
         // for linked user db rows, use the link fields of the standard row, because the link itself cannot be changed by the user

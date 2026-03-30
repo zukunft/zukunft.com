@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS ref_insert_log_11011151111_user;
-CREATE PROCEDURE ref_insert_log_11011151111_user (
+DROP PROCEDURE IF EXISTS ref_insert_log_11042151111_user;
+CREATE PROCEDURE ref_insert_log_11042151111_user (
     _user_id                bigint,
     _change_action_id       smallint,
     _change_table_id        smallint,
@@ -57,16 +57,16 @@ BEGIN
 
 END;
 
-PREPARE ref_insert_log_11011151111_user_call FROM
-    'SELECT ref_insert_log_11011151111_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE ref_insert_log_11042151111_user_call FROM
+    'SELECT ref_insert_log_11042151111_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT ref_insert_log_11011151111_user (
+SELECT ref_insert_log_11042151111_user (
                3,
                1,
                22,
                '',
                null,
-               '',
+               null,
                null,
                null,
                null,

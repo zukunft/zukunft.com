@@ -1011,10 +1011,10 @@ class value_base extends sandbox_value
     function fill(value_base|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_source() != null) {
+        if ($this->get_source() === null and $obj->get_source() != null) {
             $this->set_source($obj->get_source());
         }
-        if ($obj->get_value() != null) {
+        if ($this->get_value() === null and $obj->get_value() != null) {
             $this->set_value($obj->get_value());
         }
         return $usr_msg;

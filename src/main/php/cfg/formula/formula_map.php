@@ -890,23 +890,23 @@ class formula_map extends sandbox_code_id
 
         // do not fill all fields for the term ???
         if ($obj::class == formula::class) {
-            if ($used_obj->ref_text != null) {
+            if ($this->ref_text === null and $used_obj->ref_text != null) {
                 $this->ref_text = $used_obj->ref_text;
             }
-            if ($used_obj->usr_text != null) {
+            if ($this->usr_text === null and $used_obj->usr_text != null) {
                 $this->usr_text = $used_obj->usr_text;
             }
-            if ($used_obj->need_all_val != null) {
+            if ($this->need_all_val === null and $used_obj->need_all_val != null) {
                 $this->need_all_val = $used_obj->need_all_val;
             }
-            if ($used_obj->last_update != null) {
+            if ($this->last_update === null and $used_obj->last_update != null) {
                 $this->last_update = $used_obj->last_update;
             }
-            if ($obj->view != null) {
+            if ($this->view === null and $obj->view != null) {
                 $this->view = $obj->view;
             }
         }
-        if ($used_obj->impact != null) {
+        if ($this->impact === null and $used_obj->impact != null) {
             $this->impact = $used_obj->impact;
         }
 

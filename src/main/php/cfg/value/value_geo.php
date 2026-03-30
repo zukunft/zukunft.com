@@ -330,7 +330,7 @@ class value_geo extends value_base
     function fill(value_geo|sandbox_multi|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->geo_val != null) {
+        if ($this->geo_val === null and $obj->geo_val != null) {
             $this->geo_val = $obj->geo_val;
         }
         return $usr_msg;

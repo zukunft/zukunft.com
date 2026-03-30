@@ -42,7 +42,7 @@ SELECT value_update_log_0010222
         1::smallint,
         5::smallint,
         1::smallint,
-        0::smallint,
+        null::smallint,
         3::smallint,
         3::smallint,
         null::smallint,

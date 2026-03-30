@@ -278,7 +278,7 @@ class db_object_seq_id_user extends db_object_seq_id
     function fill(CombineObject|db_object_seq_id_user|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_user_id() != null) {
+        if ($this->get_user_id() === null and $obj->get_user_id() != null) {
             $this->set_user($obj->get_user());
         }
         return $usr_msg;

@@ -500,7 +500,7 @@ class term_view extends sandbox_link
     function fill(term_view|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->description != null) {
+        if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
         return $usr_msg;
@@ -529,15 +529,11 @@ class term_view extends sandbox_link
     /**
      * TODO check if the overwrites are correct for all objects
      *      and if a to_id() function is needed
-     * @return string with the term name
+     * @return string|null with the term name
      */
-    function to_value(): string
+    function to_value(): string|null
     {
-        if ($this->tob() == null) {
-            return '';
-        } else {
-            return $this->tob()->name();
-        }
+        return $this->tob()?->name();
     }
 
     /**
@@ -594,8 +590,8 @@ class term_view extends sandbox_link
      * @return bool true if the standard object has been loaded
      */
     function load_standard_by_link(
-        int $from_id,
-        int $to_id,
+        int          $from_id,
+        int          $to_id,
         user_message $msg
     ): bool
     {
@@ -641,7 +637,7 @@ class term_view extends sandbox_link
         $msk = $this->get_view();
         if ($msk->id() == 0) {
             if ($msk->name() != '') {
-                if(!$msk->load_by_name($msk->name())) {
+                if (!$msk->load_by_name($msk->name())) {
                     $msg->add(msg_id::LOAD_VIEW_BY_NAME_FAILED, [
                         msg_id::VAR_VIEW => $this->get_view()->dsp_id()
                     ]);
@@ -651,7 +647,7 @@ class term_view extends sandbox_link
             }
         } else {
             if ($msk->name() == '') {
-                if(!$msk->load_by_id($msk->id())) {
+                if (!$msk->load_by_id($msk->id())) {
                     $msg->add(msg_id::LOAD_VIEW_BY_ID_FAILED, [
                         msg_id::VAR_VIEW => $this->get_view()->dsp_id()
                     ]);
@@ -662,7 +658,7 @@ class term_view extends sandbox_link
         $trm = $this->term();
         if ($trm->id() == 0) {
             if ($trm->name() != '') {
-                if(!$trm->load_by_name($trm->name())) {
+                if (!$trm->load_by_name($trm->name())) {
                     $msg->add(msg_id::LOAD_TERM_BY_NAME_FAILED, [
                         msg_id::VAR_TERM => $this->term()->dsp_id()
                     ]);
@@ -672,7 +668,7 @@ class term_view extends sandbox_link
             }
         } else {
             if ($trm->name() == '') {
-                if(!$trm->load_by_id($trm->id())) {
+                if (!$trm->load_by_id($trm->id())) {
                     $msg->add(msg_id::LOAD_TERM_BY_ID_FAILED, [
                         msg_id::VAR_TERM => $this->term()->dsp_id()
                     ]);

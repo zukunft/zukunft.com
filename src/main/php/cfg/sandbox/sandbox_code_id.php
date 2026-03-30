@@ -403,7 +403,7 @@ class sandbox_code_id extends sandbox_typed
     function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_code_id() != null) {
+        if ($this->get_code_id() === null and $obj->get_code_id() != null) {
             $usr_msg->merge($this->set_code_id($obj->get_code_id(), $usr_req));
         }
         return $usr_msg;

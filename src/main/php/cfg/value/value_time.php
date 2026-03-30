@@ -328,7 +328,7 @@ class value_time extends value_base
     function fill(value_time|sandbox_multi|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->time_val != null) {
+        if ($this->time_val === null and $obj->time_val != null) {
             $this->time_val = $obj->time_val;
         }
         return $usr_msg;

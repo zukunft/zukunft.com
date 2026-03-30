@@ -942,16 +942,13 @@ class word extends sandbox_code_id
     function fill(word|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_code_id() != null) {
-            $this->set_code_id($obj->get_code_id(), $usr_req);
-        }
-        if ($obj->plural != null) {
+        if ($this->plural === null and $obj->plural != null) {
             $this->plural = $obj->plural;
         }
-        if ($obj->impact != null) {
+        if ($this->impact === null and $obj->impact != null) {
             $this->impact = $obj->impact;
         }
-        if ($obj->view != null) {
+        if ($this->view === null and $obj->view != null) {
             $this->view = $obj->view;
         }
         return $usr_msg;

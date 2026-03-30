@@ -315,7 +315,7 @@ class value_text extends value_base
     function fill(value_text|sandbox_multi|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->txt_val != null) {
+        if ($this->txt_val === null and $obj->txt_val != null) {
             $this->txt_val = $obj->txt_val;
         }
         return $usr_msg;

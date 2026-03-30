@@ -199,6 +199,8 @@ class formula_link extends sandbox_link
         $this->to_name = $lib->class_to_name(phrase::class);
 
         $this->reset(true);
+        global $sys;
+        $this->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT));
     }
 
     function reset(bool $keep_user = false): void
@@ -213,8 +215,7 @@ class formula_link extends sandbox_link
         $this->reset_objects($usr);
 
         $this->order_nbr = null;
-        global $sys;
-        $this->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT));
+        $this->predicate_id = null;
     }
 
     /**
@@ -890,7 +891,7 @@ class formula_link extends sandbox_link
     function fill(formula_link|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->order_nbr != null) {
+        if ($this->order_nbr === null and $obj->order_nbr != null) {
             $this->order_nbr = $obj->order_nbr;
         }
         return $usr_msg;

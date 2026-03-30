@@ -2146,6 +2146,7 @@
     \-- fob - section for function fob not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- from_id - section for function from_id not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- from_name - section for function from_name not yet defined that it should be set and get in /sandbox/sandbox_link.php
+    \-- from_id_or_name - section for function from_id_or_name not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- from_empty - section for function from_empty not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- predicate_id - section for function predicate_id not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- predicate_name - section for function predicate_name is expected to be preloaded in /sandbox/sandbox_link.php
@@ -2153,6 +2154,7 @@
     \-- tob - section for function tob not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- to_id - section for function to_id not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- to_name - section for function to_name not yet defined that it should be set and get in /sandbox/sandbox_link.php
+    \-- to_id_or_name - section for function to_id_or_name not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- to_empty - section for function to_empty not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- cloned - section for function cloned not yet defined that it should be set and get in /sandbox/sandbox_link.php
     \-- is_link_type_obj - section for function is_link_type_obj is expected to be info in /sandbox/sandbox_link.php

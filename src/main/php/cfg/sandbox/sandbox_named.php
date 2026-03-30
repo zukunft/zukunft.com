@@ -516,13 +516,13 @@ class sandbox_named extends sandbox
     function fill(sandbox_named|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->name() != null) {
+        if ($this->name_or_null() === null and $obj->name_or_null() != null) {
             $this->set_name($obj->name());
         }
-        if ($obj->get_description() != null) {
+        if ($this->get_description() === null and $obj->get_description() != null) {
             $this->set_description($obj->get_description());
         }
-        if ($obj->get_usage() != null) {
+        if ($this->get_usage() === null and $obj->get_usage() != null) {
             $this->set_usage($obj->get_usage());
         }
         return $usr_msg;

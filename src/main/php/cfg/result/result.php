@@ -1179,13 +1179,13 @@ class result extends sandbox_value
     function fill(result|sandbox_value|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->src_grp_id() != 0) {
+        if ($this->src_grp_id() == 0 and $obj->src_grp_id() != 0) {
             $this->set_src_grp($obj->source_group());
         }
-        if ($obj->formula_id() != 0) {
+        if ($this->formula_id() == 0 and $obj->formula_id() != 0) {
             $this->set_formula($obj->frm);
         }
-        if ($obj->get_value() != null) {
+        if ($this->get_value() === null and $obj->get_value() != null) {
             $this->set_value($obj->get_value());
         }
         return $usr_msg;

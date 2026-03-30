@@ -4097,12 +4097,12 @@ class test_base
     /**
      * check if the filling up an almost empty object matches the filled object
      * using the api json and the no_diff function
-     * @param sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $empty the object with almost all vars null
+     * @param sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $base the object with almost all vars null
      * @param sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $filled the object filled with all vars
      * @return bool true if the api message matches
      */
     function assert_fill(
-        sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $empty,
+        sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $base,
         sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $filled
     ): bool
     {
@@ -4112,9 +4112,9 @@ class test_base
 
         $lib = new library();
         $usr_msg = new user_message();
-        $class = $lib->class_to_name($empty::class);
+        $class = $lib->class_to_name($base::class);
         $test_name = 'empty ' . $class . ' differs from filled object and the no_diff function works';
-        $this->assert_false($test_name, $empty->no_diff($filled, $usr_msg));
+        $this->assert_false($test_name, $base->no_diff($filled, $usr_msg));
         $original_json = $filled->api_json([api_types::TEST_MODE], $usr_sys);
         $empty->fill($filled, $usr_sys);
         $test_name = 'no_diff finds no difference in the filled ' . $class . ' compared to the original';

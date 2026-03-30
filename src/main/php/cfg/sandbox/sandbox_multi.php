@@ -273,7 +273,7 @@ class sandbox_multi extends db_object_multi_user
     private ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     private ?int $share_id = null;      // id for public, personal, group or private
     private ?int $protection_id = null; // id for no, user, admin or full protection
-    public bool $excluded = false;     // the user sandbox for object is implemented, but can be switched off for the complete instance
+    public ?bool $excluded = null;       // the user sandbox for object is implemented, but can be switched off for the complete instance
     // but for calculation, use and display an excluded should not be used
     // when loading the word and saving the excluded field is handled as a normal user sandbox field,
     // but for calculation, use and display an excluded should not be used
@@ -322,7 +322,7 @@ class sandbox_multi extends db_object_multi_user
         $this->set_owner_id(null);
         $this->set_share_id(null);
         $this->set_protection_id(null);
-        $this->excluded = false;
+        $this->excluded = null;
     }
 
     /**
@@ -555,9 +555,9 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * @return bool true if the user does not want to use this object at all
+     * @return bool|null true if the user does not want to use this object at all
      */
-    function is_excluded(): bool
+    function is_excluded(): ?bool
     {
         return $this->excluded;
     }
@@ -957,16 +957,16 @@ class sandbox_multi extends db_object_multi_user
     {
         $usr_msg = parent::fill($obj, $usr_req);
         // e.g. if the import contains the information that this object is excluded for one user this excluded setting should also be imported
-        if ($obj->is_exclusion_set()) {
+        if ($this->excluded === null and $obj->excluded != null) {
             $this->set_excluded($obj->is_excluded());
         }
-        if ($obj->owner_id() != null) {
+        if ($this->owner_id() === null and $obj->owner_id() != null) {
             $this->set_owner_id($obj->owner_id());
         }
-        if ($obj->share_id() != null) {
+        if ($this->share_id() === null and $obj->share_id() != null) {
             $this->set_share_id($obj->share_id());
         }
-        if ($obj->protection_id() != null) {
+        if ($this->protection_id() === null and $obj->protection_id() != null) {
             $this->set_protection_id($obj->protection_id());
         }
         return $usr_msg;
@@ -4330,16 +4330,11 @@ class sandbox_multi extends db_object_multi_user
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            // TODO review and remove exception if possible
-            $old_val = $sbx->excluded;
-            if ($sbx->excluded === false) {
-                $old_val = null;
-            }
             $lst->add_field(
                 sql_db::FLD_EXCLUDED,
                 $this->excluded,
                 sql_db::FLD_EXCLUDED_SQL_TYP,
-                $old_val
+                $sbx->excluded
             );
         }
         if ($sbx->share_id != $this->share_id) {

@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION ref_insert_log_11011151111_user
+CREATE OR REPLACE FUNCTION ref_insert_log_11042151111_user
     (_user_id                bigint,
      _change_action_id       smallint,
      _change_table_id        smallint,
@@ -31,8 +31,8 @@ CREATE OR REPLACE FUNCTION ref_insert_log_11011151111_user
 $$
 BEGIN
 
-    INSERT INTO change_links (user_id, change_action_id, change_table_id, old_text_from, old_text_link, old_text_to, new_text_from, new_text_link, new_text_to, new_from_id, new_link_id, new_to_id, row_id)
-         SELECT              _user_id,_change_action_id,_change_table_id,_old_text_from,_old_text_link,_old_text_to,_new_text_from,_new_text_link,_new_text_to,_new_from_id,_new_link_id,_new_to_id,_ref_id ;
+    INSERT INTO change_links (user_id, change_action_id, change_table_id, old_text_from, old_text_link, old_text_to, new_text_from, new_text_link, new_text_to, old_from_id, old_link_id, new_from_id, new_link_id, new_to_id, row_id)
+         SELECT              _user_id,_change_action_id,_change_table_id,_old_text_from,_old_text_link,_old_text_to,_new_text_from,_new_text_link,_new_text_to,_old_from_id,_old_link_id,_new_from_id,_new_link_id,_new_to_id,_ref_id ;
 
     INSERT INTO changes (user_id, change_action_id, change_field_id, new_value, row_id)
          SELECT         _user_id,_change_action_id,_field_id_url,   _url,      _ref_id ;
@@ -58,22 +58,22 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE ref_insert_log_11011151111_user_call
+PREPARE ref_insert_log_11042151111_user_call
         (bigint,smallint,smallint,text,text,text,text,text,text,bigint,smallint,bigint,smallint,bigint,smallint,text,bigint,smallint,text,bigint,smallint,text,smallint,smallint,smallint,smallint,smallint,smallint) AS
-SELECT ref_insert_log_11011151111_user
+SELECT ref_insert_log_11042151111_user
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28);
 
-SELECT ref_insert_log_11011151111_user (
+SELECT ref_insert_log_11042151111_user (
                3::bigint,
                1::smallint,
                22::smallint,
-               ''::text,
+               'mathematics'::text,
                null::text,
-               ''::text,
+               'Q167'::text,
                null::text,
                null::text,
-               null::text,
-               0::bigint,
+               null::smallint,
+               null::bigint,
                null::smallint,
                null::bigint,
                null::smallint,

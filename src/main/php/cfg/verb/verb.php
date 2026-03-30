@@ -739,7 +739,7 @@ class verb extends type_object
      */
     private function reload_term(): term
     {
-        $trm = new term($this->usr);
+        $trm = new term($this);
         $trm->load_by_name($this->name);
         return $trm;
     }
@@ -819,22 +819,22 @@ class verb extends type_object
     function fill(verb|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->plural != null) {
+        if ($this->plural == null and $obj->plural != null) {
             $this->plural = $obj->plural;
         }
-        if ($obj->reverse != null) {
+        if ($this->reverse == null and $obj->reverse != null) {
             $this->reverse = $obj->reverse;
         }
-        if ($obj->rev_plural != null) {
+        if ($this->rev_plural == null and $obj->rev_plural != null) {
             $this->rev_plural = $obj->rev_plural;
         }
-        if ($obj->frm_name != null) {
+        if ($this->frm_name == null and $obj->frm_name != null) {
             $this->frm_name = $obj->frm_name;
         }
-        if ($obj->usage != null) {
+        if ($this->usage == null and $obj->usage != null) {
             $this->usage = $obj->usage;
         }
-        if ($obj->impact != null) {
+        if ($this->impact == null and $obj->impact != null) {
             $this->impact = $obj->impact;
         }
         return $usr_msg;

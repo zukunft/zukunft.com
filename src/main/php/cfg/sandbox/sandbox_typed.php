@@ -468,7 +468,7 @@ class sandbox_typed extends sandbox_named
     function fill(sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->type_id() != null) {
+        if ($this->type_id() === null and $obj->type_id() != null) {
             $this->set_type_id($obj->type_id(), $usr_req);
         }
         return $usr_msg;

@@ -1938,74 +1938,74 @@ class user extends db_id_object_non_sandbox
     function fill(user|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->name != null) {
+        if ($this->name === null and $obj->name != null) {
             $this->name = $obj->name;
         }
-        if ($obj->ip_addr != null) {
+        if ($this->ip_addr === null and $obj->ip_addr != null) {
             $this->ip_addr = $obj->ip_addr;
         }
-        if ($obj->email != null) {
+        if ($this->email === null and $obj->email != null) {
             $this->email = $obj->email;
         }
 
-        if ($obj->password != null) {
+        if ($this->password === null and $obj->password != null) {
             $this->password = $obj->password;
         }
-        if ($obj->activation_key != null) {
+        if ($this->activation_key === null and $obj->activation_key != null) {
             $this->activation_key = $obj->activation_key;
         }
-        if ($obj->activation_timeout != null) {
+        if ($this->activation_timeout === null and $obj->activation_timeout != null) {
             $this->activation_timeout = $obj->activation_timeout;
         }
-        if ($obj->db_now != null) {
+        if ($this->db_now === null and $obj->db_now != null) {
             $this->db_now = $obj->db_now;
         }
-        if ($obj->last_login != null) {
+        if ($this->last_login === null and $obj->last_login != null) {
             $this->last_login = $obj->last_login;
         }
-        if ($obj->last_logoff != null) {
+        if ($this->last_logoff === null and $obj->last_logoff != null) {
             $this->last_logoff = $obj->last_logoff;
         }
 
-        if ($obj->profile_id != null) {
+        if ($this->profile_id === null and $obj->profile_id != null) {
             $this->profile_id = $obj->profile_id;
         }
-        if ($obj->code_id != null) {
+        if ($this->code_id === null and $obj->code_id != null) {
             $this->code_id = $obj->code_id;
         }
-        if ($obj->type_id != null) {
+        if ($this->type_id === null and $obj->type_id != null) {
             $this->type_id = $obj->type_id;
         }
-        if ($obj->right_level != null) {
+        if ($this->right_level === null and $obj->right_level != null) {
             $this->right_level = $obj->right_level;
         }
-        if ($obj->status_id != null) {
+        if ($this->status_id === null and $obj->status_id != null) {
             $this->status_id = $obj->status_id;
         }
-        if ($obj->excluded != null) {
+        if ($this->excluded === null and $obj->excluded != null) {
             $this->excluded = $obj->excluded;
         }
 
-        if ($obj->created != null) {
+        if ($this->created === null and $obj->created != null) {
             $this->created = $obj->created;
         }
-        if ($obj->description != null) {
+        if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
-        if ($obj->first_name != null) {
+        if ($this->first_name === null and $obj->first_name != null) {
             $this->first_name = $obj->first_name;
         }
-        if ($obj->last_name != null) {
+        if ($this->last_name === null and $obj->last_name != null) {
             $this->last_name = $obj->last_name;
         }
 
-        if ($obj->trm != null) {
+        if ($this->trm === null and $obj->trm != null) {
             $this->trm = $obj->trm;
         }
-        if ($obj->msk != null) {
+        if ($this->msk === null and $obj->msk != null) {
             $this->msk = $obj->msk;
         }
-        if ($obj->src != null) {
+        if ($this->src === null and $obj->src != null) {
             $this->src = $obj->src;
         }
 

@@ -777,13 +777,13 @@ class type_object extends db_object_seq_id
     function fill(type_object|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_code_id() != null) {
+        if ($this->get_code_id() == null and $obj->get_code_id() != null) {
             $this->set_code_id($obj->get_code_id(), $usr_req);
         }
-        if ($obj->name != null) {
+        if ($this->name == null and $obj->name != null) {
             $this->name = $obj->name;
         }
-        if ($obj->description != null) {
+        if ($this->description == null and $obj->description != null) {
             $this->description = $obj->description;
         }
         return $usr_msg;

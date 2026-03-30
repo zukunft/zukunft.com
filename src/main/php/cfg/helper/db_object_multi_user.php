@@ -121,7 +121,7 @@ class db_object_multi_user extends db_object_multi
     function fill(db_object_multi_user|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_user_id() != null) {
+        if ($this->get_user() === null and $obj->get_user_id() != null) {
             $this->set_user($obj->get_user());
         }
         return $usr_msg;

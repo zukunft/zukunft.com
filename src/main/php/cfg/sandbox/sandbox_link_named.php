@@ -544,7 +544,9 @@ class sandbox_link_named extends sandbox_link
     {
         $msg = parent::fill($obj, $usr_req);
 
-        if ($this->type_id() != $obj->type_id()) {
+        if ($this->type_id === null and $obj->type_id != null) {
+            $this->type_id = $obj->type_id;
+        } elseif ($this->type_id() != $obj->type_id()) {
             $lib = new library();
             $msg->add(msg_id::DIFF_TYPE, [
                 msg_id::VAR_TYPE => $obj->type_name(),
@@ -556,10 +558,10 @@ class sandbox_link_named extends sandbox_link
         if ($obj::class == phrase::class or $obj::class == term::class) {
             $obj = $obj->obj();
         }
-        if ($obj->name != null) {
+        if ($this->name === null and $obj->name != null) {
             $this->name = $obj->name;
         }
-        if ($obj->description != '') {
+        if ($this->description === null and $obj->description != '') {
             $this->description = $obj->description;
         }
 

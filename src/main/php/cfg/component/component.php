@@ -1227,35 +1227,35 @@ class component extends sandbox_code_id
     function fill(component|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->ui_msg_code_id != null) {
+        if ($this->ui_msg_code_id === null and $obj->ui_msg_code_id != null) {
             $usr_msg->merge($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
         }
-        if ($obj->ui_msg_code_id_vars != null) {
+        if ($this->ui_msg_code_id_vars === null and $obj->ui_msg_code_id_vars != null) {
             $usr_msg->merge($this->set_ui_msg_code_id_vars($obj->ui_msg_code_id_vars, $usr_req));
         }
-        if ($obj->ui_msg_code_id_exception != null) {
+        if ($this->ui_msg_code_id_exception === null and $obj->ui_msg_code_id_exception != null) {
             $usr_msg->merge($this->set_ui_msg_code_id_exception($obj->ui_msg_code_id_exception, $usr_req));
         }
-        if ($obj->ui_msg_value_exception !== null) {
+        if ($this->ui_msg_value_exception === null and $obj->ui_msg_value_exception !== null) {
             $usr_msg->merge($this->set_ui_msg_value_exception($obj->ui_msg_value_exception, $usr_req));
         }
-        if ($obj->row_phrase != null) {
+        if ($this->row_phrase === null and $obj->row_phrase != null) {
             $this->row_phrase = $obj->row_phrase;
         }
-        if ($obj->col_phrase != null) {
+        if ($this->col_phrase === null and $obj->col_phrase != null) {
             $this->col_phrase = $obj->col_phrase;
         }
-        if ($obj->col_sub_phrase != null) {
+        if ($this->col_sub_phrase === null and $obj->col_sub_phrase != null) {
             $this->col_sub_phrase = $obj->col_sub_phrase;
         }
-        if ($obj->get_formula_id() != null) {
+        if ($this->get_formula_id() === null and $obj->get_formula_id() != null) {
             $this->set_formula($obj->get_formula());
         }
-        if ($obj->get_style_id() != null) {
+        if ($this->get_style_id() === null and $obj->get_style_id() != null) {
             $this->set_style_by_id($obj->get_style_id());
         }
         // TODO Prio 2 review and maybe deprecate
-        if ($obj->link_type_id != null) {
+        if ($this->link_type_id === null and $obj->link_type_id != null) {
             $this->link_type_id = $obj->link_type_id;
         }
         return $usr_msg;

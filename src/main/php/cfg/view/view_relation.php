@@ -536,10 +536,10 @@ class view_relation extends sandbox_link
     function fill(view_relation|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->start_pos != null) {
+        if ($this->start_pos === null and $obj->start_pos != null) {
             $this->start_pos = $obj->start_pos;
         }
-        if ($obj->description != null) {
+        if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
         return $usr_msg;

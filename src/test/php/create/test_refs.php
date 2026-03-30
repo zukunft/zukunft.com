@@ -200,8 +200,10 @@ class test_refs extends test_objects
     function ref_filled_user(): ref
     {
         global $sys;
+        $t_wrd = new test_words($this->env);
         $t_src = new test_sources($this->env);
         $ref = $this->reference_user();
+        $ref->set_phrase($t_wrd->word()->phrase());
         $ref->set_external_key(refs::PI_KEY);
         $ref->set_url(refs::PI_URL);
         $ref->set_source($t_src->source());

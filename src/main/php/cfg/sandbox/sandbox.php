@@ -310,7 +310,7 @@ class sandbox extends db_object_seq_id_user
         $this->set_owner_id(null);
         $this->set_share_id(null);
         $this->set_protection_id(null);
-        $this->include();
+        $this->excluded = null;
         // TODO move to the objects that actually use the type
         $this->type_id = null;
         if ($keep_user) {
@@ -807,16 +807,16 @@ class sandbox extends db_object_seq_id_user
     {
         $usr_msg = parent::fill($obj, $usr_req);
         // e.g. if the import contains the information that this object is excluded for one user this excluded setting should also be imported
-        if ($obj->owner_id() != null) {
+        if ($this->owner_id() === null and $obj->owner_id() != null) {
             $this->set_owner_id($obj->owner_id());
         }
-        if ($obj->share_id() != null) {
+        if ($this->share_id() === null and $obj->share_id() != null) {
             $this->set_share_id($obj->share_id());
         }
-        if ($obj->protection_id() != null) {
+        if ($this->protection_id() === null and $obj->protection_id() != null) {
             $this->set_protection_id($obj->protection_id());
         }
-        if ($obj->is_exclusion_set()) {
+        if ($this->excluded === null and $obj->is_exclusion_set()) {
             $this->set_excluded($obj->is_excluded());
         }
         return $usr_msg;
@@ -967,9 +967,9 @@ class sandbox extends db_object_seq_id_user
     /**
      * placeholder function for the link target value
      * that should always be overwritten by the child object
-     * @return string
+     * @return string|null
      */
-    function to_value(): string
+    function to_value(): string|null
     {
         $msg = 'ERROR: to_value not overwritten by ' . $this::class;
         log_err($msg);
@@ -3433,16 +3433,11 @@ class sandbox extends db_object_seq_id_user
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            // TODO review and remove exception if possible
-            $old_val = $sbx->is_excluded();
-            if ($sbx->excluded === false) {
-                $old_val = null;
-            }
             $lst->add_field(
                 sql_db::FLD_EXCLUDED,
-                $this->is_excluded(),
+                $this->excluded,
                 sql_db::FLD_EXCLUDED_SQL_TYP,
-                $old_val
+                $sbx->excluded
             );
         }
         if ($sbx->share_id <> $this->share_id) {
