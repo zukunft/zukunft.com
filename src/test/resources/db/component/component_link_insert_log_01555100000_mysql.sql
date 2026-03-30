@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS component_link_insert_log_01558100000;
-CREATE PROCEDURE component_link_insert_log_01558100000
+DROP PROCEDURE IF EXISTS component_link_insert_log_01555100000;
+CREATE PROCEDURE component_link_insert_log_01555100000
     (_view_id                bigint,
      _component_link_type_id smallint,
      _component_id           bigint,
@@ -35,10 +35,10 @@ BEGIN
 
 END;
 
-PREPARE component_link_insert_log_01558100000_call FROM
-    'SELECT component_link_insert_log_01558100000 (?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE component_link_insert_log_01555100000_call FROM
+    'SELECT component_link_insert_log_01555100000 (?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT component_link_insert_log_01558100000
+SELECT component_link_insert_log_01555100000
        (1,
         1,
         1,

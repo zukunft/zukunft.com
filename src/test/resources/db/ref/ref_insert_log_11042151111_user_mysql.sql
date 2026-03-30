@@ -31,8 +31,8 @@ CREATE PROCEDURE ref_insert_log_11042151111_user (
 
 BEGIN
 
-    INSERT INTO change_links (user_id, change_action_id, change_table_id, old_text_from, old_text_link, old_text_to, new_text_from, new_text_link, new_text_to, new_from_id, new_link_id, new_to_id, row_id)
-         SELECT              _user_id,_change_action_id,_change_table_id,_old_text_from,_old_text_link,_old_text_to,_new_text_from,_new_text_link,_new_text_to,_new_from_id,_new_link_id,_new_to_id,_ref_id ;
+    INSERT INTO change_links (user_id, change_action_id, change_table_id, old_text_from, old_text_link, old_text_to, new_text_from, new_text_link, new_text_to, old_from_id, new_from_id, new_link_id, new_to_id, row_id)
+         SELECT              _user_id,_change_action_id,_change_table_id,_old_text_from,_old_text_link,_old_text_to,_new_text_from,_new_text_link,_new_text_to,_old_from_id,_new_from_id,_new_link_id,_new_to_id,_ref_id ;
 
     INSERT INTO changes (user_id, change_action_id, change_field_id, new_value, row_id)
     SELECT         _user_id,_change_action_id,_field_id_url,   _url,      _ref_id ;
@@ -64,13 +64,13 @@ SELECT ref_insert_log_11042151111_user (
                3,
                1,
                22,
-               '',
+               'mathematics',
+               null,
+               'Q167',
                null,
                null,
                null,
-               null,
-               null,
-               0,
+               1,
                null,
                null,
                null,
