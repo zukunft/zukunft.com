@@ -230,8 +230,8 @@ class component_link extends sandbox_link
 
         $this->reset_objects($usr);
 
-        $this->set_predicate(component_link_type::ALWAYS);
-        $this->set_pos_type(position_types::BELOW);
+        $this->set_predicate(component_link_type::DEFAULT);
+        $this->set_pos_type(position_types::DEFAULT);
     }
 
     /**
@@ -345,6 +345,7 @@ class component_link extends sandbox_link
 
         // reset the all parameters for the view object but keep the user
         $this->reset(true);
+        $this->set_predicate(component_link_type::DEFAULT);
         parent::import_mapper($in_ex_json, $msg, $dto);
 
         // if for the component only the position and name is defined
@@ -589,8 +590,8 @@ class component_link extends sandbox_link
         $this->set_view($msk);
         $this->set_component($cmp);
         $this->set_pos($pos);
-        $this->set_predicate(component_link_type::ALWAYS);
-        $this->set_pos_type(position_types::BELOW);
+        $this->set_predicate(component_link_type::DEFAULT);
+        $this->set_pos_type(position_types::DEFAULT);
     }
 
     /**
@@ -606,7 +607,7 @@ class component_link extends sandbox_link
     }
 
     /**
-     * rename to standard link to object to view
+     * define the view to which the component should be added
      * @param view $msk
      */
     function set_view(view $msk): void
@@ -615,21 +616,12 @@ class component_link extends sandbox_link
     }
 
     /**
-     * rename to standard link to object to component
+     * define the component which should be added to the view
      * @param component $cmp
      */
     function set_component(component $cmp): void
     {
         $this->set_tob($cmp);
-    }
-
-    /**
-     * rename to standard link to object to component
-     * @param int $id
-     */
-    function set_component_id(int $id): void
-    {
-        $this->get_component()->id = $id;
     }
 
     /**

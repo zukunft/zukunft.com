@@ -1390,7 +1390,8 @@ class component extends sandbox_code_id
         $cmp_lnk->set_view($msk);
         $cmp_lnk->set_component($this);
         $cmp_lnk->order_nbr = $order_nbr;
-        $cmp_lnk->set_pos_type(position_types::BELOW);
+        $cmp_lnk->set_predicate(component_link_type::DEFAULT);
+        $cmp_lnk->set_pos_type(position_types::DEFAULT);
         return $cmp_lnk->save($usr_msg);
     }
 
