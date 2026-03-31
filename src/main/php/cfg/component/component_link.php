@@ -127,6 +127,7 @@ class component_link extends sandbox_link
     // the database and JSON object field names used only for formula links
     const string TBL_COMMENT = 'to link components to views with an n:m relation';
     const string FLD_ID = 'component_link_id';
+    const string FLD_LINK_TYPE_COM = 'if null the default type always is used';
     const string FLD_ORDER_NBR = 'order_nbr';
     const sql_field_type FLD_ORDER_NBR_SQL_TYP = sql_field_type::INT;
     const string FLD_POS_COM = 'the position of the component e.g. right or below';
@@ -171,7 +172,7 @@ class component_link extends sandbox_link
     // list of MANDATORY fields that CANNOT be CHANGED by the user
     const array FLD_LST_MUST_BUT_STD_ONLY = array(
         [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::ONE, '', '', ''],
-        [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
+        [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_link_type::class, self::FLD_LINK_TYPE_COM],
         [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, position_type::class, self::FLD_POS_COM],
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
@@ -201,7 +202,8 @@ class component_link extends sandbox_link
     public ?int $order_nbr = null;
 
     // defines the position of the view component relative to the previous item (1 = below, 2= side, )
-    private ?type_object $pos_type = null;
+    // TODO Prio 3 use id instead of the object
+    public ?type_object $pos_type = null;
 
     // the default display style for this component which can be overwritten by the link
     private ?type_object $style = null;
@@ -587,6 +589,8 @@ class component_link extends sandbox_link
         $this->set_view($msk);
         $this->set_component($cmp);
         $this->set_pos($pos);
+        $this->set_predicate(component_link_type::ALWAYS);
+        $this->set_pos_type(position_types::BELOW);
     }
 
     /**

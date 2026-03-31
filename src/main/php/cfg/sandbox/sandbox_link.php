@@ -94,6 +94,7 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -133,6 +134,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Exception;
@@ -997,7 +999,9 @@ class sandbox_link extends sandbox
                 $this->set_fob($obj->fob());
             }
         } else {
-            $this->fob()->fill($obj->fob(), $usr_req);
+            if (!$obj->from_empty()) {
+                $this->fob()->fill($obj->fob(), $usr_req);
+            }
         }
         if ($this->predicate_id() === null and $obj->predicate_id() != null) {
             $this->set_predicate_id($obj->predicate_id());
@@ -1007,7 +1011,9 @@ class sandbox_link extends sandbox
                 $this->set_tob($obj->tob());
             }
         } else {
-            $this->tob()->fill($obj->tob(), $usr_req);
+            if (!$obj->to_empty()) {
+                $this->tob()->fill($obj->tob(), $usr_req);
+            }
         }
 
 
@@ -1830,6 +1836,13 @@ class sandbox_link extends sandbox
                 }
                 if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
                     $lnk_empty->set_predicate_id($this->predicate_id());
+                }
+                if ($this::class == component_link::class) {
+                    // default values does not need to be inserted
+                    // TODO Prio 2 do the same for all default values also of other objects
+                    if ($this->pos_type?->get_code_id() == position_types::DEFAULT) {
+                        $lnk_empty->pos_type = $this->pos_type;
+                    }
                 }
             }
         }

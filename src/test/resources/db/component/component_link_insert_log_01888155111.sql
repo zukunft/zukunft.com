@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION component_link_insert_log_01558185111
+CREATE OR REPLACE FUNCTION component_link_insert_log_01888155111
     (_view_id                   bigint,
      _component_link_type_id    smallint,
      _component_id              bigint,
@@ -12,8 +12,6 @@ CREATE OR REPLACE FUNCTION component_link_insert_log_01558185111
      _field_id_order_nbr        smallint,
      _order_nbr                 bigint,
      _field_id_position_type_id smallint,
-     _position_old              text,
-     _position_type_id_old      smallint,
      _position                  text,
      _position_type_id          smallint,
      _field_id_view_style_id    smallint,
@@ -42,8 +40,8 @@ BEGIN
     INSERT INTO changes (user_id, change_action_id, change_field_id,    new_value,row_id)
          SELECT         _user_id,_change_action_id,_field_id_order_nbr,_order_nbr,new_component_link_id ;
 
-    INSERT INTO changes (user_id, change_action_id, change_field_id,           old_value,    new_value, old_id,               new_id,          row_id)
-         SELECT         _user_id,_change_action_id,_field_id_position_type_id,_position_old,_position, _position_type_id_old,_position_type_id,new_component_link_id ;
+    INSERT INTO changes (user_id, change_action_id, change_field_id,           new_value, new_id,          row_id)
+         SELECT         _user_id,_change_action_id,_field_id_position_type_id,_position, _position_type_id,new_component_link_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,        new_value,  new_id,      row_id)
          SELECT          _user_id,_change_action_id,_field_id_view_style_id,_view_style_name,_view_style_id,new_component_link_id ;
@@ -72,12 +70,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE component_link_insert_log_01558185111_call
-        (bigint,smallint,bigint,bigint,smallint,smallint,text,text,text,smallint,smallint,bigint,smallint,text,smallint,text,smallint,smallint,text,smallint,smallint,smallint,smallint,smallint,smallint,smallint) AS
-SELECT component_link_insert_log_01558185111
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23, $24, $25, $26);
+PREPARE component_link_insert_log_01888155111_call
+        (bigint,smallint,bigint,bigint,smallint,smallint,text,text,text,smallint,smallint,bigint,smallint,text,smallint,smallint,text,smallint,smallint,smallint,smallint,smallint,smallint,smallint) AS
+SELECT component_link_insert_log_01888155111
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24);
 
-SELECT component_link_insert_log_01558185111
+SELECT component_link_insert_log_01888155111
     (1::bigint,
      2::smallint,
      1::bigint,
@@ -91,8 +89,6 @@ SELECT component_link_insert_log_01558185111
      48::smallint,
      1::bigint,
      136::smallint,
-     'below'::text,
-     1::smallint,
      'side'::text,
      2::smallint,
      781::smallint,

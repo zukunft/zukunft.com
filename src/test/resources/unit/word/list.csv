@@ -1,8 +1,8 @@
 word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact,inactive,code_id,excluded,share_type_id,protect_id
 1,1,mathematics,,Mathematics is an area of knowledge that includes the topics of numbers and formulas,1,,,,,,,,3
-2,1,constant,,fixed and well-defined number,17,,,,,,,,3
+2,1,constant,,fixed and well-defined number,1,,,,,,,,3
 3,1,zero,,0 (zero) is a number representing an empty quantity. Adding (or subtracting) 0 to any number leaves that number unchanged; in mathematical terminology, 0 is the additive identity of the integers, rational numbers, real numbers, and complex numbers, as well as other algebraic structures,8,,,,,,,,3
-4,1,one,,1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit,8,,,,,,,,3
+4,1,one,,1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit,1,,,,,,,,3
 5,1,π,,Symbol for the ratio of the circumference of a circle to its diameter,17,,,,,,,,3
 6,1,𝑒,,Symbol for the Euler's number, which is defined as the limiting difference between the harmonic series and the natural logarithm,17,,,,,,,,3
 7,1,physics,,Physics is the natural science of matter,1,,,,,,,,3
@@ -22,11 +22,11 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 21,1,unit,,In mathematics, an identity element or neutral element of a binary operation is an element that leaves unchanged every element when the operation is applied,1,,,,,,,,3
 22,1,system,,A system is a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.,1,,,,,,,,3
 23,1,international,,Internationalism is a political principle that advocates greater political or economic cooperation among states and nations.,1,,,,,,,,3
-24,1,second,seconds,The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.,3,,,,,,,,3
+24,1,second,seconds,The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.,1,,,,,,,,3
 25,1,s,,The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).,3,,,,,,,,3
 26,1,millisecond,milliseconds,The 1'000 part of a second.,3,,,,,,,,3
 27,1,metre,,The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of ⁠1/299792458⁠ of a second, where the second is defined by a hyperfine transition frequency of caesium.,3,,,,,,,,3
-28,1,m,,Is a symbol for the metre is the base unit of length in the International System of Units (SI).,3,,,,,,,,3
+28,1,m,,Is a symbol for the metre is the base unit of length in the International System of Units (SI).,1,,,,,,,,3
 29,1,kilogram,,The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015×10−34 when expressed in the unit J⋅s, which is equal to kg⋅m2⋅s−1, where the metre and the second are defined in terms of c and ΔνCs.,3,,,,,,,,3
 30,1,kg,,The symbol for the kilogram which was originally defined in 1795 during the French Revolution as the mass of one litre of water.,3,,,,,,,,3
 31,1,ampere,,The ampere is the unit of electric current in the International System of Units (SI). One ampere is equal to 1 coulomb (C) moving past a point per second.,3,,,,,,,,3
@@ -85,7 +85,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 84,1,kat,,Is a symbol for katal,3,,,,,,,,3
 85,1,kinematic,,Kinematics is a subfield of physics and mathematics, developed in classical mechanics, that describes the motion of points, bodies (objects), and systems of bodies (groups of objects) without considering the forces that cause them to move.,3,,,,,,,,3
 86,1,light,,Light, visible light, or visible radiation is electromagnetic radiation that can be perceived by the human eye.,3,,,,,,,,3
-87,1,speed,,In kinematics, the speed (commonly referred to as v) of an object is the magnitude of the change of its position over time or the magnitude of the change of its position per unit of time.,3,,,,,,,,3
+87,1,speed,,In kinematics, the speed (commonly referred to as v) of an object is the magnitude of the change of its position over time or the magnitude of the change of its position per unit of time.,1,,,,,,,,3
 88,1,acceleration,,In mechanics, acceleration is the rate of change of the velocity of an object with respect to time. Acceleration is one of several components of kinematics, the study of motion.,3,,,,,,,,3
 89,1,square,,In mathematics, a square is the result of multiplying a number by itself. The verb "to square" is used to denote this operation. Squaring is the same as raising to the power 2, and is denoted by a superscript 2.,1,,,,,,,,3
 90,1,cube,,In geometry, a cube or regular hexahedron is a three-dimensional solid object bounded by six congruent square faces, a type of polyhedron.,1,,,,,,,,3
@@ -101,13 +101,13 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 100,1,volumetric,,Volume is a measure of regions in three-dimensional space.[1] It is often quantified numerically using SI derived units (such as the cubic metre and litre) or by various imperial or US customary units (such as the gallon, quart, cubic inch).,1,,,,,,,,3
 101,1,flow,,In physics, physical chemistry and engineering, fluid dynamics is a subdiscipline of fluid mechanics that describes the flow of fluids – liquids and gases.,1,,,,,,,,3
 102,1,rate,,In mathematics, a rate is the quotient of two quantities, often represented as a fraction.,1,,,,,,,,3
-103,1,time,,Time is the continuous progression of existence that occurs in an apparently irreversible succession from the past, through the present, and into the future.,3,,,,,,,,3
+103,1,time,,Time is the continuous progression of existence that occurs in an apparently irreversible succession from the past, through the present, and into the future.,1,,,,,,,,3
 104,1,minute,,,3,,,,,,,,3
-105,1,hour,,,3,,,,,,,,3
-106,1,day,days,,3,,,,,,,,3
-107,1,week,weeks,,3,,,,,,,,3
-108,1,month,months,,3,,,,,,,,3
-109,1,year,years,,3,,,,,,,,3
+105,1,hour,,,1,,,,,,,,3
+106,1,day,days,,1,,,,,,,,3
+107,1,week,weeks,,1,,,,,,,,3
+108,1,month,months,,2,,,,,,,,3
+109,1,year,years,,1,,,,,,,,3
 110,1,Planck,,,1,,,,,,,,3
 111,1,Boltzmann,,,1,,,,,,,,3
 112,1,Avogadro,,,1,,,,,,,,3
@@ -124,7 +124,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 123,1,m3,,,3,,,,,,,,3
 124,1,litre,,,3,,,,,,,,3
 125,1,l,,,3,,,,,,,,3
-126,1,kWh,,,3,,,,,,,,3
+126,1,kWh,,,1,,,,,,,,3
 127,1,gram,,,3,,,,,,,,3
 128,1,g,,,3,,,,,,,,3
 129,1,tonne,,,3,,,,,,,,3
@@ -137,7 +137,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 136,1,1967,,,2,,,,,,,,
 137,1,1979,,,2,,,,,,,,
 138,1,1983,,,2,,,,,,,,
-139,1,2019,,,2,,,,,,,,
+139,1,2019,,,1,,,,,,,,
 140,1,2020,,,2,,,,,,,,
 141,1,per 100 km,,,18,,,,,,,,3
 142,1,scale minute to sec,,,10,,,,,,,,
@@ -154,16 +154,16 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 153,1,scale km to metre,,,10,,,,,,,,
 154,1,scale km to 100 km,,,10,,,,,,,,
 155,1,definition of joule,,,10,,,,,,,,
-156,1,thousand,,,7,,,,,,,,3
-157,1,million,,,7,,,,,,,,3
-158,1,billion,,,7,,,,,,,,3
-159,1,percent,,,6,,,,,,,,3
+156,1,thousand,,,1,,,,,,,,3
+157,1,million,,,1,,,,,,,,3
+158,1,billion,,,1,,,,,,,,3
+159,1,percent,,,1,,,,,,,,3
 160,1,tsd.,,,7,,,,,,,,
 161,1,b,,,1,,,,,,,,
 162,1,scale thousand to one,,,10,,,,,,,,
 163,1,scale million to one,,,10,,,,,,,,
 164,1,scale billion to one,,,10,,,,,,,,
-165,1,Now,,,2,,,,,,,,3
+165,1,Now,,,1,,,,,,,,3
 166,1,January,,,2,,,,,,,,3
 167,1,February,,,2,,,,,,,,3
 168,1,March,,,2,,,,,,,,3
@@ -179,7 +179,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 178,1,latest,,,19,,,,,,,,3
 179,1,this,,,10,,,,,,,,
 180,1,next,,,10,,,,,,,,
-181,1,prior,,,10,,,,,,,,
+181,1,prior,,,1,,,,,,,,
 182,1,increase,,,10,,,,,,,,
 183,1,child,,,1,,,,,,,,
 184,1,Bern,,,1,,,,,,,,
@@ -260,10 +260,10 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 259,1,annual,,,1,,,,,,,,
 260,1,GDP,,,1,,,,,,,,
 261,1,decline,,,1,,,,,,,,
-262,1,2024,,,1,,,,,,,,
+262,1,2024,,,2,,,,,,,,
 263,1,scale trillion to one,,,10,,,,,,,,
 264,1,global happy time points,,,10,,,,,,,,
-265,1,Currency,,,3,,,,,,,,
+265,1,Currency,,,1,,,,,,,,
 266,1,Euro,,,1,,,,,,,,
 267,1,US dollar,,,1,,,,,,,,
 268,1,Pound sterling,,,1,,,,,,,,
@@ -938,7 +938,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 937,1,2023,,,2,,,,,,,,
 938,1,2022,,,2,,,,,,,,
 939,1,2021,,,2,,,,,,,,
-940,1,2012,,,2,,,,,,,,
+940,1,2012,,,1,,,,,,,,
 941,1,2011,,,2,,,,,,,,
 942,1,2010,,,2,,,,,,,,
 943,1,2008,,,2,,,,,,,,
@@ -951,7 +951,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 950,1,Growth rate (2019–2022),,,1,,,,,,,,
 951,1,U.S. dollar,,,1,,,,,,,,
 952,1,US$,,,1,,,,,,,,
-953,1,EUR,,,1,,,,,,,,
+953,1,EUR,,,3,,,,,,,,
 954,1,JPY,,,1,,,,,,,,
 955,1,¥ / 円,,,1,,,,,,,,
 956,1,Sterling,,,1,,,,,,,,

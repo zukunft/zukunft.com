@@ -4818,7 +4818,7 @@ CREATE TABLE IF NOT EXISTS component_links
     component_id           bigint   NOT NULL,
     user_id                bigint            DEFAULT NULL,
     order_nbr              bigint   NOT NULL DEFAULT 1,
-    component_link_type_id smallint NOT NULL DEFAULT 1,
+    component_link_type_id smallint          DEFAULT NULL,
     position_type_id       smallint NOT NULL DEFAULT 1,
     view_style_id          smallint          DEFAULT NULL,
     excluded               smallint          DEFAULT NULL,
@@ -4829,6 +4829,7 @@ CREATE TABLE IF NOT EXISTS component_links
 COMMENT ON TABLE component_links IS 'to link components to views with an n:m relation';
 COMMENT ON COLUMN component_links.component_link_id IS 'the internal unique primary index';
 COMMENT ON COLUMN component_links.user_id IS 'the owner / creator of the component_link';
+COMMENT ON COLUMN component_links.component_link_type_id IS 'if null the default type always is used';
 COMMENT ON COLUMN component_links.position_type_id IS 'the position of the component e.g. right or below';
 COMMENT ON COLUMN component_links.view_style_id IS 'the display style for this component link';
 COMMENT ON COLUMN component_links.excluded IS 'true if a user, but not all, have removed it';

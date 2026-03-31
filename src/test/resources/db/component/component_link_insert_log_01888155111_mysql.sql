@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS component_link_insert_log_01558185111;
-CREATE PROCEDURE component_link_insert_log_01558185111
+DROP PROCEDURE IF EXISTS component_link_insert_log_01888155111;
+CREATE PROCEDURE component_link_insert_log_01888155111
     (_view_id                   bigint,
      _component_link_type_id    smallint,
      _component_id              bigint,
@@ -13,8 +13,6 @@ CREATE PROCEDURE component_link_insert_log_01558185111
      _field_id_order_nbr        smallint,
      _order_nbr                 bigint,
      _field_id_position_type_id smallint,
-     _position_old              text,
-     _position_type_id_old      smallint,
      _position                  text,
      _position_type_id          smallint,
      _field_id_view_style_id    smallint,
@@ -42,8 +40,8 @@ BEGIN
     INSERT INTO changes (user_id, change_action_id, change_field_id,    new_value, row_id)
          SELECT         _user_id,_change_action_id,_field_id_order_nbr,_order_nbr,@new_component_link_id ;
 
-    INSERT INTO changes (user_id, change_action_id, change_field_id,           old_value,    new_value, old_id,               new_id,          row_id)
-         SELECT         _user_id,_change_action_id,_field_id_position_type_id,_position_old,_position, _position_type_id_old,_position_type_id,@new_component_link_id ;
+    INSERT INTO changes (user_id, change_action_id, change_field_id,              new_value,                new_id,          row_id)
+         SELECT         _user_id,_change_action_id,_field_id_position_type_id,_position, _position_type_id,@new_component_link_id ;
 
     INSERT INTO changes (user_id,change_action_id,change_field_id,new_value,new_id,row_id)
          SELECT _user_id,_change_action_id,_field_id_view_style_id,_view_style_name,_view_style_id,@new_component_link_id ;
@@ -69,10 +67,10 @@ BEGIN
 
 END;
 
-PREPARE component_link_insert_log_01558185111_call FROM
-    'SELECT component_link_insert_log_01558185111 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE component_link_insert_log_01888155111_call FROM
+    'SELECT component_link_insert_log_01888155111 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT component_link_insert_log_01558185111
+SELECT component_link_insert_log_01888155111
        (1,
         2,
         1,
@@ -86,8 +84,6 @@ SELECT component_link_insert_log_01558185111
         48,
         1,
         136,
-        'below',
-        1,
         'side',
         2,
         781,

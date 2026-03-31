@@ -648,6 +648,42 @@ class phrase extends combine_named
         return $this->obj()->is_valid();
     }
 
+    function fob(): sandbox_named|combine_named|null
+    {
+        if ($this->is_triple()) {
+            return $this->obj()?->fob();
+        } else {
+            return null;
+        }
+    }
+
+    function tob(): sandbox_named|combine_named|null
+    {
+        if ($this->is_triple()) {
+            return $this->obj()?->tob();
+        } else {
+            return null;
+        }
+    }
+
+    function from_empty(): bool
+    {
+        if ($this->is_triple()) {
+            return $this->obj()->from_empty();
+        } else {
+            return true;
+        }
+    }
+
+    function to_empty(): bool
+    {
+        if ($this->is_triple()) {
+            return $this->obj()->to_empty();
+        } else {
+            return true;
+        }
+    }
+
 
     /*
      * modify

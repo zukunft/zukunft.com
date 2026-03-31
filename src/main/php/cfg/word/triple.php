@@ -1487,11 +1487,11 @@ class triple extends sandbox_link_named
             }
 
             // fill the parameters
-            if ($this->weight === null and $obj->weight != null) {
-                $this->weight = $obj->weight;
+            if ($this->weight === null and $trp->weight != null) {
+                $this->weight = $trp->weight;
             }
-            if ($this->view === null and $obj->view != null) {
-                $this->view = $obj->view;
+            if ($this->view === null and $trp->view != null) {
+                $this->view = $trp->view;
             }
         }
         if ($obj::class == phrase::class) {

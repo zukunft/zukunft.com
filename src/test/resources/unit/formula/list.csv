@@ -29,7 +29,7 @@ formula_id,user_id,formula_name,formula_text,resolved_text,description,formula_t
 28,1,suburb population,{w286}=&sum;({w196}{v2}{w300}),"total" = &sum; ( "inhabitants" "of all" "suburb" ),,1,,,,,,,
 29,1,countryside population without suburb,{w286}={f27}-{f28},"total" = "countryside population" - "suburb population",,1,,,,,,,
 30,1,population in the city of Zurich in percent of Switzerland,{w159}={w196}{t93}/{w196}{w206},"percent" = "inhabitants" "Zurich (City)" / "inhabitants" "Switzerland",,1,,,,,,,
-31,1,yearly increase,{w159}=({v2}{w109}-{f20}{w109})/{f20}{w109},"percent" = ( "is a" "year" - "prior" "year" ) / "prior" "year",,1,,,,,,,
+31,1,yearly increase,{w159}=({v2}{w109}-{w181}{w109})/{w181}{w109},"percent" = ( "is a" "year" - "prior" "year" ) / "prior" "year",,1,,,,,,,
 32,1,Operating income,={w1065},="Revenues",,1,,,,,,,
 33,1,Operating expenses,={w1074}+{w1075}+{w1077},="Selling expenses" + "General administrative expenses" + "Other operating expense",,1,,,,,,,
 34,1,Other trading net,={w1079}+{w1080}+{w1073},= "Other trading income" + "Other trading expenses" + "Other revenues",,1,,,,,,,

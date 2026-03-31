@@ -544,6 +544,9 @@ class sandbox_link_named extends sandbox_link
     {
         $msg = parent::fill($obj, $usr_req);
 
+        if ($obj::class == phrase::class or $obj::class == term::class) {
+            $obj = $obj->obj();
+        }
         if ($this->type_id === null and $obj->type_id != null) {
             $this->type_id = $obj->type_id;
         } elseif ($this->type_id() != $obj->type_id()) {
@@ -554,9 +557,6 @@ class sandbox_link_named extends sandbox_link
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
             ]);
-        }
-        if ($obj::class == phrase::class or $obj::class == term::class) {
-            $obj = $obj->obj();
         }
         if ($this->name === null and $obj->name != null) {
             $this->name = $obj->name;

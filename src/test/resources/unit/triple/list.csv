@@ -39,7 +39,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 38,27,20,89,1,square metre,,,,,,,,,,,,,,3
 39,27,20,90,1,cubic metre,,,,,,,,,,,,,,3
 40,-39,26,24,1,cubic metre per second,,,,,,,,,,,,,,3
-41,,18,-40,1,m3/s,,,,,,,,,,,,,,
+41,0,18,-40,1,m3/s,,,,,,,,,,,,,,
 42,91,23,92,1,elementary charge,,,The elementary charge, usually denoted by e, is a fundamental physical constant, defined as the electric charge carried by a single proton (+1 e) or, equivalently, the magnitude of the negative electric charge carried by a single electron, which has charge −1 e.,,,,,,,,,,,3
 43,2,5,110,1,Planck constant,,,The Planck constant is a fundamental physical constant[1] of foundational importance in quantum mechanics: a photon's energy is equal to its frequency multiplied by the Planck constant, and the wavelength of a matter wave equals the Planck constant divided by the associated particle momentum.,,,,,,,,,,,3
 44,2,5,111,1,Boltzmann constant,,,The Boltzmann constant (kB or k) is the proportionality factor that relates the average relative thermal energy of particles in a gas with the thermodynamic temperature of the gas.,,,,,,,,,,,3
@@ -51,29 +51,29 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 50,93,20,94,1,luminous efficacy,,,Luminous efficacy is a measure of how well a light source produces visible light. It is the ratio of luminous flux to power, measured in lumens per watt in the International System of Units (SI). ,,,,,,,,,,,3
 51,73,26,53,1,lm/W,,,is the unit of the luminous efficacy,,,,,,,,,,,3
 52,27,26,-36,1,metre per second squared,,,,,,3,,,,,,,,3
-53,,18,-52,1,m/s2,,,,,,3,,,,,,,,3
+53,0,18,-52,1,m/s2,,,,,,3,,,,,,,,3
 54,27,26,-37,1,metre per second cubed,,,,,,3,,,,,,,,3
-55,,18,-54,1,m/s3,,,,,,3,,,,,,,,3
+55,0,18,-54,1,m/s3,,,,,,3,,,,,,,,3
 56,43,26,24,1,radian per second,,,The radian per second is the unit of angular velocity in the International System of Units (SI).,,,3,,,,,,,,3
-57,,18,-56,1,rad/s,,,,,,3,,,,,,,,3
+57,0,18,-56,1,rad/s,,,,,,3,,,,,,,,3
 58,97,26,96,1,angular velocity,,,,,,3,,,,,,,,3
 59,88,26,96,1,angular acceleration,,,,,,3,,,,,,,,3
 60,43,26,-36,1,radian per second squared,,,,,,3,,,,,,,,3
-61,,18,-60,1,rad/s2,,,,,,3,,,,,,,,3
+61,0,18,-60,1,rad/s2,,,,,,3,,,,,,,,3
 62,125,18,124,1,l (unit symbol),,,,,,,,,,,,,,
-63,1151,18,24,1,m/s,,,The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.,,,,,,,,,,,3
+63,1151,26,24,1,m/s,,,The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.,,,3,,,,,,,,3
 64,98,19,99,1,frequency drift,,,,,,3,,,,,,,,3
 65,41,26,24,1,hertz per second,,,,,,3,,,,,,,,3
-66,,18,-65,1,Hz/s,,,,,,3,,,,,,,,3
+66,0,18,-65,1,Hz/s,,,,,,3,,,,,,,,3
 67,102,5,101,1,flow rate,,,,,,3,,,,,,,,3
 68,100,5,-67,1,volumetric flow rate,,,,,,3,,,,,,,,3
 69,114,2,-34,1,distance (mechanics SI derived unit),,,,,,,,,,,,,,
-70,420,26,106,1,per day,,,,,,,,,,,,,,3
-71,,26,116,1,per km,,,,,,18,,,,,,,,3
-72,,26,126,1,per kWh,,,,,,18,,,,,,,,3
-73,,26,130,1,per t,,,,,,18,,,,,,,,3
-74,,26,124,1,per l,,,,,,18,,,,,,,,3
-75,103,26,109,1,per year,,,,,,,,,,,,,,3
+70,420,1,106,1,per day,,,,,,18,,,,,,,,3
+71,0,26,116,1,per km,,,,,,18,,,,,,,,3
+72,0,26,126,1,per kWh,,,,,,18,,,,,,,,3
+73,0,26,130,1,per t,,,,,,18,,,,,,,,3
+74,0,26,124,1,per l,,,,,,18,,,,,,,,3
+75,103,20,109,1,per year,,,,,,18,,,,,,,,3
 76,132,20,131,1,hyperfine transition,,,,,,,,,,,,,,3
 77,-76,7,98,1,hyperfine transition frequency,,,,,,,,,,,,,,3
 78,-77,5,134,1,hyperfine transition frequency of Cs,,,,,,,,,,,,,,3
@@ -90,7 +90,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 89,28,29,157,1,m is symbol for million,,,,,,,,,,,,,,
 90,161,29,158,1,b is symbol for billion,,,,,,,,,,,,,,
 91,205,20,193,1,global problem,,,,,,,,,,,,,,
-92,22,30,186,1,system configuration,,,,,,,,,,,,,,
+92,22,1,186,1,system configuration,,,,,,,,,,,,,,
 93,213,2,187,1,Zurich (City),,,,,,,,,,,,,,
 94,213,2,185,1,Zurich (Canton),,,,,,,,,,,,,,
 95,184,2,187,1,Bern (City),,,,,,,,,,,,,,

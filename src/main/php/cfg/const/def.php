@@ -393,12 +393,14 @@ class def
     const array LINK_CLASSES = [
         element::class,
         ref::class,
+        component_link::class,
     ];
 
     // list of classes where the link of two objects and the predicate/type is the main unique key beside the database id
     const array LINK_TYPE_CLASSES = [
         triple::class,
         ref::class,
+        component_link::class,
     ];
 
     // classes that have a frontend and backend object but are not user-specific
