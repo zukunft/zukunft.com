@@ -1229,6 +1229,7 @@
     \-- is_delete - section for function is_delete is expected to be info in /db/sql_type_list.php
     \-- is_select - section for function is_select is expected to be info in /db/sql_type_list.php
     \-- is_most - section for function is_most is expected to be info in /db/sql_type_list.php
+    \-- is_main - section for function is_main is expected to be info in /db/sql_type_list.php
     \-- is_prime - section for function is_prime is expected to be info in /db/sql_type_list.php
     \-- is_big - section for function is_big is expected to be info in /db/sql_type_list.php
     \-- value_table_type - section for function value_table_type not yet defined that it should be info for value table selection in /db/sql_type_list.php
@@ -3910,6 +3911,8 @@
 \-- info for value table selection
     \-- is_most
         \-- sql_type_list - @return bool true to select the table for values and results linked to an average number of phrases
+    \-- is_main
+        \-- sql_type_list - @return bool true to select the table for values and results linked to an a bit more number of phrases
     \-- is_prime
         \-- sql_type_list - @return bool true to select the table for values and results linked to only a few fields
     \-- is_big

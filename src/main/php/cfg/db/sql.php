@@ -165,4 +165,7 @@ class sql
     // placeholder for the class name in table or field comments
     const string COMMENT_CLASS_NAME = '-=class=-';
 
+    const string CAST_TEXT_PG = '::text';
+    const string CAST_TEXT_START = 'cast(';
+    const string CAST_TEXT_END = ' as char)';
 }

@@ -72,6 +72,13 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_LOG . 'changes_big.php';
 //include_once paths::MODEL_LOG . 'changes_norm.php';
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_REF . 'ref_type.php';
+//include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_REF . 'source_list.php';
+//include_once paths::MODEL_REF . 'source_type.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_RESULT . 'result_db.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SYSTEM . 'job.php';
 //include_once paths::MODEL_SYSTEM . 'job_status.php';
@@ -83,12 +90,6 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_SYSTEM . 'system_time.php';
-//include_once paths::MODEL_REF . 'ref.php';
-//include_once paths::MODEL_REF . 'ref_type.php';
-//include_once paths::MODEL_REF . 'source.php';
-//include_once paths::MODEL_REF . 'source_list.php';
-//include_once paths::MODEL_REF . 'source_type.php';
-//include_once paths::MODEL_RESULT . 'result.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_list.php';
@@ -166,6 +167,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
@@ -813,6 +815,12 @@ class def
         'users_user_id_seq',
         'user_profiles_user_profile_id_seq'
     ];
+
+    // id field names that can be either int or text e.g. the group_id
+    const array MIXED_ID_FIELDS = [
+        result_db::FLD_SOURCE_GRP,
+    ];
+
 
     // list of database fields that are also in test volatile
     // and that should be ignored in unit tests

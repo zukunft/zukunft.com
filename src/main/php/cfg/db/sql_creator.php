@@ -1176,7 +1176,13 @@ class sql_creator
      * @param bool $prepare can be set to false the created sql parts of a union query
      * @return string the created SQL statement in the previous set dialect
      */
-    function sql(int $par_offset = 0, bool $has_id = true, bool $prepare = true): string
+    function sql(
+        int $par_offset = 0,
+        bool $has_id = true,
+        bool $prepare = true,
+        bool $union = false,
+        bool $num_id = false
+    ): string
     {
         // check if the minimum parameters are set
         if ($this->query_name == '') {
@@ -1187,7 +1193,7 @@ class sql_creator
             }
         }
         // prepare the SQL statement parts that have dependencies to each other
-        $fields = $this->fields($has_id);
+        $fields = $this->fields($has_id, $union, $num_id);
         $from = $this->from($fields, $par_offset);
         $where = $this->where($par_offset);
 
@@ -2894,10 +2900,16 @@ class sql_creator
 
     /**
      * create the field statement based on the fields
-     * @param $has_id
+     * @param bool $has_id
+     * @param bool $union true if e.g. int fields should be converted to a text field to be able to union mixed fields
+     * @param bool $num_id true if the id is numeric of a field where the id might be a text e.g. the group_id
      * @return string the sql field statement
      */
-    private function fields($has_id): string
+    private function fields(
+        bool $has_id,
+        bool $union,
+        bool $num_id
+    ): string
     {
         // init
         $result = '';
@@ -3089,7 +3101,19 @@ class sql_creator
 
             if (!$fld_used) {
                 if ($this->usr_query or $this->join_type != '') {
-                    $result .= ' ' . sql_db::STD_TBL . '.' . $field;
+                    if ($union) {
+                        if (in_array($field, def::MIXED_ID_FIELDS) and $num_id) {
+                            if ($this->db_type() == sql_db::POSTGRES) {
+                                $result .= ' ' . sql_db::STD_TBL . '.' . $field . sql::CAST_TEXT_PG;
+                            } else {
+                                $result .= ' ' . sql::CAST_TEXT_START . sql_db::STD_TBL . '.' . $field . sql::CAST_TEXT_END;
+                            }
+                        } else {
+                            $result .= ' ' . sql_db::STD_TBL . '.' . $field;
+                        }
+                    } else {
+                        $result .= ' ' . sql_db::STD_TBL . '.' . $field;
+                    }
                     if ($field == $this->id_field) {
                         // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
                         if ($this->all_query) {
