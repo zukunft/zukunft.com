@@ -272,7 +272,7 @@ class result_list extends sandbox_value_list
         foreach (result_db::TBL_LIST_EX_STD as $tbl_typ) {
             $qp_tbl = $this->load_sql_by_frm_single($sc, $frm, $tbl_typ);
 
-            $qp->merge($qp_tbl);
+            $qp->merge($qp_tbl, true);
         }
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
         return $qp;

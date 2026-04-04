@@ -1201,6 +1201,28 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * create the user message that an object with the same link already exists
+     * and suggest a potential solution to the user.
+     *
+     * @param sandbox $obj_to_add the obejct that the user wants to add to the database
+     * @return user_message e.g. with the suggestion to merge with the existing link
+     */
+    function id_used_msg(sandbox $obj_to_add): user_message
+    {
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
+        $msg = new user_message();
+        $msg->add(msg_id::LINK_ALREADY_EXISTS, [
+            msg_id::VAR_CLASS_NAME => $class_name,
+            msg_id::VAR_NAME_FROM => $obj_to_add->fob()->name(),
+            msg_id::VAR_NAME_TO => $obj_to_add->tob()->name(),
+            msg_id::VAR_VALUE => $obj_to_add_name
+        ]);
+        return $msg;
+    }
+
+    /**
      * check if an object with the unique key already exists
      * returns null if no similar object is found
      * or returns the object with the same unique key that is not the actual object;
@@ -1217,34 +1239,45 @@ class sandbox_link extends sandbox
     {
         $sim = null;
 
-        // check potential duplicate by name
+        // check potential duplicate by link
         // check for linked objects
-        if (!isset($this->fob) or !isset($this->tob)) {
+        if ($this->fob == null or $this->tob == null) {
             log_err('The linked objects for ' . $this->dsp_id() . ' are missing.', '_sandbox->get_similar');
         } else {
             $db_chk = $this->clone_reset(true);
             $db_chk->set_predicate_id($this->predicate_id());
             if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
                 if ($db_chk->load_standard_by_type_link($this->fob()->id(), $this->predicate_id(), $this->tob()->id(), $msg)) {
-                    if ($db_chk->id() > 0) {
-                        log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard link space');
+                    if ($db_chk->id() != 0) {
+                        log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard link space with type ' . $this->predicate_name());
                         $sim = $db_chk;
                     }
                 }
             } else {
                 if ($db_chk->load_standard_by_link($this->fob()->id(), $this->tob()->id(), $msg)) {
-                    if ($db_chk->id() > 0) {
+                    if ($db_chk->id() != 0) {
                         log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard link space');
                         $sim = $db_chk;
                     }
                 }
             }
             // check with the user link space
-            $db_chk->set_user($this->get_user());
-            if ($db_chk->load_by_link_id($this->fob->id(), 0, $this->tob->id(), $this::class)) {
-                if ($db_chk->id() > 0) {
-                    log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space');
-                    $sim = $db_chk;
+            if ($db_chk->id() == 0) {
+                $db_chk->set_user($this->get_user());
+                if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+                    if ($db_chk->load_by_link_id($this->fob->id(), 0, $this->tob->id(), $this::class)) {
+                        if ($db_chk->id() != 0) {
+                            log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space with type ' . $this->predicate_name());
+                            $sim = $db_chk;
+                        }
+                    }
+                } else {
+                    if ($db_chk->load_by_link_id($this->fob->id(), $this->predicate_id(), $this->tob->id(), $this::class)) {
+                        if ($db_chk->id() != 0) {
+                            log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space');
+                            $sim = $db_chk;
+                        }
+                    }
                 }
             }
         }

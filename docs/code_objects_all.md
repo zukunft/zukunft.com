@@ -136,7 +136,6 @@ the object structure is:
                         \-- formula_link - link a formula to a word
                         \-- ref - a link between a phrase and another system such as wikidata
                         \-- sandbox_link_named
-                            \-- triple_object - a base object that can be used for word links, so either a word, triple or group
                             \-- triple - the object that links two words (an RDF triple)
                         \-- sandbox_predicated_link - adding the type field to the user sandbox link superclass
                         \-- term_view - to define the view for a word, triple, verb or formula

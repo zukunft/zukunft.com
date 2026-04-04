@@ -297,7 +297,7 @@ class word_write_tests
         $usr_msg = new user_message($t->usr1);
         $wrd_new->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
-        $target = 'A word with the name "'.words::MATH.'" already exists. The word "'.words::MATH.'" of created by other users is used.';
+        $target = 'A word with the name "'.words::MATH.'" already exists. The word "'.words::MATH.'" created by other users is used.';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // test the creation of a new word
@@ -313,7 +313,7 @@ class word_write_tests
         $usr_msg = new user_message($t->usr1);
         $wrd_add->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
-        $target = 'A word with the name "'.words::TEST_ADD.'" already exists. The word "'.words::TEST_ADD.'" of created by other users is used.';
+        $target = 'A word with the name "'.words::TEST_ADD.'" already exists. The word "'.words::TEST_ADD.'" created by other users is used.';
         $t->assert('word->save reject for "' . words::TEST_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // check that the word name cannot be used for a verb, triple or formula any more

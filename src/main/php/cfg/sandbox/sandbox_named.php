@@ -58,7 +58,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -85,6 +85,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'Message.php';
@@ -92,6 +93,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -1026,7 +1028,7 @@ class sandbox_named extends sandbox
                 $result = $this->is_same_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
-                if ($this::class == word::class or $this::class == phrase::class or $this::class == formula::class or $this::class == verb::class) {
+                if (in_array($this::class, def::TERM_CLASSES)) {
                     if ($this->name == $obj_to_check->name()) {
                         $result = true;
                     }
@@ -1058,10 +1060,7 @@ class sandbox_named extends sandbox
         // check potential duplicate by name
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
         // for verbs the check is inside the verbs class because verbs are not part of the user sandbox
-        if ($this::class == word::class
-            or $this::class == verb::class
-            or $this::class == triple::class
-            or $this::class == formula::class) {
+        if (in_array($this::class, def::TERM_CLASSES)) {
             $similar_trm = $this->get_term();
             if ($similar_trm->id_obj() > 0) {
                 $sim = $similar_trm->obj();
@@ -1124,7 +1123,7 @@ class sandbox_named extends sandbox
                 } else {
                     if (!$this->is_same($sim)) {
                         $lib = new library();
-                        $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+                        $msg->add(msg_id::NAME_ALREADY_EXISTS, [
                             msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                             msg_id::VAR_NAME => $this->name(),
                             msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value

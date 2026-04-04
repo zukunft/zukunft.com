@@ -2858,10 +2858,7 @@ class sandbox_multi extends db_object_multi_user
                 $result = $this->is_same_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
-                if ($this::class == word::class
-                    or $this::class == triple::class
-                    or $this::class == formula::class
-                    or $this::class == verb::class) {
+                if (in_array($this::class, def::TERM_CLASSES)) {
                     if ($this->name() == $obj_to_check->name()) {
                         $result = true;
                     }
@@ -4200,7 +4197,7 @@ class sandbox_multi extends db_object_multi_user
         $lib = new library();
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
         $msg = new user_message();
-        $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+        $msg->add(msg_id::NAME_ALREADY_EXISTS, [
             msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
             msg_id::VAR_NAME => $obj_to_add->dsp_id(),
             msg_id::VAR_VALUE => $obj_to_add_name

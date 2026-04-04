@@ -438,6 +438,28 @@ class sandbox_link_named extends sandbox_link
         return $msg;
     }
 
+    /**
+     * get the term corresponding to the given name
+     * in this case, if a formula or verb with the same name already exists, get it
+     * @param string $name the name of the term to search for
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return term|null a term with the given name or null if no term is found
+     */
+    function get_term_by_name(string $name, user_message $msg): term|null
+    {
+        $result = null;
+        $trm = new term($this->get_user());
+        if ($trm->load_standard_by_name($name, $msg)) {
+            $result = $trm;
+        } else {
+            if ($trm->load_by_name($name)) {
+                $result = $trm;
+            }
+        }
+        $trm->load_by_name($name);
+        return $result;
+    }
+
 
     /*
      * cast
@@ -568,6 +590,71 @@ class sandbox_link_named extends sandbox_link
         return $msg;
     }
 
+    /**
+     * just to double-check if the get similar function is working correctly
+     * so if the formulas "millions" is compared with the word "millions" this function returns true
+     * in short: if two objects are similar by this definition, they should not be both in the database
+     * @param null|object $obj_to_check the object used for the comparison
+     * @return bool true if the objects represent the same
+     */
+    function is_similar_named(?object $obj_to_check): bool
+    {
+        $result = false;
+        if ($obj_to_check != null) {
+            if ($this::class == $obj_to_check::class) {
+                $result = $this->is_same_std($obj_to_check);
+            } else {
+                if ($this->name() == $obj_to_check->name()) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check if an object with the unique key already exists
+     * returns null if no similar object is found
+     * or returns the object with the same unique key that is not the actual object;
+     * any warning or error message needs to be created in the calling function
+     * e.g. if the user tries to create a formula named "millions"
+     *      but a word with the same name already exists, a term with the word "millions" is returned
+     *      in this case the calling function should suggest the user to name the formula "scale millions"
+     *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return sandbox|null a filled object that links the same objects
+     *                      or null if nothing similar has been found
+     */
+    function get_similar(user_message $msg): ?sandbox
+    {
+        $sim = parent::get_similar($msg);
+
+        if ($sim == null) {
+            // check potential duplicate by name
+            // for triples it needs to be checked if a term (word, verb or formula) with the same name already exist
+            if ($this::class == triple::class) {
+                $trm = $this->get_term_by_name($this->name(), $msg);
+                if ($trm != null) {
+                    $sim = $trm->obj();
+                    if (!$this->is_similar_named($sim)) {
+                        log_err($this->dsp_id() . ' is supposed to be similar to ' . $sim->dsp_id() . ', but it seems not');
+                    }
+                } else {
+                    $trp = new triple($this->get_user());
+                    $trp->load_by_name_generated($this->name());
+                    if ($trp->id() > 0) {
+                        $trp->reload_objects($msg);
+                        log_debug($this->dsp_id() . ' has the same name is the standard name of the triple "' . $trp->dsp_id() . '"');
+                        $sim = $trp;
+                    }
+                }
+            } else {
+                log_err($this->dsp_id() . ' is not expected to be a named sandbox link object');
+            }
+        }
+
+        return $sim;
+    }
 
     /*
      * log read

@@ -383,7 +383,6 @@ class def
     ];
 
     // list of classes that can be the object of a phrase
-    // TODO Prio 1 use this for all term checks
     const array TERM_CLASSES = [
         word::class,
         verb::class,

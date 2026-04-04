@@ -1290,13 +1290,22 @@ enum messages: string
         . ' "'
         . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
         . '" of created by other users is used.';
-    case CLASS_ALREADY_EXISTS = 'A '
+    case NAME_ALREADY_EXISTS = 'A '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' with the name "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" ' . self::ALREADY_EXISTS->value . '. Please use another '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' name.';
+    case LINK_ALREADY_EXISTS = 'A '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' that links "'
+        . self::VAR_START . self::VAR_NAME_FROM . self::VAR_END
+        . ' to "'
+        . self::VAR_START . self::VAR_NAME_TO . self::VAR_END
+        . '" ' . self::ALREADY_EXISTS->value . '. Please select another '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' link.';
     case ALREADY_EXISTS = 'already exists';
     case KEY_TYPE_NAME = 'name';
     case KEY_TYPE_LINK = 'link';

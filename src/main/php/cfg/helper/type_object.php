@@ -564,7 +564,7 @@ class type_object extends db_object_seq_id
                 } else {
                     if (!$this->is_same($sim)) {
                         $lib = new library();
-                        $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+                        $msg->add(msg_id::NAME_ALREADY_EXISTS, [
                             msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                             msg_id::VAR_NAME => $this->name(),
                             msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
@@ -617,7 +617,7 @@ class type_object extends db_object_seq_id
         $class_name = $lib->class_to_name($this::class);
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
         $msg = new user_message();
-        $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+        $msg->add(msg_id::NAME_ALREADY_EXISTS, [
             msg_id::VAR_CLASS_NAME => $class_name,
             msg_id::VAR_NAME => $obj_to_add->name(),
             msg_id::VAR_VALUE => $obj_to_add_name

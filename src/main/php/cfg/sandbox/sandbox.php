@@ -2412,7 +2412,7 @@ class sandbox extends db_object_seq_id_user
                     // if two words are a formula link something has gone wrong
                     $lib = new library();
                     $class = $lib->class_to_name($this::class);
-                    $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+                    $msg->add(msg_id::NAME_ALREADY_EXISTS, [
                         msg_id::VAR_CLASS_NAME => $class,
                         msg_id::VAR_NAME => $this->name(),
                         msg_id::VAR_VALUE => $lib->class_to_name($obj_to_check::class)
@@ -2684,10 +2684,12 @@ class sandbox extends db_object_seq_id_user
 
         // check possible duplicates
         $sim = null;
+        $sim_msg = new user_message();
         if ($msg->is_ok()) {
             if (!$this->has_id() or $this->is_key_updated($db_rec)) {
-                // get similar database row but ignore the duplicate messages for the moment
-                $sim_msg = new user_message();
+                // get similar database row
+                // but ignore the duplicate messages for the moment
+                // use the specific duplicate message later for the user
                 $sim = $this->get_similar($sim_msg);
             }
         }
@@ -2715,6 +2717,8 @@ class sandbox extends db_object_seq_id_user
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($sim != null) {
                     if ($this->is_formula_word($sim, $msg)) {
+                        // add first the detail information how the $sim object matches
+                        $msg->merge($sim_msg);
                         // if a word with the same name of a formula already exists suggest a new formula name
                         // never merge a formula word with a formula
                         $msg->merge($sim->id_used_msg($this));
@@ -2729,6 +2733,8 @@ class sandbox extends db_object_seq_id_user
                                 $this->merged_info_message($this, $msg);
                             }
                         } else {
+                            // add first the detail information how the $sim object matches
+                            $msg->merge($sim_msg);
                             // suggest to use a different name
                             $msg->merge($sim->id_used_msg($this));
                         }
@@ -2989,7 +2995,11 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * @return user_message a message to use a different name
+     * create the user message that a similar object already exists
+     * and suggest a potential solution to the user.
+     * is expected to be overwritten for name and link objects for more specific messages
+     * @param sandbox $obj_to_add the obejct that the user wants to add to the database
+     * @return user_message e.g. with the suggestion to use another name
      */
     function id_used_msg(sandbox $obj_to_add): user_message
     {
@@ -2997,7 +3007,7 @@ class sandbox extends db_object_seq_id_user
         $class_name = $lib->class_to_name($this::class);
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
         $msg = new user_message();
-        $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+        $msg->add(msg_id::NAME_ALREADY_EXISTS, [
             msg_id::VAR_CLASS_NAME => $class_name,
             msg_id::VAR_NAME => $obj_to_add->name(),
             msg_id::VAR_VALUE => $obj_to_add_name
