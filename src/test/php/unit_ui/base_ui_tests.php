@@ -288,7 +288,7 @@ class base_ui_tests
         $test_name = 'a sandbox object e.g. source change button html code';
         $target = '<a href="/http/view.php?m=source_edit&id=1&back=1" title="source_edit"><i class="far fa-edit"></i></a>';
         $src = new source();
-        $src->set_from_json($t_src->source()->api_json(), $usr_msg);
+        $src->set_from_json($t_src->source_reserved()->api_json(), $usr_msg);
         $t->assert($test_name, $src->btn_edit('1'), $target);
 
         $test_name = 'a sandbox object e.g. formula delete button html code';

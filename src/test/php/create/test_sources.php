@@ -79,6 +79,16 @@ class test_sources extends test_objects
     function source(): source
     {
         $src = new source($this->env->usr1);
+        $src->set(sources::BFS_ID, sources::BFS);
+        $src->set_type(source_types::PDF, $this->env->usr1);
+        $src->description = sources::BFS_COM;
+        $src->url = sources::BFS_ULR;
+        return $src;
+    }
+
+    function source_reserved(): source
+    {
+        $src = new source($this->env->usr1);
         $src->set(sources::SIB_ID, sources::SIB);
         $src->set_type(source_types::PDF, $this->env->usr1);
         $src->description = sources::SIB_COM;
@@ -91,7 +101,7 @@ class test_sources extends test_objects
      */
     function source_incomplete(): source
     {
-        $src = $this->source();
+        $src = $this->source_reserved();
         $src->id = 0;
         $src->set_name(null);
         return $src;
@@ -155,7 +165,7 @@ class test_sources extends test_objects
      */
     function source_admin(): source
     {
-        $src = $this->source();
+        $src = $this->source_reserved();
         $src->set_code_id_db(sources::SIB_CODE);
         return $src;
     }

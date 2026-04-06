@@ -202,8 +202,14 @@
   ],
   "sources": [
     {
-      "name": "Bundesamt für Statistik",
-      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/23328853/master"
+      "name": "Federal Statistical Office",
+      "description": "Federal Statistical Office",
+      "url": "https://www.bfs.admin.ch/bfs/en/home.html"
+    },
+    {
+      "name": "Federal Statistical Office - Key population figures, 1950-2024",
+      "description": "Key population figures of Switzerland, 1950-2024 (Federal Statistical Office)",
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/36142064/master"
     }
   ],
   "components": [

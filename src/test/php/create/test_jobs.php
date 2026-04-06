@@ -105,7 +105,7 @@ class test_jobs
         $job->parameter = '1';
         $job->change_field = 2;
         $job->row_id = 3;
-        $job->src = $t_src->source();
+        $job->src = $t_src->source_reserved();
         $job->ref = $t_ref->reference();
         $job->priority = job_statuum::PRIO_HIGHEST;
         return $job;

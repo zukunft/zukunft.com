@@ -147,7 +147,7 @@ class test_users
 
         $usr->trm = $t_trm->term();
         $usr->msk = $t_msk->view();
-        $usr->src = $t_src->source();
+        $usr->src = $t_src->source_reserved();
 
         return $usr;
     }

@@ -186,7 +186,7 @@ class test_refs extends test_objects
         global $sys;
         $t_src = new test_sources($this->env);
         $ref = $this->reference();
-        $ref->set_source($t_src->source());
+        $ref->set_source($t_src->source_reserved());
         $ref->set_url(refs::PI_URL);
         $ref->include();
         $ref->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
@@ -206,7 +206,7 @@ class test_refs extends test_objects
         $ref->set_phrase($t_wrd->word()->phrase());
         $ref->set_external_key(refs::PI_KEY);
         $ref->set_url(refs::PI_URL);
-        $ref->set_source($t_src->source());
+        $ref->set_source($t_src->source_reserved());
         $ref->description = refs::PI_COM;
         $ref->exclude();
         $ref->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));

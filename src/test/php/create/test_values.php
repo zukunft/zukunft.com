@@ -221,7 +221,7 @@ class test_values
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_16();
         $val = new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
-        $val->set_source($t_src->source());
+        $val->set_source($t_src->source_reserved());
         $val->exclude();
         $val->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $val->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
@@ -246,7 +246,7 @@ class test_values
         $t_src = new test_sources($this->env);
         $grp = $t_grp->transition_cs_133();
         $val = new value($this->env->usr1, round(values::TRANSITION_OF_CS, 13), $grp);
-        $val->set_source($t_src->source());
+        $val->set_source($t_src->source_reserved());
         return $val;
     }
 
@@ -256,7 +256,7 @@ class test_values
         $t_src = new test_sources($this->env);
         $grp = $t_grp->group_speed_of_light();
         $val = new value($this->env->usr1, round(values::SPEED_OF_LIGHT, 13), $grp);
-        $val->set_source($t_src->source());
+        $val->set_source($t_src->source_reserved());
         return $val;
     }
 
@@ -266,7 +266,7 @@ class test_values
         $t_src = new test_sources($this->env);
         $grp = $t_grp->group_speed_of_light_with_two_units();
         $val = new value($this->env->usr1, round(values::SPEED_OF_LIGHT, 13), $grp);
-        $val->set_source($t_src->source());
+        $val->set_source($t_src->source_reserved());
         return $val;
     }
 
