@@ -1213,25 +1213,27 @@ class sandbox_link extends sandbox
     function is_same_std(object $obj_to_check): bool
     {
         $result = false;
-        if (isset($this->fob)
-            and isset($this->tob)
-            and isset($obj_to_check->fob)
-            and isset($obj_to_check->tob)) {
-            if ($this->fob->id() == $obj_to_check->fob->id() and
-                $this->tob->id() == $obj_to_check->tob->id()) {
-                $result = true;
-            }
-        } elseif ($obj_to_check::class == triple::class) {
+        if (parent::is_same_std($obj_to_check)) {
             if (isset($this->fob)
-                and $this->has_verb()
                 and isset($this->tob)
                 and isset($obj_to_check->fob)
-                and $obj_to_check->has_verb()
                 and isset($obj_to_check->tob)) {
-                if ($this->fob->id() == $obj_to_check->fob->id()
-                    and $this->predicate_id() == $obj_to_check->predicate_id()
-                    and $this->tob->id() == $obj_to_check->tob->id()) {
+                if ($this->fob->id() == $obj_to_check->fob->id() and
+                    $this->tob->id() == $obj_to_check->tob->id()) {
                     $result = true;
+                }
+            } elseif ($obj_to_check::class == triple::class) {
+                if (isset($this->fob)
+                    and $this->has_verb()
+                    and isset($this->tob)
+                    and isset($obj_to_check->fob)
+                    and $obj_to_check->has_verb()
+                    and isset($obj_to_check->tob)) {
+                    if ($this->fob->id() == $obj_to_check->fob->id()
+                        and $this->predicate_id() == $obj_to_check->predicate_id()
+                        and $this->tob->id() == $obj_to_check->tob->id()) {
+                        $result = true;
+                    }
                 }
             }
         }

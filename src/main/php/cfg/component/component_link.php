@@ -862,6 +862,27 @@ class component_link extends sandbox_link
         return $result;
     }
 
+    /**
+     * check if the id parameters are supposed to be changed
+     * the order_nbr is part of the unique index of the component link,
+     * because the same order number cannot be used twice
+     *
+     * @param component_link|db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(component_link|db_object_seq_id $db_rec): bool
+    {
+        $result = parent::is_key_updated($db_rec);
+
+        if ($this->order_nbr !== null) {
+            if ($this->order_nbr != $db_rec->order_nbr) {
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
 
     /*
      * modify

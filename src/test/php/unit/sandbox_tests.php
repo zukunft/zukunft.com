@@ -193,11 +193,16 @@ class sandbox_tests
         $src2 = new source($usr);
         $src2->set(sources::WIKIDATA_ID, sources::IPCC_AR6_SYNTHESIS);
         $result = $src1->is_same($src2);
-        $t->assert("are two sources supposed to be the same", $result, true);
+        $t->assert("two sources are not the same if the id does not match", $result, false);
 
         // ... and they are of course also similar
         $result = $src1->is_similar($src2);
-        $t->assert("... and similar", $result, true);
+        $t->assert("... but they are similar", $result, true);
+
+        // ... but could be the same
+        $src1->id = 0;
+        $result = $src1->is_same($src2);
+        $t->assert("two sources are supposed to be the same if the id id empty", $result, true);
 
         // TODO review test (start with test_name="" and move the creation to the test object creation)
         // a source can have the same name as a word

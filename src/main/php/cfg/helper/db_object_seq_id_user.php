@@ -237,10 +237,23 @@ class db_object_seq_id_user extends db_object_seq_id
         return $msg;
     }
 
-
-    /*
-     * info
+    /**
+     * if the db id is set, they must be the same to make the check valid if the objects are the same
+     * @param object $obj_to_check the object used for the comparison
+     * @return bool true if the id is not yet set or the ids match
      */
+    function is_same_std(object $obj_to_check): bool
+    {
+        if ($this->id() == 0) {
+            return true;
+        } else {
+            if ($this->id() == $obj_to_check->id()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 
     /**
      * Create an object where only the vars are set

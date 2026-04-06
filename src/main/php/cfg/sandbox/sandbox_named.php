@@ -1000,17 +1000,33 @@ class sandbox_named extends sandbox
     }
 
     /**
-     * check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
+     * check if the unique key and the db id of two user sandbox object is the same if the object type is the same, so the simple case
      * @param object $obj_to_check the object used for the comparison
      * @return bool true if the objects have the same unique name
      */
     function is_same_std(object $obj_to_check): bool
     {
-        if ($this->name == $obj_to_check->name) {
-            return true;
-        } else {
-            return false;
+        $result = false;
+        if (parent::is_same_std($obj_to_check)) {
+            if ($this->name == $obj_to_check->name) {
+                $result = true;
+            }
         }
+        return $result;
+    }
+
+    /**
+     * check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
+     * @param object $obj_to_check the object used for the comparison
+     * @return bool true if the objects have the same unique name
+     */
+    function is_similar_std(object $obj_to_check): bool
+    {
+        $result = false;
+        if ($this->name == $obj_to_check->name) {
+            $result = true;
+        }
+        return $result;
     }
 
     /**
@@ -1065,7 +1081,7 @@ class sandbox_named extends sandbox
             if ($similar_trm->id_obj() > 0) {
                 $sim = $similar_trm->obj();
                 if (!$this->is_similar_named($sim)) {
-                    log_err($this->dsp_id() . ' is supposed to be similar to ' . $sim->dsp_id() . ', but it seems not');
+                    $msg->merge($sim->id_used_msg($this));
                 }
             } else {
                 $similar_trp = new triple($this->get_user());

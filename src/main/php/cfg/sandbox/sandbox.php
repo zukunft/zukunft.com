@@ -2369,11 +2369,16 @@ class sandbox extends db_object_seq_id_user
      */
     function is_same_std(object $obj_to_check): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'is_same_std',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        return parent::is_same_std($obj_to_check);
+    }
+
+    /**
+     * check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
+     * @param object $obj_to_check the object used for the comparison
+     * @return bool true if the objects have the same unique name
+     */
+    function is_similar_std(object $obj_to_check): bool
+    {
         return false;
     }
 
@@ -2475,16 +2480,16 @@ class sandbox extends db_object_seq_id_user
      * so if the formulas "millions" is compared with the word "millions" this function returns true
      * just to double-check if the get similar function is working correctly,
      * in short: if two objects are similar by this definition, they should not be both in the database
-     * @param null|object $obj_to_check the object used for the comparison
+     * @param type_object|sandbox|null $obj_to_check the object used for the comparison
      * @return bool true if the objects should not be in the database at the same time
      */
-    function is_similar(?object $obj_to_check): bool
+    function is_similar(type_object|sandbox|null $obj_to_check): bool
     {
         $result = false;
         if ($obj_to_check != null) {
             //
             if ($this::class == $obj_to_check::class) {
-                $result = $this->is_same_std($obj_to_check);
+                $result = $this->is_similar_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
                 if (in_array($this::class, def::TERM_CLASSES)
