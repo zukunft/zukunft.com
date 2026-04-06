@@ -51,6 +51,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -591,6 +593,22 @@ class sandbox_link_named extends sandbox_link
     }
 
     /**
+     * check if the id parameters are supposed to be changed
+     * @param sandbox_named|db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(sandbox_named|db_object_seq_id $db_rec): bool
+    {
+        $result = parent::is_key_updated($db_rec);
+
+        if ($db_rec->name() <> $this->name()) {
+            $result = True;
+        }
+
+        return $result;
+    }
+
+    /**
      * just to double-check if the get similar function is working correctly
      * so if the formulas "millions" is compared with the word "millions" this function returns true
      * in short: if two objects are similar by this definition, they should not be both in the database
@@ -622,10 +640,10 @@ class sandbox_link_named extends sandbox_link
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @return sandbox|null a filled object that links the same objects
+     * @return type_object|sandbox|null a filled object that links the same objects
      *                      or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): ?sandbox
+    function get_similar(user_message $msg): type_object|sandbox|null
     {
         $sim = parent::get_similar($msg);
 
@@ -655,6 +673,7 @@ class sandbox_link_named extends sandbox_link
 
         return $sim;
     }
+
 
     /*
      * log read

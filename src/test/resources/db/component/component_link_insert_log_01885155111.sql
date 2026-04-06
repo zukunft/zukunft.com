@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION component_link_insert_log_01888155111
+CREATE OR REPLACE FUNCTION component_link_insert_log_01885155111
     (_view_id                   bigint,
      _component_link_type_id    smallint,
      _component_id              bigint,
@@ -70,12 +70,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE component_link_insert_log_01888155111_call
+PREPARE component_link_insert_log_01885155111_call
         (bigint,smallint,bigint,bigint,smallint,smallint,text,text,text,smallint,smallint,bigint,smallint,text,smallint,smallint,text,smallint,smallint,smallint,smallint,smallint,smallint,smallint) AS
-SELECT component_link_insert_log_01888155111
+SELECT component_link_insert_log_01885155111
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24);
 
-SELECT component_link_insert_log_01888155111
+SELECT component_link_insert_log_01885155111
     (1::bigint,
      2::smallint,
      1::bigint,

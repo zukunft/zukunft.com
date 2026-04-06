@@ -397,11 +397,14 @@ class def
         component_link::class,
     ];
 
-    // list of classes where the link of two objects and the predicate/type is the main unique key beside the database id
+    // list of classes where the link of two objects and the
+    // predicate/type is part of the main unique key beside the database id
+    // e.g. a word / phrase could have several external references (wikipedia and Wikidata)
+    //      but if the type of a component link is changes the type should be overwritten in the database
+    //      because each component could be just added once to a view at position defined by the order number
     const array LINK_TYPE_CLASSES = [
         triple::class,
         ref::class,
-        component_link::class,
     ];
 
     // classes that have a frontend and backend object but are not user-specific

@@ -759,6 +759,16 @@ class component_link extends sandbox_link
         return $this->fob();
     }
 
+    function view_id(): int|null
+    {
+        return $this->fob?->id();
+    }
+
+    function component_id(): int|null
+    {
+        return $this->tob?->id();
+    }
+
     /**
      * rename to standard link to object to component
      * @return sandbox_named|component
@@ -950,6 +960,29 @@ class component_link extends sandbox_link
     }
 
     /**
+     * load the object parameters for all users by the link ids
+     *
+     * @param int $from_id the id of the view that should have the component
+     * @param int $typ_id the id of the type how the component should be linked to the view
+     * @param int $to_id the id of the component to link
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_type_link(
+        int          $from_id,
+        int          $typ_id,
+        int          $to_id,
+        user_message $msg
+    ): bool
+    {
+        return parent::load_standard_by_type_link_parent(
+            view_db::FLD_ID, $from_id,
+            component_link_type::FLD_ID, $typ_id,
+            component::FLD_ID, $to_id, $msg
+        );
+    }
+
+    /**
      * load the component_link by the link id
      *
      * @param int $view_id the id of the view
@@ -984,8 +1017,8 @@ class component_link extends sandbox_link
      * @return bool true if the standard object has been loaded
      */
     function load_standard_by_link(
-        int $from_id,
-        int $to_id,
+        int          $from_id,
+        int          $to_id,
         user_message $msg
     ): bool
     {
@@ -1404,10 +1437,10 @@ class component_link extends sandbox_link
     /**
      * get a similar reference
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @return component_link|sandbox|null a filled object that links the same objects
+     * @return component_link|type_object|sandbox|null a filled object that links the same objects
      *                                     or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): component_link|sandbox|null
+    function get_similar(user_message $msg): component_link|type_object|sandbox|null
     {
         $sim = null;
 

@@ -2379,12 +2379,14 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * check that the given object is by the unique keys the same as the actual object
-     * handles the specials case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
+     * handles the special case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
      * so if a formula word "millions" is different from the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
      * in short: if two objects are the same by this definition, they are supposed to be merged
+     * @param word|type_object|sandbox $obj_to_check
+     * @param user_message $msg to collect the messages for the user
      * @return bool true if the given object is exactly the same as this object
      */
-    function is_formula_word(word|sandbox $obj_to_check, user_message $msg): bool
+    function is_formula_word(word|type_object|sandbox $obj_to_check, user_message $msg): bool
     {
         global $sys;
 
@@ -2430,9 +2432,10 @@ class sandbox extends db_object_seq_id_user
      * handles the specials case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
      * so if a formula word "millions" is different from the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
      * in short: if two objects are the same by this definition, they are supposed to be merged
+     * @param word|type_object|sandbox $obj_to_check the filled object that might be the same as this object
      * @return bool true if the given object is exactly the same as this object and the two objects can be merged
      */
-    function is_same(word|sandbox $obj_to_check): bool
+    function is_same(word|type_object|sandbox $obj_to_check): bool
     {
         global $sys;
         $result = false;
@@ -2446,7 +2449,7 @@ class sandbox extends db_object_seq_id_user
                     }
                 }
                 if (in_array($this::class, def::CODE_ID_CLASSES)) {
-                    if ($this->code_id != $obj_to_check->code_id) {
+                    if ($this->code_id != $obj_to_check->code_id and $obj_to_check->code_id !== null) {
                         $result = false;
                     }
                 }
@@ -2728,9 +2731,14 @@ class sandbox extends db_object_seq_id_user
                         if ($this->is_same($sim)) {
                             // reload the similar database row to update it
                             if ($sim->has_id()) {
-                                $this->id = $sim->id();
+                                if (!$this->has_id()) {
+                                    // if the id is not set not database field should be removed
+                                    $this->id = $sim->id();
+                                    $this->fill($sim, $msg->usr);
+                                }
                                 $db_rec = $this->load_db($msg);
-                                $this->merged_info_message($this, $msg);
+                                // TODO Prio 1 activate
+                                //$this->merged_info_message($this, $msg);
                             }
                         } else {
                             // add first the detail information how the $sim object matches

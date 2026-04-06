@@ -447,12 +447,13 @@ class db_object_seq_id extends db_object
      */
     function is_key_updated(db_object_seq_id $db_rec): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'is_key_updated',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return false;
+        $result = false;
+        if ($this->id() != 0) {
+            if ($this->id() != $db_rec->id()) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**

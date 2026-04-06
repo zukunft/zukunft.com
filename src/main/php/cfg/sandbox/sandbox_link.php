@@ -74,6 +74,7 @@ include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
@@ -115,6 +116,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -745,6 +747,12 @@ class sandbox_link extends sandbox
     /**
      * create an SQL statement to retrieve the parameters of the standard formula link from the database
      *
+     * @param string $from_fld the db field name of the parent object
+     * @param int $from_id the database id of the parent object
+     * @param string $type_fld the db field name that specifies the connection between the objets
+     * @param int $type_id the database id of the connection type
+     * @param string $to_fld the db field name of the child object
+     * @param int $to_id the database id of the child object
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
@@ -891,6 +899,36 @@ class sandbox_link extends sandbox
         } else {
             return false;
         }
+    }
+
+    /**
+     * check if the id parameters are supposed to be changed
+     * @param sandbox_link|db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(sandbox_link|db_object_seq_id $db_rec): bool
+    {
+        $result = parent::is_key_updated($db_rec);
+
+        if ($this->fob->id() != 0) {
+            if ($this->fob->id() != $db_rec->fob->id()) {
+                $result = true;
+            }
+        }
+        if ($this->tob->id() != 0) {
+            if ($this->tob->id() != $db_rec->tob->id()) {
+                $result = true;
+            }
+        }
+        if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+            if ($this->predicate_id() != 0) {
+                if ($this->predicate_id() != $db_rec->predicate_id()) {
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -1213,12 +1251,16 @@ class sandbox_link extends sandbox
         $class_name = $lib->class_to_name($this::class);
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
         $msg = new user_message();
-        $msg->add(msg_id::LINK_ALREADY_EXISTS, [
-            msg_id::VAR_CLASS_NAME => $class_name,
-            msg_id::VAR_NAME_FROM => $obj_to_add->fob()->name(),
-            msg_id::VAR_NAME_TO => $obj_to_add->tob()->name(),
-            msg_id::VAR_VALUE => $obj_to_add_name
-        ]);
+        if ($obj_to_add->fob() == null or $obj_to_add->tob() == null) {
+            log_err('similar link is incomplete');
+        } else {
+            $msg->add(msg_id::LINK_ALREADY_EXISTS, [
+                msg_id::VAR_CLASS_NAME => $class_name,
+                msg_id::VAR_NAME_FROM => $obj_to_add->fob()->name(),
+                msg_id::VAR_NAME_TO => $obj_to_add->tob()->name(),
+                msg_id::VAR_VALUE => $obj_to_add_name
+            ]);
+        }
         return $msg;
     }
 
@@ -1232,10 +1274,10 @@ class sandbox_link extends sandbox
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @return sandbox|null a filled object that links the same objects
-     *                      or null if nothing similar has been found
+     * @return type_object|sandbox|null a filled object that links the same objects
+     *                                  or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): ?sandbox
+    function get_similar(user_message $msg): type_object|sandbox|null
     {
         $sim = null;
 

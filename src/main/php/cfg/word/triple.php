@@ -74,6 +74,7 @@ include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LANGUAGE . 'language.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
@@ -125,6 +126,7 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -194,7 +196,7 @@ class triple extends sandbox_link_named
     private string $name_generated;
 
     // to select single triple used by the system without using the type that can potentially select more than one triple
-    private ?string $code_id;
+    public ?string $code_id;
 
     // the weight of this triple compared to others where 1 represents 100% weight
     public ?float $weight {
@@ -2545,9 +2547,9 @@ class triple extends sandbox_link_named
      * check additional if the opposite triple already exists and if yes, ask for confirmation
      *
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @returns triple|sandbox|null a filled object that has the same name, links or reverse links
+     * @returns triple|type_object|sandbox|null a filled object that has the same name, links or reverse links
      */
-    function get_similar(user_message $msg): triple|sandbox|null
+    function get_similar(user_message $msg): triple|type_object|sandbox|null
     {
         $sim = parent::get_similar($msg);
 

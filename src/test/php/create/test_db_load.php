@@ -1221,7 +1221,7 @@ class test_db_load
     }
 
     /**
-     * update the list of types json file
+     * update the list of types a json file
      * called upfront also from the reset db run because this is used for the unit tests
      *
      * @param all_tests $t the test object to collect the errors and calculate the execution times

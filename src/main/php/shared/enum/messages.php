@@ -696,7 +696,7 @@ enum messages: string
         . '" created';
     case COMPONENT_ALREADY_EXISTS = 'A view component with the name "'
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
-        . '" already exists. Please use another name.';
+        . '" ' . self::ALREADY_EXISTS->value . '. Please use another name.';
 
     // messages with vars for import
     case IMPORT_READ_ERROR = 'error reading to decode json '
@@ -1037,21 +1037,21 @@ enum messages: string
         . self::VAR_START . self::VAR_VERB_NAME . self::VAR_END
         . ' '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
-        . '" already exists. Do you really want to create both sides?';
+        . '" ' . self::ALREADY_EXISTS->value . '. Do you really want to create both sides?';
     case REF_ALREADY_EXISTS = 'reference  "'
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
         . ' from '
         . self::VAR_START . self::VAR_PHRASE . self::VAR_END
         . ' to '
         . self::VAR_START . self::VAR_URL_KEY . self::VAR_END
-        . '" already exists';
+        . '" ' . self::ALREADY_EXISTS->value . '';
     case COMPONENT_LINK_ALREADY_EXISTS = 'component '
         . self::VAR_START . self::VAR_COMPONENT . self::VAR_END
         . ' is already connected to '
         . self::VAR_START . self::VAR_VIEW . self::VAR_END
         . ' as '
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
-        . '" already exists';
+        . '" ' . self::ALREADY_EXISTS->value . '';
     case FAILED_RELOAD_CLASS = 'Reload "'
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '" failed';

@@ -45,6 +45,7 @@ include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
@@ -67,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -396,6 +398,21 @@ class test_components extends test_objects
         $t_msk = new test_views($this->env);
         $lnk = $this->component_link();
         $lnk->set_view($t_msk->view_incomplete());
+        return $lnk;
+    }
+
+    /**
+     * @return component_link with view and component set by id only (no name),
+     *         excluded and with share and protection set,
+     *         to check if the sql insert function handles partial excluded objects correctly
+     */
+    function component_link_half_filled(): component_link
+    {
+        global $sys;
+        $lnk = $this->component_link();
+        $lnk->exclude();
+        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $lnk;
     }
 
