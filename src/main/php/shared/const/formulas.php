@@ -68,6 +68,7 @@ class formulas
     const int SCALE_TO_SEC_ID = 1;
     const string SCALE_HOUR = 'scale hour to sec';
     const int SCALE_HOUR_ID = 2;
+    const string SCALE_HOUR_EXP = '{w24}={w105}*3600';
     const string DIAMETER = '= "circumference" / "Pi"';
     const string DIAMETER_DB = '={w' . words::CIRCUMFERENCE_ID . '}/{w' . words::PI_ID . '}';
     const string THIS_NAME = 'this';

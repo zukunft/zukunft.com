@@ -48,7 +48,7 @@ PREPARE formula_insert_log_0110001110100000_call
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);
 
 SELECT formula_insert_log_0110001110100000 (
-               'scale minute to sec'::text,
+               'scale hour to sec'::text,
                3::bigint,
                1::smallint,
                30::smallint,
@@ -56,6 +56,6 @@ SELECT formula_insert_log_0110001110100000 (
                31::smallint,
                1::smallint,
                33::smallint,
-               '{w24}={w104}*60'::text,
+               '{w24}={w105}*3600'::text,
                32::smallint,
-               '"second" = "minute" * 60'::text);
+               '{w24}={w105}*3600'::text);

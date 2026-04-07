@@ -61,6 +61,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_LOG . 'change_table.php';
 //include_once paths::MODEL_LOG . 'change_table_field.php';
 //include_once paths::MODEL_LOG . 'change_field.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_SYSTEM . 'pod.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -608,10 +610,10 @@ class type_object extends db_object_seq_id
 
     /**
      * suggest to the user to use a different name
-     * @param type_object $obj_to_add the type object that the user wanted to add
+     * @param type_object|sandbox $obj_to_add the type object that the user wanted to add
      * @return user_message a message to use a different name
      */
-    function id_used_msg(type_object $obj_to_add): user_message
+    function id_used_msg(type_object|sandbox $obj_to_add): user_message
     {
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);

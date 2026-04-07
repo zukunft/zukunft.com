@@ -71,6 +71,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
@@ -107,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
@@ -1065,10 +1067,10 @@ class sandbox_named extends sandbox
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @return sandbox|null a filled object that has the same name
+     * @return type_object|sandbox|null a filled object that has the same name
      *                      or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): ?sandbox
+    function get_similar(user_message $msg): type_object|sandbox|null
     {
         log_debug('check possible duplicates before adding ' . $this->dsp_id());
         $sim = null;

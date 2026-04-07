@@ -173,6 +173,7 @@ class test_terms
         $lst = new term_list($this->env->usr1);
         $lst->add($t_wrd->second()->term());
         $lst->add($t_wrd->word_minute()->term());
+        $lst->add($t_wrd->word_hour()->term());
         return $lst;
     }
 

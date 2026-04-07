@@ -616,6 +616,13 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    function word_hour(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::HOUR_ID, words::HOUR);
+        return $wrd;
+    }
+
     function second(): word
     {
         $wrd = new word($this->env->usr1);

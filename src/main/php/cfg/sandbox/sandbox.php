@@ -2514,10 +2514,10 @@ class sandbox extends db_object_seq_id_user
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @returns sandbox|db_object|null a filled object that has the same name or links the same objects
+     * @returns sandbox|type_object|db_object|null a filled object that has the same name or links the same objects
      *                  or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): sandbox|db_object|null
+    function get_similar(user_message $msg): sandbox|type_object|db_object|null
     {
         $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'get_similar',

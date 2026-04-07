@@ -241,6 +241,8 @@ class words
     const int FLOW_ID = 101;
     const string MINUTE = 'minute';
     const int MINUTE_ID = 104;
+    const string HOUR = 'hour';
+    const int HOUR_ID = 105;
     const string YEAR_2019 = '2019';
     const int YEAR_2019_ID = 139;
     const string YEAR_2020 = '2020';

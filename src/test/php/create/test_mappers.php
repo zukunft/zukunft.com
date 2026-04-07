@@ -292,7 +292,7 @@ class test_mappers
                 $obj = $t_grp->group();
                 break;
             case formula::class;
-                $obj = $t_frm->formula();
+                $obj = $t_frm->formula_rename();
                 break;
             case formula_link::class;
                 $obj = $t_frm->formula_link();
