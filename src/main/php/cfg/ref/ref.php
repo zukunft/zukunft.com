@@ -222,7 +222,7 @@ class ref extends sandbox_link
         }
         parent::reset($keep_user);
         $this->create_objects($usr);
-        $this->external_key = '';
+        $this->external_key = null;
         $this->source = null;
         $this->url = null;
         $this->description = null;
@@ -566,9 +566,9 @@ class ref extends sandbox_link
     }
 
     /**
-     * @return int|string the unique id of the external object
+     * @return int|string|null the unique id of the external object
      */
-    function to_id(): int|string
+    function to_id(): int|string|null
     {
         return $this->get_external_key();
     }
@@ -968,7 +968,7 @@ class ref extends sandbox_link
         return ref_db::FLD_EX_KEY;
     }
 
-    function to_value(): string
+    function to_value(): string|null
     {
         return $this->get_external_key();
     }
@@ -1176,24 +1176,24 @@ class ref extends sandbox_link
     function fill(ref|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_url() != null) {
+        if ($this->get_url() === null and $obj->get_url() != null) {
             $this->set_url($obj->get_url());
         }
-        if ($obj->get_external_key() != null) {
+        if ($this->get_external_key() === null and $obj->get_external_key() != null) {
             $this->set_external_key($obj->get_external_key());
         }
         if ($obj->phrase() != null) {
-            if ($obj->phrase()->id() != 0) {
+            if ($this->phrase()->id() == 0 and $obj->phrase()->id() != 0) {
                 $this->set_phrase($obj->phrase());
             }
         }
-        if ($obj->get_source() != null) {
+        if ($this->get_source() === null and $obj->get_source() != null) {
             $this->set_source($obj->get_source());
         }
-        if ($obj->predicate_id() != 0) {
+        if ($this->predicate_id() === null and $obj->predicate_id() != 0) {
             $this->set_predicate_id($obj->predicate_id());
         }
-        if ($obj->description != null) {
+        if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
         return $usr_msg;

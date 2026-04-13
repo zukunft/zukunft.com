@@ -507,7 +507,7 @@ class test_mappers
                 $obj = $t_val->value_16_filled();
                 break;
             case formula::class;
-                $obj = $t_frm->formula_filled();
+                $obj = $t_frm->formula_filled_add();
                 break;
             case result::class;
                 $obj = $t_res->result_main_filled();

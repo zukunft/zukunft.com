@@ -59,7 +59,7 @@ SELECT ref_update_log_0042442002000 (
                null,
                160,
                'Q167',
-               '',
+               null,
                65,
                'pi - ratio of the circumference of a circle to its diameter',
                null);

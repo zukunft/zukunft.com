@@ -60,7 +60,7 @@ SELECT ref_update_log_0042442002000 (
                null::smallint,
                160::smallint,
                'Q167'::text,
-               ''::text,
+               null::text,
                65::smallint,
                'pi - ratio of the circumference of a circle to its diameter'::text,
                null::text);

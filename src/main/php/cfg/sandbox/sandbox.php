@@ -1959,16 +1959,19 @@ class sandbox extends db_object_seq_id_user
      * @return bool true if everything has been fine
      */
     function save_fields_func(
-        sql_db       $db_con,
-        sandbox      $db_obj,
-        sandbox      $norm_obj,
-        user_message $usr_msg = new user_message()
+        sql_db         $db_con,
+        sandbox        $db_obj,
+        sandbox        $norm_obj,
+        user_message   $usr_msg,
+        ?sql_type_list $sc_par_lst = null
     ): bool
     {
         // the sql creator is used more than once, so create it upfront
         $sc = $db_con->sql_creator();
         // the sql function should include the log of the changes
-        $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        if ($sc_par_lst == null) {
+            $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        }
         // get a list of all fields that could potentially be updated
         $all_fields = $this->db_fields_all();
         // get the object name for the log messages
@@ -2771,7 +2774,7 @@ class sandbox extends db_object_seq_id_user
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
                     if ($msg->is_ok()) {
-                        $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
+                        $this->save_fields_func($db_con, $db_rec, $std_rec, $msg, $sc_par_lst);
                     }
                 }
             }
