@@ -1561,6 +1561,9 @@ class formula_map extends sandbox_code_id
 
         global $db_con;
 
+        // convert the formula text to db format (any error messages should have been returned from the calling user script)
+        $this->generate_ref_text(null, $msg);
+
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
         if ($msg->is_ok()) {
@@ -1591,187 +1594,65 @@ class formula_map extends sandbox_code_id
     }
 
     /**
-     * add or update a formula in the database or create a user formula
-     * overwrite the _sandbox function to create the formula ref text; maybe combine later
+     * dummy function that is supposed to be overwritten by the child class formula
      *
-     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
-     * @return bool true if everything has been fine
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param user_message $msg to enrich with problems and suggested solution
+     * @return bool true if the update of the reference text was successful and otherwise the error message is added to the user_message object
      */
-    function save(
-        user_message        $msg,
-        sql_type_list|array $sc_par_lst = []
+    function generate_ref_text(
+        ?term_list   $trm_lst = null,
+        user_message $msg = new user_message()
     ): bool
     {
-        // saving to database is always time consuming so a log entry might help to detect duplicate save calls
-        log_debug($this->dsp_id());
-
-        global $db_con;
-        global $mtr;
-        global $sys;
-
-        // check the preserved names
-        if ($this->check_save($msg)) {
-
-            // check if a new formula is supposed to be added
-            if ($this->id() <= 0) {
-                // check if a verb, formula or word with the same name is already in the database
-                log_debug('add ' . $this->dsp_id());
-                $trm = $this->get_term();
-                if ($trm->id_obj() > 0) {
-                    if ($trm->type() <> formula::class) {
-                        if ($trm->type() == word::class) {
-                            if ($trm->obj()->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
-                                log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
-                            } else {
-                                $msg->merge($trm->id_used_msg($this));
-                            }
-                        } else {
-                            $msg->merge($trm->id_used_msg($this));
-                        }
-                    } else {
-                        $this->id = $trm->id_obj();
-                        log_debug('->save adding formula name ' . $this->dsp_id() . ' is OK');
-                    }
-                }
-            }
-        }
-
-        // create an object to check possible duplicates
-        $sim = null;
-
-        // if a new object is supposed to be added, check upfront for a similar object to prevent adding duplicates
-        if ($this->id() == 0) {
-            log_debug('check possible duplicates before adding ' . $this->dsp_id());
-            $sim_msg = new user_message();
-            $sim = $this->get_similar($sim_msg);
-            if ($sim != null) {
-                if ($sim->has_id()) {
-                    // check that the get_similar function has really found a similar object and report potential program errors
-                    if (!$this->is_similar($sim)) {
-                        $msg_not = $mtr->txt(msg_id::NOT_SIMILAR);
-
-                        $msg->add(msg_id::FORMULA_NOT_SIMILAR, [
-                            msg_id::VAR_ID => $this->dsp_id(),
-                            msg_id::VAR_VALUE => $msg_not,
-                            msg_id::VAR_VAL_ID => $sim->dsp_id()
-                        ]);
-                    } else {
-                        // if similar is found, set the id to trigger the updating instead of adding
-                        $sim->load_by_id($sim->id()); // e.g. to get the type_id
-                        // to prevent that the id of a formula is used for the word with the type formula link
-                        if (get_class($this) == get_class($sim)) {
-                            $this->id = $sim->id();
-                        } else {
-                            if (!((get_class($this) == word::class and get_class($sim) == formula::class)
-                                or (get_class($this) == triple::class and get_class($sim) == formula::class))) {
-                                $msg->merge($sim->id_used_msg($this));
-                            }
-                        }
-                    }
-                } else {
-                    $sim = null;
-                }
-            }
-
-        }
-
-        // create a new formula or update an existing
-        if ($msg->is_ok()) {
-            if ($this->id() <= 0) {
-                // convert the formula text to db format (any error messages should have been returned from the calling user script)
-                $this->generate_ref_text(null, $msg);
-                if ($msg->is_ok()) {
-
-                    log_debug('add');
-                    $this->add($msg);
-                }
-            } else {
-                // if the similar object is different from $this object, suggest renaming $this object
-                if ($sim != null) {
-                    log_debug('got similar and suggest renaming or merge');
-                    // e.g. if a source already exists, update the source
-                    // but if a word with the same name of a formula already exists, suggest a new formula name
-                    if (!$this->is_same($sim)) {
-                        $msg->merge($sim->id_used_msg($this));
-                    }
-                }
-
-                // update the existing object
-                if ($msg->is_ok()) {
-                    log_debug('update ' . $this->id());
-                    // read the database values to be able to check if something has been changed; done first,
-                    // because it needs to be done for user and general formulas
-                    $db_rec = new formula($this->get_user());
-                    $db_rec->load_by_id($this->id());
-                    log_debug('database formula "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
-
-                    // relevant is if there is a user config in the database,
-                    // so use this information to prevent
-                    // the need to forward the db_rec to all functions
-                    if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
-                        $this->usr_cfg_id = $db_rec->usr_cfg_id;
-                    }
-
-                    $std_rec = new formula($this->get_user()); // must also be set to allow to take the ownership
-                    $std_rec->load_standard($this->id(), $msg);
-                    log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id . ') loaded');
-
-                    // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save
-                    if ($this->owner_id() <= 0) {
-                        $this->set_owner_id($std_rec->owner_id());
-                    }
-
-                    // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
-                    $this->generate_ref_text(null, $msg);
-                    if ($msg->is_ok()) {
-
-                        // check if the id parameters are supposed to be changed
-                        $this->delete_old_key_row($db_rec, $msg);
-
-                        // if a problem has appeared up to here, don't try to save the values
-                        // the problem is shown to the user by the calling interactive script
-                        if ($msg->is_ok()) {
-
-                            if ($db_rec->name() <> $this->name()) {
-                                log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
-                                // in case a word link exist, change also the name of the word
-                                if (!$this->wrd_rename($db_rec->name(), $msg)) {
-                                    $msg->all_info_text('formula ' . $db_rec->name() . ' cannot be renamed to ' . $this->name() . ', because ...');
-                                }
-                            }
-
-                            $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
-                        }
-                    }
-                }
-
-            }
-
-            // update the reference table for fast calculation
-            // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
-            if ($msg->is_ok()) {
-                $msg_elm = $msg->clone_reset();
-                // TODO Prio 1 load upfront the needed term and use the trm_lst
-                if (!$this->element_refresh($msg_elm)) {
-                    log_info('formula import failed on first try. relevant?');
-                    //$msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
-                }
-            }
-        }
-
-        if (!$msg->is_ok()) {
-            log_info($msg->get_last_message());
-        }
-
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'generate_ref_text',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return $msg->is_ok();
-
     }
 
 
     /*
      * save helper
      */
+
+    /**
+     * save all updated fields with one sql function
+     * similar to the sandbox_multi save_fields_func function but for only one table
+     *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param sandbox $db_obj the database record before saving the changes whereas $this is the record with the changes
+     * @param sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @return bool true if everything has been fine
+     */
+    function save_fields_func(
+        sql_db         $db_con,
+        sandbox        $db_obj,
+        sandbox        $norm_obj,
+        user_message   $usr_msg,
+        ?sql_type_list $sc_par_lst = null
+    ): bool
+    {
+        if ($db_obj->name() <> $this->name()) {
+            log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_obj->dsp_id()
+                . ' (standard ' . $norm_obj->dsp_id() . ')');
+            // in case a word link exist, change also the name of the word
+            if (!$this->wrd_rename($db_obj->name(), $usr_msg)) {
+                $usr_msg->add(msg_id::FORMULA_WORD_RENAME_FAILED, [
+                    msg_id::VAR_FORMULA => $db_obj->name(),
+                    msg_id::VAR_NAME => $this->name()
+                ]);
+            }
+        }
+
+        if ($usr_msg->is_ok()) {
+            return parent::save_fields_func($db_con, $db_obj, $norm_obj, $usr_msg, $sc_par_lst);
+        } else {
+            return false;
+        }
+    }
 
     /**
      * update the database references to the formula elements

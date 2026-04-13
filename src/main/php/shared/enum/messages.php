@@ -1087,6 +1087,11 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . ' with the expression '
         . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END;
+    case FORMULA_WORD_RENAME_FAILED = 'formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" cannot be renamed to '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' because ... ';
     case FORMULA_REF_EXPRESSION_MISSING = 'the reference is missing in formula '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
 

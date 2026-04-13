@@ -38,6 +38,7 @@
     \-- trp_ids - section for function trp_ids not yet defined that it should be expression in /formula/formula.php
     \-- vrb_ids - section for function vrb_ids not yet defined that it should be expression in /formula/formula.php
     \-- frm_ids - section for function frm_ids not yet defined that it should be expression in /formula/formula.php
+    \-- reload_objects - section for function reload_objects is expected to be related in /formula/formula.php
     \-- generate_ref_text - section for function generate_ref_text not yet defined that it should be save in /formula/formula.php
     \-- generate_usr_text - section for function generate_usr_text not yet defined that it should be save in /formula/formula.php
 \-- formula_link
@@ -81,7 +82,8 @@
     \-- is_term_the_same - section for function is_term_the_same is expected to be info in /formula/formula_map.php
     \-- delete_old_key_row - section for function delete_old_key_row is expected to be del in /formula/formula_map.php
     \-- add - section for function add not yet defined that it should be true if no other user has modified the formula in /formula/formula_map.php
-    \-- save - section for function save is expected to be save in /formula/formula_map.php
+    \-- generate_ref_text - section for function generate_ref_text not yet defined that it should be true if no other user has modified the formula in /formula/formula_map.php
+    \-- save_fields_func - section for function save_fields_func is expected to be save in /formula/formula_map.php
     \-- element_refresh - section for function element_refresh not yet defined that it should be save helper in /formula/formula_map.php
     \-- delete_elements - section for function delete_elements is expected to be del in /formula/formula_map.php
     \-- load_element_list - section for function load_element_list is expected to be load in /formula/formula_map.php
@@ -716,6 +718,8 @@
 \-- save
     \-- get_similar
         \-- component_link - get a similar reference
+    \-- reload_objects
+        \-- formula - check if the objects have been loaded
     \-- generate_ref_text
         \-- formula - update the database reference text based on the user text
     \-- generate_usr_text
@@ -830,9 +834,11 @@
         \-- formula_map - check if the id parameters are supposed to be changed
     \-- add
         \-- formula_map - create a new formula
-    \-- save
-        \-- formula_map - add or update a formula in the database or create a user formula
+    \-- generate_ref_text
+        \-- formula_map - dummy function that is supposed to be overwritten by the child class formula
 \-- save helper
+    \-- save_fields_func
+        \-- formula_map - save all updated fields with one sql function
     \-- element_refresh
         \-- formula_map - update the database references to the formula elements
     \-- delete_elements

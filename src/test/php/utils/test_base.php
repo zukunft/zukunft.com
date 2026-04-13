@@ -2670,10 +2670,11 @@ class test_base
     function assert_save(
         string                         $test_name,
         sandbox_multi|db_object_seq_id $dbo,
-        user_message                   $msg
+        user_message                   $msg,
+        sql_type_list|array            $sc_par_lst = []
     ): bool
     {
-        if ($dbo->save($msg)) {
+        if ($dbo->save($msg, $sc_par_lst)) {
             $db_obj = $dbo->clone_reset();
             $db_obj->load_by_id($dbo->id());
             $diff = $db_obj->diff_msg($dbo);
