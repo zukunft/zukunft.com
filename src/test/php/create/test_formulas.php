@@ -118,7 +118,7 @@ class test_formulas extends test_objects
     }
 
     /**
-     * @return formula for db write testing
+     * @return formula for db write testingthat does not have a reserved name
      */
     function formula_rename(): formula
     {

@@ -34,10 +34,10 @@ PREPARE view_insert_log_01110000000_call FROM
     'SELECT view_insert_log_01110000000 (?,?, ?, ?, ?, ?, ?)';
 
 SELECT view_insert_log_01110000000 (
-               'Start view',
+               'Historic',
                3,
                1,
                42,
                278,
                43,
-               'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.');
+               'show mainly related words that are relevant in sciences');

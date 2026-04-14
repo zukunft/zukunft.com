@@ -301,7 +301,7 @@ class test_mappers
                 $obj = $t_res->result();
                 break;
             case view::class;
-                $obj = $t_msk->view();
+                $obj = $t_msk->view_rename();
                 break;
             case view_relation::class;
                 $obj = $t_msk->view_relation();
@@ -513,7 +513,7 @@ class test_mappers
                 $obj = $t_res->result_main_filled();
                 break;
             case view::class;
-                $obj = $t_msk->view_filled();
+                $obj = $t_msk->view_filled_add();
                 break;
             case component::class;
                 $obj = $t_cmp->component_filled();
