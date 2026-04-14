@@ -26,5 +26,5 @@ SELECT component_delete_log
        (3,
         3,
         51,
-        'Word',
-        1);
+        'system form field name',
+        4);

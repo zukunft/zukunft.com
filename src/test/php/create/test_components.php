@@ -176,6 +176,18 @@ class test_components extends test_objects
         return $cmp;
     }
 
+    /**
+     * @return component for db write testing that does not have a reserved name
+     */
+    function component_rename(): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME);
+        $cmp->set_type(component_types::PHRASE_NAME, $this->env->usr1);
+        $cmp->description = components::FORM_NAME_COM;
+        return $cmp;
+    }
+
     function component_incomplete(): component
     {
         $cmp = $this->component();

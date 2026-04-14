@@ -310,7 +310,7 @@ class test_mappers
                 $obj = $t_msk->term_view();
                 break;
             case component::class;
-                $obj = $t_cmp->component();
+                $obj = $t_cmp->component_rename();
                 break;
             case component_link::class;
                 $obj = $t_cmp->component_link();
