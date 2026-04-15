@@ -56,7 +56,9 @@ class words
 
     // keywords to select the system configuration
     const string THIS_SYSTEM = 'zukunft.com';
+    // TODO Prio 1 add a code_id to all words that are used by the system
     const string SYSTEM = 'system';
+    const string SYSTEM_CODE_ID = 'system';
     const string CONFIGURATION = 'configuration';
 
     // words used to select parts of the system configuration where the normal name should not be changed

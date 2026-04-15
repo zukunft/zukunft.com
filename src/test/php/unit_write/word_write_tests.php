@@ -300,21 +300,47 @@ class word_write_tests
         $target = 'A word with the name "'.words::MATH.'" already exists. Please use another word name.';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
 
-        // test the creation of a new word
+        $test_name = 'creating a new word with the name "' . words::TEST_ADD . '" does not return any error messages';
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(words::TEST_ADD);
         $usr_msg = new user_message($t->usr1);
         $wrd_add->save($usr_msg);
-        $result = $usr_msg->get_last_message_translated();
-        $target = '';
-        $t->assert('word->save for "' . words::TEST_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
+        $result = $usr_msg->text();
+        $t->assert($test_name, $result, '', $t::TIMEOUT_LIMIT_DB);
+
+        $test_name = '... check if the word creation with the name "' . words::TEST_ADD . '" has been logged';
+        if ($wrd_add->id() > 0) {
+            $result = $t->log_last_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id(), true);
+        }
+        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_ADD . '"';
+        $t->assert($test_name, $result, $target);
+
+        $test_name = 'trying to create a new word with the name "' . words::TEST_ADD . '" again automatically merges the word with existing word if no unique key differs';
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(words::TEST_ADD);
+        $wrd_add->description = words::TEST_ADD_COM;
         $usr_msg = new user_message($t->usr1);
         $wrd_add->save($usr_msg);
-        $result = $usr_msg->get_last_message_translated();
-        $target = 'A word with the name "'.words::TEST_ADD.'" already exists. The word "'.words::TEST_ADD.'" created by other users is used.';
-        $t->assert('word->save reject for "' . words::TEST_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
+        $result = $usr_msg->text();
+        $t->assert($test_name, $result, '', $t::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'trying to create a new word with the name "' . words::TEST_ADD . '" again can be used to add a unique id e.g. the code_id "' . words::TEST_ADD_CODE_ID . '"';
+        $wrd_add = new word($t->usr1);
+        $wrd_add->set_name(words::TEST_ADD);
+        $wrd_add->code_id = words::TEST_ADD_CODE_ID;
+        $wrd_add->save($usr_msg);
+        $result = $usr_msg->text();
+        $t->assert($test_name, $result, '', $t::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'trying to create a new word with the name "' . words::TEST_ADD . '" again is rejected if an unique key differs';
+        $wrd_add = new word($t->usr1);
+        $wrd_add->set_name(words::TEST_ADD);
+        $wrd_add->code_id = words::SYSTEM_CODE_ID;
+        $usr_msg = new user_message($t->usr1);
+        $wrd_add->save($usr_msg);
+        $result = $usr_msg->text();
+        $target = 'A word with the name "'.words::TEST_ADD.'" already exists. Please use another word name.';
+        $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // check that the word name cannot be used for a verb, triple or formula any more
         // TODO Prio 0 review
@@ -324,7 +350,7 @@ class word_write_tests
         $vrb->set_name(words::TEST_ADD);
         $usr_msg = new user_message($t->usr1);
         $vrb->save($usr_msg);
-        $result = $usr_msg->get_last_message_translated();
+        $result = $usr_msg->text();
         $target = 'A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.';
         $t->assert('verb cannot have an already used word name', $result, $target);
@@ -336,7 +362,7 @@ class word_write_tests
         $trp->set_name(words::TEST_ADD);
         $usr_msg = new user_message($t->usr1);
         $trp->save($usr_msg);
-        $result = $usr_msg->get_last_message_translated();
+        $result = $usr_msg->text();
         $target = 'A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.';
         $target = 'user message translation for position -1 not found';
@@ -349,7 +375,7 @@ class word_write_tests
         $frm->set_name(words::TEST_ADD);
         $usr_msg = new user_message($t->usr1);
         $frm->save($usr_msg);
-        $result = $usr_msg->get_last_message_translated();
+        $result = $usr_msg->text();
         $target = 'A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.';
         $t->assert('formula cannot by renamed to an already used word name', $result, $target);
@@ -357,13 +383,6 @@ class word_write_tests
 
 
         $t->subheader($ts . 'user log');
-
-        // ... check if the word creation has been logged
-        if ($wrd_add->id() > 0) {
-            $result = $t->log_last_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id(), true);
-        }
-        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_ADD . '"';
-        $t->assert('word->save logged for "' . words::TEST_ADD . '"', $result, $target);
 
         // ... test if the new word has been created
         $wrd_added = $t_db->load_word(words::TEST_ADD);
@@ -417,7 +436,7 @@ class word_write_tests
         $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . 's"';
         $t->assert('word->load plural for "' . words::TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($wrd_reloaded, sql_db::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
-        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . ' description"';
+        $target = users::SYSTEM_TEST_NAME . ' changed "' . words::TEST_ADD_COM . '" to "' . words::TEST_RENAMED . ' description"';
         $t->assert('word->load description for "' . words::TEST_RENAMED . '" logged', $result, $target);
         $t->assert('word->load ref_2 for "' . words::TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_PHRASE_TYPE, $wrd_reloaded->id(), true);
