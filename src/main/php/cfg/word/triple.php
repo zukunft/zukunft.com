@@ -2381,8 +2381,10 @@ class triple extends sandbox_link_named
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
-            if ($db_row[user_db::FLD_ID] > 0) {
-                $result = false;
+            if (key_exists(user_db::FLD_ID, $db_row)) {
+                if ($db_row[user_db::FLD_ID] > 0) {
+                    $result = false;
+                }
             }
         }
         log_debug('triple->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));

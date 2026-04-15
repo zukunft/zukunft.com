@@ -539,7 +539,7 @@ class type_object extends db_object_seq_id
                     }
                 }
             } else {
-                log_err('The code id must be set to check if a similar object exists');
+                log_warning('The code id must be set to check if a similar object exists');
             }
         }
 

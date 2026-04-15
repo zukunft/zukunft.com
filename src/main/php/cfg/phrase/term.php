@@ -274,7 +274,9 @@ class term extends combine_named
             if ($db_row[self::FLD_ID] != 0) {
                 $this->set_obj_from_id($db_row[self::FLD_ID]);
                 $this->set_name($db_row[self::FLD_NAME]);
-                $this->set_usage($db_row[sql_db::FLD_USAGE]);
+                if (key_exists(sql_db::FLD_USAGE, $db_row)) {
+                    $this->set_usage($db_row[sql_db::FLD_USAGE]);
+                }
                 $result = true;
             }
         }

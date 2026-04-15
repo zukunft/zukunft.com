@@ -82,9 +82,10 @@ class test_triples extends test_objects
     {
         parent::cleanup_objects($ts, triples::TEST_TRIPLES, new triple($this->env->usr1));
 
-        // also clean up the words used for the triples
+        // also clean up the words and verbs used for the triples
         $t_wrd = new test_words($this->env);
         $t_wrd->cleanup($ts);
+        parent::cleanup_objects($ts, [triples::SYSTEM_TEST_ADD_AUTO], new verb());
     }
 
 

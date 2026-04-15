@@ -1254,7 +1254,12 @@ class sandbox_link extends sandbox
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
         $msg = new user_message();
         if ($obj_to_add->fob() == null or $obj_to_add->tob() == null) {
-            log_err('similar link is incomplete');
+            $lib = new library();
+            $msg->add(msg_id::NAME_ALREADY_EXISTS, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
+                msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
+            ]);
         } else {
             $msg->add(msg_id::LINK_ALREADY_EXISTS, [
                 msg_id::VAR_CLASS_NAME => $class_name,

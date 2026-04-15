@@ -2259,31 +2259,9 @@ class sandbox extends db_object_seq_id_user
         // check the preserved names
         if ($this->check_save($msg)) {
             $db_chk = $this->get_obj_with_same_id_fields($msg);
-            if ($db_chk->id() != 0) {
-                log_debug('target already exists');
-                if ($this->rename_can_switch) {
-                    // ... if yes request to delete or exclude the record with the id parameters before the change
-                    $to_del = clone $db_rec;
-                    if (!$to_del->del($msg)) {
-                        $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [
-                            msg_id::VAR_CLASS_NAME => $class_name
-                        ]);
-                    }
-                    if ($msg->is_ok()) {
-                        // .. and use it for the update
-                        // TODO review the logging: from the user view this is a change not a delete and update
-                        $this->id = $db_chk->id();
-                        $this->set_owner_id($db_chk->owner_id());
-                        // TODO check which links needs to be updated, because this is a kind of combine objects
-                        // force the include again
-                        $this->include();
-                        $db_rec->exclude();
-                    }
-                } else {
-                    $msg->add_message_text($this->msg_id_already_used());
-                }
-            } else {
-                log_debug('target does not yet exist');
+            if ($db_chk->id() == 0
+                or ($this::class == triple::class and $this->name() != $db_rec->name())) {
+                log_debug('target does not yet exist or name should be updated');
                 // TODO check if e.g. for word links and formula links "and $this->not_used()" needs to be added
                 if (!$this->can_change()) {
                     $to_del = clone $db_rec;
@@ -2311,6 +2289,29 @@ class sandbox extends db_object_seq_id_user
                             ]);
                         }
                     }
+                }
+            } else {
+                log_debug('target already exists');
+                if ($this->rename_can_switch) {
+                    // ... if yes request to delete or exclude the record with the id parameters before the change
+                    $to_del = clone $db_rec;
+                    if (!$to_del->del($msg)) {
+                        $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [
+                            msg_id::VAR_CLASS_NAME => $class_name
+                        ]);
+                    }
+                    if ($msg->is_ok()) {
+                        // .. and use it for the update
+                        // TODO review the logging: from the user view this is a change not a delete and update
+                        $this->id = $db_chk->id();
+                        $this->set_owner_id($db_chk->owner_id());
+                        // TODO check which links needs to be updated, because this is a kind of combine objects
+                        // force the include again
+                        $this->include();
+                        $db_rec->exclude();
+                    }
+                } else {
+                    $msg->add_message_text($this->msg_id_already_used());
                 }
             }
         }
@@ -2748,11 +2749,46 @@ class sandbox extends db_object_seq_id_user
                                 // TODO Prio 1 activate
                                 //$this->merged_info_message($this, $msg);
                             }
+                        } elseif ($this->has_id() and $db_rec->has_id() and $sim->has_id()
+                            and $this->id() == $db_rec->id() and $this->id() == $sim->id()
+                            and $this->name() !== $db_rec->name()) {
+                            // name updated
+                            if ($this::class == triple::class) {
+                                $sim_name = null;
+                                $sim_name_msg = new user_message();
+                                $trm = $this->get_term_by_name($this->name(), $msg);
+                                if ($trm != null) {
+                                    $sim_name = $trm->obj();
+                                    if (!$this->is_similar_named($sim)) {
+                                        log_err($this->dsp_id() . ' is supposed to be similar to ' . $sim->dsp_id() . ', but it seems not');
+                                    }
+                                } else {
+                                    $trp = new triple($this->get_user());
+                                    $trp->load_by_name_generated($this->name());
+                                    if ($trp->id() > 0) {
+                                        $trp->reload_objects($msg);
+                                        log_debug($this->dsp_id() . ' has the same name is the standard name of the triple "' . $trp->dsp_id() . '"');
+                                        $sim_name = $trp;
+                                    }
+                                }
+                                if ($sim_name != null) {
+                                    // add first the detail information how the $sim object matches
+                                    $msg->merge($sim_name_msg);
+                                    // suggest to use a different name if not yet done
+                                    if ($msg->is_ok()) {
+                                        $msg->merge($sim->id_used_msg($this));
+                                    }
+                                }
+                            } else {
+                                log_debug('name updated of ' . $db_rec->name() . ' to ' . $this->name());
+                            }
                         } else {
                             // add first the detail information how the $sim object matches
                             $msg->merge($sim_msg);
-                            // suggest to use a different name
-                            $msg->merge($sim->id_used_msg($this));
+                            // suggest to use a different name if not yet done
+                            if ($msg->is_ok()) {
+                                $msg->merge($sim->id_used_msg($this));
+                            }
                         }
                     }
                 }
