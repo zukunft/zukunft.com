@@ -293,11 +293,11 @@ class word_write_tests
 
         $test_name = 'check if saving a word with an existing name (' . words::MATH . ') merges the word and creates an info message for the user';
         $wrd_new = new word($t->usr1);
-        $wrd_new->set_name(words::MATH);
+        $wrd_new->set(words::CONST_ID, words::MATH);
         $usr_msg = new user_message($t->usr1);
         $wrd_new->save($usr_msg);
-        $result = $usr_msg->get_last_message_translated();
-        $target = 'A word with the name "'.words::MATH.'" already exists. The word "'.words::MATH.'" created by other users is used.';
+        $result = $usr_msg->text();
+        $target = 'A word with the name "'.words::MATH.'" already exists. Please use another word name.';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // test the creation of a new word

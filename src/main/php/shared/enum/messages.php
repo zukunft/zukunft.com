@@ -1300,8 +1300,10 @@ enum messages: string
         . ' with the name "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" ' . self::ALREADY_EXISTS->value . '. Please use another '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
-        . ' name.';
+        . '.';
     case LINK_ALREADY_EXISTS = 'A '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' that links "'

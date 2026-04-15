@@ -1165,6 +1165,25 @@ class sandbox_named extends sandbox
     }
 
     /**
+     * create the user message that a similar object with the same name already exists
+     * and suggest a potential solution to the user.
+     * @param sandbox $obj_to_add the obejct that the user wants to add to the database
+     * @return user_message e.g. with the suggestion to use another name
+     */
+    function id_used_msg(sandbox $obj_to_add): user_message
+    {
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $msg = new user_message();
+        $msg->add(msg_id::NAME_ALREADY_EXISTS, [
+            msg_id::VAR_CLASS_NAME => $class_name,
+            msg_id::VAR_NAME => $obj_to_add->name(),
+            msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
+        ]);
+        return $msg;
+    }
+
+    /**
      * check if target key value already exists
      * overwritten in the word class for formula link words
      * TODO load the user value not the standard value but also check the standard value
