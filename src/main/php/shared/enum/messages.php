@@ -697,6 +697,9 @@ enum messages: string
     case COMPONENT_ALREADY_EXISTS = 'A view component with the name "'
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
         . '" ' . self::ALREADY_EXISTS->value . '. Please use another name.';
+    case FORMULA_RENAME_NOT_ALLOWED = 'formula names cannot be changed to "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '".';
 
     // messages with vars for import
     case IMPORT_READ_ERROR = 'error reading to decode json '

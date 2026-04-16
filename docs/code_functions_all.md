@@ -80,7 +80,6 @@
     \-- load_sql_user_changes - section for function load_sql_user_changes is expected to be load sql in /formula/formula_map.php
     \-- del_usr_cfg_exe - section for function del_usr_cfg_exe is expected to be del in /formula/formula_map.php
     \-- is_term_the_same - section for function is_term_the_same is expected to be info in /formula/formula_map.php
-    \-- delete_old_key_row - section for function delete_old_key_row is expected to be del in /formula/formula_map.php
     \-- add - section for function add not yet defined that it should be true if no other user has modified the formula in /formula/formula_map.php
     \-- generate_ref_text - section for function generate_ref_text not yet defined that it should be true if no other user has modified the formula in /formula/formula_map.php
     \-- save_fields_func - section for function save_fields_func is expected to be save in /formula/formula_map.php
@@ -830,8 +829,6 @@
         \-- formula_map - overwrite of the user sandbox function to remove also the related elements
     \-- is_term_the_same
         \-- formula_map - overwrite of the user sandbox function to remove also the related elements
-    \-- delete_old_key_row
-        \-- formula_map - check if the id parameters are supposed to be changed
     \-- add
         \-- formula_map - create a new formula
     \-- generate_ref_text

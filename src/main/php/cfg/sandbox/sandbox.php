@@ -167,6 +167,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -1561,11 +1562,12 @@ class sandbox extends db_object_seq_id_user
     /**
      * true if the normal (not user table) db row can be changed
      *
+     * @param user_message $msg a message for the user what should be changed if something failed
      * @return bool true if the user is the owner and no one else has changed the object
      *              because if another user has changed the object and the original value is changed,
      *              maybe the user object also needs to be updated
      */
-    function can_change(): bool
+    function can_change(user_message $msg): bool
     {
         $can_change = false;
 
@@ -1575,6 +1577,14 @@ class sandbox extends db_object_seq_id_user
         log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->get_user()->id);
         if ($this->owner_id() == $this->get_user()->id or $this->owner_id() <= 0) {
             $can_change = true;
+            if ($this::class == formula::class) {
+                if (!def::UI_CAN_CHANGE_FORMULA_NAME) {
+                    $can_change = false;
+                    $msg->add(msg_id::FORMULA_RENAME_NOT_ALLOWED, [
+                        msg_id::VAR_NAME => $this->name()
+                    ]);
+                }
+            }
             if ($this->owner_id() <= 0) {
                 log_warning('owner for ' . $this::class . ' ' . $this->dsp_id() . ' has not been set');
                 // TODO Prio 3 get best owner and set it
@@ -1979,7 +1989,7 @@ class sandbox extends db_object_seq_id_user
         $obj_name = $lib->class_to_name($this::class);
 
         // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
-        if ($this->can_change()) {
+        if ($this->can_change($usr_msg)) {
             // if there is no difference between the user row and the norm row remove all fields from the user row
             if ($this->no_diff($norm_obj, $usr_msg, $sc_par_lst)) {
                 if ($this->has_usr_cfg()) {
@@ -2263,7 +2273,7 @@ class sandbox extends db_object_seq_id_user
                 or ($this::class == triple::class and $this->name() != $db_rec->name())) {
                 log_debug('target does not yet exist or name should be updated');
                 // TODO check if e.g. for word links and formula links "and $this->not_used()" needs to be added
-                if (!$this->can_change()) {
+                if (!$this->can_change($msg)) {
                     $to_del = clone $db_rec;
                     if (!$this->not_used()) {
                         // if the target link has not yet been created
