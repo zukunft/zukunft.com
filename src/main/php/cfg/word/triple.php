@@ -963,7 +963,7 @@ class triple extends sandbox_link_named
                 return $vrb->get_code_id();
             } else {
                 $msg = 'code id for verb of triple ' . $this->dsp_id() . ' is missing in system cache';
-                log_err($msg);
+                log_warning($msg);
                 return $msg;
             }
         } elseif ($id < 0) {
@@ -2574,6 +2574,25 @@ class triple extends sandbox_link_named
         }
 
         return $sim;
+    }
+
+    /**
+     * check if the id parameters are supposed to be changed
+     * @param triple|sandbox_named|db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(triple|sandbox_named|db_object_seq_id $db_rec): bool
+    {
+        $result = parent::is_key_updated($db_rec);
+
+        if ($db_rec->name_given <> $this->name_given) {
+            $result = True;
+        }
+        if ($db_rec->name_generated <> $this->name_generated) {
+            $result = True;
+        }
+
+        return $result;
     }
 
 

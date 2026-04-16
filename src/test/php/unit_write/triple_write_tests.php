@@ -336,7 +336,7 @@ class triple_write_tests
         $trp = new triple($t->usr2);
         $trp->load_by_name(triples::SYSTEM_TEST_EXCLUDED);
         if ($trp->id() != 0) {
-            $trp->set_excluded(false);
+            $trp->excluded = false;
             $trp->save($usr_msg);
         }
 

@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
@@ -48,12 +49,14 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
@@ -64,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -80,7 +84,22 @@ class test_triples extends test_objects
      */
     function cleanup(string $ts): void
     {
+        global $db_con;
+
         parent::cleanup_objects($ts, triples::TEST_TRIPLES, new triple($this->env->usr1));
+
+        // cleanup all triples that use a test verb
+        $vrb = new verb();
+        $trp_lst = new triple_list($this->env->usr1);
+        $msg = new user_message();
+        foreach (verbs::TEST_VERBS as $name) {
+            $vrb->reset();
+            $vrb->load_by_name($name);
+            if ($vrb->has_id()) {
+                $trp_lst->load_by_verb($vrb, true);
+                $trp_lst->del($msg);
+            }
+        }
 
         // also clean up the words and verbs used for the triples
         $t_wrd = new test_words($this->env);

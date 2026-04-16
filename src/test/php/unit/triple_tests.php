@@ -69,7 +69,7 @@ class triple_tests
         $t->assert_sql_insert($sc, $trp, [sql_type::USER]);
         $t->assert_sql_insert($sc, $trp, [sql_type::LOG, sql_type::USER]);
         $trp_excl = $t_trp->triple();
-        $trp_excl->set_excluded(true);
+        $trp_excl->excluded = true;
         $t->assert_sql_insert($sc, $trp_excl);
         $trp_excl->description = '';
         $trp_excl->set_type('');

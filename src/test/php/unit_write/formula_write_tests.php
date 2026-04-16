@@ -665,7 +665,7 @@ class formula_write_tests
         if ($frm->name() == '') {
             log_err('formula ' . formulas::SYSTEM_TEST_EXCLUDED . ' could not be loaded', 'create_test_formulas');
         } else {
-            $frm->set_excluded(true);
+            $frm->excluded = true;
             $frm->save($usr_msg);
         }
     }

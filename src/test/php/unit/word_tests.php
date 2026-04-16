@@ -111,6 +111,8 @@ class word_tests
         $t->assert_sql_insert($sc, $wrd_view, [sql_type::LOG, sql_type::USER]);
         $wrd_no_view = $t_wrd->word_view_not_4_user();
         $t->assert_sql_save_fields($sc, $wrd_no_view, $wrd_view, [sql_type::LOG, sql_type::USER]);
+        $wrd_view = $t_wrd->word_excluded();
+        $t->assert_sql_insert($sc, $wrd_view, [sql_type::LOG, sql_type::USER]);
         // the insert log test is already tested by the horizontal test so check if an incomplete word object returns a user message
         $wrd = $t_wrd->word_incomplete();
         $t->assert_sql_insert_fail($sc, $wrd, [sql_type::LOG]);

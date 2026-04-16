@@ -270,7 +270,7 @@ class view_write_tests
         global $usr;
         $msk = new view($usr);
         $msk->load_by_name(views::TEST_EXCLUDED_NAME);
-        $msk->set_excluded(true);
+        $msk->excluded = true;
         $msk->save($usr_msg);
     }
 

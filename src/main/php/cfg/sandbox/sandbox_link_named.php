@@ -601,7 +601,7 @@ class sandbox_link_named extends sandbox_link
     {
         $result = parent::is_key_updated($db_rec);
 
-        if ($db_rec->name() <> $this->name()) {
+        if ($db_rec->name <> $this->name) {
             $result = True;
         }
 

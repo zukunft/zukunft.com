@@ -305,7 +305,7 @@ class phrase extends combine_named
                     $wrd->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 }
                 if (array_key_exists(sql_db::FLD_EXCLUDED . $fld_ext, $db_row)) {
-                    $wrd->set_excluded($db_row[sql_db::FLD_EXCLUDED . $fld_ext]);
+                    $wrd->excluded = $db_row[sql_db::FLD_EXCLUDED . $fld_ext];
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
                     $wrd->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);
@@ -331,7 +331,7 @@ class phrase extends combine_named
                     $trp->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 }
                 if (array_key_exists(sql_db::FLD_EXCLUDED . $fld_ext, $db_row)) {
-                    $trp->set_excluded($db_row[sql_db::FLD_EXCLUDED . $fld_ext]);
+                    $trp->excluded = $db_row[sql_db::FLD_EXCLUDED . $fld_ext];
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
                     $trp->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);

@@ -357,7 +357,7 @@ class sandbox extends db_object_seq_id_user
             // e.g. the list of names does not include the field excluded
             // TODO instead the excluded rows are filtered out on SQL level
             if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
-                $this->set_excluded($db_row[sql_db::FLD_EXCLUDED]);
+                $this->excluded = $db_row[sql_db::FLD_EXCLUDED];
             }
         }
         return $result;
@@ -411,7 +411,7 @@ class sandbox extends db_object_seq_id_user
             $this->protection_id = $api_json[json_fields::PROTECTION];
         }
         if (array_key_exists(json_fields::EXCLUDED, $api_json)) {
-            $this->set_excluded($api_json[json_fields::EXCLUDED]);
+            $this->excluded = $api_json[json_fields::EXCLUDED];
         }
 
         return $usr_msg->is_ok();
@@ -457,7 +457,7 @@ class sandbox extends db_object_seq_id_user
             }
         }
         if (key_exists(json_fields::EXCLUDED, $in_ex_json)) {
-            $this->set_excluded($in_ex_json[json_fields::EXCLUDED]);
+            $this->excluded = $in_ex_json[json_fields::EXCLUDED];
         }
 
         return $msg->is_ok();
@@ -577,22 +577,6 @@ class sandbox extends db_object_seq_id_user
     {
         global $sys;
         $this->set_protection_id($sys->typ_lst->ptc_typ->id($code_id));
-    }
-
-    /**
-     * set the excluded field from a database value
-     * with postgres and MySQL this is pretty strait forward so more to prevent future issues
-     *
-     * @param bool $db_val the value from the database row array
-     * @return void
-     */
-    function set_excluded(?bool $db_val): void
-    {
-        if ($db_val == null) {
-            $this->include();
-        } else {
-            $this->excluded = $db_val;
-        }
     }
 
     /**
@@ -818,7 +802,7 @@ class sandbox extends db_object_seq_id_user
             $this->set_protection_id($obj->protection_id());
         }
         if ($this->excluded === null and $obj->is_exclusion_set()) {
-            $this->set_excluded($obj->is_excluded());
+            $this->excluded = $obj->excluded;
         }
         return $usr_msg;
     }
@@ -1576,8 +1560,7 @@ class sandbox extends db_object_seq_id_user
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
         log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->get_user()->id);
         if ($this->owner_id() == $this->get_user()->id
-            or $this->owner_id() <= 0
-            or $msg->usr?->is_system()) {
+            or $this->owner_id() <= 0) {
             $can_change = true;
             if ($this::class == formula::class) {
                 if (!def::UI_CAN_CHANGE_FORMULA_NAME) {
@@ -2092,6 +2075,10 @@ class sandbox extends db_object_seq_id_user
                     // create a new user sandbox row with the changes
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
+                    // TODO Prio 0 remove
+                    if ($this->name = 'System Test Formula Renamed') {
+                        log_info('System Test Formula Renamed');
+                    }
                     // recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $fvt_lst = $this->db_fields_changed($norm_obj, $usr_msg, $sc_par_lst);
                     $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);

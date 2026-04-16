@@ -264,7 +264,7 @@ class component_write_tests
         global $usr;
         $cmp = new component($usr);
         $cmp->load_by_name(components::TEST_EXCLUDED_NAME);
-        $cmp->set_excluded(true);
+        $cmp->excluded = true;
         $cmp->save($usr_msg);
 
     }

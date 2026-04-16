@@ -135,6 +135,18 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "company" with a suggested view
+     */
+    function word_excluded(): word
+    {
+        global $sys;
+        $wrd = new word($this->env->usr2);
+        $wrd->set(words::COMPANY_ID, words::COMPANY);
+        $wrd->exclude();
+        return $wrd;
+    }
+
+    /**
      * @return word "mathematics" without the id e.g. as given by the import
      */
     function word_view_not_4_user(): word

@@ -3816,8 +3816,7 @@ class test_base
         }
     }
 
-    private
-    function write_named_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, ?string $description): bool
+    private function write_named_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, ?string $description): bool
     {
         $id = $sbx->id();
         $sbx->set_user($usr);
