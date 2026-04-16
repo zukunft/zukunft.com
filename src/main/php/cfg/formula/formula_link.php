@@ -246,10 +246,14 @@ class formula_link extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             // TODO load by if from cache?
-            $this->formula()->id = $db_row[formula_db::FLD_ID];
-            $this->phrase()->set_id($db_row[phrase::FLD_ID]);
-            $this->predicate_id = $db_row[formula_link_type::FLD_ID];
-            $this->order_nbr = $db_row[formula_link::FLD_ORDER];
+            if (key_exists(formula_db::FLD_ID, $db_row)) {
+                $this->formula()->id = $db_row[formula_db::FLD_ID];
+                $this->phrase()->set_id($db_row[phrase::FLD_ID]);
+                $this->predicate_id = $db_row[formula_link_type::FLD_ID];
+                $this->order_nbr = $db_row[formula_link::FLD_ORDER];
+            } else {
+                log_warning('formula id missing for ' . $this->dsp_id());
+            }
         }
         return $result;
     }

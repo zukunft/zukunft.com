@@ -1120,9 +1120,12 @@ class test_db_load
         return $cmp;
     }
 
-    function test_component_lnk(string $dsp_name, string $cmp_name, int $pos): component_link
+    function test_component_lnk(
+        string $dsp_name,
+        string $cmp_name,
+        int $pos): component_link
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($this->env->usr1);
         $msk = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
         $lnk = new component_link($this->env->usr1);

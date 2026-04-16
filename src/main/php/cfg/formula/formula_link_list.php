@@ -33,15 +33,13 @@ namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
-include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
-include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -49,8 +47,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula_link_list extends sandbox_link_list
@@ -176,7 +174,7 @@ class formula_link_list extends sandbox_link_list
      * delete all links without log because this is used only when deleting a formula
      * and the main event of deleting the formula is already logged
      */
-    function del_without_log(): string
+    function del_without_log(user_message $msg): string
     {
         log_debug('formula_link_list->del_without_log');
 
@@ -185,7 +183,7 @@ class formula_link_list extends sandbox_link_list
 
         foreach ($this->lst() as $frm_lnk) {
             if ($result == '') {
-                if ($frm_lnk->can_change() > 0 and $frm_lnk->not_used()) {
+                if ($frm_lnk->can_change($msg) and $frm_lnk->not_used()) {
                     //$db_con = new mysql;
                     $db_con->usr_id = $this->get_user()->id;
                     // delete first all user configuration that have also been excluded
@@ -196,7 +194,7 @@ class formula_link_list extends sandbox_link_list
                         $result = $db_con->delete_old(formula_link::FLD_ID, $frm_lnk->id());
                     }
                 } else {
-                    log_err("Cannot delete a formula word link (id " . $frm_lnk->id() . "), which is used or created by another user.", "formula_link_list->del_without_log");
+                    log_warning("Cannot delete a formula word link (id " . $frm_lnk->id() . "), which is used or created by another user.", "formula_link_list->del_without_log");
                 }
             }
         }

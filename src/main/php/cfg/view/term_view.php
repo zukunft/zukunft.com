@@ -199,14 +199,18 @@ class term_view extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $msk = new view($this->get_user());
-            $msk->id = $db_row[view_db::FLD_ID];
-            $this->set_view($msk);
-            $trm = new term($this->get_user());
-            $trm->set_id($db_row[term::FLD_ID]);
-            $this->set_term($trm);
-            $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            if (key_exists(view_db::FLD_ID, $db_row)) {
+                $msk = new view($this->get_user());
+                $msk->id = $db_row[view_db::FLD_ID];
+                $this->set_view($msk);
+                $trm = new term($this->get_user());
+                $trm->set_id($db_row[term::FLD_ID]);
+                $this->set_term($trm);
+                $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            } else {
+                log_warning('view id missing for ' . $this->dsp_id());
+            }
         }
         return $result;
     }

@@ -1176,7 +1176,7 @@ class term extends combine_named
             $msg->add(msg_id::NAME_ALREADY_EXISTS, [
                 msg_id::VAR_CLASS_NAME => $class,
                 msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_VALUE => $lib->class_to_name($obj_to_add::class)
+                msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
             ]);
         }
 

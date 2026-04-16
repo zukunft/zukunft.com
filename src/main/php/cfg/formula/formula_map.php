@@ -1800,7 +1800,7 @@ class formula_map extends sandbox_code_id
 
         $frm_lnk_lst = new formula_link_list($this->get_user());
         if ($frm_lnk_lst->load_by_frm_id($this->id())) {
-            $msg = $frm_lnk_lst->del_without_log();
+            $msg = $frm_lnk_lst->del_without_log($usr_msg);
             $usr_msg_del->add_message_text($msg);
         }
 

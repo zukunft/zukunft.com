@@ -179,7 +179,7 @@ class component_write_tests
         // TODO Prio 1 fix it
         $target = users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         if ($result != $target) {
-            $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "System Test View Component description" to "Just added for testing the user sandbox"';
+            $target = users::SYSTEM_TEST_NAME . ' changed "System Test View Component description" to "Just added for testing the user sandbox"';
         }
         $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
         $result = $t->log_last_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id(), true);

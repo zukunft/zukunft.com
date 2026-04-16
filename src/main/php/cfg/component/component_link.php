@@ -288,13 +288,17 @@ class component_link extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $this->set_view(new view($this->get_user()));
-            $this->get_view()->id = $db_row[view_db::FLD_ID];
-            $this->set_component(new component($this->get_user()));
-            $this->get_component()->id = $db_row[component::FLD_ID];
-            $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
-            $this->set_pos_type_by_id($db_row[self::FLD_POS_TYPE]);
-            $this->set_style_by_id($db_row[self::FLD_STYLE]);
+            if (key_exists(view_db::FLD_ID, $db_row)) {
+                $this->set_view(new view($this->get_user()));
+                $this->get_view()->id = $db_row[view_db::FLD_ID];
+                $this->set_component(new component($this->get_user()));
+                $this->get_component()->id = $db_row[component::FLD_ID];
+                $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
+                $this->set_pos_type_by_id($db_row[self::FLD_POS_TYPE]);
+                $this->set_style_by_id($db_row[self::FLD_STYLE]);
+            } else {
+                log_warning('view id missing for ' . $this->dsp_id());
+            }
         }
         return $result;
     }

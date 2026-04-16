@@ -1575,7 +1575,9 @@ class sandbox extends db_object_seq_id_user
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
         log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->get_user()->id);
-        if ($this->owner_id() == $this->get_user()->id or $this->owner_id() <= 0) {
+        if ($this->owner_id() == $this->get_user()->id
+            or $this->owner_id() <= 0
+            or $msg->usr?->is_system()) {
             $can_change = true;
             if ($this::class == formula::class) {
                 if (!def::UI_CAN_CHANGE_FORMULA_NAME) {
