@@ -72,7 +72,6 @@ namespace Zukunft\ZukunftCom\main\php\cfg\word;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -85,8 +84,10 @@ include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -95,6 +96,7 @@ include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -131,13 +133,16 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -770,6 +775,32 @@ class word extends sandbox_code_id
     /*
      * info
      */
+
+    /**
+     * can merge id all unique keys match
+     * check that the given object is by all unique keys the same as the actual object
+     * handles the special case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
+     * so if a formula word "millions" is different from the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
+     * in short: if two objects are the same by this definition, they are supposed to be merged
+     * @param word|combine_named|type_object|sandbox $obj_to_check the filled object that might be the same as this object
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
+     */
+    function is_same(word|combine_named|type_object|sandbox $obj_to_check): bool
+    {
+        global $sys;
+        $result = parent::is_same($obj_to_check);
+        // check the exception case that formula link words are similar to the formula, but are not the same
+        if ($this->name() == $obj_to_check->name()) {
+            if ($this->type_id !== $obj_to_check->type_id) {
+                if ($this->type_id == $sys->typ_lst->phr_typ->id(phrase_types::FORMULA_LINK)
+                    or $obj_to_check->type_id == $sys->typ_lst->phr_typ->id(phrase_types::FORMULA_LINK)) {
+                    $result = false;
+                }
+            }
+        }
+
+        return $result;
+    }
 
     /**
      * create human-readable messages of the differences between the word objects

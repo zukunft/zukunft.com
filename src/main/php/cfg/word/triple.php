@@ -1377,6 +1377,58 @@ class triple extends sandbox_link_named
         }
     }
 
+    /**
+     * avoid duplicates
+     * if any of the unit keys of the object matches true is returned
+     * @param triple|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_similar(triple|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_similar($obj_to_check);
+
+        if ($this::class == $obj_to_check::class) {
+            if ($this->name_given == $obj_to_check->name_given) {
+                $result = true;
+            }
+            if ($this->name_generated == $obj_to_check->name_generated) {
+                $result = true;
+            }
+            if ($this->code_id == $obj_to_check->code_id) {
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * can merge if all unique keys match
+     * check that the given object is by all unique keys the same as the actual object
+     * @param triple|sandbox_link|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_same(triple|sandbox_link|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_same($obj_to_check);
+
+        if ($this::class == $obj_to_check::class) {
+            if ($this->name_given != $obj_to_check->name_given) {
+                $result = false;
+            }
+            if ($this->name_generated != $obj_to_check->name_generated) {
+                $result = false;
+            }
+            if ($this->code_id != $obj_to_check->code_id) {
+                $result = false;
+            }
+        } else {
+            $result = false;
+        }
+
+        return $result;
+    }
+
 
     /*
      * info
@@ -1785,8 +1837,8 @@ class triple extends sandbox_link_named
      * @return bool true if the standard object has been loaded
      */
     function load_standard_by_link(
-        int $from_id,
-        int $to_id,
+        int          $from_id,
+        int          $to_id,
         user_message $msg
     ): bool
     {

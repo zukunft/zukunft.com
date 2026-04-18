@@ -807,6 +807,61 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * avoid duplicates
+     * if any of the unit keys of the object matches true is returned,
+     * so if the formulas "millions" is compared with the word "millions" this function returns true
+     * just to double-check if the get similar function is working correctly,
+     * in short: if two objects are similar by this definition, they should not be both in the database
+     * @param sandbox_link|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_similar(sandbox_link|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_similar($obj_to_check);
+
+        if ($this::class == $obj_to_check::class) {
+            if ($this->fob?->is_similar($obj_to_check->fob) and $this->tob?->is_similar($obj_to_check->tob)) {
+                if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+                    if ($this->predicate_id == $obj_to_check->predicate_id) {
+                        $result = true;
+                    }
+                } else {
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * can merge if all unique keys match
+     * check that the given object is by all unique keys the same as the actual object
+     * @param sandbox_link|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_same(sandbox_link|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_same($obj_to_check);
+
+        if ($this::class == $obj_to_check::class) {
+            if ($this->fob?->is_same($obj_to_check->fob) or $this->tob?->is_same($obj_to_check->tob)) {
+                if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+                    if ($this->predicate_id != $obj_to_check->predicate_id) {
+                        $result = false;
+                    }
+                } else {
+                    $result = false;
+                }
+            }
+        } else {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    /**
      * check if the link object (e.g. triple) might be added to the database
      * if all related objects have been added to the database
      * @param user_message|Message $msg to add the suggested solutions if something is missing e.g. a linked object

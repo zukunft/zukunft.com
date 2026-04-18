@@ -83,6 +83,7 @@ include_once paths::SHARED_HELPER . 'TextIdObject.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
@@ -120,6 +121,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
@@ -516,6 +518,24 @@ class phrase extends combine_named
     function protection_id(): ?int
     {
         return $this->obj()->protection_id();
+    }
+
+    function is_similar(phrase|term|type_object|sandbox|null $obj_to_check): bool
+    {
+        if ($obj_to_check::class == phrase::class or $obj_to_check::class == term::class) {
+            return $this->obj()->is_similar($obj_to_check->obj());
+        } else {
+            return $this->obj()->is_similar($obj_to_check);
+        }
+    }
+
+    function is_same(phrase|term|type_object|sandbox|null $obj_to_check): bool
+    {
+        if ($obj_to_check::class == phrase::class or $obj_to_check::class == term::class) {
+            return $this->obj()->is_same($obj_to_check->obj());
+        } else {
+            return $this->obj()->is_same($obj_to_check);
+        }
     }
 
     /**

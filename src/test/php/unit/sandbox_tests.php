@@ -77,11 +77,14 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -93,10 +96,12 @@ class sandbox_tests
     {
 
         global $usr;
+        global $sys;
 
         // init
         $t_wrd = new test_words($t);
         $t_vrb = new test_verbs($t);
+        $t_trp = new test_triples($t);
         $t_msk = new test_views($t);
         $t_cmp = new test_components($t);
         $lib = new library();
@@ -218,6 +223,7 @@ class sandbox_tests
         // but a formula should not have the same name as a word
         $wrd = new word($usr);
         $wrd->set_name(words::MIO);
+        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_types::FORMULA_LINK);
         $frm = new formula($usr);
         $frm->set_name(words::MIO);
         $result = $wrd->is_similar($frm);
@@ -226,6 +232,16 @@ class sandbox_tests
         // ... but they are not the same
         $result = $wrd->is_same($frm);
         $t->assert("... but they are not the same", $result, false);
+
+        $test_name = 'a triple with the same link is similar even if it has a different name';
+        $trp1 = $t_trp->triple();
+        $trp2 = clone $trp1;
+        $trp2->id = 0;
+        $trp2->set_name(triples::SYSTEM_TEST_ADD);
+        $t->assert($test_name, $trp1->is_similar($trp2), true);
+
+        $test_name = '... but a triple with the same link and a different name is not the same';
+        $t->assert($test_name, $trp1->is_same($trp2), false);
 
         // a word with the name 'millions' is similar to a formulas named 'millions', but not the same, so
 

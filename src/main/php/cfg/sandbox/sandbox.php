@@ -2376,7 +2376,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
+     * check if any unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
      * @param object $obj_to_check the object used for the comparison
      * @return bool true if the objects have the same unique name
      */
@@ -2435,58 +2435,15 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * can merge
-     * check that the given object is by the unique keys the same as the actual object
-     * handles the specials case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
-     * so if a formula word "millions" is different from the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
-     * in short: if two objects are the same by this definition, they are supposed to be merged
-     * @param word|type_object|sandbox $obj_to_check the filled object that might be the same as this object
-     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
-     */
-    function is_same(word|type_object|sandbox $obj_to_check): bool
-    {
-        global $sys;
-        $result = false;
-        if ($obj_to_check != null) {
-            //
-            if ($this::class == $obj_to_check::class) {
-                $result = $this->is_same_std($obj_to_check);
-                if (in_array($this::class, def::NAME_CLASSES)) {
-                    if ($this->name() != $obj_to_check->name()) {
-                        $result = false;
-                    }
-                }
-                if (in_array($this::class, def::CODE_ID_CLASSES)) {
-                    if ($this->code_id != $obj_to_check->code_id and $obj_to_check->code_id !== null) {
-                        $result = false;
-                    }
-                }
-            }
-        }
-        // check the exception case that formula link words are similar to the formula, but are not the same
-        if ($this::class == word::class) {
-            if ($this->name() == $obj_to_check->name()) {
-                if ($this->type_id !== $obj_to_check->type_id) {
-                    if ($this->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)
-                        or $obj_to_check->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
-                        $result = false;
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * avoid duplicates,
+     * avoid duplicates
+     * if any of the unit keys of the object matches true is returned
      * so if the formulas "millions" is compared with the word "millions" this function returns true
      * just to double-check if the get similar function is working correctly,
      * in short: if two objects are similar by this definition, they should not be both in the database
-     * @param type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @param combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
      * @return bool true if the objects should not be in the database at the same time
      */
-    function is_similar(type_object|sandbox|null $obj_to_check): bool
+    function is_similar(combine_named|type_object|sandbox|null $obj_to_check): bool
     {
         $result = false;
         if ($obj_to_check != null) {
@@ -2503,6 +2460,27 @@ class sandbox extends db_object_seq_id_user
                 }
             }
         }
+        return $result;
+    }
+
+    /**
+     * can merge if all unique keys match
+     * check that the given object is by all unique keys the same as the actual object
+     * @param combine_named|type_object|sandbox $obj_to_check the filled object that might be the same as this object
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
+     */
+    function is_same(combine_named|type_object|sandbox $obj_to_check): bool
+    {
+        global $sys;
+        $result = false;
+        if ($this::class == $obj_to_check::class) {
+            $result = $this->is_same_std($obj_to_check);
+        } elseif ($this::class == word::class and $obj_to_check::class == formula::class and $this->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
+            $result = $this->is_same_std($obj_to_check);
+        } elseif ($this::class == formula::class and $obj_to_check::class == word::class and $obj_to_check->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
+            $result = $this->is_same_std($obj_to_check);
+        }
+
         return $result;
     }
 

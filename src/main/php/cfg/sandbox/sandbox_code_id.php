@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_creator.php';
@@ -57,8 +58,10 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -69,6 +72,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -77,8 +81,10 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -345,6 +351,51 @@ class sandbox_code_id extends sandbox_typed
         if ($std_obj->code_id !== $this->code_id) {
             $result->code_id = $this->code_id;
         }
+        return $result;
+    }
+
+    /**
+     * avoid duplicates
+     * * if any of the unit keys of the object matches true is returned
+     * @param sandbox_code_id|combine_named|type_object|sandbox|null $obj_to_check the filled object that might be the same as this object
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
+     */
+    function is_similar(sandbox_code_id|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_same($obj_to_check);
+        if ($this::class == $obj_to_check::class) {
+            if (in_array($this::class, def::CODE_ID_CLASSES)) {
+                if ($this->code_id == $obj_to_check->code_id
+                    or $obj_to_check->code_id === null) {
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * can merge
+     * check that the given object is by all unique keys the same as the actual object
+     * handles the special case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
+     * so if a formula word "millions" is different from the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
+     * in short: if two objects are the same by this definition, they are supposed to be merged
+     * @param sandbox_code_id|combine_named|type_object|sandbox $obj_to_check the filled object that might be the same as this object
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
+     */
+    function is_same(sandbox_code_id|combine_named|type_object|sandbox $obj_to_check): bool
+    {
+        $result = parent::is_same($obj_to_check);
+        if ($this::class == $obj_to_check::class) {
+            if (in_array($this::class, def::CODE_ID_CLASSES)) {
+                if ($this->code_id != $obj_to_check->code_id
+                    and $obj_to_check->code_id !== null) {
+                    $result = false;
+                }
+            }
+        }
+
         return $result;
     }
 
