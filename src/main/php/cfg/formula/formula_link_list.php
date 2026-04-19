@@ -174,33 +174,19 @@ class formula_link_list extends sandbox_link_list
      * delete all links without log because this is used only when deleting a formula
      * and the main event of deleting the formula is already logged
      */
-    function del_without_log(user_message $msg): string
+    function del_without_log(user_message $msg): bool
     {
-        log_debug('formula_link_list->del_without_log');
+        log_debug();
 
         global $db_con;
-        $result = '';
 
         foreach ($this->lst() as $frm_lnk) {
-            if ($result == '') {
-                if ($frm_lnk->can_change($msg) and $frm_lnk->not_used()) {
-                    //$db_con = new mysql;
-                    $db_con->usr_id = $this->get_user()->id;
-                    // delete first all user configuration that have also been excluded
-                    $db_con->set_class(formula_link::class, true);
-                    $result = $db_con->delete_old(array(formula_link::FLD_ID, sql_db::FLD_EXCLUDED), array($frm_lnk->id(), '1'));
-                    if ($result == '') {
-                        $db_con->set_class(formula_link::class);
-                        $result = $db_con->delete_old(formula_link::FLD_ID, $frm_lnk->id());
-                    }
-                } else {
-                    log_warning("Cannot delete a formula word link (id " . $frm_lnk->id() . "), which is used or created by another user.", "formula_link_list->del_without_log");
-                }
+            if ($msg->is_ok()) {
+                $frm_lnk->del($msg);
             }
         }
 
-        log_debug('done');
-        return $result;
+        return $msg->is_ok();
     }
 
 }

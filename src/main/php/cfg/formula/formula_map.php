@@ -1796,12 +1796,18 @@ class formula_map extends sandbox_code_id
     {
         global $db_con;
 
-        $usr_msg_del = new user_message();
+        $usr_msg_del = new user_message($usr_msg->usr);
 
         $frm_lnk_lst = new formula_link_list($this->get_user());
         if ($frm_lnk_lst->load_by_frm_id($this->id())) {
-            $msg = $frm_lnk_lst->del_without_log($usr_msg);
-            $usr_msg_del->add_message_text($msg);
+            $frm_lnk_lst->del_without_log($usr_msg_del);
+        }
+        // TODO Prio 2 review
+        if ($this->get_user()->id() != $usr_msg->usr->id()) {
+            $frm_lnk_lst = new formula_link_list($usr_msg->usr);
+            if ($frm_lnk_lst->load_by_frm_id($this->id())) {
+                $frm_lnk_lst->del_without_log($usr_msg_del);
+            }
         }
 
         // and the corresponding formula elements

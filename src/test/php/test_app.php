@@ -245,8 +245,11 @@ class test_app
                 $sys_script = new system_time_type();
                 $sys_script->name = $sys->script;
                 $sys_script->code_id = $sys->script;
-                $msg = new user_message();
+                $sys_usr = new user();
+                $sys_usr->load_by_id(users::SYSTEM_ID);
+                $msg = new user_message($sys_usr);
                 $sys_script->save($msg);
+                $sys_script_id = $sys_script->id();
             }
             $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
             $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);

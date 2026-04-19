@@ -2075,10 +2075,6 @@ class sandbox extends db_object_seq_id_user
                     // create a new user sandbox row with the changes
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
-                    // TODO Prio 0 remove
-                    if ($this->name = 'System Test Formula Renamed') {
-                        log_info('System Test Formula Renamed');
-                    }
                     // recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $fvt_lst = $this->db_fields_changed($norm_obj, $usr_msg, $sc_par_lst);
                     $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);

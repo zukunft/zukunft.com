@@ -223,8 +223,8 @@
         "id": 5
       },
       {
-        "name": "cfg\/sandbox\/sandbox",
-        "code_id": "cfg\/sandbox\/sandbox",
+        "name": "cfg\/db\/sql_par_list",
+        "code_id": "cfg\/db\/sql_par_list",
         "description": "",
         "id": 6
       },

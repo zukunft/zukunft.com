@@ -881,7 +881,7 @@ class triple extends sandbox_link_named
                 global $sys;
                 $vrb_selected = $sys->typ_lst->vrb->get_by_name($vrb->name());
                 if ($vrb_selected == null) {
-                    log_err('verb for ' . $vrb->name() . ' not found');
+                    log_err('verb "' . $vrb->name() . '" not found');
                 } else {
                     $this->set_predicate_id($vrb_selected->id());
                 }

@@ -3529,7 +3529,7 @@ class test_base
         }
         $lnk->del($usr_msg);
         if (!$usr_msg->is_ok()) {
-            log_err('link cleanup failed due to ' . $usr_msg->all_message_text());
+            log_warning('link cleanup failed due to ' . $usr_msg->all_message_text());
         }
     }
 

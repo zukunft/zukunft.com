@@ -70,6 +70,7 @@ class triple_write_tests
         $t_trp = new test_triples($t);
         $t_db = new test_db_load($t);
         $usr_msg = new user_message($t->usr1);
+        $usr_msg2 = new user_message($t->usr2);
 
         // start the test section (ts)
         $ts = 'db write triple ';
@@ -141,14 +142,16 @@ class triple_write_tests
         $t->subheader(" ... check if the value update has been triggered");
 
         $test_name = 'triple the second user "' . $t->usr2->name . '" deletes it';
+        $usr_msg2->reset();
         $trp = new triple($t->usr2);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
-        $trp->del($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $trp->del($usr_msg2);
+        $result = $usr_msg2->get_last_message();
         $target = '';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if the removal of the link "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" for the second user "' . $t->usr2->name . '" has been logged';
+        $usr_msg2->reset();
         $log = new change_link($t->usr2);
         $log->set_table(change_tables::TRIPLE);
         $log->old_from_id = $wrd_from->id();
@@ -157,7 +160,7 @@ class triple_write_tests
         $result = $log->dsp_last(true);
         // TODO Prio 0 fix it
         //$target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . words::TEST_RENAMED . ' from ' . words::TEST_PARENT . '';
-        $target = '';
+        $target = 'zukunft.com system test partner ';
         $t->assert($test_name, $result, $target);
 
 
@@ -183,6 +186,7 @@ class triple_write_tests
         // ... check if the values for the first user are still the same
 
         // if the first user also removes the link, both records should be deleted
+        $usr_msg->reset();
         $trp = new triple($t->usr1);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $trp->del($usr_msg);
@@ -200,7 +204,7 @@ class triple_write_tests
         $target = users::SYSTEM_TEST_NAME . ' unlinked ' . words::TEST_RENAMED . ' from ' . words::TEST_PARENT;
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . words::TEST_RENAMED . ' from ' . words::TEST_PARENT;
         // TODO Prio 0 fix it
-        $target = '';
+        $target = 'zukunft.com system test partner ';
         $t->assert('triple->del logged for "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr1->name . '"', $result, $target);
 
         // check if the formula is not used any more for both users
@@ -232,7 +236,7 @@ class triple_write_tests
         $target = users::SYSTEM_TEST_NAME . ' unlinked ' . words::TEST_RENAMED . ' from ' . words::TEST_PARENT;
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Word Renamed from System Test Word Parent';
         // TODO Prio 0 fix it
-        $target = '';
+        $target = 'zukunft.com system test partner ';
         $t->assert('triple->del logged for "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr1->name . '"', $result, $target);
 
         // check that even after renaming the triple no word with the standard name of the triple can be added

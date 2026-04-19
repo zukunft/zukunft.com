@@ -362,7 +362,7 @@ class sandbox_code_id extends sandbox_typed
      */
     function is_similar(sandbox_code_id|combine_named|type_object|sandbox|null $obj_to_check): bool
     {
-        $result = parent::is_same($obj_to_check);
+        $result = parent::is_similar($obj_to_check);
         if ($this::class == $obj_to_check::class) {
             if (in_array($this::class, def::CODE_ID_CLASSES)) {
                 if ($this->code_id == $obj_to_check->code_id

@@ -47,6 +47,7 @@ include_once test_paths::UNIT_READ . 'value_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -186,6 +187,8 @@ class a_selected_test extends test_cleanup
             */
             //new import_write_tests()->run($t);
             $imf = new import_file();
+            $ta = new all_unit_write_tests();
+            $ta->import_test_files($usr);
             //$imf->json_file(files::MESSAGE_PATH . files::TIME_FILE, $usr, false);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
@@ -254,7 +257,7 @@ class a_selected_test extends test_cleanup
             //new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
             //new verb_write_tests()->run($t);
-            //new triple_write_tests()->run($this);
+            new triple_write_tests()->run($this);
             //new phrase_write_tests()->run($t);
             //new phrase_list_write_tests()->run($t);
             //new group_write_tests()->run($this);
@@ -267,9 +270,9 @@ class a_selected_test extends test_cleanup
             //new value_write_tests()->run($this);
             //new value_list_write_tests()->run($t);
             //new expression_write_tests()->run($this);
-            //new element_write_tests()->run($this);
-            //new element_write_tests()->run_list($this);
-            //new element_group_write_tests()->run($this);
+            new element_write_tests()->run($this);
+            new element_write_tests()->run_list($this);
+            new element_group_write_tests()->run($this);
             new formula_write_tests()->run($this);
             //new formula_write_tests()->run_list($this);
             new formula_link_write_tests()->run($this);

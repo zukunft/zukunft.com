@@ -229,10 +229,7 @@ class element_group extends list_db_write
             // e.g. 1: $val_phr_lst is Swiss inhabitants
             // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
             $val_phr_lst = clone $this->phr_lst;
-            $val_time_phr = $val_phr_lst->assume_time($trm_lst);
-            if (isset($val_time_phr)) {
-                log_debug('for time ' . $val_time_phr->dsp_id());
-            }
+            $val_time_phr = null;
 
             // build the symbol for the number replacement before adding the formula elements
             // e.g. 1: {f18}
@@ -254,9 +251,9 @@ class element_group extends list_db_write
             // e.g. 1: setting the $val_time_phr to 2020
             if ($frm_elm->type() == formula::class) {
                 // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
-                if ($frm_elm->obj->is_predefined()) {
+                if ($frm_elm->obj->is_predefined() and $val_time_phr == null) {
                     $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst);
-                    if (isset($val_time_phr)) {
+                    if ($val_time_phr != null) {
                         log_debug('adjusted time ' . $val_time_phr->dsp_id());
                     }
                 } else {
@@ -265,6 +262,15 @@ class element_group extends list_db_write
                     }
                     log_debug('include formula word "' . $frm_elm->wrd_obj->name . '" (' . $frm_elm->wrd_id . ')');
                 }
+            }
+
+            // add the time to the list
+            $val_time_phr = $val_phr_lst->assume_time($trm_lst);
+            if ($val_time_phr != null) {
+                log_debug('for time ' . $val_time_phr->dsp_id());
+            }
+            if (!$val_phr_lst->has_time() and $val_time_phr != null) {
+                $val_phr_lst->add($val_time_phr);
             }
 
             // get the word group

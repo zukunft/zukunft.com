@@ -178,6 +178,18 @@ class test_terms
     }
 
     /**
+     * @return term_list a term list with the time terms e.g. minute and second
+     */
+    function term_list_years(): term_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new term_list($this->env->usr1);
+        $lst->add($t_wrd->word_2019()->term());
+        $lst->add($t_wrd->word_2020()->term());
+        return $lst;
+    }
+
+    /**
      * @return term_list the terms relevant for testing the increase formula
      */
     function term_list_increase(): term_list
