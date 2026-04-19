@@ -98,7 +98,7 @@ class triple_tests
         $t->assert_sql_delete($sc, $trp, [sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader($ts . 'view base object handling');
-        $trp = $t_trp->triple_filled_add();
+        $trp = $t_trp->triple_filled_add_name();
         $t->assert_reset($trp);
 
         $t->subheader($ts . 'api');
@@ -112,7 +112,7 @@ class triple_tests
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_trp->triple(), $usr_sys);
-        $t->assert_ex_and_import($t_trp->triple_filled_add(), $usr_sys);
+        $t->assert_ex_and_import($t_trp->triple_filled_add_name(), $usr_sys);
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
 

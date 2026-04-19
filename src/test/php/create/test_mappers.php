@@ -470,7 +470,10 @@ class test_mappers
      * @param string $class the given main class name
      * @return triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
      */
-    function class_to_add_filled_object(string $class): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
+    function class_to_add_filled_object(
+        string $class,
+        ?data_object $cac = null
+    ): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
     {
         $obj = null;
         $t_usr = new test_users($this->env);
@@ -495,7 +498,15 @@ class test_mappers
                 $obj = $t_vrb->verb_filled();
                 break;
             case triple::class;
-                $obj = $t_trp->triple_filled();
+                $wrd = $cac->get_first_word();
+                $vrb = $cac->get_first_verb();
+                $wrd2 = $cac->get_second_word();
+                if ($wrd != null and $vrb != null and $wrd2 != null) {
+                    $obj = $t_trp->triple_filled_add($wrd->phrase(), $vrb, $wrd2->phrase());
+                } else {
+                    // just a fallback that should never be used
+                    $obj = $t_trp->triple_name_only();
+                }
                 break;
             case source::class;
                 $obj = $t_src->source_filled();

@@ -136,7 +136,7 @@ class horizontal_write_tests
                 }
 
                 $test_name = 'update ' . $lib->class_to_name($class) . ' via SQL function';
-                $obj->fill($t_map->class_to_add_filled_object($class), $t->usr1);
+                $obj->fill($t_map->class_to_add_filled_object($class, $cac), $t->usr1);
                 $t->assert_save($test_name, $obj, $msg, $sc_par_lst);
 
                 $test_name = 'reload filled ' . $lib->class_to_name($class) . ' and check differences';

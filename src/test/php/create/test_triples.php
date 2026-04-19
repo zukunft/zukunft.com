@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -49,6 +50,7 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -162,6 +164,7 @@ class test_triples extends test_objects
      */
     function triple_filled(): triple
     {
+        global $sys;
         $trp = $this->triple();
         $trp->name_given = triples::MATH_CONST_GIVEN;
         $trp->weight = 0.5;
@@ -169,6 +172,8 @@ class test_triples extends test_objects
         $trp->usage = triples::SYSTEM_TEST_ADD_USAGE;
         $trp->impact = triples::SYSTEM_TEST_ADD_IMPACT;
         $trp->exclude();
+        $trp->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $trp;
     }
 
@@ -185,12 +190,13 @@ class test_triples extends test_objects
     /**
      * @return triple with all fields set and a reserved test name for testing the db write function
      */
-    function triple_filled_add(): triple
+    function triple_filled_add_name(): triple
     {
         $t_wrd = new test_words($this->env);
         $trp = $this->triple_filled_included();
         $trp->id = 0;
         $trp->set_name(triples::SYSTEM_TEST_ADD);
+        $trp->set_code_id(triples::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
         $trp->set_from($t_wrd->word_filled_add()->phrase());
         $trp->set_to($t_wrd->word_filled_add_to()->phrase());
         return $trp;
@@ -213,6 +219,26 @@ class test_triples extends test_objects
         $trp->set_from($wrd_from);
         $trp->set_verb($vrb);
         $trp->set_to($phr_to);
+        return $trp;
+    }
+
+    /**
+     * @return triple with all fields set and a reserved test name for testing the db write function
+     */
+    function triple_filled_add(phrase $wrd_from, verb $vrb, phrase $phr_to): triple
+    {
+        global $sys;
+        $trp = $this->triple_add($wrd_from, $vrb, $phr_to);
+        $trp->id = 0;
+        $trp->include();
+        $trp->set_name(triples::SYSTEM_TEST_ADD);
+        $trp->set_code_id(triples::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
+        $trp->weight = 0.5;
+        $trp->set_view_id(views::MATH_CONST_ID);
+        $trp->usage = triples::SYSTEM_TEST_ADD_USAGE;
+        $trp->impact = triples::SYSTEM_TEST_ADD_IMPACT;
+        $trp->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $trp;
     }
 

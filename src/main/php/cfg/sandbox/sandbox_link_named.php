@@ -48,6 +48,7 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_LOG . 'change_log_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
@@ -71,6 +72,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
@@ -546,6 +548,46 @@ class sandbox_link_named extends sandbox_link
                 $result = true;
             }
         }
+        return $result;
+    }
+
+    /**
+     * avoid duplicates
+     * if any of the unit keys of the object matches true is returned
+     * @param sandbox_link_named|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_similar(sandbox_link_named|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_similar($obj_to_check);
+
+        if ($this::class == $obj_to_check::class) {
+            if ($this->name() == $obj_to_check->name()) {
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * can merge if all unique keys match
+     * check that the given object is by all unique keys the same as the actual object
+     * @param sandbox_link_named|sandbox_link|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_same(sandbox_link_named|sandbox_link|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_same($obj_to_check);
+
+        if ($this::class == $obj_to_check::class) {
+            if ($this->name() != $obj_to_check->name()) {
+                $result = false;
+            }
+        } else {
+            $result = false;
+        }
+
         return $result;
     }
 
