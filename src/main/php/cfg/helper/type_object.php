@@ -147,7 +147,7 @@ class type_object extends db_object_seq_id
     // the standard fields of a type
 
     // the unique type name as shown to the user
-    public string $name;
+    public ?string $name;
     // this id text is unique for all code links and is used for system im- and export
     public ?string $code_id;
     // to explain the type to the user as a tooltip
@@ -314,7 +314,7 @@ class type_object extends db_object_seq_id
         $this->description = $description;
     }
 
-    function name(): string
+    function name(): string|null
     {
         return $this->name;
     }

@@ -405,7 +405,7 @@ class sql_par_field_list
         global $sys;
 
         // include the name field for the log also if the object is only excluded
-        if ($sbx_db->name_or_null() <> $sbx_upd->name()) {
+        if ($sbx_db->name_or_null() <> $sbx_upd->name_or_null()) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . $sbx_upd->name_field(),
@@ -415,7 +415,7 @@ class sql_par_field_list
             }
             $this->add_field(
                 $sbx_upd->name_field(),
-                $sbx_upd->name(),
+                $sbx_upd->name_or_null(),
                 sandbox_named::FLD_NAME_SQL_TYP,
                 $sbx_db->name_or_null()
             );

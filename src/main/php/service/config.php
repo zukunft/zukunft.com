@@ -397,10 +397,10 @@ class config extends db_object_seq_id
      *
      * @return string the name from the system configuration entry
      */
-    function name(): string
+    function name(): string|null
     {
         if ($this->name == null) {
-            return '';
+            return null;
         } else {
             return $this->name;
         }

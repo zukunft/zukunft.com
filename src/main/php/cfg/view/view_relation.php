@@ -819,9 +819,9 @@ class view_relation extends sandbox_link
     /**
      * @return string the html code to display the link name
      */
-    function name(): string
+    function name(): string|null
     {
-        $result = '';
+        $result = null;
 
         if ($this->parent() != null) {
             $result = $this->parent()->name();

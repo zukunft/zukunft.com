@@ -312,13 +312,9 @@ class element extends db_object_seq_id_user
     /**
      * @return string the element name to the user in the most simple form (without any ids)
      */
-    function name(): string
+    function name(): string|null
     {
-        if ($this->obj != null) {
-            return $this->obj->name();
-        } else {
-            return '';
-        }
+        return $this->obj->name();
     }
 
     /**

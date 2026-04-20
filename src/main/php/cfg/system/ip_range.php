@@ -819,7 +819,7 @@ class ip_range extends db_object_seq_id
     /**
      * @return string with the unique name of the ip range
      */
-    function name(): string
+    function name(): string|null
     {
         return 'from ' . $this->from . ' to ' . $this->to;
     }

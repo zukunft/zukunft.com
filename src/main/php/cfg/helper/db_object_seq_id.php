@@ -562,7 +562,7 @@ class db_object_seq_id extends db_object
      *
      * @return string the name from the object e.g. word using the same function as the phrase and term
      */
-    function name(): string
+    function name(): string|null
     {
         $msg = 'ERROR: name function not overwritten by child object ' . $this::class;
         log_err($msg);

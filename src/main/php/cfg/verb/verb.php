@@ -1372,7 +1372,7 @@ class verb extends type_object
         return $result;
     }
 
-    function name(): string
+    function name(): string|null
     {
         return $this->name;
     }

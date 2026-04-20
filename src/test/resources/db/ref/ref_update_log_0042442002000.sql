@@ -50,7 +50,7 @@ SELECT ref_update_log_0042442002000 (
                159::smallint,
                'Pi'::text,
                17::bigint,
-               ''::text,
+               null::text,
                0::bigint,
                22::bigint,
                161::smallint,

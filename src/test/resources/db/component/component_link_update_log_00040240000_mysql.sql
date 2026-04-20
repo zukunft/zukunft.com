@@ -46,7 +46,7 @@ SELECT component_link_update_log_00040240000
         756,
         'Word',
         1,
-        '',
+        null,
         0,
         1,
         48,

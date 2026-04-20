@@ -414,7 +414,7 @@ class db_object extends TextIdObject
      * overwritten by the child classes
      */
 
-    function name(): string
+    function name(): string|null
     {
         $msg = 'ERROR:  name not overwritten by ' . $this::class;
         log_err($msg);

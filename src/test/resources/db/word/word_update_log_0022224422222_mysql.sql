@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS word_update_log_0022224322222;
-CREATE PROCEDURE word_update_log_0022224322222
+DROP PROCEDURE IF EXISTS word_update_log_0022224422222;
+CREATE PROCEDURE word_update_log_0022224422222
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_word_name      smallint,
@@ -81,10 +81,10 @@ BEGIN
 
 END;
 
-PREPARE word_update_log_0022224322222_call FROM
-    'SELECT word_update_log_0022224322222 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE word_update_log_0022224422222_call FROM
+    'SELECT word_update_log_0022224422222 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT word_update_log_0022224322222
+SELECT word_update_log_0022224422222
        (3,
         2,
         10,
@@ -106,7 +106,7 @@ SELECT word_update_log_0022224322222
         null,
         null,
         85,
-        '',
+        'math const',
         105,
         null,
         null,

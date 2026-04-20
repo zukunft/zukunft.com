@@ -193,7 +193,7 @@ class triple extends sandbox_link_named
         }
     }
     // the generated name based on the linked objects and saved in the database for faster searching
-    private string $name_generated;
+    private ?string $name_generated;
 
     // to select single triple used by the system without using the type that can potentially select more than one triple
     public ?string $code_id;
@@ -284,7 +284,7 @@ class triple extends sandbox_link_named
         parent::reset($keep_user);
         $this->set_name(null);
         $this->name_given = null;
-        $this->name_generated = '';
+        $this->name_generated = null;
         $this->weight = null;
         $this->code_id = null;
         $this->usage = null;
@@ -553,8 +553,9 @@ class triple extends sandbox_link_named
         }
 
         // finally generate the name if needed
-        if ($this->name() == '' and $this->name_given() == '') {
+        if ($this->name() == null and $this->name_given() == null) {
             $this->name_generated = $this->generate_name();
+            $this->name = $this->name_generated;
         }
 
         return $msg->is_ok();
@@ -1058,8 +1059,8 @@ class triple extends sandbox_link_named
             // use the updated generated name or the generated name loaded from the database
             $this->name_generated = $name_generated;
         } else {
-            // worst case use an empty string
-            $this->name_generated = '';
+            // worst case use null
+            $this->name_generated = null;
             log_warning('No name found for triple ' . $this->id());
         }
     }
@@ -1071,8 +1072,8 @@ class triple extends sandbox_link_named
     function set_names(): void
     {
         // update the generated name if needed
-        if ($this->name_given == null and $this->name == '') {
-            if ($this->generate_name() != '' and $this->generate_name() != ' ()') {
+        if ($this->name_given == null and $this->name == null) {
+            if ($this->generate_name() != null and $this->generate_name() != '' and $this->generate_name() != ' ()') {
                 $this->name_generated = $this->generate_name();
             }
         }
@@ -1082,14 +1083,14 @@ class triple extends sandbox_link_named
             $this->name_given = null;
         } else {
             // or set the given name if needed e.g. when called be json import
-            if ($this->name != '' and $this->name != $this->name_generated) {
+            if ($this->name != null and $this->name != $this->name_generated) {
                 $this->name_given = $this->name;
             }
         }
 
         // use the generated name as fallback
-        if ($this->name == '') {
-            if ($this->name_given != null and $this->name_given != '') {
+        if ($this->name == null) {
+            if ($this->name_given != null and $this->name_given != null) {
                 $this->name = $this->name_given;
             } else {
                 $this->name = $this->name_generated;
@@ -1151,10 +1152,11 @@ class triple extends sandbox_link_named
      */
     function name_generated(): ?string
     {
-        if ($this->name_generated == ''
+        if ($this->name_generated == null
             and $this->name_given == null
-            and $this->name == '') {
+            and $this->name == null) {
             $this->name_generated = $this->generate_name();
+            $this->name = $this->name_generated;
         }
         return $this->name_generated;
     }
@@ -1694,16 +1696,20 @@ class triple extends sandbox_link_named
 
     /**
      * load a triple by the generated name (the name that the triple would have if the user has done not overwrite)
-     * @param string $name the generated name of the triple
+     * @param string|null $name the generated name of the triple
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name_generated(string $name): int
+    function load_by_name_generated(string|null $name): int
     {
         global $db_con;
 
-        log_debug($name);
-        $qp = $this->load_sql_by_name_generated($db_con->sql_creator(), $name, $this::class);
-        return $this->load($qp);
+        if ($name !== null) {
+            log_debug($name);
+            $qp = $this->load_sql_by_name_generated($db_con->sql_creator(), $name, $this::class);
+            return $this->load($qp);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -3045,17 +3051,17 @@ class triple extends sandbox_link_named
      * or the generic name e.g. Australia is a Country
      * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
      */
-    function name(bool $ignore_excluded = false): string
+    function name(bool $ignore_excluded = false): string|null
     {
         $result = '';
 
         if (!$this->is_excluded() or $ignore_excluded) {
-            if ($this->name <> '') {
+            if ($this->name != null) {
                 // use the object
                 $result = $this->name;
-            } elseif ($this->name_given() <> '') {
+            } elseif ($this->name_given != null) {
                 // use the user defined description
-                $result = $this->name_given();
+                $result = $this->name_given;
             } else {
                 // or use the standard generic description
                 // but do not generate a new generated name for user sandbox compare

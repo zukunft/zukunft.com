@@ -537,9 +537,9 @@ class ref extends sandbox_link
     /**
      * @return string the phrase name or an empty string phrase name is not set
      */
-    function phrase_name(): string
+    function phrase_name(): string|null
     {
-        $name = '';
+        $name = null;
         $phr = $this->phrase();
         if ($phr != null) {
             $name = $phr->name();
@@ -1521,9 +1521,9 @@ class ref extends sandbox_link
     /**
      * @return string with the unique name
      */
-    function name(): string
+    function name(): string|null
     {
-        $result = '';
+        $result = null;
 
         if ($this->phrase() != null) {
             $result .= 'ref of "' . $this->phrase()->name() . '"';

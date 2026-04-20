@@ -162,6 +162,7 @@ class test_words extends test_objects
      */
     function word_filled(): word
     {
+        $t_msk = new test_views($this->env);
         global $sys;
         $wrd = new word($this->env->usr1);
         $wrd->set(words::MATH_ID, words::MATH);
@@ -169,7 +170,7 @@ class test_words extends test_objects
         $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
         $wrd->set_code_id(words::MATH, $this->env->usr_system);
         $wrd->plural = words::MATH_PLURAL;
-        $wrd->set_view_id(views::MATH_CONST_ID);
+        $wrd->view = $t_msk->view_math();
         $wrd->usage = test_const::DUMMY_USAGE_WORD;
         $wrd->impact = test_const::DUMMY_IMPACT;
         $wrd->exclude();

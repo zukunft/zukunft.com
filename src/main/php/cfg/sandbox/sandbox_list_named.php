@@ -651,23 +651,27 @@ class sandbox_list_named extends sandbox_list
      * find an object from the loaded list by name using the hash
      * should be cast by the child function get_by_name
      *
-     * @param string $name the unique name of the object that should be returned
+     * @param string|null $name the unique name of the object that should be returned
      * @param bool $use_all force to include also the excluded names e.g. for import
      * @return word|phrase|term|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name, bool $use_all = false): word|phrase|term|CombineObject|IdObject|TextIdObject|null
+    function get_by_name(string|null $name, bool $use_all = false): word|phrase|term|CombineObject|IdObject|TextIdObject|null
     {
-        if ($use_all) {
-            $key_lst = $this->name_pos_lst_all();
-        } else {
-            $key_lst = $this->name_pos_lst();
-        }
-        $pos = null;
-        if (key_exists($name, $key_lst)) {
-            $pos = $key_lst[$name];
-        }
-        if ($pos !== null) {
-            return $this->get_by_key($pos);
+        if ($name !== null) {
+            if ($use_all) {
+                $key_lst = $this->name_pos_lst_all();
+            } else {
+                $key_lst = $this->name_pos_lst();
+            }
+            $pos = null;
+            if (key_exists($name, $key_lst)) {
+                $pos = $key_lst[$name];
+            }
+            if ($pos !== null) {
+                return $this->get_by_key($pos);
+            } else {
+                return null;
+            }
         } else {
             return null;
         }

@@ -354,10 +354,10 @@ class change_value extends change_log
     /**
      * @return string with the best possible id for this value mainly used for debugging
      */
-    function name(): string
+    function name(): string|null
     {
         if ($this->group_id == null) {
-            return '';
+            return null;
         } else {
             $grp = new group($this->get_user(), $this->group_id);
             return $grp->dsp_id_medium();

@@ -94,6 +94,14 @@ class test_views extends test_objects
         return $msk;
     }
 
+    function view_math(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::MATH_CONST_ID, views::MATH_CONST_NAME);
+        $msk->description = views::MATH_CONST_COM;
+        return $msk;
+    }
+
     /**
      * @return view for db write testing that does not have a reserved name
      */

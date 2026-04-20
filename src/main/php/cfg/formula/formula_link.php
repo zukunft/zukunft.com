@@ -1203,9 +1203,9 @@ class formula_link extends sandbox_link
     /**
      * @return string the html code to display the link name
      */
-    function name(): string
+    function name(): string|null
     {
-        $result = '';
+        $result = null;
 
         if ($this->formula() != null) {
             $result = $this->formula()->name();

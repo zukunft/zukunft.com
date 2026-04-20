@@ -391,15 +391,11 @@ class sandbox_named extends sandbox
      * get the name of the word object
      * TODO can it be merged with name_or_null() ?
      *
-     * @return string the name from the object e.g. word using the same function as the phrase and term
+     * @return string|null the name from the object e.g. word using the same function as the phrase and term
      */
-    function name(): string
+    function name(): string|null
     {
-        if ($this->name == null) {
-            return '';
-        } else {
-            return $this->name;
-        }
+        return $this->name;
     }
 
     /**

@@ -48,7 +48,7 @@ SELECT component_link_update_log_00040240000
         756::smallint,
         'Word'::text,
         1::bigint,
-        ''::text,
+        null::text,
         0::bigint,
         1::bigint,
         48::smallint,

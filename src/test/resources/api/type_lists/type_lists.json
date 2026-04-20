@@ -221,24 +221,6 @@
         "code_id": "import_test_config",
         "description": "Import the configuration for system consistency tests",
         "id": 5
-      },
-      {
-        "name": "cfg\/db\/sql_par_list",
-        "code_id": "cfg\/db\/sql_par_list",
-        "description": "",
-        "id": 6
-      },
-      {
-        "name": "Zukunft\\ZukunftCom\\main\\php\\cfg\\value\\value->del",
-        "code_id": "Zukunft\\ZukunftCom\\main\\php\\cfg\\value\\value->del",
-        "description": "",
-        "id": 7
-      },
-      {
-        "name": "Zukunft\\ZukunftCom\\main\\php\\cfg\\value\\value->del_exe",
-        "code_id": "Zukunft\\ZukunftCom\\main\\php\\cfg\\value\\value->del_exe",
-        "description": "",
-        "id": 8
       }
     ],
     "sys_log_levels": [

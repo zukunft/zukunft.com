@@ -309,7 +309,7 @@ class sandbox_link extends sandbox
     /**
      * @return int|string the id of the linked object
      */
-    function from_id_or_name(): int|string
+    function from_id_or_name(): int|string|null
     {
         if ($this->fob == null) {
             return 0;
@@ -413,7 +413,7 @@ class sandbox_link extends sandbox
     /**
      * @return string the name of the linked object
      */
-    function to_name(): string
+    function to_name(): string|null
     {
         return $this->tob()?->name();
     }
@@ -421,7 +421,7 @@ class sandbox_link extends sandbox
     /**
      * @return int|string the id of the linked object
      */
-    function to_id_or_name(): int|string
+    function to_id_or_name(): int|string|null
     {
         if ($this->tob == null) {
             return 0;

@@ -780,7 +780,7 @@ class user extends db_id_object_non_sandbox
     /**
      * @return string the unique username for the user on this pod
      */
-    function name(): string
+    function name(): string|null
     {
         if ($this->name != null) {
             return $this->name;

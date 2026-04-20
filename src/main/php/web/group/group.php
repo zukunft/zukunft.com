@@ -322,10 +322,10 @@ class group extends sandbox_named
      * @param string $sep the separator between the phrase names
      * @return string the html code to show the group name
      */
-    function name(?phrase_list $phr_lst_exclude = null, string $sep = ', '): string
+    function name(?phrase_list $phr_lst_exclude = null, string $sep = ', '): string|null
     {
         $result = '';
-        if (parent::name() <> '') {
+        if (parent::name() <> null) {
             $result .= parent::name();
         } else {
             $lst_to_show = $this->phr_lst();

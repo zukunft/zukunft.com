@@ -262,12 +262,12 @@ class sandbox_link_named extends sandbox_link
      *
      * @return string the name from the object e.g. word using the same function as the phrase and term
      */
-    function name(bool $ignore_excluded = false): string
+    function name(bool $ignore_excluded = false): string|null
     {
         if (!$this->is_excluded() or $ignore_excluded) {
             return $this->name;
         } else {
-            return '';
+            return null;
         }
     }
 
@@ -281,7 +281,12 @@ class sandbox_link_named extends sandbox_link
         if ($this->name == null) {
             return null;
         } else {
-            return $this->name();
+            // TODO Prio 1 check where excluded names must be null instead of an empty string
+            if (!$this->is_excluded()) {
+                return $this->name;
+            } else {
+                return null;
+            }
         }
     }
 
@@ -445,22 +450,24 @@ class sandbox_link_named extends sandbox_link
     /**
      * get the term corresponding to the given name
      * in this case, if a formula or verb with the same name already exists, get it
-     * @param string $name the name of the term to search for
+     * @param string|null $name the name of the term to search for
      * @param user_message $msg to collect the error messages and suggested solutions for the calling user
      * @return term|null a term with the given name or null if no term is found
      */
-    function get_term_by_name(string $name, user_message $msg): term|null
+    function get_term_by_name(string|null $name, user_message $msg): term|null
     {
         $result = null;
-        $trm = new term($this->get_user());
-        if ($trm->load_standard_by_name($name, $msg)) {
-            $result = $trm;
-        } else {
-            if ($trm->load_by_name($name)) {
+        if ($name !== null) {
+            $trm = new term($this->get_user());
+            if ($trm->load_standard_by_name($name, $msg)) {
                 $result = $trm;
+            } else {
+                if ($trm->load_by_name($name)) {
+                    $result = $trm;
+                }
             }
+            $trm->load_by_name($name);
         }
-        $trm->load_by_name($name);
         return $result;
     }
 
@@ -783,29 +790,31 @@ class sandbox_link_named extends sandbox_link
 
         // create the sql to insert the row
         $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
-        $fvt_insert_list = new sql_par_field_list();
-        $fvt_insert_list->add($fvt_insert);
-        $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
-        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
-        if ($sc->db_type == sql_db::MYSQL) {
-            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        if ($fvt_insert !== null) {
+            $fvt_insert_list = new sql_par_field_list();
+            $fvt_insert_list->add($fvt_insert);
+            $sc_insert = clone $sc;
+            $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
+            $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+            if ($sc->db_type == sql_db::MYSQL) {
+                $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+            }
+            $qp_insert->sql = $sc_insert->create_sql_insert(
+                $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+            $qp_insert->par = [$fvt_insert->value];
+
+            // add the insert row to the function body
+            //$sql .= ' ' . $qp_insert->sql . '; ';
+
+            // get the new row id for MySQL db
+            if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
+                $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+            }
+
+            $qp->sql = $qp_lnk->sql . ' ' . $sql;
+            $qp->par_fld_lst = $qp_lnk->par_fld_lst;
+            $qp->par_fld = $fvt_insert;
         }
-        $qp_insert->sql = $sc_insert->create_sql_insert(
-            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
-        $qp_insert->par = [$fvt_insert->value];
-
-        // add the insert row to the function body
-        //$sql .= ' ' . $qp_insert->sql . '; ';
-
-        // get the new row id for MySQL db
-        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
-            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
-        }
-
-        $qp->sql = $qp_lnk->sql . ' ' . $sql;
-        $qp->par_fld_lst = $qp_lnk->par_fld_lst;
-        $qp->par_fld = $fvt_insert;
 
         return $qp;
     }

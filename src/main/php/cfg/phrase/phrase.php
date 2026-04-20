@@ -458,11 +458,11 @@ class phrase extends combine_named
     /**
      * set the name of the phrase object, which is also the name of the phrase
      *
-     * @param string $name the name of the phrase set in the related object
+     * @param string|null $name the name of the phrase set in the related object
      * @param string $class the class of the phrase object can be set to force the creation of the related object
      * @return void
      */
-    function set_name(string $name, string $class = ''): void
+    function set_name(string|null $name, string $class = ''): void
     {
         if ($class != '' and $this->obj == null) {
             $this->set_obj_from_class($class);
@@ -591,7 +591,7 @@ class phrase extends combine_named
      * @param bool $ignore_excluded force to include also the excluded names e.g. for import
      * @return string the name of the phrase
      */
-    function name(bool $ignore_excluded = false): string
+    function name(bool $ignore_excluded = false): string|null
     {
         if ($this->obj == null) {
             return '';

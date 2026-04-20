@@ -457,11 +457,11 @@ class term extends combine_named
      * set the name of the term object, which is also the name of the term
      * because of this object name retrieval set and get of the name is needed for all linked objects
      *
-     * @param string $name the name of the term set in the related object
+     * @param string|null $name the name of the term set in the related object
      * @param string $class the class of the term object can be set to force the creation of the related object
      * @return void
      */
-    function set_name(string $name, string $class = ''): void
+    function set_name(string|null $name, string $class = ''): void
     {
         if ($class != '' and $this->obj == null) {
             $this->set_obj_by_class($class);
@@ -607,9 +607,9 @@ class term extends combine_named
         return $this->obj?->id();
     }
 
-    function name(): string
+    function name(): string|null
     {
-        $result = '';
+        $result = null;
         if ($this->obj() != null) {
             $result = $this->obj()->name();
         }
@@ -851,7 +851,7 @@ class term extends combine_named
      */
     function load_by_obj_id(int $id, string $class, bool $including_triples = true): int
     {
-        log_debug($this->name());
+        log_debug($id);
         $result = 0;
 
         if ($class == word::class) {
@@ -962,7 +962,7 @@ class term extends combine_named
      */
     function load_by_obj_name(string $name, bool $including_triples = true): int
     {
-        log_debug($this->name());
+        log_debug($name);
         $result = 0;
 
         if ($this->load_word_by_name($name)) {

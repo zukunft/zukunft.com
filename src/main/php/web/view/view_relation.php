@@ -201,7 +201,7 @@ class view_relation extends sandbox_link
     /**
      * return the html code to display the link name
      */
-    function name(): string
+    function name(): string|null
     {
         $result = '';
 
