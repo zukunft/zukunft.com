@@ -3464,7 +3464,7 @@ class test_base
     ): void
     {
         $usr_msg = new user_message($usr);
-        $sbx->set_user($this->usr1);
+        $sbx->set_user($usr);
         $sbx->load_by_name($name);
         if ($sbx->id() != 0) {
             if ($check) {

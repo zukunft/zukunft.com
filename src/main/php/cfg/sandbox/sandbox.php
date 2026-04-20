@@ -2866,8 +2866,6 @@ class sandbox extends db_object_seq_id_user
     private function del_exe(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
 

@@ -187,8 +187,8 @@ class a_selected_test extends test_cleanup
             */
             //new import_write_tests()->run($t);
             $imf = new import_file();
-            $ta = new all_unit_write_tests();
-            $ta->import_test_files($usr);
+            //$ta = new all_unit_write_tests();
+            //$ta->import_test_files($usr);
             //$imf->json_file(files::MESSAGE_PATH . files::TIME_FILE, $usr, false);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
@@ -252,12 +252,12 @@ class a_selected_test extends test_cleanup
             // run the selected db write tests
             //new user_write_tests()->run($this);
             //new sys_log_write_tests()->run($t);
-            new horizontal_write_tests()->run($this);
+            //new horizontal_write_tests()->run($this);
 
             //new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
             //new verb_write_tests()->run($t);
-            new triple_write_tests()->run($this);
+            //new triple_write_tests()->run($this);
             //new phrase_write_tests()->run($t);
             //new phrase_list_write_tests()->run($t);
             //new group_write_tests()->run($this);

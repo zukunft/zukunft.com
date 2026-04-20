@@ -5574,17 +5574,19 @@ class sql_creator
      */
     function del_sql_list_without_log(string $class, string $id_field, array $id_lst): sql_par
     {
-        $lib = new library();
-
         $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
         $this->set_class($class, new sql_type_list());
         $this->add_where($id_field, $id_lst, sql_par_type::INT_LIST);
         $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table) . ' ';
         $sql .= sql::WHERE . ' ' . $id_field . ' ';
-        $sql .= sql::IN . ' (' . $this->par_name(1) . ')';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql .= sql::ANY . ' (' . $this->par_name(1) . ')';
+        } else {
+            $sql .= sql::IN . ' (' . $this->par_name(1) . ')';
+        }
         $qp->name .= '_by_ids';
         $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
-        $qp->par = [implode(',', $id_lst)];
+        $qp->par = ['{' . implode(',', $id_lst) . '}'];
         return $qp;
     }
 

@@ -1794,8 +1794,6 @@ class formula_map extends sandbox_code_id
      */
     function del_links(user_message $usr_msg): bool
     {
-        global $db_con;
-
         $usr_msg_del = new user_message($usr_msg->usr);
 
         $frm_lnk_lst = new formula_link_list($this->get_user());
@@ -1814,14 +1812,16 @@ class formula_map extends sandbox_code_id
         if ($usr_msg_del->is_ok()) {
             $elm_lst = new element_list($this->get_user());
             $elm_lst->load_by_frm($this->id());
-            // TODO add del function with test
-            //$usr_msg->add($elm_lst->del_without_log());
-
-            // TODO Prio 0 use element list delete function
-            $db_con->set_class(element::class);
-            $db_con->set_usr($this->get_user()->id);
-            $msg = $db_con->delete_old($this->id_field(), $this->id());
-            $usr_msg_del->add_message_text($msg);
+            if (!$elm_lst->is_empty()) {
+                $usr_msg_del->merge($elm_lst->del_without_log());
+            }
+            if ($this->get_user()->id() != $usr_msg->usr->id()) {
+                $elm_lst = new element_list($usr_msg->usr);
+                $elm_lst->load_by_frm($this->id());
+                if (!$elm_lst->is_empty()) {
+                    $usr_msg_del->merge($elm_lst->del_without_log());
+                }
+            }
         }
 
         // and the corresponding results
