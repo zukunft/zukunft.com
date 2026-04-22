@@ -2149,9 +2149,7 @@ class value_base extends sandbox_value
                     // in this case change is allowed and done
                     log_debug('value->save_id_if_updated change the existing display component link ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                     //$this->load_objects();
-                    if (!$this->save_field_excluded($db_con, $db_rec, $std_rec, $usr_msg)) {
-                        log_err('Excluding value has failed');
-                    }
+                    $this->set_excluded();
                 } else {
                     // if the target link has not yet been created
                     // ... request to delete the old

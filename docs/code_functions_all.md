@@ -2325,8 +2325,6 @@
     \-- sql_delete - section for function sql_delete not yet defined that it should be save helper - save fields in /sandbox/sandbox_multi.php
     \-- name_field - section for function name_field is expected to be sql fields in /sandbox/sandbox_multi.php
     \-- save_field_excluded_log - section for function save_field_excluded_log is expected to be save in /sandbox/sandbox_multi.php
-    \-- save_field_excluded - section for function save_field_excluded is expected to be save in /sandbox/sandbox_multi.php
-    \-- save_field_share - section for function save_field_share is expected to be save in /sandbox/sandbox_multi.php
     \-- save_set_log_id - section for function save_set_log_id is expected to be save in /sandbox/sandbox_multi.php
     \-- is_id_updated - section for function is_id_updated is expected to be info in /sandbox/sandbox_multi.php
     \-- get_obj_with_same_id_fields - section for function get_obj_with_same_id_fields is expected to be set and get in /sandbox/sandbox_multi.php

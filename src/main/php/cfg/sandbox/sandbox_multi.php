@@ -886,11 +886,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             } else {
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->get_user()->id);
-                if ($db_con->update_old($this->id(), user_db::FLD_ID, $this->get_user()->id)) {
-                    $result = true;
-                }
+                $this->set_owner($this->get_user()->id, $msg);
             }
         }
         return $result;
@@ -2507,114 +2503,6 @@ class sandbox_multi extends db_object_multi_user
         }
         $log->set_field(sql_db::FLD_EXCLUDED);
         return $log;
-    }
-
-    /**
-     * set the update parameters for the value excluded
-     * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox_multi $db_rec the object as saved in the database before this field is updated
-     * @param sandbox_multi $std_rec the default object without user-specific changes
-     * @param user_message $usr_msg a messages for the user what should be changed if something failed
-     * returns false if something has gone wrong
-     */
-    function save_field_excluded(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec, user_message $usr_msg): string
-    {
-        log_debug($this->dsp_id());
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
-
-        if ($db_rec->is_excluded() <> $this->is_excluded()) {
-            $log = $this->save_field_excluded_log($db_rec);
-            $this->save_set_log_id($log);
-            $new_value = $this->is_excluded();
-            $std_value = $std_rec->is_excluded();
-            // similar to $this->save_field_do
-            if ($this->can_change()) {
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->get_user()->id);
-                if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                    $usr_msg->add_message_text('excluding of ' . $class_name . ' failed');
-                }
-            } else {
-                if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg($usr_msg)) {
-                        $usr_msg->add_message_text('creation of user sandbox to exclude failed');
-                    }
-                }
-                if ($usr_msg->is_ok() == '') {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    if ($new_value == $std_value) {
-                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $usr_msg->add_message_text('include of ' . $class_name . ' for user failed');
-                        }
-                    } else {
-                        if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                            $usr_msg->add_message_text('excluding of ' . $class_name . ' for user failed');
-                        }
-                    }
-                    if (!$this->del_usr_cfg_if_not_needed()) {
-                        $usr_msg->add_message_text(' and user sandbox cannot be cleaned');
-                    }
-                }
-            }
-        }
-        return $usr_msg->is_ok();
-    }
-
-    /**
-     * save the share level in the database if allowed
-     * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox_multi $db_rec the object as saved in the database before this field is updated
-     * @param sandbox_multi $std_rec the default object without user-specific changes
-     * @return string the message that should be shown to the user
-     */
-    function save_field_share(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
-    {
-        log_debug($this->dsp_id());
-        $usr_msg = new user_message();
-        $result = '';
-
-        if ($db_rec->share_id <> $this->share_id) {
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->share_type_name();
-            $log->old_id = $db_rec->share_id;
-            $log->new_value = $this->share_type_name();
-            $log->new_id = $this->share_id;
-            // TODO is the setting of the standard needed?
-            $log->std_value = $std_rec->share_type_name();
-            $log->std_id = $std_rec->share_id;
-            $this->save_set_log_id($log);
-            $log->set_field(self::FLD_SHARE);
-
-            // save_field_do is not used because the share type can only be set on the user record
-            if ($log->new_id > 0) {
-                $new_value = $log->new_id;
-                $std_value = $log->std_id;
-            } else {
-                $new_value = $log->new_value;
-                $std_value = $log->std_value;
-            }
-            if ($log->add($usr_msg)) {
-                if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg($usr_msg)) {
-                        $result = 'creation of user sandbox for share type failed';
-                    }
-                }
-                if ($result == '') {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    $fvt_lst = new sql_par_field_list();
-                    $fvt_lst->add_field($log->field(), $new_value, sql_par_type::INT_SMALL);
-                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst, new sql_type_list([sql_type::USER]));
-                    $db_con->update($qp, 'setting of share type', $usr_msg);
-                    $usr_msg->get_message();
-                }
-            }
-        }
-
-        log_debug($this->dsp_id());
-        return $result;
     }
 
     /**
