@@ -883,9 +883,9 @@ class change_log extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the name extension that should be used
      * @param string $val_tbl name of the table to select the values to insert
-     * @param string $add_fld name of the database key field
-     * @param string $row_fld name of the database id field
-     * @param string $par_name name of the database name parameter field
+     * @param string $add_fld name of the database key field e.g. type_id
+     * @param string $row_fld name of the database id field e.g. _group_id
+     * @param string $par_name name of the database name parameter field e.g. type_name
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_log(

@@ -1547,6 +1547,43 @@ class test_base
     }
 
     /**
+     * check the SQL statement creation to update a database row
+     * for all allowed SQL database dialects
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param int $usr_id the user id of the target owner
+     * @param sandbox_named|sandbox_multi|CombineObject|db_object_seq_id|user $db_obj must be the same object as the $usr_obj but with the values from the database before the update
+     * @param array $sql_type_array the parameters for the sql statement creation
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_update_owner(
+        sql_creator                                                     $sc,
+        user                                                             $usr,
+        sandbox_named|sandbox_multi|CombineObject|db_object_seq_id|user $db_obj,
+        array                                                           $sql_type_array = []
+    ): bool
+    {
+        $usr_msg = new user_message();
+        $sc_par_lst = new sql_type_list($sql_type_array);
+
+        $usr_obj = $db_obj->clone_all();
+        $usr_obj->set_user($usr);
+
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
      * check the SQL statement to delete a database row
      * for all allowed SQL database dialects
      *

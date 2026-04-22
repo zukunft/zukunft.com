@@ -41,6 +41,7 @@ include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -79,9 +81,9 @@ class test_objects
      * delete any remaining test objects for a clean test start of each test
      */
     function cleanup_objects(
-        string                                                             $ts,
-        array                                                              $obj_names,
-        sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $obj
+        string                                                                           $ts,
+        array                                                                            $obj_names,
+        sandbox_named|sandbox_link_named|sandbox_multi|verb|phrase|ref|group|type_object $obj
     ): void
     {
         $lib = new library();

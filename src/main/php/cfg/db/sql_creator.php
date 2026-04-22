@@ -1800,10 +1800,16 @@ class sql_creator
             if (!str_ends_with($qp->sql, ';')) {
                 $qp->sql .= '; ';
             }
+            // if the user is changed the the user name is included in the field list
+            $usr_id = $fvt_lst->get_value(user_db::FLD_ID);
+            // ... and the user id is in the id var
+            if (is_string($usr_id)) {
+                $usr_id = $fvt_lst->get_id(user_db::FLD_ID);
+            }
             // add the user id to the field list
             $par_lst_out->add_field(
                 user_db::FLD_ID,
-                $fvt_lst->get_value(user_db::FLD_ID),
+                $usr_id,
                 sql_par_type::INT);
             // add the action id to the field list
             $par_lst_out->add_field(
@@ -4864,7 +4870,7 @@ class sql_creator
         }
         $this->add_par(sql_par_type::CONST, '(excluded <> 1 OR excluded is NULL)');
 
-        $fields = $this->fields(true);
+        $fields = $this->fields(true, false, false);
         $from = $this->from($fields);
         $id_fld = $this->id_field;
         if ($owner_id > 0) {

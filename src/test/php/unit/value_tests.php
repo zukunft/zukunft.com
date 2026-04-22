@@ -206,6 +206,9 @@ class value_tests
         $t->assert_sql_update($sc, $val_17, $db_val_17);
         $t->assert_sql_update($sc, $val_txt, $db_val_txt);
         $t->assert_sql_update($sc, $val_txt, $db_val_txt, [sql_type::LOG]);
+        $t->assert_sql_update_owner($sc, $t->usr2, $val_3, [sql_type::LOG]);
+        $t->assert_sql_update_owner($sc, $t->usr2, $val_16, [sql_type::LOG]);
+        $t->assert_sql_update_owner($sc, $t->usr2, $val_17, [sql_type::LOG]);
         // update only the last_update date to trigger calculation
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
 

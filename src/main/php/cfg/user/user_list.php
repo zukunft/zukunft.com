@@ -692,9 +692,11 @@ class user_list
     protected function id_pos_lst(): array
     {
         $id_pos_lst = [];
-        foreach ($this->lst() as $key => $obj) {
-            if (!array_key_exists($obj->id(), $id_pos_lst)) {
-                $id_pos_lst[$obj->id()] = $key;
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $key => $obj) {
+                if (!array_key_exists($obj->id(), $id_pos_lst)) {
+                    $id_pos_lst[$obj->id()] = $key;
+                }
             }
         }
         return $id_pos_lst;

@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VALUE . 'value_text.php';
@@ -57,6 +58,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
@@ -72,18 +74,19 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
 
-class test_values
+class test_values extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test words for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, values::TEST_VALUES, new value_base($this->env->usr1));
     }
 
 

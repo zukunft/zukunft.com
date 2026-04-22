@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS change_values_text_prime
     change_field_id  smallint   NOT NULL,
     old_value        text   DEFAULT NULL,
     new_value        text   DEFAULT NULL,
+    old_id           bigint DEFAULT NULL COMMENT 'old value id',
+    new_id           bigint DEFAULT NULL COMMENT 'new value id',
     PRIMARY KEY (change_id)
 )
     ENGINE = InnoDB

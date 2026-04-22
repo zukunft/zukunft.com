@@ -93,7 +93,9 @@ class change_value extends change_log
         change::FLD_FIELD_ID,
         change_value::FLD_GROUP_ID,
         change::FLD_OLD_VALUE,
+        change::FLD_OLD_ID,
         change::FLD_NEW_VALUE,
+        change::FLD_NEW_ID,
     );
 
     // field list to log the actual change of the value with a standard group id
@@ -101,6 +103,8 @@ class change_value extends change_log
         [change::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
         [change::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
         [change::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
+        [change::FLD_OLD_ID, change::FLD_OLD_ID_SQL_TYP, sql_field_default::NULL, '', '', change::FLD_OLD_ID_COM],
+        [change::FLD_NEW_ID, change::FLD_NEW_ID_SQL_TYP, sql_field_default::NULL, '', '', change::FLD_NEW_ID_COM],
     );
 
 
@@ -267,6 +271,13 @@ class change_value extends change_log
         if ($this->new_value !== null
             or ($sc_par_lst->is_update_part() and $this->old_value !== null)) {
             $fvt_lst->add_field(change::FLD_NEW_VALUE, $this->new_value, $val_typ);
+        }
+
+        if ($this->old_id > 0 or ($sc_par_lst->is_update_part() and $this->new_id > 0)) {
+            $fvt_lst->add_field(change::FLD_OLD_ID, $this->old_id, sql_par_type::INT);
+        }
+        if ($this->new_id > 0 or ($sc_par_lst->is_update_part() and $this->old_id > 0)) {
+            $fvt_lst->add_field(change::FLD_NEW_ID, $this->new_id, sql_par_type::INT);
         }
 
         $grp_typ = sql_par_type::INT;

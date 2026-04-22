@@ -98,6 +98,12 @@ frontend:
 - lan (LANguage)           - the language used for the frontend
 - for (FORm)               - the language form of a word e.g. plural
 
+default, standard, norm, main
+- dft (DeFaulT)            - is named the data shown to users that have now overwritten the default values using the user sandbox: to be renamed to nud (New User Default)
+- std (STanDard)           - are values that are public and do not have any restrictions and can therefore be store in a table with only a few fields: to be renamed to psv (Public Standard Value)
+- main                     - are results assigned to up to 8 prime phrases (to be renamed to p8)
+- norm                     - are values or results assigned to up to 16 phrase keys (to be renamed to p16)
+
 testing
 - t (Test)                 - class with the test execution functions
 - t_cac (Test CAChe)       - the test environment that includes all vars for testing e.g. to count the number of errors and the execution time

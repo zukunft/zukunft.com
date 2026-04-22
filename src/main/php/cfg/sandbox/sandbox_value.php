@@ -1987,7 +1987,7 @@ class sandbox_value extends sandbox_multi
      */
 
     /**
-     * list of all fields that can be changed by the user in this object
+     * list of all fields that can be changed by the user in this object.
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sql_type_list $sc_par_lst only used for link objects
@@ -1995,13 +1995,11 @@ class sandbox_value extends sandbox_multi
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
+        $fields = parent::db_fields_all($sc_par_lst);
         if ($this->is_prime() or $this->is_main()) {
-            $fields = $this->grp()->id_names();
+            $fields = array_merge($fields, $this->grp()->id_names());
         } else {
-            $fields = [group_db::FLD_ID];
-        }
-        if (!$sc_par_lst->is_standard()) {
-            $fields[] = user_db::FLD_ID;
+            $fields[] = group_db::FLD_ID;
         }
         if ($this->is_numeric()) {
             $fields[] = self::FLD_VALUE;
@@ -2059,6 +2057,7 @@ class sandbox_value extends sandbox_multi
                 $lst = $this->grp()->id_fvt($usr_msg);
             }
         }
+        $lst->merge(parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst));
         if (!$sc_par_lst->is_standard()) {
             if ($is_insert) {
                 $lst->add_user($this, $sbx, $do_log, $table_id);

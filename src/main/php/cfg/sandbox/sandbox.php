@@ -1598,6 +1598,18 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * @return bool true if a record is the standard for users that have not changed this object
+     */
+    function is_default(): bool
+    {
+        $result = false;
+        if ($this->usr_cfg_id === null) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
      * remove a user adjustment without check
      * log a system error if a technical error has occurred
      *
@@ -1847,11 +1859,12 @@ class sandbox extends db_object_seq_id_user
     private function log_upd_common($log)
     {
         log_debug($this->dsp_id());
+        $msg = new user_message();
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $log->set_user($this->get_user());
         $log->set_action(change_actions::UPDATE);
-        if ($this->can_change()) {
+        if ($this->can_change($msg)) {
             // TODO add the table exceptions from sql_db
             $log->set_table($class_name . sql_db::TABLE_EXTENSION);
         } else {

@@ -613,7 +613,9 @@ CREATE TABLE IF NOT EXISTS change_values_prime
     group_id         bigint    NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
-    new_value        double precision DEFAULT NULL
+    new_value        double precision DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_prime IS 'to log all changes done by any user on values with a prime group id';
@@ -621,6 +623,8 @@ COMMENT ON COLUMN change_values_prime.change_id IS 'the prime key to identify th
 COMMENT ON COLUMN change_values_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_prime.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_prime.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -637,7 +641,9 @@ CREATE TABLE IF NOT EXISTS change_values_time_prime
     group_id         bigint    NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        timestamp DEFAULT NULL,
-    new_value        timestamp DEFAULT NULL
+    new_value        timestamp DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_time_prime IS 'to log all time value changes done by any user on values with a prime group id';
@@ -645,6 +651,8 @@ COMMENT ON COLUMN change_values_time_prime.change_id IS 'the prime key to identi
 COMMENT ON COLUMN change_values_time_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_time_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_time_prime.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_time_prime.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -661,7 +669,9 @@ CREATE TABLE IF NOT EXISTS change_values_text_prime
     group_id         bigint    NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        text  DEFAULT NULL,
-    new_value        text  DEFAULT NULL
+    new_value        text  DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_text_prime IS 'to log all text value changes done by any user on values with a prime group id';
@@ -669,6 +679,8 @@ COMMENT ON COLUMN change_values_text_prime.change_id IS 'the prime key to identi
 COMMENT ON COLUMN change_values_text_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_prime.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_text_prime.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -685,7 +697,9 @@ CREATE TABLE IF NOT EXISTS change_values_geo_prime
     group_id         bigint    NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        point DEFAULT NULL,
-    new_value        point DEFAULT NULL
+    new_value        point DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_geo_prime IS 'to log all geo value changes done by any user on values with a prime group id';
@@ -693,6 +707,8 @@ COMMENT ON COLUMN change_values_geo_prime.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_geo_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_geo_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_geo_prime.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_geo_prime.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -709,7 +725,9 @@ CREATE TABLE IF NOT EXISTS change_values_norm
     group_id         char(112) NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
-    new_value        double precision DEFAULT NULL
+    new_value        double precision DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_norm IS 'to log all changes done by any user on values with a standard group id';
@@ -717,6 +735,8 @@ COMMENT ON COLUMN change_values_norm.change_id IS 'the prime key to identify the
 COMMENT ON COLUMN change_values_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_norm.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_norm.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -733,7 +753,9 @@ CREATE TABLE IF NOT EXISTS change_values_time_norm
     group_id         char(112) NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        timestamp DEFAULT NULL,
-    new_value        timestamp DEFAULT NULL
+    new_value        timestamp DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_time_norm IS 'to log all time value changes done by any user on values with a standard group id';
@@ -741,6 +763,8 @@ COMMENT ON COLUMN change_values_time_norm.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_time_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_time_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_time_norm.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_time_norm.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -757,7 +781,9 @@ CREATE TABLE IF NOT EXISTS change_values_text_norm
     group_id         char(112) NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        text  DEFAULT NULL,
-    new_value        text  DEFAULT NULL
+    new_value        text  DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_text_norm IS 'to log all text value changes done by any user on values with a standard group id';
@@ -765,6 +791,8 @@ COMMENT ON COLUMN change_values_text_norm.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_text_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_norm.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_text_norm.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -781,7 +809,9 @@ CREATE TABLE IF NOT EXISTS change_values_geo_norm
     group_id         char(112) NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        point DEFAULT NULL,
-    new_value        point DEFAULT NULL
+    new_value        point DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_geo_norm IS 'to log all geo value changes done by any user on values with a standard group id';
@@ -789,6 +819,8 @@ COMMENT ON COLUMN change_values_geo_norm.change_id IS 'the prime key to identify
 COMMENT ON COLUMN change_values_geo_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_geo_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_geo_norm.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_geo_norm.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -805,7 +837,9 @@ CREATE TABLE IF NOT EXISTS change_values_big
     group_id         text      NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
-    new_value        double precision DEFAULT NULL
+    new_value        double precision DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_big IS 'to log all changes done by any user on values with a big group id';
@@ -813,6 +847,8 @@ COMMENT ON COLUMN change_values_big.change_id IS 'the prime key to identify the 
 COMMENT ON COLUMN change_values_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_big.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_big.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -829,7 +865,9 @@ CREATE TABLE IF NOT EXISTS change_values_time_big
     group_id         text      NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        timestamp DEFAULT NULL,
-    new_value        timestamp DEFAULT NULL
+    new_value        timestamp DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_time_big IS 'to log all time value changes done by any user on values with a big group id';
@@ -837,6 +875,8 @@ COMMENT ON COLUMN change_values_time_big.change_id IS 'the prime key to identify
 COMMENT ON COLUMN change_values_time_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_time_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_time_big.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_time_big.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -853,7 +893,9 @@ CREATE TABLE IF NOT EXISTS change_values_text_big
     group_id         text      NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        text DEFAULT NULL,
-    new_value        text DEFAULT NULL
+    new_value        text DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_text_big IS 'to log all text value changes done by any user on values with a big group id';
@@ -861,6 +903,8 @@ COMMENT ON COLUMN change_values_text_big.change_id IS 'the prime key to identify
 COMMENT ON COLUMN change_values_text_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_big.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_text_big.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -877,7 +921,9 @@ CREATE TABLE IF NOT EXISTS change_values_geo_big
     group_id         text      NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        point DEFAULT NULL,
-    new_value        point DEFAULT NULL
+    new_value        point DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_geo_big IS 'to log all geo value changes done by any user on values with a big group id';
@@ -885,6 +931,8 @@ COMMENT ON COLUMN change_values_geo_big.change_id IS 'the prime key to identify 
 COMMENT ON COLUMN change_values_geo_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_geo_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_geo_big.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_geo_big.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 

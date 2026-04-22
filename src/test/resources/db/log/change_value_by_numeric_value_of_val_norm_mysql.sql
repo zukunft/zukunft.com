@@ -7,7 +7,9 @@ PREPARE change_value_by_numeric_value_of_val_norm FROM
                 s.change_field_id,
                 s.group_id,
                 s.old_value,
+                s.old_id,
                 s.new_value,
+                s.new_id,
                 l.user_name,
                 l2.table_id
            FROM change_values_norm s

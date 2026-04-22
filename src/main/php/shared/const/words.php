@@ -451,6 +451,7 @@ class words
     const string TEST_ADD_COM = 'test description added to the word via import';
     const string TEST_ADD_TO = 'System Test Word To';
     const string TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
+    const string TEST_ADD_GROUP_PRIME = 'System Test Word for prime values';
     const string TEST_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
     const string TEST_ADD_GROUP_PRIME_SQL = 'System Test Word for prime group add via sql insert';
     const string TEST_ADD_GROUP_MOST_FUNC = 'System Test Word for main group add via sql function';
@@ -609,6 +610,7 @@ class words
         self::TEST_ADD_VIA_FUNC,
         self::TEST_ADD_GROUP_MOST_FUNC,
         self::TEST_ADD_GROUP_MOST_SQL,
+        self::TEST_ADD_GROUP_PRIME,
         self::TEST_ADD_GROUP_PRIME_FUNC,
         self::TEST_ADD_GROUP_PRIME_SQL,
         self::TEST_ADD_GROUP_BIG_FUNC,
@@ -678,6 +680,7 @@ class words
     const array TEST_WORDS = array(
         self::TEST_ADD,
         self::TEST_ADD_VIA_FUNC,
+        self::TEST_ADD_GROUP_PRIME,
         self::TEST_ADD_GROUP_PRIME_FUNC,
         self::TEST_ADD_GROUP_PRIME_SQL,
         self::TEST_ADD_GROUP_MOST_FUNC,

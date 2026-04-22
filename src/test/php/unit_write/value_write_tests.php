@@ -57,6 +57,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -76,6 +78,8 @@ class value_write_tests
 
         // init
         $t->name = 'value->';
+        $t_val = new test_values($t);
+        $t_wrd = new test_words($t);
         $t_db = new test_db_load($t);
         $tl = new test_lib();
         $lib = new library();
@@ -85,6 +89,13 @@ class value_write_tests
         // start the test section (ts)
         $ts = 'db write value ';
         $t->header($ts);
+
+        $t->subheader($ts . 'prepare');
+        $t->assert_write_named($t_wrd->word_filled_add(), words::TEST_ADD);
+
+        $t->subheader($ts . 'create');
+        $test_name = 'create test word used for test values';
+
 
         // test another rebuild_grp_id by value id
         $chk_phr_grp = $t_db->load_word_list(array(
@@ -452,6 +463,12 @@ class value_write_tests
         $val_usr2->del($usr_msg);
         */
 
+        // cleanup - fallback delete
+        $t_val->cleanup($ts);
+        $t_wrd->cleanup($ts);
+
+        // test if there are any test leftovers in the database and report which
+        $t->check_cleanup($usr_msg);
 
     }
 

@@ -2103,6 +2103,7 @@
     \-- used_by_someone_else - section for function used_by_someone_else not yet defined that it should be owner and access in /sandbox/sandbox.php
     \-- can_change - section for function can_change is expected to be sandbox in /sandbox/sandbox.php
     \-- has_usr_cfg - section for function has_usr_cfg not yet defined that it should be sandbox in /sandbox/sandbox.php
+    \-- is_default - section for function is_default is expected to be info in /sandbox/sandbox.php
     \-- del_usr_cfg_exe - section for function del_usr_cfg_exe is expected to be del in /sandbox/sandbox.php
     \-- del_usr_cfg - section for function del_usr_cfg is expected to be del in /sandbox/sandbox.php
     \-- db_ready - section for function db_ready is expected to be check in /sandbox/sandbox.php
@@ -2291,6 +2292,7 @@
     \-- load_sql_usr_num - section for function load_sql_usr_num is expected to be load sql in /sandbox/sandbox_multi.php
     \-- load_sql_obj_vars - section for function load_sql_obj_vars is expected to be load sql in /sandbox/sandbox_multi.php
     \-- delta - section for function delta is expected to be del in /sandbox/sandbox_multi.php
+    \-- has_id - section for function has_id not yet defined that it should be info in /sandbox/sandbox_multi.php
     \-- chk_owner - section for function chk_owner not yet defined that it should be check functions in /sandbox/sandbox_multi.php
     \-- share_type_code_id - section for function share_type_code_id not yet defined that it should be load types in /sandbox/sandbox_multi.php
     \-- share_type_name - section for function share_type_name not yet defined that it should be load types in /sandbox/sandbox_multi.php
@@ -2341,20 +2343,18 @@
     \-- sql_write - section for function sql_write not yet defined that it should be delete in /sandbox/sandbox_multi.php
     \-- sql_write_with_log - section for function sql_write_with_log not yet defined that it should be delete in /sandbox/sandbox_multi.php
     \-- id_fvt_lst - section for function id_fvt_lst not yet defined that it should be delete in /sandbox/sandbox_multi.php
-    \-- db_fields_all - section for function db_fields_all is expected to be sql write fields in /sandbox/sandbox_multi.php
     \-- no_diff - section for function no_diff not yet defined that it should be delete in /sandbox/sandbox_multi.php
     \-- no_non_id_diff - section for function no_non_id_diff not yet defined that it should be delete in /sandbox/sandbox_multi.php
-    \-- db_fields_changed - section for function db_fields_changed is expected to be sql write fields in /sandbox/sandbox_multi.php
-    \-- sql_insert_switch - section for function sql_insert_switch not yet defined that it should be delete in /sandbox/sandbox_multi.php
-    \-- sql_update_switch - section for function sql_update_switch not yet defined that it should be delete in /sandbox/sandbox_multi.php
+    \-- sql_insert_switch - section for function sql_insert_switch not yet defined that it should be sql write fields in /sandbox/sandbox_multi.php
+    \-- sql_update_switch - section for function sql_update_switch not yet defined that it should be sql write fields in /sandbox/sandbox_multi.php
     \-- sql_insert_key_field - section for function sql_insert_key_field is expected to be sql write in /sandbox/sandbox_multi.php
-    \-- id_used_msg - section for function id_used_msg not yet defined that it should be delete in /sandbox/sandbox_multi.php
+    \-- id_used_msg - section for function id_used_msg not yet defined that it should be sql write fields in /sandbox/sandbox_multi.php
     \-- is_prime - section for function is_prime is expected to be info in /sandbox/sandbox_multi.php
     \-- is_main - section for function is_main is expected to be info in /sandbox/sandbox_multi.php
     \-- is_big - section for function is_big is expected to be info in /sandbox/sandbox_multi.php
-    \-- id_names - section for function id_names not yet defined that it should be delete in /sandbox/sandbox_multi.php
-    \-- id_lst - section for function id_lst not yet defined that it should be delete in /sandbox/sandbox_multi.php
-    \-- id_or_lst - section for function id_or_lst not yet defined that it should be delete in /sandbox/sandbox_multi.php
+    \-- id_names - section for function id_names not yet defined that it should be sql write fields in /sandbox/sandbox_multi.php
+    \-- id_lst - section for function id_lst not yet defined that it should be sql write fields in /sandbox/sandbox_multi.php
+    \-- id_or_lst - section for function id_or_lst not yet defined that it should be sql write fields in /sandbox/sandbox_multi.php
     \-- del_links - section for function del_links is expected to be del in /sandbox/sandbox_multi.php
     \-- db_changed_sandbox_list - section for function db_changed_sandbox_list not yet defined that it should be sql write fields in /sandbox/sandbox_multi.php
     \-- type_name - section for function type_name is expected to be preloaded in /sandbox/sandbox_multi.php

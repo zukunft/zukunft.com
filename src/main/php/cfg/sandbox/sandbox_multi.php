@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_HELPER . 'db_object_multi_user.php';
 //include_once paths::MODEL_COMPONENT . 'component.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -132,6 +133,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -270,7 +272,7 @@ class sandbox_multi extends db_object_multi_user
 
     // database fields that are used in all objects and that have a specific behavior
     public ?int $usr_cfg_id = null;    // the database id if there is already some user-specific configuration for this object
-    private ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
+    public ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     private ?int $share_id = null;      // id for public, personal, group or private
     private ?int $protection_id = null; // id for no, user, admin or full protection
     public ?bool $excluded = null;       // the user sandbox for object is implemented, but can be switched off for the complete instance
@@ -939,6 +941,36 @@ class sandbox_multi extends db_object_multi_user
         return $result;
     }
 
+    function has_id(): bool
+    {
+        if (is_integer($this->id())) {
+            if ($this->id() != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if ($this->id() != '') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * @return bool true if a record is the standard for users that have not changed this object
+     */
+    function is_default(): bool
+    {
+        $result = false;
+        if ($this->usr_cfg_id === null) {
+            $result = true;
+        }
+        return $result;
+    }
+
+
 
     /*
      * modify
@@ -1339,41 +1371,20 @@ class sandbox_multi extends db_object_multi_user
     {
         log_debug($this->dsp_id() . ' to ' . $new_owner_id);
 
-        global $db_con;
-
-        if ($this->id() > 0 and $new_owner_id > 0) {
-            // to recreate the calling object
-            $std = $this->clone_all();
-            $std->reset();
-            $std->set_user($this->get_user());
+        if ($this->has_id() > 0 and $new_owner_id > 0) {
+            // load the standard db row
+            $std = $this->clone_reset();
             $std->load_standard($this->id(), $usr_msg);
 
-            $db_con->set_class($this::class);
-            $db_con->set_usr($this->get_user()->id);
+            // set the owner and save
+            $std->owner_id = $new_owner_id;
+            $std->save($usr_msg);
 
-            // TODO review and create sql creation test
-            if ($this->is_prime()) {
-                $new_owner = new user;
-                if ($new_owner->load_by_id($new_owner_id)) {
-                    $std->set_user($new_owner);
-                }
-                $std->save($usr_msg);
-            } else {
-                if (!$db_con->update_old(
-                    $this->id(), user_db::FLD_ID, $new_owner_id, group_db::FLD_ID)) {
-                    $usr_msg->add_message_text('cannot set owner');
-                }
+            // update the current object
+            if ($usr_msg->is_ok()) {
+                $this->owner_id = $new_owner_id;
             }
 
-            $this->set_owner_id($new_owner_id);
-            $new_owner = new user;
-            if ($new_owner->load_by_id($new_owner_id)) {
-                $this->set_user($new_owner);
-            } else {
-                $usr_msg->add_message_text('cannot set owner');
-            }
-
-            log_debug('owner of ' . $this->dsp_id() . ' to ' . $new_owner_id);
         }
         return $usr_msg->is_ok();
     }
@@ -2003,9 +2014,9 @@ class sandbox_multi extends db_object_multi_user
      * similar to log_prime but ...
      * * ... set the log entry parameter for a group object with a text key
      *
-     * @return changes_big the change log object with the basic parameters set
+     * @return changes_big|change_values_big|change_values_time_big|change_values_text_big|change_values_geo_big the change log object with the basic parameters set
      */
-    private function log_big(): changes_big
+    private function log_big(): changes_big|change_values_big|change_values_time_big|change_values_text_big|change_values_geo_big
     {
         log_debug($this->dsp_id());
 
@@ -2949,7 +2960,7 @@ class sandbox_multi extends db_object_multi_user
             // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
             if ($this->id() == 0) {
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
-                $similar = $this->get_similar();
+                $similar = $this->get_similar($msg);
                 if ($similar->id() <> 0) {
                     // check that the get_similar function has really found a similar object and report potential program errors
                     if (!$this->is_similar($similar)) {
@@ -3595,9 +3606,16 @@ class sandbox_multi extends db_object_multi_user
                 $fvt_lst_write->add($fvt_lst_all->get($fld, $usr_msg));
             }
         }
+        // add the user id only if a new user sandbox row is created
         if (!$sc_par_lst->is_standard()) {
-            if ($fvt_lst_all->has_name(user_db::FLD_ID) and $sc_par_lst->is_insert()) {
-                $fvt_lst_write->add($fvt_lst_all->get(user_db::FLD_ID, $usr_msg));
+            if ($fvt_lst_all->has_name(user_db::FLD_ID)) {
+                if ($sc_par_lst->is_insert()) {
+                    $fvt_lst_write->add($fvt_lst_all->get(user_db::FLD_ID, $usr_msg));
+                } elseif ($sc_par_lst->is_update()
+                    and $fvt_lst_all->get_old_id(user_db::FLD_ID) != $fvt_lst_all->get_id(user_db::FLD_ID))  {
+                    // ... or if the owner is updated
+                    $fvt_lst_write->add($fvt_lst_all->get(user_db::FLD_ID, $usr_msg));
+                }
             }
         }
         if ($this->is_numeric()) {
@@ -3671,21 +3689,6 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * dummy function to save all updated word fields, which is always overwritten by the child class
-     * @param sql_type_list $sc_par_lst only used for link objects
-     * @return array list of all database field names that have been updated
-     */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
-    {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'db_fields_all',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return [];
-    }
-
-    /**
      * detects if this object has be changed compared to the given object
      *
      * @param sandbox_multi $db_obj the user database or standard record for compare
@@ -3725,6 +3728,27 @@ class sandbox_multi extends db_object_multi_user
         return $fvt_lst->is_empty_except_id_and_internal_fields();
     }
 
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * list of all fields that can be changed by the user in this object
+     *
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array with the field names of the object and any child object
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
+    {
+        $fields = [];
+
+        $fields[] = user_db::FLD_ID;
+        // the share and protection fields are added at the end
+
+        return $fields;
+    }
+
     /**
      * get a list of database field names, values and types that have been updated
      * dummy function overwritten by the child object
@@ -3740,11 +3764,37 @@ class sandbox_multi extends db_object_multi_user
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'db_fields_changed',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return new sql_par_field_list();
+        global $sys;
+
+        $lst = new sql_par_field_list();
+        $do_log = $sc_par_lst->incl_log();
+        $sc = new sql_creator();
+        $table_id = $sc->table_id($this::class);
+
+        // to update the owner
+        if ($this->is_default()) {
+            if ($sbx->get_user()->id() !== $this->get_user()->id()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID,
+                        $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_ID),
+                        change::FLD_FIELD_ID_SQL_TYP
+                    );
+                }
+                $lst->add_field(
+                    user_db::FLD_ID,
+                    $this->get_user()->name(),
+                    sql_field_type::NAME,
+                    $sbx->get_user()->name(),
+                    user_db::FLD_NAME,
+                    $this->get_user()->id(),
+                    $sbx->get_user()->id(),
+                    sql_field_type::INT
+                );
+            }
+        }
+
+        return $lst;
     }
 
     /**

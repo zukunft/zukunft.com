@@ -5,7 +5,7 @@
 The main backend objects have these main functions:
 
 1. storage
-   1. load_by_name: lika all load_by_ function to retrieve the object data from the database by a unique key
+   1. load_by_name: like all load_by_ function to retrieve the object data from the database by a unique key
    2. save: to add or update the object in the database
    3. del: to exclude or delete the object 
 2. mapper
@@ -43,7 +43,7 @@ The main backend objects have these main functions:
 The main frontend objects have these main functions:
 
 1. storage
-    1. load_by_name: lika all load_by_ function to retrieve the object data from the database by a unique key
+    1. load_by_name: like all load_by_ function to retrieve the object data from the database by a unique key
     2. save: to add or update the object in the database
     3. del: to exclude or delete the object
 2. mapper
