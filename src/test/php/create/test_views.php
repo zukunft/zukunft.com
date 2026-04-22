@@ -65,18 +65,20 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_views
+class test_views extends test_objects
 {
 
+
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test views for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, views::TEST_VIEWS, new view($this->env->usr1));
     }
 
 
@@ -89,6 +91,25 @@ class test_views
         $msk = new view($this->env->usr1);
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
+        return $msk;
+    }
+
+    function view_math(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::MATH_CONST_ID, views::MATH_CONST_NAME);
+        $msk->description = views::MATH_CONST_COM;
+        return $msk;
+    }
+
+    /**
+     * @return view for db write testing that does not have a reserved name
+     */
+    function view_rename(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::HISTORIC_ID, views::HISTORIC_NAME);
+        $msk->description = views::HISTORIC_COM;
         return $msk;
     }
 
@@ -110,6 +131,13 @@ class test_views
         $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_types::ENTRY, $this->env->usr1);
         $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
+        return $msk;
+    }
+
+    function view_add(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set_name(views::TEST_ADD_NAME);
         return $msk;
     }
 
@@ -257,11 +285,16 @@ class test_views
      */
     function view_filled_add(): view
     {
-        $msk = $this->view_filled();
-        $msk->include();
-        $msk->id = 0;
+        global $sys;
+        $msk = $this->view_add();
         $msk->set_code_id_db(views::TEST_ADD);
-        $msk->set_name(views::TEST_ADD_NAME);
+        $msk->description = views::START_COM;
+        $msk->set_type(view_types::ENTRY, $this->env->usr1);
+        $msk->set_style(view_styles::COL_SM_4);
+        $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
+        $msk->exclude();
+        $msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $msk;
     }
 

@@ -155,11 +155,15 @@ class db_object_seq_id_user extends db_object_seq_id
                 log_warning('object user id ' . $obj_usr_id
                     . ' does not match db row user id ' . $db_usr_id);
                 if ($obj_usr_id == 0) {
+                    $usr = null;
                     global $sys;
-                    $usr = $sys->sys_usr_lst->get_by_id($db_usr_id);
-                    if ($usr != null) {
-                        $this->set_user($usr);
-                    } else {
+                    if (!$sys->sys_usr_lst->is_empty()) {
+                        $usr = $sys->sys_usr_lst->get_by_id($db_usr_id);
+                        if ($usr != null) {
+                            $this->set_user($usr);
+                        }
+                    }
+                    if ($usr == null) {
                         // TODO Prio 2 try to get the user from cache
                         $usr = new user();
                         if ($usr->load_by_id($db_usr_id)) {
@@ -233,13 +237,42 @@ class db_object_seq_id_user extends db_object_seq_id
         return $msg;
     }
 
-    function has_id(): bool
+    /**
+     * if the db id is set, they must be the same to make the check valid if the objects are the same
+     * @param object $obj_to_check the object used for the comparison
+     * @return bool true if the id is not yet set or the ids match
+     */
+    function is_same_std(object $obj_to_check): bool
     {
-        if ($this->id() !== null and $this->id() !== 0) {
+        if ($this->id() == 0) {
             return true;
         } else {
-            return false;
+            if ($this->id() == $obj_to_check->id()) {
+                return true;
+            } else {
+                return false;
+            }
         }
+    }
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param db_object_seq_id_user|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param db_object_seq_id_user|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return db_object_seq_id_user|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        db_object_seq_id_user|CombineObject|db_object_seq_id $std_obj,
+        db_object_seq_id_user|CombineObject|db_object_seq_id $result
+    ): db_object_seq_id_user|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->get_user_id() !== $this->get_user_id()) {
+            $result->set_user($this->get_user());
+        }
+        return $result;
     }
 
 
@@ -258,7 +291,7 @@ class db_object_seq_id_user extends db_object_seq_id
     function fill(CombineObject|db_object_seq_id_user|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_user_id() != null) {
+        if ($this->get_user_id() === null and $obj->get_user_id() != null) {
             $this->set_user($obj->get_user());
         }
         return $usr_msg;

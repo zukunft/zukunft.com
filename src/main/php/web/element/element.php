@@ -159,7 +159,7 @@ class element extends db_object
      * html
      */
 
-    function name(): string
+    function name(): string|null
     {
         return $this->obj->name;
     }

@@ -247,12 +247,12 @@ class component_link extends sandbox_link
     /**
      * return the html code to display the link name
      */
-    function name(): string
+    function name(): string|null
     {
         $result = '';
 
         if ($this->get_view() != null and $this->get_component() != null) {
-            if ($this->get_view()->name() <> '' and $this->get_component()->name() <> '') {
+            if ($this->get_view()->name() <> null and $this->get_component()->name() <> null) {
                 $result .= '"' . $this->get_component()->name() . '" extends "'; // e.g. company details
                 $result .= $this->get_view()->name() . '"';     // e.g. cash flow statement
             }

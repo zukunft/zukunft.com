@@ -188,7 +188,7 @@ class system_tests
         $t->assert_dsp_id($t_trm->term_list_short(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
         $t->assert_dsp_id($t_val->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_val->value_list_short(), 'Pi (math): 3.1415926535898 / Zurich City inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 213,196,139,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_src->source(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_src->source_reserved(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_ref->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
         $t->assert_dsp_id($t_frm->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->formula_list_short(), 'scale minute to sec (formula_id 1) for user 1 (zukunft.com system test)');
@@ -456,18 +456,18 @@ class system_tests
         $log_dsp = new sys_log_ui($api_msg);
         $created = $log_dsp->api_json();
         $expected = file_get_contents(test_files::SYS_LOG);
-        $t->assert('sys_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
+        $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG . ')', $lib->trim_json($created), $lib->trim_json($expected));
 
         // html code for the system log entry for normal users
         $created = $log_dsp->display();
         $expected = file_get_contents(test_files::SYS_LOG_HTML);
-        $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
+        $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG_HTML . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
         // ... and the same for admin users
         $usr_sys_dsp = new user($usr_sys->api_json());
         $created = $log_dsp->display_admin($usr_sys_dsp);
         $expected = file_get_contents(test_files::SYS_LOG_ADMIN);
-        $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
+        $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG_ADMIN . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
         // create a second system log entry to create a list
         $log2 = $t_sys->sys_log_filled();
@@ -481,15 +481,15 @@ class system_tests
         $created = $log_lst_dsp->api_json([api_types::HEADER], $usr1_dsp);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_TEST);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
-        $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
+        $t->assert('sys_log_list_dsp->get_json (file ' . test_files::SYS_LOG_LIST_TEST . ')', $lib->trim_json($created), $lib->trim_json($expected));
 
         $created = $log_lst_dsp->get_html($usr1_dsp);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_HTML);
-        $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
+        $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_HTML . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
         $created = $log_lst_dsp->get_html_page($usr1_dsp);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_PAGE);
-        $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
+        $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_PAGE . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
     }
 

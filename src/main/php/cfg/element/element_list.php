@@ -359,7 +359,7 @@ class element_list extends sandbox_list
         $sc = $db_con->sql_creator();
         $qp = $this->del_sql_without_log($sc);
         $usr_msg->add_message_text(
-            $db_con->exe_try('del elements', $qp->sql, '', array(), sys_log_levels::FATAL));
+            $db_con->exe_try('del elements', $qp->sql, $qp->name, $qp->par, sys_log_levels::FATAL_ID));
         return $usr_msg;
     }
 

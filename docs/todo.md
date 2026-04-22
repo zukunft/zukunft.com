@@ -13,6 +13,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO create the frontend page reaction flow tests
 
     TODO Release 0.0.4
+    TODO use the name "nud" (New User Default) for the default data that should be used if the user has not done an overwrite
+    TODO use the name "psv" (Public Standard Value) for values and results that are no read and write restrictions 
     TODO fix all prio 0 TODO including unit tests
     TODO use the url_var class const for all url vars
     TODO check that the api, url and import mapper just map the fields

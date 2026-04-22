@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
@@ -71,10 +72,9 @@ class test_app
      * return null if the db connection fails or the db is not compatible
      * TODO create a separate class for starting the backend and frontend
      *
-     * @param string $code_name the place that is displayed to the user e.g. add word
-     * @param bool $echo_env if true log the environment
+     * @param string $code_name the place that is displayed to the user e.g. add a word
+     * @param bool $echo_env if true, log the environment
      * @return sql_db the open database connection
-     * @throws RandomException
      */
     function start(
         string $code_name,
@@ -131,7 +131,7 @@ class test_app
 
     /**
      * open the database connection and load the base cache
-     * @param string $code_name the place that is displayed to the user e.g. add word
+     * @param string $code_name the place that is displayed to the user e.g. add a word
      * @return sql_db the open database connection
      */
     function open_db(string $code_name): sql_db
@@ -242,7 +242,14 @@ class test_app
             $db_con->set_class(system_time_type::class);
             $sys_script_id = $db_con->get_id($sys->script);
             if ($sys_script_id <= 0) {
-                $sys_script_id = $db_con->add_id($sys->script);
+                $sys_script = new system_time_type();
+                $sys_script->name = $sys->script;
+                $sys_script->code_id = $sys->script;
+                $sys_usr = new user();
+                $sys_usr->load_by_id(users::SYSTEM_ID);
+                $msg = new user_message($sys_usr);
+                $sys_script->save($msg);
+                $sys_script_id = $sys_script->id();
             }
             $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
             $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);

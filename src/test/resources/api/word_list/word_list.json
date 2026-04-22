@@ -4,7 +4,7 @@
     "name": "constant",
     "description": "fixed and well-defined number",
     "protection": 3,
-    "type_id": 17
+    "type_id": 1
   },
   {
     "id": 1,

@@ -57,7 +57,7 @@ SELECT user_update_log_202000004000000200000
          null::text,
          81::smallint,
          'system test'::text,
-         16::smallint,
+         17::smallint,
          null::text,
          null::smallint,
          213::smallint,

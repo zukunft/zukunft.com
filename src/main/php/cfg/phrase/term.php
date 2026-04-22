@@ -48,15 +48,18 @@ namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
@@ -78,18 +81,21 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
-use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -270,7 +276,9 @@ class term extends combine_named
             if ($db_row[self::FLD_ID] != 0) {
                 $this->set_obj_from_id($db_row[self::FLD_ID]);
                 $this->set_name($db_row[self::FLD_NAME]);
-                $this->set_usage($db_row[sql_db::FLD_USAGE]);
+                if (key_exists(sql_db::FLD_USAGE, $db_row)) {
+                    $this->set_usage($db_row[sql_db::FLD_USAGE]);
+                }
                 $result = true;
             }
         }
@@ -319,10 +327,7 @@ class term extends combine_named
     function clone_reset(bool $keep_user): word|verb|triple|formula|phrase|term
     {
         $obj = $this->obj->clone_reset($keep_user);
-        if ($obj::class == word::class
-            or $obj::class == verb::class
-            or $obj::class == triple::class
-            or $obj::class == formula::class) {
+        if (in_array($obj::class, def::TERM_CLASSES)) {
             $obj = $obj->term();
         }
         return $obj;
@@ -452,11 +457,11 @@ class term extends combine_named
      * set the name of the term object, which is also the name of the term
      * because of this object name retrieval set and get of the name is needed for all linked objects
      *
-     * @param string $name the name of the term set in the related object
+     * @param string|null $name the name of the term set in the related object
      * @param string $class the class of the term object can be set to force the creation of the related object
      * @return void
      */
-    function set_name(string $name, string $class = ''): void
+    function set_name(string|null $name, string $class = ''): void
     {
         if ($class != '' and $this->obj == null) {
             $this->set_obj_by_class($class);
@@ -522,6 +527,24 @@ class term extends combine_named
         return $this->obj()->protection_id();
     }
 
+    function is_similar(phrase|term|type_object|sandbox|null $obj_to_check): bool
+    {
+        if ($obj_to_check::class == phrase::class or $obj_to_check::class == term::class) {
+            return $this->obj()->is_similar($obj_to_check->obj());
+        } else {
+            return $this->obj()->is_similar($obj_to_check);
+        }
+    }
+
+    function is_same(phrase|term|type_object|sandbox|null $obj_to_check): bool
+    {
+        if ($obj_to_check::class == phrase::class or $obj_to_check::class == term::class) {
+            return $this->obj()->is_same($obj_to_check->obj());
+        } else {
+            return $this->obj()->is_same($obj_to_check);
+        }
+    }
+
     /**
      * set the value to rank the terms by usage
      *
@@ -584,9 +607,9 @@ class term extends combine_named
         return $this->obj?->id();
     }
 
-    function name(): string
+    function name(): string|null
     {
-        $result = '';
+        $result = null;
         if ($this->obj() != null) {
             $result = $this->obj()->name();
         }
@@ -742,6 +765,27 @@ class term extends combine_named
     }
 
     /**
+     * create the SQL to load the single default value always by the id or name
+     * @param sql_creator $sc with the target db_type set
+     * @param string $name the database row id to select the standard row
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_standard_by_name(sql_creator $sc, string $name): sql_par
+    {
+        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
+        $qp->name .= sql_db::FLD_NAME;
+
+        $sc->set_class($this::class);
+        $sc->set_name($qp->name);
+        $sc->set_fields($this->all_fields());
+        $sc->add_where($this->name_field(), $name);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
      * load a term from the database view
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
@@ -770,7 +814,7 @@ class term extends combine_named
     }
 
     /**
-     * test if the name is used already via view table and just load the main parameters
+     * test if the name is used already via view table and load the main parameters
      * @param string $name the name of the term and the related word, triple, formula or verb
      * @return int the id of the object found and zero if nothing is found
      */
@@ -784,6 +828,21 @@ class term extends combine_named
     }
 
     /**
+     * test if the name is used already via view table and load the main parameters
+     * @param string $name the name of the term and the related word, triple, formula or verb
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_standard_by_name(string $name, user_message $msg): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $qp = $this->load_sql_standard_by_name($db_con->sql_creator(), $name);
+        return $this->load($qp);
+    }
+
+    /**
      * load the term object by the word or triple id (not the phrase id)
      * @param int $id the id of the term object e.g. for a triple "-1"
      * @param string $class not used for this term object just to be compatible with the db base object
@@ -792,7 +851,7 @@ class term extends combine_named
      */
     function load_by_obj_id(int $id, string $class, bool $including_triples = true): int
     {
-        log_debug($this->name());
+        log_debug($id);
         $result = 0;
 
         if ($class == word::class) {
@@ -903,7 +962,7 @@ class term extends combine_named
      */
     function load_by_obj_name(string $name, bool $including_triples = true): int
     {
-        log_debug($this->name());
+        log_debug($name);
         $result = 0;
 
         if ($this->load_word_by_name($name)) {
@@ -1134,10 +1193,10 @@ class term extends combine_named
 
         if ($this->id() != 0) {
             $class = $lib->class_to_name($this->type());
-            $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
+            $msg->add(msg_id::NAME_ALREADY_EXISTS, [
                 msg_id::VAR_CLASS_NAME => $class,
                 msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_VALUE => $lib->class_to_name($obj_to_add::class)
+                msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
             ]);
         }
 
@@ -1315,6 +1374,19 @@ class term extends combine_named
             $vars = [];
         }
         return $vars;
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this object
+     */
+    protected function all_fields(): array
+    {
+        return $this::FLD_NAMES;
     }
 
 

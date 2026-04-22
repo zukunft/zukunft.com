@@ -70,7 +70,7 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CREATE . 'test_db_load.php';
-include_once test_paths::UTILS . 'all_tests.php';
+//include_once test_paths::UTILS . 'all_tests.php';
 include_once test_paths::UNIT . 'lib_tests.php';
 include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
@@ -375,7 +375,8 @@ class all_unit_write_tests extends all_unit_read_tests
             $result .= $imf->json_file($filename, $usr, false)->get_last_message();
         }
         foreach (test_files::TEST_DIRECT_IMPORT_FILE_LIST as $filename) {
-            $result .= $imf->json_file($filename, $usr)->get_last_message();
+            // TODO Prio 1 fix error reports
+            $result .= $imf->json_file($filename, $usr, true, true)->get_last_message();
         }
 
 

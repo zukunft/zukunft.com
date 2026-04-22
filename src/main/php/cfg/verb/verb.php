@@ -638,7 +638,7 @@ class verb extends type_object
                 $this->plural = $value;
             }
             if ($key == verb_db::FLD_PLURAL_REVERSE) {
-                $this->rev_plural =$value;
+                $this->rev_plural = $value;
             }
             if ($key == verb_db::FLD_NAME_FORMULA) {
                 $this->frm_name = $value;
@@ -739,7 +739,7 @@ class verb extends type_object
      */
     private function reload_term(): term
     {
-        $trm = new term($this->usr);
+        $trm = new term($this);
         $trm->load_by_name($this->name);
         return $trm;
     }
@@ -763,6 +763,46 @@ class verb extends type_object
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param verb|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param verb|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return verb|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        verb|CombineObject|db_object_seq_id $std_obj,
+        verb|CombineObject|db_object_seq_id $result
+    ): verb|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->plural !== $this->plural) {
+            $result->plural = $this->plural;
+        }
+        if ($std_obj->reverse !== $this->reverse) {
+            $result->reverse = $this->reverse;
+        }
+        if ($std_obj->rev_plural !== $this->rev_plural) {
+            $result->rev_plural = $this->rev_plural;
+        }
+        if ($std_obj->frm_name !== $this->frm_name) {
+            $result->frm_name = $this->frm_name;
+        }
+        if ($std_obj->usage !== $this->usage) {
+            $result->usage = $this->usage;
+        }
+        if ($std_obj->impact !== $this->impact) {
+            $result->impact = $this->impact;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -779,22 +819,22 @@ class verb extends type_object
     function fill(verb|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->plural != null) {
+        if ($this->plural == null and $obj->plural != null) {
             $this->plural = $obj->plural;
         }
-        if ($obj->reverse != null) {
+        if ($this->reverse == null and $obj->reverse != null) {
             $this->reverse = $obj->reverse;
         }
-        if ($obj->rev_plural != null) {
+        if ($this->rev_plural == null and $obj->rev_plural != null) {
             $this->rev_plural = $obj->rev_plural;
         }
-        if ($obj->frm_name != null) {
+        if ($this->frm_name == null and $obj->frm_name != null) {
             $this->frm_name = $obj->frm_name;
         }
-        if ($obj->usage != null) {
+        if ($this->usage == null and $obj->usage != null) {
             $this->usage = $obj->usage;
         }
-        if ($obj->impact != null) {
+        if ($this->impact == null and $obj->impact != null) {
             $this->impact = $obj->impact;
         }
         return $usr_msg;
@@ -1003,12 +1043,10 @@ class verb extends type_object
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
+        // saving to database is always time consuming so a log entry might help to detect duplicate save calls
         log_debug($this->dsp_id());
 
         global $db_con;
-
-        // check the preserved names
-        $this->check_preserved($msg);
 
         // by default all verb changes are logged
         if (is_array($sc_par_lst)) {
@@ -1019,41 +1057,90 @@ class verb extends type_object
             }
         }
 
-        // build the database object because the is anyway needed
-        $db_con->set_usr($msg->usr->id);
-        $db_con->set_class(verb::class);
+        // check the preserved names
+        $this->check_preserved($msg);
 
-        // check if a new verb is supposed to be added
-        if ($this->id() <= 0) {
-            // check if a word, triple or formula with the same name is already in the database
-            $this->set_user($msg->usr);
-            $trm = $this->reload_term();
-            if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                $msg->merge($trm->id_used_msg($this));
-            } else {
-                $this->id = $trm->id_obj();
-                log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
+        // read the database row
+        $db_rec = $this->clone_reset(true);
+        if ($msg->is_ok()) {
+            if ($this->has_id()) {
+                $db_rec = $this->load_db($msg);
             }
         }
 
-        // create a new verb or update an existing
+        // check possible duplicates
+        $sim = null;
+        $sim_msg = new user_message();
         if ($msg->is_ok()) {
-            if ($this->id() <= 0) {
+            if (!$this->has_id() or $this->is_key_updated($db_rec)) {
+                // get similar database row but ignore the duplicate messages for the moment
+                $sim = $this->get_similar($sim_msg);
+                $this->similar_message($sim, $sim_msg);
+            }
+        }
+
+        if ($msg->is_ok()) {
+
+            // check if a new verb is supposed to be added
+            if ($this->id() <= 0 and $sim == null) {
+                // create a new verb
                 if (!$this->add($msg, $sc_par_lst)) {
                     $msg->add(msg_id::VERB_ADD_FAILED, [msg_id::VAR_NAME => $this->name]);
                 }
-
             } else {
-                parent::db_update($msg, $db_con, $sc_par_lst);
+                if ($sim != null) {
+                    if ($this->is_same($sim)) {
+                        // reload the similar database row to update it
+                        if ($sim->has_id()) {
+                            $this->id = $sim->id();
+                        }
+                    } else {
+                        // suggest to use a different name
+                        $msg->merge($sim_msg);
+                    }
+                }
+
+                // update the existing object
+                if ($msg->is_ok()) {
+                    log_debug('update ' . $this->dsp_id());
+                    parent::db_update($msg, $db_con, $sc_par_lst);
+                }
             }
         }
 
         // TODO log internal errors as errors but user warnings as info
         if (!$msg->is_ok()) {
-            log_info($msg->get_last_message());
+            log_info($msg->text());
         }
 
         return $msg->is_ok();
+    }
+
+
+    /*
+     * similar
+     */
+
+    /**
+     * check if a verb is already in the database that have at least one common unique key with this verb
+     *
+     * @param user_message $msg to collect the issue messages for the user
+     * @return type_object|null a filled object that has the same name or code id
+     *                          or null if no similar verb has been found
+     */
+    function get_similar(user_message $msg): ?type_object
+    {
+        $sim = parent::get_similar($msg);
+
+        // check potential duplicate by term name
+        if ($sim == null) {
+            $trm = $this->reload_term();
+            if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
+                $msg->merge($trm->id_used_msg($this));
+            }
+        }
+
+        return $sim;
     }
 
 
@@ -1088,12 +1175,10 @@ class verb extends type_object
         if ($this->id() > 0) {
             log_debug('verb->del ' . $this->dsp_id());
             if ($this->can_change()) {
-                $log = $this->log_del();
-                if ($log->id() > 0) {
-                    $db_con->usr_id = $this->get_user()->id();
-                    $db_con->set_class(verb::class);
-                    $msg->add_message_text($db_con->delete_old(verb_db::FLD_ID, $this->id()));
-                }
+                $sc = $db_con->sql_creator();
+                // TODO include deleting of user excludes in the sql function
+                $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
+                $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
             } else {
                 // TODO: create a new verb and request to delete the old
                 log_err('Creating a new verb is not yet possible');
@@ -1287,7 +1372,7 @@ class verb extends type_object
         return $result;
     }
 
-    function name(): string
+    function name(): string|null
     {
         return $this->name;
     }

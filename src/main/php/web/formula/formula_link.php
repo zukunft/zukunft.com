@@ -62,12 +62,12 @@ class formula_link extends sandbox_link
     /**
      * return the html code to display the link name
      */
-    function name(): string
+    function name(): string|null
     {
         $result = '';
 
         if ($this->formula() != null and $this->phrase() != null) {
-            if ($this->formula()->name() <> '' and $this->phrase()->name() <> '') {
+            if ($this->formula()->name() <> null and $this->phrase()->name() <> null) {
                 $result .= '"' . $this->phrase()->name() . '" in "'; // e.g. company details
                 $result .= $this->formula()->name() . '"';     // e.g. cash flow statement
             }

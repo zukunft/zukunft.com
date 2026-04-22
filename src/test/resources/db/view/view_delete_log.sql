@@ -26,5 +26,5 @@ SELECT view_delete_log
        (3::bigint,
         3::smallint,
         42::smallint,
-        'Start view'::text,
-        1::bigint);
+        'Historic'::text,
+        99::bigint);

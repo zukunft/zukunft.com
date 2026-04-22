@@ -56,6 +56,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_FORMULA . 'formula_map.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -73,6 +74,7 @@ include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -411,19 +413,17 @@ class formula extends formula_map
 
     /**
      * delete all results for this formula
-     * @return string an empty string if the deletion has been successful
-     *                or the error message that should be shown to the user
-     *                which may include a link for error tracing
+     * @param user_message $msg to collect the problem reports and suggested solutions for the user
+     * @return bool true if all results related to this formula could be deleted
      */
-    function res_del(): string
+    function delete_results(user_message $msg): bool
     {
-        log_debug("formula->res_del (" . $this->id() . ")");
-
-        global $db_con;
-
-        $db_con->set_class(result::class);
-        $db_con->set_usr($this->get_user()->id());
-        return $db_con->delete_old(formula_db::FLD_ID, $this->id());
+        log_debug('delete_results of ' . $this->dsp_id());
+        $res_lst = new result_list($this->get_user());
+        $res_lst->load_by_frm($this);
+        $imp = new import();
+        $res_lst->db_delete_no_log($msg, $imp, result::class);
+        return $msg->is_ok();
     }
 
     /**
@@ -1069,30 +1069,49 @@ class formula extends formula_map
      */
 
     /**
+     * check if the objects have been loaded
+     * @param user_message $msg to collect the message due to missing links
+     * @returns bool  false if the loading has failed
+     */
+    function reload_objects(user_message $msg): bool
+    {
+        parent::reload_objects($msg);
+
+        // convert the formula text to db format
+        // if all related
+        // (any error messages should have been returned from the calling user script)
+        if ($msg->is_ok()) {
+            $this->generate_ref_text(null, $msg);
+        }
+
+        return $msg->is_ok();
+    }
+
+    /**
      * update the database reference text based on the user text
      * TODO check in not the left AND the right part needs to be transformed as expression
      * TODO Prio 1 return a user message instead of a string
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @param user_message $usr_msg to enrich with problems and suggested solution
+     * @param user_message $msg to enrich with problems and suggested solution
      * @return bool true if the update of the reference text was successful and otherwise the error message is added to the user_message object
      */
     function generate_ref_text(
         ?term_list   $trm_lst = null,
-        user_message $usr_msg = new user_message()
+        user_message $msg = new user_message()
     ): bool
     {
         if ($this->usr_text != null) {
             if ($this->ref_text == '' or $this->ref_text_dirty) {
                 $exp = new expression($this);
                 $exp->set_user_text($this->usr_text, $trm_lst);
-                $this->ref_text = $exp->ref_text($trm_lst, $usr_msg);
-                if ($usr_msg->is_ok()) {
+                $this->ref_text = $exp->ref_text($trm_lst, $msg);
+                if ($msg->is_ok()) {
                     $this->ref_text_dirty = false;
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

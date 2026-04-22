@@ -135,6 +135,18 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "company" with a suggested view
+     */
+    function word_excluded(): word
+    {
+        global $sys;
+        $wrd = new word($this->env->usr2);
+        $wrd->set(words::COMPANY_ID, words::COMPANY);
+        $wrd->exclude();
+        return $wrd;
+    }
+
+    /**
      * @return word "mathematics" without the id e.g. as given by the import
      */
     function word_view_not_4_user(): word
@@ -150,6 +162,7 @@ class test_words extends test_objects
      */
     function word_filled(): word
     {
+        $t_msk = new test_views($this->env);
         global $sys;
         $wrd = new word($this->env->usr1);
         $wrd->set(words::MATH_ID, words::MATH);
@@ -157,12 +170,22 @@ class test_words extends test_objects
         $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
         $wrd->set_code_id(words::MATH, $this->env->usr_system);
         $wrd->plural = words::MATH_PLURAL;
-        $wrd->set_view_id(views::MATH_CONST_ID);
+        $wrd->view = $t_msk->view_math();
         $wrd->usage = test_const::DUMMY_USAGE_WORD;
         $wrd->impact = test_const::DUMMY_IMPACT;
         $wrd->exclude();
         $wrd->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
+        return $wrd;
+    }
+
+    /**
+     * @return word to test the sql insert via function
+     */
+    function word_add(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set_name(words::TEST_ADD);
         return $wrd;
     }
 
@@ -175,6 +198,7 @@ class test_words extends test_objects
         $wrd->include();
         $wrd->id = 0;
         $wrd->set_name(words::TEST_ADD);
+        $wrd->set_code_id(words::TEST_ADD_CODE_ID, $this->env->usr_system);
         return $wrd;
     }
 
@@ -602,6 +626,13 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::MINUTE_ID, words::MINUTE);
+        return $wrd;
+    }
+
+    function word_hour(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::HOUR_ID, words::HOUR);
         return $wrd;
     }
 

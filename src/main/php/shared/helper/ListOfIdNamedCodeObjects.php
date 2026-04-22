@@ -169,15 +169,17 @@ class ListOfIdNamedCodeObjects extends ListOfIdNamedObjects
      * @param string $code_id the unique code id of the object that should be returned
      * @return object|null the found code id object or null if no id is found
      */
-    function get_by_code_id(string $code_id): object|null
+    function get_by_code_id(string $code_id, bool $log = true): object|null
     {
         $key_lst = $this->code_id_pos_lst();
         if (array_key_exists($code_id, $key_lst)) {
             $pos = $key_lst[$code_id];
             return $this->lst()[$pos];
         } else {
-            $lib = new library();
-            log_info($code_id . ' not found in ' . $lib->dsp_array_keys($key_lst));
+            if ($log) {
+                $lib = new library();
+                log_info($code_id . ' not found in ' . $lib->dsp_array_keys($key_lst));
+            }
             return null;
         }
     }

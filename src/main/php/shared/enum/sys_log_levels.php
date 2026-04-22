@@ -46,18 +46,18 @@ enum sys_log_levels: string
     const string DEBUG_NAME = "Debug";
     const string DEBUG_COM = "Additional information only message that can be switched on upon request for more debugging";
     const string INFO = "log_info";
-    const int INFO_ID = 4;
+    const int INFO_ID = 3;
     const string INFO_NAME = "Info";
     const string INFO_COM = "Information only message for debugging and execution time details";
     const string WARNING = "log_warning";
-    const int WARNING_ID = 6;
+    const int WARNING_ID = 4;
     const string WARNING_NAME = "Warning";
     const string WARNING_COM = "if a message has been shown to the user";
     const string ERROR = "log_error";
-    const int ERROR_ID = 8;
+    const int ERROR_ID = 5;
     const string ERROR_NAME = "Error";
     const string ERROR_COM = "if the process has not been completed";
     const string FATAL = "log_fatal";
-    const int FATAL_ID = 10;
+    const int FATAL_ID = 6;
 
 }

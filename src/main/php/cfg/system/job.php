@@ -874,7 +874,7 @@ class job extends db_object_seq_id_user
         return $result;
     }
 
-    function name(): string
+    function name(): string|null
     {
         $result = $this->type_code_id();
 

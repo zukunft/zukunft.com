@@ -113,7 +113,7 @@ class horizontal_ui_tests
             // fill the exclude field that is set by the crud action
             if ($filled_obj::class != verb::class) {
                 if ($filled_obj->is_excluded()) {
-                    $refilled_obj->set_excluded($filled_obj->is_excluded());
+                    $refilled_obj->excluded = $filled_obj->excluded;
                 }
             }
             // fill the code id field that should not be set via url

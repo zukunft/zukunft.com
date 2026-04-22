@@ -1066,27 +1066,16 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * load the value parameters for all users
-     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
-     * @return bool true if the standard object has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-
-        $db_row = $db_con->get1($qp);
-        return $this->row_mapper_sandbox_multi($db_row, $qp->ext, true, false);
-    }
-
-    /**
      * create the SQL to load the single default value or result always by the id
      * the $sc fields must be set by the child function
      *
+     * @param int|string $id the unique group id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(
+        int|string  $id,
         sql_creator $sc,
         array       $fld_lst = []
     ): sql_par
@@ -1134,6 +1123,31 @@ class sandbox_value extends sandbox_multi
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param sandbox_value|sandbox_multi|db_object_multi $std_obj the norm object as saved in the database
+     * @param sandbox_value|sandbox_multi|db_object_multi $result empty clone of the target user object
+     * @return sandbox_value|sandbox_multi|db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        sandbox_value|sandbox_multi|db_object_multi $std_obj,
+        sandbox_value|sandbox_multi|db_object_multi $result
+    ): sandbox_value|sandbox_multi|db_object_multi
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->last_update !== $this->last_update) {
+            $result->last_update = $this->last_update;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1147,10 +1161,10 @@ class sandbox_value extends sandbox_multi
     function fill(sandbox_value|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->grp() != null) {
+        if ($this->grp() === null and $obj->grp() != null) {
             $this->set_grp($obj->grp());
         }
-        if ($obj->last_update() != null) {
+        if ($this->last_update() === null and $obj->last_update() != null) {
             $this->set_last_update($obj->last_update());
         }
         return $usr_msg;
@@ -1973,7 +1987,7 @@ class sandbox_value extends sandbox_multi
      */
 
     /**
-     * list of all fields that can be changed by the user in this object
+     * list of all fields that can be changed by the user in this object.
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sql_type_list $sc_par_lst only used for link objects
@@ -1981,13 +1995,11 @@ class sandbox_value extends sandbox_multi
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
+        $fields = parent::db_fields_all($sc_par_lst);
         if ($this->is_prime() or $this->is_main()) {
-            $fields = $this->grp()->id_names();
+            $fields = array_merge($fields, $this->grp()->id_names());
         } else {
-            $fields = [group_db::FLD_ID];
-        }
-        if (!$sc_par_lst->is_standard()) {
-            $fields[] = user_db::FLD_ID;
+            $fields[] = group_db::FLD_ID;
         }
         if ($this->is_numeric()) {
             $fields[] = self::FLD_VALUE;
@@ -2045,6 +2057,7 @@ class sandbox_value extends sandbox_multi
                 $lst = $this->grp()->id_fvt($usr_msg);
             }
         }
+        $lst->merge(parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst));
         if (!$sc_par_lst->is_standard()) {
             if ($is_insert) {
                 $lst->add_user($this, $sbx, $do_log, $table_id);

@@ -61,7 +61,7 @@ SELECT user_insert_log_101000005000001100000
          'test@zukunft.com'::text,
          81::smallint,
          'system test'::text,
-         16::smallint,
+         17::smallint,
          228::smallint,
          2026-02-02 17:59:59::timestamp,
          213::smallint,

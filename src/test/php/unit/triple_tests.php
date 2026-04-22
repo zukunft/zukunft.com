@@ -57,7 +57,11 @@ class triple_tests
         $t->subheader($ts . 'sql read standard by name');
         $trp = new triple($usr);
         $trp->set_name(triples::PI);
-        $t->assert_sql_standard($sc, $trp);
+        $t->assert_sql_standard_by_name($sc, $trp);
+
+        $t->subheader($ts . 'sql read standard by link');
+        $trp = $t_trp->triple();
+        $t->assert_sql_standard_by_type_link($sc, $trp);
 
         $t->subheader($ts . 'sql write insert');
         $trp = $t_trp->triple();
@@ -65,7 +69,7 @@ class triple_tests
         $t->assert_sql_insert($sc, $trp, [sql_type::USER]);
         $t->assert_sql_insert($sc, $trp, [sql_type::LOG, sql_type::USER]);
         $trp_excl = $t_trp->triple();
-        $trp_excl->set_excluded(true);
+        $trp_excl->excluded = true;
         $t->assert_sql_insert($sc, $trp_excl);
         $trp_excl->description = '';
         $trp_excl->set_type('');
@@ -81,6 +85,7 @@ class triple_tests
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG]);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_update($sc, $trp_excl, $trp, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $trp_excl, $trp, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql delete');
         // TODO Prio 0 activate db write
@@ -93,7 +98,7 @@ class triple_tests
         $t->assert_sql_delete($sc, $trp, [sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader($ts . 'view base object handling');
-        $trp = $t_trp->triple_filled_add();
+        $trp = $t_trp->triple_filled_add_name();
         $t->assert_reset($trp);
 
         $t->subheader($ts . 'api');
@@ -107,7 +112,7 @@ class triple_tests
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_trp->triple(), $usr_sys);
-        $t->assert_ex_and_import($t_trp->triple_filled_add(), $usr_sys);
+        $t->assert_ex_and_import($t_trp->triple_filled_add_name(), $usr_sys);
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
 

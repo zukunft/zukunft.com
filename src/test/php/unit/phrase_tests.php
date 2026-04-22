@@ -94,7 +94,7 @@ class phrase_tests
         $phr = $t_wrd->word_filled()->phrase();
         $phr->include();
         $t->assert_api($phr, 'phrase_word_full');
-        $phr = $t_trp->triple_filled_add()->phrase();
+        $phr = $t_trp->triple_filled_add_name()->phrase();
         $phr->include();
         $t->assert_api($phr, 'phrase_triple_full');
         $phr = $t_phr->phrase();

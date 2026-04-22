@@ -216,6 +216,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true to select the table for values and results linked to an a bit more number of phrases
+     */
+    function is_main(): bool
+    {
+        return in_array(sql_type::MAIN, $this->lst);
+    }
+
+    /**
      * @return bool true to select the table for values and results linked to only a few fields
      */
     function is_prime(): bool

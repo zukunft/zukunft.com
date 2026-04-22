@@ -56,18 +56,19 @@ use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_sources
+class test_sources extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test source for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, sources::TEST_SOURCES, new source($this->env->usr1));
     }
 
 
@@ -76,6 +77,16 @@ class test_sources
      */
 
     function source(): source
+    {
+        $src = new source($this->env->usr1);
+        $src->set(sources::BFS_ID, sources::BFS);
+        $src->set_type(source_types::PDF, $this->env->usr1);
+        $src->description = sources::BFS_COM;
+        $src->url = sources::BFS_ULR;
+        return $src;
+    }
+
+    function source_reserved(): source
     {
         $src = new source($this->env->usr1);
         $src->set(sources::SIB_ID, sources::SIB);
@@ -90,7 +101,7 @@ class test_sources
      */
     function source_incomplete(): source
     {
-        $src = $this->source();
+        $src = $this->source_reserved();
         $src->id = 0;
         $src->set_name(null);
         return $src;
@@ -131,6 +142,13 @@ class test_sources
         return $src;
     }
 
+    function source_add(): source
+    {
+        $src = new source($this->env->usr1);
+        $src->set_name(sources::SYSTEM_TEST_ADD);
+        return $src;
+    }
+
     /**
      * @return source used for the reference
      */
@@ -147,7 +165,7 @@ class test_sources
      */
     function source_admin(): source
     {
-        $src = $this->source();
+        $src = $this->source_reserved();
         $src->set_code_id_db(sources::SIB_CODE);
         return $src;
     }

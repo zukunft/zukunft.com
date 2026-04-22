@@ -72,6 +72,13 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_LOG . 'changes_big.php';
 //include_once paths::MODEL_LOG . 'changes_norm.php';
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_REF . 'ref_type.php';
+//include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_REF . 'source_list.php';
+//include_once paths::MODEL_REF . 'source_type.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_RESULT . 'result_db.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SYSTEM . 'job.php';
 //include_once paths::MODEL_SYSTEM . 'job_status.php';
@@ -83,12 +90,6 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_SYSTEM . 'system_time.php';
-//include_once paths::MODEL_REF . 'ref.php';
-//include_once paths::MODEL_REF . 'ref_type.php';
-//include_once paths::MODEL_REF . 'source.php';
-//include_once paths::MODEL_REF . 'source_list.php';
-//include_once paths::MODEL_REF . 'source_type.php';
-//include_once paths::MODEL_RESULT . 'result.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_list.php';
@@ -97,6 +98,11 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_USER . 'user_official_type.php';
 //include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_time_series.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
@@ -162,6 +168,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
@@ -181,6 +188,11 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -340,9 +352,62 @@ class def
         component::class,
     ];
 
+    // list of classes that have a unique name
+    const array ONLY_ADMIN_CAN_RENAME_CLASSES = [
+        verb::class,
+    ];
+
+    // list of value classes
+    const array VALUE_CLASSES = [
+        value_base::class,
+        value::class,
+        value_time::class,
+        value_text::class,
+        value_geo::class,
+        value_time_series::class,
+    ];
+
+    // list of classes where the tables have no auto increase id instead the id is based on a phrase list based database id
+    const array DB_TYPES_NO_SEQ = [
+        value::class,
+        value_time::class,
+        value_text::class,
+        value_geo::class,
+        value_time_series::class,
+        result::class,
+        group::class,
+    ];
+
+    // list of classes that can be the object of a phrase
+    // TODO Prio 1 use this for all phrase checks
+    const array PHRASE_CLASSES = [
+        word::class,
+        triple::class,
+    ];
+
+    // list of classes that can be the object of a phrase
+    const array TERM_CLASSES = [
+        word::class,
+        verb::class,
+        triple::class,
+        formula::class,
+    ];
+
     // list of classes where the link of two objects is the main unique key beside the database id
     const array LINK_CLASSES = [
         element::class,
+        ref::class,
+        component_link::class,
+    ];
+
+    // list of classes where the link of two objects and the
+    // predicate/type is part of the main unique key beside the database id
+    // e.g. a word / phrase could have several external references (wikipedia and Wikidata)
+    //      but if the type of a component link is changes the type should be overwritten in the database
+    //      because each component could be just added once to a view at position defined by the order number
+    const array LINK_TYPE_CLASSES = [
+        triple::class,
+        ref::class,
     ];
 
     // classes that have a frontend and backend object but are not user-specific
@@ -755,6 +820,12 @@ class def
         'users_user_id_seq',
         'user_profiles_user_profile_id_seq'
     ];
+
+    // id field names that can be either int or text e.g. the group_id
+    const array MIXED_ID_FIELDS = [
+        result_db::FLD_SOURCE_GRP,
+    ];
+
 
     // list of database fields that are also in test volatile
     // and that should be ignored in unit tests

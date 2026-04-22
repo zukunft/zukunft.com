@@ -243,7 +243,7 @@ class ref extends sandbox
         return $msg->is_ok();
     }
 
-    function name(): string
+    function name(): string|null
     {
         return $this->source_name() . ' ' . $this->external_key();
     }

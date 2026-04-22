@@ -360,7 +360,7 @@ class user extends db_object
         return $this->name;
     }
 
-    function name(): string
+    function name(): string|null
     {
         if ($this->name === null) {
             return '';

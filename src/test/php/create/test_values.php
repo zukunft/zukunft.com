@@ -36,7 +36,10 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VALUE . 'value_text.php';
@@ -52,7 +55,10 @@ include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
@@ -68,18 +74,19 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
 
-class test_values
+class test_values extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test words for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, values::TEST_VALUES, new value_base($this->env->usr1));
     }
 
 
@@ -185,6 +192,14 @@ class test_values
         return $val_upd;
     }
 
+    function value_add(phrase $phr): value
+    {
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($phr);
+        $grp = $lst->get_grp_id(false);
+        return new value($this->env->usr1, values::SAMPLE_FLOAT, $grp);
+    }
+
     /**
      * @return value with the maximal number of prime phrase
      */
@@ -209,7 +224,7 @@ class test_values
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_16();
         $val = new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
-        $val->set_source($t_src->source());
+        $val->set_source($t_src->source_reserved());
         $val->exclude();
         $val->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $val->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
@@ -234,7 +249,7 @@ class test_values
         $t_src = new test_sources($this->env);
         $grp = $t_grp->transition_cs_133();
         $val = new value($this->env->usr1, round(values::TRANSITION_OF_CS, 13), $grp);
-        $val->set_source($t_src->source());
+        $val->set_source($t_src->source_reserved());
         return $val;
     }
 
@@ -244,7 +259,7 @@ class test_values
         $t_src = new test_sources($this->env);
         $grp = $t_grp->group_speed_of_light();
         $val = new value($this->env->usr1, round(values::SPEED_OF_LIGHT, 13), $grp);
-        $val->set_source($t_src->source());
+        $val->set_source($t_src->source_reserved());
         return $val;
     }
 
@@ -254,7 +269,7 @@ class test_values
         $t_src = new test_sources($this->env);
         $grp = $t_grp->group_speed_of_light_with_two_units();
         $val = new value($this->env->usr1, round(values::SPEED_OF_LIGHT, 13), $grp);
-        $val->set_source($t_src->source());
+        $val->set_source($t_src->source_reserved());
         return $val;
     }
 

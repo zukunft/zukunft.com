@@ -52,6 +52,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -228,11 +230,21 @@ class ListOfIdObjects extends ListOf
     /**
      * return the first object as a function for easy adding of exceptions
      *
-     * @return IdObject|TextIdObject|CombineObject|null the first object of the list
+     * @return word|verb|IdObject|TextIdObject|CombineObject|null the first object of the list
      */
-    function get_first_object(): IdObject|TextIdObject|CombineObject|null
+    function get_first_object(): word|verb|IdObject|TextIdObject|CombineObject|null
     {
         return $this->lst()[0] ?? null;
+    }
+
+    /**
+     * return the second object as a function for easy adding of exceptions
+     *
+     * @return word|IdObject|TextIdObject|CombineObject|null the second object of the list
+     */
+    function get_second_object(): word|IdObject|TextIdObject|CombineObject|null
+    {
+        return $this->lst()[1] ?? null;
     }
 
 

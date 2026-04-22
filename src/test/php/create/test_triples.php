@@ -33,10 +33,14 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -46,11 +50,16 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -60,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -76,11 +86,27 @@ class test_triples extends test_objects
      */
     function cleanup(string $ts): void
     {
+        global $db_con;
+
         parent::cleanup_objects($ts, triples::TEST_TRIPLES, new triple($this->env->usr1));
 
-        // also clean up the words used for the triples
+        // cleanup all triples that use a test verb
+        $vrb = new verb();
+        $trp_lst = new triple_list($this->env->usr1);
+        $msg = new user_message();
+        foreach (verbs::TEST_VERBS as $name) {
+            $vrb->reset();
+            $vrb->load_by_name($name);
+            if ($vrb->has_id()) {
+                $trp_lst->load_by_verb($vrb, true);
+                $trp_lst->del($msg);
+            }
+        }
+
+        // also clean up the words and verbs used for the triples
         $t_wrd = new test_words($this->env);
         $t_wrd->cleanup($ts);
+        parent::cleanup_objects($ts, [triples::SYSTEM_TEST_ADD_AUTO], new verb());
     }
 
 
@@ -138,6 +164,7 @@ class test_triples extends test_objects
      */
     function triple_filled(): triple
     {
+        global $sys;
         $trp = $this->triple();
         $trp->name_given = triples::MATH_CONST_GIVEN;
         $trp->weight = 0.5;
@@ -145,6 +172,8 @@ class test_triples extends test_objects
         $trp->usage = triples::SYSTEM_TEST_ADD_USAGE;
         $trp->impact = triples::SYSTEM_TEST_ADD_IMPACT;
         $trp->exclude();
+        $trp->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $trp;
     }
 
@@ -161,12 +190,13 @@ class test_triples extends test_objects
     /**
      * @return triple with all fields set and a reserved test name for testing the db write function
      */
-    function triple_filled_add(): triple
+    function triple_filled_add_name(): triple
     {
         $t_wrd = new test_words($this->env);
         $trp = $this->triple_filled_included();
         $trp->id = 0;
         $trp->set_name(triples::SYSTEM_TEST_ADD);
+        $trp->set_code_id(triples::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
         $trp->set_from($t_wrd->word_filled_add()->phrase());
         $trp->set_to($t_wrd->word_filled_add_to()->phrase());
         return $trp;
@@ -179,6 +209,36 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set_name(triples::MATH_CONST);
+        return $trp;
+    }
+
+    function triple_add(phrase $wrd_from, verb $vrb, phrase $phr_to): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set_name(triples::SYSTEM_TEST_ADD);
+        $trp->set_from($wrd_from);
+        $trp->set_verb($vrb);
+        $trp->set_to($phr_to);
+        return $trp;
+    }
+
+    /**
+     * @return triple with all fields set and a reserved test name for testing the db write function
+     */
+    function triple_filled_add(phrase $wrd_from, verb $vrb, phrase $phr_to): triple
+    {
+        global $sys;
+        $trp = $this->triple_add($wrd_from, $vrb, $phr_to);
+        $trp->id = 0;
+        $trp->include();
+        $trp->set_name(triples::SYSTEM_TEST_ADD);
+        $trp->set_code_id(triples::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
+        $trp->weight = 0.5;
+        $trp->set_view_id(views::MATH_CONST_ID);
+        $trp->usage = triples::SYSTEM_TEST_ADD_USAGE;
+        $trp->impact = triples::SYSTEM_TEST_ADD_IMPACT;
+        $trp->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $trp;
     }
 

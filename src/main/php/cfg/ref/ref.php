@@ -125,7 +125,6 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -223,7 +222,7 @@ class ref extends sandbox_link
         }
         parent::reset($keep_user);
         $this->create_objects($usr);
-        $this->external_key = '';
+        $this->external_key = null;
         $this->source = null;
         $this->url = null;
         $this->description = null;
@@ -250,6 +249,7 @@ class ref extends sandbox_link
         string $id_fld = ''
     ): bool
     {
+        $msg = new user_message();
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
@@ -258,7 +258,7 @@ class ref extends sandbox_link
             $this->set_url($db_row[ref_db::FLD_URL]);
             $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->set_source_by_id($db_row[source_db::FLD_ID]);
-            if ($this->reload_objects()) {
+            if ($this->reload_objects($msg)) {
                 $result = true;
                 log_debug('done ' . $this->dsp_id());
             }
@@ -537,9 +537,9 @@ class ref extends sandbox_link
     /**
      * @return string the phrase name or an empty string phrase name is not set
      */
-    function phrase_name(): string
+    function phrase_name(): string|null
     {
-        $name = '';
+        $name = null;
         $phr = $this->phrase();
         if ($phr != null) {
             $name = $phr->name();
@@ -566,9 +566,9 @@ class ref extends sandbox_link
     }
 
     /**
-     * @return int|string the unique id of the external object
+     * @return int|string|null the unique id of the external object
      */
-    function to_id(): int|string
+    function to_id(): int|string|null
     {
         return $this->get_external_key();
     }
@@ -855,39 +855,25 @@ class ref extends sandbox_link
     }
 
     /**
-     * create the SQL to load the default ref always by the id
+     * load the object parameters for all users by the link id
      *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     * @param int $from_id the id of the from link object
+     * @param int $typ_id the id of the link type
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
      */
-    function load_sql_standard(sql_creator $sc): sql_par
+    function load_standard_by_type_link(
+        int          $from_id,
+        int          $typ_id,
+        int|string   $to_id,
+        user_message $msg
+    ): bool
     {
-        $sc->set_class($this::class);
-        $sc->set_fields(array_merge(
-            ref_db::FLD_NAMES,
-            ref_db::FLD_NAMES_USR,
-            ref_db::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)
-        ));
-
-        return parent::load_sql_standard($sc);
-    }
-
-    /**
-     * load the ref parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard ref has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        $result = parent::load_standard($qp);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        return $result;
+        return parent::load_standard_by_type_link_parent(
+            phrase::FLD_ID, $from_id,
+            ref_db::FLD_TYPE, $typ_id,
+            '', 0, $msg
+        );
     }
 
     /**
@@ -943,12 +929,11 @@ class ref extends sandbox_link
 
     /**
      * TODO add the missing objects like the source
-     * @return bool true if all the related objects has been loaded
+     * @param user_message $msg to collect the message due to missing links
+     * @return bool true if all the related objects have been loaded
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
-        $result = true;
-
         if ($this->phrase()?->name() == null or $this->phrase()?->name() == '') {
             if ($this->phrase_id() <> 0) {
                 $phr = new phrase($this->get_user());
@@ -956,13 +941,13 @@ class ref extends sandbox_link
                     $this->set_phrase($phr);
                     log_debug('phrase ' . $phr->dsp_id() . ' loaded');
                 } else {
-                    $result = false;
+                    $msg->add(msg_id::LOAD_PHRASE_BY_ID_FAILED, [
+                        msg_id::VAR_PHRASE => $this->phrase()->dsp_id()
+                    ]);
                 }
             }
         }
-
-        log_debug('done');
-        return $result;
+        return parent::reload_objects($msg);
     }
 
     /**
@@ -983,7 +968,7 @@ class ref extends sandbox_link
         return ref_db::FLD_EX_KEY;
     }
 
-    function to_value(): string
+    function to_value(): string|null
     {
         return $this->get_external_key();
     }
@@ -1138,6 +1123,46 @@ class ref extends sandbox_link
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param ref|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param ref|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return ref|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        ref|CombineObject|db_object_seq_id $std_obj,
+        ref|CombineObject|db_object_seq_id $result
+    ): ref|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->url !== $this->url) {
+            $result->url = $this->url;
+        }
+        if ($std_obj->external_key !== $this->external_key) {
+            $result->external_key = $this->external_key;
+        }
+        if ($std_obj->phrase_id() !== $this->phrase_id()) {
+            $result->set_phrase($this->phrase());
+        }
+        if ($std_obj->source_id() !== $this->source_id()) {
+            $result->set_source($this->get_source());
+        }
+        if ($std_obj->predicate_id() !== $this->predicate_id()) {
+            $result->set_predicate_id($this->predicate_id());
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1151,24 +1176,24 @@ class ref extends sandbox_link
     function fill(ref|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_url() != null) {
+        if ($this->get_url() === null and $obj->get_url() != null) {
             $this->set_url($obj->get_url());
         }
-        if ($obj->get_external_key() != null) {
+        if ($this->get_external_key() === null and $obj->get_external_key() != null) {
             $this->set_external_key($obj->get_external_key());
         }
         if ($obj->phrase() != null) {
-            if ($obj->phrase()->id() != 0) {
+            if ($this->phrase()->id() == 0 and $obj->phrase()->id() != 0) {
                 $this->set_phrase($obj->phrase());
             }
         }
-        if ($obj->get_source() != null) {
+        if ($this->get_source() === null and $obj->get_source() != null) {
             $this->set_source($obj->get_source());
         }
-        if ($obj->predicate_id() != 0) {
+        if ($this->predicate_id() === null and $obj->predicate_id() != 0) {
             $this->set_predicate_id($obj->predicate_id());
         }
-        if ($obj->description != null) {
+        if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
         return $usr_msg;
@@ -1207,20 +1232,26 @@ class ref extends sandbox_link
     /**
      * get a similar reference
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return ref|null a filled reference that links the same objects
+     *                  or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): ref
+    function get_similar(user_message $msg): ?ref
     {
-        $result = new ref($this->get_user());
+        $sim = null;
         log_debug('ref->get_similar ' . $this->dsp_id());
 
         $db_chk = $this->clone_reset(true);
         $db_chk->load_by_link_ids($this->phrase_id(), $this->predicate_id());
         if ($db_chk->id() > 0) {
-            log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists');
-            $result = $db_chk;
+            $msg->add(msg_id::REF_ALREADY_EXISTS, [
+                msg_id::VAR_TYPE => $this->predicate_name(),
+                msg_id::VAR_PHRASE => $this->phrase_name(),
+                msg_id::VAR_URL_KEY => $this->get_external_key(),
+            ]);
+            $sim = $db_chk;
         }
 
-        return $result;
+        return $sim;
     }
 
     /**
@@ -1236,22 +1267,23 @@ class ref extends sandbox_link
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
-        log_debug();
+        // saving to database is always time consuming so a log entry might help to detect duplicate save calls
+        log_debug($this->dsp_id());
 
         global $db_con;
 
-        // build the database object because the is anyway needed
-        if ($this->get_user() != null) {
-            $db_con->set_usr($this->get_user()->id);
+        // check e.g. if a preserved name is used and if yes add a message and solution to $msg
+        if ($this->check_save($msg)) {
+            $this->reload_objects($msg);
         }
-        $db_con->set_class(ref::class);
 
         // check if the external reference is supposed to be added
         if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar($msg);
-            if (isset($similar)) {
+            $sim_msg = new user_message();
+            $similar = $this->get_similar($sim_msg);
+            if ($similar != null) {
                 if ($similar->id() != 0) {
                     $this->id = $similar->id();
                 }
@@ -1271,8 +1303,8 @@ class ref extends sandbox_link
             $db_rec->load_by_id($this->id());
             log_debug('ref->save reloaded from db');
             $std_rec = new ref($this->get_user()); // must also be set to allow to take the ownership
-            $std_rec->id = $this->id();
-            $std_rec->load_standard();
+            $std_rec->load_standard($this->id(), $msg);
+            // TODO Prio 1 check and set owner
             log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
 
             // if everything has been fine until here
@@ -1448,6 +1480,24 @@ class ref extends sandbox_link
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this formula object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            ref_db::FLD_NAMES,
+            ref_db::FLD_NAMES_USR,
+            ref_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
+    }
+
+
     /*
       * debug
       */
@@ -1471,9 +1521,9 @@ class ref extends sandbox_link
     /**
      * @return string with the unique name
      */
-    function name(): string
+    function name(): string|null
     {
-        $result = '';
+        $result = null;
 
         if ($this->phrase() != null) {
             $result .= 'ref of "' . $this->phrase()->name() . '"';

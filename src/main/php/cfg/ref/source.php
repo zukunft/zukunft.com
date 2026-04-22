@@ -105,6 +105,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_typed;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -342,49 +343,8 @@ class source extends sandbox_code_id
 
 
     /*
-     * load
-     */
-
-    /**
-     * load the source parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard source has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        $result = parent::load_standard($qp);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        return $result;
-    }
-
-
-    /*
      * load sql
      */
-
-    /**
-     * create the SQL to load the default source always by the id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        $sc->set_class($this::class);
-        $sc->set_fields(array_merge(
-            source_db::FLD_NAMES,
-            source_db::FLD_NAMES_USR,
-            source_db::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)
-        ));
-
-        return parent::load_sql_standard($sc);
-    }
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a source from the database
@@ -427,7 +387,7 @@ class source extends sandbox_code_id
 
     /**
      * check if the source in the database needs to be updated
-     * e.g. for import  if this source has only the name set, the protection should not be updated in the database
+     * e.g. for import if this source has only the name set, the protection should not be updated in the database
      *
      * @param source|CombineObject|IdObject $db_obj the source as saved in the database
      * @return bool true if this source has infos that should be saved in the database
@@ -443,6 +403,47 @@ class source extends sandbox_code_id
         return $result;
     }
 
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param source|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param source|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return source|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        source|CombineObject|db_object_seq_id $std_obj,
+        source|CombineObject|db_object_seq_id $result
+    ): source|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->url !== $this->url) {
+            $result->url = $this->url;
+        }
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this source object based on the given object
+     *
+     * @param source|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(source|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($this->url === null and $obj->url != null) {
+            $this->url = $obj->url;
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * sql fields
@@ -451,6 +452,18 @@ class source extends sandbox_code_id
     function name_field(): string
     {
         return source_db::FLD_NAME;
+    }
+
+    /**
+     * @return array with all fields names of this source object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            source_db::FLD_NAMES,
+            source_db::FLD_NAMES_USR,
+            source_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
     function all_sandbox_fields(): array

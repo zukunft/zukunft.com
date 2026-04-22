@@ -8,22 +8,22 @@
     {
       "id": 1,
       "user_id": 3,
-      "function_id": 1,
-      "trace": "the technical trace back description for debugging",
       "text": "the log text that describes the problem for the user or system admin",
-      "type_id": 3,
-      "status": 1
+      "status": 1,
+      "function_id": 3,
+      "trace": "the technical trace back description for debugging",
+      "type_id": 3
     },
     {
       "id": 2,
       "user_id": 3,
-      "function_id": 3,
-      "trace": "the technical trace 2 back description for debugging",
       "text": "the log 2 text that describes the problem for the user or system admin",
+      "status": 3,
+      "function_id": 5,
+      "trace": "the technical trace 2 back description for debugging",
       "type_id": 5,
       "description": "the error has been replicated and the fix will be deployed",
-      "solver": 1,
-      "status": 3
+      "solver": 1
     }
   ]
 }

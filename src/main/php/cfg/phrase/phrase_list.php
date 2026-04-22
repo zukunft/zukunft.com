@@ -1932,7 +1932,7 @@ class phrase_list extends sandbox_list_named
         $time_phr = null;
         $wrd_lst = $this->wrd_lst_all();
         $time_wrd = $wrd_lst->assume_time($trm_lst);
-        if (isset($time_wrd)) {
+        if ($time_wrd != null) {
             $time_phr = $time_wrd;
         }
         return $time_phr;

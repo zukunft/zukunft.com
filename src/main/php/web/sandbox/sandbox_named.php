@@ -93,7 +93,7 @@ class sandbox_named extends sandbox
         $this->name = $name;
     }
 
-    function name(): string
+    function name(): string|null
     {
         return $this->name;
     }

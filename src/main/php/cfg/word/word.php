@@ -72,7 +72,6 @@ namespace Zukunft\ZukunftCom\main\php\cfg\word;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -85,8 +84,10 @@ include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -95,6 +96,7 @@ include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -131,14 +133,15 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -637,46 +640,10 @@ class word extends sandbox_code_id
         return $this->id();
     }
 
-    /**
-     * load the word parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard word has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        $result = parent::load_standard($qp);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        return $result;
-    }
-
 
     /*
      * load sql
      */
-
-    /**
-     * create the SQL to load the default word always by the id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        $sc->set_class($this::class);
-        $sc->set_fields(array_merge(
-            word_db::FLD_NAMES,
-            word_db::FLD_NAMES_USR,
-            word_db::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)
-        ));
-
-        return parent::load_sql_standard($sc);
-    }
 
     /**
      * create an SQL statement to retrieve a word by id from the database
@@ -738,6 +705,18 @@ class word extends sandbox_code_id
         return word_db::FLD_NAME;
     }
 
+    /**
+     * @return array with all fields names of this word object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            word_db::FLD_NAMES,
+            word_db::FLD_NAMES_USR,
+            word_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
+    }
+
     function all_sandbox_fields(): array
     {
         return word_db::ALL_SANDBOX_FLD_NAMES;
@@ -796,6 +775,32 @@ class word extends sandbox_code_id
     /*
      * info
      */
+
+    /**
+     * can merge id all unique keys match
+     * check that the given object is by all unique keys the same as the actual object
+     * handles the special case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
+     * so if a formula word "millions" is different from the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
+     * in short: if two objects are the same by this definition, they are supposed to be merged
+     * @param word|combine_named|type_object|sandbox $obj_to_check the filled object that might be the same as this object
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
+     */
+    function is_same(word|combine_named|type_object|sandbox $obj_to_check): bool
+    {
+        global $sys;
+        $result = parent::is_same($obj_to_check);
+        // check the exception case that formula link words are similar to the formula, but are not the same
+        if ($this->name() == $obj_to_check->name()) {
+            if ($this->type_id !== $obj_to_check->type_id) {
+                if ($this->type_id == $sys->typ_lst->phr_typ->id(phrase_types::FORMULA_LINK)
+                    or $obj_to_check->type_id == $sys->typ_lst->phr_typ->id(phrase_types::FORMULA_LINK)) {
+                    $result = false;
+                }
+            }
+        }
+
+        return $result;
+    }
 
     /**
      * create human-readable messages of the differences between the word objects
@@ -916,6 +921,42 @@ class word extends sandbox_code_id
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param word|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param word|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return word|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        word|CombineObject|db_object_seq_id $std_obj,
+        word|CombineObject|db_object_seq_id $result
+    ): word|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+
+        if ($std_obj->view !== $this->view) {
+            $result->view = $this->view;
+        }
+        if ($std_obj->plural !== $this->plural) {
+            $result->plural = $this->plural;
+        }
+
+        if ($std_obj->impact !== $this->impact) {
+            $result->impact = $this->impact;
+        }
+        if ($std_obj->view !== $this->view) {
+            $result->view = $this->view;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -932,16 +973,13 @@ class word extends sandbox_code_id
     function fill(word|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_code_id() != null) {
-            $this->set_code_id($obj->get_code_id(), $usr_req);
-        }
-        if ($obj->plural != null) {
+        if ($this->plural === null and $obj->plural != null) {
             $this->plural = $obj->plural;
         }
-        if ($obj->impact != null) {
+        if ($this->impact === null and $obj->impact != null) {
             $this->impact = $obj->impact;
         }
-        if ($obj->view != null) {
+        if ($this->view === null and $obj->view != null) {
             $this->view = $obj->view;
         }
         return $usr_msg;
@@ -1706,7 +1744,7 @@ class word extends sandbox_code_id
     /**
      * return the name (just because all objects should have a name function)
      */
-    function name_dsp(): string
+    function name_dsp(): ?string
     {
         if ($this->is_excluded()) {
             return '';

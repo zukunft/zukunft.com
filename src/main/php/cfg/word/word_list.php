@@ -1503,7 +1503,7 @@ class word_list extends sandbox_list_named
             $time_lst = new word_list($this->get_user());
             foreach ($trm_lst->lst() as $trm) {
                 if ($trm->is_time()) {
-                    $time_lst->add($trm->word());
+                    $time_lst->add($trm->get_word());
                 }
             }
             $wrd = $time_lst->max_time();

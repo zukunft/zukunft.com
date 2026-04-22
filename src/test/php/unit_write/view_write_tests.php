@@ -182,7 +182,7 @@ class view_write_tests
 
         $test_name = 'check if the description view parameter adding have been logged to '. views::TEST_RENAMED_NAME;
         $result = $t->log_last_by_field($msk_reloaded, sql_db::FLD_DESCRIPTION, $msk_reloaded->id(), true);
-        $target = users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
+        $target = 'zukunft.com system test changed "Just added for testing" to "Just added for testing the user sandbox"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the view_type view parameter adding have been logged to '. views::TEST_RENAMED_NAME;
@@ -270,7 +270,7 @@ class view_write_tests
         global $usr;
         $msk = new view($usr);
         $msk->load_by_name(views::TEST_EXCLUDED_NAME);
-        $msk->set_excluded(true);
+        $msk->excluded = true;
         $msk->save($usr_msg);
     }
 

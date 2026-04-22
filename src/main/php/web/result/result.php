@@ -146,7 +146,7 @@ class result extends sandbox_value
     /**
      * @return string interface function to align the value with the other sandbox objects
      */
-    function name(): string
+    function name(): string|null
     {
         return $this->grp->name();
     }

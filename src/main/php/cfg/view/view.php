@@ -170,6 +170,7 @@ class view extends sandbox_code_id
     private ?term_view_list $trm_msk_lst;
 
     // the default display style for this component which can be overwritten by the link
+    // TODO Prio 1 change to style_id because the style objects are part of the $sys object
     private ?type_object $style = null;
 
     // the parent view so that this view is either overwrites some component of the parent view
@@ -676,24 +677,6 @@ class view extends sandbox_code_id
         return $this->row_mapper_sandbox($db_view);
     }
 
-    /**
-     * load the view parameters for all users including the user id to know the owner of the standard
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard view has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        $result = parent::load_standard($qp);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        return $result;
-    }
-
 
     /*
      * load sql
@@ -741,25 +724,6 @@ class view extends sandbox_code_id
             view_db::FLD_NAMES_USR,
             view_db::FLD_NAMES_NUM_USR
         );
-    }
-
-    /**
-     * create the SQL to load the default view always by the id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        $sc->set_class($this::class);
-        $sc->set_fields(array_merge(
-            view_db::FLD_NAMES,
-            view_db::FLD_NAMES_USR,
-            view_db::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)
-        ));
-
-        return parent::load_sql_standard($sc);
     }
 
 
@@ -992,6 +956,31 @@ class view extends sandbox_code_id
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param view|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param view|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return view|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        view|CombineObject|db_object_seq_id $std_obj,
+        view|CombineObject|db_object_seq_id $result
+    ): view|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->get_style_id() !== $this->get_style_id()) {
+            $result->set_style_by_id($this->get_style_id());
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1007,7 +996,7 @@ class view extends sandbox_code_id
     function fill(view|sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_style_id() != null) {
+        if ($this->get_style_id() === null and $obj->get_style_id() != null) {
             $this->set_style_by_id($obj->get_style_id());
         }
         return $usr_msg;
@@ -1267,6 +1256,23 @@ class view extends sandbox_code_id
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this view object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            view_db::FLD_NAMES,
+            view_db::FLD_NAMES_USR,
+            view_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
 

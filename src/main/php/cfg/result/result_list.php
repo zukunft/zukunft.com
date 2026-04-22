@@ -44,6 +44,8 @@ include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
+// formula_map.php always includes result_list.php, so including it here would create a circular dependency
+//include_once paths::MODEL_FORMULA . 'formula_map.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
@@ -76,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
@@ -145,10 +148,10 @@ class result_list extends sandbox_value_list
      *      -> measure it based on real life data
      *      -> a solution could be to include the source group and the formula in the result group id
      *
-     * @param formula $frm a named object used for selection e.g. a formula
+     * @param formula|formula_map $frm a named object used for selection e.g. a formula
      * @return bool true if loading has been successful
      */
-    function load_by_frm(formula $frm): bool
+    function load_by_frm(formula|formula_map $frm): bool
     {
         global $db_con;
 
@@ -269,7 +272,7 @@ class result_list extends sandbox_value_list
         foreach (result_db::TBL_LIST_EX_STD as $tbl_typ) {
             $qp_tbl = $this->load_sql_by_frm_single($sc, $frm, $tbl_typ);
 
-            $qp->merge($qp_tbl);
+            $qp->merge($qp_tbl, true);
         }
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
         return $qp;
@@ -380,21 +383,31 @@ class result_list extends sandbox_value_list
      *     *
      * @param sql_creator $sc with the target db_type set
      * @param formula $frm if set to get all results for this phrase
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param array $sc_par_arr the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_by_frm_single(sql_creator $sc, formula $frm, array $sc_par_lst): sql_par
+    function load_sql_by_frm_single(
+        sql_creator $sc,
+        formula $frm,
+        array $sc_par_arr
+    ): sql_par
     {
         $qp = $this->load_sql_init(
             $sc,
             result::class,
             'frm',
-            $sc_par_lst,
+            $sc_par_arr,
             new sql_field_list(),
             new sql_type_list()
         );
         $sc->add_where(formula_db::FLD_ID, $frm->id());
-        $qp->sql = $sc->sql(0, true, false);
+        // detect if the group id is numeric and if yes force the conversion to text
+        $num_id = false;
+        $sc_par_lst = new sql_type_list($sc_par_arr);
+        if ($sc_par_lst->is_prime() or $sc_par_lst->is_main()) {
+            $num_id = true;
+        }
+        $qp->sql = $sc->sql(0, true, false, true, $num_id);
         $qp->par = $sc->get_par();
 
         return $qp;

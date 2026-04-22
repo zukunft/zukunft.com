@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS change_values_geo_prime
     group_id         bigint    NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        point DEFAULT NULL,
-    new_value        point DEFAULT NULL
+    new_value        point DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_geo_prime IS 'to log all geo value changes done by any user on values with a prime group id';
@@ -21,3 +23,6 @@ COMMENT ON COLUMN change_values_geo_prime.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_geo_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_geo_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_geo_prime.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_geo_prime.new_id IS 'new value id';
+

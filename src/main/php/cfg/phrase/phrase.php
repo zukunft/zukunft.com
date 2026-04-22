@@ -83,6 +83,7 @@ include_once paths::SHARED_HELPER . 'TextIdObject.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
@@ -120,6 +121,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
@@ -305,7 +307,7 @@ class phrase extends combine_named
                     $wrd->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 }
                 if (array_key_exists(sql_db::FLD_EXCLUDED . $fld_ext, $db_row)) {
-                    $wrd->set_excluded($db_row[sql_db::FLD_EXCLUDED . $fld_ext]);
+                    $wrd->excluded = $db_row[sql_db::FLD_EXCLUDED . $fld_ext];
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
                     $wrd->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);
@@ -331,7 +333,7 @@ class phrase extends combine_named
                     $trp->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 }
                 if (array_key_exists(sql_db::FLD_EXCLUDED . $fld_ext, $db_row)) {
-                    $trp->set_excluded($db_row[sql_db::FLD_EXCLUDED . $fld_ext]);
+                    $trp->excluded = $db_row[sql_db::FLD_EXCLUDED . $fld_ext];
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
                     $trp->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);
@@ -456,11 +458,11 @@ class phrase extends combine_named
     /**
      * set the name of the phrase object, which is also the name of the phrase
      *
-     * @param string $name the name of the phrase set in the related object
+     * @param string|null $name the name of the phrase set in the related object
      * @param string $class the class of the phrase object can be set to force the creation of the related object
      * @return void
      */
-    function set_name(string $name, string $class = ''): void
+    function set_name(string|null $name, string $class = ''): void
     {
         if ($class != '' and $this->obj == null) {
             $this->set_obj_from_class($class);
@@ -518,6 +520,24 @@ class phrase extends combine_named
         return $this->obj()->protection_id();
     }
 
+    function is_similar(phrase|term|type_object|sandbox|null $obj_to_check): bool
+    {
+        if ($obj_to_check::class == phrase::class or $obj_to_check::class == term::class) {
+            return $this->obj()->is_similar($obj_to_check->obj());
+        } else {
+            return $this->obj()->is_similar($obj_to_check);
+        }
+    }
+
+    function is_same(phrase|term|type_object|sandbox|null $obj_to_check): bool
+    {
+        if ($obj_to_check::class == phrase::class or $obj_to_check::class == term::class) {
+            return $this->obj()->is_same($obj_to_check->obj());
+        } else {
+            return $this->obj()->is_same($obj_to_check);
+        }
+    }
+
     /**
      * set the value to rank the words by usage
      *
@@ -571,12 +591,24 @@ class phrase extends combine_named
      * @param bool $ignore_excluded force to include also the excluded names e.g. for import
      * @return string the name of the phrase
      */
-    function name(bool $ignore_excluded = false): string
+    function name(bool $ignore_excluded = false): string|null
     {
         if ($this->obj == null) {
             return '';
         } else {
             return $this->obj()->name($ignore_excluded);
+        }
+    }
+
+    /**
+     * @return string the name of the word or triple type
+     */
+    function type_name(): string
+    {
+        if ($this->obj == null) {
+            return '';
+        } else {
+            return $this->obj()->type_name();
         }
     }
 
@@ -634,6 +666,42 @@ class phrase extends combine_named
     function is_valid(): bool
     {
         return $this->obj()->is_valid();
+    }
+
+    function fob(): sandbox_named|combine_named|null
+    {
+        if ($this->is_triple()) {
+            return $this->obj()?->fob();
+        } else {
+            return null;
+        }
+    }
+
+    function tob(): sandbox_named|combine_named|null
+    {
+        if ($this->is_triple()) {
+            return $this->obj()?->tob();
+        } else {
+            return null;
+        }
+    }
+
+    function from_empty(): bool
+    {
+        if ($this->is_triple()) {
+            return $this->obj()->from_empty();
+        } else {
+            return true;
+        }
+    }
+
+    function to_empty(): bool
+    {
+        if ($this->is_triple()) {
+            return $this->obj()->to_empty();
+        } else {
+            return true;
+        }
     }
 
 
@@ -936,6 +1004,7 @@ class phrase extends combine_named
     {
         log_debug($this->dsp_id());
         $result = null;
+        $msg = new user_message();
 
         if ($this->id() != 0 and $this->name() == '') {
             $this->load_by_id($this->id());
@@ -945,7 +1014,7 @@ class phrase extends combine_named
         }
         if ($this->id() < 0) {
             $lnk = $this->obj();
-            $lnk->reload_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
+            $lnk->reload_objects($msg); // try to be on the save side, and it is anyway checked if loading is really needed
             $result = $lnk->fob();
         } elseif ($this->id() > 0) {
             $result = $this->obj;

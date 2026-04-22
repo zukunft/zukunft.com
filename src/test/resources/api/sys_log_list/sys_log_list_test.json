@@ -10,7 +10,7 @@
       "user_id": 3,
       "text": "the log text that describes the problem for the user or system admin",
       "status": 1,
-      "function_id": 1,
+      "function_id": 3,
       "trace": "the technical trace back description for debugging",
       "type_id": 3
     },
@@ -19,7 +19,7 @@
       "user_id": 3,
       "text": "the log 2 text that describes the problem for the user or system admin",
       "status": 3,
-      "function_id": 3,
+      "function_id": 5,
       "trace": "the technical trace 2 back description for debugging",
       "type_id": 5,
       "description": "the error has been replicated and the fix will be deployed",

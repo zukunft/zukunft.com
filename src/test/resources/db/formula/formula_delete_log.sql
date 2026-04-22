@@ -23,5 +23,5 @@ SELECT formula_delete_log
     (3::bigint,
      3::smallint,
      30::smallint,
-     'scale minute to sec'::text,
-     1::bigint);
+     'scale hour to sec'::text,
+     2::bigint);

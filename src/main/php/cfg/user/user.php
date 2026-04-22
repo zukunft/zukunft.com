@@ -780,7 +780,7 @@ class user extends db_id_object_non_sandbox
     /**
      * @return string the unique username for the user on this pod
      */
-    function name(): string
+    function name(): string|null
     {
         if ($this->name != null) {
             return $this->name;
@@ -1457,6 +1457,23 @@ class user extends db_id_object_non_sandbox
         return $fvt_lst->is_empty_except_internal_fields();
     }
 
+    /**
+     * detects if this object has been changed compared to the given object,
+     * excluding changes on internal fields like last_update
+     *
+     * @param user $db_usr the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_non_id_diff(
+        user          $db_usr,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
+    {
+        $fvt_lst = $this->db_fields_changed($db_usr, $usr_msg, $sc_par_lst);
+        return $fvt_lst->is_empty_except_id_and_internal_fields();
+    }
+
 
     /*
      * owner and access
@@ -1814,6 +1831,98 @@ class user extends db_id_object_non_sandbox
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param user|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param user|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return user|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        user|CombineObject|db_object_seq_id $std_obj,
+        user|CombineObject|db_object_seq_id $result
+    ): user|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->name !== $this->name) {
+            $result->name = $this->name;
+        }
+        if ($std_obj->ip_addr !== $this->ip_addr) {
+            $result->ip_addr = $this->ip_addr;
+        }
+        if ($std_obj->email !== $this->email) {
+            $result->email = $this->email;
+        }
+
+        if ($std_obj->password !== $this->password) {
+            $result->password = $this->password;
+        }
+        if ($std_obj->activation_key !== $this->activation_key) {
+            $result->activation_key = $this->activation_key;
+        }
+        if ($std_obj->activation_timeout !== $this->activation_timeout) {
+            $result->activation_timeout = $this->activation_timeout;
+        }
+        if ($std_obj->db_now !== $this->db_now) {
+            $result->db_now = $this->db_now;
+        }
+        if ($std_obj->last_login !== $this->last_login) {
+            $result->last_login = $this->last_login;
+        }
+        if ($std_obj->last_logoff !== $this->last_logoff) {
+            $result->last_logoff = $this->last_logoff;
+        }
+
+        if ($std_obj->profile_id !== $this->profile_id) {
+            $result->profile_id = $this->profile_id;
+        }
+        if ($std_obj->code_id !== $this->code_id) {
+            $result->code_id = $this->code_id;
+        }
+        if ($std_obj->type_id !== $this->type_id) {
+            $result->type_id = $this->type_id;
+        }
+        if ($std_obj->right_level !== $this->right_level) {
+            $result->right_level = $this->right_level;
+        }
+        if ($std_obj->status_id !== $this->status_id) {
+            $result->status_id = $this->status_id;
+        }
+        if ($std_obj->excluded !== $this->excluded) {
+            $result->excluded = $this->excluded;
+        }
+
+        if ($std_obj->created !== $this->created) {
+            $result->created = $this->created;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        if ($std_obj->first_name !== $this->first_name) {
+            $result->first_name = $this->first_name;
+        }
+        if ($std_obj->last_name !== $this->last_name) {
+            $result->last_name = $this->last_name;
+        }
+
+        if ($std_obj->trm !== $this->trm) {
+            $result->trm = $this->trm;
+        }
+        if ($std_obj->msk !== $this->msk) {
+            $result->msk = $this->msk;
+        }
+        if ($std_obj->src !== $this->src) {
+            $result->src = $this->src;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1829,74 +1938,74 @@ class user extends db_id_object_non_sandbox
     function fill(user|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->name != null) {
+        if ($this->name === null and $obj->name != null) {
             $this->name = $obj->name;
         }
-        if ($obj->ip_addr != null) {
+        if ($this->ip_addr === null and $obj->ip_addr != null) {
             $this->ip_addr = $obj->ip_addr;
         }
-        if ($obj->email != null) {
+        if ($this->email === null and $obj->email != null) {
             $this->email = $obj->email;
         }
 
-        if ($obj->password != null) {
+        if ($this->password === null and $obj->password != null) {
             $this->password = $obj->password;
         }
-        if ($obj->activation_key != null) {
+        if ($this->activation_key === null and $obj->activation_key != null) {
             $this->activation_key = $obj->activation_key;
         }
-        if ($obj->activation_timeout != null) {
+        if ($this->activation_timeout === null and $obj->activation_timeout != null) {
             $this->activation_timeout = $obj->activation_timeout;
         }
-        if ($obj->db_now != null) {
+        if ($this->db_now === null and $obj->db_now != null) {
             $this->db_now = $obj->db_now;
         }
-        if ($obj->last_login != null) {
+        if ($this->last_login === null and $obj->last_login != null) {
             $this->last_login = $obj->last_login;
         }
-        if ($obj->last_logoff != null) {
+        if ($this->last_logoff === null and $obj->last_logoff != null) {
             $this->last_logoff = $obj->last_logoff;
         }
 
-        if ($obj->profile_id != null) {
+        if ($this->profile_id === null and $obj->profile_id != null) {
             $this->profile_id = $obj->profile_id;
         }
-        if ($obj->code_id != null) {
+        if ($this->code_id === null and $obj->code_id != null) {
             $this->code_id = $obj->code_id;
         }
-        if ($obj->type_id != null) {
+        if ($this->type_id === null and $obj->type_id != null) {
             $this->type_id = $obj->type_id;
         }
-        if ($obj->right_level != null) {
+        if ($this->right_level === null and $obj->right_level != null) {
             $this->right_level = $obj->right_level;
         }
-        if ($obj->status_id != null) {
+        if ($this->status_id === null and $obj->status_id != null) {
             $this->status_id = $obj->status_id;
         }
-        if ($obj->excluded != null) {
+        if ($this->excluded === null and $obj->excluded != null) {
             $this->excluded = $obj->excluded;
         }
 
-        if ($obj->created != null) {
+        if ($this->created === null and $obj->created != null) {
             $this->created = $obj->created;
         }
-        if ($obj->description != null) {
+        if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
-        if ($obj->first_name != null) {
+        if ($this->first_name === null and $obj->first_name != null) {
             $this->first_name = $obj->first_name;
         }
-        if ($obj->last_name != null) {
+        if ($this->last_name === null and $obj->last_name != null) {
             $this->last_name = $obj->last_name;
         }
 
-        if ($obj->trm != null) {
+        if ($this->trm === null and $obj->trm != null) {
             $this->trm = $obj->trm;
         }
-        if ($obj->msk != null) {
+        if ($this->msk === null and $obj->msk != null) {
             $this->msk = $obj->msk;
         }
-        if ($obj->src != null) {
+        if ($this->src === null and $obj->src != null) {
             $this->src = $obj->src;
         }
 
@@ -2038,6 +2147,7 @@ class user extends db_id_object_non_sandbox
 
         if ($this->is_profile_valid()) {
             if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::LOG)
                 or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
@@ -2292,22 +2402,24 @@ class user extends db_id_object_non_sandbox
                 // if a new user is supposed to be added check upfront for a similar object to prevent adding duplicates
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar($msg);
-                if ($similar->id <> 0) {
-                    log_debug('got similar ' . $similar->dsp_id());
-                    // check that the get_similar function has really found a similar object and report potential program errors
-                    if (!$this->is_similar($similar)) {
-                        $msg->add(msg_id::NOT_SIMILAR_OBJECTS, [
-                            msg_id::VAR_NAME => $this->dsp_id(),
-                            msg_id::VAR_NAME_CHK => $similar->dsp_id()
-                        ]);
+                if ($similar != null) {
+                    if ($similar->id <> 0) {
+                        log_debug('got similar ' . $similar->dsp_id());
+                        // check that the get_similar function has really found a similar object and report potential program errors
+                        if (!$this->is_similar($similar)) {
+                            $msg->add(msg_id::NOT_SIMILAR_OBJECTS, [
+                                msg_id::VAR_NAME => $this->dsp_id(),
+                                msg_id::VAR_NAME_CHK => $similar->dsp_id()
+                            ]);
+                        } else {
+                            // if similar is found set the id to trigger the updating instead of adding
+                            $similar->load_by_id($similar->id); // e.g. to get the type_id
+                            $this->id = $similar->id;
+                        }
                     } else {
-                        // if similar is found set the id to trigger the updating instead of adding
-                        $similar->load_by_id($similar->id); // e.g. to get the type_id
-                        $this->id = $similar->id;
+                        log_debug('no similar to ' . $this->dsp_id() . ' found');
+                        $similar = null;
                     }
-                } else {
-                    log_debug('no similar to ' . $this->dsp_id() . ' found');
-                    $similar = null;
                 }
             }
         }
@@ -2392,20 +2504,23 @@ class user extends db_id_object_non_sandbox
     /**
      * check if a user with the name or email already exists
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @return user a filled object that has the same name
-     *                 or a sandbox object with id() = 0 if nothing similar has been found
+     * @return user|null a filled object that has the same name
+     *                 or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): user
+    function get_similar(user_message $msg): user|null
     {
-        $result = new user();
+        $sim = new user();
         if ($this->name != '' and $this->name != null and $this->email != '' and $this->email != null) {
-            $result->load_by_name_or_email($this->name, $this->email);
+            $sim->load_by_name_or_email($this->name, $this->email);
         } elseif ($this->name != '' and $this->name != null) {
-            $result->load_by_name($this->name);
+            $sim->load_by_name($this->name);
         } elseif ($this->email != '' and $this->email != null) {
-            $result->load_by_email($this->email);
+            $sim->load_by_email($this->email);
         }
-        return $result;
+        if ($sim->id() == 0) {
+            return null;
+        }
+        return $sim;
     }
 
     /**
@@ -2973,6 +3088,14 @@ class user extends db_id_object_non_sandbox
 
         // password should not be part of the change log
         if ($obj->password <> $this->password) {
+            // TODO Prio 3 log the password hash change in a admin only log for security reasons
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_PASSWORD,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_PASSWORD),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
             $lst->add_field(
                 user_db::FLD_PASSWORD,
                 $this->password,
@@ -2982,6 +3105,14 @@ class user extends db_id_object_non_sandbox
         }
         // the activation_key is used during the signup process and is not logged
         if ($obj->activation_key <> $this->activation_key) {
+            // the change of the activation_key if logged e.g. to be able to limit the number of login attempts
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ACTIVATION_KEY,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_ACTIVATION_KEY),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
             $lst->add_field(
                 user_db::FLD_ACTIVATION_KEY,
                 $this->activation_key,
@@ -2991,6 +3122,14 @@ class user extends db_id_object_non_sandbox
         }
         // the activation_timeout is used during the signup process and is not logged
         if ($obj->activation_timeout <> $this->activation_timeout) {
+            // the change of the activation_timeout if logged e.g. to be able to limit the number of login attempts
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ACTIVATION_TIMEOUT,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_ACTIVATION_TIMEOUT),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
             $lst->add_field(
                 user_db::FLD_ACTIVATION_TIMEOUT,
                 $this->activation_timeout?->format(sql_db::DATE_FORMAT),

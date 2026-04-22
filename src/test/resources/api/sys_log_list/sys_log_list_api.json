@@ -8,9 +8,9 @@
     {
       "id": 3,
       "user_id": 3,
-      "function_id": 3,
+      "function_id": 5,
       "trace": "import_test_config",
-      "type_id": 4,
+      "type_id": 3,
       "text": "test setup",
       "description": "import of the pod test setup",
       "status": 1
@@ -18,9 +18,9 @@
     {
       "id": 2,
       "user_id": 3,
-      "function_id": 2,
+      "function_id": 4,
       "trace": "import_test_config",
-      "type_id": 4,
+      "type_id": 3,
       "text": "pod setup",
       "description": "import of the pod base setup",
       "status": 1
@@ -28,9 +28,9 @@
     {
       "id": 1,
       "user_id": 3,
-      "function_id": 1,
+      "function_id": 3,
       "trace": "import_base_config",
-      "type_id": 4,
+      "type_id": 3,
       "text": "base setup",
       "description": "import of the base setup",
       "status": 1

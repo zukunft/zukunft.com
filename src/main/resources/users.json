@@ -37,6 +37,13 @@
       "code_id": "signup",
       "profile": "signup",
       "email": "signup@zukunft.com"
+    },
+    {
+      "name": "zukunft.com system log",
+      "description": "an internal zukunft.com user to add to the log that cannot update or delete ",
+      "code_id": "log",
+      "profile": "log",
+      "email": "log@zukunft.com"
     }
   ]
 }

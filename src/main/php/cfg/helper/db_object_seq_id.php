@@ -430,6 +430,75 @@ class db_object_seq_id extends db_object
      * info
      */
 
+    function has_id(): bool
+    {
+        if ($this->id() !== null and $this->id() !== 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * dummy function definition that will be overwritten by the child objects
+     * check if the id parameters are supposed to be changed
+     * @param db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(db_object_seq_id $db_rec): bool
+    {
+        $result = false;
+        if ($this->id() != 0) {
+            if ($this->id() != $db_rec->id()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if the object has a valid database id
+     */
+    function is_loaded(): bool
+    {
+        if ($this->id() == null) {
+            return false;
+        } else {
+            if ($this->id() != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     * Used to get the database fields that need to be updated in the user sandbox row
+     * E.g. if the user has renamed a word and changes the name now back to the standard name,
+     *      the name of the user sandbox row is supposed to be null
+     * $this is usually the target user object
+     * $obj is the norm object as saved in the database
+     * $result is the user object that should be used to write the user sandbox db row
+     *
+     *
+     * @param CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        CombineObject|db_object_seq_id $std_obj,
+        CombineObject|db_object_seq_id $result
+    ): CombineObject|db_object_seq_id
+    {
+        // TODO move to the calling function
+        // $result = $this->clone_reset(true);
+        // the database id mus always be identical to the original db row
+        $result->id = $std_obj->id();
+        return $result;
+    }
+
     /**
      * create human-readable messages of the differences between the db id objects
      * @param CombineObject|db_object_seq_id $obj which might be different to this db id object
@@ -485,27 +554,6 @@ class db_object_seq_id extends db_object
 
 
     /*
-     * info
-     */
-
-    /**
-     * @return bool true if the object has a valid database id
-     */
-    function is_loaded(): bool
-    {
-        if ($this->id() == null) {
-            return false;
-        } else {
-            if ($this->id() != 0) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-
-    /*
      * overwrite
      */
 
@@ -514,7 +562,7 @@ class db_object_seq_id extends db_object
      *
      * @return string the name from the object e.g. word using the same function as the phrase and term
      */
-    function name(): string
+    function name(): string|null
     {
         $msg = 'ERROR: name function not overwritten by child object ' . $this::class;
         log_err($msg);
@@ -651,7 +699,8 @@ class db_object_seq_id extends db_object
             $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_PROFILE => $msg->usr?->name()
+                msg_id::VAR_USER_NAME => $msg->usr?->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr?->profile_name()
             ]);
         }
 
@@ -684,11 +733,33 @@ class db_object_seq_id extends db_object
 
         // read the database values to be able to check if something has been changed
         // TODO Prio 2 to be added also to the prepared SQL statement
-        $db_rec = $this->clone_all();
-        $db_rec->reset(true);
-        $db_rec->load_by_id($this->id());
+        $db_rec = $this->load_db($msg);
 
         return $this->db_update_row($db_rec, $msg, $db_con, $sc_par_lst);
+    }
+
+    /**
+     * read the database values to be able to check if something has been changed;
+     * done first, because it needs to be done for user and general object values
+     * @param user_message $msg
+     * @return db_object_seq_id
+     */
+    protected function load_db(user_message $msg): db_object_seq_id
+    {
+        // prepare
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
+        // read the database values to be able to check if something has been changed;
+        // done first, because it needs to be done for user and general object values
+        $db_rec = clone $this;
+        $db_rec->reset();
+        if ($db_rec->load_by_id($this->id()) != $this->id()) {
+            $msg->add(msg_id::FAILED_RELOAD_CLASS, [
+                msg_id::VAR_CLASS_NAME => $class_name
+            ]);
+        }
+        return $db_rec;
     }
 
     /**
@@ -725,7 +796,8 @@ class db_object_seq_id extends db_object
             $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_PROFILE => $msg->usr->name()
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr?->profile_name()
             ]);
         }
 
@@ -1479,7 +1551,7 @@ class db_object_seq_id extends db_object
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      * @returns db_object|null a filled object that has the same name or links the same objects
-     *                         or a sandbox object with id() = 0 if nothing similar has been found
+     *                         or null if nothing similar has been found
      */
     function get_similar(user_message $msg): db_object|null
     {

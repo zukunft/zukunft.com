@@ -212,12 +212,6 @@ class sql_creator
         job::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
-    // classes where the tables have no auto increase id
-    const array DB_TYPES_NO_SEQ = [
-        group::class,
-        value::class,
-        result::class
-    ];
 
     // name the positions in the field definition array
     private const int FLD_POS_NAME = 0;
@@ -1182,7 +1176,13 @@ class sql_creator
      * @param bool $prepare can be set to false the created sql parts of a union query
      * @return string the created SQL statement in the previous set dialect
      */
-    function sql(int $par_offset = 0, bool $has_id = true, bool $prepare = true): string
+    function sql(
+        int $par_offset = 0,
+        bool $has_id = true,
+        bool $prepare = true,
+        bool $union = false,
+        bool $num_id = false
+    ): string
     {
         // check if the minimum parameters are set
         if ($this->query_name == '') {
@@ -1193,7 +1193,7 @@ class sql_creator
             }
         }
         // prepare the SQL statement parts that have dependencies to each other
-        $fields = $this->fields($has_id);
+        $fields = $this->fields($has_id, $union, $num_id);
         $from = $this->from($fields, $par_offset);
         $where = $this->where($par_offset);
 
@@ -1800,10 +1800,16 @@ class sql_creator
             if (!str_ends_with($qp->sql, ';')) {
                 $qp->sql .= '; ';
             }
+            // if the user is changed the the user name is included in the field list
+            $usr_id = $fvt_lst->get_value(user_db::FLD_ID);
+            // ... and the user id is in the id var
+            if (is_string($usr_id)) {
+                $usr_id = $fvt_lst->get_id(user_db::FLD_ID);
+            }
             // add the user id to the field list
             $par_lst_out->add_field(
                 user_db::FLD_ID,
-                $fvt_lst->get_value(user_db::FLD_ID),
+                $usr_id,
                 sql_par_type::INT);
             // add the action id to the field list
             $par_lst_out->add_field(
@@ -2900,10 +2906,16 @@ class sql_creator
 
     /**
      * create the field statement based on the fields
-     * @param $has_id
+     * @param bool $has_id
+     * @param bool $union true if e.g. int fields should be converted to a text field to be able to union mixed fields
+     * @param bool $num_id true if the id is numeric of a field where the id might be a text e.g. the group_id
      * @return string the sql field statement
      */
-    private function fields($has_id): string
+    private function fields(
+        bool $has_id,
+        bool $union,
+        bool $num_id
+    ): string
     {
         // init
         $result = '';
@@ -3095,7 +3107,19 @@ class sql_creator
 
             if (!$fld_used) {
                 if ($this->usr_query or $this->join_type != '') {
-                    $result .= ' ' . sql_db::STD_TBL . '.' . $field;
+                    if ($union) {
+                        if (in_array($field, def::MIXED_ID_FIELDS) and $num_id) {
+                            if ($this->db_type() == sql_db::POSTGRES) {
+                                $result .= ' ' . sql_db::STD_TBL . '.' . $field . sql::CAST_TEXT_PG;
+                            } else {
+                                $result .= ' ' . sql::CAST_TEXT_START . sql_db::STD_TBL . '.' . $field . sql::CAST_TEXT_END;
+                            }
+                        } else {
+                            $result .= ' ' . sql_db::STD_TBL . '.' . $field;
+                        }
+                    } else {
+                        $result .= ' ' . sql_db::STD_TBL . '.' . $field;
+                    }
                     if ($field == $this->id_field) {
                         // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
                         if ($this->all_query) {
@@ -4846,7 +4870,7 @@ class sql_creator
         }
         $this->add_par(sql_par_type::CONST, '(excluded <> 1 OR excluded is NULL)');
 
-        $fields = $this->fields(true);
+        $fields = $this->fields(true, false, false);
         $from = $this->from($fields);
         $id_fld = $this->id_field;
         if ($owner_id > 0) {
@@ -5556,17 +5580,19 @@ class sql_creator
      */
     function del_sql_list_without_log(string $class, string $id_field, array $id_lst): sql_par
     {
-        $lib = new library();
-
         $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
         $this->set_class($class, new sql_type_list());
         $this->add_where($id_field, $id_lst, sql_par_type::INT_LIST);
         $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table) . ' ';
         $sql .= sql::WHERE . ' ' . $id_field . ' ';
-        $sql .= sql::IN . ' (' . $this->par_name(1) . ')';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql .= sql::ANY . ' (' . $this->par_name(1) . ')';
+        } else {
+            $sql .= sql::IN . ' (' . $this->par_name(1) . ')';
+        }
         $qp->name .= '_by_ids';
         $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
-        $qp->par = [implode(',', $id_lst)];
+        $qp->par = ['{' . implode(',', $id_lst) . '}'];
         return $qp;
     }
 

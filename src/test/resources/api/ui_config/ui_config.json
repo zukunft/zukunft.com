@@ -97,22 +97,28 @@
         "id": 15
       },
       {
+        "name": "system log",
+        "code_id": "log",
+        "description": "profile that can add everything but cannot update or delete anything",
+        "id": 16
+      },
+      {
         "name": "system test",
         "code_id": "test",
         "description": "for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
-        "id": 16
+        "id": 17
       },
       {
         "name": "benevolent dictator",
         "code_id": "bdfl",
         "description": "a fallback admin user for unexpected cases; hopefully never used",
-        "id": 17
+        "id": 18
       },
       {
         "name": "system",
         "code_id": "system",
         "description": "User to log internal tasks not directly initiated by an user like system testing and cleanup",
-        "id": 18
+        "id": 19
       }
     ],
     "user_types": [
@@ -187,22 +193,34 @@
     ],
     "sys_log_functions": [
       {
+        "name": "no function name detected",
+        "code_id": "no function name detected",
+        "description": "fallback value if the function name is missing",
+        "id": 1
+      },
+      {
+        "name": "cfg\/system\/sys_log",
+        "code_id": "cfg\/system\/sys_log",
+        "description": "for errors on the system log functions itself",
+        "id": 2
+      },
+      {
         "name": "Import system configuration",
         "code_id": "import_base_config",
         "description": "Import the default system and user configuration",
-        "id": 1
+        "id": 3
       },
       {
         "name": "Import pod configuration",
         "code_id": "import_pod_config",
         "description": "Import the default pod configuration",
-        "id": 2
+        "id": 4
       },
       {
         "name": "Import test configuration",
         "code_id": "import_test_config",
         "description": "Import the configuration for system consistency tests",
-        "id": 3
+        "id": 5
       }
     ],
     "sys_log_levels": [
@@ -2275,7 +2293,7 @@
       {
         "name": "1password",
         "code_id": "1password",
-        "description": "",
+        "description": "the final solution should be to log only the time of the password change without saving the hash in the log due to security reasons",
         "id": 212
       },
       {

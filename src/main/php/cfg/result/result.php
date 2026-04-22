@@ -493,14 +493,20 @@ class result extends sandbox_value
 
     /**
      * create the SQL to load the single default result always by the id
+     *
+     * @param int|string $id the unique result id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
+    function load_sql_standard(
+        int|string  $id,
+        sql_creator $sc,
+        array       $fld_lst = []
+    ): sql_par
     {
         $fld_lst = array_merge(result_db::FLD_NAMES, array(user_db::FLD_ID));
-        return parent::load_sql_standard($sc, $fld_lst);
+        return parent::load_sql_standard($id, $sc, $fld_lst);
     }
 
     /**
@@ -1129,6 +1135,37 @@ class result extends sandbox_value
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param result|sandbox_multi|db_object_multi $std_obj the norm object as saved in the database
+     * @param result|sandbox_multi|db_object_multi $result empty clone of the target user object
+     * @return result|sandbox_multi|db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        result|sandbox_multi|db_object_multi $std_obj,
+        result|sandbox_multi|db_object_multi $result
+    ): result|sandbox_multi|db_object_multi
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->src_grp_id() !== $this->src_grp_id()) {
+            $result->set_src_grp($this->source_group());
+        }
+        if ($std_obj->formula_id() !== $this->formula_id()) {
+            $result->set_formula($this->frm);
+        }
+        if ($std_obj->number !== $this->number) {
+            $result->number = $this->number;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1142,13 +1179,13 @@ class result extends sandbox_value
     function fill(result|sandbox_value|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->src_grp_id() != 0) {
+        if ($this->src_grp_id() == 0 and $obj->src_grp_id() != 0) {
             $this->set_src_grp($obj->source_group());
         }
-        if ($obj->formula_id() != 0) {
+        if ($this->formula_id() == 0 and $obj->formula_id() != 0) {
             $this->set_formula($obj->frm);
         }
-        if ($obj->get_value() != null) {
+        if ($this->get_value() === null and $obj->get_value() != null) {
             $this->set_value($obj->get_value());
         }
         return $usr_msg;

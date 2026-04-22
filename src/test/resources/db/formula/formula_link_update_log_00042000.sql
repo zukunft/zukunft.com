@@ -36,7 +36,7 @@ SELECT formula_link_update_log_00042000 (
                702::smallint,
                'minute'::text,
                104::bigint,
-               ''::text,
+               null::text,
                0::bigint,
                1::bigint,
                700::smallint,

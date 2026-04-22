@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS change_values_text_norm
     group_id         char(112) NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        text  DEFAULT NULL,
-    new_value        text  DEFAULT NULL
+    new_value        text  DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_text_norm IS 'to log all text value changes done by any user on values with a standard group id';
@@ -21,3 +23,5 @@ COMMENT ON COLUMN change_values_text_norm.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_text_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_norm.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_text_norm.new_id IS 'new value id';

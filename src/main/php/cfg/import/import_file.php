@@ -80,15 +80,6 @@ class import_file
      * set and get
      */
 
-    /*
-     * use to apply the time of the parent process for continuous timestamp reporting
-     */
-    function set_start_time(float $tart_time): void
-    {
-        $this->start_time = $tart_time;
-    }
-
-
     /**
      * import a single json file
      * TODO Prio 0 add user_message as a parameter
@@ -138,7 +129,7 @@ class import_file
         $imp->step_start(msg_id::READ, self::FILE, $size, $imp->est_time_read);
         $json_str = file_get_contents($filename);
         $imp->step_end($size, $read_bytes_per_sec);
-        $imp->step_main_end($size, $read_bytes_per_sec);
+        $imp->step_main_end();
 
         if (!$json_str) {
             $this->read_error($filename, file_types::JSOM, $usr_msg);
@@ -228,7 +219,7 @@ class import_file
      * TODO validate the import by comparing the import with the api message to tne frontend
      *
      * @param user $usr who has triggered the function
-     * @param bool $validate if true the import is validated even if the number of the values matches
+     * @param bool $validate if true, the import is validated even if the number of the values matches
      * @return user_message true if the configuration has imported
      */
     function import_config_yaml(user $usr, bool $validate = false): user_message

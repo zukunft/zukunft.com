@@ -84,11 +84,11 @@ class source_tests
         $t->subheader($ts . 'sql read standard by name');
         $src = new source($usr);
         $src->set_name(sources::WIKIDATA);
-        $t->assert_sql_standard($sc, $src);
+        $t->assert_sql_standard_by_name($sc, $src);
 
         $t->subheader($ts . 'sql write insert');
         // TODO test the log version for db write
-        $src = $t_src->source();
+        $src = $t_src->source_reserved();
         $t->assert_sql_insert($sc, $src);
         $t->assert_sql_insert($sc, $src, [sql_type::USER]);
         $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::USER]);
@@ -96,7 +96,7 @@ class source_tests
         $t->assert_sql_insert_fail($sc, $src, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
-        $src = $t_src->source();
+        $src = $t_src->source_reserved();
         $src_renamed = $src->cloned(sources::SYSTEM_TEST_RENAMED);
         $t->assert_sql_update($sc, $src_renamed, $src);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::USER]);
@@ -126,14 +126,14 @@ class source_tests
         $t->assert_reset($src);
 
         $t->subheader($ts . 'api');
-        $src = $t_src->source();
+        $src = $t_src->source_reserved();
         $t->assert_api_json($src);
         $db_con = new sql_db();
         $src->set_code_id_db(sources::SIB_CODE);
         $t->assert_api_msg($db_con, $src);
 
         $t->subheader($ts . 'frontend');
-        $src = $t_src->source();
+        $src = $t_src->source_reserved();
         $t->assert_api_to_ui($src, new source_ui());
 
         $t->subheader($ts . 'import and export');

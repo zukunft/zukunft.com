@@ -201,6 +201,19 @@ class triple_list extends sandbox_list_named
     }
 
     /**
+     * load all triples that use the given verb
+     * @param verb $vrb if set to filter the selection
+     * @param bool $load_all force to include also the excluded triples e.g. for admins
+     * @return bool true if at least one triple found
+     */
+    function load_by_verb(verb $vrb, bool $load_all = false): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_verb($db_con->sql_creator(), $vrb);
+        return $this->load($qp, $load_all);
+    }
+
+    /**
      * load this list of triples
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @param bool $load_all force to include also the excluded triples e.g. for admins
@@ -366,6 +379,31 @@ class triple_list extends sandbox_list_named
         } else {
             $qp->name = '';
             log_err('At least the phrase must be set to load a triple list by phrase');
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load all triples that use the given verb
+     * @param sql_creator $sc with the target db_type set
+     * @param verb $vrb if set to filter the selection
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_verb(
+        sql_creator $sc,
+        verb        $vrb
+    ): sql_par
+    {
+        $qp = $this->load_sql($sc);
+        if ($vrb->id() <> 0) {
+            $qp->name .= 'vrb';
+            $sc->add_where(verb_db::FLD_ID, $vrb->id());
+            $sc->set_name($qp->name);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+            log_err('The verb must be valid to load a triple list');
         }
         $qp->par = $sc->get_par();
         return $qp;

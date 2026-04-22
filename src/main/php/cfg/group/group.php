@@ -577,6 +577,29 @@ class group extends sandbox_multi
         $this->is_saved = true;
     }
 
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param group|sandbox_multi|db_object_multi $std_obj the norm object as saved in the database
+     * @param group|sandbox_multi|db_object_multi $result empty clone of the target user object
+     * @return group|sandbox_multi|db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        group|sandbox_multi|db_object_multi $std_obj,
+        group|sandbox_multi|db_object_multi $result
+    ): group|sandbox_multi|db_object_multi
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->name !== $this->name) {
+            $result->name = $this->name;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
 
     /*
      * sql create
@@ -767,26 +790,36 @@ class group extends sandbox_multi
 
     /**
      * load the standard group use by most users for the given phrase group and time
-     *
-     * @return bool true if the standard value has been loaded
-     */
-    function load_standard_by_id(): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        return parent::load_standard($qp);
-    }
-
-    /**
-     * load the standard group use by most users for the given phrase group and time
      * @param string $name the name given by the user for the group
      * @return bool true if the standard value has been loaded
      */
-    function load_standard_by_name(string $name): bool
+    function load_standard_by_name(string $name, user_message $msg): bool
     {
         global $db_con;
-        $qp = $this->load_standard_by_name_sql($db_con->sql_creator(), $name);
-        return parent::load_standard($qp);
+        $qp = $this->load_sql_standard_by_name($name, $db_con->sql_creator());
+        return $this->load_standard_qp($qp, $msg);
+    }
+
+    /**
+     * load the value parameters for all users
+     * @param sql_par $qp
+     * @param user_message $msg to collect the user messages
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_qp(sql_par $qp, user_message $msg): bool
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        if (!$this->row_mapper_sandbox_multi(
+            $db_row, $qp->ext, true, false)) {
+            $lib = new library();
+            $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $msg->is_ok();
     }
 
     /**
@@ -898,25 +931,32 @@ class group extends sandbox_multi
 
     /**
      * create the SQL to load the default group always by the id
+     * @param int|string $id the unique group id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
+    function load_sql_standard(
+        int|string  $id,
+        sql_creator $sc,
+        array       $fld_lst = []
+    ): sql_par
     {
         $fld_lst = array_merge(
             group_db::FLD_NAMES,
             array(user_db::FLD_ID)
         );
-        return parent::load_sql_standard($sc, $fld_lst);
+        return parent::load_sql_standard($id, $sc, $fld_lst);
     }
 
     /**
-     * create the SQL to load the single default value always by the id
+     * create the SQL to load the single default value always by the name
+     *
+     * @param string $name the unique name of the object
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_standard_by_name_sql(sql_creator $sc, string $name): sql_par
+    function load_sql_standard_by_name(string $name, sql_creator $sc): sql_par
     {
         $sc_par_lst = new sql_type_list();
         $sc_par_lst->add($this->table_type());
@@ -1503,10 +1543,10 @@ class group extends sandbox_multi
     function fill(group|db_object_multi $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->name() != null) {
+        if ($this->name === null and $obj->name() != null) {
             $this->set_name($obj->name());
         }
-        if ($obj->get_description() != null) {
+        if ($this->get_description() === null and $obj->get_description() != null) {
             $this->set_description($obj->get_description());
         }
         return $usr_msg;
@@ -1522,12 +1562,13 @@ class group extends sandbox_multi
      * returns null if no similar group is found
      * or returns the group with the same unique key that is not the actual object
      *
-     * @return group a filled object that has the same name
-     *                 or a sandbox object with id() = 0 if nothing similar has been found
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return group|null a filled object that has the same name
+     *                    or null if nothing similar has been found
      */
-    function get_similar(): group
+    function get_similar(user_message $msg): group|null
     {
-        $result = new group($this->get_user());
+        $sim = null;
 
         // check potential duplicate by name
         $db_chk = clone $this;
@@ -1536,7 +1577,7 @@ class group extends sandbox_multi
         if ($db_chk->load_standard_by_name($this->name())) {
             if ($db_chk->id() > 0) {
                 log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
-                $result = $db_chk;
+                $sim = $db_chk;
             }
         }
         // check with the user namespace
@@ -1545,14 +1586,14 @@ class group extends sandbox_multi
             if ($db_chk->load_by_name($this->name())) {
                 if ($db_chk->id() > 0) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                    $result = $db_chk;
+                    $sim = $db_chk;
                 }
             }
         } else {
             log_err('The name must be set to check if a similar object exists');
         }
 
-        return $result;
+        return $sim;
     }
 
     /**
@@ -1781,9 +1822,10 @@ class group extends sandbox_multi
      * TODO maybe move this to del_exe
      *
      * @param user_message $usr_msg
+     * @param bool $must_exist if false no error message is created if the group has already been deleted
      * @return bool
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $usr_msg, bool $must_exist = true): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();

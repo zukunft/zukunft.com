@@ -197,12 +197,12 @@ class term_view extends sandbox_link
     /**
      * return the html code to display the link name
      */
-    function name(): string
+    function name(): string|null
     {
         $result = '';
 
         if ($this->view() != null and $this->term_linked() != null) {
-            if ($this->view()->name() <> '' and $this->term_linked()->name() <> '') {
+            if ($this->view()->name() <> null and $this->term_linked()->name() <> null) {
                 $result .= '"' . $this->term_linked()->name() . '" extends "'; // e.g. company details
                 $result .= $this->view()->name() . '"';     // e.g. cash flow statement
             }

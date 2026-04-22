@@ -134,6 +134,7 @@ class element_write_tests
 
         $t->subheader($ts . 'cleanup formula element write');
         $usr_msg->reset(true);
+        $usr_msg->usr = $t->usr1;
         $frm_sector->del($usr_msg);
         $wrd_total->del($usr_msg);
 
@@ -171,6 +172,7 @@ class element_write_tests
 
         $t->subheader($ts . 'cleanup');
         $usr_msg->reset(true);
+        $usr_msg->usr = $t->usr1;
         $frm_sector->del($usr_msg);
         $wrd_total->del($usr_msg);
 

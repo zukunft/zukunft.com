@@ -154,6 +154,14 @@ class value_read_tests
             $t->assert(', value->load for value id "' . $ch_inhabitants->id() . '"', $result, $target);
 
             // test load by phrase list first to get the value id
+            $phr_lst = $t_db->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2019));
+            $val_by_phr_lst = new value($t->usr1);
+            $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id());
+            $result = $val_by_phr_lst->number();
+            $target = values::CH_INHABITANTS_2019_IN_MIO;
+            $t->assert(', value->load for another word list ' . $phr_lst->dsp_name(), $result, $target);
+
+            // test load by phrase list first to get the value id
             $phr_lst = $t_db->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
             $val_by_phr_lst = new value($t->usr1);
             $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id());

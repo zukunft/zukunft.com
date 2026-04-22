@@ -45,6 +45,7 @@ include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
@@ -56,6 +57,7 @@ include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once test_paths::CREATE . 'test_const.php';
+include_once test_paths::CREATE . 'test_objects.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -65,8 +67,8 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -76,32 +78,42 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
-use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_components
+class test_components extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test components for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, components::TEST_COMPONENTS, new component($this->env->usr1));
     }
 
 
+    /*
+     * unit
+     */
+
     /**
-     * @return component_list with a list of suggested component for a word
+     * @return component_list with a list of suggested components for a word
      */
     function component_list_word(): component_list
     {
         $lst = new component_list($this->env->usr1);
         $lst->add($this->component_filled());
         return $lst;
+    }
+
+    function component_add(): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set_name(components::TEST_ADD_NAME);
+        return $cmp;
     }
 
     /**
@@ -161,6 +173,18 @@ class test_components
         $cmp->set(components::WORD_ID, components::WORD_NAME);
         $cmp->set_type(component_types::PHRASE_NAME, $this->env->usr1);
         $cmp->description = components::WORD_COM;
+        return $cmp;
+    }
+
+    /**
+     * @return component for db write testing that does not have a reserved name
+     */
+    function component_rename(): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME);
+        $cmp->set_type(component_types::PHRASE_NAME, $this->env->usr1);
+        $cmp->description = components::FORM_NAME_COM;
         return $cmp;
     }
 
@@ -386,6 +410,21 @@ class test_components
         $t_msk = new test_views($this->env);
         $lnk = $this->component_link();
         $lnk->set_view($t_msk->view_incomplete());
+        return $lnk;
+    }
+
+    /**
+     * @return component_link with view and component set by id only (no name),
+     *         excluded and with share and protection set,
+     *         to check if the sql insert function handles partial excluded objects correctly
+     */
+    function component_link_half_filled(): component_link
+    {
+        global $sys;
+        $lnk = $this->component_link();
+        $lnk->exclude();
+        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $lnk;
     }
 

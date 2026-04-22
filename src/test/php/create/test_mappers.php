@@ -38,9 +38,11 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_id_object_non_sandbox.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
@@ -92,6 +94,7 @@ include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
@@ -99,9 +102,11 @@ include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
@@ -150,6 +155,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
@@ -176,6 +182,69 @@ class test_mappers
     /*
      * map
      */
+
+    /**
+     * get an empty object based on the given class
+     * @param string $class the given main class name
+     * @return sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox with only a few vars filled
+     */
+    function class_to_object(string $class, user $usr): sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox
+    {
+        $obj = null;
+        switch ($class) {
+            case user::class;
+                $obj = new user();
+                break;
+            case word::class;
+                $obj = new word($usr);
+                break;
+            case verb::class;
+                $obj = new verb();
+                break;
+            case triple::class;
+                $obj = new triple($usr);
+                break;
+            case source::class;
+                $obj = new source($usr);
+                break;
+            case ref::class;
+                $obj = new ref($usr);
+                break;
+            case value::class;
+                $obj = new value($usr);
+                break;
+            case group::class;
+                $obj = new group($usr);
+                break;
+            case formula::class;
+                $obj = new formula($usr);
+                break;
+            case formula_link::class;
+                $obj = new formula_link($usr);
+                break;
+            case result::class;
+                $obj = new result($usr);
+                break;
+            case view::class;
+                $obj = new view($usr);
+                break;
+            case view_relation::class;
+                $obj = new view_relation($usr);
+                break;
+            case term_view::class;
+                $obj = new term_view($usr);
+                break;
+            case component::class;
+                $obj = new component($usr);
+                break;
+            case component_link::class;
+                $obj = new component_link($usr);
+                break;
+            default:
+                log_err('no base object defined for ' . $class);
+        }
+        return $obj;
+    }
 
     /**
      * get the base test object related to the given class
@@ -223,7 +292,7 @@ class test_mappers
                 $obj = $t_grp->group();
                 break;
             case formula::class;
-                $obj = $t_frm->formula();
+                $obj = $t_frm->formula_rename();
                 break;
             case formula_link::class;
                 $obj = $t_frm->formula_link();
@@ -232,7 +301,7 @@ class test_mappers
                 $obj = $t_res->result();
                 break;
             case view::class;
-                $obj = $t_msk->view();
+                $obj = $t_msk->view_rename();
                 break;
             case view_relation::class;
                 $obj = $t_msk->view_relation();
@@ -241,7 +310,7 @@ class test_mappers
                 $obj = $t_msk->term_view();
                 break;
             case component::class;
-                $obj = $t_cmp->component();
+                $obj = $t_cmp->component_rename();
                 break;
             case component_link::class;
                 $obj = $t_cmp->component_link();
@@ -312,6 +381,7 @@ class test_mappers
                 $obj->set_name(components::TEST_RENAMED_NAME);
                 break;
             case component_link::class;
+                $obj->set_predicate(component_link_type::ALWAYS);
                 $obj->set_view($t_msk->view());
                 break;
             default:
@@ -400,7 +470,10 @@ class test_mappers
      * @param string $class the given main class name
      * @return triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
      */
-    function class_to_add_object(string $class): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
+    function class_to_add_filled_object(
+        string $class,
+        ?data_object $cac = null
+    ): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
     {
         $obj = null;
         $t_usr = new test_users($this->env);
@@ -425,7 +498,15 @@ class test_mappers
                 $obj = $t_vrb->verb_filled();
                 break;
             case triple::class;
-                $obj = $t_trp->triple_filled();
+                $wrd = $cac->get_first_word();
+                $vrb = $cac->get_first_verb();
+                $wrd2 = $cac->get_second_word();
+                if ($wrd != null and $vrb != null and $wrd2 != null) {
+                    $obj = $t_trp->triple_filled_add($wrd->phrase(), $vrb, $wrd2->phrase());
+                } else {
+                    // just a fallback that should never be used
+                    $obj = $t_trp->triple_name_only();
+                }
                 break;
             case source::class;
                 $obj = $t_src->source_filled();
@@ -437,13 +518,13 @@ class test_mappers
                 $obj = $t_val->value_16_filled();
                 break;
             case formula::class;
-                $obj = $t_frm->formula_filled();
+                $obj = $t_frm->formula_filled_add();
                 break;
             case result::class;
                 $obj = $t_res->result_main_filled();
                 break;
             case view::class;
-                $obj = $t_msk->view_filled();
+                $obj = $t_msk->view_filled_add();
                 break;
             case component::class;
                 $obj = $t_cmp->component_filled();
@@ -453,6 +534,98 @@ class test_mappers
                 break;
             default:
                 log_err('no add object defined for ' . $class);
+        }
+        return $obj;
+    }
+
+    /**
+     * get an object related to the given class that can be used for insert db tests
+     * @param string $class the given main class name
+     * @param data_object|null $cac the cache of objects created until now use e.g. to create link objects
+     * @return sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox
+     *         with only a few vars filled and with a name, that will be cleaned up after testing
+     */
+    function class_to_add_object(
+        string       $class,
+        Message      $msg,
+        ?data_object $cac = null
+    ): sandbox|sandbox_multi|sandbox_link|type_object|db_id_object_non_sandbox
+    {
+        $obj = null;
+        $t_usr = new test_users($this->env);
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $t_trp = new test_triples($this->env);
+        $t_src = new test_sources($this->env);
+        $t_ref = new test_refs($this->env);
+        $t_val = new test_values($this->env);
+        $t_grp = new test_groups($this->env);
+        $t_frm = new test_formulas($this->env);
+        $t_res = new test_results($this->env);
+        $t_msk = new test_views($this->env);
+        $t_cmp = new test_components($this->env);
+        switch ($class) {
+            case user::class;
+                $obj = $t_usr->user_add();
+                break;
+            case word::class;
+                $obj = $t_wrd->word_add();
+                break;
+            case verb::class;
+                $obj = $t_vrb->verb_add();
+                break;
+            case triple::class;
+                $wrd = $cac->get_first_word();
+                $vrb = $cac->get_first_verb();
+                $wrd2 = $cac->get_second_word();
+                if ($wrd != null and $vrb != null and $wrd2 != null) {
+                    $obj = $t_trp->triple_add($wrd->phrase(), $vrb, $wrd2->phrase());
+                } else {
+                    // just a fallback that should never be used
+                    $obj = $t_trp->triple_name_only();
+                }
+                break;
+            case source::class;
+                $obj = $t_src->source_add();
+                break;
+            case ref::class;
+                $wrd = $cac->get_first_word();
+                $obj = $t_ref->reference_add($wrd->phrase());
+                break;
+            case group::class;
+                $wrd = $cac->get_first_word();
+                $obj = $t_grp->group_add($wrd->phrase());
+                break;
+            case value::class;
+                $wrd = $cac->get_first_word();
+                $obj = $t_val->value_add($wrd->phrase());
+                break;
+            case formula::class;
+                $obj = $t_frm->formula_add();
+                break;
+            case formula_link::class;
+                $obj = $t_frm->formula_link_add();
+                break;
+            case result::class;
+                $obj = $t_res->result_add();
+                break;
+            case view::class;
+                $obj = $t_msk->view_add();
+                break;
+            case view_relation::class;
+                $obj = $t_msk->view_relation_add();
+                break;
+            case term_view::class;
+                $obj = $t_msk->term_view_add();
+                break;
+            case component::class;
+                $obj = $t_cmp->component_add();
+                break;
+            case component_link::class;
+                $obj = $t_cmp->component_link_add();
+                break;
+            default:
+                log_err('no base object defined for ' . $class);
         }
         return $obj;
     }
@@ -684,8 +857,8 @@ class test_mappers
         $t_trp = new test_triples($this->env);
         $t_src = new test_sources($this->env);
         $t_ref = new test_refs($this->env);
-        $t_grp = new test_groups($this->env);
         $t_val = new test_values($this->env);
+        $t_grp = new test_groups($this->env);
         $t_frm = new test_formulas($this->env);
         $t_res = new test_results($this->env);
         $t_msk = new test_views($this->env);

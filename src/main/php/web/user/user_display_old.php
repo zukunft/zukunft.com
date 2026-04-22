@@ -435,8 +435,8 @@ class user_display_old extends user
                 $frm_usr->formula()->set_id($sbx_row[formula_db::FLD_ID]);
                 $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
                 $frm_usr->predicate_id = $sbx_row['usr_type'];
-                $frm_usr->set_excluded($sbx_row['usr_excluded']);
-                $frm_usr->reload_objects();
+                $frm_usr->excluded = $sbx_row['usr_excluded'];
+                $frm_usr->reload_objects($msg);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -445,7 +445,7 @@ class user_display_old extends user
                 $frm_std = clone $frm_usr;
                 $frm_std->set_user($usr_std);
                 $frm_std->predicate_id = $sbx_row['std_type'];
-                $frm_std->set_excluded($sbx_row['std_excluded']);
+                $frm_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
                 if ($frm_usr->predicate_id == $frm_std->predicate_id
@@ -495,8 +495,8 @@ class user_display_old extends user
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->set_user($usr_other);
                         $frm_lnk_other->predicate_id = $frm_lnk_other_row['link_type_id'];
-                        $frm_lnk_other->set_excluded($frm_lnk_other_row[sql_db::FLD_EXCLUDED]);
-                        $frm_lnk_other->reload_objects();
+                        $frm_lnk_other->excluded = $frm_lnk_other_row[sql_db::FLD_EXCLUDED];
+                        $frm_lnk_other->reload_objects($msg);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1277,7 +1277,7 @@ class user_display_old extends user
                 $dsp_usr->url = $sbx_row['usr_url'];
                 $dsp_usr->description = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
-                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
+                $dsp_usr->excluded = $sbx_row['usr_excluded'];
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -1289,7 +1289,7 @@ class user_display_old extends user
                 $dsp_std->url = $sbx_row['std_url'];
                 $dsp_std->description = $sbx_row['std_comment'];
                 $dsp_std->type_id = $sbx_row['std_type'];
-                $dsp_std->set_excluded($sbx_row['std_excluded']);
+                $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
                 if ($dsp_usr->name() == $dsp_std->name()
@@ -1345,7 +1345,7 @@ class user_display_old extends user
                         $dsp_other->url = $dsp_other_row[source_db::FLD_URL];
                         $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
-                        $dsp_other->set_excluded($dsp_other_row[sql_db::FLD_EXCLUDED]);
+                        $dsp_other->excluded = $dsp_other_row[sql_db::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }

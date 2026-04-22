@@ -41,13 +41,13 @@ PREPARE component_insert_log_01110050000000000000_call FROM
     'SELECT component_insert_log_01110050000000000000 (?,?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT component_insert_log_01110050000000000000 (
-               'Word',
+               'system form field name',
                3,
                1,
                51,
                743,
                52,
-               'simply show the word or triple name',
+               'the name field in a form',
                53,
                'word name',
                8);

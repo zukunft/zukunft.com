@@ -80,4 +80,12 @@ class values
     CONST string GEO = '47.263179, 8.684730'; // to test geo values
     CONST string DB_TEXT = 'old db text sample value'; // to test updating text values
 
+
+
+    // list of values that are used for system testing that should be removed are the system test has been completed
+    // and that are never expected to be used by a user
+    const array TEST_VALUES = array(
+        [words::TEST_ADD_GROUP_PRIME],
+    );
+
 }

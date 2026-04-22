@@ -232,6 +232,37 @@ class db_object_multi extends db_object_key
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     * Used to get the database fields that need to be updated in the user sandbox row
+     * E.g. if the user has renamed a word and changes the name now back to the standard name,
+     *      the name of the user sandbox row is supposed to be null
+     * $this is usually the target user object
+     * $obj is the norm object as saved in the database
+     * $result is the user object that should be used to write the user sandbox db row
+     *
+     *
+     * @param db_object_multi $std_obj the norm object as saved in the database
+     * @param db_object_multi $result empty clone of the target user object
+     * @return db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        db_object_multi $std_obj,
+        db_object_multi $result
+    ): db_object_multi
+    {
+        // TODO move to the calling function
+        // $result = $this->clone_reset(true);
+        // the database id mus always be identical to the original db row
+        $result->id = $std_obj->id();
+        return $result;
+    }
+
+    /*
      * modify
      */
 

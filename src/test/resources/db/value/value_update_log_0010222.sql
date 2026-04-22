@@ -14,14 +14,14 @@ CREATE OR REPLACE FUNCTION value_update_log_0010222
 $$
 BEGIN
 
-    INSERT INTO change_values_norm ( user_id, change_action_id, change_field_id,        old_value,     new_value, group_id)
-         SELECT                      _user_id,_change_action_id,_field_id_excluded,_excluded_old,_excluded,_group_id ;
+    INSERT INTO change_values_norm ( user_id, change_action_id, change_field_id,        old_value,         group_id)
+         SELECT                     _user_id,_change_action_id,_field_id_excluded,     _excluded_old,     _group_id ;
 
-    INSERT INTO change_values_norm ( user_id, change_action_id, change_field_id,        old_value,     group_id)
-         SELECT                      _user_id,_change_action_id,_field_id_share_type_id,_share_type_id_old,_group_id ;
+    INSERT INTO change_values_norm ( user_id, change_action_id, change_field_id,        old_value,         group_id)
+         SELECT                     _user_id,_change_action_id,_field_id_share_type_id,_share_type_id_old,_group_id ;
 
-    INSERT INTO change_values_norm ( user_id,change_action_id,change_field_id,old_value,group_id)
-         SELECT                      _user_id,_change_action_id,_field_id_protect_id,_protect_id_old,_group_id ;
+    INSERT INTO change_values_norm ( user_id, change_action_id, change_field_id,        old_value,         group_id)
+         SELECT                     _user_id,_change_action_id,_field_id_protect_id,   _protect_id_old,   _group_id ;
 
     UPDATE values
        SET share_type_id = _share_type_id,
@@ -42,7 +42,7 @@ SELECT value_update_log_0010222
         1::smallint,
         5::smallint,
         1::smallint,
-        0::smallint,
+        null::smallint,
         3::smallint,
         3::smallint,
         null::smallint,

@@ -77,6 +77,8 @@ class change_value_geo extends change_value
         [change::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
         [change::FLD_OLD_VALUE, sql_field_type::POINT, sql_field_default::NULL, '', '', ''],
         [change::FLD_NEW_VALUE, sql_field_type::POINT, sql_field_default::NULL, '', '', ''],
+        [change::FLD_OLD_ID, change::FLD_OLD_ID_SQL_TYP, sql_field_default::NULL, '', '', change::FLD_OLD_ID_COM],
+        [change::FLD_NEW_ID, change::FLD_NEW_ID_SQL_TYP, sql_field_default::NULL, '', '', change::FLD_NEW_ID_COM],
     );
 
 

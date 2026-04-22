@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS change_values_time_big
     group_id         text      NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        timestamp DEFAULT NULL,
-    new_value        timestamp DEFAULT NULL
+    new_value        timestamp DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_time_big IS 'to log all time value changes done by any user on values with a big group id';
@@ -21,3 +23,5 @@ COMMENT ON COLUMN change_values_time_big.change_id IS 'the prime key to identify
 COMMENT ON COLUMN change_values_time_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_time_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_time_big.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_time_big.new_id IS 'new value id';

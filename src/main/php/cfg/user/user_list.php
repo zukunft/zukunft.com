@@ -82,7 +82,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
-// TODO base it on the base_list object
+// TODO base it on the base_list object or ListOfIdNamedCodeObjects
 class user_list
 {
     // internal db field name to count the changes by on user
@@ -147,7 +147,7 @@ class user_list
      * @param sql_creator $sc with the target db_type set
      * @param array $ids list of user ids that should be loaded
      * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
+     * @param int $offset jump over these numbers of pages
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
@@ -188,7 +188,7 @@ class user_list
      * e.g. loading the admin includes the system user
      *
      * @param sql_creator $sc with the target db_type set
-     * @param int $profile_id list of user that have at least this profile level
+     * @param int $profile_id list of user that has at least this profile level
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_profile_and_higher(sql_creator $sc, int $profile_id): sql_par
@@ -328,7 +328,7 @@ class user_list
      * e.g. loading the admin includes the system user
      *
      * @param sql_db $db_con the database link as a parameter to load the system users at program start
-     * @param int $profile_id list of user that have at least this profile level
+     * @param int $profile_id list of user that has at least this profile level
      * @return bool true if at least one user found
      */
     function load_by_profile_and_higher(sql_db $db_con, int $profile_id): bool
@@ -557,7 +557,7 @@ class user_list
      *
      * @param user $usr_to_add an object with a unique database id that should be added to the list
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
-     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     * @returns user_message if adding failed or something is strange, the messages for the user with the suggested solutions
      */
     function add(
         user $usr_to_add,
@@ -663,15 +663,40 @@ class user_list
     }
 
     /**
+     * select a user by the code id
+     * TODO Prio 1 make the child of ListOfIdObjects and use the parent function
+     *
+     * @param string $code_id the unique database id of the object that should be returned
+     * @param bool $log by default true so that missing user request are logged; switch off to get the log user
+     * @return object|null the found user sandbox object or null if no id is found
+     */
+    function get_by_code_id(string $code_id, bool $log = true): object|null
+    {
+        $key_lst = $this->id_pos_lst();
+        if (array_key_exists($code_id, $this->code_id_hash)) {
+            $pos = $this->code_id_hash[$code_id];
+            return $this->lst()[$pos];
+        } else {
+            if ($log) {
+                $lib = new library();
+                log_info($code_id . ' not found in ' . $lib->dsp_array_keys($key_lst));
+            }
+            return null;
+        }
+    }
+
+    /**
      * TODO Prio 1 make the child of ListOfIdObjects and use the parent function
      * @returns array with all unique ids of this list with the keys within this list
      */
     protected function id_pos_lst(): array
     {
         $id_pos_lst = [];
-        foreach ($this->lst() as $key => $obj) {
-            if (!array_key_exists($obj->id(), $id_pos_lst)) {
-                $id_pos_lst[$obj->id()] = $key;
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $key => $obj) {
+                if (!array_key_exists($obj->id(), $id_pos_lst)) {
+                    $id_pos_lst[$obj->id()] = $key;
+                }
             }
         }
         return $id_pos_lst;
@@ -685,7 +710,7 @@ class user_list
 
     /**
      * simple loop to save all users of the list
-     * because there are probably not many users to save at once
+     * because there are probably few users to save at once
      *
      * @param user|null $usr_req the user who has request the user adding or update
      * @param user_message $usr_msg_all in case of an issue the problem description what has failed and a suggested solution

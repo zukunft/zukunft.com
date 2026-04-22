@@ -199,14 +199,18 @@ class term_view extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $msk = new view($this->get_user());
-            $msk->id = $db_row[view_db::FLD_ID];
-            $this->set_view($msk);
-            $trm = new term($this->get_user());
-            $trm->set_id($db_row[term::FLD_ID]);
-            $this->set_term($trm);
-            $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            if (key_exists(view_db::FLD_ID, $db_row)) {
+                $msk = new view($this->get_user());
+                $msk->id = $db_row[view_db::FLD_ID];
+                $this->set_view($msk);
+                $trm = new term($this->get_user());
+                $trm->set_id($db_row[term::FLD_ID]);
+                $this->set_term($trm);
+                $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            } else {
+                log_warning('view id missing for ' . $this->dsp_id());
+            }
         }
         return $result;
     }
@@ -460,6 +464,31 @@ class term_view extends sandbox_link
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param term_view|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param term_view|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return term_view|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        term_view|CombineObject|db_object_seq_id $std_obj,
+        term_view|CombineObject|db_object_seq_id $result
+    ): term_view|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -468,14 +497,14 @@ class term_view extends sandbox_link
      * if the given type is not set (null) the type is not removed
      * if the given type is zero (not null) the type is removed
      *
-     * @param view_relation|sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param term_view|sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
      * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(view_relation|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    function fill(term_view|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->description != null) {
+        if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
         return $usr_msg;
@@ -504,15 +533,11 @@ class term_view extends sandbox_link
     /**
      * TODO check if the overwrites are correct for all objects
      *      and if a to_id() function is needed
-     * @return string with the term name
+     * @return string|null with the term name
      */
-    function to_value(): string
+    function to_value(): string|null
     {
-        if ($this->tob() == null) {
-            return '';
-        } else {
-            return $this->tob()->name();
-        }
+        return $this->tob()?->name();
     }
 
     /**
@@ -561,6 +586,26 @@ class term_view extends sandbox_link
      */
 
     /**
+     * load the object parameters for all users by the link id
+     *
+     * @param int $from_id the id of the from link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_link(
+        int          $from_id,
+        int          $to_id,
+        user_message $msg
+    ): bool
+    {
+        return parent::load_standard_by_link_parent(
+            view_db::FLD_ID, $from_id,
+            term::FLD_ID, $to_id, $msg
+        );
+    }
+
+    /**
      * create the common part of an SQL statement to retrieve a view term link from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -588,83 +633,53 @@ class term_view extends sandbox_link
      * TODO add a bool var "is_loaded" to db_object
      *      to indicate is the object has just been created and might be incomplete
      *      or if loaded from the db and is expected to have all vars in line with the db
-     * @return bool true if all the related objects has been loaded
+     * @param user_message $msg to collect the message due to missing links
+     * @return bool true if all the related objects have been loaded
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
-        $result = true;
-
         $msk = $this->get_view();
         if ($msk->id() == 0) {
             if ($msk->name() != '') {
-                $result = $msk->load_by_name($msk->name());
+                if (!$msk->load_by_name($msk->name())) {
+                    $msg->add(msg_id::LOAD_VIEW_BY_NAME_FAILED, [
+                        msg_id::VAR_VIEW => $this->get_view()->dsp_id()
+                    ]);
+                }
             } else {
                 log_warning('Cannot load view because neither id nor name is set');
             }
         } else {
             if ($msk->name() == '') {
-                $result = $msk->load_by_id($msk->id());
+                if (!$msk->load_by_id($msk->id())) {
+                    $msg->add(msg_id::LOAD_VIEW_BY_ID_FAILED, [
+                        msg_id::VAR_VIEW => $this->get_view()->dsp_id()
+                    ]);
+                }
             }
         }
 
         $trm = $this->term();
         if ($trm->id() == 0) {
             if ($trm->name() != '') {
-                $result = $trm->load_by_name($trm->name());
+                if (!$trm->load_by_name($trm->name())) {
+                    $msg->add(msg_id::LOAD_TERM_BY_NAME_FAILED, [
+                        msg_id::VAR_TERM => $this->term()->dsp_id()
+                    ]);
+                }
             } else {
                 log_warning('Cannot load term because neither id nor name is set');
             }
         } else {
             if ($trm->name() == '') {
-                $result = $trm->load_by_id($trm->id());
+                if (!$trm->load_by_id($trm->id())) {
+                    $msg->add(msg_id::LOAD_TERM_BY_ID_FAILED, [
+                        msg_id::VAR_TERM => $this->term()->dsp_id()
+                    ]);
+                }
             }
         }
-
-        return $result;
-    }
-
-    /**
-     * create an SQL statement to retrieve the parameters of the standard view term link from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        // try to get the search values from the objects
-        if ($this->id() <= 0) {
-            $this->id = 0;
-        }
-
-        $sc->set_class($this::class);
-        $qp = new sql_par($this::class);
-        if ($this->id() != 0) {
-            $qp->name .= 'std_id';
-        } else {
-            $qp->name .= 'std_link_ids';
-        }
-        $sc->set_name($qp->name);
-        $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)));
-        if ($this->id() > 0) {
-            $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->get_view()->id() > 0 and $this->term()->id() != 0) {
-            $sc->add_where(view_db::FLD_ID, $this->get_view()->id());
-            $sc->add_where(term::FLD_ID, $this->term()->id());
-        } else {
-            if ($this->get_view()->id() > 0) {
-                log_err('Cannot load default view term link because term id for ' . $this->term()->dsp_id() . 'is missing');
-            } else {
-                log_err('Cannot load default view term link because term id for ' . $this->get_view()->dsp_id() . 'is missing');
-            }
-        }
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        return parent::reload_objects($msg);
     }
 
 
@@ -783,6 +798,23 @@ class term_view extends sandbox_link
                 $sys->typ_lst->msk_lnk_typ);
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this word object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
 

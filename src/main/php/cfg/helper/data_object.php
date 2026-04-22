@@ -289,11 +289,36 @@ class data_object
     }
 
     /**
+     * @return word|null with the first word of the cache
+     */
+    function get_first_word(): ?word
+    {
+            return $this->wrd_lst->get_first_object();
+    }
+
+    /**
+     * @return word|null with the second word of the cache
+     */
+    function get_second_word(): ?word
+    {
+        return $this->wrd_lst->get_second_object();
+    }
+
+
+    /**
      * @return verb_list with the verbs of this data object
      */
     function verb_list(): verb_list
     {
         return $this->vrb_lst;
+    }
+
+    /**
+     * @return verb|null with the first verb of the cache
+     */
+    function get_first_verb(): ?verb
+    {
+        return $this->vrb_lst->get_first_object();
     }
 
     /**

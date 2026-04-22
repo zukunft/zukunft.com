@@ -61,6 +61,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_LOG . 'change_table.php';
 //include_once paths::MODEL_LOG . 'change_table_field.php';
 //include_once paths::MODEL_LOG . 'change_field.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_SYSTEM . 'pod.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -145,7 +147,7 @@ class type_object extends db_object_seq_id
     // the standard fields of a type
 
     // the unique type name as shown to the user
-    public string $name;
+    public ?string $name;
     // this id text is unique for all code links and is used for system im- and export
     public ?string $code_id;
     // to explain the type to the user as a tooltip
@@ -312,7 +314,7 @@ class type_object extends db_object_seq_id
         $this->description = $description;
     }
 
-    function name(): string
+    function name(): string|null
     {
         return $this->name;
     }
@@ -492,6 +494,160 @@ class type_object extends db_object_seq_id
 
 
     /*
+     * similar
+     */
+
+    /**
+     * TODO Prio 1 call this check also if a named sandbox object is renamed
+     * check if an object with the unique key already exists
+     * returns null if no similar object is found
+     * or returns the object with the same unique key that is not the actual object
+     * any warning or error message needs to be created in the calling function
+     * e.g. if the user tries to create a formula named "millions"
+     *      but a word with the same name already exists, a term with the word "millions" is returned
+     *      in this case the calling function should suggest the user to name the formula "scale millions"
+     *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return type_object|null a filled object that has the same name
+     *                      or null if nothing similar has been found
+     */
+    function get_similar(user_message $msg): ?type_object
+    {
+        log_debug('check possible duplicates before adding ' . $this->dsp_id());
+        $sim = null;
+
+        // check potential duplicate by name
+        $db_chk = $this->clone_reset(true);
+        if ($this->name() != '') {
+            if ($db_chk->load_by_name($this->name())) {
+                if ($db_chk->id() > 0) {
+                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                    $sim = $db_chk;
+                }
+            }
+        } else {
+            log_err('The name must be set to check if a similar object exists');
+        }
+
+        // check potential duplicate by code id
+        if ($sim == null) {
+            if ($this->code_id != '') {
+                if ($db_chk->load_by_code_id($this->code_id)) {
+                    if ($db_chk->id() > 0) {
+                        log_debug($this->dsp_id() . ' has the same code id is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                        $sim = $db_chk;
+                    }
+                }
+            } else {
+                log_warning('The code id must be set to check if a similar object exists');
+            }
+        }
+
+        return $sim;
+    }
+
+    /**
+     * create a message for the user to use another name oder code id
+     * @param type_object|null $sim the object with a least one matching key
+     * @param user_message $msg to collect the messages and suggested solutions for the user
+     * @return bool true if no critical error occured
+     */
+    function similar_message(?type_object $sim, user_message $msg): bool
+    {
+        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
+        if ($sim != null) {
+            if ($sim->id() <> 0) {
+                // check that the get_similar function has really found a similar object and report potential program errors
+                if (!$this->is_similar($sim)) {
+                    $msg->add(msg_id::NOT_SIMILAR_OBJECTS, [
+                        msg_id::VAR_NAME => $this->dsp_id(),
+                        msg_id::VAR_NAME_CHK => $sim->dsp_id()
+                    ]);
+                } else {
+                    if (!$this->is_same($sim)) {
+                        $lib = new library();
+                        $msg->add(msg_id::NAME_ALREADY_EXISTS, [
+                            msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                            msg_id::VAR_NAME => $this->name(),
+                            msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
+                        ]);
+                    } else {
+                        // if similar is found set the id to trigger the updating instead of adding
+                        $sim->load_by_id($sim->id()); // e.g. to get the type_id
+                        // prevent that the id of a formula is used for the word with the type formula link
+                        if (get_class($this) != get_class($sim)) {
+                            $msg->merge($sim->id_used_msg($this));
+                        }
+                    }
+                }
+            }
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * returns true if any of the unique keys matches
+     * if two types are similar by this definition, they should not be both in the database
+     *
+     * @param null|type_object $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_similar(?type_object $obj_to_check): bool
+    {
+        $result = false;
+        if ($obj_to_check != null) {
+            if ($this->name() == $obj_to_check->name()) {
+                $result = true;
+            }
+            if ($this->code_id != '') {
+                if ($this->code_id == $obj_to_check->code_id) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * suggest to the user to use a different name
+     * @param type_object|sandbox $obj_to_add the type object that the user wanted to add
+     * @return user_message a message to use a different name
+     */
+    function id_used_msg(type_object|sandbox $obj_to_add): user_message
+    {
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
+        $msg = new user_message();
+        $msg->add(msg_id::NAME_ALREADY_EXISTS, [
+            msg_id::VAR_CLASS_NAME => $class_name,
+            msg_id::VAR_NAME => $obj_to_add->name(),
+            msg_id::VAR_VALUE => $obj_to_add_name
+        ]);
+        return $msg;
+    }
+
+    /**
+     * can merge
+     * returns true if all the unique keys match
+     * if two objects are the same by this definition, they are supposed to be merged
+     *
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
+     */
+    function is_same(type_object $obj_to_check): bool
+    {
+        $result = true;
+        if ($this->name() !== $obj_to_check->name()) {
+            $result = false;
+        }
+        if ($this->code_id !== $obj_to_check->code_id) {
+            $result = false;
+        }
+        return $result;
+    }
+
+
+    /*
      * info
      */
 
@@ -510,6 +666,27 @@ class type_object extends db_object_seq_id
     function is_used(): bool
     {
         return true;
+    }
+
+    /**
+     * check if any unique key beside the database id has been changed
+     * for type objects the unique keys are the name and the code id
+     *
+     * @param type_object|db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(type_object|db_object_seq_id $db_rec): bool
+    {
+        $result = False;
+
+        if ($db_rec->name() <> $this->name()) {
+            $result = True;
+        }
+        if ($db_rec->code_id <> $this->code_id) {
+            $result = True;
+        }
+
+        return $result;
     }
 
 
@@ -536,6 +713,54 @@ class type_object extends db_object_seq_id
         return $fvt_lst->is_empty_except_internal_fields();
     }
 
+    /**
+     * detects if this object has been changed compared to the given object,
+     * excluding changes on internal fields like last_update
+     *
+     * @param type_object $db_typ the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_non_id_diff(
+        type_object   $db_typ,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
+    {
+        $fvt_lst = $this->db_fields_changed($db_typ, $usr_msg, $sc_par_lst);
+        return $fvt_lst->is_empty_except_id_and_internal_fields();
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param type_object|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param type_object|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return type_object|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        type_object|CombineObject|db_object_seq_id $std_obj,
+        type_object|CombineObject|db_object_seq_id $result
+    ): type_object|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->code_id !== $this->code_id) {
+            $result->code_id = $this->code_id;
+        }
+        if ($std_obj->name !== $this->name) {
+            $result->name = $this->name;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
 
     /*
      * modify
@@ -554,13 +779,13 @@ class type_object extends db_object_seq_id
     function fill(type_object|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_code_id() != null) {
+        if ($this->get_code_id() == null and $obj->get_code_id() != null) {
             $this->set_code_id($obj->get_code_id(), $usr_req);
         }
-        if ($obj->name != null) {
+        if ($this->name == null and $obj->name != null) {
             $this->name = $obj->name;
         }
-        if ($obj->description != null) {
+        if ($this->description == null and $obj->description != null) {
             $this->description = $obj->description;
         }
         return $usr_msg;

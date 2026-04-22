@@ -147,8 +147,20 @@ class test_users
 
         $usr->trm = $t_trm->term();
         $usr->msk = $t_msk->view();
-        $usr->src = $t_src->source();
+        $usr->src = $t_src->source_reserved();
 
+        return $usr;
+    }
+
+    /**
+     * @return user a user that can be used for database write testing and that will be removed after testing
+     */
+    function user_add(): user
+    {
+        $usr = new user();
+        $usr->ip_addr = users::TEST_USER_IP;
+        $usr->name = users::TEST_USER_NAME;
+        $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
         return $usr;
     }
 

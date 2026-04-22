@@ -63,6 +63,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
 //include_once paths::MODEL_COMPONENT . 'component_link_type.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -73,6 +74,7 @@ include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
@@ -93,6 +95,7 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -100,6 +103,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
@@ -112,6 +116,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -131,6 +136,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Exception;
@@ -162,8 +168,8 @@ class sandbox_link extends sandbox
      * object vars
      */
 
-    private sandbox_named|combine_named|null $fob = null; // the (F)rom (OB)ject which this linked object is creating the connection
-    private sandbox_named|combine_named|string|null $tob = null; // the (T)o (OB)ject which this linked object is creating the connection (can be a string for external keys)
+    public sandbox_named|combine_named|null $fob = null; // the (F)rom (OB)ject which this linked object is creating the connection
+    public sandbox_named|combine_named|string|null $tob = null; // the (T)o (OB)ject which this linked object is creating the connection (can be a string for external keys)
 
     // database id of the type used for named link user sandbox objects with predefined functionality
     // which is formula link and view component link
@@ -201,7 +207,7 @@ class sandbox_link extends sandbox
     /**
      * fill the vars with this link type sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
@@ -301,6 +307,22 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * @return int|string the id of the linked object
+     */
+    function from_id_or_name(): int|string|null
+    {
+        if ($this->fob == null) {
+            return 0;
+        } else {
+            if ($this->fob->id() == 0) {
+                return $this->fob->name();
+            } else {
+                return $this->fob->id();
+            }
+        }
+    }
+
+    /**
      * @return bool true if the from object is not set
      */
     function from_empty(): bool
@@ -376,10 +398,10 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * @return int|string the id of the linked object
+     * @return int|string|null the id of the linked object
      * or in case of an external reference the external key as a string
      */
-    function to_id(): int|string
+    function to_id(): int|string|null
     {
         if ($this->tob == null) {
             return 0;
@@ -391,9 +413,25 @@ class sandbox_link extends sandbox
     /**
      * @return string the name of the linked object
      */
-    function to_name(): string
+    function to_name(): string|null
     {
         return $this->tob()?->name();
+    }
+
+    /**
+     * @return int|string the id of the linked object
+     */
+    function to_id_or_name(): int|string|null
+    {
+        if ($this->tob == null) {
+            return 0;
+        } else {
+            if ($this->tob->id() == 0) {
+                return $this->tob->name();
+            } else {
+                return $this->tob->id();
+            }
+        }
     }
 
     /**
@@ -534,31 +572,6 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * load the link parameters for all users
-     * TODO remove from the child objects
-     *
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard view component link has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-
-        if ($qp->has_par()) {
-            $db_dsl = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_dsl, true);
-            if ($result) {
-                $result = $this->load_owner();
-            }
-        }
-        return $result;
-    }
-
-    /**
      * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -571,14 +584,199 @@ class sandbox_link extends sandbox
     function load_sql_by_link(sql_creator $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
     {
         if ($predicate_id > 0) {
-            $qp = $this->load_sql($sc, 'link_type_ids', $class);
+            $qp = $this->load_sql($sc, 'link_type_ids');
             $sc->add_where($this->from_field(), $from);
             $sc->add_where($this->type_field(), $predicate_id);
         } else {
-            $qp = $this->load_sql($sc, 'link_ids', $class);
+            $qp = $this->load_sql($sc, 'link_ids');
             $sc->add_where($this->from_field(), $from);
         }
         $sc->add_where($this->to_field(), $to);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the object parameters for all users by the link ids
+     * to be overwritten by the child objects
+     *
+     * @param int $from_id the id of the from link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_link(
+        int          $from_id,
+        int          $to_id,
+        user_message $msg
+    ): bool
+    {
+        $msg->add(msg_id::MISSING_OVERWRITE, [
+            msg_id::VAR_NAME => 'load_standard_by_link',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $msg->is_ok();
+    }
+
+    /**
+     * load the object parameters for all users by the standard formula link from the database
+     * to be overwritten by the child objects
+     *
+     * @param int $from_id the id of the from link object
+     * @param int $typ_id the id of the verb object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_type_link(
+        int          $from_id,
+        int          $typ_id,
+        int          $to_id,
+        user_message $msg
+    ): bool
+    {
+        $msg->add(msg_id::MISSING_OVERWRITE, [
+            msg_id::VAR_NAME => 'load_standard_by_type_link',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $msg->is_ok();
+    }
+
+    /**
+     * load the object parameters for all users by the link id
+     *
+     * @param string $from_fld the id field name of the from link object
+     * @param int $from_id the id of the from link object
+     * @param string $to_fld the id field name of the to link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_link_parent(
+        string       $from_fld,
+        int          $from_id,
+        string       $to_fld,
+        int          $to_id,
+        user_message $msg
+    ): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_standard_by_link($from_fld, $from_id, $to_fld, $to_id, $sc);
+
+        $db_row = $db_con->get1($qp, $msg);
+        if (!$this->row_mapper_sandbox(
+            $db_row, true, false)) {
+            $lib = new library();
+            $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * create an SQL statement to retrieve the parameters of the standard formula link from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_standard_by_link(
+        string      $from_fld,
+        int         $from_id,
+        string      $to_fld,
+        int         $to_id,
+        sql_creator $sc
+    ): sql_par
+    {
+        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
+        $qp->name .= 'link_ids';
+
+        $sc->set_class($this::class);
+        $sc->set_name($qp->name);
+        $sc->set_fields($this->all_fields());
+        $sc->add_where($from_fld, $from_id);
+        $sc->add_where($to_fld, $to_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the object parameters for all users by the link id
+     *
+     * @param string $from_fld the id field name of the from link object
+     * @param int $from_id the id of the from link object
+     * @param string $to_fld the id field name of the to link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_type_link_parent(
+        string       $from_fld,
+        int          $from_id,
+        string       $type_fld,
+        int          $type_id,
+        string       $to_fld,
+        int          $to_id,
+        user_message $msg
+    ): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_standard_by_type_link($from_fld, $from_id, $type_fld, $type_id, $to_fld, $to_id, $sc);
+
+        $db_row = $db_con->get1($qp, $msg);
+        if (!$this->row_mapper_sandbox(
+            $db_row, true, false)) {
+            $lib = new library();
+            $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * create an SQL statement to retrieve the parameters of the standard formula link from the database
+     *
+     * @param string $from_fld the db field name of the parent object
+     * @param int $from_id the database id of the parent object
+     * @param string $type_fld the db field name that specifies the connection between the objets
+     * @param int $type_id the database id of the connection type
+     * @param string $to_fld the db field name of the child object
+     * @param int $to_id the database id of the child object
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_standard_by_type_link(
+        string      $from_fld,
+        int         $from_id,
+        string      $type_fld,
+        int         $type_id,
+        string      $to_fld,
+        int|string  $to_id,
+        sql_creator $sc
+    ): sql_par
+    {
+        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
+        $qp->name .= 'link_type_ids';
+
+        $sc->set_class($this::class);
+        $sc->set_name($qp->name);
+        $sc->set_fields($this->all_fields());
+        $sc->add_where($from_fld, $from_id);
+        $sc->add_where($type_fld, $type_id);
+        if ($to_fld != '') {
+            $sc->add_where($to_fld, $to_id);
+        }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -591,7 +789,7 @@ class sandbox_link extends sandbox
      */
 
     /**
-     * @return bool true if the object value are valid for identifying a unique link
+     * @return bool true if the object value is valid for identifying a unique link
      */
     function is_unique(): bool
     {
@@ -605,6 +803,61 @@ class sandbox_link extends sandbox
                 }
             }
         }
+        return $result;
+    }
+
+    /**
+     * avoid duplicates
+     * if any of the unit keys of the object matches true is returned,
+     * so if the formulas "millions" is compared with the word "millions" this function returns true
+     * just to double-check if the get similar function is working correctly,
+     * in short: if two objects are similar by this definition, they should not be both in the database
+     * @param sandbox_link|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_similar(sandbox_link|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_similar($obj_to_check);
+
+        if ($this::class == $obj_to_check::class) {
+            if ($this->fob?->is_similar($obj_to_check->fob) and $this->tob?->is_similar($obj_to_check->tob)) {
+                if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+                    if ($this->predicate_id == $obj_to_check->predicate_id) {
+                        $result = true;
+                    }
+                } else {
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * can merge if all unique keys match
+     * check that the given object is by all unique keys the same as the actual object
+     * @param sandbox_link|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_same(sandbox_link|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_same($obj_to_check);
+
+        if ($this::class == $obj_to_check::class) {
+            if ($this->fob?->is_same($obj_to_check->fob) or $this->tob?->is_same($obj_to_check->tob)) {
+                if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+                    if ($this->predicate_id != $obj_to_check->predicate_id) {
+                        $result = false;
+                    }
+                } else {
+                    $result = false;
+                }
+            }
+        } else {
+            $result = false;
+        }
+
         return $result;
     }
 
@@ -704,6 +957,36 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * check if the id parameters are supposed to be changed
+     * @param sandbox_link|db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(sandbox_link|db_object_seq_id $db_rec): bool
+    {
+        $result = parent::is_key_updated($db_rec);
+
+        if ($this->fob->id() != 0) {
+            if ($this->fob->id() != $db_rec->fob->id()) {
+                $result = true;
+            }
+        }
+        if ($this->tob->id() != 0) {
+            if ($this->tob->id() != $db_rec->tob->id()) {
+                $result = true;
+            }
+        }
+        if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+            if ($this->predicate_id() != 0) {
+                if ($this->predicate_id() != $db_rec->predicate_id()) {
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database
@@ -763,6 +1046,31 @@ class sandbox_link extends sandbox
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param sandbox_link|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param sandbox_link|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return sandbox_link|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        sandbox_link|CombineObject|db_object_seq_id $std_obj,
+        sandbox_link|CombineObject|db_object_seq_id $result
+    ): sandbox_link|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->predicate_id() !== $this->predicate_id()) {
+            $result->set_predicate_id($this->predicate_id());
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -778,9 +1086,30 @@ class sandbox_link extends sandbox
     function fill(sandbox|sandbox_link|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->predicate_id() != null) {
+        // fill to link objects
+        if ($this->from_empty()) {
+            if (!$obj->from_empty()) {
+                $this->set_fob($obj->fob());
+            }
+        } else {
+            if (!$obj->from_empty()) {
+                $this->fob()->fill($obj->fob(), $usr_req);
+            }
+        }
+        if ($this->predicate_id() === null and $obj->predicate_id() != null) {
             $this->set_predicate_id($obj->predicate_id());
         }
+        if ($this->to_empty()) {
+            if (!$obj->to_empty()) {
+                $this->set_tob($obj->tob());
+            }
+        } else {
+            if (!$obj->to_empty()) {
+                $this->tob()->fill($obj->tob(), $usr_req);
+            }
+        }
+
+
         return $usr_msg;
     }
 
@@ -790,7 +1119,7 @@ class sandbox_link extends sandbox
      */
 
     /**
-     * add the link specific values to the export array
+     * add the link-specific values to the export array
      * which is actually only the predicate code id
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
@@ -932,46 +1261,6 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
-     * should only be called if the user is the owner and nobody has used the display component link
-     * @param sql_db $db_con the active database connection
-     * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
-     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
-     * @throws Exception
-     */
-    function save_id_fields_link(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): string
-    {
-        $result = '';
-        log_debug($this->dsp_id());
-
-        if ($this->is_id_updated_link($db_rec)) {
-            log_debug('to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
-
-            $log = $this->log_upd_link();
-            $log->old_from = $db_rec->fob();
-            $log->new_from = $this->fob();
-            $log->std_from = $std_rec->fob();
-            $log->old_to = $db_rec->tob();
-            $log->new_to = $this->tob();
-            $log->std_to = $std_rec->tob();
-
-            $log->row_id = $this->id();
-            if ($log->add($usr_msg)) {
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->get_user()->id);
-                if (!$db_con->update_old($this->id(),
-                    array($this->from_name . sql_db::FLD_EXT_ID, $this->from_name . sql_db::FLD_EXT_ID),
-                    array($this->fob()->id(), $this->tob()->id()))) {
-                    $result .= 'update from link to ' . $this->from_name . 'failed';
-                }
-            }
-        }
-        log_debug('for ' . $this->dsp_id() . ' done');
-        return $result;
-    }
-
-    /**
      * check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
      * @param object $obj_to_check the object used for the comparison
      * @return bool true if the objects represent the same link
@@ -979,25 +1268,27 @@ class sandbox_link extends sandbox
     function is_same_std(object $obj_to_check): bool
     {
         $result = false;
-        if (isset($this->fob)
-            and isset($this->tob)
-            and isset($obj_to_check->fob)
-            and isset($obj_to_check->tob)) {
-            if ($this->fob->id() == $obj_to_check->fob->id() and
-                $this->tob->id() == $obj_to_check->tob->id()) {
-                $result = true;
-            }
-        } elseif ($obj_to_check::class == triple::class) {
+        if (parent::is_same_std($obj_to_check)) {
             if (isset($this->fob)
-                and $this->has_verb()
                 and isset($this->tob)
                 and isset($obj_to_check->fob)
-                and $obj_to_check->has_verb()
                 and isset($obj_to_check->tob)) {
-                if ($this->fob->id() == $obj_to_check->fob->id()
-                    and $this->predicate_id() == $obj_to_check->predicate_id()
-                    and $this->tob->id() == $obj_to_check->tob->id()) {
+                if ($this->fob->id() == $obj_to_check->fob->id() and
+                    $this->tob->id() == $obj_to_check->tob->id()) {
                     $result = true;
+                }
+            } elseif ($obj_to_check::class == triple::class) {
+                if (isset($this->fob)
+                    and $this->has_verb()
+                    and isset($this->tob)
+                    and isset($obj_to_check->fob)
+                    and $obj_to_check->has_verb()
+                    and isset($obj_to_check->tob)) {
+                    if ($this->fob->id() == $obj_to_check->fob->id()
+                        and $this->predicate_id() == $obj_to_check->predicate_id()
+                        and $this->tob->id() == $obj_to_check->tob->id()) {
+                        $result = true;
+                    }
                 }
             }
         }
@@ -1005,48 +1296,118 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * create the user message that an object with the same link already exists
+     * and suggest a potential solution to the user.
+     *
+     * @param sandbox $obj_to_add the obejct that the user wants to add to the database
+     * @return user_message e.g. with the suggestion to merge with the existing link
+     */
+    function id_used_msg(sandbox $obj_to_add): user_message
+    {
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
+        $msg = new user_message();
+        if ($obj_to_add->fob() == null or $obj_to_add->tob() == null) {
+            $lib = new library();
+            $msg->add(msg_id::NAME_ALREADY_EXISTS, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
+                msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
+            ]);
+        } else {
+            $msg->add(msg_id::LINK_ALREADY_EXISTS, [
+                msg_id::VAR_CLASS_NAME => $class_name,
+                msg_id::VAR_NAME_FROM => $obj_to_add->fob()->name(),
+                msg_id::VAR_NAME_TO => $obj_to_add->tob()->name(),
+                msg_id::VAR_VALUE => $obj_to_add_name
+            ]);
+        }
+        return $msg;
+    }
+
+    /**
      * check if an object with the unique key already exists
      * returns null if no similar object is found
-     * or returns the object with the same unique key that is not the actual object
+     * or returns the object with the same unique key that is not the actual object;
      * any warning or error message needs to be created in the calling function
      * e.g. if the user tries to create a formula named "millions"
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @returns string a filled object that links the same objects
-     *                 or a sandbox object with id() = 0 if nothing similar has been found
+     * @return type_object|sandbox|null a filled object that links the same objects
+     *                                  or null if nothing similar has been found
      */
-    function get_similar(user_message $msg): sandbox
+    function get_similar(user_message $msg): type_object|sandbox|null
     {
-        $result = new sandbox($this->get_user());
+        $sim = null;
 
-        // check potential duplicate by name
+        // check potential duplicate by link
         // check for linked objects
-        if (!isset($this->fob) or !isset($this->tob)) {
+        if ($this->fob == null or $this->tob == null) {
             log_err('The linked objects for ' . $this->dsp_id() . ' are missing.', '_sandbox->get_similar');
         } else {
             $db_chk = $this->clone_reset(true);
-            $db_chk->set_fob($this->fob());
-            $db_chk->set_tob($this->tob());
             $db_chk->set_predicate_id($this->predicate_id());
-            if ($db_chk->load_standard()) {
-                if ($db_chk->id() > 0) {
-                    log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard link space');
-                    $result = $db_chk;
+            if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+                if ($db_chk->load_standard_by_type_link($this->fob()->id(), $this->predicate_id(), $this->tob()->id(), $msg)) {
+                    if ($db_chk->id() != 0) {
+                        log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard link space with type ' . $this->predicate_name());
+                        $sim = $db_chk;
+                    }
+                }
+            } else {
+                if ($db_chk->load_standard_by_link($this->fob()->id(), $this->tob()->id(), $msg)) {
+                    if ($db_chk->id() != 0) {
+                        log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard link space');
+                        $sim = $db_chk;
+                    }
                 }
             }
             // check with the user link space
-            $db_chk->set_user($this->get_user());
-            if ($db_chk->load_by_link_id($this->fob->id(), 0, $this->tob->id(), $this::class)) {
-                if ($db_chk->id() > 0) {
-                    log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space');
-                    $result = $db_chk;
+            if ($db_chk->id() == 0) {
+                $db_chk->set_user($this->get_user());
+                if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+                    if ($db_chk->load_by_link_id($this->fob->id(), 0, $this->tob->id(), $this::class)) {
+                        if ($db_chk->id() != 0) {
+                            log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space with type ' . $this->predicate_name());
+                            $sim = $db_chk;
+                        }
+                    }
+                } else {
+                    if ($db_chk->load_by_link_id($this->fob->id(), $this->predicate_id(), $this->tob->id(), $this::class)) {
+                        if ($db_chk->id() != 0) {
+                            log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space');
+                            $sim = $db_chk;
+                        }
+                    }
                 }
             }
         }
 
-        return $result;
+        return $sim;
+    }
+
+    /**
+     * check if target key value already exists
+     * overwritten in the word class for formula link words
+     * TODO load the user value not the standard value but also check the standard value
+     * TODO should not ADDITIONAL the user-specific load be called
+     *
+     * @return sandbox object with id zero if no object with the same id is found
+     */
+    function get_obj_with_same_id_fields(user_message $msg): sandbox
+    {
+        log_debug('check if target with the name already exists ' . $this->dsp_id());
+        $db_chk = $this->clone_reset();
+        $chk_msg = $msg->clone_reset(); // it is in this case ok if no db row a found so an error should not influence the later process steps
+        if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+            $db_chk->load_standard_by_type_link($this->fob()->id(), $this->predicate_id(), $this->tob()->id(), $msg);
+        } else {
+            $db_chk->load_standard_by_link($this->fob()->id(), $this->tob()->id(), $chk_msg);
+        }
+        return $db_chk;
     }
 
 
@@ -1259,6 +1620,27 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * add a message for the user that the new object has been merged with a standard object with the same name or unique key
+     *
+     * @param sandbox_link|sandbox $obj_to_add the object that the user wants to add to the database
+     * @param user_message $msg to collect the messages and suggested solutions for the user
+     * @return bool true if the merge is fine
+     */
+    function merged_info_message(sandbox_link|sandbox $obj_to_add, user_message $msg): bool
+    {
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
+        $msg->add_info_with_vars(msg_id::MERGED_BY_LINK_WITH_STANDARD_OBJECT, [
+            msg_id::VAR_CLASS_NAME => $class_name,
+            msg_id::VAR_NAME => $this->link_id(),
+            msg_id::VAR_VALUE => $obj_to_add_name,
+            msg_id::VAR_NAME_CHK => $obj_to_add->link_id()
+        ]);
+        return $msg->is_ok();
+    }
+
+    /**
      * deleting the references of links is usually needed
      * so no action is done and just true is returned
      *
@@ -1340,7 +1722,7 @@ class sandbox_link extends sandbox
                     $this->message_from_invalid($msg);
                 }
             }
-            if ($obj->from_id() !== $this->from_id()) {
+            if (($obj->from_id_or_name() !== $this->from_id_or_name()) or $sc_par_lst->is_insert()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1366,7 +1748,7 @@ class sandbox_link extends sandbox
                     }
                 }
             }
-            if ($obj->to_id() !== $this->to_id()) {
+            if (($obj->to_id_or_name() !== $this->to_id_or_name()) or $sc_par_lst->is_insert()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
@@ -1430,7 +1812,7 @@ class sandbox_link extends sandbox
                     $to_fld = sql::TO_FLD_PREFIX . $to_fld;
                 }
                 // TODO check how to handle if the standard
-                if ($this->is_excluded() and !$obj->is_excluded() or $is_delete) {
+                if (($this->is_excluded() and !$obj->is_excluded()) or $is_delete) {
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1470,7 +1852,7 @@ class sandbox_link extends sandbox
                             $obj->tob()
                         );
                     }
-                } elseif (!$this->is_excluded() and $obj->is_excluded()) {
+                } elseif ((!$this->is_excluded() and $obj->is_excluded()) or $is_delete) {
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1580,6 +1962,27 @@ class sandbox_link extends sandbox
         $sc_par_lst_used->add(sql_type::INSERT);
         // fields and values that the word has additional to the standard named user sandbox object
         $lnk_empty = $this->clone_reset();
+        // if a user has deleted or excluded a link fill the empty object with the link id so that the link id can be used for the log
+        if ($this->is_excluded()) {
+            if (in_array($this::class, def::LINK_CLASSES)) {
+                $lnk_empty->set_fob($this->fob());
+                if ($this::class == ref::class) {
+                    $lnk_empty->external_key = $this->external_key;
+                } else {
+                    $lnk_empty->set_tob($this->tob());
+                }
+                if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+                    $lnk_empty->set_predicate_id($this->predicate_id());
+                }
+                if ($this::class == component_link::class) {
+                    // default values does not need to be inserted
+                    // TODO Prio 2 do the same for all default values also of other objects
+                    if ($this->pos_type?->get_code_id() == position_types::DEFAULT) {
+                        $lnk_empty->pos_type = $this->pos_type;
+                    }
+                }
+            }
+        }
         // for a new component link the owner should be set, so remove the user id to force writing the user
         $lnk_empty->set_user($this->get_user()->clone_reset());
         // for linked user db rows, use the link fields of the standard row, because the link itself cannot be changed by the user

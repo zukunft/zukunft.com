@@ -56,7 +56,9 @@ class words
 
     // keywords to select the system configuration
     const string THIS_SYSTEM = 'zukunft.com';
+    // TODO Prio 1 add a code_id to all words that are used by the system
     const string SYSTEM = 'system';
+    const string SYSTEM_CODE_ID = 'system';
     const string CONFIGURATION = 'configuration';
 
     // words used to select parts of the system configuration where the normal name should not be changed
@@ -241,6 +243,8 @@ class words
     const int FLOW_ID = 101;
     const string MINUTE = 'minute';
     const int MINUTE_ID = 104;
+    const string HOUR = 'hour';
+    const int HOUR_ID = 105;
     const string YEAR_2019 = '2019';
     const int YEAR_2019_ID = 139;
     const string YEAR_2020 = '2020';
@@ -273,7 +277,7 @@ class words
     const string SPEED = 'speed';
     const int SPEED_ID = 87;
     const string METER = 'meter';
-    const int METER_ID = 1151;
+    const int METER_ID = 1161;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 131;
     const string TRANSITION = 'transition';
@@ -443,9 +447,11 @@ class words
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
     const string TEST_ADD = 'System Test Word';
+    const string TEST_ADD_CODE_ID = 'System Test Word code id';
     const string TEST_ADD_COM = 'test description added to the word via import';
     const string TEST_ADD_TO = 'System Test Word To';
     const string TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
+    const string TEST_ADD_GROUP_PRIME = 'System Test Word for prime values';
     const string TEST_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
     const string TEST_ADD_GROUP_PRIME_SQL = 'System Test Word for prime group add via sql insert';
     const string TEST_ADD_GROUP_MOST_FUNC = 'System Test Word for main group add via sql function';
@@ -604,6 +610,7 @@ class words
         self::TEST_ADD_VIA_FUNC,
         self::TEST_ADD_GROUP_MOST_FUNC,
         self::TEST_ADD_GROUP_MOST_SQL,
+        self::TEST_ADD_GROUP_PRIME,
         self::TEST_ADD_GROUP_PRIME_FUNC,
         self::TEST_ADD_GROUP_PRIME_SQL,
         self::TEST_ADD_GROUP_BIG_FUNC,
@@ -673,6 +680,7 @@ class words
     const array TEST_WORDS = array(
         self::TEST_ADD,
         self::TEST_ADD_VIA_FUNC,
+        self::TEST_ADD_GROUP_PRIME,
         self::TEST_ADD_GROUP_PRIME_FUNC,
         self::TEST_ADD_GROUP_PRIME_SQL,
         self::TEST_ADD_GROUP_MOST_FUNC,

@@ -137,9 +137,9 @@ class change extends change_log
         self::FLD_FIELD_ID,
         self::FLD_ROW_ID,
         change::FLD_OLD_VALUE,
-        self::FLD_OLD_ID,
+        change::FLD_OLD_ID,
         change::FLD_NEW_VALUE,
-        self::FLD_NEW_ID
+        change::FLD_NEW_ID
     );
 
     // field list to log the actual change of the named user sandbox object
@@ -147,8 +147,8 @@ class change extends change_log
         [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
         [change::FLD_OLD_VALUE, change::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [change::FLD_NEW_VALUE, change::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_OLD_ID, self::FLD_OLD_ID_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
-        [self::FLD_NEW_ID, self::FLD_NEW_ID_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
+        [change::FLD_OLD_ID, change::FLD_OLD_ID_SQL_TYP, sql_field_default::NULL, '', '', change::FLD_OLD_ID_COM],
+        [change::FLD_NEW_ID, change::FLD_NEW_ID_SQL_TYP, sql_field_default::NULL, '', '', change::FLD_NEW_ID_COM],
     );
 
 

@@ -31,9 +31,9 @@ SELECT component_link_delete_log
         3::smallint,
         16::smallint,
         'Start view'::text,
-        null::text,
+        'always'::text,
         'Word'::text,
         1::bigint,
-        null::smallint,
+        1::smallint,
         1::bigint,
         1::bigint);

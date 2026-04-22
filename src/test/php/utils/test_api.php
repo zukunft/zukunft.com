@@ -623,7 +623,7 @@ class test_api extends test_base
         $usr_msg_ui = new user_message_ui();
         $test_name = 'add new ' . $lib->class_to_name($class) . ' via api post call';
 
-        $dbo = $t_map->class_to_add_object($class);
+        $dbo = $t_map->class_to_add_filled_object($class);
         $name = $dbo->name();
         $dbo_ui = $t_map->class_to_ui_object($class);
         $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
@@ -658,7 +658,7 @@ class test_api extends test_base
 
         $test_name = 'add new ' . $lib->class_to_name($class) . ' by simulation the post call';
 
-        $dbo = $t_map->class_to_add_object($class);
+        $dbo = $t_map->class_to_add_filled_object($class);
         $dbo_ui = $t_map->class_to_ui_object($class);
         $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
         // replacement for the api call
@@ -691,7 +691,7 @@ class test_api extends test_base
 
         $test_name = 'del new ' . $lib->class_to_name($class) . ' by simulation the delete call';
 
-        $dbo = $t_map->class_to_add_object($class);
+        $dbo = $t_map->class_to_add_filled_object($class);
         $dbo->load_by_name($dbo->name());
         $dbo_ui = $t_map->class_to_ui_object($class);
         $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
