@@ -153,7 +153,7 @@ class test_cleanup extends test_api
                     $val->load_by_id($val_id);
                     // check again, because some id may be added twice
                     if ($val->is_id_set()) {
-                        $val->del($usr_msg);
+                        $val->del($usr_msg, false);
                         $result .= $usr_msg->get_last_message();
                         $target = '';
                         $this->assert('value->del test value for "' . words::TEST_RENAMED . '"', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);

@@ -1366,23 +1366,29 @@ class sandbox_multi extends db_object_multi_user
      * any calling function should make sure that taking setting the owner is allowed
      * and that all user values
      * TODO review sql and object field compare of user and standard
+     * @param bool $must_exist if false no error message is created if the value or result does not exist
+     * @return bool true if the owner is succesful set
      */
-    function set_owner(int $new_owner_id, user_message $usr_msg): bool
+    function set_owner(int $new_owner_id, user_message $usr_msg, bool $must_exist = true): bool
     {
         log_debug($this->dsp_id() . ' to ' . $new_owner_id);
 
         if ($this->has_id() > 0 and $new_owner_id > 0) {
             // load the standard db row
             $std = $this->clone_reset();
-            $std->load_standard($this->id(), $usr_msg);
+            $get_msg = clone $usr_msg;
+            $std->load_standard($this->id(), $get_msg);
 
-            // set the owner and save
-            $std->owner_id = $new_owner_id;
-            $std->save($usr_msg);
+            if ($get_msg->is_ok() or $must_exist) {
 
-            // update the current object
-            if ($usr_msg->is_ok()) {
-                $this->owner_id = $new_owner_id;
+                // set the owner and save
+                $std->owner_id = $new_owner_id;
+                $std->save($usr_msg);
+
+                // update the current object
+                if ($usr_msg->is_ok()) {
+                    $this->owner_id = $new_owner_id;
+                }
             }
 
         }
@@ -3212,7 +3218,7 @@ class sandbox_multi extends db_object_multi_user
      * TODO check if all have deleted the object
      *      does not remove the user excluding if no one else is using it
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $usr_msg, bool $must_exist = true): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -3260,7 +3266,7 @@ class sandbox_multi extends db_object_multi_user
                             // TODO change the original object, so that it uses the configuration of the new owner
 
                             // set owner
-                            if (!$this->set_owner($new_owner_id, $usr_msg)) {
+                            if (!$this->set_owner($new_owner_id, $usr_msg, $must_exist)) {
                                 $msg .= 'Setting of owner while deleting ' . $class_name . ' failed';
                                 log_err($msg, $this::class . '->del');
 
@@ -3294,13 +3300,19 @@ class sandbox_multi extends db_object_multi_user
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
                         }
                         $std_rec = $this->clone_reset();
+                        $std_msg_txt = '';
                         if ($usr_msg->is_ok()) {
+                            $std_msg = clone $usr_msg;
                             $std_rec->set_user($this->get_user()); // must also be set to allow to take the ownership
-                            if (!$std_rec->load_standard($this->id(), $usr_msg)) {
-                                $msg .= 'Reloading of standard ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
+                            if (!$std_rec->load_standard($this->id(), $std_msg)) {
+                                $std_msg_txt = 'Reloading of standard ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
+                            }
+                            if ($must_exist) {
+                                $usr_msg->merge($std_msg);
+                                $msg .= $std_msg_txt;
                             }
                         }
-                        if ($msg == '') {
+                        if ($std_msg_txt == '') {
                             log_debug('loaded standard ' . $std_rec->dsp_id());
                             $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                         }

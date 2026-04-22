@@ -85,7 +85,7 @@ class values
     // list of values that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
     const array TEST_VALUES = array(
-        words::TEST_ADD_GROUP_PRIME,
+        [words::TEST_ADD_GROUP_PRIME],
     );
 
 }

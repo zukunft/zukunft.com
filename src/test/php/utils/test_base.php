@@ -1558,7 +1558,7 @@ class test_base
      */
     function assert_sql_update_owner(
         sql_creator                                                     $sc,
-        user                                                             $usr,
+        user                                                            $usr,
         sandbox_named|sandbox_multi|CombineObject|db_object_seq_id|user $db_obj,
         array                                                           $sql_type_array = []
     ): bool
@@ -3483,11 +3483,26 @@ class test_base
     }
 
     /**
+     * remove all remaining test rows of a named user sandbox object
+     *
+     * @param value_base|sandbox_multi $sbx the value or phrase group object
+     * @param group $grp the phrase group that specifies the value
+     * @param bool $check if true an error message is created if the object needs to be removed
+     *                    e.g. to detect incomplete clean-up of previous tests
+     * @return void
+     */
+    function write_value_cleanup(value_base|sandbox_multi $sbx, group $grp, bool $check = false): void
+    {
+        $this->write_value_cleanup_one($sbx, $this->usr1, $grp, $check);
+        $this->write_value_cleanup_one($sbx, $this->usr2, $grp, $check);
+    }
+
+    /**
      * remove remaining test rows for one name and one user
      *
      * @param sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx the named user sandbox object e.g. a word
-     * @param string $name the name of the user sandbox object that should be removed
      * @param user $usr the user configuration of this user should be removed
+     * @param string $name the name of the user sandbox object that should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
      *                    e.g. to detect incomplete clean-up of previous tests
      * @return void
@@ -3503,6 +3518,35 @@ class test_base
         $usr_msg = new user_message($usr);
         $sbx->set_user($usr);
         $sbx->load_by_name($name);
+        if ($sbx->id() != 0) {
+            if ($check) {
+                log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
+            }
+            $sbx->del($usr_msg);
+        }
+    }
+
+    /**
+     * remove remaining test rows for one name and one user
+     *
+     * @param value_base|sandbox_multi $sbx the value or phrase group object
+     * @param user $usr the phrase group that specifies the value
+     * @param group $grp the name of the user sandbox object that should be removed
+     * @param bool $check if true an error message is created if the object needs to be removed
+     *                    e.g. to detect incomplete clean-up of previous tests
+     * @return void
+     */
+    private
+    function write_value_cleanup_one(
+        value_base|sandbox_multi $sbx,
+        user       $usr,
+        group      $grp,
+        bool       $check = false
+    ): void
+    {
+        $usr_msg = new user_message($usr);
+        $sbx->set_user($usr);
+        $sbx->load_by_grp($grp);
         if ($sbx->id() != 0) {
             if ($check) {
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());

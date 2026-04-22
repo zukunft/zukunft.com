@@ -1822,9 +1822,10 @@ class group extends sandbox_multi
      * TODO maybe move this to del_exe
      *
      * @param user_message $usr_msg
+     * @param bool $must_exist if false no error message is created if the group has already been deleted
      * @return bool
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $usr_msg, bool $must_exist = true): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();

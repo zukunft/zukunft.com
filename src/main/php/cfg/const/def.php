@@ -98,6 +98,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_USER . 'user_official_type.php';
 //include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
 //include_once paths::MODEL_VALUE . 'value_geo.php';
 //include_once paths::MODEL_VALUE . 'value_text.php';
 //include_once paths::MODEL_VALUE . 'value_time.php';
@@ -187,6 +188,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
@@ -357,6 +359,7 @@ class def
 
     // list of value classes
     const array VALUE_CLASSES = [
+        value_base::class,
         value::class,
         value_time::class,
         value_text::class,
