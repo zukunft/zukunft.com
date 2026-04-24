@@ -32,6 +32,11 @@
 
 */
 
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('This script may only be run from the command line.');
+}
+
 include_once 'test_const.php';
 
 // load the main test class to get the test environment

@@ -331,8 +331,17 @@ class sandbox_list extends list_db_write
         int                                            $offset = 0
     ): sql_par
     {
-        $qp = new sql_par($this::class);
+        $qp = new sql_par($sbx::class);
         // TODO Prio 0 fill
+        /* $sql = "SELECT u.formula_name,
+                 u.resolved_text AS usr_formula_text,
+                 f.resolved_text AS formula_text,
+                 f.formula_id
+            FROM user_formulas u,
+                 formulas f
+           WHERE u.user_id = " . $user_id . "
+             AND u.formula_id = f.formula_id;";
+        */
         return $qp;
     }
 

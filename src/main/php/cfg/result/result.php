@@ -1250,6 +1250,8 @@ class result extends sandbox_value
             }
         }
         // get formula results that may need an update (maybe include also word groups that have any word of the updated word group)
+        // TODO Prio review
+        /*
         if (!empty($frm_ids)) {
             $sql_in = $lib->sql_array($frm_ids, ' formula_id IN (', ') ');
             $sql = "SELECT group_id, formula_id
@@ -1268,7 +1270,7 @@ class result extends sandbox_value
                 $res_upd->save($usr_msg);
                 $result[] = $usr_msg->get_last_message();
             }
-        }
+        } */
 
         return $result;
     }
