@@ -2889,60 +2889,9 @@ class sandbox_multi extends db_object_multi_user
         if ($log->id > 0) {
             $db_con->usr_id = $this->get_user()->id;
 
-            // for words first delete all links
-            if ($this::class == word::class) {
-                $msg = $this->del_links();
-                $usr_msg->merge($msg);
-            }
-
-            // for triples first delete all links
-            if ($this::class == triple::class) {
-                $msg = $this->del_links();
-                $usr_msg->merge($msg);
-            }
-
-            // for formulas first delete all links
-            if ($this::class == formula::class) {
-                $msg = $this->del_links();
-                $usr_msg->merge($msg);
-
-                // and the corresponding formula elements
-                if ($usr_msg->is_ok()) {
-                    $db_con->set_class(element::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $usr_msg->add_message_text($msg);
-                }
-
-                // and the corresponding results
-                if ($usr_msg->is_ok()) {
-                    $db_con->set_class(result::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $usr_msg->add_message_text($msg);
-                }
-
-                // and the corresponding word if possible
-                if ($usr_msg->is_ok()) {
-                    $wrd = new word($this->get_user());
-                    $wrd->load_by_name($this->name());
-                    $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
-                    $wrd->del($usr_msg);
-                }
-
-            }
-
-            // for view components first delete all links
-            if ($this::class == component::class) {
-                $msg = $this->del_links();
-                $usr_msg->merge($msg);
-            }
-
-            // for views first delete all links
-            if ($this::class == view::class) {
-                $msg = $this->del_links();
-                $usr_msg->merge($msg);
-            }
+            // TODO Prio 1 activate
+            // $msg = $this->del_links();
+            // $usr_msg->merge($msg);
 
             // delete first all user configuration that have also been excluded
             if ($usr_msg->is_ok()) {
@@ -2951,13 +2900,7 @@ class sandbox_multi extends db_object_multi_user
                     $qp = $this->sql_delete($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
                     $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
                 } else {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    // TODO use prepared query
-                    $msg = $db_con->delete_old(
-                        array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
-                        array($this->id(), '1'));
-                    $usr_msg->add_message_text($msg);
+                    log_err('Delete of user link for ' . $this::class . ' not yet defined');
                 }
             }
             if ($usr_msg->is_ok()) {
@@ -2966,10 +2909,7 @@ class sandbox_multi extends db_object_multi_user
                     $qp = $this->sql_delete($db_con->sql_creator(), $usr_msg);
                     $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
                 } else {
-                    $db_con->set_class($this::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $usr_msg->add_message_text($msg);
+                    log_err('Delete of link for ' . $this::class . ' not yet defined');
                 }
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {

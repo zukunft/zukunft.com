@@ -4842,55 +4842,6 @@ class sql_db
         return $usr_msg;
     }
 
-    /**
-     * delete action
-     * @return string an empty string if the deletion has been successful
-     *                or the error message that should be shown to the user
-     *                which may include a link for error tracing
-     */
-    function delete_old($id_fields, $id_values): string
-    {
-        global $sys;
-        $sys->times->switch(system_time_type::DB_WRITE);
-
-        $lib = new library();
-        if (is_array($id_fields)) {
-            log_debug('in "' . $this->class . '" WHERE "' . $lib->dsp_array($id_fields) . '" IS "' . $lib->dsp_array($id_values) . '" for user ' . $this->usr_id);
-        } else {
-            log_debug('in "' . $this->class . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
-
-        }
-
-        if (is_array($id_fields)) {
-            $sql = 'DELETE ' . 'FROM ' . $this->name_sql_esc($this->table);
-            $sql_del = '';
-            foreach (array_keys($id_fields) as $i) {
-                $del_val = $id_values[$i];
-                if (is_array($del_val)) {
-                    $del_val_txt = $lib->sql_array($del_val, ' IN (', ') ', true);
-                } else {
-                    $del_val_txt = ' = ' . $this->sf($del_val) . ' ';
-                }
-                if ($sql_del == '') {
-                    $sql_del .= ' WHERE ' . $id_fields[$i] . $del_val_txt;
-                } else {
-                    $sql_del .= ' AND ' . $id_fields[$i] . $del_val_txt;
-                }
-            }
-            $sql = $sql . $sql_del . ';';
-        } else {
-            $sql = 'DELETE FROM ' . $this->name_sql_esc($this->table) . ' WHERE ' . $id_fields . ' = ' . $this->sf($id_values) . ';';
-        }
-
-        log_debug('sql "' . $sql . '"');
-        $result = $this->exe_try(
-            'Deleting of ' . $this->class,
-            $sql, '',
-            array(),
-            sys_log_levels::FATAL_ID);
-        $sys->times->switch();
-        return $result;
-    }
 
     /*
       list functions to finally get data from the MySQL database

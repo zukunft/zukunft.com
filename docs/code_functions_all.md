@@ -1093,7 +1093,6 @@
     \-- insert - section for function insert not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
     \-- update - section for function update not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
     \-- delete - section for function delete is expected to be del in /db/sql_db.php
-    \-- delete_old - section for function delete_old is expected to be del in /db/sql_db.php
     \-- name_sql_esc - section for function name_sql_esc not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- sf - section for function sf not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- postgres_format - section for function postgres_format not yet defined that it should be private supporting functions in /db/sql_db.php

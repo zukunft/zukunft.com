@@ -1406,43 +1406,10 @@ class formula_map extends sandbox_code_id
      *
      * @return bool true if user sandbox row has successfully been deleted
      */
-    function del_usr_cfg_exe($db_con): bool
+    function del_usr_cfg_exe($db_con, user_message $usr_msg): bool
     {
-        log_debug('->del_usr_cfg_exe ' . $this->dsp_id());
-
-        $result = false;
-        $action = 'Deletion of user formula ';
-        $msg_failed = $this->id() . ' failed for ' . $this->get_user()->name;
-        $msg = '';
-
-        $db_con->set_class(element::class);
-        try {
-            $msg = $db_con->delete_old(
-                array(formula_db::FLD_ID, user_db::FLD_ID),
-                array($this->id(), $this->get_user()->id()));
-        } catch (Exception $e) {
-            log_err($action . ' elements ' . $msg_failed . ' because ' . $e);
-        }
-        if ($msg != '') {
-            log_err($action . ' elements ' . $msg_failed . ' because ' . $msg);
-        } else {
-            $db_con->set_class(formula::class, true);
-            try {
-                $msg = $db_con->delete_old(
-                    array(formula_db::FLD_ID, user_db::FLD_ID),
-                    array($this->id(), $this->get_user()->id()));
-                if ($msg == '') {
-                    $this->usr_cfg_id = null;
-                    $result = true;
-                } else {
-                    log_err($action . $msg_failed . ' because ' . $msg);
-                }
-            } catch (Exception $e) {
-                log_err($action . $msg_failed . ' because ' . $e);
-            }
-        }
-
-        return $result;
+        $this->delete_elements($usr_msg);
+        return parent::del_usr_cfg_exe($db_con, $usr_msg);
     }
 
     private

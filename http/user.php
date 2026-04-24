@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -100,60 +101,61 @@ if ($usr->id > 0) {
     // use frontend user url_mapper function
     //$result .= $usr->upd_pars($_GET);
 
+    $usr_msg = new user_message();
     // undo user changes for values
     if ($undo_val > 0) {
         $val = new value($usr);
         $val->set_id($undo_val);
-        $val->del_usr_cfg();
+        $val->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for words
     if ($undo_wrd > 0) {
         $wrd = new word($usr);
         $wrd->id = $undo_wrd;
-        $wrd->del_usr_cfg();
+        $wrd->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for triples
     if ($undo_lnk > 0) {
         $lnk = new triple($usr);
         $lnk->id = $undo_lnk;
-        $lnk->del_usr_cfg();
+        $lnk->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for formulas
     if ($undo_frm > 0) {
         $frm = new formula($usr);
         $frm->id = $undo_frm;
-        $frm->del_usr_cfg();
+        $frm->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for formula word links
     if ($undo_frm_lnk > 0) {
         $frm_lnk = new formula_link($usr);
         $frm_lnk->id = $undo_frm_lnk;
-        $frm_lnk->del_usr_cfg();
+        $frm_lnk->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for formulas
     if ($undo_msk > 0) {
         $msk = new view($usr);
         $msk->id = $undo_msk;
-        $msk->del_usr_cfg();
+        $msk->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for formulas
     if ($undo_cmp > 0) {
         $cmp = new component($usr);
         $cmp->id = $undo_cmp;
-        $cmp->del_usr_cfg();
+        $cmp->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for formulas
     if ($undo_cmp_lnk > 0) {
         $cmp_lnk = new component_link($usr);
         $cmp_lnk->id = $undo_cmp_lnk;
-        $cmp_lnk->del_usr_cfg();
+        $cmp_lnk->del_usr_cfg($usr_msg);
     }
 
     $msk_dsp = new view_ui($msk->api_json());
