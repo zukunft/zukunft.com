@@ -335,16 +335,6 @@ class change_link extends change_log
         return $result;
     }
 
-    private function source_name($id): string
-    {
-        global $db_con;
-        $result = '';
-        //$db_con = new mysql;
-        $db_con->set_class(source::class);
-        $result .= $db_con->get_name($id);
-        return $result;
-    }
-
 
     // TODO Prio 0 this should be dismissed
     function add_link_ref(): bool
@@ -475,14 +465,6 @@ class change_link extends change_log
                 } else {
                     log_err('Object(s) missing when trying to log an del action');
                 }
-            }
-        }
-        if ($this->table() == change_tables::VALUE and $this->link_text == 'source') {
-            if ($this->old_to > 0) {
-                $this->old_text_to = $this->source_name($this->old_to);
-            }
-            if ($this->new_to > 0) {
-                $this->new_text_to = $this->source_name($this->new_to);
             }
         }
         log_debug('set fields done');

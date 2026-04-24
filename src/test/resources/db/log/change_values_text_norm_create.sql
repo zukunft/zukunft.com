@@ -23,5 +23,7 @@ COMMENT ON COLUMN change_values_text_norm.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_text_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_norm.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_text_norm.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_text_norm.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_text_norm.new_id IS 'new value id';

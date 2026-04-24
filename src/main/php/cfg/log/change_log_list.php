@@ -488,7 +488,7 @@ class change_log_list extends list_db_read
         if ($class == value::class) {
             $sc->add_where(group_db::FLD_ID, $id);
         } else {
-            $sc->add_where(change::FLD_ROW_ID, $id);
+            $sc->add_where(change_log::FLD_ROW_ID, $id);
         }
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();

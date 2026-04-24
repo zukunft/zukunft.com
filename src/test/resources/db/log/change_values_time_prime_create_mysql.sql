@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS change_values_time_prime
     change_action_id smallint   NOT NULL COMMENT 'the crud action',
     group_id         bigint     NOT NULL,
     change_field_id  smallint   NOT NULL,
-    old_value        timestamp DEFAULT NULL,
-    new_value        timestamp DEFAULT NULL,
+    old_value        timestamp DEFAULT NULL COMMENT 'the value before the change',
+    new_value        timestamp DEFAULT NULL COMMENT 'the value after the change',
     old_id           bigint DEFAULT NULL COMMENT 'old value id',
     new_id           bigint DEFAULT NULL COMMENT 'new value id',
     PRIMARY KEY (change_id)

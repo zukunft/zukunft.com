@@ -23,6 +23,8 @@ COMMENT ON COLUMN change_values_prime.change_id IS 'the prime key to identify th
 COMMENT ON COLUMN change_values_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_prime.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_prime.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_prime.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_prime.new_id IS 'new value id';
 

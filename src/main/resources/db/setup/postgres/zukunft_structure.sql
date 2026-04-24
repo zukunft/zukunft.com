@@ -623,6 +623,8 @@ COMMENT ON COLUMN change_values_prime.change_id IS 'the prime key to identify th
 COMMENT ON COLUMN change_values_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_prime.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_prime.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_prime.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_prime.new_id IS 'new value id';
 
@@ -651,6 +653,8 @@ COMMENT ON COLUMN change_values_time_prime.change_id IS 'the prime key to identi
 COMMENT ON COLUMN change_values_time_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_time_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_time_prime.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_time_prime.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_time_prime.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_time_prime.new_id IS 'new value id';
 
@@ -679,6 +683,8 @@ COMMENT ON COLUMN change_values_text_prime.change_id IS 'the prime key to identi
 COMMENT ON COLUMN change_values_text_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_prime.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_text_prime.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_text_prime.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_text_prime.new_id IS 'new value id';
 
@@ -707,6 +713,8 @@ COMMENT ON COLUMN change_values_geo_prime.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_geo_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_geo_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_geo_prime.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_geo_prime.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_geo_prime.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_geo_prime.new_id IS 'new value id';
 
@@ -735,6 +743,8 @@ COMMENT ON COLUMN change_values_norm.change_id IS 'the prime key to identify the
 COMMENT ON COLUMN change_values_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_norm.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_norm.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_norm.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_norm.new_id IS 'new value id';
 
@@ -763,6 +773,8 @@ COMMENT ON COLUMN change_values_time_norm.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_time_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_time_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_time_norm.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_time_norm.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_time_norm.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_time_norm.new_id IS 'new value id';
 
@@ -791,6 +803,8 @@ COMMENT ON COLUMN change_values_text_norm.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_text_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_norm.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_text_norm.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_text_norm.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_text_norm.new_id IS 'new value id';
 
@@ -819,6 +833,8 @@ COMMENT ON COLUMN change_values_geo_norm.change_id IS 'the prime key to identify
 COMMENT ON COLUMN change_values_geo_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_geo_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_geo_norm.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_geo_norm.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_geo_norm.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_geo_norm.new_id IS 'new value id';
 
@@ -847,6 +863,8 @@ COMMENT ON COLUMN change_values_big.change_id IS 'the prime key to identify the 
 COMMENT ON COLUMN change_values_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_big.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_big.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_big.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_big.new_id IS 'new value id';
 
@@ -875,6 +893,8 @@ COMMENT ON COLUMN change_values_time_big.change_id IS 'the prime key to identify
 COMMENT ON COLUMN change_values_time_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_time_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_time_big.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_time_big.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_time_big.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_time_big.new_id IS 'new value id';
 
@@ -903,6 +923,8 @@ COMMENT ON COLUMN change_values_text_big.change_id IS 'the prime key to identify
 COMMENT ON COLUMN change_values_text_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_big.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_text_big.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_text_big.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_text_big.new_id IS 'new value id';
 
@@ -931,6 +953,8 @@ COMMENT ON COLUMN change_values_geo_big.change_id IS 'the prime key to identify 
 COMMENT ON COLUMN change_values_geo_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_geo_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_geo_big.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_geo_big.new_value IS 'the value after the change';
 COMMENT ON COLUMN change_values_geo_big.old_id IS 'old value id';
 COMMENT ON COLUMN change_values_geo_big.new_id IS 'new value id';
 

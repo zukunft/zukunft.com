@@ -3549,22 +3549,6 @@ class sql_db
     }
 
     /**
-     * similar to get_id, but the other way round
-     */
-    function get_name($id)
-    {
-        $result = '';
-        log_debug('for "' . $id . '" of the db object "' . $this->class . '"');
-
-        $this->set_id_field();
-        $this->set_name_field();
-        $result = $this->get_value($this->name_field, $this->id_field, $id);
-
-        log_debug('is "' . $result . '"');
-        return $result;
-    }
-
-    /**
      * similar to zu_sql_get_id, but using a second ID field
      */
     function get_id_2key($name, $field2_name, $field2_value)
