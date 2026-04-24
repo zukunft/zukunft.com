@@ -1623,26 +1623,6 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
-     * should only be called if the user is the owner and nobody has used the display component link
-     * @param sql_db $db_con the active database connection
-     * @param sandbox_multi $db_rec the database record before the saving
-     * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
-     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
-     * @return bool true if the id fields have been saved
-     * @throws Exception
-     */
-    function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec, user_message $usr_msg): bool
-    {
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
-        $msg = 'ERROR: The user sandbox save_id_fields does not support changing the phrase for ' . $class_name;
-        log_err($msg);
-        return $usr_msg->is_ok();
-    }
-
-
-    /**
      * the common part of the sql statement creation for insert and update statements
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
