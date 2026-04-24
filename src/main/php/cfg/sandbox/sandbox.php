@@ -1615,11 +1615,10 @@ class sandbox extends db_object_seq_id_user
      *
      * @return bool true if the user sandbox row has successfully been deleted
      */
-    function del_usr_cfg_exe($db_con): bool
+    function del_usr_cfg_exe(sql_db $db_con, user_message $usr_msg): bool
     {
         log_debug($this->dsp_id() . ' und user ' . $this->get_user()->name);
         $lib = new library();
-        $usr_msg = new user_message();
         $class_name = $lib->class_to_name($this::class);
 
         $result = false;
@@ -1627,24 +1626,14 @@ class sandbox extends db_object_seq_id_user
         $msg_failed = $this->id() . ' failed for ' . $this->get_user()->name;
 
         $db_con->set_class($this::class, true);
-        try {
-            if ($this->sql_write_prepared()) {
-                $qp = $this->sql_delete($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
-                $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
-                $msg = $usr_msg->get_message();
-            } else {
-                $msg = $db_con->delete_old(
-                    array($this->id_field(), user_db::FLD_ID),
-                    array($this->id(), $this->get_user()->id));
-            }
-            if ($msg == '') {
-                $this->usr_cfg_id = null;
-                $result = true;
-            } else {
-                log_err($action . $msg_failed . ' because ' . $msg);
-            }
-        } catch (Exception $e) {
-            log_err($action . $msg_failed . ' because ' . $e);
+        $qp = $this->sql_delete($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
+        $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
+        $msg = $usr_msg->get_message();
+        if ($msg == '') {
+            $this->usr_cfg_id = null;
+            $result = true;
+        } else {
+            log_err($action . $msg_failed . ' because ' . $msg);
         }
         return $result;
     }
@@ -1653,7 +1642,7 @@ class sandbox extends db_object_seq_id_user
      * remove user adjustment and log it (used by user.php to undo the user changes)
      * @return bool true if no error has occurred
      */
-    function del_usr_cfg(): bool
+    function del_usr_cfg(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -1666,7 +1655,7 @@ class sandbox extends db_object_seq_id_user
             $log = $this->log_del();
             if ($log->id() > 0) {
                 $db_con->usr_id = $this->get_user()->id;
-                $result = $this->del_usr_cfg_exe($db_con);
+                $result = $this->del_usr_cfg_exe($db_con, $usr_msg);
             }
 
         } else {
@@ -1751,7 +1740,7 @@ class sandbox extends db_object_seq_id_user
      * TODO separate the query parameter creation and add a unit test
      * @return bool false if the deletion has failed and true if it was successful or not needed
      */
-    protected function del_usr_cfg_if_not_needed(): bool
+    protected function del_usr_cfg_if_not_needed(user_message|Message $msg): bool
     {
 
         global $db_con;
@@ -1768,7 +1757,7 @@ class sandbox extends db_object_seq_id_user
             log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->get_user()->name . ' with (' . $qp->sql . ')');
             if ($usr_cfg_row[$this->id_field()] > 0) {
                 if ($this->no_usr_fld_used($this->all_sandbox_fields(), $usr_cfg_row)) {
-                    $result = $this->del_usr_cfg_exe($db_con);
+                    $result = $this->del_usr_cfg_exe($db_con, $msg);
                 }
             }
         }
@@ -2013,7 +2002,7 @@ class sandbox extends db_object_seq_id_user
             }
             if ($usr_msg->is_ok()) {
                 // check if some user overwrites can be removed
-                $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
+                $this->del_usr_cfg_if_not_needed($usr_msg); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
             }
             /*
             // check if renaming this object breaks any user's sandbox
@@ -2964,7 +2953,7 @@ class sandbox extends db_object_seq_id_user
                             // delete all user records of the new owner
                             // does not use del_usr_cfg because the deletion request has already been logged
                             if ($msg_txt == '') {
-                                if (!$this->del_usr_cfg_exe($db_con)) {
+                                if (!$this->del_usr_cfg_exe($db_con, $msg)) {
                                     $msg_txt .= 'Deleting of ' . $class_name . ' failed';
                                 }
                             }

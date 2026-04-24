@@ -886,11 +886,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             } else {
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->get_user()->id);
-                if ($db_con->update_old($this->id(), user_db::FLD_ID, $this->get_user()->id)) {
-                    $result = true;
-                }
+                $this->set_owner($this->get_user()->id, $msg);
             }
         }
         return $result;
@@ -2510,114 +2506,6 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * set the update parameters for the value excluded
-     * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox_multi $db_rec the object as saved in the database before this field is updated
-     * @param sandbox_multi $std_rec the default object without user-specific changes
-     * @param user_message $usr_msg a messages for the user what should be changed if something failed
-     * returns false if something has gone wrong
-     */
-    function save_field_excluded(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec, user_message $usr_msg): string
-    {
-        log_debug($this->dsp_id());
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
-
-        if ($db_rec->is_excluded() <> $this->is_excluded()) {
-            $log = $this->save_field_excluded_log($db_rec);
-            $this->save_set_log_id($log);
-            $new_value = $this->is_excluded();
-            $std_value = $std_rec->is_excluded();
-            // similar to $this->save_field_do
-            if ($this->can_change()) {
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->get_user()->id);
-                if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                    $usr_msg->add_message_text('excluding of ' . $class_name . ' failed');
-                }
-            } else {
-                if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg($usr_msg)) {
-                        $usr_msg->add_message_text('creation of user sandbox to exclude failed');
-                    }
-                }
-                if ($usr_msg->is_ok() == '') {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    if ($new_value == $std_value) {
-                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $usr_msg->add_message_text('include of ' . $class_name . ' for user failed');
-                        }
-                    } else {
-                        if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                            $usr_msg->add_message_text('excluding of ' . $class_name . ' for user failed');
-                        }
-                    }
-                    if (!$this->del_usr_cfg_if_not_needed()) {
-                        $usr_msg->add_message_text(' and user sandbox cannot be cleaned');
-                    }
-                }
-            }
-        }
-        return $usr_msg->is_ok();
-    }
-
-    /**
-     * save the share level in the database if allowed
-     * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox_multi $db_rec the object as saved in the database before this field is updated
-     * @param sandbox_multi $std_rec the default object without user-specific changes
-     * @return string the message that should be shown to the user
-     */
-    function save_field_share(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
-    {
-        log_debug($this->dsp_id());
-        $usr_msg = new user_message();
-        $result = '';
-
-        if ($db_rec->share_id <> $this->share_id) {
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->share_type_name();
-            $log->old_id = $db_rec->share_id;
-            $log->new_value = $this->share_type_name();
-            $log->new_id = $this->share_id;
-            // TODO is the setting of the standard needed?
-            $log->std_value = $std_rec->share_type_name();
-            $log->std_id = $std_rec->share_id;
-            $this->save_set_log_id($log);
-            $log->set_field(self::FLD_SHARE);
-
-            // save_field_do is not used because the share type can only be set on the user record
-            if ($log->new_id > 0) {
-                $new_value = $log->new_id;
-                $std_value = $log->std_id;
-            } else {
-                $new_value = $log->new_value;
-                $std_value = $log->std_value;
-            }
-            if ($log->add($usr_msg)) {
-                if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg($usr_msg)) {
-                        $result = 'creation of user sandbox for share type failed';
-                    }
-                }
-                if ($result == '') {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    $fvt_lst = new sql_par_field_list();
-                    $fvt_lst->add_field($log->field(), $new_value, sql_par_type::INT_SMALL);
-                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst, new sql_type_list([sql_type::USER]));
-                    $db_con->update($qp, 'setting of share type', $usr_msg);
-                    $usr_msg->get_message();
-                }
-            }
-        }
-
-        log_debug($this->dsp_id());
-        return $result;
-    }
-
-    /**
      * set to row id for the log
      * @param change_value|change_log $log
      * @return void
@@ -2678,113 +2566,6 @@ class sandbox_multi extends db_object_multi_user
         return $msg;
     }
 
-    /**
-     * check if the id parameters are supposed to be changed
-     * and change the id (which can start a longer lasting confirmation process)
-     *
-     * @param sql_db $db_con the active database connection
-     * @param sandbox_multi $db_rec the database record before the saving
-     * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @return bool true if everything has been fine
-     */
-    function save_id_if_updated(
-        sql_db        $db_con,
-        sandbox_multi $db_rec,
-        sandbox_multi $std_rec,
-        user_message  $usr_msg
-    ): bool
-    {
-        log_debug($this->dsp_id());
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
-
-        if ($this->is_id_updated($db_rec)) {
-            $db_chk = $this->get_obj_with_same_id_fields();
-            if ($db_chk->id() != 0) {
-                log_debug('target already exists');
-                if ($this->rename_can_switch) {
-                    // ... if yes request to delete or exclude the record with the id parameters before the change
-                    $to_del = clone $db_rec;
-                    if (!$to_del->del($usr_msg)) {
-                        $usr_msg->add_message_text('Failed to delete the unused ' . $this::class);
-                    }
-                    if ($usr_msg->is_ok()) {
-                        // .. and use it for the update
-                        // TODO review the logging: from the user view this is a change not a delete and update
-                        $this->id = $db_chk->id();
-                        $this->set_owner_id($db_chk->owner_id());
-                        // TODO check which links needs to be updated, because this is a kind of combine objects
-                        // force the include again
-                        $this->include();
-                        $db_rec->exclude();
-                        $this->save_field_func($db_con, $db_rec, $std_rec, $usr_msg);
-                        if (!$usr_msg->is_ok()) {
-                            log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
-                        } else {
-                            //$result = 'Failed to exclude the unused ' . $this::class ;
-                            $usr_msg->add_message_text('A ' . $class_name . ' with the name "' . $this->name() . '" already exists. Please use another name or merge with this ' . $class_name . '.');
-                        }
-                    }
-                } else {
-                    // TODO Prio 1 review
-                    $usr_msg->add_message_text($this->msg_id_already_used());
-                }
-            } else {
-                log_debug('target does not yet exist');
-                // TODO check if e.g. for word links and formula links "and $this->not_used()" needs to be added
-                if ($this->can_change()) {
-                    // in this case change is allowed and done
-                    log_debug('change the existing ' . $class_name . ' ' . $this->dsp_id() . ' (db ' . $db_rec->dsp_id() . ', standard ' . $std_rec->dsp_id() . ')');
-                    // TODO check if next line is needed
-                    //$this->load_objects();
-                    if ($this->is_named_obj()) {
-                        $this->save_id_fields($db_con, $db_rec, $std_rec, $usr_msg);
-                    } else {
-                        log_info('Save of id field for ' . $class_name . ' not expected');
-                    }
-                } else {
-                    // if the target link has not yet been created
-                    // ... request to delete the old
-                    $to_del = clone $db_rec;
-                    if (!$to_del->del($usr_msg)) {
-                        $usr_msg->add_message_text('Failed to delete the unused ' . $this::class);
-                    }
-                    // TODO .. and create a deletion request for all users ???
-
-                    if ($usr_msg->is_ok()) {
-                        // ... and create a new display component link
-                        $this->set_id(0);
-                        $this->set_owner_id($this->get_user()->id);
-                        $this->add($usr_msg);
-                    }
-                }
-            }
-        }
-
-        return $usr_msg->is_ok();
-    }
-
-    /**
-     * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
-     *
-     * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
-     * should only be called if the user is the owner and nobody has used the display component link
-     * @param sql_db $db_con the active database connection
-     * @param sandbox_multi $db_rec the database record before the saving
-     * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
-     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
-     * @return bool true if the id fields have been saved
-     */
-    function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec, user_message $usr_msg): bool
-    {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'save_id_fields',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $usr_msg->get_last_message();
-    }
 
     /*
      * save helper - check similar
@@ -3063,11 +2844,6 @@ class sandbox_multi extends db_object_multi_user
                         }
                     }
 
-                    // check if the id parameters are supposed to be changed
-                    if ($msg->is_ok()) {
-                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
-                    }
-
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
                     // TODO add function based saving
@@ -3113,60 +2889,9 @@ class sandbox_multi extends db_object_multi_user
         if ($log->id > 0) {
             $db_con->usr_id = $this->get_user()->id;
 
-            // for words first delete all links
-            if ($this::class == word::class) {
-                $msg = $this->del_links();
-                $usr_msg->merge($msg);
-            }
-
-            // for triples first delete all links
-            if ($this::class == triple::class) {
-                $msg = $this->del_links();
-                $usr_msg->merge($msg);
-            }
-
-            // for formulas first delete all links
-            if ($this::class == formula::class) {
-                $msg = $this->del_links();
-                $usr_msg->merge($msg);
-
-                // and the corresponding formula elements
-                if ($usr_msg->is_ok()) {
-                    $db_con->set_class(element::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $usr_msg->add_message_text($msg);
-                }
-
-                // and the corresponding results
-                if ($usr_msg->is_ok()) {
-                    $db_con->set_class(result::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $usr_msg->add_message_text($msg);
-                }
-
-                // and the corresponding word if possible
-                if ($usr_msg->is_ok()) {
-                    $wrd = new word($this->get_user());
-                    $wrd->load_by_name($this->name());
-                    $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
-                    $wrd->del($usr_msg);
-                }
-
-            }
-
-            // for view components first delete all links
-            if ($this::class == component::class) {
-                $msg = $this->del_links();
-                $usr_msg->merge($msg);
-            }
-
-            // for views first delete all links
-            if ($this::class == view::class) {
-                $msg = $this->del_links();
-                $usr_msg->merge($msg);
-            }
+            // TODO Prio 1 activate
+            // $msg = $this->del_links();
+            // $usr_msg->merge($msg);
 
             // delete first all user configuration that have also been excluded
             if ($usr_msg->is_ok()) {
@@ -3175,13 +2900,7 @@ class sandbox_multi extends db_object_multi_user
                     $qp = $this->sql_delete($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
                     $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
                 } else {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    // TODO use prepared query
-                    $msg = $db_con->delete_old(
-                        array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
-                        array($this->id(), '1'));
-                    $usr_msg->add_message_text($msg);
+                    log_err('Delete of user link for ' . $this::class . ' not yet defined');
                 }
             }
             if ($usr_msg->is_ok()) {
@@ -3190,10 +2909,7 @@ class sandbox_multi extends db_object_multi_user
                     $qp = $this->sql_delete($db_con->sql_creator(), $usr_msg);
                     $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
                 } else {
-                    $db_con->set_class($this::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $usr_msg->add_message_text($msg);
+                    log_err('Delete of link for ' . $this::class . ' not yet defined');
                 }
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {

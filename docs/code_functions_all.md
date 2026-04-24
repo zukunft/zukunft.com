@@ -1093,8 +1093,6 @@
     \-- insert - section for function insert not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
     \-- update - section for function update not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
     \-- delete - section for function delete is expected to be del in /db/sql_db.php
-    \-- update_old - section for function update_old not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
-    \-- delete_old - section for function delete_old is expected to be del in /db/sql_db.php
     \-- name_sql_esc - section for function name_sql_esc not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- sf - section for function sf not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- postgres_format - section for function postgres_format not yet defined that it should be private supporting functions in /db/sql_db.php
@@ -2325,14 +2323,10 @@
     \-- sql_delete - section for function sql_delete not yet defined that it should be save helper - save fields in /sandbox/sandbox_multi.php
     \-- name_field - section for function name_field is expected to be sql fields in /sandbox/sandbox_multi.php
     \-- save_field_excluded_log - section for function save_field_excluded_log is expected to be save in /sandbox/sandbox_multi.php
-    \-- save_field_excluded - section for function save_field_excluded is expected to be save in /sandbox/sandbox_multi.php
-    \-- save_field_share - section for function save_field_share is expected to be save in /sandbox/sandbox_multi.php
     \-- save_set_log_id - section for function save_set_log_id is expected to be save in /sandbox/sandbox_multi.php
     \-- is_id_updated - section for function is_id_updated is expected to be info in /sandbox/sandbox_multi.php
     \-- get_obj_with_same_id_fields - section for function get_obj_with_same_id_fields is expected to be set and get in /sandbox/sandbox_multi.php
     \-- msg_id_already_used - section for function msg_id_already_used not yet defined that it should be save helper - check id in /sandbox/sandbox_multi.php
-    \-- save_id_if_updated - section for function save_id_if_updated is expected to be save in /sandbox/sandbox_multi.php
-    \-- save_id_fields - section for function save_id_fields is expected to be save in /sandbox/sandbox_multi.php
     \-- is_same_std - section for function is_same_std is expected to be info in /sandbox/sandbox_multi.php
     \-- is_same - section for function is_same is expected to be info in /sandbox/sandbox_multi.php
     \-- is_similar - section for function is_similar is expected to be info in /sandbox/sandbox_multi.php
@@ -2648,8 +2642,6 @@
     \-- del_wrd - section for function del_wrd is expected to be del in /value/value_base.php
     \-- save_field_trigger_update - section for function save_field_trigger_update is expected to be save in /value/value_base.php
     \-- save_set_log_id - section for function save_set_log_id is expected to be save in /value/value_base.php
-    \-- save_id_fields - section for function save_id_fields is expected to be save in /value/value_base.php
-    \-- save_id_if_updated - section for function save_id_if_updated is expected to be save in /value/value_base.php
     \-- add - section for function add not yet defined that it should be Select functions in /value/value_base.php
     \-- save - section for function save is expected to be save in /value/value_base.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_sandbox_multi, import_mapper should be before row_mapper_sandbox_multi of __construct,reset,row_mapper_sandbox_multi,api_mapper,import_mapper does not match __construct,reset,clone_all,row_mapper_sandbox,api_mapper,row_mapper,row_mapper_typ_obj,import_mapper,load_dummy,default_id,row_mapper_sandbox_multi,order of section construct and map has difference at api_mapper should be before row_mapper_sandbox_multi, import_mapper should be before row_mapper_sandbox_multi of __construct,reset,row_mapper_sandbox_multi,api_mapper,import_mapper does not match __construct,reset,clone_all,row_mapper_sandbox,api_mapper,row_mapper,row_mapper_typ_obj,import_mapper,load_dummy,default_id,row_mapper_sandbox_multi
