@@ -3481,7 +3481,7 @@ class sql_db
     {
         $result = '';
         $usr_msg = new user_message();
-        log_debug($field_name . ' from ' . $this->class . ' where ' . $id_name . ' = ' . $this->sf($id));
+        log_debug($field_name . ' from ' . $this->class . ' where ' . $id_name . ' = ' . $id);
 
         if ($this->class <> '') {
 
@@ -3545,24 +3545,6 @@ class sql_db
             }
         }
 
-        return $result;
-    }
-
-    /**
-     * returns the id field of a standard table
-     * which means that the table name ends with 's', the name field is the table name plus '_name' and prim index ends with '_id'
-     * $name is the unique text that identifies one row e.g. for the $name "company" the word id "1" is returned
-     */
-    function get_id($name): string
-    {
-        $result = '';
-        log_debug('for "' . $name . '" of the db object "' . $this->class . '"');
-
-        $this->set_id_field();
-        $this->set_name_field();
-        $result .= $this->get_value($this->id_field, $this->name_field, $name);
-
-        log_debug('is "' . $result . '"');
         return $result;
     }
 

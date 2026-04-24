@@ -238,9 +238,7 @@ class test_app
 
         $sys_time_end = microtime(true);
         if ($sys_time_end > $sys->time_limit) {
-            $db_con->usr_id = users::SYSTEM_ID;
-            $db_con->set_class(system_time_type::class);
-            $sys_script_id = $db_con->get_id($sys->script);
+            $sys_script_id = $sys->typ_lst->sys_log_fnc->id_by_name($sys->script, false);
             if ($sys_script_id <= 0) {
                 $sys_script = new system_time_type();
                 $sys_script->name = $sys->script;

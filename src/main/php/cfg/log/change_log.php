@@ -253,23 +253,16 @@ class change_log extends db_object_seq_id_user
     /**
      * set the action of this change log object and to add a new action to the database if needed
      * @param string $action_name the name of the new action
-     * @param sql_db|null $given_db_con the name of the new field
      * @return bool true if a new action has been added to the database
      */
-    function set_action(string $action_name, ?sql_db $given_db_con = null): bool
+    function set_action(string $action_name): bool
     {
         global $sys;
-        global $db_con;
-
-        $used_db_con = $db_con;
-        if ($given_db_con != null) {
-            $used_db_con = $given_db_con;
-        }
 
         $db_changed = false;
         $this->action_id = $sys->typ_lst->cng_act->id($action_name);
         if ($this->action_id <= 0) {
-            $this->add_action($used_db_con, $action_name);
+            $this->add_action($action_name);
             if ($this->action_id <= 0) {
                 log_err("Cannot add action name " . $action_name);
             } else {
@@ -525,10 +518,10 @@ class change_log extends db_object_seq_id_user
     {
         $db_changed = false;
         foreach (change_action::ACTION_LIST as $action_name) {
-            $db_changed = $this->set_action($action_name, $db_con);
+            $db_changed = $this->set_action($action_name);
         }
         foreach (change_table_list::TABLE_LIST as $table_name) {
-            $db_changed = $this->set_table($table_name, $db_con);
+            $db_changed = $this->set_table($table_name);
             if ($table_name == change_tables::USER) {
                 $db_con->set_class(user::class);
                 foreach (user_db::FLD_NAMES as $field_name) {
@@ -817,18 +810,18 @@ class change_log extends db_object_seq_id_user
     }
 
     protected function add_action(
-        sql_db       $db_con,
         string       $action_name,
         user_message $msg = new user_message()
     ): void
     {
+        global $sys;
+
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
-        $db_type = $db_con->get_class();
-        $db_con->set_class(change_action::class);
-        $action_id = $db_con->get_id($action_name);
+        $act = new change_action();
+        $act->load_by_name($action_name);
 
         // add new action name if needed
-        if ($action_id <= 0) {
+        if ($act->id() <= 0) {
             $act = new change_action();
             $act->name = $action_name;
             $act->code_id = $action_name;
@@ -840,8 +833,6 @@ class change_log extends db_object_seq_id_user
         } else {
             log_fatal("Insert to change log failed due to action id failure.", "user_log->set_action");
         }
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
     }
 
 
