@@ -1053,11 +1053,7 @@
     \-- get1_internal - section for function get1_internal not yet defined that it should be TODO Prio 2 active if requested or needed in /db/sql_db.php
     \-- get1 - section for function get1 not yet defined that it should be TODO Prio 2 active if requested or needed in /db/sql_db.php
     \-- get1_int - section for function get1_int not yet defined that it should be TODO Prio 2 active if requested or needed in /db/sql_db.php
-    \-- get_value - section for function get_value is expected to be set and get in /db/sql_db.php
     \-- get_value_2key - section for function get_value_2key is expected to be set and get in /db/sql_db.php
-    \-- get_id_2key - section for function get_id_2key is expected to be set and get in /db/sql_db.php
-    \-- sql_std_lst_usr - section for function sql_std_lst_usr not yet defined that it should be TODO Prio 2 active if requested or needed in /db/sql_db.php
-    \-- sql_std_lst - section for function sql_std_lst not yet defined that it should be TODO Prio 2 active if requested or needed in /db/sql_db.php
     \-- where_par - section for function where_par not yet defined that it should be TODO Prio 2 active if requested or needed in /db/sql_db.php
     \-- set_where_id - section for function set_where_id is expected to be set and get in /db/sql_db.php
     \-- set_where_name - section for function set_where_name is expected to be set and get in /db/sql_db.php

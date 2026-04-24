@@ -3475,48 +3475,6 @@ class sql_db
 
     /**
      * TODO Prio 1 deprecate
-     * returns first value of a simple SQL query
-     */
-    function get_value($field_name, $id_name, $id)
-    {
-        $result = '';
-        $usr_msg = new user_message();
-        log_debug($field_name . ' from ' . $this->class . ' where ' . $id_name . ' = ' . $id);
-
-        if ($this->class <> '') {
-
-            // set fallback values
-            if ($field_name == '') {
-                $this->set_name_field();
-                $field_name = $this->name_field;
-            }
-            if ($id_name == '') {
-                $this->set_id_field();
-                $id_name = $this->id_field;
-            }
-
-            //$sql = "SELECT " . $this->name_sql_esc($field_name) . " FROM " . $this->name_sql_esc($this->table) . " WHERE " . $id_name . " = $1 LIMIT 1;";
-            //$sql_name = 'get_value_' . $id_name . '_' . $this->name_sql_esc($field_name) . '_' . $this->name_sql_esc($this->table);
-            //$sql_array = array($this->sf($id));
-            $sql = "SELECT " . $this->name_sql_esc($field_name) . " FROM " . $this->name_sql_esc($this->table) . " WHERE " . $id_name . " = " . $this->sf($id) . " LIMIT 1;";
-
-            $sql_row = $this->fetch_first($sql, $usr_msg);
-
-            if ($sql_row) {
-                if (count($sql_row) > 0) {
-                    $result = $sql_row[0];
-                }
-            }
-
-        } else {
-            log_err("Type not set to get " . $id . " " . $id_name . ".", "sql_db->get_value", (new Exception)->getTraceAsString());
-        }
-
-        return $result;
-    }
-
-    /**
-     * TODO Prio 1 deprecate
      * similar to sql_db->get_value, but for two key fields
      */
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2)
@@ -3546,87 +3504,6 @@ class sql_db
         }
 
         return $result;
-    }
-
-    /**
-     * similar to zu_sql_get_id, but using a second ID field
-     */
-    function get_id_2key($name, $field2_name, $field2_value)
-    {
-        $result = '';
-        log_debug('for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->class . '"');
-
-        $this->set_id_field();
-        $this->set_name_field();
-        $result = $this->get_value_2key($this->id_field, $this->name_field, $name, $field2_name, $field2_value);
-
-        log_debug('is "' . $result . '"');
-        return $result;
-    }
-
-    /**
-     * create a standard query for a list of database id and name while taking the user sandbox into account
-     */
-    function sql_std_lst_usr(): string
-    {
-        log_debug($this->class);
-
-        $this->set_id_field();
-        $this->set_name_field();
-        /* this query looks easier than the one below, but it does not word for user exclusions
-        $sql = "SELECT t.".$this->id_field." AS id,
-                       IF(u.".$this->name_field." IS NULL, t.".$this->name_field.", u.".$this->name_field.") AS name
-                  FROM ".$this->table." t
-             LEFT JOIN user_".str_replace("`","",$this->table)." u ON u.".$this->id_field." = t.".$this->id_field."
-                                         AND u.user_id = ".$this->usr_id."
-                 WHERE (u.excluded IS NULL AND (t.excluded IS NULL OR t.excluded = 0)) OR u.excluded = 0
-              ORDER BY t.".$this->name_field.";";
-        */
-        $sql_where = '';
-        if ($this->class == 'view') {
-            $sql_where = ' WHERE t.code_id IS NULL ';
-        }
-        if ($this->db_type == sql_db::POSTGRES) {
-            $sql = "SELECT id, name 
-              FROM ( SELECT t." . $this->id_field . " AS id, 
-                            CASE WHEN (u." . $this->name_field . " <> '' IS NOT TRUE) THEN t." . $this->name_field . " ELSE u." . $this->name_field . " END AS name,
-                            CASE WHEN (u.excluded                        IS     NULL) THEN     COALESCE(t.excluded, 0) ELSE COALESCE(u.excluded, 0)     END AS excluded
-                      FROM " . $this->name_sql_esc($this->table) . " t       
-                  LEFT JOIN user_" . str_replace("`", "", $this->table) . " u ON u." . $this->id_field . " = t." . $this->id_field . " 
-                                              AND u.user_id = " . $this->usr_id . " 
-                            " . $sql_where . ") AS s
-            WHERE excluded <> 1                                   
-          ORDER BY name;";
-        } else {
-            $sql = "SELECT" . " id, name 
-              FROM ( SELECT t." . $this->id_field . " AS id, 
-                            IF(u." . $this->name_field . " IS NULL, t." . $this->name_field . ", u." . $this->name_field . ") AS name,
-                            IF(u.excluded                  IS NULL,     COALESCE(t.excluded, 0), COALESCE(u.excluded, 0))     AS excluded
-                      FROM " . $this->name_sql_esc($this->table) . " t       
-                  LEFT JOIN user_" . str_replace("`", "", $this->table) . " u ON u." . $this->id_field . " = t." . $this->id_field . " 
-                                              AND u.user_id = " . $this->usr_id . " 
-                            " . $sql_where . ") AS s
-            WHERE excluded <> 1                                   
-          ORDER BY name;";
-        }
-        return $sql;
-    }
-
-    /**
-     * create a standard query for a list of database id and name
-     */
-    function sql_std_lst(): string
-    {
-        log_debug("sql_db->sql_std_lst (" . $this->class . ")");
-
-        $this->set_id_field();
-        $this->set_name_field();
-        $sql = "SELECT " . $this->name_sql_esc($this->id_field) . " AS id,
-                   " . $this->name_sql_esc($this->name_field) . " AS name
-              FROM " . $this->name_sql_esc($this->table) . "
-          ORDER BY " . $this->name_sql_esc($this->name_field) . ";";
-
-        return $sql;
     }
 
     /**
