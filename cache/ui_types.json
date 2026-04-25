@@ -481,7 +481,7 @@
       {
         "name": "fixed word",
         "code_id": "phrase",
-        "description": "show the user specific name of a word or a triple as a text",
+        "description": "show the user-specific name of a word or a triple as a text",
         "id": 4
       },
       {
@@ -1644,7 +1644,7 @@
         "id": 1
       }
     ],
-    "sys_log_statuus": [
+    "sys_log_statuum": [
       {
         "name": "new",
         "code_id": "new",
@@ -3688,8 +3688,8 @@
         "id": 201
       },
       {
-        "name": "31sys_log_type_id",
-        "code_id": "31sys_log_type_id",
+        "name": "31sys_log_level_id",
+        "code_id": "31sys_log_level_id",
         "description": "",
         "id": 202
       },

@@ -101,6 +101,30 @@ class sql_type_list
      */
 
     /**
+     * @return bool true if the changes should be added to the change log
+     */
+    function do_log(): bool
+    {
+        return in_array(sql_type::LOG, $this->lst);
+    }
+
+    /**
+     * @return bool true if the changes should never be added to the change log
+     */
+    function no_log(): bool
+    {
+        return in_array(sql_type::NO_LOG, $this->lst);
+    }
+
+    /**
+     * @return bool true if the field list should not include the id field e.g. because the field list is used for a pure insert statement
+     */
+    function no_id_field(): bool
+    {
+        return in_array(sql_type::NO_ID_FIELD, $this->lst);
+    }
+
+    /**
      * @return bool true if only the sql function name should be created
      */
     function is_call_only(): bool
@@ -192,6 +216,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true to select the table for values and results linked to an a bit more number of phrases
+     */
+    function is_main(): bool
+    {
+        return in_array(sql_type::MAIN, $this->lst);
+    }
+
+    /**
      * @return bool true to select the table for values and results linked to only a few fields
      */
     function is_prime(): bool
@@ -245,7 +277,7 @@ class sql_type_list
     }
 
     /**
-     * @return bool true if sql should return the normal values and not the user specific
+     * @return bool true if sql should return the normal values and not the user-specific
      */
     function is_norm(): bool
     {

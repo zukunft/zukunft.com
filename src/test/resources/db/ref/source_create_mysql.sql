@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS sources (
     source_id      bigint           NOT NULL COMMENT 'the internal unique primary index',
     user_id        bigint       DEFAULT NULL COMMENT 'the owner / creator of the source',
     source_name    varchar(255)     NOT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
-    description    text         DEFAULT NULL COMMENT 'the user specific description of the source for mouse over helps',
+    description    text         DEFAULT NULL COMMENT 'the user-specific description of the source for mouse over helps',
     source_type_id smallint     DEFAULT NULL COMMENT 'link to the source type',
     `url`          text         DEFAULT NULL COMMENT 'the url of the source',
     code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
@@ -29,14 +29,14 @@ ALTER TABLE sources
     MODIFY source_id bigint NOT NULL AUTO_INCREMENT;
 
 --
--- table structure to save user specific changes for the original sources for the numeric, time and geo values
+-- table structure to save user-specific changes for the original sources for the numeric, time and geo values
 --
 
 CREATE TABLE IF NOT EXISTS user_sources (
     source_id      bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index',
     user_id        bigint           NOT NULL COMMENT 'the changer of the source',
     source_name    varchar(255) DEFAULT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
-    description    text         DEFAULT NULL COMMENT 'the user specific description of the source for mouse over helps',
+    description    text         DEFAULT NULL COMMENT 'the user-specific description of the source for mouse over helps',
     source_type_id smallint     DEFAULT NULL COMMENT 'link to the source type',
     `url`          text         DEFAULT NULL COMMENT 'the url of the source',
     code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',

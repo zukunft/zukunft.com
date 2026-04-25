@@ -1,5 +1,6 @@
 PREPARE ip_range_list_by_active FROM
    'SELECT ip_range_id,
+           ip_range_key,
            ip_from,
            ip_to,
            reason,

@@ -36,13 +36,14 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Random\RandomException;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 // open database
 $app = new frontend();
@@ -54,9 +55,9 @@ if ($db_con->is_open()) {
     $result = ''; // reset the html code var
     $usr_msg = new user_message();
 
-    $_SESSION['logged'] = FALSE;
+    $_SESSION[url_var::SESSION_LOGGED] = FALSE;
 
-    if (isset($_POST['submit'])) {
+    if (isset($_POST[url_var::POST_SUBMIT])) {
         $html = new html_base();
         $msg = '';
 
@@ -73,29 +74,31 @@ if ($db_con->is_open()) {
         $db_key = $usr->activation_key;
         $db_time_limit = $usr->activation_timeout; // TODO check if and when the conversion to time should be done
         $db_now = $usr->db_now; // get the server now
-        log_debug("login_activate (db: " . $db_key . ", post: " . $_POST['key'] . ", limit: " . $db_time_limit . ", db now:" . $db_now . ")");
-        if ($db_key == $_POST['key'] and $db_time_limit > $db_now) {
+        log_debug("login_activate (db: " . $db_key . ", post: " . $_POST[url_var::POST_KEY]
+            . ", limit: " . $db_time_limit->format(DateTimeInterface::ATOM)
+            . ", db now:" . $db_now->format(DateTimeInterface::ATOM) . ")");
+        if ($db_key == $_POST[url_var::POST_KEY] and $db_time_limit > $db_now) {
 
             // check the user input
             $error = '';
-            if (empty($_POST['password'])) {
+            if (empty($_POST[url_var::USER_PASSWORD_HUMAN])) {
                 $error .= 'password can\'t be empty<br>';
             }
-            if (empty($_POST['re_password'])) {
+            if (empty($_POST[url_var::USER_PASSWORD_RETYPE_HUMAN])) {
                 $error .= 'You must re-type your password<br>';
             }
-            if ($_POST['password'] != $_POST['re_password']) {
+            if ($_POST[url_var::USER_PASSWORD_HUMAN] != $_POST[url_var::USER_PASSWORD_RETYPE_HUMAN]) {
                 $error .= 'passwords don\'t match<br>';
             }
 
             if ($error == '') {
                 // If all fields are not empty, and the passwords match,
                 // create a session, and session variables,
-                $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
-                //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
-                $db_con->set_class(user::class);
-                $db_con->set_usr(users::SYSTEM_ID);
-                $db_con->update_old($usr_id, array('password', 'activation_key', 'activation_timeout'), array($pw_hash, '', 'NOW()'));
+                $pw_hash = password_hash($_POST[url_var::USER_PASSWORD_HUMAN], PASSWORD_BCRYPT);
+                $usr->password = $pw_hash;
+                $usr->activation_key = '';
+                $usr->activation_timeout = new DateTime();
+                $usr->save($usr_msg);
                 /*
                 $sql = sprintf("UPDATE users
                               SET password       = '%s',
@@ -114,9 +117,16 @@ if ($db_con->is_open()) {
                 if ($usr_id > 0 and $usr_name <> '') {
                     // auto login
                     session_start();
-                    $_SESSION['usr_id'] = $usr_id;
-                    $_SESSION['user_name'] = $usr_name;
-                    $_SESSION['logged'] = TRUE;
+                    if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                        try {
+                            $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                        } catch (RandomException $e) {
+                            log_err('RandomException ' . $e->getMessage());
+                        }
+                    }
+                    $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
+                    $_SESSION[url_var::USERNAME_HUMAN] = $usr_name;
+                    $_SESSION[url_var::SESSION_LOGGED] = TRUE;
                 } else {
                     log_err("Cannot find id for " . $usr_name . " after password change.", "login_activate.php");
                 }
@@ -129,7 +139,7 @@ if ($db_con->is_open()) {
             }
         } else {
             if ($db_key <> "") {
-                //$msg .= dsp_err ('Error: activation key ('.$db_key.'/'.$_POST['key'].' for '.$usr_id.') does not match. Please request the password reset again.').'<br>';
+                //$msg .= dsp_err ('Error: activation key ('.$db_key.'/'.$_POST[url_var::POST_KEY].' for '.$usr_id.') does not match. Please request the password reset again.').'<br>';
                 $msg .= $html->dsp_err('Error: activation key does not match. Please request the password reset again.') . '<br>';
             } else {
                 $msg .= $html->dsp_err('Activation key is not valid any more. Please request the password reset again.') . '<br>';
@@ -137,10 +147,10 @@ if ($db_con->is_open()) {
         }
     }
 
-    if (!$_SESSION['logged']) {
+    if (!$_SESSION[url_var::SESSION_LOGGED]) {
         $usr_id = $_GET[url_var::ID];
         if ($usr_id <= 0) {
-            if (isset($_POST['submit'])) {
+            if (isset($_POST[url_var::POST_SUBMIT])) {
                 $usr_id = $_POST[url_var::ID];
             }
         }

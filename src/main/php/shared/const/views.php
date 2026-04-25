@@ -322,7 +322,6 @@ class views
     // TI_* means 'test id'
     const string TEST_ADD_NAME = 'System Test View';
     const string TEST_ADD_VIA_FUNC_NAME = 'System Test View added via sql function';
-    const string TEST_ADD_VIA_SQL_NAME = 'System Test View added via sql insert';
     const string TEST_ADD_COM = 'System Test View Description';
     const string TEST_ADD = 'System Test View Code Id';
     const string TEST_RENAMED_NAME = 'System Test View Renamed';
@@ -362,7 +361,6 @@ class views
     const array RESERVED_NAMES = array(
         self::START_NAME,
         self::TEST_ADD_NAME,
-        self::TEST_ADD_VIA_SQL_NAME,
         self::TEST_ADD_VIA_FUNC_NAME,
         self::TEST_RENAMED_NAME,
         self::TEST_COMPLETE_NAME,
@@ -378,7 +376,6 @@ class views
     // array of test view names create before the test
     const array TEST_VIEWS = array(
         self::TEST_ADD_NAME,
-        self::TEST_ADD_VIA_SQL_NAME,
         self::TEST_ADD_VIA_FUNC_NAME,
         self::TEST_RENAMED_NAME,
         self::TEST_COMPLETE_NAME,

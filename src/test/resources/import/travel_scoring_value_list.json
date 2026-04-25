@@ -17,7 +17,6 @@
     { "name": "current prices", "refs": [ { "name": "Real_versus_nominal_value_(economics)", "type": "wikipedia" } ] },
     { "name": "Used Score"},
     { "name": "US-Dollar", "refs": [ { "name": "US-Dollar", "type": "wikipedia" } ] },
-    { "name": "$"},
     { "name": "Electoral process and pluralism"},
     { "name": "Functioning of government"},
     { "name": "Political participation"},
@@ -25,6 +24,7 @@
     { "name": "Civil liberties"},
     { "name": "Trend"},
     { "name": "Region"},
+    { "name": "percent"},
     { "name": "number of visits"},
     { "name": "cultural equality"},
     { "name": "cultural difference"},
@@ -590,7 +590,7 @@
     {"name": "", "from": "Central African Republic", "verb": "is part of", "to": "Sub-Saharan Africa"},
     {"name": "", "from": "Democratic Republic of the Congo", "verb": "is part of", "to": "Sub-Saharan Africa"},
     {"name": "", "from": "North Korea", "verb": "is part of", "to": "Asia & Australasia"},
-    {"name": "$", "from": "$", "verb": "is alias of", "to": "US-Dollar"}
+    {"from": "$", "verb": "is symbol for", "to": "US-Dollar"}
   ],
   "formulas": [
     {
@@ -620,6 +620,9 @@
     {
       "name": "Status of Rome Statute of the International Criminal Court",
       "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XVIII-10&chapter=18&clang=_en"
+    },
+    {
+      "name": "personal agreement"
     }
   ],
   "value-list": [
@@ -2372,10 +2375,17 @@
       "source": "personal agreement"
     },
     {
-      "words": ["Travel","Rating","Global Peace Index","Scoring Scaling Factor","2020"],
-      "number": "159.87%",
+      "words": ["Travel","Rating","Global Peace Index","Scoring Scaling Factor","2020","percent"],
+      "number": "159.87",
       "share": "personal",
       "source": "personal agreement"
+    }
+  ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
     }
   ],
   "views": [

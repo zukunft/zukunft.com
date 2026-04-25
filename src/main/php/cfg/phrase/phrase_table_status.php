@@ -41,7 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 class phrase_table_status extends type_object
 {
 
-    // list of the pod statuus
+    // list of the pod statuum
     const string REQUESTED = 'requested'; // the system has requested the table creation
     const string CREATING = 'creating'; // the tables are created and filled with data
     const string ACTIVE = 'active'; // the tables are filled and are used as the primary source and target

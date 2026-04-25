@@ -45,7 +45,7 @@ class CombineObject
      * object vars
      */
 
-    protected IdObject|TextIdObject|null $obj;
+    public IdObject|TextIdObject|null $obj;
 
 
     /*
@@ -104,6 +104,20 @@ class CombineObject
     function id(): int
     {
         return $this->obj()->id();
+    }
+
+
+    /*
+     * info
+     */
+
+    function has_id(): bool
+    {
+        $result = false;
+        if ($this->id() != 0) {
+            $result = true;
+        }
+        return $result;
     }
 
 

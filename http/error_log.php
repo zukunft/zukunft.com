@@ -38,6 +38,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
@@ -67,7 +68,8 @@ global $sys_msk_cac;
 $result = ''; // reset the html code var
 
 $err_id = $_GET[url_var::ID] ?? 0;
-$back = $_GET[url_var::BACK] ?? '';
+$lib = new library();
+$back = $lib->filter_var($_GET[url_var::BACK]);
 
 // load the session user parameters
 $usr = new user;

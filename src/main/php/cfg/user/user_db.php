@@ -159,22 +159,32 @@ class user_db extends db_object_seq_id
     const array FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_IP_ADDR,
-        self::FLD_PASSWORD,
-        sql_db::FLD_DESCRIPTION,
-        sql_db::FLD_CODE_ID,
-        self::FLD_PROFILE,
-        // TODO to be added
-        //self::FLD_TYPE_ID,
-        //self::FLD_LEVEL,
         self::FLD_EMAIL,
-        //self::FLD_EMAIL_STATUS,
-        self::FLD_FIRST_NAME,
-        self::FLD_LAST_NAME,
-        self::FLD_TERM,
-        self::FLD_SOURCE,
+
+        self::FLD_PASSWORD,
         self::FLD_ACTIVATION_KEY,
         self::FLD_ACTIVATION_TIMEOUT,
-        //self::FLD_DB_NOW
+        self::FLD_LAST_LOGIN,
+        self::FLD_LAST_LOGOUT,
+
+        self::FLD_PROFILE,
+        sql_db::FLD_CODE_ID,
+        self::FLD_TYPE_ID,
+        self::FLD_LEVEL,
+        self::FLD_STATUS,
+        sql_db::FLD_EXCLUDED,
+
+        self::FLD_CREATED,
+        sql_db::FLD_DESCRIPTION,
+        self::FLD_FIRST_NAME,
+        self::FLD_LAST_NAME,
+
+        self::FLD_TERM,
+        self::FLD_VIEW,
+        self::FLD_SOURCE,
+
+        // TODO to be added
+        //self::FLD_EMAIL_STATUS,
     );
     // the database field names excluding the id and the fields for logon
     const array FLD_NAMES_LIST = array(
@@ -184,6 +194,7 @@ class user_db extends db_object_seq_id
         self::FLD_FIRST_NAME,
         self::FLD_LAST_NAME,
         self::FLD_TERM,
+        self::FLD_VIEW,
         self::FLD_SOURCE,
         self::FLD_PROFILE
     );
@@ -222,7 +233,7 @@ class user_db extends db_object_seq_id
         [self::FLD_TERM, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_TERM_COM],
         [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, '', view::class, self::FLD_VIEW_COM],
         [self::FLD_SOURCE, sql_field_type::INT, sql_field_default::NULL, '', source::class, self::FLD_SOURCE_COM],
-        [self::FLD_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_STATUS_COM],
+        [self::FLD_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', user_status::class, self::FLD_STATUS_COM],
         [self::FLD_CREATED, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, '', '', ''],
         [self::FLD_LAST_LOGIN, sql_field_type::TIME, sql_field_default::NULL, '', '', ''],
         [self::FLD_LAST_LOGOUT, sql_field_type::TIME, sql_field_default::NULL, '', '', ''],

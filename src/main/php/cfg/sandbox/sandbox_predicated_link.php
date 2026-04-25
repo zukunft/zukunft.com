@@ -88,7 +88,7 @@ class sandbox_predicated_link extends sandbox_link
     function predicate_name(): string
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'predicate_name',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);

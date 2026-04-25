@@ -34,17 +34,20 @@ namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_SYSTEM . 'ip_range.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_SYSTEM . 'ip_range_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
@@ -53,7 +56,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
-class ip_range_list extends base_list
+class ip_range_list extends list_db_write
 {
     /*
      * modify
@@ -63,11 +66,17 @@ class ip_range_list extends base_list
      * add an ip range to the list
      *
      * @param ip_range $range the ip range that should be added to the list
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * * @param user_message $usr_msg to report which entry is double
      * @return bool true if the object has been added
      */
-    function add(ip_range $range): bool
+    function add(
+        ip_range     $range,
+        bool         $allow_duplicates = false,
+        user_message $usr_msg = new user_message()
+    ): bool
     {
-        return parent::add_obj($range)->is_ok();
+        return parent::add_obj($range, $allow_duplicates, $usr_msg);
     }
 
     /*
@@ -87,8 +96,8 @@ class ip_range_list extends base_list
 
         $db_con->set_class(ip_range::class);
         $db_con->set_name($qp->name);
-        $db_con->set_fields(ip_range::FLD_NAMES);
-        $db_con->set_where_id(ip_range::FLD_ACTIVE, sql_db::VAL_BOOL_TRUE);
+        $db_con->set_fields(ip_range_db::FLD_NAMES);
+        $db_con->set_where_id(ip_range_db::FLD_ACTIVE, sql_db::VAL_BOOL_TRUE);
         $qp->sql = $db_con->select_all();
         $qp->par = $db_con->get_par();
 
@@ -162,8 +171,8 @@ class ip_range_list extends base_list
     {
         global $cfg;
 
-        $load_per_sec = $cfg->get_by([words::IP_RANGES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $upd_per_sec = $cfg->get_by([words::IP_RANGES, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $load_per_sec = $cfg->get_by([words::IP_RANGES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $upd_per_sec = $cfg->get_by([words::IP_RANGES, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
         if ($this->is_empty()) {
             $usr_msg->add_info_id(msg_id::IP_LIST_EMPTY);
@@ -176,7 +185,7 @@ class ip_range_list extends base_list
                 $ip_usr_msg = $usr_msg->clone_reset();
                 $ip->save($ip_usr_msg);
                 // collect the user message for a consolidated list for the user
-                $usr_msg->add($ip_usr_msg);
+                $usr_msg->merge($ip_usr_msg);
             }
 
             /*

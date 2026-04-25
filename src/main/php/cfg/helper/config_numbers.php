@@ -44,7 +44,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 
@@ -58,7 +58,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 
@@ -191,7 +191,7 @@ class config_numbers extends value_list
      * @param array $names with the phrase names to select the config value
      * @param int|float|string|null $fallback if not null the fallback value that should be used
      *                                        if the configuration value is not found
-     * @return int|float|string|null with the user specific config value
+     * @return int|float|string|null with the user-specific config value
      */
     function get_by(array $names, int|float|string|null $fallback = null): int|float|string|null
     {
@@ -242,7 +242,7 @@ class config_numbers extends value_list
                 log_debug($this->count() . ' config values loaded');
                 $this->load_phrases();
             } else {
-                log_debug('no config values loaded');
+                log_err('no config values loaded');
                 $usr_msg->add_id(msg_id::CONFIG_EMPTY);
             }
             if ($usr_msg->is_ok()) {
@@ -328,7 +328,7 @@ class config_numbers extends value_list
 
     private function cache_array(): array
     {
-        return $this->api_json_array(new api_type_list([api_type::PHRASE_NAMES]));
+        return $this->api_json_array(new api_type_list([api_types::PHRASE_NAMES]));
     }
 
     /*

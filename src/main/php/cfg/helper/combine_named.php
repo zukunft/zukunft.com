@@ -145,9 +145,14 @@ class combine_named extends combine_object
     /**
      * @return string|null the description of the word, triple, formula or verb
      */
-    function description(): ?string
+    function get_description(): ?string
     {
         return $this->obj()?->get_description();
+    }
+
+    function get_code_id(): ?string
+    {
+        return $this->obj()?->get_code_id();
     }
 
     /**

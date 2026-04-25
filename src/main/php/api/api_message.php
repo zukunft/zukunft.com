@@ -109,7 +109,7 @@ class api_message
         $msg[json_fields::TYPE_NAME] = $class;
         if ($usr != null) {
             $msg[json_fields::USER_ID] = $usr->id();
-            $msg[json_fields::USER_NAME] = $usr->name();
+            $msg[json_fields::USER_NAME] = $usr->name_or_null();
         }
         $msg[json_fields::VERSION] = def::PRG_VERSION;
         $msg[json_fields::TIMESTAMP] = new DateTime()->format(DateTimeInterface::ATOM);

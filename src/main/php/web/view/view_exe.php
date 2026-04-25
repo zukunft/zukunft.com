@@ -38,8 +38,6 @@
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\types\component_type;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
@@ -50,20 +48,19 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
-include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::VIEW . 'view_base.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
@@ -75,16 +72,17 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_exe extends view_base
 {
@@ -310,7 +308,7 @@ class view_exe extends view_base
 
         // use the default settings if needed
         if ($this->type_id() <= 0) {
-            $this->set_type_id($sys->typ_lst->msk_typ->id(view_type::DEFAULT));
+            $this->set_type_id($sys->typ_lst->msk_typ->id(view_types::DEFAULT));
         }
 
         // the header to add or change a view
@@ -357,7 +355,7 @@ class view_exe extends view_base
             $result .= '</div>';
 
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
-            $row_limit = $cfg->get_by([triples::ROW_LIMIT, words::DATABASE]);
+            $row_limit = $cfg->get_by([triples::ROW_LIMIT, words::DATABASE], def::FALLBACK_DB_PAGE_ROWS);
 
             // collect the history
             $changes = $this->dsp_hist(0, $row_limit, '', $back);
@@ -525,7 +523,7 @@ class view_exe extends view_base
                 $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
             }
             $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_edit('design the view', $call_edit) . ' ';
+            $result .= btn_edit('design the view', $call_edit) . ' ';
             $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';

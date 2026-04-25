@@ -8,6 +8,7 @@ PREPARE user_list_by_code_id (text) AS
          first_name,
          last_name,
          term_id,
+         view_id,
          source_id,
          user_profile_id
     FROM users

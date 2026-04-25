@@ -54,16 +54,19 @@ class sources
     const string SIB_COM = 'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards';
     const string SIB_URL = 'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf';
     const string SIB_CODE = 'BIPM';
-    const string MATH_CONST = 'mathematical constant';
-    const string WIKIDATA = 'wikidata';
     const int WIKIDATA_ID = 2;
-    const string TRUST_ME_BRO = 'my estimates';
+    const string WIKIDATA = 'wikidata';
+    const string MATH_CONST = 'mathematical constant';
+    const int BFS_ID = 7;
+    const string BFS = 'Federal Statistical Office';
+    const string BFS_COM = 'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.';
+    const string BFS_ULR = 'https://www.bfs.admin.ch/bfs/en/home.html';
     const int TRUST_ME_BRO_ID = 9;
+    const string TRUST_ME_BRO = 'my estimates';
     const string SYSTEM_TEST_ADD = 'System Test Source';
     const string SYSTEM_TEST_ADD_COM = 'System Test Source Description';
     const string SYSTEM_TEST_ADD_URL = 'https://www.zukunft.com/';
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Source added via sql function';
-    const string SYSTEM_TEST_ADD_VIA_SQL = 'System Test Source added via sql insert';
     const string SYSTEM_TEST_RENAMED = 'System Test Source Renamed';
 
     // must be the same as in /resource/api/source/source_put.json
@@ -79,7 +82,7 @@ class sources
     const string TEST_URL_CHANGED = 'https://api.zukunft.com/';
     const string TEST_DESCRIPTION_CHANGED = 'System Test Source Description Changed';
 
-    // array of source names that used for testing and remove them after the test
+    // array of source names that used for testing and should be removed or renamed by a user
     const array RESERVED_NAMES = array(
         self::WIKIDATA, // the source for all data imported from wikidata that does not yet have a source defined in wikidata
         self::SIB,
@@ -93,6 +96,7 @@ class sources
         self::SIB
     );
 
+    // array of test source names that used for testing that should be removed after the test
     const array TEST_SOURCES = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_ADD_API,

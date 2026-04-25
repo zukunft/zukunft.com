@@ -47,6 +47,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -55,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
@@ -205,18 +207,18 @@ class db_object_multi extends db_object_key
      * general part to import a database multi table object from a JSON array object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        $usr_msg->start_time = microtime(true);
-        return $usr_msg->is_ok();
+        $msg->start_time = microtime(true);
+        return $msg->is_ok();
     }
 
     /*
@@ -228,6 +230,37 @@ class db_object_multi extends db_object_key
         return $this->id;
     }
 
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     * Used to get the database fields that need to be updated in the user sandbox row
+     * E.g. if the user has renamed a word and changes the name now back to the standard name,
+     *      the name of the user sandbox row is supposed to be null
+     * $this is usually the target user object
+     * $obj is the norm object as saved in the database
+     * $result is the user object that should be used to write the user sandbox db row
+     *
+     *
+     * @param db_object_multi $std_obj the norm object as saved in the database
+     * @param db_object_multi $result empty clone of the target user object
+     * @return db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        db_object_multi $std_obj,
+        db_object_multi $result
+    ): db_object_multi
+    {
+        // TODO move to the calling function
+        // $result = $this->clone_reset(true);
+        // the database id mus always be identical to the original db row
+        $result->id = $std_obj->id();
+        return $result;
+    }
 
     /*
      * modify
@@ -245,15 +278,15 @@ class db_object_multi extends db_object_key
      */
     function fill(db_object_multi $obj, user $usr_req): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($obj->id() !== 0 and $obj->id() !== '' ) {
             if ($this->id() === 0 or $this->id() === '') {
                 $this->set_id($obj->id());
             } elseif ($obj->id() != $this->id()) {
-                $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
+                $msg->add(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -292,15 +325,17 @@ class db_object_multi extends db_object_key
      */
     function diff_msg(db_object_multi $obj): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
+        $lib = new library();
         if ($this->id() != $obj->id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
+            $msg->add(msg_id::DIFF_ID, [
                 msg_id::VAR_ID => $obj->id(),
                 msg_id::VAR_ID_CHK => $this->id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

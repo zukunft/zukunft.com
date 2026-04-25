@@ -101,6 +101,9 @@ class verb_write_tests
 
         $t_vrb->cleanup($ts);
 
+        // test if there are any test leftovers in the database and report which
+        $t->check_cleanup($usr_msg);
+
     }
 
 }

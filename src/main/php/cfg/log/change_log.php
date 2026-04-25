@@ -236,7 +236,7 @@ class change_log extends db_object_seq_id_user
      */
 
     /**
-     * always set the user because a change log list is always user specific
+     * always set the user because a change log list is always user-specific
      * @param user|null $usr the user who requested to see the log entries
      */
     function __construct(?user $usr)
@@ -253,23 +253,16 @@ class change_log extends db_object_seq_id_user
     /**
      * set the action of this change log object and to add a new action to the database if needed
      * @param string $action_name the name of the new action
-     * @param sql_db|null $given_db_con the name of the new field
      * @return bool true if a new action has been added to the database
      */
-    function set_action(string $action_name, ?sql_db $given_db_con = null): bool
+    function set_action(string $action_name): bool
     {
         global $sys;
-        global $db_con;
-
-        $used_db_con = $db_con;
-        if ($given_db_con != null) {
-            $used_db_con = $given_db_con;
-        }
 
         $db_changed = false;
         $this->action_id = $sys->typ_lst->cng_act->id($action_name);
         if ($this->action_id <= 0) {
-            $this->add_action($used_db_con, $action_name);
+            $this->add_action($action_name);
             if ($this->action_id <= 0) {
                 log_err("Cannot add action name " . $action_name);
             } else {
@@ -310,29 +303,21 @@ class change_log extends db_object_seq_id_user
     /**
      * set the table of this change log object and to add a new table to the database if needed
      * @param string $table_name the name of the new table
-     * @param sql_db|null $given_db_con the name of the new field
      * @return bool true if a new table has been added to the database
      */
-    function set_table(string $table_name, ?sql_db $given_db_con = null): bool
+    function set_table(string $table_name): bool
     {
         global $sys;
-        global $db_con;
-
-        $used_db_con = $db_con;
-        if ($given_db_con != null) {
-            $used_db_con = $given_db_con;
-        }
 
         $db_changed = false;
         $this->table_id = $sys->typ_lst->cng_tbl->id($table_name);
         if ($this->table_id <= 0) {
-            $this->add_table($used_db_con, $table_name);
-            if ($this->table_id <= 0) {
-                log_err("Cannot add table name " . $table_name);
-            } else {
+            if ($this->add_table($table_name)) {
                 $tbl = new type_object($table_name, $table_name, '', $this->table_id);
                 $sys->typ_lst->cng_tbl->add($tbl);
                 $db_changed = true;
+            } else {
+                log_err("Cannot add table name " . $table_name);
             }
         }
         return $db_changed;
@@ -369,7 +354,7 @@ class change_log extends db_object_seq_id_user
             $this->field_id = $sys->typ_lst->cng_fld->id($this->table_id . $field_name);
             if ($this->field_id <= 0) {
                 if ($used_db_con->connected()) {
-                    $this->add_field($used_db_con, $field_name);
+                    $this->add_field($field_name, $this->table_id);
                     if ($this->field_id <= 0) {
                         log_err("Cannot add field name " . $field_name);
                     } else {
@@ -533,10 +518,10 @@ class change_log extends db_object_seq_id_user
     {
         $db_changed = false;
         foreach (change_action::ACTION_LIST as $action_name) {
-            $db_changed = $this->set_action($action_name, $db_con);
+            $db_changed = $this->set_action($action_name);
         }
         foreach (change_table_list::TABLE_LIST as $table_name) {
-            $db_changed = $this->set_table($table_name, $db_con);
+            $db_changed = $this->set_table($table_name);
             if ($table_name == change_tables::USER) {
                 $db_con->set_class(user::class);
                 foreach (user_db::FLD_NAMES as $field_name) {
@@ -655,7 +640,7 @@ class change_log extends db_object_seq_id_user
             } else {
                 $sys_usr = new user();
                 $sys_usr->id = users::SYSTEM_ID;
-                $sys_usr->set_name(users::SYSTEM_NAME);
+                $sys_usr->name = users::SYSTEM_NAME;
                 log_warning('Log field settings for table ' . $table_name . ' are missing',
                     '', '', '', $sys_usr, $db_con);
             }
@@ -757,93 +742,97 @@ class change_log extends db_object_seq_id_user
      */
 
     /**
-     * to save database space the table name is saved as a reference id in the log table
+     * to save database space, the table name is saved as a reference id in the log table
      */
-    protected function add_table(sql_db $db_con, string $table_name = ''): int
+    protected function add_table(
+        string       $table_name = '',
+        user_message $msg = new user_message()
+    ): bool
     {
         // check parameter
         if ($table_name == "") {
             log_err("missing table name", "user_log->set_table");
         }
 
-        // if e.g. a "value" is changed $table_name is "values" and the reference 1 is saved in the log to save space
-        //$db_con = new mysql;
-        $db_type = $db_con->get_class();
-        $db_con->set_class(change_table::class);
-        $table_id = $db_con->get_id($table_name);
-
-        // add new table name if needed
-        if ($table_id <= 0) {
-            $table_id = $db_con->add_id($table_name);
-            // save also the code_id
-            if ($table_id > 0) {
-                $db_con->set_class(change_table::class);
-                $db_con->update_old($table_id, array('code_id'), array($table_name));
+        $tbl = new change_table();
+        $tbl->load_by_code_id($table_name);
+        if (!$tbl->has_db_id()) {
+            $tbl->load_by_name($table_name);
+            if (!$tbl->has_db_id()) {
+                $tbl->name = $table_name;
+                $tbl->code_id = $table_name;
+                $tbl->save($msg);
             }
         }
-        if ($table_id > 0) {
-            $this->table_id = $table_id;
+        if ($tbl->id > 0) {
+            $this->table_id = $tbl->id;
         } else {
             log_fatal_db(
                 "Insert to change log failed due to table id failure.",
                 "user_log->add");
         }
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-        return $table_id;
+
+        return $msg->is_ok();
     }
 
     /**
      * save the field name as a reference id in the log table
      */
-    protected function add_field(sql_db $db_con, string $field_name = ''): int
+    protected function add_field(
+        string       $field_name = '',
+        int          $tbl_id = 0,
+        user_message $msg = new user_message()
+    ): int
     {
         // check parameter
-        if ($this->table_id <= 0) {
+        if ($tbl_id <= 0) {
             log_err("missing table_id", "user_log->set_field");
         }
         if ($field_name == "") {
             log_err("missing field name", "user_log->set_field");
         }
 
-        $db_type = $db_con->get_class();
-        $db_con->set_class(change_field::class);
-        $field_id = $db_con->get_id_2key($field_name, "table_id", $this->table_id);
-
-        // add new field name if needed
-        if ($field_id <= 0) {
-            // TODO use a "normal" insert statement
-            // TODO do not log NOW() field
-            $field_id = $db_con->add_id_2key($field_name, "table_id", $this->table_id);
+        $fld = new change_field();
+        $fld->load_by_name_and_table_id($field_name, $tbl_id);
+        if (!$fld->has_db_id()) {
+            $fld->tbl_id = $tbl_id;
+            $fld->name = $field_name;
+            $fld->code_id = $tbl_id . $field_name;
+            $fld->save($msg);
         }
-        if ($field_id > 0) {
-            $this->field_id = $field_id;
+        if ($fld->id > 0) {
+            $this->field_id = $fld->id;
         } else {
             log_fatal("Insert to change log failed due to field id failure.", "user_log->add");
         }
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-        return $field_id;
+
+        return $msg->is_ok();
     }
 
-    protected function add_action(sql_db $db_con, string $action_name): void
+    protected function add_action(
+        string       $action_name,
+        user_message $msg = new user_message()
+    ): void
     {
+        global $sys;
+
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
-        $db_type = $db_con->get_class();
-        $db_con->set_class(change_action::class);
-        $action_id = $db_con->get_id($action_name);
+        $act = new change_action();
+        $act->load_by_name($action_name);
 
         // add new action name if needed
-        if ($action_id <= 0) {
-            $action_id = $db_con->add_id($action_name);
+        if ($act->id() <= 0) {
+            $act = new change_action();
+            $act->name = $action_name;
+            $act->code_id = $action_name;
+            $act->save($msg);
+            $action_id = $act->id;
         }
         if ($action_id > 0) {
             $this->action_id = $action_id;
         } else {
             log_fatal("Insert to change log failed due to action id failure.", "user_log->set_action");
         }
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
     }
 
 
@@ -885,12 +874,12 @@ class change_log extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the name extension that should be used
      * @param string $val_tbl name of the table to select the values to insert
-     * @param string $add_fld name of the database key field
-     * @param string $row_fld name of the database id field
-     * @param string $par_name name of the database name parameter field
+     * @param string $add_fld name of the database key field e.g. type_id
+     * @param string $row_fld name of the database id field e.g. _group_id
+     * @param string $par_name name of the database name parameter field e.g. type_name
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
-    function sql_insert(
+    function sql_insert_log(
         sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list(),
         string        $ext = '',
@@ -1021,6 +1010,59 @@ class change_log extends db_object_seq_id_user
         return $fvt_lst;
     }
 
+    /*
+     * save
+     */
+
+    /**
+     * log a user change of a word, value or formula
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @return true if the change has been logged successfully
+     */
+    function add(user_message $usr_msg): bool
+    {
+        log_debug($this->dsp_id());
+
+        global $db_con;
+
+        $db_type = $db_con->get_class();
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert_log($sc);
+        if ($qp->name == 'change_values_prime_insert') {
+            if (count($qp->par) > 5) {
+                log_debug('');
+                $qp = $this->sql_insert_log($sc);
+            }
+        }
+        $log_id = 0;
+        if ($db_con->insert($qp, 'log change', $usr_msg)) {
+            $log_id = $usr_msg->get_row_id();
+        }
+
+        if ($log_id <= 0) {
+            // write the error message in steps to get at least some message if the parameters has caused the error
+            if ($this->get_user() == null) {
+                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
+            } else {
+                log_fatal("Insert to change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
+            }
+            $result = False;
+        } else {
+            $this->id = $log_id;
+            // restore the type before saving the log
+            $db_con->set_class($db_type);
+            $result = True;
+        }
+
+        return $result;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
     /**
      * get a list of all database fields
      * list must be corresponding to the db_values fields
@@ -1051,55 +1093,6 @@ class change_log extends db_object_seq_id_user
         $sql_values[] = $this->field_id;
 
         return $sql_values;
-    }
-
-
-    /*
-     * save
-     */
-
-    /**
-     * log a user change of a word, value or formula
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
-     * @return true if the change has been logged successfully
-     */
-    function add(user_message $usr_msg): bool
-    {
-        log_debug($this->dsp_id());
-
-        global $db_con;
-
-        $db_type = $db_con->get_class();
-        $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc);
-        if ($qp->name == 'change_values_prime_insert') {
-            if (count($qp->par) > 5) {
-                log_debug('');
-                $qp = $this->sql_insert($sc);
-            }
-        }
-        $log_id = 0;
-        if ($db_con->insert($qp, 'log change', $usr_msg)) {
-            $log_id = $usr_msg->get_row_id();
-        }
-
-        if ($log_id <= 0) {
-            // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->get_user() == null) {
-                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
-            } else {
-                log_fatal("Insert to change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
-                log_fatal("Insert to change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
-            }
-            $result = False;
-        } else {
-            $this->id = $log_id;
-            // restore the type before saving the log
-            $db_con->set_class($db_type);
-            $result = True;
-        }
-
-        return $result;
     }
 
 

@@ -8,6 +8,12 @@
   
 */
 
+// refuse unless explicitly enabled via env var that gets unset after install
+if (getenv('ZUKUNFT_ALLOW_SETUP') !== '1') {
+    http_response_code(404);
+    exit;
+}
+
 // standard start for all php code that can be called
 global $debug;
 $debug = $_GET['debug'] ?? 0;

@@ -12,8 +12,10 @@ CREATE TABLE IF NOT EXISTS change_values_text_big
     change_action_id smallint   NOT NULL COMMENT 'the crud action',
     group_id         text       NOT NULL,
     change_field_id  smallint   NOT NULL,
-    old_value        text DEFAULT NULL,
-    new_value        text DEFAULT NULL,
+    old_value        text DEFAULT NULL COMMENT 'the value before the change',
+    new_value        text DEFAULT NULL COMMENT 'the value after the change',
+    old_id           bigint DEFAULT NULL COMMENT 'old value id',
+    new_id           bigint DEFAULT NULL COMMENT 'new value id',
     PRIMARY KEY (change_id)
 )
     ENGINE = InnoDB

@@ -40,8 +40,8 @@ include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_list.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::REF . 'source_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -51,23 +51,24 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_sources
+class test_sources extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test source for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, sources::TEST_SOURCES, new source($this->env->usr1));
     }
 
 
@@ -76,6 +77,16 @@ class test_sources
      */
 
     function source(): source
+    {
+        $src = new source($this->env->usr1);
+        $src->set(sources::BFS_ID, sources::BFS);
+        $src->set_type(source_types::PDF, $this->env->usr1);
+        $src->description = sources::BFS_COM;
+        $src->url = sources::BFS_ULR;
+        return $src;
+    }
+
+    function source_reserved(): source
     {
         $src = new source($this->env->usr1);
         $src->set(sources::SIB_ID, sources::SIB);
@@ -90,7 +101,7 @@ class test_sources
      */
     function source_incomplete(): source
     {
-        $src = $this->source();
+        $src = $this->source_reserved();
         $src->id = 0;
         $src->set_name(null);
         return $src;
@@ -131,6 +142,13 @@ class test_sources
         return $src;
     }
 
+    function source_add(): source
+    {
+        $src = new source($this->env->usr1);
+        $src->set_name(sources::SYSTEM_TEST_ADD);
+        return $src;
+    }
+
     /**
      * @return source used for the reference
      */
@@ -147,7 +165,7 @@ class test_sources
      */
     function source_admin(): source
     {
-        $src = $this->source();
+        $src = $this->source_reserved();
         $src->set_code_id_db(sources::SIB_CODE);
         return $src;
     }
@@ -159,16 +177,6 @@ class test_sources
     {
         $msk = new source($this->env->usr1);
         $msk->set_name(sources::SYSTEM_TEST_ADD_VIA_FUNC);
-        return $msk;
-    }
-
-    /**
-     * @return source to test the sql insert without use of function
-     */
-    function source_add_by_sql(): source
-    {
-        $msk = new source($this->env->usr1);
-        $msk->set_name(sources::SYSTEM_TEST_ADD_VIA_SQL);
         return $msk;
     }
 

@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -32,23 +32,29 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
+use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class type_tests
@@ -58,6 +64,8 @@ class type_tests
     {
 
         // init
+        $sc = new sql_creator();
+        $t_typ = new test_types($t);
         $t->name = 'type->';
         $t->resource_path = 'db/type/';
 
@@ -68,7 +76,7 @@ class type_tests
         // TODO job_types
 
         $t->subheader($ts . 'system log type sql setup');
-        $log_typ = new sys_log_type('');
+        $log_typ = new sys_log_level('');
         $t->assert_sql_table_create($log_typ);
         $t->assert_sql_index_create($log_typ);
 
@@ -82,20 +90,30 @@ class type_tests
         $t->assert_sql_table_create($log_fuc);
         $t->assert_sql_index_create($log_fuc);
 
+        $t->subheader($ts . 'job status sql setup');
+        $job_typ = new job_status('');
+        $t->assert_sql_table_create($job_typ);
+        $t->assert_sql_index_create($job_typ);
+
         $t->subheader($ts . 'job type sql setup');
         $job_typ = new job_type('');
         $t->assert_sql_table_create($job_typ);
         $t->assert_sql_index_create($job_typ);
+
+        $t->subheader($ts . 'user profile sql setup');
+        $usr_prf = new user_profile('');
+        $t->assert_sql_table_create($usr_prf);
+        $t->assert_sql_index_create($usr_prf);
 
         $t->subheader($ts . 'user type sql setup');
         $usr_typ = new user_type('');
         $t->assert_sql_table_create($usr_typ);
         $t->assert_sql_index_create($usr_typ);
 
-        $t->subheader($ts . 'user profile sql setup');
-        $usr_prf = new user_profile('');
-        $t->assert_sql_table_create($usr_prf);
-        $t->assert_sql_index_create($usr_prf);
+        $t->subheader($ts . 'user status sql setup');
+        $usr_sta = new user_status('');
+        $t->assert_sql_table_create($usr_sta);
+        $t->assert_sql_index_create($usr_sta);
 
         $t->subheader($ts . 'user identification sql setup');
         $usr_idt = new user_official_type('');
@@ -151,6 +169,86 @@ class type_tests
         $dsp_lnk_typ = new view_relation_type('');
         $t->assert_sql_table_create($dsp_lnk_typ);
         $t->assert_sql_index_create($dsp_lnk_typ);
+
+        $t->subheader($ts . 'component link type sql setup');
+        $dsp_lnk_typ = new component_link_type('');
+        $t->assert_sql_table_create($dsp_lnk_typ);
+        $t->assert_sql_index_create($dsp_lnk_typ);
+
+        $t->subheader($ts . 'sql write insert of base change log types without log e.g. for system setup');
+        $typ = $t_typ->change_action();
+        $t->assert_sql_insert($sc, $typ);
+        $typ = $t_typ->change_table();
+        $t->assert_sql_insert($sc, $typ);
+        $typ = $t_typ->change_field();
+        $t->assert_sql_insert($sc, $typ);
+        $typ = $t_typ->user_profile();
+        $t->assert_sql_insert($sc, $typ);
+
+        // TODO Prio 0 add language
+        // TODO Prio 0 add  position_types, system_time_types
+        // TODO Prio 3 revert [sql_type::LOG] to [sql_type::NO_LOG]
+
+        $t->subheader($ts . 'sql write insert with log e.g. for system setup');
+        $typ = $t_typ->sys_log_level();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->sys_log_status();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->sys_log_function();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->job_status();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->job_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->user_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->user_profile();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->user_official_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->protection_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->share_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->phrase_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->source_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->ref_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->formula_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->formula_link_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->element_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->view_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->view_style();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->view_link_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->view_relation_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->component_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->component_link_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->position_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->language();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->language_form();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+
+        $t->subheader($ts . 'sql write update for admin use only');
+        $typ = $t_typ->phrase_type();
+        $typ_db = $typ->clone_all();
+        $typ_db->description = 'changed description';
+        $t->assert_sql_update($sc, $typ, $typ_db, [sql_type::LOG]);
+
+        $t->subheader($ts . 'sql delete update for admin use only');
+        $t->assert_sql_delete($sc, $typ, [sql_type::LOG]);
     }
 
 }

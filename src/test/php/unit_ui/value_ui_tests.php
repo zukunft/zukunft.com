@@ -34,7 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\value\value;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -53,7 +53,7 @@ class value_ui_tests
 
         $t->subheader($ts . 'html');
 
-        $val = new value($t_val->value()->api_json([api_type::INCL_PHRASES]));
+        $val = new value($t_val->value()->api_json([api_types::INCL_PHRASES]));
         $test_page = $html->text_h2('value display test');
         $test_page .= 'with name and tooltip: ' . $val->name_tip() . '<br>';
         $test_page .= 'with name and link: ' . $val->name_link() . '<br>';

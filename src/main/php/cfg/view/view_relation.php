@@ -87,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -113,6 +114,12 @@ class view_relation extends sandbox_link
     const array FLD_NAMES_USR = view_relation_db::FLD_NAMES_USR;
     const array ALL_SANDBOX_FLD_NAMES = view_relation_db::ALL_SANDBOX_FLD_NAMES;
 
+    // overwrite the parent link const
+    const string FLD_FROM = view_relation_db::FLD_PARENT;
+    const string FLD_PREDICATE = view_relation_type::FLD_ID;
+    const string FLD_TO = view_relation_db::FLD_CHILD;
+
+
 
     /*
      * object vars
@@ -132,7 +139,7 @@ class view_relation extends sandbox_link
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->reset();
+        $this->reset(true);
         $this->set_predicate(view_relation_type::DEFAULT);
     }
 
@@ -180,17 +187,17 @@ class view_relation extends sandbox_link
      * import the name and description of a sandbox link object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
-        array $in_ex_json,
-        user_message $usr_msg,
+        array        $in_ex_json,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);;
+        parent::import_mapper($in_ex_json, $msg, $dto);;
 
         // reset of object not needed, because the calling function has just created the object
         // name is not mandatory because might be generated based on the link
@@ -199,7 +206,7 @@ class view_relation extends sandbox_link
                 $this->set_parent_by_name($in_ex_json[json_fields::PARENT]);
             } else {
                 $msk = new view($this->get_user());
-                $msk->import_mapper($in_ex_json[json_fields::PARENT], $usr_msg, $dto);
+                $msk->import_mapper($in_ex_json[json_fields::PARENT], $msg, $dto);
                 $this->set_parent($msk);
             }
         }
@@ -208,7 +215,7 @@ class view_relation extends sandbox_link
                 $this->set_child_by_name($in_ex_json[json_fields::CHILD]);
             } else {
                 $msk = new view($this->get_user());
-                $msk->import_mapper($in_ex_json[json_fields::CHILD], $usr_msg, $dto);
+                $msk->import_mapper($in_ex_json[json_fields::CHILD], $msg, $dto);
                 $this->set_child($msk);
             }
         }
@@ -222,7 +229,7 @@ class view_relation extends sandbox_link
             $this->description = $in_ex_json[json_fields::DESCRIPTION];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -486,13 +493,41 @@ class view_relation extends sandbox_link
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param view_relation|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param view_relation|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return view_relation|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        view_relation|CombineObject|db_object_seq_id $std_obj,
+        view_relation|CombineObject|db_object_seq_id $result
+    ): view_relation|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->start_pos !== $this->start_pos) {
+            $result->start_pos = $this->start_pos;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
     /**
      * fill this view relation object based on the given object
      * if the given type is not set (null) the type is not removed
-     * if the given type is zero (not null) the type is removed
+     * if the given type is zero (not null), the type is removed
      *
      * @param view_relation|sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
      * @param user $usr_req the user who has requested the fill
@@ -501,10 +536,10 @@ class view_relation extends sandbox_link
     function fill(view_relation|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->start_pos != null) {
+        if ($this->start_pos === null and $obj->start_pos != null) {
             $this->start_pos = $obj->start_pos;
         }
-        if ($obj->description != null) {
+        if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
         return $usr_msg;
@@ -575,83 +610,85 @@ class view_relation extends sandbox_link
      * TODO add a bool var "is_loaded" to db_object
      *      to indicate is the object has just been created and might be incomplete
      *      or if loaded from the db and is expected to have all vars in line with the db
+     * @param user_message $msg to collect the message due to missing links
      * @return bool true if all the related objects has been loaded
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
         $result = true;
 
         $prt = $this->parent();
         if ($prt->id() == 0) {
             if ($prt->name() != '') {
-                $result = $prt->load_by_name($prt->name());
+                if (!$prt->load_by_name($prt->name())) {
+                    $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
+                        msg_id::VAR_SIDE => msg_id::SIDE_PARENT->text(),
+                        msg_id::VAR_VIEW => $this->parent()->dsp_id()
+                    ]);
+                }
             } else {
-                log_warning('Cannot load the parent view because neither id nor name is set');
+                $msg->add(msg_id::LOAD_VIEW_SIDE_NAME_MISSING, [
+                    msg_id::VAR_SIDE => msg_id::SIDE_PARENT->text(),
+                    msg_id::VAR_VIEW => $this->dsp_id()
+                ]);
             }
         } else {
             if ($prt->name() == '') {
-                $result = $prt->load_by_id($prt->id());
+                if (!$prt->load_by_id($prt->id())) {
+                    $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
+                        msg_id::VAR_SIDE => msg_id::SIDE_PARENT->text(),
+                        msg_id::VAR_VIEW => $this->parent()->dsp_id()
+                    ]);
+                }
             }
         }
 
         $cld = $this->child();
         if ($cld->id() == 0) {
             if ($cld->name() != '') {
-                $result = $cld->load_by_name($cld->name());
+                if (!$cld->load_by_name($cld->name())) {
+                    $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
+                        msg_id::VAR_SIDE => msg_id::SIDE_CHILD->text(),
+                        msg_id::VAR_VIEW => $this->child()->dsp_id()
+                    ]);
+                }
             } else {
-                log_warning('Cannot load the child view because neither id nor name is set');
+                $msg->add(msg_id::LOAD_VIEW_SIDE_NAME_MISSING, [
+                    msg_id::VAR_SIDE => msg_id::SIDE_CHILD->text(),
+                    msg_id::VAR_VIEW => $this->dsp_id()
+                ]);
             }
         } else {
             if ($cld->name() == '') {
-                $result = $cld->load_by_id($cld->id());
+                if (!$cld->load_by_id($cld->id())) {
+                    $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
+                        msg_id::VAR_SIDE => msg_id::SIDE_CHILD->text(),
+                        msg_id::VAR_VIEW => $this->child()->dsp_id()
+                    ]);
+                }
             }
         }
-
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
-     * create an SQL statement to retrieve the parameters of the standard view relation from the database
-     * TODO move to the highest object level
+     * load the object parameters for all users by the link id
      *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     * @param int $from_id the id of the from link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
      */
-    function load_sql_standard(sql_creator $sc): sql_par
+    function load_standard_by_link(
+        int $from_id,
+        int $to_id,
+        user_message $msg
+    ): bool
     {
-        // try to get the search values from the objects
-        if ($this->id() <= 0) {
-            $this->id = 0;
-        }
-
-        $sc->set_class($this::class);
-        $qp = new sql_par($this::class);
-        if ($this->id() != 0) {
-            $qp->name .= 'std_id';
-        } else {
-            $qp->name .= 'std_link_ids';
-        }
-        $sc->set_name($qp->name);
-        $sc->set_fields(array_merge(
-            view_relation_db::FLD_NAMES,
-            view_relation_db::FLD_NAMES_USR,
-            array(user_db::FLD_ID)));
-        if ($this->id() > 0) {
-            $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->parent()->id() > 0 and $this->child()->id() != 0) {
-            $sc->add_where(view_db::FLD_ID, $this->parent()->id());
-            $sc->add_where(term::FLD_ID, $this->child()->id());
-        } else {
-            if ($this->parent()->id() > 0) {
-                log_err('Cannot load default view relation because term id for ' . $this->child()->dsp_id() . 'is missing');
-            } else {
-                log_err('Cannot load default view relation because term id for ' . $this->parent()->dsp_id() . 'is missing');
-            }
-        }
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        return parent::load_standard_by_link_parent(
+            view_relation_db::FLD_PARENT, $from_id,
+            view_relation_db::FLD_CHILD, $to_id, $msg
+        );
     }
 
 
@@ -673,22 +710,23 @@ class view_relation extends sandbox_link
                 view_relation_type::FLD_ID,
                 view_relation_db::FLD_START_POS,
                 sql_db::FLD_DESCRIPTION,
-            ]
+            ],
+            parent::db_fields_all_sandbox()
         );
     }
 
     /**
      * add the type field to the list of changed database fields with name, value and type
      *
-     * @param sandbox|view_relation $sbx the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param view_relation|db_object_seq_id $obj the compare value to detect the changed fields
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|view_relation $sbx,
-        user_message          $usr_msg,
-        sql_type_list         $sc_par_lst = new sql_type_list()
+        view_relation|db_object_seq_id $obj,
+        user_message                   $msg,
+        sql_type_list                  $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -697,9 +735,9 @@ class view_relation extends sandbox_link
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
 
-        if ($sbx->predicate_id() !== $this->predicate_id()) {
+        if ($obj->predicate_id() !== $this->predicate_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_relation_type::FLD_ID,
@@ -709,7 +747,7 @@ class view_relation extends sandbox_link
             }
             global $sys;
             if ($this->predicate_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
+                $msg->add(msg_id::VIEW_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -718,11 +756,11 @@ class view_relation extends sandbox_link
                 view_relation_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
-                $sbx->predicate_id(),
-                $sys->typ_lst->phr_typ);
+                $obj->predicate_id(),
+                $sys->typ_lst->mrl_typ);
         }
 
-        if ($sbx->start_pos !== $this->start_pos) {
+        if ($obj->start_pos !== $this->start_pos) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_relation_db::FLD_START_POS,
@@ -734,11 +772,11 @@ class view_relation extends sandbox_link
                 view_relation_db::FLD_START_POS,
                 $this->start_pos,
                 sql_field_type::INT,
-                $sbx->start_pos
+                $obj->start_pos
             );
         }
 
-        if ($sbx->description !== $this->description) {
+        if ($obj->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -750,11 +788,27 @@ class view_relation extends sandbox_link
                 sql_db::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
-                $sbx->description
+                $obj->description
             );
         }
 
-        return $lst;
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this view_relation object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            view_relation_db::FLD_NAMES,
+            view_relation_db::FLD_NAMES_USR,
+            array(user_db::FLD_ID));
     }
 
 
@@ -765,9 +819,9 @@ class view_relation extends sandbox_link
     /**
      * @return string the html code to display the link name
      */
-    function name(): string
+    function name(): string|null
     {
-        $result = '';
+        $result = null;
 
         if ($this->parent() != null) {
             $result = $this->parent()->name();

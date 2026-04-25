@@ -42,5 +42,4 @@ class ref_type extends type_object
     // the extra reference fields of a type
     public ?string $url = '';  // to explain the type to the user as a tooltip
 
-
 }

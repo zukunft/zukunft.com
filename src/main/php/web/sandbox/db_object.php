@@ -5,7 +5,7 @@
     web/sandbox/db_object.php - the superclass for the html frontend of database objects
     -------------------------
 
-    This superclass should be used by the classes word_ui, formula_ui, ... to enable user specific values and links
+    This superclass should be used by the classes word_ui, formula_ui, ... to enable user-specific values and links
 
 
     This file is part of zukunft.com - calc with words
@@ -148,7 +148,7 @@ class db_object extends TextIdObject
                 $this->set_id($url_array[url_var::ID]);
             } else {
                 $this->set_id(0);
-                $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
+                $usr_msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
             }
         }
         return $usr_msg;
@@ -174,7 +174,7 @@ class db_object extends TextIdObject
      * set the vars of this frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
      * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function set_from_json(string $json_api_msg, user_message $usr_msg): bool
     {
@@ -186,10 +186,10 @@ class db_object extends TextIdObject
      * this function is expected to be extended by each child object that has additional object vars
      *
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
         // get body from message
         $api_msg = new api_message();
@@ -199,13 +199,13 @@ class db_object extends TextIdObject
             $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
-            $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+            $msg->add_error_text('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
 
         // remember to send the updates to the backend
         $this->set_modified();
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     function set_id(int|string $id): void
@@ -414,7 +414,7 @@ class db_object extends TextIdObject
      * overwritten by the child classes
      */
 
-    function name(): string
+    function name(): string|null
     {
         $msg = 'ERROR:  name not overwritten by ' . $this::class;
         log_err($msg);
@@ -466,8 +466,7 @@ class db_object extends TextIdObject
     function value(): float|string|DateTime|null
     {
         $msg = 'ERROR: value not overwritten by ' . $this::class;
-        // TODO Prio 0 activate
-        //log_err($msg);
+        log_err($msg);
         return 0;
     }
 
@@ -495,7 +494,7 @@ class db_object extends TextIdObject
     }
 
     /**
-     * @returns string the formula expression in the user readable format and including user formatting
+     * @returns string the formula expression in the user-readable format and including user formatting
      */
     function user_expression(): string
     {

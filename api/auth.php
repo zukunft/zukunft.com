@@ -36,7 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL . 'application.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 

@@ -37,6 +37,7 @@ namespace Zukunft\ZukunftCom\main\php\web\element;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::WORD . 'triple.php';
@@ -60,9 +61,13 @@ class element extends db_object
      * object vars
      */
 
+    // the repeated formula object for direct access
+    public formula $frm;
     // the word, verb or formula class name to direct the links
-    // TODO Prio 2 use instead the obj class
+    // TODO Prio 2 deprecate and use $typ_id instead
     public string $type = '';
+    // the element type which is the term type plus the result phrases plus special formula selections
+    public int $typ_id = 0;
     // the word, verb or formula object
     public word|triple|verb|formula|null $obj = null;
     // the database reference symbol for formula expressions
@@ -74,34 +79,79 @@ class element extends db_object
      */
 
     /**
-     * set the vars of this object bases on the api json array
+     * set the vars of this element object based on the api json array
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $msg OK or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        parent::api_mapper($json_array, $usr_msg);
-        if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
-            if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-                $wrd = new word();
-                $wrd->api_mapper($json_array, $usr_msg);
-                $this->obj = $wrd;
-            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-                $trp = new triple();
-                $trp->api_mapper($json_array, $usr_msg);
-                $this->obj = $trp;
-            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
-                $vrb = new verb();
-                $vrb->api_mapper($json_array, $usr_msg);
-                $this->obj = $vrb;
-            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
-                $frm = new formula();
-                $frm->api_mapper($json_array, $usr_msg);
-                $this->obj = $frm;
+        parent::api_mapper($json_array, $msg);
+        if (array_key_exists(json_fields::ID, $json_array)) {
+            $this->id = $json_array[json_fields::ID];
+        }
+        if (array_key_exists(json_fields::FORMULA, $json_array)) {
+            $frm = new formula();
+            $frm->api_mapper($json_array[json_fields::FORMULA], $msg);
+            $this->frm = $frm;
+        }
+        if (array_key_exists(json_fields::TERM, $json_array)) {
+            if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
+                if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
+                    $wrd = new word();
+                    $wrd->api_mapper($json_array[json_fields::TERM], $msg);
+                    $this->obj = $wrd;
+                } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
+                    $trp = new triple();
+                    $trp->api_mapper($json_array[json_fields::TERM], $msg);
+                    $this->obj = $trp;
+                } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
+                    $vrb = new verb();
+                    $vrb->api_mapper($json_array[json_fields::TERM], $msg);
+                    $this->obj = $vrb;
+                } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
+                    $frm = new formula();
+                    $frm->api_mapper($json_array[json_fields::TERM], $msg);
+                    $this->obj = $frm;
+                }
             }
         }
-        return $usr_msg->is_ok();
+        if (array_key_exists(json_fields::TYPE, $json_array)) {
+            $this->typ_id = $json_array[json_fields::TYPE];
+        }
+        return $msg->is_ok();
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an api json array for the backend based on this frontend object
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+
+        $vars[json_fields::ID] = $this->id();
+        $vars[json_fields::FORMULA] = $this->frm->api_array();
+        if ($this->obj != null) {
+            $vars[json_fields::TERM] = $this->obj->api_array();
+            if ($this->obj->term()->is_word()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
+            } elseif ($this->obj->term()->is_verb()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
+            } elseif ($this->obj->term()->is_triple()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
+            } elseif ($this->obj->term()->is_formula()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
+            }
+            $vars[json_fields::TYPE] = $this->typ_id;
+        }
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 
@@ -109,7 +159,7 @@ class element extends db_object
      * html
      */
 
-    function name(): string
+    function name(): string|null
     {
         return $this->obj->name;
     }

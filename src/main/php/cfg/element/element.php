@@ -3,7 +3,7 @@
 /*
 
     model/element/element.php - either a word, triple, verb or formula with a link to a formula
-    -----------------------
+    -------------------------
 
     formula elements are terms or expression operators such as add or brackets
     The term formula elements are saved in the database for fast detection of dependencies
@@ -46,14 +46,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
-include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
-include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_ELEMENT . 'element_db.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
@@ -64,15 +64,15 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
@@ -80,8 +80,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -89,27 +89,15 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 
 class element extends db_object_seq_id_user
 {
-
-    // the allowed objects types for a formula element
-    // a word is used for an AND selection of values
-    // a triple is used for an AND selection of values
-    // a verb is used for dynamic usage of linked words for an AND selection
-    // a formula is used to include formula results of another formula
-    const ELM_CLASSES = [
-        word::class,
-        triple::class,
-        verb::class,
-        formula::class
-    ];
-
 
     /*
      * db const
@@ -118,35 +106,10 @@ class element extends db_object_seq_id_user
     // comments used for the database creation
     const string TBL_COMMENT = 'cache for fast update of formula resolved text';
 
-    // database fields only used for formula elements
-    const string FLD_ID = 'element_id';
-    const string FLD_FORMULA_COM = 'each element can only be used for one formula';
-    const string FLD_ORDER = 'order_nbr';
-    const sql_field_type FLD_ORDER_SQL_TYP = sql_field_type::INT;
-    const string FLD_TYPE = 'element_type_id';
-    const string FLD_REF_ID_COM = 'either a term, verb or formula id';
-    const string FLD_REF_ID = 'ref_id';
-    const string FLD_TEXT = 'resolved_text';
-    // TODO: is resolved text needed?
-
-    // all database field names excluding the id, standard name and user specific fields
-    const array FLD_NAMES = array(
-        formula_db::FLD_ID,
-        user_db::FLD_ID,
-        self::FLD_ORDER,
-        self::FLD_TYPE,
-        self::FLD_REF_ID
-    );
-
-    // field lists for the table creation
-    const array FLD_LST_ALL = array(
-        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
-        [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
-        [element_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
-        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
-        [self::FLD_REF_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_REF_ID_COM],
-        [self::FLD_TEXT, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-    );
+    // forward the const to enable usage of $this::CONST_NAME
+    const string FLD_ID = element_db::FLD_ID;
+    const array FLD_NAMES = element_db::FLD_NAMES;
+    const array FLD_LST_ALL = element_db::FLD_LST_ALL;
 
 
     /*
@@ -154,12 +117,12 @@ class element extends db_object_seq_id_user
      */
 
     // TODO should be actually just the linked formula id that extends the term
+    // TODO Prio 2 deprecate the symbol var and create it with a function
 
-    public string $type = '';        // the word, verb or formula class name to direct the links
-    public ?string $symbol = null;   // the database reference symbol for formula expressions
-    public ?object $obj = null;      // the word, verb or formula object
-    public ?word $wrd_obj = null;    // in case of a formula the corresponding word object
-    public ?string $frm_type = null; // in case of a special formula the predefined formula type
+    public formula $frm;                              // the repeated formula object for direct access when saving to the database
+    public word|verb|triple|formula|null $obj = null; // the word, verb, triple or formula object
+    public ?string $symbol = null;                    // the database reference symbol for formula expressions
+    public int $typ_id = 0;                           // the element type which is the term type plus the result phrases plus special formula selections
 
 
     /*
@@ -167,17 +130,48 @@ class element extends db_object_seq_id_user
      */
 
     /**
-     * always set the user because a formula element is always user specific
+     * always set the user because a formula element is always user-specific
      * @param user $usr the user who requested to use this formula element
      */
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        db_object_seq_id_user::__construct($usr);
+        $this->frm = new formula($usr);
     }
 
     /**
-     * map the formula element database fields for later load of the object
+     * reset the vars of this element
+     * @param bool $keep_user set to true to keep the original user for sandbox objects
+     */
+    function reset(bool $keep_user = false): void
+    {
+        parent::reset($keep_user);
+        if ($keep_user) {
+            $this->frm = new formula($this->get_user());
+        } else {
+            $this->frm = new formula(new user());
+        }
+        $this->obj = null;
+        $this->typ_id = 0;
+    }
+
+    /**
+     * clone this object and all linked objects
+     * @return $this a complete clone including a clone of all child objects
+     */
+    function clone_all(): element
+    {
+        $elm = parent::clone_all();
+        $elm->frm = $elm->frm->clone_all();
+        if ($elm->obj != null) {
+            $elm->obj = $elm->obj->clone_all();
+        }
+        return $elm;
+    }
+
+    /**
+     * map the formula element database fields for a later load of the object
+     * TODO Prio 2 rename to row_mapper and use the term cache to avoid reloading of terms
      *
      * @param array|null $db_row with the data directly from the database
      * @return bool true if the triple is loaded and valid
@@ -185,11 +179,27 @@ class element extends db_object_seq_id_user
     function row_mapper_sandbox(?array $db_row): bool
     {
         $this->id = 0;
-        $result = parent::row_mapper($db_row, self::FLD_ID);
+        $result = parent::row_mapper($db_row, element_db::FLD_ID);
         if ($result) {
-            $par_typ = new parameter_type();
-            $this->type = $par_typ->class_name($db_row[self::FLD_TYPE]);
-            $this->load_obj_by_id($db_row[self::FLD_REF_ID]);
+            if (array_key_exists(element_db::FLD_REF_ID, $db_row)
+                and array_key_exists(element_db::FLD_TYPE, $db_row)) {
+                $id = $db_row[element_db::FLD_REF_ID];
+                $typ_id = $db_row[element_db::FLD_TYPE];
+                $this->set_object_by_id($id, $typ_id);
+            }
+        }
+        if ($result) {
+            if (array_key_exists(formula_db::FLD_ID, $db_row)) {
+                $frm = new formula($this->get_user());
+                $frm->load_by_id($db_row[formula_db::FLD_ID]);
+                $this->frm = $frm;
+            }
+        }
+        if ($result) {
+            if (array_key_exists(element_db::FLD_TYPE, $db_row)) {
+                $this->typ_id = $db_row[element_db::FLD_TYPE];
+                $this->validate_type();
+            }
         }
         return $result;
     }
@@ -197,9 +207,9 @@ class element extends db_object_seq_id_user
     /**
      * map an element api json to this model element object
      * @param array $api_json the api array with the element values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      *                              including the user who has requested the mapping e.g. to check permissions to set code id or profiles
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -207,30 +217,40 @@ class element extends db_object_seq_id_user
             log_warning('Missing id in api_json');
         } elseif (!array_key_exists(json_fields::OBJECT_CLASS, $api_json)) {
             log_warning('Missing class in api_json');
+        } elseif (!array_key_exists(json_fields::FORMULA, $api_json)) {
+            log_warning('Missing formula id in api_json');
         } else {
+            $this->id = $api_json[json_fields::ID];
+            $frm = new formula($this->get_user());
+            if ($frm->api_mapper($api_json[json_fields::FORMULA], $usr_msg)) {
+                $this->frm = $frm;
+            }
             if ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd = new word($this->get_user());
-                if ($wrd->api_mapper($api_json, $usr_msg)) {
+                if ($wrd->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
                     $this->obj = $wrd;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->get_user());
-                if ($trp->api_mapper($api_json, $usr_msg)) {
+                if ($trp->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
                     $this->obj = $trp;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
+                // TODO Prio 1 use verb_id
                 $vrb = new verb();
                 if ($usr_msg->is_ok()) {
                     $this->obj = $vrb;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
                 $frm = new formula($this->get_user());
-                if ($frm->api_mapper($api_json, $usr_msg)) {
+                if ($frm->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
                     $this->obj = $frm;
                 }
             } else {
                 $this->obj = null;
             }
+            $this->typ_id = $api_json[json_fields::TYPE];
+            $this->validate_type();
         }
         return $usr_msg->is_ok();
     }
@@ -251,17 +271,30 @@ class element extends db_object_seq_id_user
     {
         $vars = [];
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
-            $vars = $this->obj->api_json_array($typ_lst, $usr);
-            if ($this->is_word()) {
-                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
-            } elseif ($this->is_triple()) {
-                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
-            } elseif ($this->is_verb()) {
-                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
-            } elseif ($this->is_formula()) {
-                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
+            if ($this->id() != 0) {
+                $vars[json_fields::ID] = $this->id();
+            }
+            if ($this->frm->id() != 0) {
+                $vars[json_fields::FORMULA] = $this->frm->api_json_array($typ_lst, $usr);
+            }
+            if ($this->obj != null) {
+                $vars[json_fields::TERM] = $this->obj->api_json_array($typ_lst, $usr);
+                if ($this->is_word()) {
+                    $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
+                } elseif ($this->is_triple()) {
+                    $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
+                } elseif ($this->is_verb()) {
+                    $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
+                } elseif ($this->is_formula()) {
+                    $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
+                } else {
+                    $vars[json_fields::OBJECT_CLASS] = '';
+                }
             } else {
                 $vars[json_fields::OBJECT_CLASS] = '';
+            }
+            if ($this->typ_id != 0) {
+                $vars[json_fields::TYPE] = $this->typ_id;
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -279,27 +312,44 @@ class element extends db_object_seq_id_user
     /**
      * @return string the element name to the user in the most simple form (without any ids)
      */
-    function name(): string
+    function name(): string|null
     {
-        if ($this->obj != null) {
-            return $this->obj->name();
+        return $this->obj->name();
+    }
+
+    /**
+     * set the element object by the id and the type id
+     * TODO use cache to avoid db reloading
+     *
+     * @param int $id the database id of the element object
+     * @param int $typ_id the id of the element object type
+     * @return bool true if a valid object has been set
+     */
+    function set_object_by_id(int $id, int $typ_id): bool
+    {
+        global $sys;
+
+        $typ = $sys->typ_lst->elm_typ->get($typ_id);
+        if ($typ->code_id == element_types::WORD_SELECTOR or $typ->code_id == element_types::WORD_RESULT) {
+            $obj = new word($this->get_user());
+        } elseif ($typ->code_id == element_types::VERB_SELECTOR) {
+            $obj = new verb();
+        } elseif ($typ->code_id == element_types::TRIPLE_SELECTOR or $typ->code_id == element_types::TRIPLE_RESULT) {
+            $obj = new triple($this->get_user());
+        } elseif ($typ->code_id == element_types::FORMULA_SELECTOR) {
+            $obj = new formula($this->get_user());
         } else {
-            return '';
+            $obj = new word($this->get_user());
+            log_err('id of type ' . $this->type() . ' is not expected');
         }
+        $this->obj = $obj;
+        return $obj->load_by_id($id);
     }
 
     /**
-     * @return int the database id of the related object
+     * @return int|null the database id of the related object
      */
-    function id(): int
-    {
-        return $this->obj?->id();
-    }
-
-    /**
-     * @return int the database id of the related object
-     */
-    function trm_id(): int
+    function trm_id(): int|null
     {
         return $this->obj?->id();
     }
@@ -307,6 +357,54 @@ class element extends db_object_seq_id_user
     function term(): term
     {
         return $this->obj?->term();
+    }
+
+    /**
+     * set the element type based on the given term or the already set element object
+     * @param bool $res_phr if true, the element is only used to add the phrase to the result phrases
+     * @param term|null $trm if given, use this term to detect the element type
+     * @return void
+     */
+    function set_type(bool $res_phr = false, ?term $trm = null): void
+    {
+        global $sys;
+
+        $typ_lst = $sys->typ_lst->elm_typ;
+
+        if ($trm == null) {
+            $trm = $this->obj->term();
+        }
+        if ($trm == null) {
+            log_err('term cannot be null when trying to set the type of an element');
+        }
+        if ($trm->is_word()) {
+            if ($res_phr) {
+                $this->typ_id = $typ_lst->id(element_types::WORD_RESULT);
+            } else {
+                $this->typ_id = $typ_lst->id(element_types::WORD_SELECTOR);
+            }
+        } elseif ($this->type() == verb::class) {
+            $this->typ_id = $typ_lst->id(element_types::VERB_SELECTOR);
+        } elseif ($this->type() == triple::class) {
+            if ($res_phr) {
+                $this->typ_id = $typ_lst->id(element_types::TRIPLE_RESULT);
+            } else {
+                $this->typ_id = $typ_lst->id(element_types::TRIPLE_SELECTOR);
+            }
+        } elseif ($this->type() == formula::class) {
+            $this->typ_id = $typ_lst->id(element_types::FORMULA_SELECTOR);
+        } else {
+            log_err('type of term ' . $trm->dsp_id() . ' is unknown');
+        }
+    }
+
+    function type(): string
+    {
+        if ($this->obj != null) {
+            return $this->obj::class;
+        } else {
+            return '';
+        }
     }
 
 
@@ -328,7 +426,7 @@ class element extends db_object_seq_id_user
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_fields(element_db::FLD_NAMES);
 
         return $qp;
     }
@@ -341,23 +439,23 @@ class element extends db_object_seq_id_user
     function load_obj_by_id(int $id): int
     {
         if ($id != 0 and $this->get_user()->is_set()) {
-            if ($this->type == word::class) {
+            if ($this->type() == word::class) {
                 $wrd = new word($this->get_user());
                 $wrd->load_by_id($id);
                 $this->symbol = chars::WORD_START . $wrd->id() . chars::WORD_END;
                 $this->obj = $wrd;
-            } elseif ($this->type == triple::class) {
+            } elseif ($this->type() == triple::class) {
                 $trp = new triple($this->get_user());
                 $trp->load_by_id($id);
                 $this->symbol = chars::TRIPLE_START . $trp->id() . chars::TRIPLE_END;
                 $this->obj = $trp;
-            } elseif ($this->type == verb::class) {
+            } elseif ($this->type() == verb::class) {
                 $vrb = new verb;
                 $vrb->set_user($this->get_user());
                 $vrb->load_by_id($id);
                 $this->symbol = chars::TRIPLE_START . $vrb->id() . chars::TRIPLE_END;
                 $this->obj = $vrb;
-            } elseif ($this->type == formula::class) {
+            } elseif ($this->type() == formula::class) {
                 $frm = new formula($this->get_user());
                 $frm->load_by_id($id);
                 $this->symbol = chars::FORMULA_START . $frm->id() . chars::FORMULA_END;
@@ -369,20 +467,17 @@ class element extends db_object_seq_id_user
                 $this->wrd_obj = $wrd;
                 */
                 //
-                if ($frm->is_predefined()) {
-                    $this->frm_type = $frm->type_cl;
-                }
             } else {
-                log_err('id of type ' . $this->type . ' is not expected');
+                log_err('id of type ' . $this->type() . ' is not expected');
             }
-            log_debug("element->load got " . $this->dsp_id() . " (" . $this->symbol . ").");
+            log_debug("element->load got " . $this->dsp_id());
         }
         return $id;
     }
 
     /**
      * create an SQL statement to retrieve a formula element by id from the database
-     * just set the class formula element for the parent function
+     * set the class formula element for the parent function
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
@@ -397,6 +492,10 @@ class element extends db_object_seq_id_user
     /*
      * forward
      */
+
+    // TODO Prio 2 deprecate because elements should never be excluded
+    //             because excluded term should not be used in expression
+    //             this implies that excluding a term updates all related formulas
 
     function include(): void
     {
@@ -413,14 +512,22 @@ class element extends db_object_seq_id_user
         if ($this->is_verb()) {
             return false;
         } else {
-            return $this->obj->is_excluded();
+            if ($this->obj != null) {
+                return $this->obj->is_excluded();
+            } else {
+                return false;
+            }
         }
     }
 
     function is_word(): bool
     {
-        if ($this->obj::class == word::class) {
-            return true;
+        if ($this->obj != null) {
+            if ($this->obj::class == word::class) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -428,8 +535,12 @@ class element extends db_object_seq_id_user
 
     function is_triple(): bool
     {
-        if ($this->obj::class == triple::class) {
-            return true;
+        if ($this->obj != null) {
+            if ($this->obj::class == triple::class) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -437,8 +548,12 @@ class element extends db_object_seq_id_user
 
     function is_verb(): bool
     {
-        if ($this->obj::class == verb::class) {
-            return true;
+        if ($this->obj != null) {
+            if ($this->obj::class == verb::class) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -446,8 +561,12 @@ class element extends db_object_seq_id_user
 
     function is_formula(): bool
     {
-        if ($this->obj::class == formula::class) {
-            return true;
+        if ($this->obj != null) {
+            if ($this->obj::class == formula::class) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -456,12 +575,68 @@ class element extends db_object_seq_id_user
     /**
      * checks if the element object can be added to the database
      *
-     * @param user_message $usr_msg the explanation for the user why the element cannot yet be added to the database
+     * @param user_message|Message $msg the explanation for the user why the element cannot yet be added to the database
      * @return true if all mandatory vars of the element are set and the element can be stored in the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
-        return $this->obj->db_ready($usr_msg);
+        if ($this->obj != null) {
+            if ($this->typ_id > 0) {
+                if ($this->frm->db_ready($msg)) {
+                    return $this->obj->db_ready($msg);
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /*
+     * validate
+     */
+
+    /**
+     * check if the object contradicts the element type
+     * @return bool true if no mismatch is detected
+     */
+    function validate_type(): bool
+    {
+        global $sys;
+
+        $result = false;
+        $typ_lst = $sys->typ_lst->elm_typ;
+
+        $trm = $this->obj?->term();
+        if ($trm != null) {
+            if ($trm->is_word()) {
+                if ($this->typ_id == $typ_lst->id(element_types::WORD_SELECTOR)
+                    or $this->typ_id == $typ_lst->id(element_types::WORD_RESULT)) {
+                    $result = true;
+                }
+            } elseif ($this->type() == verb::class) {
+                if ($this->typ_id == $typ_lst->id(element_types::VERB_SELECTOR)) {
+                    $result = true;
+                }
+            } elseif ($this->type() == triple::class) {
+                if ($this->typ_id == $typ_lst->id(element_types::TRIPLE_SELECTOR)
+                    or $this->typ_id == $typ_lst->id(element_types::TRIPLE_RESULT)) {
+                    $result = true;
+                }
+            } elseif ($this->type() == formula::class) {
+                if ($this->typ_id == $typ_lst->id(element_types::FORMULA_SELECTOR)) {
+                    $result = true;
+                }
+                $this->typ_id = $typ_lst->id(element_types::FORMULA_SELECTOR);
+            }
+        }
+        if (!$result) {
+            log_err('element type ' . $this->typ_id . ' does not match term ' . $trm->dsp_id());
+        }
+        return $result;
     }
 
 
@@ -471,33 +646,36 @@ class element extends db_object_seq_id_user
 
     /**
      * create the sql statement to add an element to the database
-     * always all fields are included in the query to be able to remove overwrites with a null value
+     * all fields are always included in the query to be able to remove by overwriting with a null value
      *
      * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
+        // create an empty sandbox object but of the same type and with the same user to detect the fields that should be written
+        $db_row = $this->clone_reset();
+
         // clone the sql parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
+
         // set the sql query type
         $sc_par_lst_used->add(sql_type::INSERT);
-        // get the fields and values that are filled and should be written to the db
-        $elm_empty = new element($this->get_user()->clone_reset());
-        $fvt_lst = $this->db_fields_changed($elm_empty);
 
-        // create the sql and get the sql parameters used
-        $qp = new sql_par($this::class, $sc_par_lst_used);
+        // get the field names, values and parameter types that have been changed
+        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
+
+        // prepare the sql statement
+        $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::INSERT, $sc_par_lst_used);
+
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->db_values();
-
-        // update the sql creator settings
-        $sc->set_class($this::class, $sc_par_lst_used);
-        $sc->set_name($qp->name);
 
         return $qp;
     }
@@ -506,24 +684,103 @@ class element extends db_object_seq_id_user
      * create the sql statement to update a word in the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param element $db_row the word with the database values before the update
+     * @param element|db_object_seq_id $db_row the word with the database values before the update
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
-    function sql_update(sql_creator $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list()): sql_par
+    function sql_update(
+        sql_creator              $sc,
+        element|db_object_seq_id $db_row,
+        user_message             $usr_msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()
+    ): sql_par|null
     {
-        // get the field names, values and parameter types that have been changed
-        // and that needs to be updated in the database
-        // the db_* child function call the corresponding parent function
-        // including the sql parameters for logging
-        $fvt_lst = $this->db_fields_changed($db_row);
-        $this->db_fields_all();
-        // create the sql and get the sql parameters used
-        $qp = new sql_par($this::class, $sc_par_lst);
-        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
-        $qp->par = $fvt_lst->db_values();
+        if ($this->can_update($usr_msg)) {
+            // clone the sql parameter list to avoid changing the given list
+            $sc_par_lst_used = clone $sc_par_lst;
 
-        // unlike the db_* function the sql_update_* parent function is called directly
+            // set the sql query type
+            $sc_par_lst_used->add(sql_type::UPDATE);
+
+            // get the field names, values and parameter types that have been changed
+            // and that needs to be updated in the database
+            // the db_* child function call the corresponding parent function
+            // including the sql parameters for logging
+            $fvt_lst = $this->db_fields_changed($db_row, $usr_msg);
+
+            // prepare the sql statement
+            $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::UPDATE, $sc_par_lst_used);
+
+            $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
+            $qp->par = $fvt_lst->db_values();
+
+            // unlike the db_* function the sql_update_* parent function is called directly
+
+            return $qp;
+        } else {
+            return null;
+        }
+    }
+
+    function sql_prepare(
+        sql_creator        $sc,
+        sql_par_field_list $fvt_lst,
+        user_message       $usr_msg,
+        sql_type           $sql_type,
+        sql_type_list      $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+
+        // set the sql query type
+        $sc_par_lst_used->add($sql_type);
+
+        // get the list of all fields that can be changed by the user
+        $fld_lst_all = $this->db_fields_all();
+
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+
+        // create the sql and get the sql parameters used
+        $qp = new sql_par($this::class, $sc_par_lst_used, $ext);
+        $sc->set_class($this::class, $sc_par_lst_used);
+        $sc->set_name($qp->name);
+
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_delete(
+        sql_creator   $sc,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::DELETE);
+
+        // set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst_used);
+        $sc->set_name($qp->name);
+
+        // delete element
+        $par_lst = [$this->id()];
+        $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);
+        $qp->par = $par_lst;
+
         return $qp;
     }
 
@@ -533,35 +790,67 @@ class element extends db_object_seq_id_user
      */
 
     /**
-     * get a list of all database fields that might be changed
-     * field list must be corresponding to the db_fields_changed fields
+     * to get a list of all database fields that might be changed,
+     * a field list must be corresponding to the db_fields_changed fields
      *
      * @return array list of all database field names that might have been updated
      */
-    function db_fields_all(): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return [
-            $this::FLD_ID,
-            user_db::FLD_ID,
-            self::FLD_REF_ID
-        ];
+        return array_merge(
+            parent::db_fields_all(),
+            [
+                formula_db::FLD_ID,
+                element_type::FLD_ID,
+                user_db::FLD_ID,
+                element_db::FLD_REF_ID,
+            ],
+        );
     }
 
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param element $sbx the compare value to detect the changed fields
+     * @param element|db_object_seq_id $obj the compare value to detect the changed fields
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
-    function db_fields_changed(element $sbx): sql_par_field_list
+    function db_fields_changed(
+        element|db_object_seq_id $obj,
+        user_message             $msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
     {
-        $lst = new sql_par_field_list();
-        if ($sbx->trm_id() !== $this->trm_id()) {
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
+        if ($obj->frm->id() !== $this->frm->id()) {
             $lst->add_field(
-                term::FLD_ID,
+                formula_db::FLD_ID,
+                $this->frm->id(),
+                sql_field_type::INT,
+                $obj->frm->id()
+            );
+        }
+        if ($obj->typ_id !== $this->typ_id) {
+            $lst->add_field(
+                element_db::FLD_TYPE,
+                $this->typ_id,
+                sql_field_type::INT,
+                $obj->typ_id
+            );
+        }
+        if ($obj->get_user_id() !== $this->get_user_id()) {
+            $lst->add_field(
+                user_db::FLD_ID,
+                $this->get_user_id(),
+                sql_field_type::INT,
+                $obj->get_user_id()
+            );
+        }
+        if ($obj->trm_id() !== $this->trm_id()) {
+            $lst->add_field(
+                element_db::FLD_REF_ID,
                 $this->trm_id(),
-                term::FLD_ID_SQL_TYP,
-                $sbx->trm_id()
+                sql_field_type::INT,
+                $obj->trm_id()
             );
         }
         return $lst;
@@ -577,21 +866,27 @@ class element extends db_object_seq_id_user
      */
     function dsp_id(): string
     {
-        $lib = new library();
+        global $sys;
+
         $result = '';
-        if ($this->type <> '') {
-            $class_name = $lib->class_to_name($this->type);
-            $result .= $class_name . ' ';
+
+        $lib = new library();
+        $typ_lst = $sys->typ_lst->elm_typ;
+
+        if ($this->typ_id > 0) {
+            $result .= $typ_lst->name($this->typ_id) . ' ';
+        } else {
+            $result .= 'element type not set ';
         }
         $name = $this->name();
         if ($name <> '') {
             $result .= '"' . $name . '" ';
         }
-        if ($this->id() > 0) {
-            $result .= '(' . $this->id() . ')';
+        if ($this->obj != null) {
+            $result .= '(' . $this->obj->id() . ')';
         } else {
-            if ($this->obj != null) {
-                $result .= '(' . $this->obj->id() . ')';
+            if ($this->id() > 0) {
+                $result .= '(' . $this->id() . ')';
             }
         }
         $result .= $this->dsp_id_user();

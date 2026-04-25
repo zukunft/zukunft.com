@@ -17,4 +17,4 @@ PREPARE formula_list_by_trp_ref FROM
   LEFT JOIN user_formulas u    ON s.formula_id = u.formula_id AND u.user_id = ?
   LEFT JOIN elements l ON s.formula_id = l.formula_id
       WHERE l.ref_id = ?
-        AND l.element_type_id = ?';
+        AND (l.element_type_id = ? OR l.element_type_id = ?)';

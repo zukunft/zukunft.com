@@ -8,6 +8,13 @@
     "class": "word"
   },
   {
+    "name": "not set",
+    "code_id": "not_set",
+    "description": "no verb \/ predicate selected",
+    "id": 1,
+    "class": "verb"
+  },
+  {
     "id": 1,
     "protection": 3,
     "name": "mathematical constant",
@@ -25,12 +32,5 @@
     "user_text": "\"second\" = \"minute\" * 60",
     "ref_text": "{w24}={w104}*60",
     "class": "formula"
-  },
-  {
-    "name": "not set",
-    "code_id": "not_set",
-    "description": "no verb \/ predicate selected",
-    "id": 1,
-    "class": "verb"
   }
 ]

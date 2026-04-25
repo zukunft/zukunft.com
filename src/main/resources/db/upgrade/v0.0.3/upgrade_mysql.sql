@@ -276,7 +276,7 @@ CREATE TABLE IF NOT EXISTS `user_value_time_series`
     `protect_id`   int(11)   NOT NULL,
     `last_update`          timestamp NULL DEFAULT NULL
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='common parameters for a user specific list of intraday values';
+  DEFAULT CHARSET = utf8 COMMENT ='common parameters for a user-specific list of intraday values';
 
 --
 -- Indexes for table`user_value_time_series`
@@ -417,7 +417,7 @@ CREATE TABLE IF NOT EXISTS `groups_prime`
   DEFAULT CHARSET = utf8 COMMENT = 'to add a user given name using a 64 bit bigint group id index for up to four 16 bit phrase ids including the order';
 
 --
--- Table structure for saving a user specific group name
+-- Table structure for saving a user-specific group name
 --
 
 CREATE TABLE IF NOT EXISTS `user_groups_prime`
@@ -427,7 +427,7 @@ CREATE TABLE IF NOT EXISTS `user_groups_prime`
     `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
     `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'to link the user specific name to the group';
+  DEFAULT CHARSET = utf8 COMMENT = 'to link the user-specific name to the group';
 
 --
 -- Table structure for phrase group names of more than 16 phrases
@@ -442,7 +442,7 @@ CREATE TABLE IF NOT EXISTS `groups_big`
   DEFAULT CHARSET = utf8 COMMENT = 'to add a user given name using text group id index for an almost unlimited number of phrase ids including the order';
 
 --
--- Table structure for saving a user specific group name for more than 16 phrases
+-- Table structure for saving a user-specific group name for more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS `user_groups_big`
@@ -452,7 +452,7 @@ CREATE TABLE IF NOT EXISTS `user_groups_big`
     `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
     `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'for saving a user specific group name for more than 16 phrases';
+  DEFAULT CHARSET = utf8 COMMENT = 'for saving a user-specific group name for more than 16 phrases';
 
 -- --------------------------------------------------------
 

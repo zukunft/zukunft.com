@@ -114,26 +114,14 @@ class source_type_list extends type_list
 
     /**
      * overwrite the user_type_list get function to be able to return the correct object
-     * @param int $id the database id of the expected type
+     * @param int|string $id the database id of the expected type
      * @return source_type|null the type object
      */
-    function get_by_id(int $id): ?source_type
+    function get(int|string $id): ?source_type
     {
-        global $sys;
-
-        $lib = new library();
-        $result = null;
-        if ($id > 0) {
-            if (array_key_exists($id, $sys->typ_lst->src_typ->lst())) {
-                $result = $sys->typ_lst->src_typ->get($id);
-            } else {
-                log_err('Source type with is ' . $id . ' not found in ' . $lib->dsp_array($sys->typ_lst->src_typ->lst()));
-            }
-        } else {
-            log_debug('Source type id not not set');
-        }
-        return $result;
+        return parent::get($id);
     }
+
 }
 
 /**

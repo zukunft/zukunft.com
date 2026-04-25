@@ -17,8 +17,8 @@ BEGIN
 END;
 
 SELECT group_prime_delete_log
-    (1,
+    (3,
      3,
      320,
-     'Pi',
-     562956395970562);
+     'Pi (math)',
+     32770);

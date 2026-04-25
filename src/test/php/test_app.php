@@ -31,6 +31,7 @@
 
 namespace Zukunft\ZukunftCom\test\php;
 
+use Random\RandomException;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'db_check.php';
@@ -53,12 +54,14 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 class test_app
@@ -69,8 +72,8 @@ class test_app
      * return null if the db connection fails or the db is not compatible
      * TODO create a separate class for starting the backend and frontend
      *
-     * @param string $code_name the place that is displayed to the user e.g. add word
-     * @param bool $echo_env if true log the environment
+     * @param string $code_name the place that is displayed to the user e.g. add a word
+     * @param bool $echo_env if true, log the environment
      * @return sql_db the open database connection
      */
     function start(
@@ -87,6 +90,13 @@ class test_app
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
         session_start();
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
+        }
 
         /*
         require __DIR__ . '/vendor/autoload.php';
@@ -121,7 +131,7 @@ class test_app
 
     /**
      * open the database connection and load the base cache
-     * @param string $code_name the place that is displayed to the user e.g. add word
+     * @param string $code_name the place that is displayed to the user e.g. add a word
      * @return sql_db the open database connection
      */
     function open_db(string $code_name): sql_db
@@ -178,6 +188,12 @@ class test_app
             $sys->times->switch(system_time_type::LOAD_TYPES);
             // the types are general so the system user can be used to load the types
             $cac = new data_object($usr_sys);
+            // TODO Prio 1 review error and message handling
+            /*
+            if (!$sys->load_type_lists($db_con)) {
+                log_err('Type loading incomplete due to ');
+            }
+            */
             $sys->load_type_lists($db_con);
 
             $log = new change_log($usr_sys);
@@ -222,11 +238,16 @@ class test_app
 
         $sys_time_end = microtime(true);
         if ($sys_time_end > $sys->time_limit) {
-            $db_con->usr_id = users::SYSTEM_ID;
-            $db_con->set_class(system_time_type::class);
-            $sys_script_id = $db_con->get_id($sys->script);
+            $sys_script_id = $sys->typ_lst->sys_log_fnc->id_by_name($sys->script, false);
             if ($sys_script_id <= 0) {
-                $sys_script_id = $db_con->add_id($sys->script);
+                $sys_script = new system_time_type();
+                $sys_script->name = $sys->script;
+                $sys_script->code_id = $sys->script;
+                $sys_usr = new user();
+                $sys_usr->load_by_id(users::SYSTEM_ID);
+                $msg = new user_message($sys_usr);
+                $sys_script->save($msg);
+                $sys_script_id = $sys_script->id();
             }
             $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
             $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);

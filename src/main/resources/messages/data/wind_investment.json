@@ -104,7 +104,7 @@
       "name": "kilowatt"
     },
     {
-      "name": "per kWh"
+      "name": "kWh"
     },
     {
       "name": "Share"
@@ -265,6 +265,15 @@
     },
     {
       "name": "year"
+    },
+    {
+      "name": "production climate emissions"
+    },
+    {
+      "name": "climate gas emissions"
+    },
+    {
+      "name": "Production per year"
     }
   ],
   "triples": [
@@ -327,6 +336,11 @@
       "from": "Watt",
       "verb": "per",
       "to": "m²"
+    },
+    {
+      "name": "per kWh",
+      "verb": "per",
+      "to": "kWh"
     },
     {
       "name": "Power per Wind Turbine",
@@ -443,9 +457,15 @@
       "to": "Germany"
     },
     {
-      "name": "Production per year",
+      "name": "energy production per year",
       "from": "Production",
       "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "lifetime in years",
+      "from": "lifetime",
+      "verb": "in",
       "to": "year"
     },
     {
@@ -458,22 +478,27 @@
   "formulas": [
     {
       "name": "lifetime energy production",
-      "expression": "'\"energy production per year\" * \"lifetime in years\"",
+      "expression": "=\"energy production per year\" * \"lifetime in years\"",
+      "assigned_word": "Power Plant"
+    },
+    {
+      "name": "production climate emissions per kWh",
+      "expression": "=\"production climate emissions\" / \"kWh\"",
       "assigned_word": "Power Plant"
     },
     {
       "name": "CO2 reduction based on replacement mix",
-      "expression": "'\"CO2-eq\" \"replacement mix\" / \"CO2-eq\" \"production climate emissions per kWh\"",
+      "expression": "=\"CO2-eq\" \"replacement mix\" / \"CO2-eq\" \"production climate emissions per kWh\"",
       "assigned_word": "Power Plant"
     },
     {
       "name": "CO2 über Laufzeit",
-      "expression": "'\"CO2-eq\" \"climate gas emissions\" * \"lifetime\"",
+      "expression": "=\"CO2-eq\" \"climate gas emissions\" * \"lifetime\"",
       "assigned_word": "Power Plant"
     },
     {
       "name": "Euro pro tonne",
-      "expression": "'\"CO2-eq\" \"climate gas emissions\" * \"lifetime\" /  \"investment\"",
+      "expression": "=\"CO2-eq\" \"climate gas emissions\" * \"lifetime\" /  \"investment\"",
       "assigned_word": "Power Plant"
     }
   ],

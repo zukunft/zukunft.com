@@ -46,14 +46,14 @@ PREPARE source_insert_log_01110011000_call FROM
     'SELECT source_insert_log_01110011000 (?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT source_insert_log_01110011000 (
-               'The International System of Units',
+               'Federal Statistical Office',
                3,
                1,
                57,
                56,
                58,
-               'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards',
+               'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.',
                59,
                4,
                60,
-               'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf');
+               'https://www.bfs.admin.ch/bfs/en/home.html');

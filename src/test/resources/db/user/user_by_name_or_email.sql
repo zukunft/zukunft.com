@@ -3,17 +3,25 @@ PREPARE user_by_name_or_email (text, text) AS
          user_id,
          user_name,
          ip_address,
-         password,
-         description,
-         code_id,
-         user_profile_id,
          email,
+         password,
+         activation_key,
+         activation_timeout,
+         last_login,
+         last_logoff,
+         user_profile_id,
+         code_id,
+         user_type_id,
+         right_level,
+         user_status_id,
+         excluded,
+         created,
+         description,
          first_name,
          last_name,
          term_id,
-         source_id,
-         activation_key,
-         activation_timeout
+         view_id,
+         source_id
     FROM users
    WHERE (user_name = $1
       OR email = $2);

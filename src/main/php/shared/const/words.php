@@ -43,7 +43,7 @@ class words
 
     // words used in the frontend and backend for the system configuration
     // code_id and name of a words used by the system for its own configuration
-    // e.g. the number of decimal places related to the user specific words
+    // e.g. the number of decimal places related to the user-specific words
     // system configuration that are core for the database setup and update check are using the flat cfg methods
     // *_COM is the tooltip for the word; to have the comments on one place the yaml is the preferred place
     // *_ID is the expected database id only used for system testing
@@ -56,7 +56,9 @@ class words
 
     // keywords to select the system configuration
     const string THIS_SYSTEM = 'zukunft.com';
+    // TODO Prio 1 add a code_id to all words that are used by the system
     const string SYSTEM = 'system';
+    const string SYSTEM_CODE_ID = 'system';
     const string CONFIGURATION = 'configuration';
 
     // words used to select parts of the system configuration where the normal name should not be changed
@@ -88,6 +90,12 @@ class words
     const string LAUNCH = 'launch';
     const int LAUNCH_ID = 197;
 
+    const string LIMITS = 'limits';
+    const string LIFETIME = 'lifetime';
+    const string CHECK = 'check';
+    const string PERIOD = 'period';
+    const string TOLERANCE = 'tolerance';
+
     // for the user settings
     const string ROW = 'row';
     const string LIMIT = 'limit';
@@ -97,11 +105,13 @@ class words
     const string FORMULA = 'formula';
     const string WORDS = 'words';
     const string VERBS = 'verbs';
+    const int VERBS_ID = 419;
     const string TRIPLES = 'triples';
     const string SOURCES = 'sources';
     const string REFERENCES = 'references';
     const string VALUES = 'values';
     const string FORMULAS = 'formulas';
+    const string ELEMENTS = 'elements';
     const string VIEWS = 'views';
     const string COMPONENTS = 'components';
     const string CHANGES = 'changes';
@@ -177,6 +187,7 @@ class words
     const string AUTOMATIC = 'automatic';
     const string CREATE = 'create';
     const string STORE = 'store';
+    const string REMOVE = 'remove';
     const string VIEW = 'view';
     const string FREEZE = 'freeze';
     const string CHANGE = 'change';
@@ -232,6 +243,8 @@ class words
     const int FLOW_ID = 101;
     const string MINUTE = 'minute';
     const int MINUTE_ID = 104;
+    const string HOUR = 'hour';
+    const int HOUR_ID = 105;
     const string YEAR_2019 = '2019';
     const int YEAR_2019_ID = 139;
     const string YEAR_2020 = '2020';
@@ -264,7 +277,7 @@ class words
     const string SPEED = 'speed';
     const int SPEED_ID = 87;
     const string METER = 'meter';
-    const int METER_ID = 1138;
+    const int METER_ID = 1161;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 131;
     const string TRANSITION = 'transition';
@@ -434,10 +447,11 @@ class words
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
     const string TEST_ADD = 'System Test Word';
+    const string TEST_ADD_CODE_ID = 'System Test Word code id';
     const string TEST_ADD_COM = 'test description added to the word via import';
     const string TEST_ADD_TO = 'System Test Word To';
     const string TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
-    const string TEST_ADD_VIA_SQL = 'System Test Word added via sql insert';
+    const string TEST_ADD_GROUP_PRIME = 'System Test Word for prime values';
     const string TEST_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
     const string TEST_ADD_GROUP_PRIME_SQL = 'System Test Word for prime group add via sql insert';
     const string TEST_ADD_GROUP_MOST_FUNC = 'System Test Word for main group add via sql function';
@@ -594,9 +608,9 @@ class words
         self::COMPANY,
         self::TEST_ADD,
         self::TEST_ADD_VIA_FUNC,
-        self::TEST_ADD_VIA_SQL,
         self::TEST_ADD_GROUP_MOST_FUNC,
         self::TEST_ADD_GROUP_MOST_SQL,
+        self::TEST_ADD_GROUP_PRIME,
         self::TEST_ADD_GROUP_PRIME_FUNC,
         self::TEST_ADD_GROUP_PRIME_SQL,
         self::TEST_ADD_GROUP_BIG_FUNC,
@@ -641,9 +655,24 @@ class words
         self::TEST_UPD_API
     );
 
-    // array of word names that used for db read testing and that should not be renamed
+    // array of word names that used for system configuration or db read testing
+    // and that should not be renamed for all users
     const array FIXED_NAMES = array(
-        self::MATH
+        self::MATH,
+        self::POD,
+        self::JOB,
+        self::USER,
+        self::FRONTEND,
+        self::BACKEND,
+        self::LANGUAGE,
+        self::BYTE,
+        self::URL,
+        self::LAUNCH,
+        self::LIMITS,
+        self::LIFETIME,
+        self::CHECK,
+        self::PERIOD,
+        self::TOLERANCE,
     );
 
     // list of words that are used for system testing that should be removed are the system test has been completed
@@ -651,7 +680,7 @@ class words
     const array TEST_WORDS = array(
         self::TEST_ADD,
         self::TEST_ADD_VIA_FUNC,
-        self::TEST_ADD_VIA_SQL,
+        self::TEST_ADD_GROUP_PRIME,
         self::TEST_ADD_GROUP_PRIME_FUNC,
         self::TEST_ADD_GROUP_PRIME_SQL,
         self::TEST_ADD_GROUP_MOST_FUNC,

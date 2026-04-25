@@ -42,7 +42,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::TYPES . 'component_type_list.php';
 include_once html_paths::TYPES . 'formula_link_type_list.php';
 include_once html_paths::TYPES . 'formula_type_list.php';
-include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'phrase_type_list.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::TYPES . 'ref_type_list.php';
 include_once html_paths::TYPES . 'share.php';
@@ -64,7 +64,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\component_type_list;
 use Zukunft\ZukunftCom\main\php\web\types\formula_link_type_list;
 use Zukunft\ZukunftCom\main\php\web\types\formula_type_list;
-use Zukunft\ZukunftCom\main\php\web\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\web\types\phrase_type_list;
 use Zukunft\ZukunftCom\main\php\web\types\protection;
 use Zukunft\ZukunftCom\main\php\web\types\ref_type_list;
 use Zukunft\ZukunftCom\main\php\web\types\share;
@@ -115,7 +115,7 @@ class type_lists_ui_tests
         $test_page .= $html->label(verbs::NAME, verbs::NAME);
         $test_page .= $ui_cache->html_verbs->selector($form) . '<br>';
 
-        $test_page .= $html->label(phrase_types::NAME, url_var::PHRASE_TYPE);
+        $test_page .= $html->label(phrase_type_list::NAME, url_var::PHRASE_TYPE);
         $test_page .= $ui_cache->html_phrase_types->selector($form) . '<br>';
 
         $test_page .= $html->label(formula_type_list::NAME, formula_type_list::NAME);

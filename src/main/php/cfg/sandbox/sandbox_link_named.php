@@ -48,11 +48,16 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_LOG . 'change_log_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
@@ -67,11 +72,17 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -153,7 +164,7 @@ class sandbox_link_named extends sandbox_link
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
      * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -178,17 +189,17 @@ class sandbox_link_named extends sandbox_link
      * import the name and description of a sandbox link object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
-        array $in_ex_json,
-        user_message $usr_msg,
+        array        $in_ex_json,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);;
+        parent::import_mapper($in_ex_json, $msg, $dto);;
 
         // reset of object not needed, because the calling function has just created the object
         // name is not mandatory because might be generated based on the link
@@ -199,7 +210,7 @@ class sandbox_link_named extends sandbox_link
             $this->description = $in_ex_json[json_fields::DESCRIPTION];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -251,12 +262,12 @@ class sandbox_link_named extends sandbox_link
      *
      * @return string the name from the object e.g. word using the same function as the phrase and term
      */
-    function name(bool $ignore_excluded = false): string
+    function name(bool $ignore_excluded = false): string|null
     {
         if (!$this->is_excluded() or $ignore_excluded) {
             return $this->name;
         } else {
-            return '';
+            return null;
         }
     }
 
@@ -270,7 +281,12 @@ class sandbox_link_named extends sandbox_link
         if ($this->name == null) {
             return null;
         } else {
-            return $this->name();
+            // TODO Prio 1 check where excluded names must be null instead of an empty string
+            if (!$this->is_excluded()) {
+                return $this->name;
+            } else {
+                return null;
+            }
         }
     }
 
@@ -297,7 +313,7 @@ class sandbox_link_named extends sandbox_link
      */
     function cloned_named(string $name): sandbox_link_named
     {
-        $obj_cpy = parent::cloned();
+        $obj_cpy = parent::clone_reset(true);
         $obj_cpy->id = $this->id;
         $obj_cpy->set_fob($this->fob());
         $obj_cpy->set_tob($this->tob());
@@ -342,19 +358,19 @@ class sandbox_link_named extends sandbox_link
      */
     function set_type_id(?int $type_id, user $usr_req): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr_req->can_set_type_id()) {
             $this->type_id = $type_id;
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr_req->name(),
                 msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
                 msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -381,20 +397,20 @@ class sandbox_link_named extends sandbox_link
         user      $usr_req = new user()
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($code_id == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_code_id($code_id)) {
                 $this->set_type_id($typ_lst->id($code_id), $usr_req);
             } else {
-                $usr_msg->add_id_with_vars($msg_id, [
+                $msg->add($msg_id, [
                     msg_id::VAR_NAME => $code_id
                 ]);
                 $this->type_id = null;
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -415,20 +431,44 @@ class sandbox_link_named extends sandbox_link
         user      $usr_req = new user()
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($name == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_name($name)) {
                 $this->set_type_id($typ_lst->id_by_name($name), $usr_req);
             } else {
-                $usr_msg->add_id_with_vars($msg_id, [
+                $msg->add($msg_id, [
                     msg_id::VAR_NAME => $name
                 ]);
                 $this->type_id = null;
             }
         }
-        return $usr_msg;
+        return $msg;
+    }
+
+    /**
+     * get the term corresponding to the given name
+     * in this case, if a formula or verb with the same name already exists, get it
+     * @param string|null $name the name of the term to search for
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return term|null a term with the given name or null if no term is found
+     */
+    function get_term_by_name(string|null $name, user_message $msg): term|null
+    {
+        $result = null;
+        if ($name !== null) {
+            $trm = new term($this->get_user());
+            if ($trm->load_standard_by_name($name, $msg)) {
+                $result = $trm;
+            } else {
+                if ($trm->load_by_name($name)) {
+                    $result = $trm;
+                }
+            }
+            $trm->load_by_name($name);
+        }
+        return $result;
     }
 
 
@@ -453,6 +493,32 @@ class sandbox_link_named extends sandbox_link
     /*
      * info
      */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param sandbox_link_named|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param sandbox_link_named|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return sandbox_link_named|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        sandbox_link_named|CombineObject|db_object_seq_id $std_obj,
+        sandbox_link_named|CombineObject|db_object_seq_id $result
+    ): sandbox_link_named|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->name !== $this->name) {
+            $result->name = $this->name;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        if ($std_obj->type_id !== $this->type_id) {
+            $result->type_id = $this->type_id;
+        }
+        return $result;
+    }
 
     /**
      * check if the named object in the database needs to be updated
@@ -492,6 +558,171 @@ class sandbox_link_named extends sandbox_link
         return $result;
     }
 
+    /**
+     * avoid duplicates
+     * if any of the unit keys of the object matches true is returned
+     * @param sandbox_link_named|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_similar(sandbox_link_named|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_similar($obj_to_check);
+
+        if ($this::class == $obj_to_check::class) {
+            if ($this->name() == $obj_to_check->name()) {
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * can merge if all unique keys match
+     * check that the given object is by all unique keys the same as the actual object
+     * @param sandbox_link_named|sandbox_link|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_same(sandbox_link_named|sandbox_link|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_same($obj_to_check);
+
+        if ($this::class == $obj_to_check::class) {
+            if ($this->name() != $obj_to_check->name()) {
+                $result = false;
+            }
+        } else {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this named link object based on the given object
+     * if the id is set in the given word loaded from the database, but this import word does not yet have the db id, set the id.
+     * if the given name is not set (null) the given name is not remove.
+     * if the given name is an empty string the given name is removed.
+     *
+     * @param sandbox_link_named|CombineObject|db_object_seq_id $obj word with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox_link_named|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $msg = parent::fill($obj, $usr_req);
+
+        if ($obj::class == phrase::class or $obj::class == term::class) {
+            $obj = $obj->obj();
+        }
+        if ($this->type_id === null and $obj->type_id != null) {
+            $this->type_id = $obj->type_id;
+        } elseif ($this->type_id() != $obj->type_id()) {
+            $lib = new library();
+            $msg->add(msg_id::DIFF_TYPE, [
+                msg_id::VAR_TYPE => $obj->type_name(),
+                msg_id::VAR_TYPE_CHK => $this->type_name(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
+            ]);
+        }
+        if ($this->name === null and $obj->name != null) {
+            $this->name = $obj->name;
+        }
+        if ($this->description === null and $obj->description != '') {
+            $this->description = $obj->description;
+        }
+
+        return $msg;
+    }
+
+    /**
+     * check if the id parameters are supposed to be changed
+     * @param sandbox_named|db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(sandbox_named|db_object_seq_id $db_rec): bool
+    {
+        $result = parent::is_key_updated($db_rec);
+
+        if ($db_rec->name <> $this->name) {
+            $result = True;
+        }
+
+        return $result;
+    }
+
+    /**
+     * just to double-check if the get similar function is working correctly
+     * so if the formulas "millions" is compared with the word "millions" this function returns true
+     * in short: if two objects are similar by this definition, they should not be both in the database
+     * @param null|object $obj_to_check the object used for the comparison
+     * @return bool true if the objects represent the same
+     */
+    function is_similar_named(?object $obj_to_check): bool
+    {
+        $result = false;
+        if ($obj_to_check != null) {
+            if ($this::class == $obj_to_check::class) {
+                $result = $this->is_same_std($obj_to_check);
+            } else {
+                if ($this->name() == $obj_to_check->name()) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check if an object with the unique key already exists
+     * returns null if no similar object is found
+     * or returns the object with the same unique key that is not the actual object;
+     * any warning or error message needs to be created in the calling function
+     * e.g. if the user tries to create a formula named "millions"
+     *      but a word with the same name already exists, a term with the word "millions" is returned
+     *      in this case the calling function should suggest the user to name the formula "scale millions"
+     *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return type_object|sandbox|null a filled object that links the same objects
+     *                      or null if nothing similar has been found
+     */
+    function get_similar(user_message $msg): type_object|sandbox|null
+    {
+        $sim = parent::get_similar($msg);
+
+        if ($sim == null) {
+            // check potential duplicate by name
+            // for triples it needs to be checked if a term (word, verb or formula) with the same name already exist
+            if ($this::class == triple::class) {
+                $trm = $this->get_term_by_name($this->name(), $msg);
+                if ($trm != null) {
+                    $sim = $trm->obj();
+                    if (!$this->is_similar_named($sim)) {
+                        log_err($this->dsp_id() . ' is supposed to be similar to ' . $sim->dsp_id() . ', but it seems not');
+                    }
+                } else {
+                    $trp = new triple($this->get_user());
+                    $trp->load_by_name_generated($this->name());
+                    if ($trp->id() > 0) {
+                        $trp->reload_objects($msg);
+                        log_debug($this->dsp_id() . ' has the same name is the standard name of the triple "' . $trp->dsp_id() . '"');
+                        $sim = $trp;
+                    }
+                }
+            } else {
+                log_err($this->dsp_id() . ' is not expected to be a named sandbox link object');
+            }
+        }
+
+        return $sim;
+    }
+
 
     /*
      * log read
@@ -524,36 +755,6 @@ class sandbox_link_named extends sandbox_link
 
 
     /*
-     * save function
-     */
-
-    /**
-     * set the update parameters for the link object description
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox_link_named $db_rec the database record before the saving
-     * @param sandbox_link_named $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
-     */
-    function save_field_description(sql_db $db_con, sandbox_link_named $db_rec, sandbox_link_named $std_rec): string
-    {
-        $result = '';
-        // if the description is not set, don't overwrite any db entry
-        if ($this->description <> Null) {
-            if ($this->description <> $db_rec->description) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->description;
-                $log->new_value = $this->description;
-                $log->std_value = $std_rec->description;
-                $log->row_id = $this->id();
-                $log->set_field(sql_db::FLD_DESCRIPTION);
-                $result = $this->save_field_user($db_con, $log);
-            }
-        }
-        return $result;
-    }
-
-
-    /*
      * sql write
      */
 
@@ -575,7 +776,7 @@ class sandbox_link_named extends sandbox_link
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
         user_message       $usr_msg,
-        sql_type_list      $sc_par_lst_sub
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -589,29 +790,31 @@ class sandbox_link_named extends sandbox_link
 
         // create the sql to insert the row
         $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
-        $fvt_insert_list = new sql_par_field_list();
-        $fvt_insert_list->add($fvt_insert);
-        $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
-        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
-        if ($sc->db_type == sql_db::MYSQL) {
-            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        if ($fvt_insert !== null) {
+            $fvt_insert_list = new sql_par_field_list();
+            $fvt_insert_list->add($fvt_insert);
+            $sc_insert = clone $sc;
+            $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
+            $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+            if ($sc->db_type == sql_db::MYSQL) {
+                $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+            }
+            $qp_insert->sql = $sc_insert->create_sql_insert(
+                $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+            $qp_insert->par = [$fvt_insert->value];
+
+            // add the insert row to the function body
+            //$sql .= ' ' . $qp_insert->sql . '; ';
+
+            // get the new row id for MySQL db
+            if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
+                $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+            }
+
+            $qp->sql = $qp_lnk->sql . ' ' . $sql;
+            $qp->par_fld_lst = $qp_lnk->par_fld_lst;
+            $qp->par_fld = $fvt_insert;
         }
-        $qp_insert->sql = $sc_insert->create_sql_insert(
-            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
-        $qp_insert->par = [$fvt_insert->value];
-
-        // add the insert row to the function body
-        //$sql .= ' ' . $qp_insert->sql . '; ';
-
-        // get the new row id for MySQL db
-        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
-            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
-        }
-
-        $qp->sql = $qp_lnk->sql . ' ' . $sql;
-        $qp->par_fld_lst = $qp_lnk->par_fld_lst;
-        $qp->par_fld = $fvt_insert;
 
         return $qp;
     }
@@ -643,24 +846,24 @@ class sandbox_link_named extends sandbox_link
      * get a list of database field names, values and types that have been updated
      * of the object to combine the list with the list of the child object e.g. word
      *
-     * @param sandbox|sandbox_link_named $sbx the same named sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sandbox_link_named|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox|sandbox_link_named $sbx,
-        user_message               $usr_msg,
-        sql_type_list              $sc_par_lst = new sql_type_list()
+        sandbox_link_named|db_object_seq_id $obj,
+        user_message                        $msg,
+        sql_type_list                       $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // for insert statements of user sandbox rows user id fields always needs to be included
-        $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
+        $lst->add_name_and_description($this, $obj, $do_log, $table_id);
         return $lst;
     }
 

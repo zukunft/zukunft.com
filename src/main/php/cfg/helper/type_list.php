@@ -5,6 +5,8 @@
     model/helper/type_list.php - the superclass for word, formula and view type lists
     --------------------------
 
+    TODO Prio 2 base this list on ListOfIdObjects to avoid repeating e.g. of the is_empty function
+
 
     This file is part of zukunft.com - calc with words
 
@@ -38,67 +40,85 @@ include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_COMPONENT . 'component_link_type.php';
-include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
+//include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
 include_once paths::MODEL_COMPONENT . 'component_type.php';
-include_once paths::MODEL_COMPONENT . 'component_type_list.php';
+//include_once paths::MODEL_COMPONENT . 'component_type_list.php';
 include_once paths::MODEL_COMPONENT . 'position_type.php';
-include_once paths::MODEL_COMPONENT . 'position_type_list.php';
+//include_once paths::MODEL_COMPONENT . 'position_type_list.php';
 include_once paths::MODEL_COMPONENT . 'view_style.php';
-include_once paths::MODEL_COMPONENT . 'view_style_list.php';
+//include_once paths::MODEL_COMPONENT . 'view_style_list.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_ELEMENT . 'element_type.php';
-include_once paths::MODEL_ELEMENT . 'element_type_list.php';
+//include_once paths::MODEL_ELEMENT . 'element_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_type.php';
-include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
+//include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula_type.php';
-include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+//include_once paths::MODEL_FORMULA . 'formula_type_list.php';
 include_once paths::MODEL_REF . 'ref_type.php';
-include_once paths::MODEL_REF . 'ref_type_list.php';
+//include_once paths::MODEL_REF . 'ref_type_list.php';
 include_once paths::MODEL_REF . 'source_type.php';
-include_once paths::MODEL_REF . 'source_type_list.php';
+//include_once paths::MODEL_REF . 'source_type_list.php';
+include_once paths::MODEL_SYSTEM . 'job_status.php';
+//include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
-include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+//include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_LANGUAGE . 'language.php';
 include_once paths::MODEL_LANGUAGE . 'language_form.php';
-include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
-include_once paths::MODEL_LANGUAGE . 'language_list.php';
+//include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
+//include_once paths::MODEL_LANGUAGE . 'language_list.php';
 include_once paths::MODEL_LOG . 'change_action.php';
-include_once paths::MODEL_LOG . 'change_action_list.php';
+//include_once paths::MODEL_LOG . 'change_action_list.php';
 include_once paths::MODEL_LOG . 'change_field.php';
-include_once paths::MODEL_LOG . 'change_field_list.php';
+//include_once paths::MODEL_LOG . 'change_field_list.php';
 include_once paths::MODEL_LOG . 'change_table.php';
 include_once paths::MODEL_LOG . 'change_table_field.php';
-include_once paths::MODEL_LOG . 'change_table_list.php';
+//include_once paths::MODEL_LOG . 'change_table_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
-include_once paths::MODEL_PHRASE . 'phrase_types.php';
-include_once paths::MODEL_REF . 'ref.php';
-include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
-include_once paths::MODEL_SANDBOX . 'share_type_list.php';
+//include_once paths::MODEL_PHRASE . 'phrase_types.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_SANDBOX . 'protection_type.php';
+//include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
+//include_once paths::MODEL_SANDBOX . 'share_type.php';
+//include_once paths::MODEL_SANDBOX . 'share_type_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_function_list.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_function_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
-include_once paths::MODEL_USER . 'user_profile_list.php';
+//include_once paths::MODEL_USER . 'user_profile_list.php';
+//include_once paths::MODEL_USER . 'user_type.php';
+//include_once paths::MODEL_USER . 'user_type_list.php';
+//include_once paths::MODEL_USER . 'user_status.php';
+//include_once paths::MODEL_USER . 'user_status_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
-include_once paths::MODEL_VERB . 'verb_list.php';
-include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VERB . 'verb_list.php';
+//include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_link_type.php';
-include_once paths::MODEL_VIEW . 'view_link_type_list.php';
+//include_once paths::MODEL_VIEW . 'view_link_type_list.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
-include_once paths::MODEL_VIEW . 'view_type_list.php';
+//include_once paths::MODEL_VIEW . 'view_type_list.php';
 include_once paths::MODEL_VIEW . 'view_relation_type.php';
-include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
+//include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_USER . 'user_type.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
+include_once paths::SHARED_HELPER . 'ListOfIdNamedCodeObjects.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+//include_once paths::SHARED_TYPES . 'protection_types.php';
+//include_once paths::SHARED_TYPES . 'share_types.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
+//include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -127,6 +147,10 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
@@ -144,15 +168,21 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
@@ -164,13 +194,20 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
+use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdNamedCodeObjects;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
 
-class type_list
+class type_list extends ListOfIdNamedCodeObjects
 {
 
     /*
@@ -193,9 +230,6 @@ class type_list
      * object vars
      */
 
-    private array $lst = [];  // a list of type objects
-    private array $hash = []; // hash list with the code id for fast selection
-    private array $name_hash = []; // if the user can add new type the hash list of the names for fast selection
     private bool $usr_can_add = false; // true if the user can add new types that does not yet have a code id
 
 
@@ -205,15 +239,12 @@ class type_list
 
     /**
      * @param bool $usr_can_add true if some types might not yet have a code id
+     * @param array $lst with the initial objects of this list
      */
-    function __construct(bool $usr_can_add = false)
+    function __construct(bool $usr_can_add = false, array $lst = [])
     {
+        parent::__construct($lst);
         $this->usr_can_add = $usr_can_add;
-    }
-
-    function reset(): void
-    {
-        $this->set_lst(array());
     }
 
 
@@ -222,32 +253,32 @@ class type_list
      */
 
     /**
-     * @returns true if the list has been replaced
+     * create a clone object of these list items with only the name set
+     * @param string $name the name of the new type
+     * @param Message $msg to collect the error e.g. if no matching object can be created due to an inconsistency in the code
+     * @return type_object a new object of the type of this list with only the name set
      */
-    function set_lst(array $lst): bool
+    private function get_new(string $name, Message $msg): type_object
     {
-        $this->lst = $lst;
-        $this->get_hash($lst);
-        if ($this->usr_can_add) {
-            $this->get_name_hash($lst);
+        if (!$this->is_empty()) {
+            $typ = clone $this->lst()[0];
+            $typ->reset();
+            $typ->name = $name;
+        } else {
+            if ($this::class == change_action_list::class) {
+                $typ = new change_action(null, $name);
+            } elseif ($this::class == change_field_list::class) {
+                $typ = new change_field(null, $name);
+            } elseif ($this::class == sys_log_function_list::class) {
+                $typ = new sys_log_function(null, $name);
+            } else {
+                $msg->add(msg_id::CLASS_LIST_UNEXPECTED, [
+                    msg_id::VAR_CLASS_NAME => $this::class
+                ]);
+                $typ = new type_object(null, $name);
+            }
         }
-        return true;
-    }
-
-    /**
-     * @returns array the protected list of preloaded types
-     */
-    function lst(): array
-    {
-        return $this->lst;
-    }
-
-    /**
-     * @returns array the hash list of preloaded types
-     */
-    function hash(): array
-    {
-        return $this->hash;
+        return $typ;
     }
 
 
@@ -255,24 +286,39 @@ class type_list
      * interface set and get
      */
 
-    function add(type_object|ref|view $item): void
+    /**
+     * get the type object with this name from the list
+     * or add the name to the database and trigger the update of the type list cache
+     *
+     * @param string $name
+     * @param Message $msg
+     * @return type_object
+     */
+    function get_or_insert(string $name, Message $msg): type_object
     {
-        if ($item->id() <= 0) {
-            log_err('Type id ' . $item->id() . ' not expected');
-        } elseif ($item->get_code_id() == '' and !$this->usr_can_add) {
-            log_err('Type code id for ' . $item->id() . ' cannot be empty');
-        } else {
-            $this->lst[$item->id()] = $item;
-            $this->hash[$item->get_code_id()] = $item->id();
+        $typ = $this->get_by_name($name);
+        if ($typ == null) {
+            $typ = $this->get_new($name, $msg);
+            // TODO Prio 0 save the new type in the database
         }
-        if ($this->usr_can_add) {
-            $this->name_hash[$item->name] = $item->id();
-        }
+        return $typ;
     }
 
-    function add_direct(type_object|ref|view $item): void
+    function add(type_object|ref|view $item, bool $log = true): void
     {
-        $this->lst[] = $item;
+        if ($item->id() <= 0) {
+            if ($this::class == sys_log_level_list::class) {
+                log_debug('Type id ' . $item->name . ' (' . $item::class . ' ' . $item->id() . ') is allowed only for ' . sys_log_level_list::class);
+            } else {
+                log_err('Type id ' . $item->name . ' (' . $item::class . ' ' . $item->id() . ') not expected');
+            }
+        } elseif ($item->get_code_id() == '' and !$this->usr_can_add) {
+            if ($log) {
+                log_err('Type code id for ' . $item->name . ' (' . $item::class . ' ' . $item->id() . ') cannot be empty');
+            }
+        } else {
+            parent::add_obj($item);
+        }
     }
 
 
@@ -299,11 +345,11 @@ class type_list
     /**
      * set the common part of the sql parameters to load all rows of one 'type of database type'
      *
-     * a type is the link between one object and some predefined behavior
+     * a type is the link between one object and some predefined behaviour
      * a.g. a word like 'meter' has the type 'measure' which implies that
-     * the result of meter divided by meter is a relative value which is e.g. in percent
+     * the result of meter divided by meter is a relative value which is e.g. in per cent
      *
-     * a 'database type' is a group of type used for the same objects
+     * a 'database type' is a group of types used for the same objects
      * e.g. a db_type is phrase_type or view type
      *
      * @param sql_creator $sc with the target db_type set
@@ -320,6 +366,9 @@ class type_list
     ): sql_par
     {
         $lib = new library();
+        if ($class == '') {
+            $class= $this::class;
+        }
         $db_type = $lib->class_to_name($class);
         $sc->set_class($class);
         $qp = new sql_par($db_type);
@@ -373,6 +422,50 @@ class type_list
     }
 
     /**
+     * get the type object for a given type class
+     *
+     * @param string $class a type class name
+     * @return type_object the corresponding type class object
+     */
+    function class_to_type_object(string $class): type_object
+    {
+        return match ($class) {
+            sys_log_function::class => new sys_log_function(),
+            sys_log_level::class => new sys_log_level(),
+            sys_log_status::class, sys_log_statuum::class => new sys_log_status(),
+            system_time_type::class => new system_time_type(),
+            user_profile::class => new user_profile(),
+            user_type::class => new user_type(),
+            user_official_type::class => new user_official_type(),
+            user_status::class, user_statuum::class => new user_status(),
+            change_action::class => new change_action(),
+            change_table::class => new change_table(),
+            change_field::class => new change_field(),
+            share_types::class => new share_type(),
+            protection_types::class => new protection_type(),
+            job_status::class => new job_status(),
+            job_type::class => new job_type(),
+            language_form::class => new language_form(),
+            language::class => new language(),
+            verb::class => new verb(),
+            ref_type::class => new ref_type(),
+            source_type::class => new source_type(),
+            formula_type::class => new formula_type(),
+            formula_link_type::class => new formula_link_type(),
+            element_type::class => new element_type(),
+            phrase_types::class => new phrase_type(''),
+            view_type::class => new view_type(),
+            view_style::class => new view_style(),
+            view_link_type::class => new view_link_type(),
+            view_relation_type::class, view_relation_types::class => new view_relation_type(),
+            component_type::class => new component_type(),
+            component_link_type::class => new component_link_type(),
+            position_type::class => new position_type(),
+            default => new type_object(),
+        };
+    }
+
+    /**
      * get the type class for a given type list class
      *
      * @param string $class a list class name
@@ -382,13 +475,17 @@ class type_list
     {
         return match ($class) {
             sys_log_function_list::class => sys_log_function::class,
+            sys_log_level_list::class => sys_log_level::class,
             sys_log_status_list::class => sys_log_status::class,
             user_profile_list::class => user_profile::class,
+            user_type_list::class => user_type::class,
+            user_status_list::class => user_status::class,
             change_action_list::class => change_action::class,
             change_table_list::class => change_table::class,
             change_field_list::class => change_table_field::class,
-            share_type_list::class => share_type::class,
-            protection_type_list::class => protection_type::class,
+            share_type_list::class => share_types::class,
+            protection_type_list::class => protection_types::class,
+            job_status_list::class => job_status::class,
             job_type_list::class => job_type::class,
             language_form_list::class => language_form::class,
             language_list::class => language::class,
@@ -413,12 +510,12 @@ class type_list
     /**
      * force to reload the type names and translations from the database
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $class the database name e.g. the table name without s
+     * @param string $class the database name is e.g. the table name without s
      * @return array the list of types
      */
     protected function load_list(sql_db $db_con, string $class): array
     {
-        $this->lst = [];
+        $this->set_lst([]);
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
@@ -432,81 +529,60 @@ class type_list
                     $type_name = strval($db_row[type_object::FLD_TABLE]);
                 } elseif ($class == change_table_field::class) {
                     $type_name = strval($db_row[type_object::FLD_FIELD]);
+                } elseif ($class == sys_log_function::class) {
+                    $type_name = strval($db_row[sys_log_function::FLD_NAME]);
+                } elseif ($class == sys_log_level::class) {
+                    $type_name = strval($db_row[sys_log_level::FLD_NAME]);
+                } elseif ($class == sys_log_status::class) {
+                    $type_name = strval($db_row[sys_log_status::FLD_NAME]);
+                } elseif ($class == user_profile::class) {
+                    $type_name = strval($db_row[user_profile::FLD_NAME]);
+                } elseif ($class == user_status::class) {
+                    $type_name = strval($db_row[user_status::FLD_NAME]);
                 } elseif ($class == language_form::class) {
                     $type_name = strval($db_row[language_form::FLD_NAME]);
                 } elseif ($class == language::class) {
                     $type_name = strval($db_row[language::FLD_NAME]);
                 } elseif ($class == view_style::class) {
                     $type_name = strval($db_row[$db_con->get_name_field($class)]);
+                } elseif ($class == job_status::class) {
+                    $type_name = strval($db_row[job_status::FLD_NAME]);
                 } else {
                     // TODO use a unique type name for each type
-                    $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
+                    if (array_key_exists(sql_db::FLD_TYPE_NAME, $db_row)) {
+                        $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
+                    } else {
+                        $type_name = '';
+                        log_err(sql_db::FLD_TYPE_NAME . ' missing for class ' . $class);
+                    }
                 }
                 $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
                 $this->add($type_obj);
             }
         }
-        return $this->lst;
-    }
-
-    /**
-     * recreate the hash table to get the database id for a code_id
-     * @param array $type_list the list of the code_id indexed by the database id
-     * @return array with the database ids indexed by the code_id
-     */
-    function get_hash(array $type_list): array
-    {
-        $this->hash = [];
-        if ($type_list != null) {
-            foreach ($type_list as $key => $type) {
-                $this->hash[$type->get_code_id()] = $key;
-            }
-        }
-        return $this->hash;
-    }
-
-    /**
-     * recreate the hash table of the names to get the database id for a name
-     * @param array $type_list the list of the code_id indexed by the database id
-     * @return array with the database ids indexed by the code_id
-     */
-    function get_name_hash(array $type_list): array
-    {
-        $this->name_hash = [];
-        if ($type_list != null) {
-            if ($this->usr_can_add) {
-                foreach ($type_list as $key => $type) {
-                    $this->name_hash[$type->name] = $key;
-                }
-            }
-        }
-        return $this->name_hash;
+        return $this->lst();
     }
 
     /**
      * reload a type list from the database e.g. because a translation has changed and fill the hash table
      * @param string $class the child object class for the database table type name to select either word, formula, view, ...
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
+     * @return bool true if a load was successful
      */
     function load(sql_db $db_con, string $class = ''): bool
     {
-        $result = false;
         if ($class == '') {
             $class = $this::class;
             // replace the type list class with the type class because the load is done from the list object instead of the type object
             $class = $this->list_class_to_type($class);
         }
-        $this->lst = $this->load_list($db_con, $class);
-        $this->hash = $this->get_hash($this->lst);
-        if ($this->usr_can_add) {
-            $this->name_hash = $this->get_name_hash($this->lst);
+        $this->load_list($db_con, $class);
+        if ($this->is_empty()) {
+            return false;
+        } else {
+            return true;
         }
-        if (count($this->hash) > 0) {
-            $result = true;
-        }
-        return $result;
     }
 
 
@@ -581,6 +657,7 @@ class type_list
                 while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
                     if ($row == 1) {
                         $col_names = $lib->array_trim($data);
+                        // TODO Prio 2 try to avoid these exception and use e.g. name_field() function
                         if (in_array(json_fields::ID, $col_names)) {
                             $id_col = array_search(json_fields::ID, $col_names);
                         } elseif (in_array(change_table::FLD_ID, $col_names)) {
@@ -597,6 +674,8 @@ class type_list
                             $name_col = array_search(change_table::FLD_NAME, $col_names);
                         } elseif (in_array(change_field::FLD_NAME, $col_names)) {
                             $name_col = array_search(change_field::FLD_NAME, $col_names);
+                        } elseif (in_array(user_profile::FLD_NAME, $col_names)) {
+                            $name_col = array_search(user_profile::FLD_NAME, $col_names);
                         } elseif (in_array(language_form::FLD_NAME, $col_names)) {
                             $name_col = array_search(language_form::FLD_NAME, $col_names);
                         }
@@ -654,30 +733,35 @@ class type_list
     }
 
     /**
-     * return the database row id based on the code_id
+     * return the database row id based on the code_id,
      * and if code id is not found, use the name
      *
      * @param string $code_id or the name
+     * @param bool $log_err can be set to false if it is not an issue the id is missing
      * @return int the database id for the given code_id
      */
-    function id(string $code_id): int
+    function id(string $code_id, bool $log_err = true): int
     {
         $lib = new library();
         $result = 0;
         if ($code_id != '' and $code_id != null) {
             if ($this->has_code_id($code_id)) {
-                $result = $this->hash[$code_id];
+                $result = $this->id_by_code_id($code_id);
             } else {
                 if ($this->usr_can_add) {
-                    if (array_key_exists($code_id, $this->name_hash)) {
-                        $result = $this->name_hash[$code_id];
+                    if ($this->has_name($code_id)) {
+                        $result = $this->id_by_name($code_id);
                     } else {
                         $result = self::CODE_ID_NOT_FOUND;
-                        log_err('Type id not found for name "' . $code_id . '" in ' . $lib->dsp_array_keys($this->name_hash));
+                        if ($log_err) {
+                            log_err('Type id not found for name "' . $code_id . '" in ' . implode(',', $this->names()));
+                        }
                     }
                 } else {
                     $result = self::CODE_ID_NOT_FOUND;
-                    log_warning('Type id not found for "' . $code_id . '" in ' . $lib->dsp_array_keys($this->hash));
+                    if ($log_err) {
+                        log_warning('Type id not found for "' . $code_id . '" in ' . implode(',', $this->code_ids()));
+                    }
                 }
             }
         } else {
@@ -691,18 +775,20 @@ class type_list
      * return the database row id based on the name
      *
      * @param string $name of the type
+     * @param bool $log_err can be set to false if it is not an issue the id is missing
      * @return int the database id for the given code_id
      */
-    function id_by_name(string $name): int
+    function id_by_name(string $name, bool $log_err = true): int
     {
-        $lib = new library();
         $result = 0;
         if ($name != '' and $name != null) {
             if ($this->has_name($name)) {
-                $result = $this->name_hash[$name];
+                $result = parent::id_by_name($name);
             } else {
                 $result = self::CODE_ID_NOT_FOUND;
-                log_err('Type id not found for name "' . $name . '" in ' . $lib->dsp_array_keys($this->name_hash));
+                if ($log_err) {
+                    log_err('Type id not found for name "' . $name . '" in ' . implode(',', $this->names()));
+                }
             }
         } else {
             log_debug('Type code id not not set');
@@ -712,7 +798,7 @@ class type_list
     }
 
     /**
-     * return user specific type name based on the database row id
+     * return a user-specific type name based on the database row id
      *
      * @param int|null $id
      * @return string
@@ -731,17 +817,8 @@ class type_list
         return $result;
     }
 
-    function names(): array
-    {
-        $result = [];
-        foreach ($this->lst as $item) {
-            $result[] = $item->name();
-        }
-        return $result;
-    }
-
     /**
-     * return user specific type name based on the database row id
+     * return a user-specific type name based on the database row id
      *
      * @param int|null $id
      * @return string|null
@@ -753,58 +830,6 @@ class type_list
         } else {
             return $this->name($id);
         }
-    }
-
-    /**
-     * pick a type from the preloaded object list
-     * @param int $id the database id of the expected type
-     * @return type_object|view|null the type object or the system view
-     */
-    function get(int $id): type_object|view|null
-    {
-        $result = null;
-        if ($id > 0) {
-            if (array_key_exists($id, $this->lst)) {
-                $result = $this->lst[$id];
-            } else {
-                log_err('Type with is ' . $id . ' not found in ' . $this->dsp_id());
-            }
-        } else {
-            log_debug('Type id not set');
-        }
-        return $result;
-    }
-
-    function has_code_id(string $code_id): bool
-    {
-        return array_key_exists($code_id, $this->hash);
-    }
-
-    /**
-     * TODO to rename to get and rename get to get_by_id
-     */
-    function get_by_code_id(string $code_id): ?type_object
-    {
-        return $this->get($this->id($code_id));
-    }
-
-    /**
-     * true if the name exists in this type list
-     * @param string $name the name of the type
-     * @return bool true if the name exists in this type list
-     */
-    function has_name(string $name): bool
-    {
-        return array_key_exists($name, $this->name_hash);
-    }
-
-    function get_by_name(string $name): verb|type_object|null
-    {
-        $result = null;
-        if (array_key_exists($name, $this->name_hash)) {
-            $result = $this->get($this->name_hash[$name]);
-        }
-        return $result;
     }
 
     function code_id(?int $id): ?string
@@ -821,21 +846,30 @@ class type_list
         return $result;
     }
 
-    function count(): int
+
+    /*
+     * info
+     */
+
+    function has(?int $id): bool
     {
-        return count($this->lst());
+        if ($this->get($id) == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
-    /**
-     * @return bool true if the list is empty (and a foreach loop will fail)
+
+    /*
+     * modify
      */
-    function is_empty(): bool
+
+    function merge(type_list $lst): void
     {
-        $result = false;
-        if (empty($this->lst)) {
-            $result = true;
+        foreach ($lst->lst() as $typ) {
+            $this->add($typ);
         }
-        return $result;
     }
 
 
@@ -844,15 +878,15 @@ class type_list
      */
 
     /**
-     * create dummy type list for the unit tests without database connection
+     * create a dummy type list for the unit tests without database connection
      */
     function load_dummy(): void
     {
-        $this->lst = array();
-        $this->hash = array();
-        $this->name_hash = array();
+        $this->set_lst([]);
+        /*
         $type = new type_object(type_list::TEST_TYPE, type_list::TEST_NAME, '', 1);
         $this->add($type);
+        */
     }
 
     /**
@@ -898,7 +932,7 @@ class type_list
         $names = '';
         $ids = '';
         if (!$this->is_empty()) {
-            foreach ($this->lst as $key => $type) {
+            foreach ($this->lst() as $key => $type) {
                 if ($names != '') {
                     $names .= ', ';
                 }

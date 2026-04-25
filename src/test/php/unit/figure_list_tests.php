@@ -44,7 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list as figure_list_ui;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -79,7 +79,7 @@ class figure_list_tests
 
         $fig_lst = $t_fig->figure_list();
         $t->assert_api($fig_lst, 'figure_list_without_phrases');
-        $t->assert_api($fig_lst, 'figure_list_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($fig_lst, 'figure_list_with_phrases', [api_types::INCL_PHRASES]);
 
 
         $t->subheader($ts . 'html frontend');

@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::SERVICE . 'config.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
@@ -48,6 +49,8 @@ include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_USER . 'user_type_list.php';
+include_once paths::MODEL_USER . 'user_status_list.php';
 include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 include_once paths::SHARED_CONST . 'users.php';
@@ -58,6 +61,9 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type_list;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
@@ -103,7 +109,7 @@ class db_check
         $main_tbl_name = $lib->class_to_name(config::class);
         if (!$db_con->has_table($main_tbl_name)) {
             // because no log yet exists here echo instead of log_echo() is used
-            $log_txt->echo_log('zukunft.com: empty database detected');
+            $log_txt->echo_text_log('zukunft.com: empty database detected');
             $usr_msg = $db_con->setup_db();
             if ($usr_msg->is_ok()) {
                 $db_con->db_fill_code_links();
@@ -114,7 +120,7 @@ class db_check
         }
 
         $cfg = new config();
-        $cfg->check(config::SITE_NAME, def::POD_NAME, $db_con);
+        $cfg->check_cfg(config::SITE_NAME, def::POD_NAME, $db_con);
 
         // get the db version and start the upgrade process if needed
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
@@ -178,8 +184,8 @@ class db_check
         $msg = $this->db_move_time_phrase_to_group();
         if ($msg->is_ok()) {
             //
-            $msg->add($db_con->del_field($lib->class_to_name(value::class), 'time_word_id'));
-            $msg->add($db_con->del_field('result', 'time_word_id'));
+            $msg->merge($db_con->del_field($lib->class_to_name(value::class), 'time_word_id'));
+            $msg->merge($db_con->del_field('result', 'time_word_id'));
         }
 
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
@@ -353,7 +359,7 @@ class db_check
 
         $result .= $db_con->change_table_name('results', result_two::class);
         $result .= $db_con->change_table_name('user_phrase_groups', 'user_' . group::class);
-        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'phrase_group_id', group::FLD_ID);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'phrase_group_id', group_db::FLD_ID);
 
         // TODO set default profile_id in users to 1
         if ($db_con->db_type == sql_db::MYSQL) {
@@ -382,19 +388,23 @@ class db_check
             global $sys;
             $sys->typ_lst->usr_pro = new user_profile_list();
             $sys->typ_lst->usr_pro->load($db_con);
+            $sys->typ_lst->usr_typ = new user_type_list();
+            $sys->typ_lst->usr_typ->load($db_con);
+            $sys->typ_lst->usr_sta = new user_status_list();
+            $sys->typ_lst->usr_sta->load($db_con);
 
             // add missing system users if needed
             $sys_usr = new user();
             if (!$sys_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
                 $sys_usr->load_by_name(users::SYSTEM_NAME);
-                $sys_usr->set_profile(user_profiles::SYSTEM);
+                $sys_usr->set_profile(user_profiles::SYSTEM, $usr_msg);
                 $sys_usr->save_user($usr_msg, $sys_usr);
             }
             // add missing system users if needed
             $usr_admin = new user();
             if (!$usr_admin->has_any_user_this_profile(user_profiles::ADMIN)) {
                 $usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME);
-                $usr_admin->set_profile(user_profiles::ADMIN);
+                $usr_admin->set_profile(user_profiles::ADMIN, $usr_msg);
                 $usr_admin->save_user($usr_msg, $sys_usr);
             }
 
@@ -402,11 +412,11 @@ class db_check
             $test_usr = new user();
             if (!$test_usr->has_any_user_this_profile(user_profiles::TEST)) {
                 $test_usr->load_by_name(users::SYSTEM_TEST_NAME);
-                $test_usr->set_profile(user_profiles::TEST);
+                $test_usr->set_profile(user_profiles::TEST, $usr_msg);
                 $test_usr->save_user($usr_msg, $sys_usr);
                 $test_usr2 = new user();
                 $test_usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
-                $test_usr2->set_profile(user_profiles::TEST);
+                $test_usr2->set_profile(user_profiles::TEST, $usr_msg);
                 $test_usr2->save_user($usr_msg, $sys_usr);
             }
 
@@ -414,7 +424,7 @@ class db_check
             if (!$test_usr_normal->has_any_user_this_profile(user_profiles::NORMAL)) {
                 $test_usr_normal = new user();
                 $test_usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
-                $test_usr_normal->set_profile(user_profiles::NORMAL);
+                $test_usr_normal->set_profile(user_profiles::NORMAL, $usr_msg);
                 $test_usr_normal->save_user($usr_msg, $sys_usr);
             }
         }

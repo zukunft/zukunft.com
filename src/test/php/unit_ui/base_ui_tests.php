@@ -36,7 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::HTML . 'html_selector.php';
@@ -73,8 +73,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
-use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
@@ -103,7 +103,7 @@ class base_ui_tests
 
         $t->subheader($ts . 'login');
 
-        $created_html = $html->about();
+        $created_html = $html->about_page();
         $expected_html = $t->file(test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'about.html');
         $t->assert('about', $lib->trim_html($expected_html), $lib->trim_html($created_html));
 
@@ -146,7 +146,7 @@ class base_ui_tests
         $grp_canton = new group($t->usr1);
         $grp_canton->set_phrase_list($t_phr->phrase_list_canton_mio());
         $grp_ch = new group($t->usr1);
-        $grp_ch->set_phrase_list($t_phr->phrase_list_ch_mio());
+        $grp_ch->set_phrase_list($t_phr->ch_inhabitants_in_mio_2019());
         $grp_city_pct = new group($t->usr1);
         $grp_city_pct->set_phrase_list($t_phr->phrase_list_zh_city_pct());
         $grp_canton_pct = new group($t->usr1);
@@ -158,7 +158,7 @@ class base_ui_tests
         $val_city = new value($t->usr1);
         $val_city->set_grp($grp_city);
         $val_city->set_number(values::CITY_ZH_INHABITANTS_2019);
-        $val_city_dsp = new value_ui($val_city->api_json([api_type::INCL_PHRASES]));
+        $val_city_dsp = new value_ui($val_city->api_json([api_types::INCL_PHRASES]));
         $val_city_html = $val_city_dsp->name_link();
         $t->assert_text_contains('', $val_city_html, words::CITY);
 
@@ -166,7 +166,7 @@ class base_ui_tests
         $val_canton = new value($t->usr1);
         $val_canton->set_grp($grp_canton);
         $val_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
-        $val_canton_dsp = new value_ui($val_canton->api_json([api_type::INCL_PHRASES]));
+        $val_canton_dsp = new value_ui($val_canton->api_json([api_types::INCL_PHRASES]));
         $val_canton_html = $val_canton_dsp->name_link();
         $t->assert_text_contains('', $val_canton_html, words::CANTON);
 
@@ -174,7 +174,7 @@ class base_ui_tests
         $val_ch = new value($t->usr1);
         $val_ch->set_grp($grp_ch);
         $val_ch->set_number(values::CH_INHABITANTS_2019_IN_MIO);
-        $val_ch_dsp = new value_ui($val_ch->api_json([api_type::INCL_PHRASES]));
+        $val_ch_dsp = new value_ui($val_ch->api_json([api_types::INCL_PHRASES]));
         $val_ch_html = $val_ch_dsp->name_link();
         $t->assert_text_contains('', $val_ch_html, round(values::CH_INHABITANTS_2019_IN_MIO, 2));
 
@@ -183,7 +183,7 @@ class base_ui_tests
         $res_city->set_grp($grp_city_pct);
         $ch_val_scaled = values::CH_INHABITANTS_2019_IN_MIO * 1000000;
         $res_city->set_number(values::CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
-        $res_city_dsp = new value_ui($res_city->api_json([api_type::INCL_PHRASES]));
+        $res_city_dsp = new value_ui($res_city->api_json([api_types::INCL_PHRASES]));
         $res_city_html = $res_city_dsp->name_link();
         $t->assert_text_contains('', $res_city_html, words::CITY);
 
@@ -191,19 +191,19 @@ class base_ui_tests
         $res_canton = new result($t->usr1);
         $res_canton->set_grp($grp_canton_pct);
         $res_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO);
-        $res_canton_dsp = new value_ui($res_canton->api_json([api_type::INCL_PHRASES]));
+        $res_canton_dsp = new value_ui($res_canton->api_json([api_types::INCL_PHRASES]));
         $res_canton_html = $res_canton_dsp->value_edit('');
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2) . '%';
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
 
         // create the formula result list and the table to display the results
         $res_lst = new result_list_ui();
-        $res_lst->add(new result_ui($res_city->api_json([api_type::INCL_PHRASES])));
-        $res_lst->add(new result_ui($res_canton->api_json([api_type::INCL_PHRASES])));
+        $res_lst->add_result(new result_ui($res_city->api_json([api_types::INCL_PHRASES])));
+        $res_lst->add_result(new result_ui($res_canton->api_json([api_types::INCL_PHRASES])));
         $t->html_page_test($res_lst->table(), '', 'table_result', $t);
 
         // create the same table as above, but within a context
-        $phr_lst_context_dsp = new phrase_list_ui($phr_lst_context->api_json([api_type::INCL_PHRASES]));
+        $phr_lst_context_dsp = new phrase_list_ui($phr_lst_context->api_json([api_types::INCL_PHRASES]));
         $t->html_page_test($res_lst->table($phr_lst_context_dsp), '', 'table_result_context', $t);
 
 
@@ -288,7 +288,7 @@ class base_ui_tests
         $test_name = 'a sandbox object e.g. source change button html code';
         $target = '<a href="/http/view.php?m=source_edit&id=1&back=1" title="source_edit"><i class="far fa-edit"></i></a>';
         $src = new source();
-        $src->set_from_json($t_src->source()->api_json(), $usr_msg);
+        $src->set_from_json($t_src->source_reserved()->api_json(), $usr_msg);
         $t->assert($test_name, $src->btn_edit('1'), $target);
 
         $test_name = 'a sandbox object e.g. formula delete button html code';

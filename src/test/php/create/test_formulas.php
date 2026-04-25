@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -44,18 +44,18 @@ include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_FORMULA . 'formula_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
-include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'formula_link_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::CREATE . 'test_objects.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
-include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
@@ -66,16 +66,16 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
 
@@ -105,7 +105,7 @@ class test_formulas extends test_objects
      */
 
     /**
-     * @return formula for testing e.g. the expression calculation
+     * @return formula for testing of e.g. the expression calculation
      */
     function formula(): formula
     {
@@ -113,6 +113,19 @@ class test_formulas extends test_objects
         $frm = new formula($this->env->usr1);
         $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
         $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
+        $frm->set_type(formula_type::CALC, $this->env->usr1);
+        return $frm;
+    }
+
+    /**
+     * @return formula for db write testingthat does not have a reserved name
+     */
+    function formula_rename(): formula
+    {
+        $t_trm = new test_terms($this->env);
+        $frm = new formula($this->env->usr1);
+        $frm->set(formulas::SCALE_HOUR_ID, formulas::SCALE_HOUR);
+        $frm->set_user_text(formulas::SCALE_HOUR_EXP, $t_trm->term_list_time());
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }
@@ -159,23 +172,11 @@ class test_formulas extends test_objects
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
         $frm->set_view_id(views::START_ID);
-        $frm->set_usage(test_const::DUMMY_USAGE_FORMULA);
-        $frm->set_impact(test_const::DUMMY_IMPACT);
+        $frm->usage = test_const::DUMMY_USAGE_FORMULA;
+        $frm->impact = test_const::DUMMY_IMPACT;
         $frm->exclude();
-        $frm->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
-        return $frm;
-    }
-
-    /**
-     * @return formula with all fields set and a reserved test name for testing the db write function
-     */
-    function formula_filled_add(): formula
-    {
-        $frm = $this->formula_filled();
-        $frm->include();
-        $frm->id = 0;
-        $frm->set_name(formulas::SYSTEM_TEST_ADD);
+        $frm->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $frm;
     }
 
@@ -187,6 +188,38 @@ class test_formulas extends test_objects
         $frm = $this->formula_filled();
         $frm->usr_text = '';
         $frm->ref_text = '';
+        return $frm;
+    }
+
+    function formula_add(): formula
+    {
+        $t_trm = new test_terms($this->env);
+        $frm = new formula($this->env->usr1);
+        $frm->set_name(formulas::SYSTEM_TEST_ADD);
+        $frm->set_user_text(formulas::INCREASE_EXP, $t_trm->term_list_increase());
+        $frm->set_type(formula_type::CALC, $this->env->usr1);
+        return $frm;
+    }
+
+    /**
+     * @return formula with all fields set and a reserved test name for testing the db write function
+     */
+    function formula_filled_add(): formula
+    {
+        global $sys;
+        $frm = $this->formula_add();
+        // TODO Prio 1 activate
+        //$frm->set_code_id(formulas::SCALE_TO_SEC_CODE_ID, $this->env->usr_system);
+        //$frm->set_owner_id($this->env->usr1->id());
+        $frm->description = formulas::SCALE_TO_SEC_COM;
+        $frm->need_all_val = true;
+        $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
+        $frm->set_view_id(views::START_ID);
+        $frm->usage = test_const::DUMMY_USAGE_FORMULA;
+        $frm->impact = test_const::DUMMY_IMPACT;
+        $frm->exclude();
+        $frm->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $frm;
     }
 
@@ -208,11 +241,14 @@ class test_formulas extends test_objects
      */
     function formula_this(): formula
     {
+        global $sys;
         $t_phr = new test_phrases($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formulas::THIS_ID, formulas::THIS_NAME);
         $frm->set_user_text(formulas::THIS_EXP, $t_phr->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::THIS, $this->env->usr1);
+        $frm->description = formulas::THIS_COM;
+        $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $frm;
     }
 
@@ -271,7 +307,7 @@ class test_formulas extends test_objects
         $t_wrd = new test_words($this->env);
         $lnk = new formula_link($this->env->usr1);
         $lnk->set(1, $this->formula(), $t_wrd->word_minute()->phrase());
-        $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_type::TIME_PERIOD));
+        $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::TIME_PERIOD));
         $lnk->order_nbr = 2;
         return $lnk;
     }
@@ -289,8 +325,8 @@ class test_formulas extends test_objects
         global $sys;
         $lnk = $this->formula_link();
         $lnk->exclude();
-        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $lnk;
     }
 
@@ -316,7 +352,7 @@ class test_formulas extends test_objects
     {
         $tl = new test_lib();
         $lnk_lst = $this->formula_link_list();
-        return $tl->list_to_ui($lnk_lst, [api_type::INCL_PHRASES]);
+        return $tl->list_to_ui($lnk_lst, [api_types::INCL_PHRASES]);
     }
 
     /**
@@ -328,20 +364,6 @@ class test_formulas extends test_objects
         $frm = new formula($this->env->usr1);
         $frm->set_name(formulas::SYSTEM_TEST_ADD_VIA_FUNC);
         $frm->set_user_text(formulas::INCREASE_EXP, $t_trm->term_list_increase());
-        $frm->set_type(formula_type::CALC, $this->env->usr1);
-        return $frm;
-    }
-
-    /**
-     * based on the phrase list by intention to test what happens if the formulas are missing
-     * @return formula to test the sql insert without use of function
-     */
-    function formula_add_by_sql(): formula
-    {
-        $t_phr = new test_phrases($this->env);
-        $frm = new formula($this->env->usr1);
-        $frm->set_name(formulas::SYSTEM_TEST_ADD_VIA_SQL);
-        $frm->set_user_text(formulas::INCREASE_EXP, $t_phr->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }
@@ -362,11 +384,24 @@ class test_formulas extends test_objects
     function element_list(): element_list
     {
         $t_trm = new test_terms($this->env);
+        $usr_msg = new user_message();
         $trm_lst = $t_trm->term_list_time();
-        $exp = $this->formula()->expression($trm_lst);
-        return $exp->element_list($trm_lst);
+        $frm = $this->formula();
+        $exp = $frm->expression($trm_lst);
+        $elm_lst = $exp->element_list($usr_msg, $trm_lst);
+        return $this->add_seq_number_to_element_list($elm_lst);
     }
 
+    function add_seq_number_to_element_list(element_list $elm_lst): element_list
+    {
+        $id = 1;
+        foreach ($elm_lst->lst() as $elm) {
+            if ($elm->id() == 0) {
+                $elm->id = $id++;
+            }
+        }
+        return $elm_lst;
+    }
 
     /*
      * formula test creation

@@ -44,7 +44,7 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
-//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
 //include_once paths::MODEL_GROUP . 'result_id.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -63,6 +63,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_VALUE . 'value_time.php';
 //include_once paths::MODEL_VALUE . 'value_geo.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -72,7 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
-use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -86,8 +87,12 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sandbox_value_list extends sandbox_list
@@ -102,7 +107,6 @@ class sandbox_value_list extends sandbox_list
     private bool $name_hash_dirty = true;
 
 
-
     /*
      * construct and map
      */
@@ -115,13 +119,26 @@ class sandbox_value_list extends sandbox_list
     /**
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         foreach ($api_json as $json_val) {
-            $val = new value($this->get_user());
+            if (array_key_exists(json_fields::NUMBER, $json_val)) {
+                $val = new value($this->get_user());
+            } elseif (array_key_exists(json_fields::TIME_VALUE, $json_val)) {
+                $val = new value_time($this->get_user());
+            } elseif (array_key_exists(json_fields::TEXT_VALUE, $json_val)) {
+                $val = new value_text($this->get_user());
+            } elseif (array_key_exists(json_fields::GEO_VALUE, $json_val)) {
+                $val = new value_geo($this->get_user());
+            } else {
+                $val = new value($this->get_user());
+                $usr_msg->add(msg_id::IMPORT_VALUE_FORMAT_NOT_KNOWN, [
+                    msg_id::VAR_JSON_TEXT => $json_val
+                ]);
+            }
             if ($val->api_mapper($json_val, $usr_msg)) {
                 $this->add($val);
             }
@@ -162,10 +179,10 @@ class sandbox_value_list extends sandbox_list
      * to be called after the lists have been updated
      * but the index list have not yet been updated
      */
-    protected function set_lst_dirty(): void
+    protected function set_hash_dirty(): void
     {
         $this->name_hash_dirty = true;
-        parent::set_lst_dirty();
+        parent::set_hash_dirty();
     }
 
 
@@ -289,7 +306,7 @@ class sandbox_value_list extends sandbox_list
                 $spt = sql_par_type::LIKE_OR;
             }
             $grp_id = new group_id();
-            $sc->add_where_par(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
+            $sc->add_where_par(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
         }
 
         // add the user parameter
@@ -386,7 +403,7 @@ class sandbox_value_list extends sandbox_list
                 if ($or) {
                     $spt = sql_par_type::LIKE_OR;
                 }
-                $sc->add_where_no_par('', group::FLD_ID, $spt, $grp_pos);
+                $sc->add_where_no_par('', group_db::FLD_ID, $spt, $grp_pos);
             }
         }
         $qp->sql = $sc->sql(0, true, false);
@@ -582,25 +599,25 @@ class sandbox_value_list extends sandbox_list
         msg_id             $msg_additional = msg_id::VALUE_ADDITIONAL,
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($this->lst() as $val) {
-            $val_to_chk = $val_lst->get_by_id($val->id());
+            $val_to_chk = $val_lst->get($val->id());
             if ($val_to_chk == null) {
                 $vars = [msg_id::VAR_VAL_ID => $val->dsp_db()];
-                $usr_msg->add_id_with_vars($msg_missing, $vars);
+                $msg->add($msg_missing, $vars);
             }
             if ($val_to_chk != null) {
-                $usr_msg->add($val->diff_msg($val_to_chk));
+                $msg->merge($val->diff_msg($val_to_chk));
             }
         }
         foreach ($val_lst->lst() as $val) {
-            $val_to_chk = $this->get_by_id($val->id());
+            $val_to_chk = $this->get($val->id());
             if ($val_to_chk == null) {
                 $vars = [msg_id::VAR_VAL_ID => $val->dsp_db()];
-                $usr_msg->add_id_with_vars($msg_additional, $vars);
+                $msg->add($msg_additional, $vars);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -651,7 +668,7 @@ class sandbox_value_list extends sandbox_list
         } else {
             $this->name_hash[] = $name;
             // assuming that in most cases either the id or the names has is needed for building up the list but not both
-            $this->set_lst_dirty();
+            $this->set_hash_dirty();
         }
     }
 

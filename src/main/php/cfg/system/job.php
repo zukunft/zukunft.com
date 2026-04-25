@@ -24,7 +24,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -50,7 +50,7 @@ add, update or delete on an object always triggers all action from A) to D)
   
 If the change influences the standard result additional to the user value the standard value needs to be updated
 If the user has done no modifications only the standard value needs to be updated
-Because the calculation dependencies can be complex always both cases (user specific and standard) are calculated but only the result needed is saved
+Because the calculation dependencies can be complex always both cases (user-specific and standard) are calculated but only the result needed is saved
 
 
 One Sample
@@ -76,72 +76,68 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
-include_once paths::DB . 'sql_creator.php';
-include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
-include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_db.php';
 include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_SYSTEM . 'job_db.php';
+include_once paths::MODEL_SYSTEM . 'job_status.php';
+include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
-include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
-include_once paths::MODEL_REF . 'ref.php';
-include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'job_statuum.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref_db;
-use Zukunft\ZukunftCom\main\php\cfg\ref\source;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_db;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use DateTime;
-use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
+use DateTime;
+use DateTimeInterface;
 
 class job extends db_object_seq_id_user
 {
-
-    const string STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine
-    const string STATUS_ASSIGNED = 'assigned'; // the job has been assigned to a calc engine
-    const string STATUS_WORKING = 'working'; // the calc engine is reporting the progress
-    const string STATUS_NOT_RESPONDING = 'not_responding'; // the calc engine is not reporting the progress
-    const string STATUS_WAITING = 'waiting'; // the task is waiting for user input of other jobs
-    const string STATUS_DONE = 'done'; // the task has been completed successfully
-    const string STATUS_FAILED = 'failed'; // the task has been completed unsuccessful
-
-    const int PRIO_HIGHEST = 1;
-    const int PRIO_LOWEST = 10;
-
 
     /*
      * database link
@@ -149,50 +145,11 @@ class job extends db_object_seq_id_user
 
     // object specific database object field names and comments
     const string TBL_COMMENT = 'for each concrete job run';
-    const string FLD_ID_COM = 'the unique internal id of the job';
-    const string FLD_ID = 'job_id';
-    const string FLD_USER_COM = 'the id of the user who has requested the job by editing the scheduler the last time';
-    const string FLD_TIME_REQUEST_COM = 'timestamp of the request for the job execution';
-    const string FLD_TIME_REQUEST = 'request_time';
-    const string FLD_TIME_START_COM = 'timestamp when the system has started the execution';
-    const string FLD_TIME_START = 'start_time';
-    const string FLD_TIME_END_COM = 'timestamp when the job has been completed or canceled';
-    const string FLD_TIME_END = 'end_time';
-    const string FLD_TYPE_COM = 'the id of the job type that should be started';
-    const string FLD_TYPE = 'job_type_id';
-    const string FLD_PARAMETER_COM = 'id of the phrase with the snapped parameter set for this job start';
-    const string FLD_PARAMETER = 'parameter';
-    const string FLD_CHANGE_FIELD_COM = 'e.g. for undo jobs the id of the field that should be changed';
-    const string FLD_CHANGE_FIELD = 'change_field_id';
-    const string FLD_ROW_COM = 'e.g. for undo jobs the id of the row that should be changed';
-    const string FLD_ROW = 'row_id';
-    const string FLD_SOURCE_COM = 'used for import to link the source';
-    const string FLD_REF_COM = 'used for import to link the reference';
 
-    // all database field names excluding the id used to identify if there are some user specific changes
-    const array FLD_NAMES = array(
-        self::FLD_ID,
-        self::FLD_TIME_REQUEST,
-        self::FLD_TIME_START,
-        self::FLD_TIME_END,
-        self::FLD_TYPE,
-        self::FLD_ROW,
-        self::FLD_CHANGE_FIELD
-    );
-
-    // field lists for the table creation
-    const array FLD_LST_ALL = array(
-        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
-        [job_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
-        [self::FLD_TIME_REQUEST, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_REQUEST_COM],
-        [self::FLD_TIME_START, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_START_COM],
-        [self::FLD_TIME_END, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_END_COM],
-        [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],
-        [self::FLD_CHANGE_FIELD, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
-        [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
-        [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [ref_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
-    );
+    // forward the const to enable usage of $this::CONST_NAME
+    const string FLD_ID = job_db::FLD_ID;
+    const array FLD_NAMES = job_db::FLD_NAMES;
+    const array FLD_LST_ALL = job_db::FLD_LST_ALL;
 
 
     /*
@@ -200,13 +157,17 @@ class job extends db_object_seq_id_user
      */
 
     // database fields
+    private ?int $type_id;                  // id of the job type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
+    public ?int $status_id;                 // id of the job status e.g. "new", "running", "done", ...
     public ?DateTime $request_time = null;  // time when the job has been requested
     public ?DateTime $start_time = null;    // start time of the job execution
     public ?DateTime $end_time = null;      // end time of the job execution
-    private ?int $type_id;                  // id of the job type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
-    public int|string|null $row_id = null;             // the id of the related object e.g. if a value has been updated the group_id
-    public string $status;
-    public string $priority;
+    public ?string $parameter = null;       // id of the phrase with the snapped parameter set for this job start
+    public ?int $change_field = null;       // if of e.g. for undo jobs the id of the field that should be changed
+    public int|string|null $row_id = null;  // the id of the related object e.g. if a value has been updated the group_id
+    public source|null $src = null;         // used for import to link the source
+    public ref|null $ref = null;            // used for import to link the reference
+    public int|null $priority = 0;
 
     // in memory only fields
     public ?object $obj = null;             // the updated object
@@ -216,21 +177,44 @@ class job extends db_object_seq_id_user
     public ?formula $frm = null;           // the formula object that should be used for updating the result
     public ?phrase_list $phr_lst = null;   //
 
+
     /*
      * construct and map
      */
 
     /**
-     * always set the user because a term is always user specific
+     * always set the type and the user
      * @param user $usr the user who requested to see this term
+     * @param DateTime $request_time the time when the job has been requested
      */
     function __construct(user $usr, DateTime $request_time = new DateTime())
     {
         parent::__construct($usr);
         $this->request_time = $request_time;
-        $this->status = self::STATUS_NEW;
-        $this->priority = self::PRIO_LOWEST;
-        $this->type_id = 0;
+        $this->status_id = job_statuum::STATUS_NEW_ID;
+        $this->priority = job_statuum::PRIO_LOWEST;
+        $this->type_id = null;
+    }
+
+    /**
+     * clear all job object values e.g. to detect the changed fields
+     * @param bool $keep_user set to true to keep the original user
+     * @return void
+     */
+    function reset(bool $keep_user = false): void
+    {
+        parent::reset($keep_user);
+        $this->type_id = null;
+        $this->status_id = null;
+        $this->request_time = null;
+        $this->start_time = null;
+        $this->end_time = null;
+        $this->parameter = null;
+        $this->change_field = null;
+        $this->row_id = null;
+        $this->src = null;
+        $this->ref = null;
+        $this->priority = null;
     }
 
     /**
@@ -242,15 +226,34 @@ class job extends db_object_seq_id_user
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        global $sys;
-        $result = parent::row_mapper($db_row, self::FLD_ID);
+        $lib = new library();
+        $result = parent::row_mapper($db_row, job_db::FLD_ID);
         if ($result) {
-            //$this->request_time = $db_row[self::FLD_TIME_REQUEST];
-            //$this->start_time = $db_row[self::FLD_TIME_START];
-            //$this->end_time = $db_row[self::FLD_TIME_END];
-            $this->type_id = $db_row[self::FLD_TYPE];
-            //$this->status = $db_row[self::FLD_ID];
-            //$this->priority = $db_row[self::FLD_ID];
+            if (array_key_exists(job_db::FLD_TYPE, $db_row)) {
+                $this->type_id = $db_row[job_db::FLD_TYPE];
+            }
+            if (array_key_exists(job_db::FLD_STATUS, $db_row)) {
+                $this->status_id = $db_row[job_db::FLD_STATUS];
+            }
+            if (array_key_exists(job_db::FLD_TIME_REQUEST, $db_row)) {
+                $this->request_time = $lib->get_datetime($db_row[job_db::FLD_TIME_REQUEST], $this->dsp_id());
+            }
+            if (array_key_exists(job_db::FLD_TIME_START, $db_row)) {
+                $this->start_time = $lib->get_datetime($db_row[job_db::FLD_TIME_START], $this->dsp_id());
+            }
+            if (array_key_exists(job_db::FLD_TIME_END, $db_row)) {
+                $this->end_time = $lib->get_datetime($db_row[job_db::FLD_TIME_END], $this->dsp_id());
+            }
+            $this->parameter = $db_row[job_db::FLD_PARAMETER];
+            $this->change_field = $db_row[job_db::FLD_CHANGE_FIELD];
+            $this->row_id = $db_row[job_db::FLD_ROW];
+            if (array_key_exists(source_db::FLD_ID, $db_row)) {
+                $this->set_source_id($db_row[source_db::FLD_ID]);
+            }
+            if (array_key_exists(ref_db::FLD_ID, $db_row)) {
+                $this->set_ref_id($db_row[ref_db::FLD_ID]);
+            }
+            $this->priority = $db_row[job_db::FLD_PRIO];
             log_debug('Batch job ' . $this->id() . ' loaded');
         }
         return $result;
@@ -270,7 +273,7 @@ class job extends db_object_seq_id_user
      */
     function set_type_id(?int $type_id = null, user $usr_req = new user()): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr_req->can_set_type_id()) {
             $this->type_id = $type_id;
         } else {
@@ -279,7 +282,7 @@ class job extends db_object_seq_id_user
                 $this->type_id = $type_id;
             } else {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                $msg->add(msg_id::NOT_ALLOWED_TO, [
                     msg_id::VAR_USER_NAME => $usr_req->name(),
                     msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
                     msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
@@ -287,7 +290,36 @@ class job extends db_object_seq_id_user
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg;
+    }
+
+    /**
+     * set the database id of the status
+     *
+     * @param int|null $sta_id the database id of the status
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_status_id(?int $sta_id = null, user $usr_req = new user()): user_message
+    {
+        $msg = new user_message();
+        if ($usr_req->can_set_type_id()) {
+            $this->type_id = $sta_id;
+        } else {
+            // the type of a job can be set once if not defined already
+            if ($sta_id === null) {
+                $this->status_id = $sta_id;
+            } else {
+                $lib = new library();
+                $msg->add(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => $usr_req->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
+                    msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+                ]);
+            }
+        }
+        return $msg;
     }
 
     function type_id(): ?int
@@ -295,10 +327,21 @@ class job extends db_object_seq_id_user
         return $this->type_id;
     }
 
+    function status_id(): ?int
+    {
+        return $this->status_id;
+    }
+
     function set_type(string $code_id, user $usr_req): void
     {
         global $sys;
         $this->set_type_id($sys->typ_lst->job_typ->id($code_id), $usr_req);
+    }
+
+    function set_status(string $code_id, user $usr_req): void
+    {
+        global $sys;
+        $this->set_status_id($sys->typ_lst->job_sta->id($code_id), $usr_req);
     }
 
     function type_code_id(): string
@@ -313,6 +356,61 @@ class job extends db_object_seq_id_user
         }
         return $result;
     }
+
+    /**
+     * @param int|null $id the id of the source use by the job
+     */
+    function set_source_id(int|null $id): void
+    {
+        if ($id == null) {
+            $this->src = null;
+        } else {
+            if ($this->src == null) {
+                $this->src = new source($this->get_user());
+            }
+            $this->src->id = $id;
+        }
+    }
+
+    /**
+     * @return int the id of the source for this job or zero if no source is defined
+     */
+    function get_source_id(): int
+    {
+        if ($this->src == null) {
+            return 0;
+        } else {
+            return $this->src->id();
+        }
+    }
+
+    /**
+     * @param int|null $id the id of the reference use by the job
+     */
+    function set_ref_id(int|null $id): void
+    {
+        if ($id == null) {
+            $this->ref = null;
+        } else {
+            if ($this->ref == null) {
+                $this->ref = new ref($this->get_user());
+            }
+            $this->ref->id = $id;
+        }
+    }
+
+    /**
+     * @return int the id of the reference for this job or zero if no reference is defined
+     */
+    function get_ref_id(): int
+    {
+        if ($this->ref == null) {
+            return 0;
+        } else {
+            return $this->ref->id();
+        }
+    }
+
 
     /*
      * load
@@ -333,7 +431,7 @@ class job extends db_object_seq_id_user
 
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
-        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_fields(job_db::FLD_NAMES);
 
         return $qp;
     }
@@ -366,11 +464,11 @@ class job extends db_object_seq_id_user
 
     /**
      * TODO align the field name with the object
-     * @return string job_id instead of job object
+     * @return string job_id instead of a job object
      */
     function id_field(): string
     {
-        return self::FLD_ID;
+        return job_db::FLD_ID;
     }
 
 
@@ -391,6 +489,8 @@ class job extends db_object_seq_id_user
 
         $vars[json_fields::ID] = $this->id();
         $vars[json_fields::USER_NAME] = $this->get_user()->name();
+        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::STATUS] = $this->status_id();
         // TODO use time zone?
         $vars[json_fields::TIME_REQUEST] = $this->request_time->format(DateTimeInterface::ATOM);
         if ($this->start_time != null) {
@@ -399,8 +499,11 @@ class job extends db_object_seq_id_user
         if ($this->end_time != null) {
             $vars[json_fields::TIME_END] = $this->end_time->format(DateTimeInterface::ATOM);
         }
-        $vars[json_fields::TYPE] = $this->type_id();
-        $vars[json_fields::STATUS] = $this->status;
+        $vars[json_fields::JOB_PARAMETER] = $this->parameter;
+        $vars[json_fields::FIELD_ID] = $this->change_field;
+        $vars[json_fields::ROW_ID] = $this->row_id;
+        $vars[json_fields::SOURCE_ID] = $this->src?->id();
+        $vars[json_fields::REFERENCE] = $this->ref?->id();
         $vars[json_fields::PRIORITY] = $this->priority;
 
         return $vars;
@@ -412,72 +515,11 @@ class job extends db_object_seq_id_user
      */
 
     /**
-     * request a new calculation
-     * @return int the id of the added batch job
-     */
-    function add(string $code_id = ''): int
-    {
-
-        global $db_con;
-        global $usr;
-
-        $result = 0;
-        log_debug();
-
-        // create first the database entry to make sure the update is done
-        if ($this->type_id() <= 0) {
-            if ($code_id == '') {
-                log_debug('invalid batch job type');
-            } else {
-                $this->set_type($code_id, $usr);
-            }
-        }
-
-        if ($this->type_id() > 0) {
-            log_debug('ok');
-            if ($this->row_id <= 0) {
-                if (isset($this->obj)) {
-                    $this->row_id = $this->obj->id();
-                }
-            }
-            if ($this->row_id <= 0 and $code_id != job_type_list::BASE_IMPORT) {
-                log_debug('row id missing?');
-            } else {
-                log_debug('row_id ok');
-                if (isset($this->obj) or $code_id == job_type_list::BASE_IMPORT) {
-                    if (isset($this->obj)) {
-                        $this->row_id = $this->obj->id();
-                    }
-                    log_debug('connect');
-                    //$db_con = New mysql;
-                    $db_type = $db_con->get_class();
-                    $db_con->set_class(job::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    $job_id = $db_con->insert_old(array(user_db::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
-                        array($this->get_user()->id, sql::NOW, $this->type_id(), $this->row_id));
-                    $this->request_time = new DateTime();
-
-                    // execute the job if possible
-                    if ($job_id > 0 and $code_id != job_type_list::BASE_IMPORT) {
-                        $this->id = $job_id;
-                        $this->exe();
-                        $result = $job_id;
-                    }
-                    $db_con->set_class($db_type);
-                }
-            }
-        }
-        log_debug('done');
-        return $result;
-    }
-
-    /**
      * update all result depending on one value
      */
-    function exe_val_upd(): void
+    function exe_val_upd(user_message $usr_msg): bool
     {
         log_debug();
-        global $db_con;
 
         // load all depending formula results
         if (isset($this->obj)) {
@@ -495,14 +537,11 @@ class job extends db_object_seq_id_user
             }
         }
 
-        //$db_con = New mysql;
-        $db_type = $db_con->get_class();
-        $db_con->set_class(job::class);
-        $db_con->usr_id = $this->get_user()->id;
-        $result = $db_con->update_old($this->id(), 'end_time', sql::NOW);
-        $db_con->set_class($db_type);
+        $this->end_time = new DateTime();
+        $this->save($usr_msg);
 
-        log_debug('done with ' . $result);
+        log_debug('done with ' . $usr_msg->all_message_text());
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -510,30 +549,293 @@ class job extends db_object_seq_id_user
      */
     function exe(): void
     {
-        global $db_con;
-        //$db_con = New mysql;
-        $db_type = $db_con->get_class();
-        $db_con->usr_id = $this->get_user()->id;
-        $db_con->set_class(job::class);
-        $result = $db_con->update_old($this->id(), 'start_time', sql::NOW);
+        $usr_msg = new user_message();
 
-        log_debug($this->type_code_id() . ' with ' . $result);
-        if ($this->type_code_id() == job_type_list::VALUE_UPDATE) {
-            $this->exe_val_upd();
+        $this->start_time = new DateTime();
+        $this->save($usr_msg);
+
+        if ($this->type_code_id() == job_types::VALUE_UPDATE) {
+            $this->exe_val_upd($usr_msg);
         } else {
             log_err('Job type "' . $this->type_code_id() . '" not defined.', 'job->exe');
         }
-        $db_con->set_class($db_type);
     }
 
     /**
      * remove the old requests from the database if they are closed since a while
-     * @param user_message $usr_msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @param user_message $msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
+    {
+        return array_merge(
+            parent::db_fields_all(),
+            [
+                job_db::FLD_TYPE,
+                job_db::FLD_STATUS,
+                job_db::FLD_TIME_REQUEST,
+                job_db::FLD_TIME_START,
+                job_db::FLD_TIME_END,
+                job_db::FLD_PARAMETER,
+                job_db::FLD_CHANGE_FIELD,
+                job_db::FLD_ROW,
+                source_db::FLD_ID,
+                ref_db::FLD_ID,
+                job_db::FLD_PRIO,
+            ]
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param job|db_object_seq_id $obj the compare value to detect the changed fields
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        job|db_object_seq_id $obj,
+        user_message         $msg,
+        sql_type_list        $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
+    {
+        global $sys;
+
+        $sc = new sql_creator();
+        $do_log = $sc_par_lst->incl_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
+        if ($obj->type_id() !== $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            global $sys;
+            if ($this->type_id() < 0) {
+                $msg->add(msg_id::JOB_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
+            $lst->add_type_field(
+                job_db::FLD_TYPE,
+                type_object::FLD_NAME,
+                $this->type_id(),
+                $obj->type_id(),
+                $sys->typ_lst->job_typ);
+        }
+        if ($obj->status_id() !== $this->status_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            global $sys;
+            if ($this->status_id() < 0) {
+                $msg->add(msg_id::JOB_STATUS_MISSING, [
+                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
+            $lst->add_type_field(
+                job_db::FLD_STATUS,
+                type_object::FLD_NAME,
+                $this->status_id(),
+                $obj->status_id(),
+                $sys->typ_lst->job_sta);
+        }
+        // TODO Prio 2 maybe add the time zone to the formatting and move the format to a SQL const
+        if ($obj->request_time != $this->request_time) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TIME_REQUEST,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_TIME_REQUEST),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                job_db::FLD_TIME_REQUEST,
+                $this->request_time?->format(sql_db::DATE_FORMAT),
+                sql_field_type::TIME,
+                $obj->request_time?->format(sql_db::DATE_FORMAT)
+            );
+        }
+        if ($obj->start_time != $this->start_time) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TIME_START,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_TIME_START),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                job_db::FLD_TIME_START,
+                $this->start_time?->format(sql_db::DATE_FORMAT),
+                sql_field_type::TIME,
+                $obj->start_time?->format(sql_db::DATE_FORMAT)
+            );
+        }
+        if ($obj->end_time != $this->end_time) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TIME_END,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_TIME_END),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                job_db::FLD_TIME_END,
+                $this->end_time?->format(sql_db::DATE_FORMAT),
+                sql_field_type::TIME,
+                $obj->end_time?->format(sql_db::DATE_FORMAT)
+            );
+        }
+        if ($obj->parameter !== $this->parameter) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_PARAMETER,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_PARAMETER),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                job_db::FLD_PARAMETER,
+                $this->parameter,
+                sql_field_type::INT,
+                $obj->parameter
+            );
+        }
+        if ($obj->change_field !== $this->change_field) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_CHANGE_FIELD,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_CHANGE_FIELD),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                job_db::FLD_CHANGE_FIELD,
+                $this->change_field,
+                sql_field_type::INT,
+                $obj->change_field
+            );
+        }
+        if ($obj->row_id !== $this->row_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_ROW,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_ROW),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                job_db::FLD_ROW,
+                $this->row_id,
+                sql_field_type::INT,
+                $obj->row_id
+            );
+        }
+        if ($obj->get_source_id() !== $this->get_source_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_link_field(
+                source_db::FLD_ID,
+                source_db::FLD_NAME,
+                $this->src,
+                $obj->src
+            );
+        }
+        if ($obj->get_ref_id() !== $this->get_ref_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . ref_db::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_link_field(
+                ref_db::FLD_ID,
+                ref_db::FLD_EX_KEY,
+                $this->ref,
+                $obj->ref
+            );
+        }
+        if ($obj->priority !== $this->priority) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_PRIO,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_PRIO),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                job_db::FLD_PRIO,
+                $this->priority,
+                sql_field_type::INT_SMALL,
+                $obj->priority
+            );
+        }
+        return $lst;
+    }
+
+
+    /*
+     * db helper
+     */
+
+    /**
+     * check if the user can add this object to the database
+     * e.g. reject if a reserved name is used and the user is not a system test user or an admin user
+     * to be overwritten by the child objects
+     *
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
+     */
+    protected function check(user_message $msg): bool
+    {
+        // the job type must be valid
+        if ($this->type_id() <= 0) {
+            $msg->add_err(msg_id::JOB_TYPE_INVALID, [
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
+        } elseif ($this->type_code_id() != job_types::BASE_IMPORT) {
+            if ($this->row_id <= 0) {
+                $msg->add_err(msg_id::JOB_ROW_MISSING, [
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
+        }
+        return $msg->is_ok();
     }
 
 
@@ -572,7 +874,7 @@ class job extends db_object_seq_id_user
         return $result;
     }
 
-    function name(): string
+    function name(): string|null
     {
         $result = $this->type_code_id();
 

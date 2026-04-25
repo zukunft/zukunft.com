@@ -106,14 +106,14 @@ class horizontal_ui_tests
             $ui_obj->url_mapper($url_array, $usr_msg_ui);
             $api_msg = $ui_obj->api_array();
             $refilled_obj = clone $filled_obj;
-            $refilled_obj->reset();
+            $refilled_obj->reset(true);
             $refilled_obj->api_mapper($api_msg, $usr_msg);
             // fill the id that is not set by the add url
             $refilled_obj->id = $filled_obj->id();
             // fill the exclude field that is set by the crud action
             if ($filled_obj::class != verb::class) {
                 if ($filled_obj->is_excluded()) {
-                    $refilled_obj->set_excluded($filled_obj->is_excluded());
+                    $refilled_obj->excluded = $filled_obj->excluded;
                 }
             }
             // fill the code id field that should not be set via url

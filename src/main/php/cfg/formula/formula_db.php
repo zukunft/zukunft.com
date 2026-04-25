@@ -116,16 +116,16 @@ class formula_db
     );
 
     // all database field names excluding the id
-    // actually empty because all formula fields are user specific
-    // TODO check if last_update must be user specific
+    // actually empty because all formula fields are user-specific
+    // TODO check if last_update must be user-specific
     const array FLD_NAMES = array();
-    // list of the user specific database field names
+    // list of the user-specific database field names
     const array FLD_NAMES_USR = array(
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
         sql_db::FLD_DESCRIPTION
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
         self::FLD_ALL_NEEDED,
@@ -134,7 +134,7 @@ class formula_db
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_FORMULA_TEXT,

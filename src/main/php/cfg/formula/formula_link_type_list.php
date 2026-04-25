@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -36,8 +36,10 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::SHARED_TYPES . 'formula_link_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 
 class formula_link_type_list extends type_list
 {
@@ -57,7 +59,7 @@ class formula_link_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(formula_link_type::DEFAULT);
+        return parent::id(formula_link_types::DEFAULT);
     }
 
 }

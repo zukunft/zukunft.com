@@ -33,6 +33,8 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
@@ -43,26 +45,24 @@ include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula_type_list.php';
 include_once paths::MODEL_LANGUAGE . 'language_list.php';
 include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
-include_once paths::MODEL_LOG . 'change_action_list.php';
-include_once paths::MODEL_LOG . 'change_field_list.php';
-include_once paths::MODEL_LOG . 'change_table_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_REF . 'ref_type_list.php';
 include_once paths::MODEL_REF . 'source_type_list.php';
 include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
 include_once paths::MODEL_SANDBOX . 'share_type_list.php';
-include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_USER . 'user_type_list.php';
+include_once paths::MODEL_USER . 'user_status_list.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_VIEW . 'view_link_type_list.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_VIEW . 'view_sys_list.php';
 include_once paths::MODEL_VIEW . 'view_type_list.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
-include_once html_paths::TYPES . 'formula_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_type_list;
@@ -72,15 +72,11 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_list;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_action_list;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_field_list;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_table_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
@@ -91,7 +87,6 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
-use Zukunft\ZukunftCom\main\php\web\types\formula_type_list as formula_type_list_ui;
 
 class unit_env
 {
@@ -133,6 +128,7 @@ class unit_env
         $this->init_protection_types();
         $this->init_languages();
         $this->init_language_forms();
+        $this->init_job_statuum();
         $this->init_job_types();
         $this->init_log_actions();
         $this->init_log_tables();
@@ -172,6 +168,30 @@ class unit_env
 
         $sys->typ_lst->usr_pro = new user_profile_list();
         $sys->typ_lst->usr_pro->load_dummy();
+
+    }
+
+    /**
+     * create the user types for the unit tests without database connection
+     */
+    private function init_user_types(): void
+    {
+        global $sys;
+
+        $sys->typ_lst->usr_typ = new user_type_list();
+        $sys->typ_lst->usr_typ->load_dummy();
+
+    }
+
+    /**
+     * create the user statuum for the unit tests without database connection
+     */
+    private function init_user_statuum(): void
+    {
+        global $sys;
+
+        $sys->typ_lst->usr_sta = new user_status_list();
+        $sys->typ_lst->usr_sta->load_dummy();
 
     }
 
@@ -409,6 +429,16 @@ class unit_env
     {
         global $sys;
         $sys->typ_lst->job_typ->load_dummy();
+
+    }
+
+    /**
+     * create the job status array for the unit tests without database connection
+     */
+    private function init_job_statuum(): void
+    {
+        global $sys;
+        $sys->typ_lst->job_sta->load_dummy();
 
     }
 

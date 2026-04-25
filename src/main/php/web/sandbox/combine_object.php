@@ -86,7 +86,7 @@ class combine_object extends CombineObject
      * set the vars of this combine frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
      * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function set_from_json(string $json_api_msg, user_message $usr_msg): bool
     {
@@ -98,7 +98,7 @@ class combine_object extends CombineObject
      * dummy function that should be overwritten by the child object
      * @param array $json_array an api json message
      * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $json_array, user_message $usr_msg): bool
     {

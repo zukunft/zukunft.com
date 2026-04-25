@@ -36,6 +36,9 @@ class formula_types
 
     // list of the formula types that have a coded functionality
     const string CALC = "default";    // a normal calculation formula
+    const int CALC_ID = 1;
+    const string CALC_NAME = "calc";
+    const string CALC_COM = "a normal calculation formula";
     const string NEXT = "time_next";  // time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
     const string THIS = "time_this";  // selects the assumed time term
     const string PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"

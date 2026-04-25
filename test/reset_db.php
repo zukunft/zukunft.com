@@ -32,10 +32,16 @@
 
 */
 
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('This script may only be run from the command line.');
+}
+
 include_once 'test_const.php';
 
 // load the main test class to get the test environment
 include_once TEST_PHP_PATH . 'test_app.php';
+
 use Zukunft\ZukunftCom\test\php\test_app;
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;

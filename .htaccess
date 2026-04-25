@@ -1,0 +1,14 @@
+# Block direct access to log files anywhere
+<FilesMatch "\.log$">
+    Require all denied
+</FilesMatch>
+
+# Block dotfiles (catches .env, .env.example, .gitignore)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Block the install/update shell scripts if they ended up in docroot
+<FilesMatch "\.(sh|sql|yaml|yml|md)$">
+    Require all denied
+</FilesMatch>

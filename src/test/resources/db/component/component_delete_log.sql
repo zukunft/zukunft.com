@@ -26,5 +26,5 @@ SELECT component_delete_log
        (3::bigint,
         3::smallint,
         51::smallint,
-        'Word'::text,
-        1::bigint);
+        'system form field name'::text,
+        4::bigint);

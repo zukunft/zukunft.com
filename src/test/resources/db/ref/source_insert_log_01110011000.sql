@@ -47,14 +47,14 @@ PREPARE source_insert_log_01110011000_call
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);
 
 SELECT source_insert_log_01110011000 (
-               'The International System of Units'::text,
+               'Federal Statistical Office'::text,
                3::bigint,
                1::smallint,
                57::smallint,
                56::smallint,
                58::smallint,
-               'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards'::text,
+               'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.'::text,
                59::smallint,
                4::smallint,
                60::smallint,
-               'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf'::text);
+               'https://www.bfs.admin.ch/bfs/en/home.html'::text);

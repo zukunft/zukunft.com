@@ -42,22 +42,29 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
-include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
+include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
+use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 
 class element_list extends sandbox_list
 {
@@ -68,11 +75,11 @@ class element_list extends sandbox_list
 
     /**
      * add the element object
-     * to the parent function that fills the element list based on a database records
+     * to the parent function that fills the element list based on a database record
      *
      * @param array $db_rows is an array of an array with the database values
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
-     * @return bool true if at least one component has been loaded
+     * @return bool true if at least one element has been loaded
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
@@ -131,7 +138,7 @@ class element_list extends sandbox_list
         $sc->set_class(element::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
-        $sc->set_fields(element::FLD_NAMES);
+        $sc->set_fields(element_db::FLD_NAMES);
         return $qp;
     }
 
@@ -167,7 +174,7 @@ class element_list extends sandbox_list
         $qp = $this->load_sql($sc, 'frm_and_type_id');
         if ($frm_id > 0 and $elm_type_id != 0) {
             $sc->add_where(formula_db::FLD_ID, $frm_id);
-            $sc->add_where(element::FLD_TYPE, $elm_type_id);
+            $sc->add_where(element_db::FLD_TYPE, $elm_type_id);
             $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
             $qp->sql = $sc->sql();
         } else {
@@ -177,10 +184,87 @@ class element_list extends sandbox_list
         return $qp;
     }
 
+    function get_by_link_id(element $elm): element|null
+    {
+        $res_elm = null;
+        foreach ($this->lst() as $chk_elm) {
+            if ($res_elm == null) {
+                if ($chk_elm->frm->id() == $elm->frm->id()
+                    and $chk_elm->trm_id() == $elm->trm_id()) {
+                    $res_elm = $elm;
+                }
+            }
+        }
+        return $res_elm;
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * get the first ids from the list e.g. to show it to humans
+     *
+     * @param ?int $limit the max number of ids to show
+     * @return array with the database ids of all objects of this list
+     */
+    function ids(?int $limit = null): array
+    {
+        if ($limit == null and !$this->is_dirty()) {
+            $result = array_keys($this->id_pos_lst());
+        } else {
+            $result = array();
+            $pos = 0;
+            foreach ($this->lst() as $sbx_obj) {
+                if ($pos <= $limit or $limit == null) {
+                    // use only valid ids
+                    if ($sbx_obj->frm?->id() != 0) {
+                        $id_txt = $sbx_obj->frm?->id();
+                        if ($sbx_obj->obj?->id() != 0) {
+                            $id_txt .= '/' . $sbx_obj->obj?->id();
+                        }
+                        $result[] = $id_txt;
+                        $pos++;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * modify
      */
+
+    /**
+     * add an object to the list that does
+     * not yet have a database id
+     * but has linked objects
+     *
+     * @param element|db_object_seq_id|null $to_add the object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param Message $msg to report which entry is double
+     * @returns bool true if the object has been added
+     */
+    function add_by_link(
+        element|db_object_seq_id|null $to_add,
+        bool                          $allow_duplicates = false,
+        Message                       $msg = new Message()
+    ): bool
+    {
+        $result = false;
+        if ($allow_duplicates) {
+            $result = $this->add($to_add);
+        } else {
+            $elm = $this->get_by_link_id($to_add);
+            if ($elm == null) {
+                $result = $this->add($to_add);
+            }
+        }
+        return $result;
+    }
 
     /**
      * add one formula element to the list and keep the order (contrary to the parent function)
@@ -188,9 +272,78 @@ class element_list extends sandbox_list
      */
     function add(?element $elm_to_add): bool
     {
-        $this->add_obj($elm_to_add, true);
-        $this->set_lst_dirty();
+        parent::add_direct($elm_to_add);
+        $this->set_hash_dirty();
         return true;
+    }
+
+    function merge(element_list $lst): void
+    {
+        foreach ($lst->lst() as $elm) {
+            $this->add($elm);
+        }
+    }
+
+
+    /*
+     * filter
+     */
+
+    /**
+     * get all objects that are not in the given list
+     *
+     * @param element_list|list_db_write|ListOfIdObjects $lst the list to compare with
+     * @return element_list|list_db_write|ListOfIdObjects the list of objects that are only in this list
+     */
+    function diff(
+        element_list|list_db_write|ListOfIdObjects $lst
+    ): element_list|list_db_write|ListOfIdObjects
+    {
+        $lst = $this->clone_reset();
+        foreach ($this->lst() as $elm) {
+            if (!$lst->get_by_link_id($elm)) {
+                $lst->add($elm);
+            }
+        }
+        return $lst;
+    }
+
+    /**
+     * get the formula elements from this list that use the verb following
+     * to select the values
+     * @return element_list with precoded formula elements using predicate "following"
+     */
+    function predefined_following(): element_list
+    {
+        $result = new element_list($this->get_user());
+        foreach ($this->lst() as $elm) {
+            if ($elm->is_formula()) {
+                if ($elm->obj->uses_following()) {
+                    $result->add($elm);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * remove all duplicate links from this list
+     * the element list created from the expression may contain the same link more than once
+     * e.g. for correct number fillings.
+     * whereas the element list loaded from the database contains each link only once
+     * because the database table should only be used to select the the formula so no duplicates are needed
+     *
+     * @return element_list with only unique links
+     */
+    function unique(): element_list
+    {
+        $lst = $this->clone_reset();
+        foreach ($this->lst() as $elm) {
+            if (!$lst->get_by_link_id($elm)) {
+                $lst->add($elm);
+            }
+        }
+        return $lst;
     }
 
 
@@ -206,7 +359,7 @@ class element_list extends sandbox_list
         $sc = $db_con->sql_creator();
         $qp = $this->del_sql_without_log($sc);
         $usr_msg->add_message_text(
-            $db_con->exe_try('del elements', $qp->sql, '', array(), sys_log_level::FATAL));
+            $db_con->exe_try('del elements', $qp->sql, $qp->name, $qp->par, sys_log_levels::FATAL_ID));
         return $usr_msg;
     }
 
@@ -219,7 +372,7 @@ class element_list extends sandbox_list
     function del_sql_without_log(sql_creator $sc): sql_par
     {
         return $sc->del_sql_list_without_log(
-            element::class, (new element($this->get_user()))->id_field(), $this->ids());
+            element::class, new element($this->get_user())->id_field(), $this->ids());
     }
 
 }

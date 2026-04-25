@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -30,29 +30,33 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 
 //include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
-//include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 /**
@@ -114,7 +118,7 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
  * @param string $msg_text
  * @param string $function_name
  * @param string $msg_description
- * @param string $function_trace
+ * @param string $trace
  * @param user|null $calling_usr
  * @param bool $force_log
  * @return string
@@ -122,14 +126,14 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
 function log_info(string $msg_text,
                   string $function_name = '',
                   string $msg_description = '',
-                  string $function_trace = '',
+                  string $trace = '',
                   ?user  $calling_usr = null,
                   bool   $force_log = false): string
 {
     return log_msg($msg_text,
         $msg_description,
-        sys_log_level::INFO,
-        $function_name, $function_trace,
+        sys_log_levels::INFO_ID,
+        $function_name, $trace,
         $calling_usr,
         $force_log);
 }
@@ -137,15 +141,15 @@ function log_info(string $msg_text,
 function log_warning(string  $msg_text,
                      string  $function_name = '',
                      string  $msg_description = '',
-                     string  $function_trace = '',
+                     string  $trace = '',
                      ?user   $calling_usr = null,
                      ?sql_db $given_db_con = null): string
 {
     return log_msg($msg_text,
         $msg_description,
-        sys_log_level::WARNING,
+        sys_log_levels::WARNING_ID,
         $function_name,
-        $function_trace,
+        $trace,
         $calling_usr,
         false,
         $given_db_con
@@ -155,7 +159,7 @@ function log_warning(string  $msg_text,
 function log_err(string $msg_text,
                  string $function_name = '',
                  string $msg_description = '',
-                 string $function_trace = '',
+                 string $trace = '',
                  ?user  $calling_usr = null): string
 {
     global $errors;
@@ -172,23 +176,23 @@ function log_err(string $msg_text,
     if ($function_name == '' or $function_name == null) {
         $function_name = 'no function name detected';
     }
-    if ($function_trace == '') {
-        $function_trace = (new Exception)->getTraceAsString();
+    if ($trace == '') {
+        $trace = (new Exception)->getTraceAsString();
     }
     return log_msg($msg_text,
         $msg_description,
-        sys_log_level::ERROR,
+        sys_log_levels::ERROR_ID,
         $function_name,
-        $function_trace,
+        $trace,
         $calling_usr);
 }
 
 /**
- * if still possible write the fatal error message to the database and stop the execution
- * @param string $msg_text is a short description that is used to group and limit the number of error messages
+ * if still possible, write the fatal error message to the database and stop the execution
+ * @param string $msg_text is a short description used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
  * @param string $function_name is the function name which has most likely caused the error
- * @param string $function_trace is the complete system trace to get more details
+ * @param string $trace is the complete system trace to get more details
  * @param user|null $calling_usr the user who has trigger the error
  * @return string
  */
@@ -196,7 +200,7 @@ function log_fatal_db(
     string $msg_text,
     string $function_name,
     string $msg_description = '',
-    string $function_trace = '',
+    string $trace = '',
     ?user  $calling_usr = null): string
 {
     echo 'FATAL ERROR! ' . $msg_text;
@@ -206,15 +210,15 @@ function log_fatal_db(
         $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
         $function_name = $lib->str_left_of($function_name, ': log_');
     }
-    if ($function_trace == '') {
-        $function_trace = (new Exception)->getTraceAsString();
+    if ($trace == '') {
+        $trace = (new Exception)->getTraceAsString();
     }
     return log_msg(
         'FATAL ERROR! ' . $msg_text,
         $msg_description,
-        sys_log_level::FATAL,
+        sys_log_levels::FATAL_ID,
         $function_name,
-        $function_trace,
+        $trace,
         $calling_usr);
 }
 
@@ -224,14 +228,14 @@ function log_fatal_db(
  * @param string $msg_text is a short description that is used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
  * @param string $function_name is the function name which has most likely caused the error
- * @param string $function_trace is the complete system trace to get more details
+ * @param string $trace is the complete system trace to get more details
  * @param user|null $calling_usr the user who has trigger the error
  * @return string the message that should be shown to the user if possible
  */
 function log_fatal(string $msg_text,
                    string $function_name,
                    string $msg_description = '',
-                   string $function_trace = '',
+                   string $trace = '',
                    ?user  $calling_usr = null): string
 {
     $time = (new DateTime())->format('c');
@@ -255,15 +259,15 @@ function log_fatal(string $msg_text,
         $function_name = $lib->str_left_of($function_name, ': log_');
         $write_with_more_info = true;
     }
-    if ($function_trace == '') {
-        $function_trace = (new Exception)->getTraceAsString();
+    if ($trace == '') {
+        $trace = (new Exception)->getTraceAsString();
         $write_with_more_info = true;
     }
     if ($write_with_more_info) {
         fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n"
             . $msg_description . "\n"
             . 'function ' . $function_name . "\n"
-            . 'trace ' . "\n" . $function_trace . "\n"
+            . 'trace ' . "\n" . $trace . "\n"
             . 'by user ' . $usr_txt . "\n");
     }
     return $msg_text;
@@ -274,11 +278,11 @@ function log_fatal(string $msg_text,
  * with the link for more details and to trace the resolution process
  * used also for system messages so no debug calls from here to avoid loops
  *
- * @param string $msg_text is a short description that is used to group and limit the number of error messages
+ * @param string $msg_text is a short description used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
- * @param string $msg_log_level is the criticality level e.g. debug, info, warning, error or fatal error
+ * @param int $msg_log_level is the criticality level e.g. debug, info, warning, error or fatal error
  * @param string $function_name is the function name which has most likely caused the error
- * @param string $function_trace is the complete system trace to get more details
+ * @param string $trace is the complete system trace to get more details
  * @param user|null $usr is the user who has probably seen the error message
  * @return string the text that can be shown to the user in the navigation bar
  * TODO return the link to the log message so that the user can trace the bug fixing
@@ -286,9 +290,9 @@ function log_fatal(string $msg_text,
  */
 function log_msg(string  $msg_text,
                  string  $msg_description,
-                 string  $msg_log_level,
+                 int     $msg_log_level,
                  string  $function_name,
-                 string  $function_trace,
+                 string  $trace,
                  ?user   $usr = null,
                  bool    $force_log = false,
                  ?sql_db $given_db_con = null): string
@@ -313,7 +317,7 @@ function log_msg(string  $msg_text,
     // TODO Prio 3 activate
     /*
     if (!$used_db_con->connected()) {
-        if (!$used_db_con->open_with_retry($msg_text, $msg_description, $function_name, $function_trace, $usr)) {
+        if (!$used_db_con->open_with_retry($msg_text, $msg_description, $function_name, $trace, $usr)) {
             log_fatal('Stopped database connection retry', 'log_msg');
         }
     }
@@ -332,62 +336,44 @@ function log_msg(string  $msg_text,
             $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
             $function_name = $lib->str_left_of($function_name, ': log_');
         }
-        if ($function_trace == '') {
-            $function_trace = (new Exception)->getTraceAsString();
+        if ($trace == '') {
+            $trace = (new Exception)->getTraceAsString();
         }
         $user_id = 0;
         if ($usr != null) {
             $user_id = $usr->id;
         }
         if ($user_id <= 0) {
-            $user_id = $_SESSION['usr_id'] ?? users::SYSTEM_ID;
+            $user_id = $_SESSION[url_var::SESSION_USER_ID] ?? users::SYSTEM_ID;
         }
 
         // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
         $msg_type_text = $user_id . substr($msg_text, 0, 200);
         if (!in_array($msg_type_text, $sys->log_msg_lst)) {
-            $used_db_con->usr_id = $user_id;
-            $sys_log_id = 0;
+            $msg = new user_message();
+            $sys_log = new sys_log();
 
             $sys->log_msg_lst[] = $msg_type_text;
             if ($msg_log_level > text_log::LOG_LEVEL or $force_log) {
-                $used_db_con->set_class(sys_log_function::class);
-                $function_id = $used_db_con->get_id($function_name);
-                if ($function_id <= 0) {
-                    $function_id = $used_db_con->add_id($function_name);
-                }
-                $msg_text = str_replace("'", "", $msg_text);
-                $msg_description = str_replace("'", "", $msg_description);
-                $function_trace = str_replace("'", "", $function_trace);
-                $msg_text = $used_db_con->sf($msg_text);
-                $msg_description = $used_db_con->sf($msg_description);
-                $function_trace = $used_db_con->sf($function_trace);
-                $fields = array();
-                $values = array();
-                $fields[] = "sys_log_type_id";
-                $values[] = $msg_log_level;
-                $fields[] = "sys_log_function_id";
-                $values[] = $function_id;
-                $fields[] = "sys_log_text";
-                $values[] = $msg_text;
-                $fields[] = "sys_log_description";
-                $values[] = $msg_description;
-                $fields[] = "sys_log_trace";
-                $values[] = $function_trace;
-                if ($user_id > 0) {
-                    $fields[] = user_db::FLD_ID;
-                    $values[] = $user_id;
-                }
-                $used_db_con->set_class(sys_log::class);
 
-                $sys_log_id = $used_db_con->insert_old($fields, $values, false);
-                //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
-                //$sys_log_id = mysqli_insert_id();
+                $fnc = $sys->typ_lst->sys_log_fnc->get_by_name($function_name);
+                if ($fnc == null) {
+                    $sys_log_fnc = new sys_log_function();
+                    $sys_log_fnc->name = $function_name;
+                    $sys_log_fnc->code_id = $function_name;
+                    $msg->usr = $sys->user_log();
+                    $sys_log_fnc->save($msg);
+                    $sys->typ_lst->sys_log_fnc->add($sys_log_fnc, false);
+                }
+
+                $sys_log->set($user_id, $function_name, $trace, $msg_log_level, $msg_text, $msg_description, $msg);
+                $sys_log->insert($msg);
+
             }
             if ($msg_log_level >= text_log::MSG_LEVEL) {
                 echo "Zukunft.com has detected a critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
-                if ($sys_log_id > 0) {
-                    echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log_id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log_id . '</a><br>';
+                if ($sys_log->id > 0) {
+                    echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log->id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log->id . '</a><br>';
                 }
             } else {
                 if ($msg_log_level >= text_log::DSP_LEVEL) {

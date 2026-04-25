@@ -33,30 +33,32 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::SHARED_CONST . 'groups.php';
-include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_groups
+class test_groups extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test groups for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, groups::TEST_GROUPS_CREATE, new group($this->env->usr1));
     }
 
 
@@ -65,7 +67,7 @@ class test_groups
      */
 
     /**
-     * @return group with one prime phrases
+     * @return group with one prime phrase
      */
     function group(): group
     {
@@ -73,6 +75,16 @@ class test_groups
         $lst = $t_phr->phrase_list_pi();
         $grp = $lst->get_grp_id(false);
         $grp->name = groups::TN_READ;
+        return $grp;
+    }
+
+    /**
+     * @return group with one prime phrase and all object vars set
+     */
+    function group_filled(): group
+    {
+        $grp = $this->group();
+        $grp->description = groups::TN_READ_COM;
         return $grp;
     }
 
@@ -86,8 +98,15 @@ class test_groups
         return $ref;
     }
 
+    function group_add(phrase $phr): group
+    {
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($phr);
+        return $lst->get_grp_id(false);
+    }
+
     /**
-     * @return group with one prime phrases
+     * @return group with one prime phrase
      */
     function group_pi_symbol(): group
     {
@@ -292,7 +311,7 @@ class test_groups
     function group_ch(): group
     {
         $t_phr = new test_phrases($this->env);
-        $lst = $t_phr->phrase_list_ch_mio();
+        $lst = $t_phr->ch_inhabitants_in_mio_2019();
         return $lst->get_grp_id(false);
     }
 

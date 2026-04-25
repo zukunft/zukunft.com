@@ -24,5 +24,5 @@ SELECT formula_delete_log
     (3,
      3,
      30,
-     'scale minute to sec',
-     1);;
+     'scale hour to sec',
+     2);

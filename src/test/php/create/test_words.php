@@ -41,10 +41,10 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once test_paths::CREATE . 'test_const.php';
@@ -56,10 +56,10 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -92,9 +92,9 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(words::MATH_ID, words::MATH);
         $wrd->description = words::MATH_COM;
-        $wrd->set_type(phrase_type::NORMAL, $this->env->usr1);
+        $wrd->set_type(phrase_types::NORMAL, $this->env->usr1);
         global $sys;
-        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $wrd;
     }
 
@@ -130,7 +130,19 @@ class test_words extends test_objects
         $msk = new view($this->env->usr1);
         $msk->set(views::HISTORIC_ID);
         $wrd->view = $msk;
-        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
+        return $wrd;
+    }
+
+    /**
+     * @return word "company" with a suggested view
+     */
+    function word_excluded(): word
+    {
+        global $sys;
+        $wrd = new word($this->env->usr2);
+        $wrd->set(words::COMPANY_ID, words::COMPANY);
+        $wrd->exclude();
         return $wrd;
     }
 
@@ -150,19 +162,30 @@ class test_words extends test_objects
      */
     function word_filled(): word
     {
+        $t_msk = new test_views($this->env);
         global $sys;
         $wrd = new word($this->env->usr1);
         $wrd->set(words::MATH_ID, words::MATH);
         $wrd->description = words::MATH_COM;
-        $wrd->set_type(phrase_type::SCALING, $this->env->usr1);
+        $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
         $wrd->set_code_id(words::MATH, $this->env->usr_system);
         $wrd->plural = words::MATH_PLURAL;
-        $wrd->set_view_id(views::MATH_CONST_ID);
-        $wrd->set_usage(test_const::DUMMY_USAGE_WORD);
-        $wrd->set_impact(test_const::DUMMY_IMPACT);
+        $wrd->view = $t_msk->view_math();
+        $wrd->usage = test_const::DUMMY_USAGE_WORD;
+        $wrd->impact = test_const::DUMMY_IMPACT;
         $wrd->exclude();
-        $wrd->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $wrd->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
+        return $wrd;
+    }
+
+    /**
+     * @return word to test the sql insert via function
+     */
+    function word_add(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set_name(words::TEST_ADD);
         return $wrd;
     }
 
@@ -175,6 +198,7 @@ class test_words extends test_objects
         $wrd->include();
         $wrd->id = 0;
         $wrd->set_name(words::TEST_ADD);
+        $wrd->set_code_id(words::TEST_ADD_CODE_ID, $this->env->usr_system);
         return $wrd;
     }
 
@@ -201,16 +225,6 @@ class test_words extends test_objects
     }
 
     /**
-     * @return word to test the sql insert without use of function
-     */
-    function word_add_by_sql(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set_name(words::TEST_ADD_VIA_SQL);
-        return $wrd;
-    }
-
-    /**
      * @return word to test the api insert call
      */
     function word_add_via_api(): word
@@ -219,7 +233,7 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set_name(words::TEST_ADD_API);
         $wrd->description = words::TEST_ADD_API_COM;
-        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type::NORMAL);
+        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_types::NORMAL);
         return $wrd;
     }
 
@@ -232,7 +246,7 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set_name(words::TEST_UPD_API);
         $wrd->description = words::TEST_UPD_API_COM;
-        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type::MEASURE);
+        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_types::MEASURE);
         return $wrd;
     }
 
@@ -253,9 +267,9 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(words::CONST_ID, words::CONST_NAME);
         $wrd->description = words::CONST_COM;
-        $wrd->set_type(phrase_type::MATH_CONST, $this->env->usr1);
+        $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         global $sys;
-        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $wrd;
     }
 
@@ -267,9 +281,9 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(words::PI_SYMBOL_ID, words::PI_SYMBOL);
         $wrd->description = words::PI_SYMBOL_COM;
-        $wrd->set_type(phrase_type::MATH_CONST, $this->env->usr1);
+        $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         global $sys;
-        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $wrd;
     }
 
@@ -281,9 +295,9 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(words::PI_ID, words::PI);
         $wrd->description = words::PI_COM;
-        $wrd->set_type(phrase_type::MATH_CONST, $this->env->usr1);
+        $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         global $sys;
-        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $wrd;
     }
 
@@ -314,7 +328,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::E_SYMBOL_ID, words::E_SYMBOL);
-        $wrd->set_type(phrase_type::MATH_CONST, $this->env->usr1);
+        $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         return $wrd;
     }
 
@@ -325,7 +339,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::E_ID, words::E);
-        $wrd->set_type(phrase_type::MATH_CONST, $this->env->usr1);
+        $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         return $wrd;
     }
 
@@ -393,7 +407,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::HZ_ID, words::HZ);
-        $wrd->set_type(phrase_type::MEASURE, $this->env->usr1);
+        $wrd->set_type(phrase_types::MEASURE, $this->env->usr1);
         $wrd->set_description(words::HZ_COM);
         return $wrd;
     }
@@ -402,7 +416,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::YEAR_1967_ID, words::YEAR_1967);
-        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
+        $wrd->set_type(phrase_types::TIME, $this->env->usr1);
         return $wrd;
     }
 
@@ -410,7 +424,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::YEAR_1983_ID, words::YEAR_1983);
-        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
+        $wrd->set_type(phrase_types::TIME, $this->env->usr1);
         return $wrd;
     }
 
@@ -421,7 +435,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::YEAR_CAP_ID, words::YEAR_CAP);
-        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
+        $wrd->set_type(phrase_types::TIME, $this->env->usr1);
         return $wrd;
     }
 
@@ -440,7 +454,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::YEAR_2020_ID, words::YEAR_2020);
-        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
+        $wrd->set_type(phrase_types::TIME, $this->env->usr1);
         $wrd->set_description(words::YEAR_2020_COM);
         return $wrd;
     }
@@ -502,7 +516,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set($id, $name);
-        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
+        $wrd->set_type(phrase_types::TIME, $this->env->usr1);
         return $wrd;
     }
 
@@ -513,7 +527,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::PCT_ID, words::PCT);
-        $wrd->set_type(phrase_type::PERCENT, $this->env->usr1);
+        $wrd->set_type(phrase_types::PERCENT, $this->env->usr1);
         return $wrd;
     }
 
@@ -573,7 +587,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::THIS_ID, words::THIS_NAME);
-        $wrd->set_type(phrase_type::THIS, $this->env->usr1);
+        $wrd->set_type(phrase_types::THIS, $this->env->usr1);
         return $wrd;
     }
 
@@ -581,7 +595,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::PRIOR_ID, words::PRIOR_NAME);
-        $wrd->set_type(phrase_type::PRIOR, $this->env->usr1);
+        $wrd->set_type(phrase_types::PRIOR, $this->env->usr1);
         return $wrd;
     }
 
@@ -589,7 +603,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::ONE_ID, words::ONE);
-        $wrd->set_type(phrase_type::SCALING_HIDDEN, $this->env->usr1);
+        $wrd->set_type(phrase_types::SCALING_HIDDEN, $this->env->usr1);
         return $wrd;
     }
 
@@ -604,7 +618,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::MIO_ID, words::MIO_SHORT);
-        $wrd->set_type(phrase_type::SCALING, $this->env->usr1);
+        $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
         return $wrd;
     }
 
@@ -612,6 +626,13 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::MINUTE_ID, words::MINUTE);
+        return $wrd;
+    }
+
+    function word_hour(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::HOUR_ID, words::HOUR);
         return $wrd;
     }
 
@@ -927,7 +948,7 @@ class test_words extends test_objects
     function word_list_ui(): word_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->word_list_all_types(), [api_type::INCL_PHRASES]);
+        return $tl->list_to_ui($this->word_list_all_types(), [api_types::INCL_PHRASES]);
     }
 
 

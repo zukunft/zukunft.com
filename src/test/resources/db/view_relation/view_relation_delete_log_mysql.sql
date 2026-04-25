@@ -32,7 +32,7 @@ SELECT view_relation_delete_log
         3,
         108,
         'word_edit',
-        'standard',
+        'add components',
         'word_usage',
         3,
         1,

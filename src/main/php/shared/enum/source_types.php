@@ -36,8 +36,12 @@ enum source_types: string
 {
 
     // list of the source types that have a coded functionality
+    const string XML = "XML";
+    const string JSON = "json";
     const string XBRL = "xbrl";
     const int XBRL_ID = 2; // the fixed database ID for testing
+    const string XBRL_NAME = "XBRL";
+    const string XBRL_COM = "eXtensible Business Reporting Language is a freely available global framework for exchanging business information";
     const string CSV = "csv";
     const int CSV_ID = 3; // the fixed database ID for testing
     const string PDF = "pdf";

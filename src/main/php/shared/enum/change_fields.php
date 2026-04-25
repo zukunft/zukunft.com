@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2025 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -42,6 +42,8 @@ enum change_fields: string
     const string FLD_TABLE = 'table_id';
     // TODO add the user_id to the field list because the owner can change and this should be included in the log
     const string FLD_WORD_NAME = 'word_name';
+    const int FLD_WORD_NAME_ID = 10;
+    const string FLD_WORD_NAME_COM = '';
     const string FLD_WORD_NAME_DSP = 'name';
     const string FLD_WORD_VIEW = 'view_id';
     const string FLD_WORD_PLURAL = 'plural';

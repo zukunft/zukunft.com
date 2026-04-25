@@ -36,7 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
@@ -94,11 +94,11 @@ class figure_tests
 
         $fig = $t_fig->figure_value();
         $t->assert_api($fig, 'figure_value_without_phrases');
-        $t->assert_api($fig, 'figure_value_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($fig, 'figure_value_with_phrases', [api_types::INCL_PHRASES]);
 
         $fig = $t_fig->figure_result();
         $t->assert_api($fig, 'figure_result_without_phrases');
-        $t->assert_api($fig, 'figure_result_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($fig, 'figure_result_with_phrases', [api_types::INCL_PHRASES]);
 
 
         $t->subheader($ts . 'html frontend');

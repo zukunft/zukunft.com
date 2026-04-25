@@ -28,7 +28,7 @@ ALTER TABLE formula_links
     MODIFY formula_link_id bigint NOT NULL AUTO_INCREMENT;
 
 --
--- table structure to save user specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure to save user-specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS user_formula_links

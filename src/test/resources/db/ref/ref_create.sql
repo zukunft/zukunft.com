@@ -32,7 +32,7 @@ COMMENT ON COLUMN refs.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN refs.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to link external data to internal for synchronisation
+-- table structure to save user-specific changes to link external data to internal for synchronisation
 --
 
 CREATE TABLE IF NOT EXISTS user_refs

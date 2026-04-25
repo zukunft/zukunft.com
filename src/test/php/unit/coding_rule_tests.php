@@ -51,6 +51,7 @@ class coding_rule_tests
     // use path that does not need to be included
     const array PATH_NO_INCLUDE = [
         'PgSql\Connection',
+        'Random\RandomException',
         'Zukunft\ZukunftCom\main\php\cfg\const\paths',
         'Zukunft\ZukunftCom\main\php\web\const\paths',
         'Zukunft\ZukunftCom\test\php\const\paths'

@@ -25,7 +25,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
@@ -64,7 +65,7 @@ if ($db_con->is_open()) {
     if ($usr->id > 0) {
 
         if ($lan_typ_id != '') {
-            $lan_typ = new language(language::DEFAULT);
+            $lan_typ = new language(languages::DEFAULT);
             $lan_typ->load_by_id($lan_typ_id);
             $result = $lan_typ->api_json();
         } else {

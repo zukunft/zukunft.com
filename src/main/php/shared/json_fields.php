@@ -105,7 +105,11 @@ class json_fields
     // is needed in the json because the json format does not support ordered lists by definition
     const string POSITION = 'position';
 
+    // language
+    const string WIKI_CODE = 'wikimedia_code';
+
     // language forms
+    const string LANGUAGE = 'language_id';
     const string PLURAL = 'plural';
     const string NAME_PLURAL = 'name_plural';
     const string NAME_REVERSE = 'name_reverse';
@@ -117,6 +121,13 @@ class json_fields
     const string FRM_NAME = 'frm_name';
     const string USAGE = 'usage';
     const string IMPACT = 'impact';
+
+    // user profiles
+    const string RIGHT_LEVEL = 'right_level';
+
+    // phrase types
+    const string SCALE = 'scale';
+    const string SYMBOL = 'symbol';
 
 
     /*
@@ -136,7 +147,8 @@ class json_fields
     const string PHRASE = 'phrase'; // the phrase object as a sub array
     const string TERM_ID = 'term_id';
     const string TERM = 'term'; // the term object as a sub array
-    const string SOURCE = 'source_id';
+    const string SOURCE_ID = 'source_id';
+    const string SOURCE = 'source'; // the source object as a sub array
     const string USER_ID = 'user_id';
     //const string GROUP_ID = 'group_id';
     const string FORMULA_ID = 'formula_id';
@@ -174,7 +186,7 @@ class json_fields
     const string EXTERNAL_KEY = 'external_key'; // the unique key of the reference
 
     // object specific fields
-    const string IS_STD = 'is_std'; // flag if a value or result is user specific or the default value for all users
+    const string IS_STD = 'is_std'; // flag if a value or result is user-specific or the default value for all users
     const string USER_TEXT = 'user_text'; // the formula expression in a human-readable format
     const string REF_TEXT = 'ref_text'; // the formula expression in a database reference format
     const string NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
@@ -186,8 +198,10 @@ class json_fields
     const string TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
     const string PRIORITY = 'priority'; // of the batch job
     const string TIME_START = 'start_time'; // e.g. the timestamp of a log entry
+    const string TIME_UPDATE = 'update_time'; // e.g. the timestamp of the last system error update
     const string TIME_END = 'end_time'; // e.g. the timestamp of a log entry
-    const string STATUS = 'status'; // of the job and also used for the sys log
+    const string STATUS = 'status'; // name or code id of the user or job status and also used for the sys log
+    const string STATUS_ID = 'status_id'; // database id of the user or job status and also used for the sys log
 
     // change log fields
     const string TIME = 'time'; // e.g. the timestamp of a log entry
@@ -195,8 +209,8 @@ class json_fields
 
     // system log fields
     const string TRACE = 'trace'; // what has lead to the issue
-    const string PRG_PART = 'prg_part'; // which part has caused the issue
-    const string OWNER = 'owner'; // the developer which wants to fix the problem
+    const string FUNCTION_ID = 'function_id'; // id of a code part that has caused an issue
+    const string SOLVER = 'solver'; // the developer which wants to fix the problem
 
     // the database id e.g. of a component_link
     const string LINK_ID = 'link_id';
@@ -255,6 +269,7 @@ class json_fields
 
     // to review
     const string USER_NAME = 'user';
+    const string JOB_PARAMETER = 'job_parameter';
 
 
     /*
@@ -263,9 +278,12 @@ class json_fields
 
     //const string TYPE_LISTS = 'type_lists';
     const string LIST_USER_PROFILES = 'user_profiles';
+    const string LIST_USER_TYPES = 'user_types';
+    const string LIST_USER_STATUUS = 'user_statuum';
     const string LIST_PHRASE_TYPES = 'phrase_types';
     const string LIST_FORMULA_TYPES = 'formula_types';
     const string LIST_FORMULA_LINK_TYPES = 'formula_link_types';
+    const string LIST_ELEMENTS = 'elements';
     const string LIST_ELEMENT_TYPES = 'element_types';
     const string LIST_VIEW_TYPES = 'view_types';
     const string LIST_VIEW_STYLES = 'view_styles';
@@ -280,7 +298,10 @@ class json_fields
     const string LIST_PROTECTION_TYPES = 'protection_types';
     const string LIST_LANGUAGES = 'languages';
     const string LIST_LANGUAGE_FORMS = 'language_forms';
-    const string LIST_SYS_LOG_STATUUS = 'sys_log_statuus';
+    const string LIST_SYS_LOG_FUNCTIONS = 'sys_log_functions';
+    const string LIST_SYS_LOG_LEVELS = 'sys_log_levels';
+    const string LIST_SYS_LOG_STATUUS = 'sys_log_statuum';
+    const string LIST_JOB_STATUUS = 'job_statuum';
     const string LIST_JOB_TYPES = 'job_types';
     const string LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const string LIST_CHANGE_LOG_TABLES = 'change_table_list';
@@ -326,6 +347,12 @@ class json_fields
     const string LAST_NAME = 'last_name';
     const string PROFILE = 'profile';
     const string PROFILE_ID = 'profile_id';
+    const string ACTIVATION_KEY = 'activation_key';
+    const string ACTIVATION_TIMEOUT = 'activation_timeout';
+    const string DB_NOW = 'db_now';
+    const string LAST_LOGIN = 'last_login';
+    const string LAST_LOGOFF = 'last_logoff';
+    const string CREATED = 'created';
 
     const string PHRASE_VALUES = 'phrase-values';
     const string SOURCES = 'sources';
@@ -356,6 +383,11 @@ class json_fields
     const string ASSIGNED_WORD = 'assigned_word';
     const string FORMULAS = 'formulas';
     const string FORMULA_LINKS = 'formula_links';
+    // TODO Prio 2 cleanup and use fields with *_id only for API messages and move const to this section
+    //             use phrase_type (without id) for im- and export where the name is used
+    //             if e.g. phrase_type (without id) is used in an API message all type vars are included
+    const string PHRASE_TYPE = 'phrase_type';
+    const string PHRASE_TYPE_ID = 'phrase_type_id';
 
 
     // for results

@@ -46,7 +46,7 @@ class job_ui_tests
     function run(test_cleanup $t): void
     {
         $html = new html_base();
-        $t_job = new test_jobs();
+        $t_job = new test_jobs($t);
 
         // start the test section (ts)
         $ts = 'unit ui html batch job ';

@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -58,6 +59,7 @@ include_once html_paths::VERB . 'verb.php';
 $app = new frontend();
 $db_con = $app->start("link_type_add");
 $html = new html_base();
+$msg = '';
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
@@ -74,7 +76,8 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(views::VERB_ADD);
-    $back = $_GET[url_var::BACK] = ''; // the calling word which should be displayed after saving
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); // the calling word which should be displayed after saving
 
     if (!$usr->is_admin()) {
         $result .= log_err("Only user with the administrator profile can add verbs (triple types).", "verb_add.php");
@@ -89,16 +92,16 @@ if ($usr->id() > 0) {
             $vrb->set_name($_GET[url_var::NAME]);
         }
         if ($_GET[url_var::PLURAL] != null) {
-            $vrb->set_plural($_GET[url_var::PLURAL]);
+            $vrb->plural = $_GET[url_var::PLURAL];
         }
         if (isset($_GET[url_var::REVERSE])) {
-            $vrb->set_reverse($_GET[url_var::REVERSE]);
+            $vrb->reverse = $_GET[url_var::REVERSE];
         }
         if (isset($_GET[url_var::REVERSE_PLURAL])) {
-            $vrb->set_reverse_plural($_GET[url_var::REVERSE_PLURAL]);
+            $vrb->rev_plural = $_GET[url_var::REVERSE_PLURAL];
         }
         if (isset($_GET[url_var::NAME_IN_FORMULA])) {
-            $vrb->set_formula_name($_GET[url_var::NAME_IN_FORMULA]);
+            $vrb->frm_name = $_GET[url_var::NAME_IN_FORMULA];
         }
 
         if ($_GET['confirm'] > 0) {

@@ -33,9 +33,9 @@ SELECT view_update_log_00220000000
        (3::bigint,
         2::smallint,
         42::smallint,
-        'Start view'::text,
+        'Historic'::text,
         'System Test View Renamed'::text,
-        1::bigint,
+        99::bigint,
         43::smallint,
-        'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.'::text,
+        'show mainly related words that are relevant in sciences'::text,
         null::text);

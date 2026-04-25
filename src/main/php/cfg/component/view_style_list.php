@@ -33,7 +33,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_COMPONENT . 'component_type.php';

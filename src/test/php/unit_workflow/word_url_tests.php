@@ -47,7 +47,7 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
 class word_url_tests

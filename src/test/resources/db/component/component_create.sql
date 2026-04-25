@@ -55,7 +55,7 @@ COMMENT ON COLUMN components.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN components.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes for the single components of a view
+-- table structure to save user-specific changes for the single components of a view
 --
 
 CREATE TABLE IF NOT EXISTS user_components

@@ -100,16 +100,28 @@ class users
     const string DEV_CODE_ID = 'developer'; // unique id to select the user
     const string DEV_EMAIL = 'developer@zukunft.com';
 
+    // to get the internal user used for logging
+    const int SYSTEM_LOG_ID = 8;
+    const string SYSTEM_LOG_NAME = 'zukunft.com system log';
+    const string SYSTEM_LOG_CODE_ID = 'log';
+
     // system testing
     const string TEST_NAME = 'standard user view for all users';
     const string TEST_IP = '66.249.64.95'; // used to check the blocking of an IP address
 
     // a test user for db write tests
     const string TEST_USER_NAME = 'zukunft.com system write test user';
+    const string TEST_USER_NAME_UPDATED = 'zukunft.com system write test user changed';
+    const string TEST_USER_LAST_NAME = 'zukunft.com system write test user last name';
     const string TEST_USER_COM = 'test description if it can be added to the user via import';
     const string TEST_USER_MAIL = 'test@zukunft.com';
     // invalid address used to test creating a new user
     const string TEST_USER_IP = '258.257.256.255';
+    const string TEST_USER_PASSWORD = 'password123';
+    const string TEST_USER_PASSWORD_FIX_HASH = '$2y$12$ptUFPCd9OihCWBlz4.3daOcLAVDFp8tnbRHVJg42915QeTHnAZiQy'; // a fixed sample password hash just for testing
+    const string TEST_USER_ACTIVATION_KEY = '376913';
+    CONST string TEST_USER_LOGIN_TIME = '2026-02-2T17:59:59+0100'; // fixed test login time
+    CONST string TEST_USER_LOGOFF_TIME = '2026-02-2T18:59:59+0100'; // fixed test logoff time
 
     // list of predefined usernames used for the system and for testing that are expected to be never used or changed
     const array RESERVED_NAMES = array(
@@ -118,6 +130,7 @@ class users
         self::LOCALHOST_NAME,
         self::TEST_NAME,
         self::TEST_USER_NAME,
+        self::TEST_USER_NAME_UPDATED,
     );
 
     // array of usernames that used for db read testing and that should not be renamed
@@ -125,9 +138,17 @@ class users
         self::SYSTEM_NAME
     );
 
+    // list of user that is used for system testing that should be removed are the system test has been completed
+    // and where no real user is allowed to use the username
+    const array TEST_USERS = array(
+        self::TEST_USER_NAME,
+        self::TEST_USER_NAME_UPDATED,
+    );
+
     // list of usernames that are only used for system testing and that does not create log entries
     const array TEST_NO_LOG = [
-        self::TEST_USER_NAME
+        self::TEST_USER_NAME,
+        self::TEST_USER_NAME_UPDATED,
     ];
 
 
@@ -137,11 +158,5 @@ class users
     const int RIGHT_LEVEL_DEVELOPER = 80;
     const int RIGHT_LEVEL_SYSTEM_TEST = 90;
     const int RIGHT_LEVEL_SYSTEM = 99;
-
-    // list of user that is used for system testing that should be removed are the system test has been completed
-    // and where no real user is allowed to use the username
-    const array TEST_USERS = array(
-        self::TEST_USER_NAME
-    );
 
 }

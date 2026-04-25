@@ -1,0 +1,11 @@
+job_status_id, status_name, description, code_id, priority
+1, 'created', 'the job is not yet assigned to any calc engine', 'new', 6
+2, 'assigned', 'the job has been assigned to a calc engine', 'assigned', 4
+3, 'forced', 'the priority of the job has been increased', 'forced', 8
+4, 'delayed', 'the priority of the job has been reduced', 'delayed', 2
+5, 'working', 'the calc engine is reporting the progress', 'working', 5
+6, 'not responding', ' the calc engine is not reporting the progress', 'not_responding', 1
+7, 'waiting', 'the task is waiting for user input of other jobs', 'waiting', 1
+8, 'done', 'the task has been completed successfully', 'done', 0
+9, 'failed', 'the task has been completed unsuccessful', 'failed', 0
+10, 'retry', 'an admin has forced to retry the execution', 'retry', 7

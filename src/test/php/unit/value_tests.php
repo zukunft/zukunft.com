@@ -58,8 +58,10 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -74,11 +76,15 @@ class value_tests
         global $usr_sys;
 
         // init
+        $usr_msg = new user_message();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $tl = new test_lib();
         $t_val = new test_values($t);
         $t_grp = new test_groups($t);
+        $t_phr = new test_phrases($t);
+        $t_trm = new test_terms($t);
+        $trm_lst = $t_trm->term_list_all();
         $t->name = 'value->';
         $t->resource_path = 'db/value/';
 
@@ -137,7 +143,7 @@ class value_tests
         $t->assert_sql_standard($sc, $val_17);
         $t->assert_sql_standard($sc, $val_txt);
 
-        // TODO Prio 2 activate db write
+        // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql write insert');
         $val = $t_val->value();
         $db_val = $val->cloned(values::SAMPLE_FLOAT);
@@ -180,7 +186,7 @@ class value_tests
 
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
-        // TODO add test to change owner of the normal (not user specific) value
+        // TODO add test to change owner of the normal (not user-specific) value
         // TODO add tests for time, text and geo values
         $t->subheader($ts . 'sql write update');
         $val = $t_val->value();
@@ -200,6 +206,9 @@ class value_tests
         $t->assert_sql_update($sc, $val_17, $db_val_17);
         $t->assert_sql_update($sc, $val_txt, $db_val_txt);
         $t->assert_sql_update($sc, $val_txt, $db_val_txt, [sql_type::LOG]);
+        $t->assert_sql_update_owner($sc, $t->usr2, $val_3, [sql_type::LOG]);
+        $t->assert_sql_update_owner($sc, $t->usr2, $val_16, [sql_type::LOG]);
+        $t->assert_sql_update_owner($sc, $t->usr2, $val_17, [sql_type::LOG]);
         // update only the last_update date to trigger calculation
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
 
@@ -217,7 +226,7 @@ class value_tests
 
         $t->subheader($ts . 'database query creation');
 
-        // sql to load a user specific value by phrase group id
+        // sql to load a user-specific value by phrase group id
         $val->reset(true);
         $val->grp()->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
@@ -257,7 +266,7 @@ class value_tests
         $t->assert_api_to_ui($val, new value_ui());
 
         // TODO move to ui tests
-        $val_dsp = new value_ui($val->api_json([api_type::INCL_PHRASES]));
+        $val_dsp = new value_ui($val->api_json([api_types::INCL_PHRASES]));
         $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32770" title="3.14">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
@@ -266,16 +275,16 @@ class value_tests
         $grp = $t_grp->group();
         $val = new value($usr, round(values::PI_LONG, 13), $grp);
         $t->assert_api($val, 'value_without_phrases');
-        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
         $val = $t_val->time_value();
         $t->assert_api($val);
-        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
         $val = $t_val->text_value();
         $t->assert_api($val);
-        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
         $val = $t_val->geo_value();
         $t->assert_api($val);
-        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
 
         // casting figure
         $val = new value($usr);
@@ -289,7 +298,7 @@ class value_tests
 
         $t->subheader($ts . 'database query creation');
 
-        // sql to load a user specific time series by id
+        // sql to load a user-specific time series by id
         $vts = new value_time_series($usr);
         $vts->set_grp($t_grp->group_16());
         $t->assert_sql_by_id($sc, $vts);
@@ -298,7 +307,7 @@ class value_tests
         // TODO Prio 2 activate
         //$t->assert_sql_standard($sc, $vts);
 
-        // sql to load a user specific time series by phrase group id
+        // sql to load a user-specific time series by phrase group id
         $vts->reset(true);
         $vts->grp()->set_id(2);
         $this->assert_sql_by_grp($t, $db_con, $vts, $vts->grp());
@@ -309,6 +318,17 @@ class value_tests
         $t->assert_sql_index_create($tsn);
         // TODO Prio 2 activate
         //$t->assert_sql_foreign_key_create($tsn);
+
+
+        $t->subheader($ts . 'scaling');
+
+        $test_name = 'scale the number of Swiss inhabitants from million to single inhabitants';
+        $trm_lst = $t_phr->ch_inhabitants_in_mio_2019()->term_list();
+        $res_phr_lst = $t_phr->phrase_list_one();
+        $mio_val = $t_val->value_ch();
+        $result = $mio_val->scale_new($res_phr_lst, $usr_msg, $trm_lst);
+        $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
+        //$t->assert($test_name, $result, $target);
 
     }
 

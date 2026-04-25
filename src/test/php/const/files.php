@@ -79,7 +79,7 @@ class files
     CONST string TYPE_LISTS_CACHE = test_paths::API_TYPE_LIST_RES . 'type_lists' . self::JSON;
     CONST string SYS_LOG = test_paths::API_SYSTEM_RES . 'sys_log' . self::JSON;
     CONST string SYS_LOG_HTML = test_paths::WEB_SYSTEM_RES . 'sys_log' . self::HTML;
-    CONST string SYS_LOG_LIST_API = test_paths::API_SYS_LOG_RES . 'sys_log_list' . self::JSON;
+    CONST string SYS_LOG_LIST_TEST = test_paths::API_SYS_LOG_RES . 'sys_log_list_test' . self::JSON;
     CONST string SYS_LOG_LIST_HTML = test_paths::WEB_SYSTEM_RES . 'sys_log_list' . self::HTML;
     CONST string SYS_LOG_LIST_PAGE = test_paths::WEB_SYSTEM_RES . 'sys_log_list_page' . self::HTML;
     CONST string SYS_LOG_ADMIN = test_paths::WEB_SYSTEM_RES . 'sys_log_admin' . self::HTML;
@@ -148,4 +148,30 @@ class files
         'THOMY_test.json'
     ];
 
+
+    /*
+     * cleanup
+     */
+
+    // queries to check if removing of the test rows is complete
+    const string CLEAN_CHECK_WORDS = test_paths::DB_CLEANUP . 'test_words.sql';
+    const string CLEAN_CHECK_VERBS = test_paths::DB_CLEANUP . 'test_verbs.sql';
+    const string CLEAN_CHECK_TRIPLES = test_paths::DB_CLEANUP . 'test_triples.sql';
+    const string CLEAN_CHECK_SOURCES = test_paths::DB_CLEANUP . 'test_sources.sql';
+    const string CLEAN_CHECK_REFS = test_paths::DB_CLEANUP . 'test_refs.sql';
+    const string CLEAN_CHECK_GROUPS = test_paths::DB_CLEANUP . 'test_groups.sql';
+    const string CLEAN_CHECK_FORMULAS = test_paths::DB_CLEANUP . 'test_formulas.sql';
+    const string CLEAN_CHECK_VIEWS = test_paths::DB_CLEANUP . 'test_views.sql';
+    const string CLEAN_CHECK_COMPONENTS = test_paths::DB_CLEANUP . 'test_components.sql';
+    const array CLEAN_CHECKS = array(
+        self::CLEAN_CHECK_WORDS,
+        self::CLEAN_CHECK_VERBS,
+        self::CLEAN_CHECK_TRIPLES,
+        self::CLEAN_CHECK_SOURCES,
+        self::CLEAN_CHECK_REFS,
+        self::CLEAN_CHECK_GROUPS,
+        self::CLEAN_CHECK_FORMULAS,
+        self::CLEAN_CHECK_VIEWS,
+        self::CLEAN_CHECK_COMPONENTS,
+    );
 }

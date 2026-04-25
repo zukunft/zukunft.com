@@ -44,7 +44,7 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
-include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
@@ -58,7 +58,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
-use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
@@ -78,9 +78,9 @@ class result_db
     // *_SQL_TYP is the sql data type used for the field
     const string FLD_ID = 'group_id';
     const string FLD_SOURCE = 'source_';
-    // TODO replace with result_db::FLD_SOURCE . group::FLD_ID
+    // TODO replace with result_db::FLD_SOURCE . group_db::FLD_ID
     const string FLD_SOURCE_GRP = 'source_group_id';
-    // TODO replace with group::FLD_ID
+    // TODO replace with group_db::FLD_ID
     const string FLD_GRP = 'group_id';
     const string FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
     const string FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
@@ -94,7 +94,7 @@ class result_db
         [self::FLD_RESULT_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
     );
 
-    // all database field names excluding the id and excluding the user specific fields
+    // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         formula_db::FLD_ID,
         user_db::FLD_ID,
@@ -131,16 +131,16 @@ class result_db
         self::FLD_SOURCE_GRP,
         formula_db::FLD_ID,
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR_EX_STD = array(
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
-    // list of the user specific datetime database field names
+    // list of the user-specific datetime database field names
     const array FLD_NAMES_DATE_USR_EX_STD = array(
         sandbox_multi::FLD_LAST_UPDATE
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         sandbox_multi::FLD_VALUE,
         sandbox_multi::FLD_LAST_UPDATE,
@@ -230,13 +230,13 @@ class result_db
     );
     const array FLD_ALL_SOURCE = array();
     const array FLD_ALL_SOURCE_GROUP = array(
-        [self::FLD_SOURCE . group::FLD_ID, sql_field_type::REF_512, sql_field_default::NULL, sql::INDEX, '', '512-bit reference to the sorted phrase list used to calculate this result'],
+        [self::FLD_SOURCE . group_db::FLD_ID, sql_field_type::REF_512, sql_field_default::NULL, sql::INDEX, '', '512-bit reference to the sorted phrase list used to calculate this result'],
     );
     const array FLD_ALL_SOURCE_GROUP_PRIME = array(
-        [self::FLD_SOURCE . group::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', '64-bit reference to the sorted phrase list used to calculate this result'],
+        [self::FLD_SOURCE . group_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', '64-bit reference to the sorted phrase list used to calculate this result'],
     );
     const array FLD_ALL_SOURCE_GROUP_BIG = array(
-        [self::FLD_SOURCE . group::FLD_ID, sql_field_type::TEXT, sql_field_default::NULL, sql::INDEX, '', 'text reference to the sorted phrase list used to calculate this result'],
+        [self::FLD_SOURCE . group_db::FLD_ID, sql_field_type::TEXT, sql_field_default::NULL, sql::INDEX, '', 'text reference to the sorted phrase list used to calculate this result'],
     );
     const array FLD_ALL_OWNER = array(
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the id of the user who has requested the calculation'],
