@@ -45,7 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 class pod_status extends type_object
 {
 
-    // list of the pod statuus
+    // list of the pod statuum
     const string ACTIVE = 'active';
     const string TO_DEPRECATE = 'to_deprecate'; // data should be moved out of this pod to other pods
     const string DEPRECATED = "deprecated"; // the pod is not active anymore

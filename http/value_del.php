@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -62,6 +63,7 @@ $db_con = $app->start("value_del");
 global $mtr;
 
 $result = ''; // reset the html code var
+$msg_txt = '';
 
 // load the session user parameters
 $usr = new user;
@@ -75,7 +77,8 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(views::VALUE_DEL);
-    $back = $_GET[url_var::BACK] = '';  // the page from which the value deletion has been called
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]);  // the page from which the value deletion has been called
 
     // get the parameters
     $val_id = $_GET[url_var::ID];
@@ -89,7 +92,7 @@ if ($usr->id() > 0) {
 
         if ($confirm == 1) {
             // actually delete the value (at least for this user)
-            $val->del($usr_msg);
+            $val->del($msg_txt);
 
             $result .= $html->dsp_go_back($back, $usr);
         } else {

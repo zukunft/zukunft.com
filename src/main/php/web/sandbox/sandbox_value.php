@@ -180,7 +180,7 @@ class sandbox_value extends sandbox
     }
 
     /**
-     * @return bool false if the loaded value is user specific
+     * @return bool false if the loaded value is user-specific
      */
     function is_std(): bool
     {
@@ -211,20 +211,20 @@ class sandbox_value extends sandbox
 
 
     /**
-     * set the vars of this object bases on the api json array
+     * set the vars of this base object on the api json array
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $msg OK or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
 
         if (array_key_exists(json_fields::ID, $json_array)) {
             $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
-            $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+            $msg->add_error_text('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
         if (array_key_exists(json_fields::NUMBER, $json_array)) {
             $this->number = $json_array[json_fields::NUMBER];
@@ -243,11 +243,11 @@ class sandbox_value extends sandbox
         }
         $this->grp = new group();
         if (array_key_exists(json_fields::PHRASES, $json_array)) {
-            $this->grp->api_mapper($json_array[json_fields::PHRASES], $usr_msg);
+            $this->grp->api_mapper($json_array[json_fields::PHRASES], $msg);
         } else {
-            $usr_msg->add_err('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
+            $msg->add_error_text('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

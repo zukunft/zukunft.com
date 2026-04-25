@@ -34,17 +34,15 @@ namespace Zukunft\ZukunftCom\main\php\cfg\ref;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_REF . 'ref_type.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::SHARED_TYPES . 'ref_types.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 
 class ref_type_list extends type_list
 {
@@ -100,7 +98,7 @@ class ref_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(ref_type::WIKIPEDIA);
+        return parent::id(ref_types::WIKIPEDIA);
     }
 
 }

@@ -57,6 +57,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -74,8 +75,8 @@ include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -89,6 +90,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
@@ -106,8 +108,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -132,8 +134,8 @@ class value_list extends sandbox_value_list
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 // TODO remove temp
-                if (array_key_exists(group::FLD_ID, $db_row)) {
-                    if ($db_row[group::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
+                if (array_key_exists(group_db::FLD_ID, $db_row)) {
+                    if ($db_row[group_db::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
                         log_info('got value');
                     }
                 } else {
@@ -420,7 +422,7 @@ class value_list extends sandbox_value_list
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
         $grp_id = new group_id();
-        $sc->add_where_par(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '', $par_name);
+        $sc->add_where_par(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '', $par_name);
 
         // add the user parameter
         $pos_usr = $par_pos;
@@ -805,7 +807,7 @@ class value_list extends sandbox_value_list
                     phrase::FLD_ID . '_' . $i, sql_par_type::INT_SAME_OR, $phr_pos);
             }
         } else {
-            $sc->add_where_no_par('', group::FLD_ID, sql_par_type::LIKE, $grp_pos);
+            $sc->add_where_no_par('', group_db::FLD_ID, sql_par_type::LIKE, $grp_pos);
         }
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
@@ -868,13 +870,13 @@ class value_list extends sandbox_value_list
      * import a value from an external object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -896,7 +898,7 @@ class value_list extends sandbox_value_list
 
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->get_user());
-                if ($phr_lst->import_lst($value, $usr_msg)) {
+                if ($phr_lst->import_lst($value, $msg)) {
                     $val->set_grp($phr_lst->get_grp_id($do_save));
                 }
             }
@@ -905,7 +907,7 @@ class value_list extends sandbox_value_list
                 if (strtotime($value)) {
                     $val->time_stamp = $lib->get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                    $msg->add(msg_id::CANNOT_ADD_TIMESTAMP, [
                         msg_id::VAR_VALUE => $value,
                         msg_id::VAR_ID => $val->dsp_id()
                     ]);
@@ -924,10 +926,10 @@ class value_list extends sandbox_value_list
                 $src = new source($this->get_user());
                 $src->set_name($value);
                 if ($do_save) {
-                    if ($usr_msg->is_ok()) {
+                    if ($msg->is_ok()) {
                         $src->load_by_name($value);
                         if ($src->id() == 0) {
-                            $src->save($usr_msg);
+                            $src->save($msg);
                         }
                     }
                 }
@@ -938,28 +940,28 @@ class value_list extends sandbox_value_list
                 foreach ($value as $val_entry_key => $val_entry) {
                     if (is_array($val_entry)) {
                         foreach ($val_entry as $val_key => $val_number) {
-                            $usr_msg = $this->add_value(
+                            $msg = $this->add_value(
                                 $val_key,
                                 $val_number,
                                 $val,
                                 $phr_lst,
                                 $do_save,
-                                $usr_msg);
+                                $msg);
                         }
                     } else {
-                        $usr_msg = $this->add_value(
+                        $msg = $this->add_value(
                             $val_entry_key,
                             $val_entry,
                             $val,
                             $phr_lst,
                             $do_save,
-                            $usr_msg);
+                            $msg);
                     }
                 }
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     private function add_value(
@@ -980,7 +982,7 @@ class value_list extends sandbox_value_list
             $phr_lst_to_add->add($val_phr);
         } else {
             $val_phr->set_name($val_key, word::class);
-            $phr_lst_to_add->add_by_name($val_phr);
+            $phr_lst_to_add->add_by_key($val_phr);
         }
         $val_to_add->set_number($val_number);
         $grp = $phr_lst_to_add->get_grp_id($do_save);
@@ -1021,9 +1023,9 @@ class value_list extends sandbox_value_list
         if ($this->count() > 1) {
 
             // use the first value to get the context parameter
-            $val0 = $this->get(0);
+            $val0 = $this->get_by_key(0);
             // use the second value to detect the context phrases
-            $val1 = $this->get(1);
+            $val1 = $this->get_by_key(1);
 
             // get phrase names of the first value
             $phr_lst1 = $val0->phr_names();
@@ -1191,7 +1193,7 @@ class value_list extends sandbox_value_list
     {
         $usr_msg = new user_message();
         foreach ($this->lst() as $val) {
-            $usr_msg->add($val->set_group_id_by_phrase_list($phr_lst));
+            $usr_msg->merge($val->set_group_id_by_phrase_list($phr_lst));
         }
         return $usr_msg;
     }
@@ -1361,7 +1363,7 @@ class value_list extends sandbox_value_list
      * @param value_list $val_lst
      * @return value_list
      */
-    function diff(value_list $val_lst): value_list
+    function remove_list(value_list $val_lst): value_list
     {
         $result = new value_list($this->get_user());
         foreach ($this->lst() as $val) {
@@ -1432,7 +1434,8 @@ class value_list extends sandbox_value_list
         // the id and the user must be set
         $db_con->set_class(value::class);
         $db_con->set_usr($this->get_user()->id);
-        $sql = $db_con->select_by_set_id();
+        // TODO Prio 1 review
+        /* $sql = $db_con->select_by_set_id();
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
             $val = new value($this->get_user());
@@ -1441,7 +1444,7 @@ class value_list extends sandbox_value_list
                 $result = false;
             }
             log_debug($lib->dsp_count($this->lst()));
-        }
+        } */
         log_debug($lib->dsp_count($this->lst()));
         return $result;
     }
@@ -1457,7 +1460,7 @@ class value_list extends sandbox_value_list
      * save
      */
 
-    function save(user_message $usr_msg, import $imp, float $est_per_sec = 0.0): bool
+    function save(user_message $msg, import $imp, float $est_per_sec = 0.0): bool
     {
         $lib = new library();
         $name = $lib->class_to_table(value::class);
@@ -1482,12 +1485,12 @@ class value_list extends sandbox_value_list
             $imp->step_start(msg_id::SAVE, value::class);
             foreach ($this->lst() as $val) {
                 if ($val->get_value() === null) {
-                    $usr_msg->add_id_with_vars(msg_id::NULL_VALUE_NOT_SAVED, [msg_id::VAR_ID => $val->dsp_id()]);
+                    $msg->add(msg_id::NULL_VALUE_NOT_SAVED, [msg_id::VAR_ID => $val->dsp_id()]);
                 } else {
                     if ($val->id() == 0) {
-                        $usr_msg->add_id_with_vars(msg_id::CANNOT_SAVE_ZERO_ID, [msg_id::VAR_ID => $val->dsp_id()]);
+                        $msg->add(msg_id::CANNOT_SAVE_ZERO_ID, [msg_id::VAR_ID => $val->dsp_id()]);
                     } else {
-                        $val->save($usr_msg);
+                        $val->save($msg);
                     }
                 }
                 $i++;
@@ -1502,7 +1505,7 @@ class value_list extends sandbox_value_list
             //      create blocks of update function calls
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

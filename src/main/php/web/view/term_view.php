@@ -113,16 +113,16 @@ class term_view extends sandbox_link
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
         // get body from message
         $api_msg = new api_message();
         $json_array = $api_msg->validate($json_array);
 
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
         if (array_key_exists(json_fields::VIEW_ID, $json_array)) {
             $this->set_view_id($json_array[json_fields::VIEW_ID]);
         }
@@ -132,7 +132,7 @@ class term_view extends sandbox_link
         if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
             $this->description = $json_array[json_fields::DESCRIPTION];
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -197,12 +197,12 @@ class term_view extends sandbox_link
     /**
      * return the html code to display the link name
      */
-    function name(): string
+    function name(): string|null
     {
         $result = '';
 
         if ($this->view() != null and $this->term_linked() != null) {
-            if ($this->view()->name() <> '' and $this->term_linked()->name() <> '') {
+            if ($this->view()->name() <> null and $this->term_linked()->name() <> null) {
                 $result .= '"' . $this->term_linked()->name() . '" extends "'; // e.g. company details
                 $result .= $this->view()->name() . '"';     // e.g. cash flow statement
             }

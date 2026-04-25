@@ -44,6 +44,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -67,8 +68,9 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
-include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -87,8 +89,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 
 class component_list extends sandbox_list_named
 {
@@ -346,11 +349,11 @@ class component_list extends sandbox_list_named
     {
         global $cfg;
 
-        $load_per_sec = $cfg->get_by([words::COMPONENTS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $save_per_sec = $cfg->get_by([words::COMPONENTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $upd_per_sec = $cfg->get_by([words::COMPONENTS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $del_per_sec = $cfg->get_by([words::COMPONENTS, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $max_frm_levels = $cfg->get_by([words::COMPONENTS, triples::MAX_LEVELS, words::IMPORT], 99);
+        $load_per_sec = $cfg->get_by([words::COMPONENTS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $save_per_sec = $cfg->get_by([words::COMPONENTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $upd_per_sec = $cfg->get_by([words::COMPONENTS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $del_per_sec = $cfg->get_by([words::COMPONENTS, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $max_frm_levels = $cfg->get_by([words::COMPONENTS, triples::MAX_LEVELS, words::IMPORT], def::FALLBACK_RECURSIVE_MAX);
 
         if ($this->is_empty()) {
             log_info('no components to save');
@@ -399,7 +402,7 @@ class component_list extends sandbox_list_named
 
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, component::class, $add_lst->count(), $step_time);
-                    $usr_msg->add($add_lst->insert($db_lst_all, true, $imp, component::class));
+                    $usr_msg->merge($add_lst->insert($db_lst_all, $imp, component::class));
                     if ($add_lst->count() > 0) {
                         $usr_msg->set_added_depending();
                         $frm_added = true;
@@ -410,19 +413,12 @@ class component_list extends sandbox_list_named
                 $level++;
             }
 
-            // reload the id of the components added with the last run
-            // TODO use the insert message instead to increase speed
-            $db_lst = new component_list($this->get_user());
-            if (!$add_lst->is_empty()) {
-                $db_lst->load_by_names($add_lst->names(true), true);
-            }
-
             // fill up the overall db list with db value for later detection of the components that needs to be updated
             $db_lst_all->merge($db_lst);
 
 
             // create any missing sql update functions and update the components
-            $usr_msg->add($this->update($db_lst_all, true, $imp, component::class, $upd_per_sec));
+            $usr_msg->merge($this->update($db_lst_all, $imp, component::class, $upd_per_sec));
 
 
             // fill up the main list with the components to check if anything is missing
@@ -430,7 +426,7 @@ class component_list extends sandbox_list_named
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->add($this->delete($db_lst_all, true, $imp, component::class, $del_per_sec));
+            $usr_msg->merge($this->delete($db_lst_all, $imp, component::class, $del_per_sec));
 
         }
 
@@ -446,18 +442,18 @@ class component_list extends sandbox_list_named
      * get a list of components that are ready to be added to the database
      * TODO Prio 2 move to parent?
      *
-     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
+     * @param user_message $msg to collect the error messages for the user and the suggested solutions
      * @param string $file_name the name of the import file which has delevered the data
      * @return component_list list of the components that have an id or a name
      */
-    function get_ready(user_message $usr_msg, string $file_name = ''): component_list
+    function get_ready(user_message $msg, string $file_name = ''): component_list
     {
         $cmp_lst = new component_list($this->get_user());
         foreach ($this->lst() as $cmp) {
-            if ($cmp->db_ready($usr_msg)) {
-                $cmp_lst->add_by_name($cmp);
+            if ($cmp->db_ready($msg)) {
+                $cmp_lst->add_by_key($cmp);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                $msg->add(msg_id::IMPORT_COMPONENT_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $cmp->dsp_id(),
                 ]);

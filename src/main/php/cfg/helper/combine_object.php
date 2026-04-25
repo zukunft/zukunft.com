@@ -139,7 +139,7 @@ class combine_object extends CombineObject
     }
 
     /**
-     * create an array for the json api message
+     * create an array for the api json message
      *
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
@@ -180,12 +180,12 @@ class combine_object extends CombineObject
     /**
      * checks if the combine object can be added to the database
      *
-     * @param user_message $usr_msg the explanation for the user why the link cannot yet be added to the database
+     * @param user_message $msg the explanation for the user why the link cannot yet be added to the database
      * @return true if all vars of the underlying object are set and the phrase can be stored in the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message $msg): bool
     {
-        return $this->obj()->db_ready($usr_msg);
+        return $this->obj()->db_ready($msg);
     }
 
 }

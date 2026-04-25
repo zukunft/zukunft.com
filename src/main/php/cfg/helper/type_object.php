@@ -51,17 +51,17 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
-include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 // TODO avoid include loops
 //include_once paths::EXPORT . 'export_type_list.php';
 //include_once paths::MODEL_LANGUAGE . 'language.php';
-//include_once paths::MODEL_LANGUAGE . 'language_form.php';
 //include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_table.php';
 //include_once paths::MODEL_LOG . 'change_table_field.php';
+//include_once paths::MODEL_LOG . 'change_field.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_SYSTEM . 'pod.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -69,6 +69,7 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -80,16 +81,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
-use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -97,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -125,7 +124,7 @@ class type_object extends db_object_seq_id
     const string FLD_TABLE = 'change_table_name';
     const string FLD_FIELD = 'change_table_field_name';
 
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
         sql_db::FLD_DESCRIPTION
@@ -148,7 +147,7 @@ class type_object extends db_object_seq_id
     // the standard fields of a type
 
     // the unique type name as shown to the user
-    public string $name;
+    public ?string $name;
     // this id text is unique for all code links and is used for system im- and export
     public ?string $code_id;
     // to explain the type to the user as a tooltip
@@ -159,7 +158,7 @@ class type_object extends db_object_seq_id
      * construct and map
      */
 
-    function __construct(?string $code_id, string $name = '', ?string $description = null, int $id = 0)
+    function __construct(?string $code_id = '', string $name = '', ?string $description = null, int $id = 0)
     {
         parent::__construct();
         $this->id = $id;
@@ -177,17 +176,6 @@ class type_object extends db_object_seq_id
     }
 
     /**
-     * create an almost empty clone of the object
-     * if the object e.g. the verb has an owner, keep the owner upon request
-     */
-    function clone_reset(bool $keep_user = false): type_object
-    {
-        $obj_cpy = clone $this;
-        $obj_cpy->reset($keep_user);
-        return $obj_cpy;
-    }
-
-    /**
      * fill the type object vars based on an array of fields from the database
      * @param array $db_row with the data from the database
      * @param string $class the type class name that should be filled
@@ -200,25 +188,19 @@ class type_object extends db_object_seq_id
         if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
             $this->id = ($db_row[language::FLD_ID]);
         }
-        if ($this->id() > 0) {
+        if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
             $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
-            $type_name = '';
-            if ($class == change_action::class) {
-                $type_name = strval($db_row[self::FLD_ACTION]);
-            } elseif ($class == change_table::class) {
-                $type_name = strval($db_row[self::FLD_TABLE]);
-            } elseif ($class == change_table_field::class) {
-                $type_name = strval($db_row[self::FLD_FIELD]);
-            } elseif ($class == language_form::class) {
-                $type_name = strval($db_row[language_form::FLD_NAME]);
-            } elseif ($class == language::class) {
-                $type_name = strval($db_row[language::FLD_NAME]);
-            } else {
-                $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
-            }
-            $this->name = $type_name;
+        }
+        if (array_key_exists($this->name_field(), $db_row)) {
+            $this->name = strval($db_row[$this->name_field()]);
+        }
+        if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
             $this->description = strval($db_row[sql_db::FLD_DESCRIPTION]);
-            $result = true;
+        }
+        if (($this->code_id == null or $this->name == '')
+            and ($this->name == null or $this->name == '')) {
+            log_err('either the name of code_id must be set');
+            $result = false;
         }
         return $result;
     }
@@ -226,8 +208,8 @@ class type_object extends db_object_seq_id
     /**
      * fill the vars with this sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -249,17 +231,28 @@ class type_object extends db_object_seq_id
      * general part to import a database object from a JSON array object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        return $usr_msg->is_ok();
+        parent::import_mapper($in_ex_json, $msg, $dto);
+
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->set_name($in_ex_json[json_fields::NAME]);
+        }
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            if ($in_ex_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $in_ex_json[json_fields::DESCRIPTION];
+            }
+        }
+
+        return $msg->is_ok();
     }
 
 
@@ -271,7 +264,7 @@ class type_object extends db_object_seq_id
      * set the vars of this type object based on json string from the frontend object
      * @param string $api_json with the api message created by the frontend
      * @param user_message $usr_msg with problems and suggested solutions for the user
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function set_from_api(string $api_json, user_message $usr_msg): bool
     {
@@ -292,19 +285,19 @@ class type_object extends db_object_seq_id
      */
     function set_code_id(?string $code_id, user $usr): user_message
     {
-        $usr_msg = new user_message();
-        if ($usr->can_set_code_id()) {
+        $msg = new user_message();
+        if ($usr->can_set_code_id() or $this->code_id == null) {
             $this->code_id = $code_id;
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
                 msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -321,14 +314,18 @@ class type_object extends db_object_seq_id
         $this->description = $description;
     }
 
-    function name(): string
+    function name(): string|null
     {
         return $this->name;
     }
 
     function get_code_id(): string
     {
-        return $this->code_id;
+        if ($this->code_id == null) {
+            return '';
+        } else {
+            return $this->code_id;
+        }
     }
 
     function get_description(): ?string
@@ -338,94 +335,38 @@ class type_object extends db_object_seq_id
 
 
     /*
-     * im- and export
-     */
-
-    /**
-     * create an array with the export json fields
-     * @param export_type_list|array $exp_typ define the export format
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return array the filled array used to create the user export json
-     */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
-    {
-        $vars = [];
-
-        if ($this->name() <> '') {
-            $vars[json_fields::NAME] = $this->name();
-        }
-        if ($this->code_id <> '') {
-            $vars[json_fields::CODE_ID] = $this->code_id;
-        }
-        if ($this->description <> '') {
-            $vars[json_fields::DESCRIPTION] = $this->description;
-        }
-
-        return $vars;
-    }
-
-
-    /*
-     * info
-     */
-
-    function is_type(string $type_to_check): bool
-    {
-        if ($this->code_id == $type_to_check) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * TODO Prio 2 fill
-     */
-    function is_used(): bool
-    {
-        return true;
-    }
-
-
-    /*
-     * sql create
-     */
-
-    /**
-     * the sql statement to create the tables of a type object
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return string the sql statement to create the table
-     */
-    function sql_table(sql_creator $sc): string
-    {
-        $sql = $sc->sql_separator();
-        // the pod is a type object but the number of pods might be significant higher than the number of types
-        if ($this:: class == pod::class) {
-            $sql .= $this->sql_table_create($sc);
-        } else {
-            $sql .= $this->sql_table_create($sc, new sql_type_list([sql_type::KEY_SMALL_INT]));
-        }
-        return $sql;
-    }
-
-    /**
-     * the sql statement to create the database indices of a type object
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return string the sql statement to create the indices
-     */
-    function sql_index(sql_creator $sc): string
-    {
-        $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc);
-        return $sql;
-    }
-
-
-    /*
      * load (used if the user can request a new type via the GUI)
      */
+
+    /**
+     * load a type from the database selected by the name
+     * @param string $name e.g. of the phrase type
+     * @return int the id of the type object found and zero if nothing is found
+     */
+    function load_by_name(string $name): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_name($sc, $name);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a type from the database selected by the name
+     * @param string $code_id e.g. of the phrase type
+     * @return int the id of the type object found and zero if nothing is found
+     */
+    function load_by_code_id(string $code_id): int
+    {
+        global $db_con;
+
+        log_debug($code_id);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_code_id($sc, $code_id);
+        return $this->load($qp);
+    }
 
     /**
      * create an SQL statement to retrieve a type object by id from the database
@@ -469,7 +410,7 @@ class type_object extends db_object_seq_id
     function load_sql_by_name(sql_creator $sc, string $name, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_NAME);
+        $qp = $typ_lst->load_sql($sc, $class, 'by_' . sql_db::FLD_NAME);
         $sc->add_where($this->name_field_typ($class), $name);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -488,7 +429,7 @@ class type_object extends db_object_seq_id
     function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($sc, $class, 'code_id');
+        $qp = $typ_lst->load_sql($sc, $class, 'by_' . sql_db::FLD_CODE_ID);
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -525,6 +466,369 @@ class type_object extends db_object_seq_id
 
 
     /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    {
+        $vars = [];
+
+        if ($this->name() <> '') {
+            $vars[json_fields::NAME] = $this->name();
+        }
+        if ($this->code_id <> '') {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+
+        return $vars;
+    }
+
+
+    /*
+     * similar
+     */
+
+    /**
+     * TODO Prio 1 call this check also if a named sandbox object is renamed
+     * check if an object with the unique key already exists
+     * returns null if no similar object is found
+     * or returns the object with the same unique key that is not the actual object
+     * any warning or error message needs to be created in the calling function
+     * e.g. if the user tries to create a formula named "millions"
+     *      but a word with the same name already exists, a term with the word "millions" is returned
+     *      in this case the calling function should suggest the user to name the formula "scale millions"
+     *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
+     * @return type_object|null a filled object that has the same name
+     *                      or null if nothing similar has been found
+     */
+    function get_similar(user_message $msg): ?type_object
+    {
+        log_debug('check possible duplicates before adding ' . $this->dsp_id());
+        $sim = null;
+
+        // check potential duplicate by name
+        $db_chk = $this->clone_reset(true);
+        if ($this->name() != '') {
+            if ($db_chk->load_by_name($this->name())) {
+                if ($db_chk->id() > 0) {
+                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                    $sim = $db_chk;
+                }
+            }
+        } else {
+            log_err('The name must be set to check if a similar object exists');
+        }
+
+        // check potential duplicate by code id
+        if ($sim == null) {
+            if ($this->code_id != '') {
+                if ($db_chk->load_by_code_id($this->code_id)) {
+                    if ($db_chk->id() > 0) {
+                        log_debug($this->dsp_id() . ' has the same code id is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                        $sim = $db_chk;
+                    }
+                }
+            } else {
+                log_warning('The code id must be set to check if a similar object exists');
+            }
+        }
+
+        return $sim;
+    }
+
+    /**
+     * create a message for the user to use another name oder code id
+     * @param type_object|null $sim the object with a least one matching key
+     * @param user_message $msg to collect the messages and suggested solutions for the user
+     * @return bool true if no critical error occured
+     */
+    function similar_message(?type_object $sim, user_message $msg): bool
+    {
+        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
+        if ($sim != null) {
+            if ($sim->id() <> 0) {
+                // check that the get_similar function has really found a similar object and report potential program errors
+                if (!$this->is_similar($sim)) {
+                    $msg->add(msg_id::NOT_SIMILAR_OBJECTS, [
+                        msg_id::VAR_NAME => $this->dsp_id(),
+                        msg_id::VAR_NAME_CHK => $sim->dsp_id()
+                    ]);
+                } else {
+                    if (!$this->is_same($sim)) {
+                        $lib = new library();
+                        $msg->add(msg_id::NAME_ALREADY_EXISTS, [
+                            msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                            msg_id::VAR_NAME => $this->name(),
+                            msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
+                        ]);
+                    } else {
+                        // if similar is found set the id to trigger the updating instead of adding
+                        $sim->load_by_id($sim->id()); // e.g. to get the type_id
+                        // prevent that the id of a formula is used for the word with the type formula link
+                        if (get_class($this) != get_class($sim)) {
+                            $msg->merge($sim->id_used_msg($this));
+                        }
+                    }
+                }
+            }
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * returns true if any of the unique keys matches
+     * if two types are similar by this definition, they should not be both in the database
+     *
+     * @param null|type_object $obj_to_check the object used for the comparison
+     * @return bool true if the objects should not be in the database at the same time
+     */
+    function is_similar(?type_object $obj_to_check): bool
+    {
+        $result = false;
+        if ($obj_to_check != null) {
+            if ($this->name() == $obj_to_check->name()) {
+                $result = true;
+            }
+            if ($this->code_id != '') {
+                if ($this->code_id == $obj_to_check->code_id) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * suggest to the user to use a different name
+     * @param type_object|sandbox $obj_to_add the type object that the user wanted to add
+     * @return user_message a message to use a different name
+     */
+    function id_used_msg(type_object|sandbox $obj_to_add): user_message
+    {
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
+        $msg = new user_message();
+        $msg->add(msg_id::NAME_ALREADY_EXISTS, [
+            msg_id::VAR_CLASS_NAME => $class_name,
+            msg_id::VAR_NAME => $obj_to_add->name(),
+            msg_id::VAR_VALUE => $obj_to_add_name
+        ]);
+        return $msg;
+    }
+
+    /**
+     * can merge
+     * returns true if all the unique keys match
+     * if two objects are the same by this definition, they are supposed to be merged
+     *
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
+     */
+    function is_same(type_object $obj_to_check): bool
+    {
+        $result = true;
+        if ($this->name() !== $obj_to_check->name()) {
+            $result = false;
+        }
+        if ($this->code_id !== $obj_to_check->code_id) {
+            $result = false;
+        }
+        return $result;
+    }
+
+
+    /*
+     * info
+     */
+
+    function is_type(string $type_to_check): bool
+    {
+        if ($this->code_id == $type_to_check) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * TODO Prio 2 fill
+     */
+    function is_used(): bool
+    {
+        return true;
+    }
+
+    /**
+     * check if any unique key beside the database id has been changed
+     * for type objects the unique keys are the name and the code id
+     *
+     * @param type_object|db_object_seq_id $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields has been changed
+     */
+    function is_key_updated(type_object|db_object_seq_id $db_rec): bool
+    {
+        $result = False;
+
+        if ($db_rec->name() <> $this->name()) {
+            $result = True;
+        }
+        if ($db_rec->code_id <> $this->code_id) {
+            $result = True;
+        }
+
+        return $result;
+    }
+
+
+    /*
+     * compare
+     */
+
+    /**
+     * detects if this object has been changed compared to the given object,
+     * excluding changes on internal fields like last_update
+     *
+     * @param type_object $db_typ the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_diff(
+        type_object   $db_typ,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
+    {
+        // for the check it is not relevant if only the user differs
+        $chk_obj = clone $this;
+        $fvt_lst = $chk_obj->db_fields_changed($db_typ, $usr_msg, $sc_par_lst);
+        return $fvt_lst->is_empty_except_internal_fields();
+    }
+
+    /**
+     * detects if this object has been changed compared to the given object,
+     * excluding changes on internal fields like last_update
+     *
+     * @param type_object $db_typ the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_non_id_diff(
+        type_object   $db_typ,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
+    {
+        $fvt_lst = $this->db_fields_changed($db_typ, $usr_msg, $sc_par_lst);
+        return $fvt_lst->is_empty_except_id_and_internal_fields();
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param type_object|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param type_object|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return type_object|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        type_object|CombineObject|db_object_seq_id $std_obj,
+        type_object|CombineObject|db_object_seq_id $result
+    ): type_object|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->code_id !== $this->code_id) {
+            $result->code_id = $this->code_id;
+        }
+        if ($std_obj->name !== $this->name) {
+            $result->name = $this->name;
+        }
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this type object based on the given type object
+     * if the id is set in the given type object loaded from the database, but this import type object does not yet have the db id, set the id.
+     * if the given description is not set (null), the description is not removed.
+     * if the given description is an empty string, the description is removed.
+     *
+     * @param type_object|CombineObject|db_object_seq_id $obj type object with the values that should have been updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(type_object|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($this->get_code_id() == null and $obj->get_code_id() != null) {
+            $this->set_code_id($obj->get_code_id(), $usr_req);
+        }
+        if ($this->name == null and $obj->name != null) {
+            $this->name = $obj->name;
+        }
+        if ($this->description == null and $obj->description != null) {
+            $this->description = $obj->description;
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the tables of a type object
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql_creator $sc): string
+    {
+        $sql = $sc->sql_separator();
+        // the pod is a type object but the number of pods might be significant higher than the number of types
+        if ($this:: class == pod::class) {
+            $sql .= $this->sql_table_create($sc);
+        } else {
+            $sql .= $this->sql_table_create($sc, new sql_type_list([sql_type::KEY_SMALL_INT]));
+        }
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the database indices of a type object
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return string the sql statement to create the indices
+     */
+    function sql_index(sql_creator $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_index_create($sc);
+        return $sql;
+    }
+
+
+    /*
      * api
      */
 
@@ -547,187 +851,197 @@ class type_object extends db_object_seq_id
      */
 
     /**
-     * create the sql statement to delete type object e.g. a verb
-     * but only if it does not have a code_id and is never used
+     * create the sql statement to add or update an object in the database
+     * all fields are always included in the query to be able to remove overwriting with a null value
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par|null the SQL update statement, the name of the SQL statement, and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
-    function sql_delete(
-        sql_creator   $sc,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par|null
-    {
-        $qp = null;
-        if ($this->can_delete($usr_msg)) {
-            // clone the sql parameter list to avoid changing the given list
-            $sc_par_lst_used = clone $sc_par_lst;
-            // set the sql query type
-            $sc_par_lst_used->add(sql_type::DELETE);
-            // set the query name
-            $qp = $this->sql_common($sc, $sc_par_lst_used);
-            $sc->set_name($qp->name);
-            // fields and values that the word has additional to the standard named user sandbox object
-            // for a new sandbox object the owner should be set, so remove the user id to force writing the user
-            $sbx_empty = $this->clone_reset(true);
-            // to get the list of the changed fields,
-            // the list of all fields is not needed because only the id fields are written to the log in case of a delete
-            $fvt_lst = $sbx_empty->db_fields_changed($this, $usr_msg, $sc_par_lst_used);
-            // actual create the sql statement to delete the type object
-            // and log who has deleted it and when
-            $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst, $usr_msg, $sc_par_lst_used);
-        }
-
-        return $qp;
-    }
-
-    /**
-     * @param sql_creator $sc the sql creator object with the db type set
-     * @param sql_par $qp the query parameter with the name already set
-     * @param sql_par_field_list $fvt_lst list of field names, values and sql types for the log entry what has been deleted
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
-     * @param sql_type_list $sc_par_lst
-     * @return sql_par
-     */
-    private function sql_delete_and_log(
-        sql_creator        $sc,
-        sql_par            $qp,
-        sql_par_field_list $fvt_lst,
-        user_message       $usr_msg,
-        sql_type_list      $sc_par_lst = new sql_type_list()
+    function sql_write(
+        sql_creator      $sc,
+        db_object_seq_id $db_row,
+        user_message     $usr_msg,
+        sql_type_list    $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         global $sys;
-        $table_id = $sc->table_id($this::class);
+
+        // get a list of all fields that could potentially be updated
+        $fld_lst_all = $this->db_fields_all();
+
+        // get the list of all fields that can be changed by the user
+        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst);
+
+        // TODO Prio 1 move the line from here to the end to a sql_write function and move it to the parent object
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+
+        // create the main query parameter object and set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+
+        // log functions must always use named parameters
+        $sc_par_lst->add(sql_type::NAMED_PAR);
 
         // set some var names to shorten the code lines
-        $ext = sql::NAME_SEP . sql_creator::FILE_DELETE;
         $id_fld = $sc->id_field_name();
-        $id_val = '_' . $id_fld;
-        $name_fld = $this->name_field();
+        if ($sc_par_lst->is_insert()) {
+            $var_name_row_id = $sc->var_name_row_id($sc_par_lst);
+        } else {
+            $var_name_row_id = '_' . $id_fld;
+        }
+
+        // add the change action field to the field list for the log entries
+        $fvt_lst->add_field(
+            change_action::FLD_ID,
+            $sys->typ_lst->cng_act->id(change_actions::ADD),
+            type_object::FLD_ID_SQL_TYP
+        );
 
         // list of parameters actually used in order of the function usage
-        $fvt_lst_out = new sql_par_field_list();
+        $par_lst_out = new sql_par_field_list();
 
         // init the function body
-        $sql = $sc->sql_func_start('', $sc_par_lst);
+        if ($sc_par_lst->is_insert()) {
+            $id_fld_new = $sc->var_name_new_id($sc_par_lst);
+        } else {
+            $id_fld_new = '';
+        }
+        $sql = $sc->sql_func_start($id_fld_new, $sc_par_lst);
 
         // don't use the log parameter for the sub queries
-        $sc_par_lst_sub = clone $sc_par_lst;
+        $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
         $sc_par_lst_sub->add(sql_type::LIST);
-        $sc_par_lst_sub->add(sql_type::NAMED_PAR);
-        $sc_par_lst_sub->add(sql_type::DELETE_PART);
-        $sc_par_lst_log = $sc_par_lst_sub->remove(sql_type::LOG);
-        $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
 
-        // create the queries for the log entries
-        $func_body_change = '';
+        if ($sc_par_lst->is_insert()) {
+            // create sql to set the prime key upfront to get the sequence id
+            $qp_id = clone $qp;
+            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
+            $par_lst_out->add($qp_id->par_fld);
+            $sql .= $qp_id->sql;
+        }
 
-        // add the user_id to log who requested the deletion
-        $fvt_lst_out->add_field(
+        // get the data fields and move the unique db key field to the first entry
+        $fld_lst_log = array_intersect($fvt_lst->names(), $fld_lst_all);
+        $key_fld_pos = array_search($this->id_field(), $fld_lst_log);
+        unset($fld_lst_log[$key_fld_pos]);
+
+        // add the user to the field list so that the id can be used for the log
+        $fvt_lst->add_field(
             user_db::FLD_ID,
             $usr_msg->usr->id(),
-            sql_par_type::INT);
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
 
-        // add the change_action_id if needed
-        $fvt_lst_out->add_field(
-            change_action::FLD_ID,
-            $sys->typ_lst->cng_act->id(change_actions::DELETE),
-            sql_par_type::INT_SMALL);
+        // create the query parameters for the log entries for the single fields
+        $qp_log = $this->sql_write_log($sc, $usr_msg, $fvt_lst, $fld_lst_log, $sc_par_lst_sub);
+        $sql .= ' ' . $qp_log->sql;
+        $par_lst_out->add_list($qp_log->par_fld_lst);
 
-        // add the field_id of the field actually changed if needed
-        $fvt_lst_out->add_field(
-            sql::FLD_LOG_FIELD_PREFIX . $name_fld,
-            $sys->typ_lst->cng_fld->id($table_id . $name_fld),
-            sql_par_type::INT_SMALL);
-
-        // add the db field value of the field actually changed if needed
-        $fvt_lst_out->add_field(
-            $name_fld,
-            $this->name(),
-            sql_par_type::TEXT);
-
-        // create the insert log statement
-        $sc_log = clone $sc;
-        $log = new change($usr_msg->usr);
-        $log->set_class($this::class);
-        $log->set_field($name_fld);
-        $log->old_value = $this->name();
-        $log->new_value = null;
-        $qp_log = $log->sql_insert(
-            $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
-
-        // TODO get the fields used in the change log sql from the sql
-        $func_body_change .= ' ' . $qp_log->sql . ';';
-
-        // add the row id of the standard table for user overwrites
-        $fvt_lst_out->add_field(
-            $this->id_field(),
-            $this->id(),
-            sql_par_type::INT);
-
-        $sql .= ' ' . $func_body_change;
-
-        // create the actual delete or exclude statement
-        $sc_delete = clone $sc;
-        $sc_par_lst_del = clone $sc_par_lst;
-        $sc_par_lst_del->add(sql_type::DELETE);
-        $sc_par_lst_del->add(sql_type::NAMED_PAR);
-        $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_log);
-        $qp_delete->sql = $sc_delete->create_sql_delete(
-            $id_fld, $id_val, $sc_par_lst_sub);
-        // add the delete statement to the function body
-        $sql .= ' ' . $qp_delete->sql . ' ';
-
-        $sql .= $sc->sql_func_end();
-
-        // create the query parameters for the call
-        $sc_par_lst_func = clone $sc_par_lst;
-        $sc_par_lst_func->add(sql_type::FUNCTION);
-        $sc_par_lst_func->add(sql_type::DELETE);
-        $sc_par_lst_func->add(sql_type::NO_ID_RETURN);
-        if ($sc_par_lst->exclude_sql()) {
-            $sc_par_lst_func->add(sql_type::EXCLUDE);
+        // add the name field if it is missing and the object should be excluded
+        if (!$par_lst_out->has_name($this->name_field())) {
+            $table_id = $sc->table_id($this::class);
+            $par_lst_out->add_field(
+                sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
+                $sys->typ_lst->cng_fld->id($table_id . $this->name_field()),
+                change::FLD_FIELD_ID_SQL_TYP
+            );
+            $par_lst_out->add_field(
+                $this->name_field() . change::FLD_OLD_EXT,
+                $this->name(),
+                sandbox_named::FLD_NAME_SQL_TYP
+            );
         }
-        $qp_func = $this->sql_common($sc_delete, $sc_par_lst_func);
-        $qp_func->sql = $sc->create_sql_delete(
-            $id_fld, $id_val, $sc_par_lst_func, $fvt_lst_out);
-        $qp_func->par = $fvt_lst_out->values();
 
-        // merge all together and create the function
-        $qp->sql = $qp_func->sql . ' ' . $sql . ';';
-        $qp->par = $fvt_lst_out->values();
+        // add the update row SQL to the function body
+        $sql_upd = $this->sql_write_update(
+            $sc, $usr_msg, $id_fld, $var_name_row_id, $fvt_lst, $fld_lst_log, $sc_par_lst);
+        if ($sql_upd != '') {
+            $sql .= ' ' . $sql_upd . ' ';
+        }
 
-        // create the function call
-        $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . ' (';
+        // create the call sql statement
+        return $this->sql_write_call($sc, $qp, $sql, $id_fld_new, $par_lst_out, $sc_par_lst);
+    }
 
-        $call_val_str = $fvt_lst_out->par_sql($sc);
+    /**
+     * create the sql statement to add a new named sandbox object e.g. word to the database
+     * TODO add qp merge
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_par $qp
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param string $id_fld_new
+     * @param user_message $usr_msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_insert_key_field(
+        sql_creator        $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst,
+        string             $id_fld_new,
+        user_message       $usr_msg,
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
 
-        $qp->call_sql .= $call_val_str . ');';
+        // list of parameters actually used in order of the function usage
+        $sql = '';
+        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+        if ($fvt_insert == null) {
+            log_err('name field is missing for ' . $this->dsp_id());
+        }
+
+        // create the sql to insert the row
+        $fvt_insert_list = new sql_par_field_list();
+        $fvt_insert_list->add($fvt_insert);
+        $sc_insert = clone $sc;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
+        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        }
+        $qp_insert->sql = $sc_insert->create_sql_insert(
+            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+        $qp_insert->par = [$fvt_insert->value];
+
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_insert->sql . '; ';
+
+        // get the new row id for MySQL db
+        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+        }
+
+        $qp->sql = $sql;
+        $qp->par_fld = $fvt_insert;
 
         return $qp;
     }
 
-    protected function can_delete(user_message $usr_msg): bool
+
+    protected function can_delete(user_message $msg): bool
     {
         $can_del = false;
         if (!$this->is_used()) {
             if ($this->code_id != null or $this->code_id != '') {
-                if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+                if ($msg->usr->is_admin() or $msg->usr->is_system()) {
                     $can_del = true;
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::CANNOT_DELETE_TYPE_WITH_CODE_IS, [
+                    $msg->add(msg_id::CANNOT_DELETE_TYPE_WITH_CODE_IS, [
                         msg_id::VAR_NAME => $this->name(),
                     ]);
                 }
             }
         } else {
             // for the system user it should be possible to delete a type
-            if ($usr_msg->usr->is_system()) {
+            if ($msg->usr->is_system()) {
                 $can_del = true;
             }
         }
@@ -749,41 +1063,38 @@ class type_object extends db_object_seq_id
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return [
-            $this->id_field_typ($this::class),
-            $this->name_field(),
-            sql_db::FLD_CODE_ID,
-            sql_db::FLD_DESCRIPTION
-        ];
+        return array_merge(
+            parent::db_fields_all(),
+            [
+                $this->name_field(),
+                sql_db::FLD_CODE_ID,
+                sql_db::FLD_DESCRIPTION
+            ]
+        );
     }
 
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param type_object $typ the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param type_object|db_object_seq_id $obj the compare value to detect the changed fields
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        type_object   $typ,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        type_object|db_object_seq_id $obj,
+        user_message                 $msg,
+        sql_type_list                $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
 
-        $lst = new sql_par_field_list();
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst->add_field(
-            $this->id_field_typ($this::class),
-            $typ->id(),
-            db_object_seq_id::FLD_ID_SQL_TYP
-        );
-        if ($typ->name <> $this->name) {
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
+        if ($obj->name <> $this->name) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
@@ -791,7 +1102,7 @@ class type_object extends db_object_seq_id
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            $used_old_name = $typ->name;
+            $used_old_name = $obj->name;
             if ($used_old_name == '') {
                 $used_old_name = null;
             }
@@ -802,7 +1113,7 @@ class type_object extends db_object_seq_id
                 $used_old_name
             );
         }
-        if ($typ->code_id !== $this->code_id) {
+        if ($obj->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
@@ -814,10 +1125,10 @@ class type_object extends db_object_seq_id
                 sql_db::FLD_CODE_ID,
                 $this->code_id,
                 sql_field_type::CODE_ID,
-                $typ->code_id
+                $obj->code_id
             );
         }
-        if ($typ->description <> $this->description) {
+        if ($obj->description <> $this->description) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -829,7 +1140,7 @@ class type_object extends db_object_seq_id
                 sql_db::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
-                $typ->description
+                $obj->description
             );
         }
         return $lst;
@@ -848,6 +1159,36 @@ class type_object extends db_object_seq_id
     function all_fields(): array
     {
         return type_object::FLD_NAMES;
+    }
+
+
+    /*
+     * db helper
+     */
+
+    /**
+     * check if the user can add this object to the database
+     * e.g. reject if a reserved name is used and the user is not a system test user or an admin user
+     * to be overwritten by the child objects
+     *
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
+     */
+    protected function check(user_message $msg): bool
+    {
+        // all types must have a code_id or a name
+        // TODO Prio 3 review
+        /*
+        if ($this->code_id != '') {
+            if ($this->name != '') {
+                $msg->add_err(msg_id::TYPE_CODE_ID_MISSING, [
+                    msg_id::VAR_NAME => $this->dsp_id(),
+                    msg_id::VAR_CLASS_NAME => $this::class
+                ]);
+            }
+        }
+        */
+        return $msg->is_ok();
     }
 
 

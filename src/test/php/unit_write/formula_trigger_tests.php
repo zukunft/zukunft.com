@@ -39,7 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -118,7 +118,7 @@ class formula_trigger_tests
         if ($res_lst != null) {
             if (count($res_lst) > 0) {
                 $res = $res_lst[0];
-                $res_dsp = new result($res->api_json([api_type::INCL_PHRASES]));
+                $res_dsp = new result($res->api_json([api_types::INCL_PHRASES]));
                 $result = trim($res_dsp->val_formatted());
             } else {
                 $result = '';

@@ -44,7 +44,7 @@ include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -56,7 +56,7 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class triple_list extends ListBase
@@ -174,15 +174,15 @@ class triple_list extends ListBase
         $prev_verb_id = 0;
 
         // loop over the graph elements
-        foreach (array_keys($this->lst()) as $lnk_id) {
+        foreach (array_keys($this->lst()) as $lnk_key) {
             // reset the vars
             $directional_link_type_id = 0;
 
-            $lnk = $this->get($lnk_id);
+            $lnk = $this->get_by_key($lnk_key);
             // get the next link to detect if there is more than one word linked with the same link type
             // TODO check with a unit test if last element is used
-            if ($this->count() - 1 > $lnk_id) {
-                $next_lnk = $this->get($lnk_id + 1);
+            if ($this->count() - 1 > $lnk_key) {
+                $next_lnk = $this->get_by_key($lnk_key + 1);
             } else {
                 $next_lnk = $lnk;
             }
@@ -300,7 +300,7 @@ class triple_list extends ListBase
      *
      * @param triple_list_ui $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(triple_list_ui $del_lst): void
+    private function remove(triple_list_ui $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -400,7 +400,7 @@ class triple_list extends ListBase
      */
     function ex_time(): void
     {
-        $this->diff($this->time_lst());
+        $this->remove($this->time_lst());
     }
 
     /**
@@ -408,7 +408,7 @@ class triple_list extends ListBase
      */
     function ex_measure(): void
     {
-        $this->diff($this->measure_lst());
+        $this->remove($this->measure_lst());
     }
 
     /**
@@ -416,7 +416,7 @@ class triple_list extends ListBase
      */
     function ex_scaling(): void
     {
-        $this->diff($this->scaling_lst());
+        $this->remove($this->scaling_lst());
     }
 
     /**
@@ -424,7 +424,7 @@ class triple_list extends ListBase
      */
     function ex_percent(): void
     {
-        $this->diff($this->percent_lst());
+        $this->remove($this->percent_lst());
     }
 
     /**

@@ -40,12 +40,12 @@ include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
-include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_TYPES . 'view_types.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once test_paths::CREATE . 'test_const.php';
@@ -55,28 +55,30 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
-use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_views
+class test_views extends test_objects
 {
 
+
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test views for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, views::TEST_VIEWS, new view($this->env->usr1));
     }
 
 
@@ -89,6 +91,25 @@ class test_views
         $msk = new view($this->env->usr1);
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
+        return $msk;
+    }
+
+    function view_math(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::MATH_CONST_ID, views::MATH_CONST_NAME);
+        $msk->description = views::MATH_CONST_COM;
+        return $msk;
+    }
+
+    /**
+     * @return view for db write testing that does not have a reserved name
+     */
+    function view_rename(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::HISTORIC_ID, views::HISTORIC_NAME);
+        $msk->description = views::HISTORIC_COM;
         return $msk;
     }
 
@@ -108,8 +129,15 @@ class test_views
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         $msk->set_code_id_db(views::START_CODE);
-        $msk->set_type(view_type::ENTRY, $this->env->usr1);
-        $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        $msk->set_type(view_types::ENTRY, $this->env->usr1);
+        $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
+        return $msk;
+    }
+
+    function view_add(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set_name(views::TEST_ADD_NAME);
         return $msk;
     }
 
@@ -243,12 +271,12 @@ class test_views
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         $msk->set_code_id_db(views::START_CODE);
-        $msk->set_type(view_type::ENTRY, $this->env->usr1);
+        $msk->set_type(view_types::ENTRY, $this->env->usr1);
         $msk->set_style(view_styles::COL_SM_4);
         $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
         $msk->exclude();
-        $msk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $msk;
     }
 
@@ -257,11 +285,16 @@ class test_views
      */
     function view_filled_add(): view
     {
-        $msk = $this->view_filled();
-        $msk->include();
-        $msk->id = 0;
+        global $sys;
+        $msk = $this->view_add();
         $msk->set_code_id_db(views::TEST_ADD);
-        $msk->set_name(views::TEST_ADD_NAME);
+        $msk->description = views::START_COM;
+        $msk->set_type(view_types::ENTRY, $this->env->usr1);
+        $msk->set_style(view_styles::COL_SM_4);
+        $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
+        $msk->exclude();
+        $msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $msk;
     }
 
@@ -272,16 +305,6 @@ class test_views
     {
         $msk = new view($this->env->usr1);
         $msk->set_name(views::TEST_ADD_VIA_FUNC_NAME);
-        return $msk;
-    }
-
-    /**
-     * @return view to test the sql insert without use of function
-     */
-    function view_add_by_sql(): view
-    {
-        $msk = new view($this->env->usr1);
-        $msk->set_name(views::TEST_ADD_VIA_SQL_NAME);
         return $msk;
     }
 
@@ -373,8 +396,8 @@ class test_views
         $mrl = $this->view_relation();
         $mrl->description = 'add usage and log of a word';
         $mrl->exclude();
-        $mrl->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $mrl->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $mrl->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $mrl->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $mrl;
     }
 
@@ -398,7 +421,7 @@ class test_views
         $t_wrd = new test_words($this->env);
         $trm_msk->id = 1;
         $trm_msk->set_term($t_wrd->word()->term());
-        $trm_msk->set_predicate(view_link_type::DEFAULT);
+        $trm_msk->set_predicate(view_link_types::DEFAULT);
         $trm_msk->set_view($this->view());
         return $trm_msk;
     }
@@ -409,8 +432,8 @@ class test_views
         $trm_msk = $this->term_view();
         $trm_msk->description = 'add usage and log of a word';
         $trm_msk->exclude();
-        $trm_msk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $trm_msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $trm_msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $trm_msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $trm_msk;
     }
 

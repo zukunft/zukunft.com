@@ -1,7 +1,7 @@
 {
   "id": 1,
   "user": "zukunft.com system test",
-  "type_id": "11",
-  "status": "new",
-  "priority": "10"
+  "type_id": 11,
+  "status": 1,
+  "priority": 10
 }

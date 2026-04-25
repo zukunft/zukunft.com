@@ -96,7 +96,7 @@ class system_form extends component
     /**
      * start an HTML form, show the title and set and set the unique form name
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user specific frontend language
+     * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
      * @return string the html code to start a new form and display the tile
      */
     function form_tile(string $form_name, ?msg_id $ui_msg_code_id = null): string
@@ -1465,7 +1465,7 @@ class system_form extends component
     function button_save(): string
     {
         $html = new html_base();
-        return $html->button('Save');
+        return $html->button_bs('Save');
     }
 
     /**
@@ -1474,7 +1474,7 @@ class system_form extends component
     function button_del(): string
     {
         $html = new html_base();
-        return $html->button('Delete', html_base::BS_BTN_DEL);
+        return $html->button_bs('Delete', html_base::BS_BTN_DEL);
     }
 
     /**
@@ -1483,7 +1483,7 @@ class system_form extends component
     function button_import(): string
     {
         $html = new html_base();
-        return $html->button('Import', html_base::BS_BTN_IMPORT);
+        return $html->button_bs('Import', html_base::BS_BTN_IMPORT);
     }
 
     /**
@@ -1492,7 +1492,7 @@ class system_form extends component
     function button_export(): string
     {
         $html = new html_base();
-        return $html->button('Export', html_base::BS_BTN_EXPORT);
+        return $html->button_bs('Export', html_base::BS_BTN_EXPORT);
     }
 
     /**

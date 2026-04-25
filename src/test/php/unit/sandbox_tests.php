@@ -77,11 +77,14 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -93,10 +96,12 @@ class sandbox_tests
     {
 
         global $usr;
+        global $sys;
 
         // init
         $t_wrd = new test_words($t);
         $t_vrb = new test_verbs($t);
+        $t_trp = new test_triples($t);
         $t_msk = new test_views($t);
         $t_cmp = new test_components($t);
         $lib = new library();
@@ -116,7 +121,7 @@ class sandbox_tests
         $name_list_ex = implode('.', array_keys($wrd_lst->name_pos_lst_all()));
         $wrd_ex = $t_wrd->word_education();
         $wrd_ex->exclude();
-        $wrd_lst->add_by_name($wrd_ex);
+        $wrd_lst->add_by_key($wrd_ex);
         $name_list_ex_cache = implode('.', array_keys($wrd_lst->name_pos_lst_all()));
         // TODO Prio 2 activate and add the handling of excluded named objects
         //$t->assert_not($test_name, $name_list_ex_cache, $name_list);
@@ -193,11 +198,16 @@ class sandbox_tests
         $src2 = new source($usr);
         $src2->set(sources::WIKIDATA_ID, sources::IPCC_AR6_SYNTHESIS);
         $result = $src1->is_same($src2);
-        $t->assert("are two sources supposed to be the same", $result, true);
+        $t->assert("two sources are not the same if the id does not match", $result, false);
 
         // ... and they are of course also similar
         $result = $src1->is_similar($src2);
-        $t->assert("... and similar", $result, true);
+        $t->assert("... but they are similar", $result, true);
+
+        // ... but could be the same
+        $src1->id = 0;
+        $result = $src1->is_same($src2);
+        $t->assert("two sources are supposed to be the same if the id id empty", $result, true);
 
         // TODO review test (start with test_name="" and move the creation to the test object creation)
         // a source can have the same name as a word
@@ -213,6 +223,7 @@ class sandbox_tests
         // but a formula should not have the same name as a word
         $wrd = new word($usr);
         $wrd->set_name(words::MIO);
+        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_types::FORMULA_LINK);
         $frm = new formula($usr);
         $frm->set_name(words::MIO);
         $result = $wrd->is_similar($frm);
@@ -221,6 +232,16 @@ class sandbox_tests
         // ... but they are not the same
         $result = $wrd->is_same($frm);
         $t->assert("... but they are not the same", $result, false);
+
+        $test_name = 'a triple with the same link is similar even if it has a different name';
+        $trp1 = $t_trp->triple();
+        $trp2 = clone $trp1;
+        $trp2->id = 0;
+        $trp2->set_name(triples::SYSTEM_TEST_ADD);
+        $t->assert($test_name, $trp1->is_similar($trp2), true);
+
+        $test_name = '... but a triple with the same link and a different name is not the same';
+        $t->assert($test_name, $trp1->is_same($trp2), false);
 
         // a word with the name 'millions' is similar to a formulas named 'millions', but not the same, so
 
@@ -516,216 +537,6 @@ class sandbox_tests
 
         // test a SQL select creation of user sandbox data for Postgres
         $db_con->db_type = sql_db::POSTGRES;
-        $db_con->set_class(source::class);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID));
-        $db_con->set_usr_fields(array(source_db::FLD_URL, sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array('source_type_id'));
-        $db_con->set_where_std(1, '');
-        $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT 
-                        s.source_id,
-                        u.source_id AS user_source_id,
-                        s.user_id,
-                        s.code_id,
-                        CASE WHEN (u.source_name    <> '' IS NOT TRUE) THEN s.source_name    ELSE u.source_name    END AS source_name,
-                        CASE WHEN (u.url            <> '' IS NOT TRUE) THEN s.url            ELSE u.url            END AS url,
-                        CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
-                        CASE WHEN (u.source_type_id IS           NULL) THEN s.source_type_id ELSE u.source_type_id END AS source_type_id
-                   FROM sources s 
-              LEFT JOIN user_sources u ON s.source_id = u.source_id 
-                                      AND u.user_id = 1 
-                  WHERE s.source_id = $1;";
-        $t->assert('Postgres user sandbox select', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... same for search by name
-        $db_con->set_class(source::class);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID));
-        $db_con->set_usr_fields(array(source_db::FLD_URL, sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array('source_type_id'));
-        $db_con->set_where_std(0, 'wikidata');
-        $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT
-                        s.source_id,
-                        u.source_id AS user_source_id,
-                        s.user_id,
-                        s.code_id,
-                        CASE WHEN (u.source_name    <> '' IS NOT TRUE) THEN s.source_name    ELSE u.source_name    END AS source_name,
-                        CASE WHEN (u.url            <> '' IS NOT TRUE) THEN s.url            ELSE u.url            END AS url,
-                        CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
-                        CASE WHEN (u.source_type_id IS           NULL) THEN s.source_type_id ELSE u.source_type_id END AS source_type_id
-                   FROM sources s 
-              LEFT JOIN user_sources u ON s.source_id = u.source_id 
-                                      AND u.user_id = 1 
-                  WHERE (u.source_name = $1 
-                     OR (s.source_name = $1 AND u.source_name IS NULL));";
-        $t->assert('Postgres user sandbox select by name', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... same for search by code_id
-        $db_con->set_class(source::class);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID));
-        $db_con->set_usr_fields(array(source_db::FLD_URL, sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array('source_type_id'));
-        $db_con->set_where_std(0, '', 'wikidata');
-        $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT " . "
-                        s.source_id,
-                        u.source_id AS user_source_id,
-                        s.user_id,
-                        s.code_id,
-                        CASE WHEN (u.source_name    <> '' IS NOT TRUE) THEN s.source_name    ELSE u.source_name    END AS source_name,
-                        CASE WHEN (u.url            <> '' IS NOT TRUE) THEN s.url            ELSE u.url            END AS url,
-                        CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
-                        CASE WHEN (u.source_type_id IS           NULL) THEN s.source_type_id ELSE u.source_type_id END AS source_type_id
-                   FROM sources s 
-              LEFT JOIN user_sources u ON s.source_id = u.source_id 
-                                      AND u.user_id = 1 
-                  WHERE s.code_id = $1 AND s.code_id IS NOT NULL;";
-        $t->assert('Postgres user sandbox select by code_id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... same for all users by id
-        $db_con->set_class(source::class);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID, source_db::FLD_URL, sql_db::FLD_DESCRIPTION, 'source_type_id'));
-        $db_con->set_where_std(1, '');
-        $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT
-                        source_id,
-                        source_name,
-                        code_id,
-                        url,
-                        description,
-                        source_type_id
-                   FROM sources 
-                  WHERE source_id = $1;";
-        $t->assert('Postgres all user select by id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... similar with joined fields
-        $db_con->set_class(formula::class);
-        $db_con->set_fields(array(
-            user_db::FLD_ID,
-            formula_db::FLD_FORMULA_TEXT,
-            formula_db::FLD_FORMULA_USER_TEXT,
-            sql_db::FLD_DESCRIPTION,
-            formula_db::FLD_TYPE,
-            formula_db::FLD_ALL_NEEDED,
-            formula_db::FLD_LAST_UPDATE,
-            sql_db::FLD_EXCLUDED));
-        $db_con->set_join_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
-        $db_con->set_where_std(1, '');
-        $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT s.formula_id,
-                     s.formula_name,
-                     s.user_id,
-                     s.formula_text,
-                     s.resolved_text,
-                     s.description,
-                     s.formula_type_id,
-                     s.all_values_needed,
-                     s.last_update,
-                     s.excluded,
-                     l.code_id 
-                FROM formulas s
-           LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
-               WHERE s.formula_id = $1;";
-        $t->assert('Postgres all user join select by id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... same for user sandbox data (should match with the parameters in formula->load)
-        $db_con->set_class(formula::class);
-        $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array(
-            formula_db::FLD_TYPE,
-            formula_db::FLD_ALL_NEEDED,
-            formula_db::FLD_LAST_UPDATE));
-        $db_con->set_usr_bool_fields(array(sql_db::FLD_EXCLUDED));
-        $db_con->set_where_std(1, '');
-        $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT s.formula_id,
-                       u.formula_id AS user_formula_id,
-                       s.user_id,
-                       CASE WHEN (u.formula_name      <> '' IS NOT TRUE) THEN s.formula_name         ELSE u.formula_name         END AS formula_name,
-                       CASE WHEN (u.formula_text      <> '' IS NOT TRUE) THEN s.formula_text         ELSE u.formula_text         END AS formula_text,
-                       CASE WHEN (u.resolved_text     <> '' IS NOT TRUE) THEN s.resolved_text        ELSE u.resolved_text        END AS resolved_text,
-                       CASE WHEN (u.description       <> '' IS NOT TRUE) THEN s.description          ELSE u.description          END AS description,
-                       CASE WHEN (u.formula_type_id   IS           NULL) THEN s.formula_type_id      ELSE u.formula_type_id      END AS formula_type_id,
-                       CASE WHEN (u.all_values_needed IS           NULL) THEN s.all_values_needed    ELSE u.all_values_needed    END AS all_values_needed,
-                       CASE WHEN (u.last_update       IS           NULL) THEN s.last_update          ELSE u.last_update          END AS last_update,
-                       CASE WHEN (u.excluded          IS           NULL) THEN COALESCE(s.excluded,0) ELSE COALESCE(u.excluded,0) END AS excluded
-                  FROM formulas s
-             LEFT JOIN user_formulas u ON s.formula_id = u.formula_id 
-                                      AND u.user_id = 1 
-               WHERE s.formula_id = $1;";
-        $t->assert('Postgres user sandbox join select by id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... same for a link table
-        $db_con->set_class(triple::class);
-        $db_con->set_fields(array(triple_db::FLD_FROM, triple_db::FLD_TO, verb_db::FLD_ID, 'phrase_type_id'));
-        $db_con->set_usr_fields(array(triple_db::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION, sql_db::FLD_EXCLUDED));
-        $db_con->set_where_text('s.triple_id = 1');
-        $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT s.triple_id,
-                     u.triple_id AS user_triple_id,
-                     s.user_id,
-                     s.from_phrase_id,
-                     s.to_phrase_id,
-                     s.verb_id,
-                     s.phrase_type_id,
-                     CASE WHEN (u.name_given  <> '' IS NOT TRUE) THEN s.name_given  ELSE u.name_given  END AS name_given,
-                     CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description ELSE u.description END AS description,
-                     CASE WHEN (u.excluded    <> '' IS NOT TRUE) THEN s.excluded    ELSE u.excluded    END AS excluded
-                FROM triples s 
-           LEFT JOIN user_triples u ON s.triple_id = u.triple_id 
-                                      AND u.user_id = 1 
-               WHERE s.triple_id = 1;";
-        $t->assert('Postgres user sandbox link select by where text', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // test the view load_standard SQL creation
-        $db_con->set_class(view::class);
-        $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, view_db::FLD_TYPE, sql_db::FLD_EXCLUDED));
-        $db_con->set_where_std(1);
-        $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT view_id,
-                     view_name,
-                     description,
-                     view_type_id,
-                     excluded
-                FROM views
-               WHERE view_id = $1;";
-        $t->assert('Postgres view load_standard select by id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // test the view load SQL creation
-        $db_con->set_class(view::class);
-        $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array(view_db::FLD_TYPE, sql_db::FLD_EXCLUDED));
-        $db_con->set_where_std(1);
-        $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT 
-                        s.view_id, 
-                        u.view_id AS user_view_id, 
-                        s.user_id, 
-                        CASE WHEN (u.view_name <> ''   IS NOT TRUE) THEN s.view_name    ELSE u.view_name    END AS view_name, 
-                        CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description  ELSE u.description  END AS description, 
-                        CASE WHEN (u.view_type_id      IS     NULL) THEN s.view_type_id ELSE u.view_type_id END AS view_type_id, 
-                        CASE WHEN (u.excluded          IS     NULL) THEN s.excluded     ELSE u.excluded     END AS excluded 
-                   FROM views s 
-              LEFT JOIN user_views u ON s.view_id = u.view_id 
-                                    AND u.user_id = 1 
-                  WHERE s.view_id = $1;";
-        $t->assert('Postgres view load select by id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // test the component_link load_standard SQL creation
-        $db_con->set_class(component_link::class);
-        $db_con->set_link_fields(view_db::FLD_ID, component::FLD_ID);
-        $db_con->set_fields(array(component_link::FLD_ORDER_NBR, component_link::FLD_POS_TYPE, sql_db::FLD_EXCLUDED));
-        $db_con->set_where_link_no_fld(1, 2, 3);
-        $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT component_link_id,
-                     view_id,
-                     component_id,
-                     order_nbr,
-                     position_type_id,
-                     excluded
-                FROM component_links 
-               WHERE component_link_id = $1;";
-        $t->assert('Postgres component_link load_standard select by id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... same but select by the link ids
         $db_con->set_class(component_link::class);

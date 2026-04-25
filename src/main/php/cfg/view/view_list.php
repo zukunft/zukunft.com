@@ -290,7 +290,7 @@ class view_list extends sandbox_list_named
                 // actual save the component link to the database
                 $msk->save_component_links($cmp_lnk_usr_msg);
                 // collect the user message for a consolidated list for the user
-                $usr_msg->add($cmp_lnk_usr_msg);
+                $usr_msg->merge($cmp_lnk_usr_msg);
             }
         }
         return $usr_msg->is_ok();

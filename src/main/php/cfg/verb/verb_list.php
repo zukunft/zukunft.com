@@ -166,6 +166,7 @@ class verb_list extends type_list
 
     /**
      * load a list of verbs that are used by a given word
+     * TODO Prio 1 review and use function of ListOfIdNamedCodeObject
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param phrase $phr the phrase used as a base for selecting the verb list e.g. Zurich
@@ -276,7 +277,7 @@ class verb_list extends type_list
         $vrb = new verb();
         $vrb->id = verbs::TIME_STEP_ID;
         $vrb->set_name(verbs::TIME_STEP_NAME);
-        $vrb->set_formula_name(verbs::TIME_STEP_NAME_FORMULA);
+        $vrb->frm_name = verbs::TIME_STEP_NAME_FORMULA;
         $vrb->set_code_id_db(verbs::TIME_STEP);
         $this->add_verb($vrb);
         $vrb = new verb();
@@ -369,6 +370,7 @@ class verb_list extends type_list
         $vrb->set_name(verbs::PER_NAME);
         $vrb->set_code_id_db(verbs::PER);
         $this->add_verb($vrb);
+        $vrb = new verb();
         $vrb->id = verbs::TIMES_ID;
         $vrb->set_name(verbs::TIMES_NAME);
         $vrb->set_code_id_db(verbs::TIMES);
@@ -415,9 +417,9 @@ class verb_list extends type_list
      * cast
      */
 
-    function term_list(): term_list
+    function term_list(user $usr): term_list
     {
-        $trm_lst = new term_list($this->usr);
+        $trm_lst = new term_list($usr);
         foreach ($this->lst() as $vrb) {
             $trm_lst->add($vrb->term());
         }
@@ -441,7 +443,7 @@ class verb_list extends type_list
             if ($vrb::class != verb::class) {
                 log_err('unexpected class ' . $vrb::class . ' in verb list');
             } else {
-                $trm_lst->add_by_name($vrb->term());
+                $trm_lst->add_by_key($vrb->term());
             }
         }
         return $trm_lst;
@@ -469,12 +471,7 @@ class verb_list extends type_list
      */
     function add_by_name(verb $to_add): bool
     {
-        $result = false;
-        if (!in_array($to_add->name(), array_keys($this->names()))) {
-            $this->add_direct($to_add);
-            $result = true;
-        }
-        return $result;
+        return parent::add_obj_by_name($to_add);
     }
 
     /**
@@ -518,9 +515,10 @@ class verb_list extends type_list
     }
 
     /**
+     * @param ?int $limit the max number of ids to show
      * @return array the list of the verb ids
      */
-    function ids(): array
+    function ids(?int $limit = null): array
     {
         $result = array();
         if (!$this->is_empty()) {
@@ -570,10 +568,8 @@ class verb_list extends type_list
     {
         $result = null;
         if ($id > 0) {
-            $vrb_lst = $this->lst();
-            if (array_key_exists($id, $vrb_lst)) {
-                $result = $vrb_lst[$id];
-            } else {
+            $result = $this->get($id);
+            if ($result == null) {
                 log_err('Verb with id ' . $id . ' not found in ' . $this->dsp_id());
             }
         } else {
@@ -608,11 +604,11 @@ class verb_list extends type_list
                     $id = $vrb->id();
                     $select_row[] = $id;
                     $select_row[] = $select_name;
-                    $select_row[] = $vrb->get_usage();
+                    $select_row[] = $vrb->usage;
                     $combined_list[$id] = $select_row;
 
                     $select_row = array();
-                    $select_name = $vrb->get_reverse();
+                    $select_name = $vrb->reverse;
                     /* like above ...
                     if ($vrb->name() != '' and $select_name != '') {
                         $select_name .= ' (' . $vrb->name() . ')';
@@ -622,7 +618,7 @@ class verb_list extends type_list
                         $id = $vrb->id() * -1;
                         $select_row[] = $id;
                         $select_row[] = $select_name;
-                        $select_row[] = $vrb->get_usage(); // TODO separate the backward usage or separate the reverse form
+                        $select_row[] = $vrb->usage; // TODO separate the backward usage or separate the reverse form
                         $combined_list[$id] = $select_row;
                     }
                 }
@@ -689,7 +685,7 @@ class verb_list extends type_list
                 // actual save the reference to the database
                 $vrb->save($vrb_usr_msg);
                 // collect the user message for a consolidated list for the user
-                $usr_msg->add($vrb_usr_msg);
+                $usr_msg->merge($vrb_usr_msg);
             }
         }
 

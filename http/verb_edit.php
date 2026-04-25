@@ -36,6 +36,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -64,6 +65,7 @@ $usr_msg = new user_message(); // to collect all messages that should be shown t
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
+$msg = '';
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
@@ -73,7 +75,8 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(views::VERB_EDIT);
-    $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change is finished
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); // the original calling page that should be shown after the change is finished
 
     // create the verb object to have an place to update the parameters
     $vrb = new verb;
@@ -92,16 +95,16 @@ if ($usr->id() > 0) {
                 $vrb->set_name($_GET[url_var::NAME]);
             }
             if (isset($_GET[url_var::PLURAL])) {
-                $vrb->set_plural($_GET[url_var::PLURAL]);
+                $vrb->plural = $_GET[url_var::PLURAL];
             }
             if (isset($_GET[url_var::REVERSE])) {
-                $vrb->set_reverse($_GET[url_var::REVERSE]);
+                $vrb->reverse = $_GET[url_var::REVERSE];
             }
             if (isset($_GET[url_var::REVERSE_PLURAL])) {
-                $vrb->set_reverse_plural($_GET[url_var::REVERSE_PLURAL]);
+                $vrb->rev_plural = $_GET[url_var::REVERSE_PLURAL];
             }
             if (isset($_GET[url_var::NAME_IN_FORMULA])) {
-                $vrb->set_formula_name($_GET[url_var::NAME_IN_FORMULA]);
+                $vrb->frm_name = $_GET[url_var::NAME_IN_FORMULA];
             }
 
             // save the changes

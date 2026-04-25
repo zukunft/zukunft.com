@@ -56,6 +56,7 @@ include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -71,6 +72,8 @@ use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Random\RandomException;
 
 class application
 {
@@ -93,6 +96,13 @@ class application
 
         // resume session (based on cookies)
         session_start();
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
+        }
 
         // link to database
         $db_con = new sql_db;
@@ -126,6 +136,13 @@ class application
 
         // resume session (based on cookies)
         session_start();
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
+        }
 
         // link to database
         $db_con = new sql_db;
@@ -161,11 +178,13 @@ class application
      *
      * @param string $code_name the place that is displayed to the user e.g. add word
      * @param bool $echo_env if true log the environment
+     * @param bool $restart if true to start the php session again
      * @return sql_db the open database connection
      */
     function start(
         string $code_name,
-        bool   $echo_env = false
+        bool   $echo_env = false,
+        bool   $restart = false
     ): sql_db
     {
         global $sys;
@@ -176,7 +195,16 @@ class application
 
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
-        session_start();
+        if (!$restart) {
+            session_start();
+            if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                try {
+                    $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                } catch (RandomException $e) {
+                    log_err('RandomException ' . $e->getMessage());
+                }
+            }
+        }
 
         /*
         require __DIR__ . '/vendor/autoload.php';

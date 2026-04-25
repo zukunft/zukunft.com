@@ -173,7 +173,7 @@ class value_list extends ListBase
         $result = false;
         if (!in_array($to_add->id(), $this->id_lst())) {
             $this->add_direct($to_add);
-            $this->set_lst_dirty();
+            $this->set_hash_dirty();
             $result = true;
         }
         return $result;
@@ -328,7 +328,7 @@ class value_list extends ListBase
         }
 
         // if no phrase is left for the header, show 'description' as a dummy replacement
-        // TODO make the replacement language and user specific
+        // TODO make the replacement language and user-specific
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {

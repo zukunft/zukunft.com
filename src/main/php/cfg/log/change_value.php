@@ -45,6 +45,7 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -81,6 +83,8 @@ class change_value extends change_log
     const string TBL_COMMENT = 'to log all numeric value changes done by any user on all kind of values (table, prime, big and standard';
     const string FLD_FIELD_ID = 'change_field_id';
     const string FLD_GROUP_ID = 'group_id';
+    const string FLD_OLD_VALUE_COM = 'the value before the change';
+    const string FLD_NEW_VALUE_COM = 'the value after the change';
     const string FLD_ROW_ID = self::FLD_GROUP_ID;
 
     // all database field names
@@ -91,14 +95,18 @@ class change_value extends change_log
         change::FLD_FIELD_ID,
         change_value::FLD_GROUP_ID,
         change::FLD_OLD_VALUE,
+        change::FLD_OLD_ID,
         change::FLD_NEW_VALUE,
+        change::FLD_NEW_ID,
     );
 
     // field list to log the actual change of the value with a standard group id
     const array FLD_LST_CHANGE = array(
         [change::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [change::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
-        [change::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
+        [change::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', change_value::FLD_OLD_VALUE_COM],
+        [change::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', change_value::FLD_NEW_VALUE_COM],
+        [change::FLD_OLD_ID, change::FLD_OLD_ID_SQL_TYP, sql_field_default::NULL, '', '', change::FLD_OLD_ID_COM],
+        [change::FLD_NEW_ID, change::FLD_NEW_ID_SQL_TYP, sql_field_default::NULL, '', '', change::FLD_NEW_ID_COM],
     );
 
 
@@ -139,8 +147,8 @@ class change_value extends change_log
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
                 $this->row_id = $db_row[self::FLD_ROW_ID];
-            } elseif (array_key_exists(group::FLD_ID, $db_row)) {
-                $this->row_id = $db_row[group::FLD_ID];
+            } elseif (array_key_exists(group_db::FLD_ID, $db_row)) {
+                $this->row_id = $db_row[group_db::FLD_ID];
             }
             $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_value = $db_row[change::FLD_OLD_VALUE];
@@ -203,7 +211,7 @@ class change_value extends change_log
      */
 
     /**
-     * create an array for the json api message
+     * create an array for the api json message
      *
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
@@ -267,6 +275,13 @@ class change_value extends change_log
             $fvt_lst->add_field(change::FLD_NEW_VALUE, $this->new_value, $val_typ);
         }
 
+        if ($this->old_id > 0 or ($sc_par_lst->is_update_part() and $this->new_id > 0)) {
+            $fvt_lst->add_field(change::FLD_OLD_ID, $this->old_id, sql_par_type::INT);
+        }
+        if ($this->new_id > 0 or ($sc_par_lst->is_update_part() and $this->old_id > 0)) {
+            $fvt_lst->add_field(change::FLD_NEW_ID, $this->new_id, sql_par_type::INT);
+        }
+
         $grp_typ = sql_par_type::INT;
         if ($this::class == change_values_norm::class
             or $this::class == change_values_time_norm::class
@@ -279,14 +294,13 @@ class change_value extends change_log
             or $this::class == change_values_geo_big::class) {
             $grp_typ = sql_par_type::TEXT;
         }
-        $fvt_lst->add_field(group::FLD_ID, $this->group_id, $grp_typ);
+        $fvt_lst->add_field(group_db::FLD_ID, $this->group_id, $grp_typ);
         return $fvt_lst;
     }
 
     /**
      * get a list of all database fields
      * list must be corresponding to the db_values fields
-     * TODO deprecate
      *
      * @return array list of the database field names
      */
@@ -301,7 +315,7 @@ class change_value extends change_log
             $sql_fields[] = change::FLD_NEW_VALUE;
         }
 
-        $sql_fields[] = group::FLD_ID;
+        $sql_fields[] = group_db::FLD_ID;
         return $sql_fields;
     }
 
@@ -353,10 +367,10 @@ class change_value extends change_log
     /**
      * @return string with the best possible id for this value mainly used for debugging
      */
-    function name(): string
+    function name(): string|null
     {
         if ($this->group_id == null) {
-            return '';
+            return null;
         } else {
             $grp = new group($this->get_user(), $this->group_id);
             return $grp->dsp_id_medium();

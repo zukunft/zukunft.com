@@ -264,7 +264,7 @@ CREATE TABLE IF NOT EXISTS user_value_time_series
     last_update          timestamp NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_time_series is 'common parameters for a user specific list of intraday values';
+COMMENT ON TABLE user_values_time_series is 'common parameters for a user-specific list of intraday values';
 
 --
 -- Indexes for table user_values
@@ -373,7 +373,7 @@ COMMENT ON COLUMN groups.group_name is 'the name given by a user to display the 
 COMMENT ON COLUMN groups.description is 'the description of the group given by a user';
 
 --
--- Table structure for saving a user specific group name
+-- Table structure for saving a user-specific group name
 --
 
 CREATE TABLE IF NOT EXISTS user_groups
@@ -384,9 +384,9 @@ CREATE TABLE IF NOT EXISTS user_groups
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE user_groups is 'to link the user specific name to the standard group';
-COMMENT ON COLUMN user_groups.group_name is 'the user specific group name which can contain the phrase names in a different order';
-COMMENT ON COLUMN user_groups.description is 'the user specific description for mouse over helps';
+COMMENT ON TABLE user_groups is 'to link the user-specific name to the standard group';
+COMMENT ON COLUMN user_groups.group_name is 'the user-specific group name which can contain the phrase names in a different order';
+COMMENT ON COLUMN user_groups.description is 'the user-specific description for mouse over helps';
 
 --
 -- Table structure for phrase group names of up to four prime phrases
@@ -404,7 +404,7 @@ COMMENT ON COLUMN groups_prime.group_name is 'the name given by a user to displa
 COMMENT ON COLUMN groups_prime.description is 'the description of the group given by a user';
 
 --
--- Table structure for saving a user specific group name for up to four prime phrases
+-- Table structure for saving a user-specific group name for up to four prime phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_groups_prime
@@ -415,9 +415,9 @@ CREATE TABLE IF NOT EXISTS user_groups_prime
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE user_groups_prime is 'to link the user specific name to the group';
-COMMENT ON COLUMN user_groups_prime.group_name is 'the user specific group name which can contain the phrase names in a different order';
-COMMENT ON COLUMN user_groups_prime.description is 'the user specific description for mouse over helps';
+COMMENT ON TABLE user_groups_prime is 'to link the user-specific name to the group';
+COMMENT ON COLUMN user_groups_prime.group_name is 'the user-specific group name which can contain the phrase names in a different order';
+COMMENT ON COLUMN user_groups_prime.description is 'the user-specific description for mouse over helps';
 
 --
 -- Table structure for phrase group names of more than 16 phrases
@@ -435,7 +435,7 @@ COMMENT ON COLUMN groups_big.group_name is 'the name given by a user to display 
 COMMENT ON COLUMN groups_big.description is 'the description of the group given by a user';
 
 --
--- Table structure for saving a user specific group name for more than 16 phrases
+-- Table structure for saving a user-specific group name for more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_groups_big
@@ -446,9 +446,9 @@ CREATE TABLE IF NOT EXISTS user_groups_big
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE user_groups_big is 'to link the user specific name to the group';
-COMMENT ON COLUMN user_groups_big.group_name is 'the user specific group name which can contain the phrase names in a different order';
-COMMENT ON COLUMN user_groups_big.description is 'the user specific description for mouse over helps';
+COMMENT ON TABLE user_groups_big is 'to link the user-specific name to the group';
+COMMENT ON COLUMN user_groups_big.group_name is 'the user-specific group name which can contain the phrase names in a different order';
+COMMENT ON COLUMN user_groups_big.description is 'the user-specific description for mouse over helps';
 
 -- --------------------------------------------------------
 
@@ -523,7 +523,7 @@ CREATE TABLE IF NOT EXISTS user_values
     protect_id    bigint           DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values is 'for quick access to the user specific values';
+COMMENT ON TABLE user_values is 'for quick access to the user-specific values';
 COMMENT ON COLUMN user_values.last_update is 'for fast calculation of the updates';
 
 -- --------------------------------------------------------
@@ -553,7 +553,7 @@ COMMENT ON COLUMN value_prime.description is 'temp field used during dev phase f
 COMMENT ON COLUMN value_prime.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes for the most often requested values related up to four prime phrase
+-- Table structure to store the user-specific changes for the most often requested values related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_value_prime
@@ -569,7 +569,7 @@ CREATE TABLE IF NOT EXISTS user_value_prime
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_prime is 'the user specific changes of the most often used values';
+COMMENT ON TABLE user_value_prime is 'the user-specific changes of the most often used values';
 COMMENT ON COLUMN user_value_prime.group_id is 'temp field to increase speed created by the value term links';
 COMMENT ON COLUMN user_value_prime.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_prime.last_update is 'for fast recalculation';
@@ -603,7 +603,7 @@ COMMENT ON COLUMN value_big.description is 'temp field used during dev phase for
 COMMENT ON COLUMN value_big.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of values related to more than 16 phrases
+-- Table structure to store the user-specific changes of values related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_value_big
@@ -619,7 +619,7 @@ CREATE TABLE IF NOT EXISTS user_value_big
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_big is 'the user specific changes of numeric values related to more than 16 phrases';
+COMMENT ON TABLE user_value_big is 'the user-specific changes of numeric values related to more than 16 phrases';
 COMMENT ON COLUMN user_value_big.group_id is 'temp field to increase speed created by the value term links';
 COMMENT ON COLUMN user_value_big.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_big.last_update is 'for fast recalculation';
@@ -653,7 +653,7 @@ COMMENT ON COLUMN value_text.description is 'temp field used during dev phase fo
 COMMENT ON COLUMN value_text.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of text values where the text might be long and where the text is expected to be never user in a search
+-- Table structure to store the user-specific changes of text values where the text might be long and where the text is expected to be never user in a search
 --
 
 CREATE TABLE IF NOT EXISTS user_value_text
@@ -669,7 +669,7 @@ CREATE TABLE IF NOT EXISTS user_value_text
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_text is 'to store the user specific changes of the most often used text values';
+COMMENT ON TABLE user_value_text is 'to store the user-specific changes of the most often used text values';
 COMMENT ON COLUMN user_value_text.group_id is 'the prime index to find the values';
 COMMENT ON COLUMN user_value_text.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_text.last_update is 'for fast recalculation';
@@ -727,7 +727,7 @@ COMMENT ON COLUMN value_text_prime.description is 'temp field used during dev ph
 COMMENT ON COLUMN value_text_prime.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes for the most often requested values related up to four prime phrase
+-- Table structure to store the user-specific changes for the most often requested values related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_value_text_prime
@@ -742,7 +742,7 @@ CREATE TABLE IF NOT EXISTS user_value_text_prime
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_text_prime is 'the user specific changes of the most often used values';
+COMMENT ON TABLE user_value_text_prime is 'the user-specific changes of the most often used values';
 COMMENT ON COLUMN user_value_text_prime.group_id is 'temp field to increase speed created by the value term links';
 COMMENT ON COLUMN user_value_text_prime.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_text_prime.description is 'temp field used during dev phase for easy value to trm assigns';
@@ -771,7 +771,7 @@ COMMENT ON COLUMN value_text_big.description is 'temp field used during dev phas
 COMMENT ON COLUMN value_text_big.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes for the most often requested values related up to more than 16 phrases
+-- Table structure to store the user-specific changes for the most often requested values related up to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_value_text_big
@@ -786,7 +786,7 @@ CREATE TABLE IF NOT EXISTS user_value_text_big
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_text_big is 'the user specific changes of the most often used values';
+COMMENT ON TABLE user_value_text_big is 'the user-specific changes of the most often used values';
 COMMENT ON COLUMN user_value_text_big.group_id is 'the prime index to find the values';
 COMMENT ON COLUMN user_value_text_big.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_text_big.description is 'temp field used during dev phase for easy value to trm assigns';
@@ -819,7 +819,7 @@ COMMENT ON COLUMN value_time.description is 'temp field used during dev phase fo
 COMMENT ON COLUMN value_time.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of time values where the time is expected to be never user in a search
+-- Table structure to store the user-specific changes of time values where the time is expected to be never user in a search
 --
 
 CREATE TABLE IF NOT EXISTS user_value_time
@@ -835,7 +835,7 @@ CREATE TABLE IF NOT EXISTS user_value_time
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_time is 'to store the user specific changes of the most often used time values';
+COMMENT ON TABLE user_value_time is 'to store the user-specific changes of the most often used time values';
 COMMENT ON COLUMN user_value_time.group_id is 'the prime index to find the values';
 COMMENT ON COLUMN user_value_time.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_time.last_update is 'for fast recalculation';
@@ -895,7 +895,7 @@ COMMENT ON COLUMN value_time_prime.description is 'temp field used during dev ph
 COMMENT ON COLUMN value_time_prime.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of time values where the time is expected to be never user in a search related up to four prime phrase
+-- Table structure to store the user-specific changes of time values where the time is expected to be never user in a search related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_value_time_prime
@@ -911,7 +911,7 @@ CREATE TABLE IF NOT EXISTS user_value_time_prime
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_time_prime is 'to store the user specific changes of the most often used time values';
+COMMENT ON TABLE user_value_time_prime is 'to store the user-specific changes of the most often used time values';
 COMMENT ON COLUMN user_value_time_prime.group_id is 'the prime index to find the values';
 COMMENT ON COLUMN user_value_time_prime.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_time_prime.last_update is 'for fast recalculation';
@@ -943,7 +943,7 @@ COMMENT ON COLUMN value_time_big.description is 'temp field used during dev phas
 COMMENT ON COLUMN value_time_big.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of time values where the time is expected to be never user in a search related to more than 16 phrases
+-- Table structure to store the user-specific changes of time values where the time is expected to be never user in a search related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_value_time_big
@@ -959,7 +959,7 @@ CREATE TABLE IF NOT EXISTS user_value_time_big
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_time_big is 'to store the user specific changes of the most often used time values';
+COMMENT ON TABLE user_value_time_big is 'to store the user-specific changes of the most often used time values';
 COMMENT ON COLUMN user_value_time_big.group_id is 'the prime index to find the values';
 COMMENT ON COLUMN user_value_time_big.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_time_big.last_update is 'for fast recalculation';
@@ -993,7 +993,7 @@ COMMENT ON COLUMN value_geo.description is 'temp field used during dev phase for
 COMMENT ON COLUMN value_geo.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of geo locations
+-- Table structure to store the user-specific changes of geo locations
 --
 
 CREATE TABLE IF NOT EXISTS user_value_geo
@@ -1009,7 +1009,7 @@ CREATE TABLE IF NOT EXISTS user_value_geo
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_geo is 'to store the user specific changes of the most often used geo location values';
+COMMENT ON TABLE user_value_geo is 'to store the user-specific changes of the most often used geo location values';
 COMMENT ON COLUMN user_value_geo.group_id is 'the prime index to find the values';
 COMMENT ON COLUMN user_value_geo.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_geo.last_update is 'for fast recalculation';
@@ -1069,7 +1069,7 @@ COMMENT ON COLUMN value_geo_prime.description is 'temp field used during dev pha
 COMMENT ON COLUMN value_geo_prime.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of geo locations related up to four prime phrase
+-- Table structure to store the user-specific changes of geo locations related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_value_geo_prime
@@ -1085,7 +1085,7 @@ CREATE TABLE IF NOT EXISTS user_value_geo_prime
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_geo_prime is 'to store the user specific changes of the most often used geo location values';
+COMMENT ON TABLE user_value_geo_prime is 'to store the user-specific changes of the most often used geo location values';
 COMMENT ON COLUMN user_value_geo_prime.group_id is 'the prime index to find the geo locations';
 COMMENT ON COLUMN user_value_geo_prime.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_geo_prime.last_update is 'for fast recalculation';
@@ -1117,7 +1117,7 @@ COMMENT ON COLUMN value_geo_big.description is 'temp field used during dev phase
 COMMENT ON COLUMN value_geo_big.excluded is 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of geo locations related to more than 16 phrases
+-- Table structure to store the user-specific changes of geo locations related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_value_geo_big
@@ -1133,7 +1133,7 @@ CREATE TABLE IF NOT EXISTS user_value_geo_big
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_geo_big is 'to store the user specific changes of the most often used geo location values';
+COMMENT ON TABLE user_value_geo_big is 'to store the user-specific changes of the most often used geo location values';
 COMMENT ON COLUMN user_value_geo_big.group_id is 'the prime index to find the geo locations';
 COMMENT ON COLUMN user_value_geo_big.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN user_value_geo_big.last_update is 'for fast recalculation';

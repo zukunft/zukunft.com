@@ -34,13 +34,13 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_PHRASE . 'phrase.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\api\controller;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
@@ -67,10 +67,10 @@ if ($db_con->is_open()) {
         $phr = new phrase($usr);
         if ($phr_id > 0) {
             $phr->load_by_id($phr_id);
-            $result = $phr->api_json([api_type::HEADER], $usr);
+            $result = $phr->api_json([api_types::HEADER], $usr);
         } elseif ($phr_name != '') {
             $phr->load_by_name($phr_name);
-            $result = $phr->api_json([api_type::HEADER], $usr);
+            $result = $phr->api_json([api_types::HEADER], $usr);
         } else {
             $msg = 'phrase id or name is missing';
         }

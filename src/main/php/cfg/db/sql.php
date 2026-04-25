@@ -112,6 +112,7 @@ class sql
     const string UNION = 'UNION';
     const string UNION_ALL = 'UNION ALL';
     const string IN = 'IN';
+    const string ANY = '= ANY';
     const string COALESCE = 'COALESCE';
 
     // to separate one SQL statement from the next
@@ -165,4 +166,7 @@ class sql
     // placeholder for the class name in table or field comments
     const string COMMENT_CLASS_NAME = '-=class=-';
 
+    const string CAST_TEXT_PG = '::text';
+    const string CAST_TEXT_START = 'cast(';
+    const string CAST_TEXT_END = ' as char)';
 }

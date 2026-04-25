@@ -1065,7 +1065,7 @@
     },
     {
       "name": "time",
-      "description": "Time is the continuous progression of existence that occurs in an apparently irreversible succession from the past, through the present, and into the future.",
+      "description": "Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [

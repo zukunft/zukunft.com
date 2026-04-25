@@ -37,8 +37,8 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -47,9 +47,9 @@ include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::SHARED_CONST . 'results.php';
 include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 class test_results
@@ -146,8 +146,8 @@ class test_results
         global $sys;
         $res = $this->result_main_max();
         $res->exclude();
-        $res->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $res->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $res->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $res->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $res;
     }
 
@@ -189,6 +189,16 @@ class test_results
         $res->set_number(results::TV_PCT);
         return $res;
     }
+
+    function result_add(): result
+    {
+        $t_grp = new test_groups($this->env);
+        $res = new result($this->env->usr1);
+        $res->set_grp($t_grp->group_add());
+        $res->set_number(results::TV_FLOAT);
+        return $res;
+    }
+
 
     function result_list(): result_list
     {

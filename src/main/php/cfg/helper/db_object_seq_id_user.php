@@ -2,7 +2,7 @@
 
 /*
 
-    model/helper/db_object_seq_id_user.php - a base object for all user specific database id objects
+    model/helper/db_object_seq_id_user.php - a base object for all user-specific database id objects
     --------------------------------------
 
     same as db_object_user but for database objects that have an auto sequence prime id
@@ -45,15 +45,29 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
@@ -80,6 +94,88 @@ class db_object_seq_id_user extends db_object_seq_id
     {
         parent::__construct();
         $this->set_user($usr);
+    }
+
+    /**
+     * reset the vars of this element
+     * @param bool $keep_user set to true to keep the original user for sandbox objects
+     */
+    function reset(bool $keep_user = false): void
+    {
+        if ($keep_user) {
+            $usr = $this->usr;
+        } else {
+            $usr = new user();
+        }
+        parent::reset();
+        $this->usr = $usr;
+    }
+
+    /**
+     * clone this object and all linked objects
+     * @return $this a complete clone including a clone of all child objects
+     */
+    function clone_all(): db_object_seq_id_user
+    {
+        $obj = parent::clone_all();
+        $obj->usr = $this->usr->clone_all();
+        return $obj;
+    }
+
+    /**
+     * create a fresh copy of this object
+     * used to avoid detecting again which object is used
+     *
+     * @return $this a cloned object including a clone of all child objects
+     *               with all vars set to the default value
+     *               except the owner if requested
+     */
+    function clone_reset(bool $keep_user = false): db_object_seq_id_user
+    {
+        $obj_cpy = $this->clone_all();
+        $obj_cpy->reset($keep_user);
+        return $obj_cpy;
+    }
+
+    /**
+     * set the user based on the id from the database row array
+     * to be extended by the child functions
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if the user sandbox object is loaded and valid
+     */
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    {
+        $result = parent::row_mapper($db_row, $id_fld);
+        if (array_key_exists(user_db::FLD_ID, $db_row)) {
+            $obj_usr_id = $this->get_user_id();
+            $db_usr_id = $db_row[user_db::FLD_ID];
+            if ($obj_usr_id != $db_usr_id) {
+                log_warning('object user id ' . $obj_usr_id
+                    . ' does not match db row user id ' . $db_usr_id);
+                if ($obj_usr_id == 0) {
+                    $usr = null;
+                    global $sys;
+                    if (!$sys->sys_usr_lst->is_empty()) {
+                        $usr = $sys->sys_usr_lst->get_by_id($db_usr_id);
+                        if ($usr != null) {
+                            $this->set_user($usr);
+                        }
+                    }
+                    if ($usr == null) {
+                        // TODO Prio 2 try to get the user from cache
+                        $usr = new user();
+                        if ($usr->load_by_id($db_usr_id)) {
+                            $this->set_user($usr);
+                        } else {
+                            log_err('db user id ' . $obj_usr_id . ' not found');
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
 
@@ -128,26 +224,55 @@ class db_object_seq_id_user extends db_object_seq_id
      */
     function diff_msg(CombineObject|db_object_seq_id_user|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         if ($this->get_user_id() != $obj->get_user_id()) {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::DIFF_USER, [
+            $msg->add(msg_id::DIFF_USER, [
                 msg_id::VAR_USER => $obj->get_user()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->get_user()->dsp_id(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
-    function has_id(): bool
+    /**
+     * if the db id is set, they must be the same to make the check valid if the objects are the same
+     * @param object $obj_to_check the object used for the comparison
+     * @return bool true if the id is not yet set or the ids match
+     */
+    function is_same_std(object $obj_to_check): bool
     {
-        if ($this->id() !== null and $this->id() !== 0) {
+        if ($this->id() == 0) {
             return true;
         } else {
-            return false;
+            if ($this->id() == $obj_to_check->id()) {
+                return true;
+            } else {
+                return false;
+            }
         }
+    }
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param db_object_seq_id_user|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param db_object_seq_id_user|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return db_object_seq_id_user|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        db_object_seq_id_user|CombineObject|db_object_seq_id $std_obj,
+        db_object_seq_id_user|CombineObject|db_object_seq_id $result
+    ): db_object_seq_id_user|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->get_user_id() !== $this->get_user_id()) {
+            $result->set_user($this->get_user());
+        }
+        return $result;
     }
 
 
@@ -166,10 +291,81 @@ class db_object_seq_id_user extends db_object_seq_id
     function fill(CombineObject|db_object_seq_id_user|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_user_id() != null) {
+        if ($this->get_user_id() === null and $obj->get_user_id() != null) {
             $this->set_user($obj->get_user());
         }
         return $usr_msg;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
+    {
+        return array_merge(
+            parent::db_fields_all(),
+            [
+                user_db::FLD_ID,
+            ]
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param db_object_seq_id_user|db_object_seq_id $obj the compare value to detect the changed fields
+     * @param user_message $msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        db_object_seq_id_user|db_object_seq_id $obj,
+        user_message                           $msg,
+        sql_type_list                          $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
+    {
+        global $sys;
+
+        $sc = new sql_creator();
+        $table_id = $sc->table_id($this::class);
+
+        // do not include the id field for insert statements
+        $sc_par_lst_id = clone $sc_par_lst;
+        if ($sc_par_lst->is_insert()) {
+            $sc_par_lst_id->add(sql_type::NO_ID_FIELD);
+        }
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst_id);
+        if ($sc_par_lst->is_insert()) {
+            if ($sc_par_lst->incl_log()) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            if ($obj->get_user_id() == 0) {
+                $old_user_id = null;
+            } else {
+                $old_user_id = $obj->get_user_id();
+            }
+            $lst->add_field(
+                user_db::FLD_ID,
+                $this->get_user_id(),
+                db_object_seq_id::FLD_ID_SQL_TYP,
+                $old_user_id
+            );
+        }
+        return $lst;
     }
 
 

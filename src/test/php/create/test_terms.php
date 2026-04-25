@@ -139,6 +139,7 @@ class test_terms
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
         $t_vrb = new test_verbs($this->env);
+        $t_frm = new test_formulas($this->env);
         $lst = new term_list($this->env->usr1);
         $lst->add($this->term());
         $lst->add($this->term_triple());
@@ -152,10 +153,14 @@ class test_terms
         $lst->add($t_wrd->word_this()->term());
         $lst->add($t_wrd->word_parts()->term());
         $lst->add($t_wrd->word_total()->term());
+        $lst->add($t_wrd->second()->term());
+        $lst->add($t_wrd->word_minute()->term());
         $lst->add($t_vrb->verb_of()->term());
         $lst->add($t_vrb->verb_with()->term());
         $lst->add($t_wrd->word_one()->term());
         $lst->add($t_wrd->word_mio()->term());
+        $lst->add($t_frm->formula_this()->term());
+        $lst->add($t_frm->formula_prior()->term());
         return $lst;
     }
 
@@ -168,6 +173,19 @@ class test_terms
         $lst = new term_list($this->env->usr1);
         $lst->add($t_wrd->second()->term());
         $lst->add($t_wrd->word_minute()->term());
+        $lst->add($t_wrd->word_hour()->term());
+        return $lst;
+    }
+
+    /**
+     * @return term_list a term list with the time terms e.g. minute and second
+     */
+    function term_list_years(): term_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new term_list($this->env->usr1);
+        $lst->add($t_wrd->word_2019()->term());
+        $lst->add($t_wrd->word_2020()->term());
         return $lst;
     }
 

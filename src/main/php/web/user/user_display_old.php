@@ -2,7 +2,7 @@
 
 /*
 
-    web/user/user_display_old.php - to display the user specific settings
+    web/user/user_display_old.php - to display the user-specific settings
     -----------------------------
 
     This file is part of zukunft.com - calc with words
@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -45,6 +46,7 @@ include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
@@ -57,12 +59,16 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VIEW . 'view.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -70,9 +76,10 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 
@@ -89,16 +96,6 @@ class user_display_old extends user
     function user(): ?user
     {
         return $this->viewer;
-    }
-
-    /**
-     * display the latest changes of the user
-     * TODO add display the latest changes by a user
-     */
-    function dsp_changes($call, $size, $page, $back): string
-    {
-        $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(user::class, $this->id(), $size, $page, '', $back);
     }
 
     // display the error that are related to the user, so that he can track when they are closed
@@ -436,10 +433,10 @@ class user_display_old extends user
                 $frm_usr = new formula_link($this);
                 $frm_usr->set_id($sbx_row['id']);
                 $frm_usr->formula()->set_id($sbx_row[formula_db::FLD_ID]);
-                $frm_usr->phrase()->set_id($sbx_row[phrase_db::FLD_ID]);
+                $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
                 $frm_usr->predicate_id = $sbx_row['usr_type'];
-                $frm_usr->set_excluded($sbx_row['usr_excluded']);
-                $frm_usr->reload_objects();
+                $frm_usr->excluded = $sbx_row['usr_excluded'];
+                $frm_usr->reload_objects($msg);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -448,7 +445,7 @@ class user_display_old extends user
                 $frm_std = clone $frm_usr;
                 $frm_std->set_user($usr_std);
                 $frm_std->predicate_id = $sbx_row['std_type'];
-                $frm_std->set_excluded($sbx_row['std_excluded']);
+                $frm_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
                 if ($frm_usr->predicate_id == $frm_std->predicate_id
@@ -498,8 +495,8 @@ class user_display_old extends user
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->set_user($usr_other);
                         $frm_lnk_other->predicate_id = $frm_lnk_other_row['link_type_id'];
-                        $frm_lnk_other->set_excluded($frm_lnk_other_row[sql_db::FLD_EXCLUDED]);
-                        $frm_lnk_other->reload_objects();
+                        $frm_lnk_other->excluded = $frm_lnk_other_row[sql_db::FLD_EXCLUDED];
+                        $frm_lnk_other->reload_objects($msg);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -602,7 +599,7 @@ class user_display_old extends user
                 $val_usr->set_number($val_row['usr_value']);
                 $val_usr->set_source_id($val_row['usr_source']);
                 $val_usr->set_excluded($val_row['usr_excluded']);
-                $val_usr->grp->set_id($val_row[group::FLD_ID]);
+                $val_usr->grp->set_id($val_row[group_db::FLD_ID]);
                 $val_usr->load_phrases();
 
                 // to review: try to avoid using load_test_user
@@ -1280,7 +1277,7 @@ class user_display_old extends user
                 $dsp_usr->url = $sbx_row['usr_url'];
                 $dsp_usr->description = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
-                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
+                $dsp_usr->excluded = $sbx_row['usr_excluded'];
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -1292,7 +1289,7 @@ class user_display_old extends user
                 $dsp_std->url = $sbx_row['std_url'];
                 $dsp_std->description = $sbx_row['std_comment'];
                 $dsp_std->type_id = $sbx_row['std_type'];
-                $dsp_std->set_excluded($sbx_row['std_excluded']);
+                $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
                 if ($dsp_usr->name() == $dsp_std->name()
@@ -1348,7 +1345,7 @@ class user_display_old extends user
                         $dsp_other->url = $dsp_other_row[source_db::FLD_URL];
                         $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
-                        $dsp_other->set_excluded($dsp_other_row[sql_db::FLD_EXCLUDED]);
+                        $dsp_other->excluded = $dsp_other_row[sql_db::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }

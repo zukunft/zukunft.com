@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\main\php\shared\calc;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_SYSTEM . 'BasicEnum.php';
@@ -57,19 +58,6 @@ use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 
 class parameter_type extends BasicEnum
 {
-    // the database id for a formula element (or parameter) type
-    const int WORD_ID = 1;
-    const int VERB_ID = 2;
-    const int FORMULA_ID = 3;
-    const int TRIPLE_ID = 4;
-
-    // the allowed objects types for a formula element
-    // use the class name for the formula element object
-    const string WORD_CLASS = word::class;        // a word is used for an AND selection of values
-    const string TRIPLE_CLASS = triple::class;    // a triple is used for an AND selection of values
-    const string VERB_CLASS = verb::class;        // a verb is used for dynamic usage of linked words for an AND selection
-    const string FORMULA_CLASS = formula::class;  // a formula is used to include formula results of another formula
-
     // for the frontend
     const string WORD_WEB_CLASS = word_ui::class;        // a word is used for an AND selection of values
     const string TRIPLE_WEB_CLASS = triple_ui::class;    // a triple is used for an AND selection of values
@@ -80,45 +68,30 @@ class parameter_type extends BasicEnum
     {
         $result = 'formula element type "' . $value . '" not yet defined';
 
+        global $sys;
+
+        $typ_lst = $sys->typ_lst->elm_typ;
+
         switch ($value) {
 
             // system log
-            case parameter_type::WORD_ID:
+            case $typ_lst->id(element_types::WORD_SELECTOR):
+            case $typ_lst->id(element_types::WORD_RESULT):
                 $result = 'a reference to a simple word';
                 break;
-            case parameter_type::VERB_ID:
+            case $typ_lst->id(element_types::TRIPLE_SELECTOR):
+            case $typ_lst->id(element_types::TRIPLE_RESULT):
+                $result = 'a reference to word link';
+                break;
+            case $typ_lst->id(element_types::VERB_SELECTOR):
                 $result = 'a reference to predicate';
                 break;
-            case parameter_type::FORMULA_ID:
+            case $typ_lst->id(element_types::FORMULA_SELECTOR):
                 $result = 'a reference to another formula';
-                break;
-            case parameter_type::TRIPLE_ID:
-                $result = 'a reference to word link';
                 break;
         }
 
         return $result;
     }
 
-    function db_id(string $class): int
-    {
-        $result = 0;
-        return match ($class) {
-            self::WORD_CLASS => self::WORD_ID,
-            self::TRIPLE_CLASS => self::TRIPLE_ID,
-            self::FORMULA_CLASS => self::FORMULA_ID,
-            self::VERB_CLASS => self::VERB_ID,
-        };
-    }
-
-    function class_name(int $id): string
-    {
-        $result = '';
-        return match ($id) {
-            self::WORD_ID => self::WORD_CLASS,
-            self::TRIPLE_ID => self::TRIPLE_CLASS,
-            self::FORMULA_ID => self::FORMULA_CLASS,
-            self::VERB_ID => self::VERB_CLASS,
-        };
-    }
 }

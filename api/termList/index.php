@@ -35,7 +35,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_PHRASE . 'trm_ids.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
@@ -66,7 +66,7 @@ if ($db_con->is_open()) {
 
         if ($trm_ids != '') {
             $lst = new term_list($usr);
-            $lst->load_by_ids((new trm_ids(explode(",", $trm_ids))));
+            $lst->load_by_ids(new trm_ids(explode(",", $trm_ids)), true);
             $result = $lst->api_json();
         } elseif ($pattern != '') {
             $lst = new term_list($usr);

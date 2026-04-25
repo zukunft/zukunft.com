@@ -36,6 +36,8 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
@@ -68,7 +70,8 @@ $result = ''; // reset the html code var
 
 // get the parameters
 $id = $_GET[url_var::ID];
-$back = $_GET[url_var::BACK] = '';
+$lib = new library();
+$back = $lib->filter_var($_GET[url_var::BACK]);
 $undo_val = $_GET['undo_value'];
 $undo_wrd = $_GET['undo_word'];
 $undo_lnk = $_GET['undo_triple'];
@@ -95,62 +98,64 @@ if ($usr->id > 0) {
     $msk->load_by_code_id(views::USER);
 
     // do user change
-    $result .= $usr->upd_pars($_GET);
+    // use frontend user url_mapper function
+    //$result .= $usr->upd_pars($_GET);
 
+    $usr_msg = new user_message();
     // undo user changes for values
     if ($undo_val > 0) {
         $val = new value($usr);
         $val->set_id($undo_val);
-        $val->del_usr_cfg();
+        $val->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for words
     if ($undo_wrd > 0) {
         $wrd = new word($usr);
         $wrd->id = $undo_wrd;
-        $wrd->del_usr_cfg();
+        $wrd->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for triples
     if ($undo_lnk > 0) {
         $lnk = new triple($usr);
         $lnk->id = $undo_lnk;
-        $lnk->del_usr_cfg();
+        $lnk->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for formulas
     if ($undo_frm > 0) {
         $frm = new formula($usr);
         $frm->id = $undo_frm;
-        $frm->del_usr_cfg();
+        $frm->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for formula word links
     if ($undo_frm_lnk > 0) {
         $frm_lnk = new formula_link($usr);
         $frm_lnk->id = $undo_frm_lnk;
-        $frm_lnk->del_usr_cfg();
+        $frm_lnk->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for formulas
     if ($undo_msk > 0) {
         $msk = new view($usr);
         $msk->id = $undo_msk;
-        $msk->del_usr_cfg();
+        $msk->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for formulas
     if ($undo_cmp > 0) {
         $cmp = new component($usr);
         $cmp->id = $undo_cmp;
-        $cmp->del_usr_cfg();
+        $cmp->del_usr_cfg($usr_msg);
     }
 
     // undo user changes for formulas
     if ($undo_cmp_lnk > 0) {
         $cmp_lnk = new component_link($usr);
         $cmp_lnk->id = $undo_cmp_lnk;
-        $cmp_lnk->del_usr_cfg();
+        $cmp_lnk->del_usr_cfg($usr_msg);
     }
 
     $msk_dsp = new view_ui($msk->api_json());
@@ -183,7 +188,7 @@ if ($usr->id > 0) {
     }
 
     // display the user changes 
-    $changes = $dsp_usr->dsp_changes(0, 0, 1, $back);
+    $changes = $dsp_usr->dsp_changes(0, 1);
     if (trim($changes) <> "") {
         $result .= $html->dsp_text_h2("Your latest changes");
         $result .= $changes;
@@ -208,7 +213,7 @@ if ($usr->id > 0) {
         }
     }
 
-    if ($_SESSION['logged']) {
+    if ($_SESSION[url_var::SESSION_LOGGED]) {
         $result .= '<br><br><a href="/http/logout.php">logout</a>';
     }
 }

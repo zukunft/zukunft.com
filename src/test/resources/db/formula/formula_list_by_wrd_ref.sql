@@ -1,4 +1,4 @@
-PREPARE formula_list_by_wrd_ref (bigint, bigint, bigint) AS
+PREPARE formula_list_by_wrd_ref (bigint, bigint, bigint, bigint) AS
     SELECT s.formula_id,
            u.formula_id AS user_formula_id,
            s.user_id,
@@ -17,4 +17,4 @@ PREPARE formula_list_by_wrd_ref (bigint, bigint, bigint) AS
  LEFT JOIN user_formulas  u   ON s.formula_id = u.formula_id AND u.user_id = $1
  LEFT JOIN elements l ON s.formula_id = l.formula_id
     WHERE l.ref_id = $2
-      AND l.element_type_id = $3;
+      AND (l.element_type_id = $3 OR l.element_type_id = $4);

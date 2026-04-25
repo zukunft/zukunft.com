@@ -246,6 +246,7 @@ class url_var
     const string USERNAME_HUMAN = 'username';
     const string EMAIL_HUMAN = 'email';
     const string USER_PASSWORD_HUMAN = 'password';
+    const string USER_PASSWORD_RETYPE_HUMAN = 're_password';
     const string USER_PROFILE_HUMAN = 'user_profile';
     const string USER_FIRST_NAME_HUMAN = 'user_first_name';
     const string USER_LAST_NAME_HUMAN = 'user_last_name';
@@ -386,6 +387,23 @@ class url_var
     // impact
     const string USAGE_HUMAN = 'usage';
     const string IMPACT_HUMAN = 'impact';
+
+
+    /*
+     * session
+     */
+
+    const string SESSION_LOGGED = 'logged';
+    const string SESSION_TOKEN = 'token';
+    const string SESSION_USER_ID = 'usr_id';
+
+
+    /*
+     * curl
+     */
+
+    const string POST_SUBMIT = 'submit';
+    const string POST_KEY = 'key';
 
 
     /*

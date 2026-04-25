@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_creator.php';
@@ -57,8 +58,10 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -69,6 +72,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -77,8 +81,10 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -98,7 +104,7 @@ class sandbox_code_id extends sandbox_typed
 
     // database field to select single object used by the system
     // without using the type that can potentially select more than one object
-    private ?string $code_id;
+    public ?string $code_id;
 
 
     /*
@@ -152,7 +158,7 @@ class sandbox_code_id extends sandbox_typed
      *
      * @param array $api_json an api json message
      * @param user_message ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -171,25 +177,25 @@ class sandbox_code_id extends sandbox_typed
      * set the code id only if the requesting user is allowed to
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -250,19 +256,19 @@ class sandbox_code_id extends sandbox_typed
      */
     function set_code_id(?string $code_id, user $usr): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr->can_set_code_id()) {
             $this->code_id = $code_id;
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
                 msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -325,32 +331,73 @@ class sandbox_code_id extends sandbox_typed
 
 
     /*
-     * modify
+     * info
      */
 
     /**
-     * fill this object based on the given object
-     * if the id is set in the given object loaded from the database but this import object does not yet have the db id, set the id
-     * if the given description is not set (null) the description is not remove
-     * if the given description is an empty string the description is removed
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
      *
-     * @param sandbox|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
-     * @param user $usr_req the user who has requested the fill
-     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     * @param sandbox_code_id|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param sandbox_code_id|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return sandbox_code_id|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
      */
-    function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    function delta(
+        sandbox_code_id|CombineObject|db_object_seq_id $std_obj,
+        sandbox_code_id|CombineObject|db_object_seq_id $result
+    ): sandbox_code_id|CombineObject|db_object_seq_id
     {
-        $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->get_code_id() != null) {
-            $usr_msg->add($this->set_code_id($obj->get_code_id(), $usr_req));
+        parent::delta($std_obj, $result);
+        if ($std_obj->code_id !== $this->code_id) {
+            $result->code_id = $this->code_id;
         }
-        return $usr_msg;
+        return $result;
     }
 
-
-    /*
-     * info
+    /**
+     * avoid duplicates
+     * * if any of the unit keys of the object matches true is returned
+     * @param sandbox_code_id|combine_named|type_object|sandbox|null $obj_to_check the filled object that might be the same as this object
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
      */
+    function is_similar(sandbox_code_id|combine_named|type_object|sandbox|null $obj_to_check): bool
+    {
+        $result = parent::is_similar($obj_to_check);
+        if ($this::class == $obj_to_check::class) {
+            if (in_array($this::class, def::CODE_ID_CLASSES)) {
+                if ($this->code_id == $obj_to_check->code_id
+                    or $obj_to_check->code_id === null) {
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * can merge
+     * check that the given object is by all unique keys the same as the actual object
+     * handles the special case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
+     * so if a formula word "millions" is different from the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
+     * in short: if two objects are the same by this definition, they are supposed to be merged
+     * @param sandbox_code_id|combine_named|type_object|sandbox $obj_to_check the filled object that might be the same as this object
+     * @return bool true if the given object is exactly the same as this object and the two objects can be merged
+     */
+    function is_same(sandbox_code_id|combine_named|type_object|sandbox $obj_to_check): bool
+    {
+        $result = parent::is_same($obj_to_check);
+        if ($this::class == $obj_to_check::class) {
+            if (in_array($this::class, def::CODE_ID_CLASSES)) {
+                if ($this->code_id != $obj_to_check->code_id
+                    and $obj_to_check->code_id !== null) {
+                    $result = false;
+                }
+            }
+        }
+
+        return $result;
+    }
 
     /**
      * create human-readable messages of the differences between the objects
@@ -359,17 +406,17 @@ class sandbox_code_id extends sandbox_typed
      */
     function diff_msg(sandbox|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         if ($this->get_code_id() != $obj->get_code_id()) {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::DIFF_CODE_ID, [
+            $msg->add(msg_id::DIFF_CODE_ID, [
                 msg_id::VAR_NAME => $obj->get_code_id(),
                 msg_id::VAR_NAME_CHK => $this->get_code_id(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_SANDBOX_NAME => $this->name(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -387,6 +434,30 @@ class sandbox_code_id extends sandbox_typed
             }
         }
         return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this object based on the given object
+     * if the id is set in the given object loaded from the database but this import object does not yet have the db id, set the id
+     * if the given description is not set (null) the description is not remove
+     * if the given description is an empty string the description is removed
+     *
+     * @param sandbox|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($this->get_code_id() === null and $obj->get_code_id() != null) {
+            $usr_msg->merge($this->set_code_id($obj->get_code_id(), $usr_req));
+        }
+        return $usr_msg;
     }
 
 
@@ -413,15 +484,15 @@ class sandbox_code_id extends sandbox_typed
     /**
      * add the code id field to the list of changed fields if the code_id has been changed
      *
-     * @param sandbox_code_id|sandbox $sbx the same named sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sandbox_code_id|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox_code_id|sandbox $sbx,
-        user_message            $usr_msg,
-        sql_type_list           $sc_par_lst = new sql_type_list()
+        sandbox_code_id|db_object_seq_id $obj,
+        user_message                     $msg,
+        sql_type_list                    $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -430,8 +501,8 @@ class sandbox_code_id extends sandbox_typed
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
-        if ($sbx->code_id !== $this->code_id) {
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
+        if ($obj->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
@@ -443,7 +514,7 @@ class sandbox_code_id extends sandbox_typed
                 sql_db::FLD_CODE_ID,
                 $this->code_id,
                 sql_field_type::CODE_ID,
-                $sbx->code_id
+                $obj->code_id
             );
         }
         return $lst;

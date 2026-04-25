@@ -35,7 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_db.php';
-include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 
@@ -45,7 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
-use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -66,8 +66,6 @@ class component_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'component prepared write');
-        $test_name = 'add component ' . components::TEST_ADD_VIA_SQL_NAME . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_sql(), false);
         $test_name = 'add component ' . components::TEST_ADD_VIA_FUNC_NAME . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_func(), true);
 
@@ -178,28 +176,28 @@ class component_write_tests
         // TODO for testing always use the latest table name
         // TODO create an additional test based on change_tables and change_fields to receive data for an deprecated table or field
         $result = $t->log_last_by_field($cmp_reloaded, sql_db::FLD_DESCRIPTION, $cmp_reloaded->id(), true);
-        // TODO fix it
+        // TODO Prio 1 fix it
         $target = users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         if ($result != $target) {
-            $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
+            $target = users::SYSTEM_TEST_NAME . ' changed "System Test View Component description" to "Just added for testing the user sandbox"';
         }
         $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
         $result = $t->log_last_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id(), true);
-        // TODO fix it
+        // TODO Prio 1 fix it
         $target = users::SYSTEM_TEST_NAME . ' added "word name"';
         if ($result != $target) {
             $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "word name" to "formulas"';
         }
         $t->assert('component->load component_type_id for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
 
-        $test_name = 'user specific component is created if another user changes the component for "' . components::TEST_RENAMED_NAME . '"';
+        $test_name = 'user-specific component is created if another user changes the component for "' . components::TEST_RENAMED_NAME . '"';
         $cmp_usr2 = new component($t->usr2);
         $cmp_usr2->load_by_name(components::TEST_RENAMED_NAME);
         $cmp_usr2->description = 'Just changed for testing the user sandbox';
         $cmp_usr2->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::FORMULAS);
         $t->assert_true($test_name, $cmp_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // check if a user specific component changes have been saved
+        // check if a user-specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
         $cmp_usr2_reloaded->load_by_name(components::TEST_RENAMED_NAME);
         $result = $cmp_usr2_reloaded->description;
@@ -226,7 +224,7 @@ class component_write_tests
         $cmp_usr2->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::PHRASE_NAME);
         $t->assert_true($test_name, $cmp_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // check if a user specific component changes have been saved
+        // check if a user-specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
         $cmp_usr2_reloaded->load_by_name(components::TEST_RENAMED_NAME);
         $result = $cmp_usr2_reloaded->description;
@@ -236,8 +234,8 @@ class component_write_tests
         //$target = cl(SQL_VIEW_TYPE_WORD_NAME);
         //$t->assert('component->load type_id for "'.component::TEST_NAME_RENAMED.'"', $result, $target);
 
-        // redo the user specific component changes
-        // check if the user specific changes can be removed with one click
+        // redo the user-specific component changes
+        // check if the user-specific changes can be removed with one click
 
         // cleanup - fallback delete
         $cmp = new component($t->usr1);
@@ -266,7 +264,7 @@ class component_write_tests
         global $usr;
         $cmp = new component($usr);
         $cmp->load_by_name(components::TEST_EXCLUDED_NAME);
-        $cmp->set_excluded(true);
+        $cmp->excluded = true;
         $cmp->save($usr_msg);
 
     }

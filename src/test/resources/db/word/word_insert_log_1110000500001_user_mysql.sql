@@ -35,7 +35,7 @@ SELECT word_insert_log_1110000500001_user
          'company',
          188,
          85,
-         '',
+         null,
          99,
          87,
          3);

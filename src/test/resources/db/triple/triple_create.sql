@@ -51,7 +51,7 @@ COMMENT ON COLUMN triples.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN triples.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to link one word or triple with a verb to another word or triple
+-- table structure to save user-specific changes to link one word or triple with a verb to another word or triple
 --
 
 CREATE TABLE IF NOT EXISTS user_triples

@@ -78,7 +78,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -106,7 +106,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class formula extends sandbox_code_id
@@ -185,12 +185,12 @@ class formula extends sandbox_code_id
      * set the vars this formula bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @param user_message $usr_msg, ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $msg, ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
         if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
             $this->set_usr_text($json_array[json_fields::USER_TEXT]);
         } else {
@@ -220,7 +220,7 @@ class formula extends sandbox_code_id
         } else {
             $this->impact = 0.0;
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -430,7 +430,7 @@ class formula extends sandbox_code_id
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->only_type(view_type::FORMULA);
+        $msk_lst = $msk_lst->only_type(view_types::FORMULA);
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 
@@ -725,7 +725,7 @@ class formula extends sandbox_code_id
     }
 
     /**
-     * the user specific list of a phrases assigned to a formula
+     * the user-specific list of a phrases assigned to a formula
      */
     function direct_assigned_phrases(): ?phrase_list
     {

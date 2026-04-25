@@ -1,0 +1,81 @@
+<?php
+
+/*
+
+    web/types/phrase_type_list.php - the preloaded data phrase types used for the html frontend
+    ------------------------------
+
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+  
+*/
+
+namespace Zukunft\ZukunftCom\main\php\web\types;
+
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
+class phrase_type_list extends type_list
+{
+
+    const string NAME = url_var::PHRASE_TYPE;
+
+    /**
+     * create the HTML code to select a phrase type
+     * @param string $form the name of the html form
+     * @param int $selected the database id of the
+     * @param string $name the unique name inside the form for this selector
+     * @param string $style e.g. to define the size of the select field
+     * @returns string the html code to select a type from this list
+     */
+    function selector(
+        string $form,
+        int    $selected = 1,
+        string $name = self::NAME,
+        string $style = view_styles::COL_SM_4
+    ): string
+    {
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_PHRASE_TYPE, $style);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function default_id(): int
+    {
+        return parent::id(phrase_types::NORMAL);
+    }
+
+}

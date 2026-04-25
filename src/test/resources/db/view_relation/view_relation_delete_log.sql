@@ -32,7 +32,7 @@ SELECT view_relation_delete_log
         3::smallint,
         108::smallint,
         'word_edit'::text,
-        'standard'::text,
+        'add components'::text,
         'word_usage'::text,
         3::bigint,
         1::smallint,

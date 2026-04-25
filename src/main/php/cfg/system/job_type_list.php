@@ -33,27 +33,16 @@ namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_HELPER . 'type_object.php';
-include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 
 class job_type_list extends type_list
 {
-    // list of the predefined system batch jobs
-    const string VALUE_UPDATE = "value_update";
-    const string VALUE_ADD = "value_add";
-    const string VALUE_DEL = "value_del";
-    const string FORMULA_UPDATE = "formula_update";
-    const string FORMULA_ADD = "formula_add";
-    const string FORMULA_DEL = "formula_del";
-    const string FORMULA_LINK = "formula_link";
-    const string FORMULA_UNLINK = "formula_unlink";
-    const string TRIPLE = "triple";
-    const string WORD_UNLINK = "word_unlink";
-    const string BASE_IMPORT = "base_import"; // import the base configuration by a system user on initial setup
 
     /**
      * adding the job type used for unit tests to a dummy list
@@ -62,9 +51,9 @@ class job_type_list extends type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new type_object(job_type_list::VALUE_UPDATE, job_type_list::VALUE_UPDATE, '', 2);
+        $type = new type_object(job_types::VALUE_UPDATE, job_types::VALUE_UPDATE, '', 2);
         $this->add($type);
-        $type = new type_object(job_type_list::BASE_IMPORT, job_type_list::BASE_IMPORT, '', 11);
+        $type = new type_object(job_types::BASE_IMPORT, job_types::BASE_IMPORT, '', 11);
         $this->add($type);
     }
 
@@ -73,7 +62,7 @@ class job_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(job_type_list::VALUE_UPDATE);
+        return parent::id(job_types::VALUE_UPDATE);
     }
 
 }

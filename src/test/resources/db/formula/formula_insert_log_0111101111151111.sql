@@ -107,7 +107,7 @@ SELECT formula_insert_log_0111101111151111 (
                35::smallint,
                1::smallint,
                655::smallint,
-               ''::text,
+               null::text,
                1::bigint,
                174::smallint,
                3.4::numeric,

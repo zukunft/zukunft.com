@@ -45,7 +45,7 @@ class sys_log_ui_tests
     function run(test_cleanup $t): void
     {
         $html = new html_base();
-        $t_sys = new test_sys_log();
+        $t_sys = new test_sys_log($t);
 
         $sys_usr = new user;
         $sys_usr->load_by_id(users::SYSTEM_ID);

@@ -87,7 +87,7 @@ class value_db
         [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
     );
 
-    // all database field names excluding the id and excluding the user specific fields
+    // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array();
     const array FLD_NAMES_STD = array(
         self::FLD_VALUE,
@@ -97,26 +97,26 @@ class value_db
     const array FLD_NAMES_STD_DUMMY = array(
         user_db::FLD_ID,
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR_EX_STD = array(
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
-    // list of the user specific datetime database field names
+    // list of the user-specific datetime database field names
     const array FLD_NAMES_DATE_USR_EX_STD = array(
         sandbox_multi::FLD_LAST_UPDATE
     );
-    // list of the user specific database text field names for numeric tables and queries
+    // list of the user-specific database text field names for numeric tables and queries
     const array FLD_NAMES_USR = array();
-    // list of the user specific database text field names for text tables and queries
+    // list of the user-specific database text field names for text tables and queries
     const array FLD_NAMES_USR_TEXT = array(
         self::FLD_VALUE_TEXT,
     );
-    // list of the user specific database text field names for geo point tables and queries
+    // list of the user-specific database text field names for geo point tables and queries
     const array FLD_NAMES_USR_GEO = array(
         self::FLD_VALUE_GEO,
     );
-    // list of the user specific numeric database field names for numeric tables and queries
+    // list of the user-specific numeric database field names for numeric tables and queries
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_VALUE,
         source_db::FLD_ID,
@@ -124,14 +124,14 @@ class value_db
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
-    // list of the user specific numeric database field names for text tables and queries
+    // list of the user-specific numeric database field names for text tables and queries
     const array FLD_NAMES_NUM_USR_TEXT = array(
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
-    // list of the user specific numeric database field names for timetables and queries
+    // list of the user-specific numeric database field names for timetables and queries
     const array FLD_NAMES_NUM_USR_TIME = array(
         self::FLD_VALUE_TIME,
         source_db::FLD_ID,
@@ -139,14 +139,14 @@ class value_db
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
-    // list of the user specific numeric database field names for geo point tables and queries
+    // list of the user-specific numeric database field names for geo point tables and queries
     const array FLD_NAMES_NUM_USR_GEO = array(
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_VALUE,
         source_db::FLD_ID,

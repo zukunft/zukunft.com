@@ -31,7 +31,7 @@ SELECT word_insert_log_1100000300002_user
         (3,
          1,
          85,
-         '',
+         null,
          99,
          null,
          null,

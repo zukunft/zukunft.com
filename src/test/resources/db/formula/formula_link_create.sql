@@ -25,7 +25,7 @@ COMMENT ON COLUMN formula_links.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN formula_links.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure to save user-specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS user_formula_links

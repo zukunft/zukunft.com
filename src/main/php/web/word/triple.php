@@ -62,7 +62,7 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
@@ -82,7 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -174,17 +174,17 @@ class triple extends sandbox_code_id
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
         if (array_key_exists(json_fields::FROM_PHRASE, $json_array)) {
             $value = $json_array[json_fields::FROM_PHRASE];
             if (is_array($value)) {
                 $phr = new phrase();
-                $phr->api_mapper($value, $usr_msg);
+                $phr->api_mapper($value, $msg);
                 $this->set_from($phr);
             } else {
                 $this->set_from_by_id($value);
@@ -193,7 +193,7 @@ class triple extends sandbox_code_id
             $value = $json_array[json_fields::FROM];
             if (is_array($value)) {
                 $phr = new phrase();
-                $phr->api_mapper($value, $usr_msg);
+                $phr->api_mapper($value, $msg);
                 $this->set_from($phr);
             } else {
                 $this->set_from_by_id($value);
@@ -205,7 +205,7 @@ class triple extends sandbox_code_id
             $value = $json_array[json_fields::VERB];
             if (is_array($value)) {
                 $vrb = new verb();
-                $vrb->api_mapper($value, $usr_msg);
+                $vrb->api_mapper($value, $msg);
                 $this->set_verb($vrb);
             } else {
                 $this->set_verb_by_id($value);
@@ -217,7 +217,7 @@ class triple extends sandbox_code_id
             $value = $json_array[json_fields::TO_PHRASE];
             if (is_array($value)) {
                 $phr = new phrase();
-                $phr->api_mapper($value, $usr_msg);
+                $phr->api_mapper($value, $msg);
                 $this->set_to($phr);
             } else {
                 $this->set_to_by_id($value);
@@ -226,7 +226,7 @@ class triple extends sandbox_code_id
             $value = $json_array[json_fields::TO];
             if (is_array($value)) {
                 $phr = new phrase();
-                $phr->api_mapper($value, $usr_msg);
+                $phr->api_mapper($value, $msg);
                 $this->set_to($phr);
             } else {
                 $this->set_to_by_id($value);
@@ -249,7 +249,7 @@ class triple extends sandbox_code_id
         } else {
             $this->impact = 0.0;
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -322,7 +322,7 @@ class triple extends sandbox_code_id
         $phr = null;
         if ($dto != null) {
             $phr_lst = $dto->phr_lst;
-            $phr = $phr_lst->get_by_id($id);
+            $phr = $phr_lst->get($id);
         }
         if ($phr == null) {
             if ($id > 0) {
@@ -372,7 +372,7 @@ class triple extends sandbox_code_id
 
     /**
      * TODO use ENUM instead of string in php version 8.1
-     * @return phrase_type|null the phrase type of this word
+     * @return phrase_types|null the phrase type of this word
      */
     function type(): ?object
     {
@@ -469,7 +469,7 @@ class triple extends sandbox_code_id
      */
     function is_hidden(): bool
     {
-        return $this->is_type(phrase_type::SCALING_HIDDEN);
+        return $this->is_type(phrase_types::SCALING_HIDDEN);
     }
 
 
@@ -584,12 +584,12 @@ class triple extends sandbox_code_id
      */
     function is_percent(): bool
     {
-        return $this->is_type(phrase_type::PERCENT);
+        return $this->is_type(phrase_types::PERCENT);
     }
 
     function is_measure(): bool
     {
-        return $this->is_type(phrase_type::MEASURE);
+        return $this->is_type(phrase_types::MEASURE);
     }
 
     /**
@@ -598,7 +598,7 @@ class triple extends sandbox_code_id
      */
     function is_info(): bool
     {
-        return $this->is_type(phrase_type::INFO);
+        return $this->is_type(phrase_types::INFO);
     }
 
 

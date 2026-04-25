@@ -35,13 +35,13 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::API_OBJECT . 'ui_config.php';
 include_once paths::MODEL_USER . 'user.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 
 // open database
 $app = new application();
@@ -62,7 +62,7 @@ if ($db_con->is_open()) {
     if ($usr->id > 0) {
         $ui_cfg = new ui_config();
         $ui_cfg->reload($usr);
-        $result = $ui_cfg->api_json([api_type::HEADER, api_type::INCL_COMPONENTS], $usr);
+        $result = $ui_cfg->api_json([api_types::HEADER, api_types::INCL_COMPONENTS], $usr);
     }
 
     $ctrl = new controller();

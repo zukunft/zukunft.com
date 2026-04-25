@@ -37,7 +37,9 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -79,7 +81,7 @@ class term_write_tests
         $term = new term($usr);
         $term->load_by_obj_name(triples::CITY_ZH);
         $target = '<style class="text-danger">A triple with the name "' . triples::CITY_ZH . '" already exists. '
-            . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</style>';
+            . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.</style>';
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
@@ -97,7 +99,7 @@ class term_write_tests
         $term->load_by_obj_name(formulas::INCREASE);
         // each formula name has also a word
         $target = 'A formula with the name "' . formulas::INCREASE . '" already exists. '
-            . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
+            . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.';
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 

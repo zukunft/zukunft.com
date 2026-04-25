@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -74,7 +75,8 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(views::FORMULA_EDIT);
-    $back = $_GET[url_var::BACK] = '';
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]);
 
     // create the formula object to have a place to update the parameters
     $frm = new formula($usr);

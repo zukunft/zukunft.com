@@ -135,11 +135,12 @@ class triples
     const string SYSTEM_TEST_ADD = 'System Test Triple';
     const string SYSTEM_TEST_ADD_COM = 'System Test Triple Description';
     const string SYSTEM_TEST_ADD_AUTO = 'System Test Triple';
+    const string SYSTEM_TEST_ADD_CODE_ID = 'System Test Triple Code Id';
     const int SYSTEM_TEST_ADD_USAGE = 12;
     const float SYSTEM_TEST_ADD_IMPACT = 23.4;
+    const string SYSTEM_TEST_RENAMED = 'System Test Triple renamed';
     const string SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
-    const string SYSTEM_TEST_ADD_VIA_SQL = 'System Test Triple added via prepared sql insert';
 
     // triple used in the default start view
     const string GLOBAL_PROBLEM = 'global problem';
@@ -218,6 +219,7 @@ class triples
     const array RESERVED_NAMES = array(
         self::SYSTEM_CONFIG,
         self::SYSTEM_TEST_ADD,
+        self::SYSTEM_TEST_RENAMED,
         self::SYSTEM_TEST_EXCLUDED
     );
 
@@ -231,15 +233,11 @@ class triples
     const array TEST_TRIPLES = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_ADD_VIA_FUNC,
-        self::SYSTEM_TEST_ADD_VIA_SQL
+        self::SYSTEM_TEST_RENAMED,
+        self::SYSTEM_TEST_EXCLUDED,
     );
 
-    const array TEST_TRIPLE_STANDARD = array(
-        self::SYSTEM_TEST_ADD,
-        self::SYSTEM_TEST_EXCLUDED
-    );
-
-    // list of words where the id is used for system testing
+    // list of triples where the id is used for system testing
     const array TEST_TRIPLE_IDS = array(
         self::CANTON_ZURICH_ID => self::CANTON_ZURICH,
         self::CASH_FLOW_ID => self::CASH_FLOW,

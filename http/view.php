@@ -26,7 +26,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -39,7 +39,7 @@ include_once 'const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-// load the mian frontend class
+// load the main frontend class
 include_once paths::WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -67,6 +67,7 @@ if ($db_con->is_open()) {
     // TODO Prio 2 create a session object and include the user in the prg_start return object
     $usr = new user;
     $html_str .= $usr->get();
+    // TODO Prio 1 set the user of the $msg and make the the only place where the requesting user is stored
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id() > 0) {

@@ -26,5 +26,5 @@ SELECT view_delete_log
        (3,
         3,
         42,
-        'Start view',
-        1);
+        'Historic',
+        99);

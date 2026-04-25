@@ -28,7 +28,7 @@ ALTER TABLE term_views
     MODIFY term_view_id bigint NOT NULL AUTO_INCREMENT;
 
 --
--- table structure to save user specific changes to link view to a word,triple,verb or formula with an n:m relation
+-- table structure to save user-specific changes to link view to a word,triple,verb or formula with an n:m relation
 --
 
 CREATE TABLE IF NOT EXISTS user_term_views

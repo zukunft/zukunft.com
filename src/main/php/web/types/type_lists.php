@@ -27,7 +27,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -47,12 +47,12 @@ include_once html_paths::TYPES . 'change_field_list.php';
 include_once html_paths::TYPES . 'sys_log_status_list.php';
 include_once html_paths::TYPES . 'user_profile.php';
 include_once html_paths::TYPES . 'job_type_list.php';
-include_once html_paths::TYPES . 'languages.php';
-include_once html_paths::TYPES . 'language_forms.php';
+include_once html_paths::TYPES . 'language_list.php';
+include_once html_paths::TYPES . 'language_form_list.php';
 include_once html_paths::TYPES . 'share.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::TYPES . 'verbs.php';
-include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'phrase_type_list.php';
 include_once html_paths::TYPES . 'formula_type_list.php';
 include_once html_paths::TYPES . 'formula_link_type_list.php';
 include_once html_paths::TYPES . 'source_type_list.php';
@@ -90,7 +90,7 @@ class type_lists
      */
 
     public ?user_profile $html_user_profiles = null;
-    public ?phrase_types $html_phrase_types = null;
+    public ?phrase_type_list $html_phrase_types = null;
     public ?formula_type_list $html_formula_types = null;
     public ?formula_link_type_list $html_formula_link_types = null;
     public ?view_type_list $html_view_types = null;
@@ -104,10 +104,10 @@ class type_lists
     public ?ref_type_list $html_ref_types = null;
     public ?share $html_share_types = null;
     public ?protection $html_protection_types = null;
-    public ?languages $html_languages = null;
-    public ?language_forms $html_language_forms = null;
+    public ?language_list $html_languages = null;
+    public ?language_form_list $html_language_forms = null;
     public ?verbs $html_verbs = null;
-    public ?sys_log_status_list $html_sys_log_statuus = null;
+    public ?sys_log_status_list $html_sys_log_statuum = null;
     public ?job_type_list $html_job_types = null;
     public ?change_action_list $html_change_action_list = null;
     public ?change_table_list $html_change_table_list = null;
@@ -145,11 +145,11 @@ class type_lists
         $ctrl = new api();
         $json_array = json_decode($json_api_msg, true);
         if ($json_array == null) {
-            $usr_msg = new user_message();
-            $usr_msg->add_id_with_vars(msg_id::API_MESSAGE_EMPTY, [
+            $msg = new user_message();
+            $msg->add(msg_id::API_MESSAGE_EMPTY, [
                 msg_id::VAR_REQUEST => 'type_lists'
             ]);
-            return $usr_msg;
+            return $msg;
         } else {
             $type_lists_json = $ctrl->check_api_msg($json_array, json_fields::BODY);
             return $this->set_from_json_array($type_lists_json);
@@ -167,55 +167,55 @@ class type_lists
         if (array_key_exists(api::JSON_LIST_USER_PROFILES, $json_array)) {
             $this->set_user_profiles($json_array[api::JSON_LIST_USER_PROFILES]);
         } else {
-            $usr_msg->add_err('Mandatory user profiles missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory user profiles missing in API JSON ' . json_encode($json_array));
             $this->set_user_profiles([]);
         }
         if (array_key_exists(api::JSON_LIST_PHRASE_TYPES, $json_array)) {
             $this->set_phrase_types($json_array[api::JSON_LIST_PHRASE_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory phrase_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory phrase_types missing in API JSON ' . json_encode($json_array));
             $this->set_phrase_types([]);
         }
         if (array_key_exists(api::JSON_LIST_FORMULA_TYPES, $json_array)) {
             $this->set_formula_types($json_array[api::JSON_LIST_FORMULA_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory formula_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory formula_types missing in API JSON ' . json_encode($json_array));
             $this->set_formula_types([]);
         }
         if (array_key_exists(api::JSON_LIST_FORMULA_LINK_TYPES, $json_array)) {
             $this->set_formula_link_types($json_array[api::JSON_LIST_FORMULA_LINK_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory formula_link_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory formula_link_types missing in API JSON ' . json_encode($json_array));
             $this->set_formula_link_types([]);
         }
         if (array_key_exists(api::JSON_LIST_VIEW_TYPES, $json_array)) {
             $this->set_view_types($json_array[api::JSON_LIST_VIEW_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory view_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory view_types missing in API JSON ' . json_encode($json_array));
             $this->set_view_types([]);
         }
         if (array_key_exists(api::JSON_LIST_VIEW_STYLES, $json_array)) {
             $this->set_view_styles($json_array[api::JSON_LIST_VIEW_STYLES]);
         } else {
-            $usr_msg->add_err('Mandatory view_styles missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory view_styles missing in API JSON ' . json_encode($json_array));
             $this->set_view_styles([]);
         }
         if (array_key_exists(api::JSON_LIST_VIEW_LINK_TYPES, $json_array)) {
             $this->set_view_link_types($json_array[api::JSON_LIST_VIEW_LINK_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory view_link_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory view_link_types missing in API JSON ' . json_encode($json_array));
             $this->set_view_link_types([]);
         }
         if (array_key_exists(api::JSON_LIST_VIEW_RELATION_TYPES, $json_array)) {
             $this->set_view_relation_types($json_array[api::JSON_LIST_VIEW_RELATION_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory view_relation_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory view_relation_types missing in API JSON ' . json_encode($json_array));
             $this->set_view_relation_types([]);
         }
         if (array_key_exists(api::JSON_LIST_COMPONENT_TYPES, $json_array)) {
             $this->set_component_types($json_array[api::JSON_LIST_COMPONENT_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory component_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory component_types missing in API JSON ' . json_encode($json_array));
             $this->set_component_types([]);
         }
         /*
@@ -223,92 +223,92 @@ class type_lists
         if (array_key_exists(api::JSON_LIST_VIEW_COMPONENT_LINK_TYPES, $json_array)) {
             $this->set_component_link_types($json_array[api::JSON_LIST_VIEW_COMPONENT_LINK_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory component_link_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory component_link_types missing in API JSON ' . json_encode($json_array));
             $this->set_component_link_types([]);
         }
         */
         if (array_key_exists(api::JSON_LIST_COMPONENT_POSITION_TYPES, $json_array)) {
             $this->set_position_types($json_array[api::JSON_LIST_COMPONENT_POSITION_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory position_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory position_types missing in API JSON ' . json_encode($json_array));
             $this->set_position_types([]);
         }
         if (array_key_exists(api::JSON_LIST_SOURCE_TYPES, $json_array)) {
             $this->set_source_types($json_array[api::JSON_LIST_SOURCE_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory source_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory source_types missing in API JSON ' . json_encode($json_array));
             $this->set_source_types([]);
         }
         if (array_key_exists(api::JSON_LIST_REF_TYPES, $json_array)) {
             $this->set_ref_types($json_array[api::JSON_LIST_REF_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory ref_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory ref_types missing in API JSON ' . json_encode($json_array));
             $this->set_ref_types([]);
         }
         if (array_key_exists(api::JSON_LIST_SHARE_TYPES, $json_array)) {
             $this->set_share_types($json_array[api::JSON_LIST_SHARE_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory share_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory share_types missing in API JSON ' . json_encode($json_array));
             $this->set_share_types([]);
         }
         if (array_key_exists(api::JSON_LIST_PROTECTION_TYPES, $json_array)) {
             $this->set_protection_types($json_array[api::JSON_LIST_PROTECTION_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory protection_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory protection_types missing in API JSON ' . json_encode($json_array));
             $this->set_protection_types([]);
         }
         if (array_key_exists(api::JSON_LIST_LANGUAGES, $json_array)) {
             $this->set_languages($json_array[api::JSON_LIST_LANGUAGES]);
         } else {
-            $usr_msg->add_err('Mandatory languages missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory languages missing in API JSON ' . json_encode($json_array));
             $this->set_languages([]);
         }
         if (array_key_exists(api::JSON_LIST_LANGUAGE_FORMS, $json_array)) {
             $this->set_language_forms($json_array[api::JSON_LIST_LANGUAGE_FORMS]);
         } else {
-            $usr_msg->add_err('Mandatory language_forms missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory language_forms missing in API JSON ' . json_encode($json_array));
             $this->set_language_forms([]);
         }
         if (array_key_exists(api::JSON_LIST_VERBS, $json_array)) {
             $this->set_verbs($json_array[api::JSON_LIST_VERBS]);
         } else {
-            $usr_msg->add_err('Mandatory verbs missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory verbs missing in API JSON ' . json_encode($json_array));
             $this->set_verbs([]);
         }
         if (array_key_exists(api::JSON_LIST_SYSTEM_VIEWS, $json_array)) {
             $this->set_system_views($json_array[api::JSON_LIST_SYSTEM_VIEWS]);
         } else {
-            //$usr_msg->add_err('Mandatory system_views missing in API JSON ' . json_encode($json_array));
+            //$usr_msg->add_error_text('Mandatory system_views missing in API JSON ' . json_encode($json_array));
             $this->set_system_views([]);
         }
         if (array_key_exists(api::JSON_LIST_SYS_LOG_STATUUS, $json_array)) {
-            $this->set_sys_log_statuus($json_array[api::JSON_LIST_SYS_LOG_STATUUS]);
+            $this->set_sys_log_statuum($json_array[api::JSON_LIST_SYS_LOG_STATUUS]);
         } else {
-            $usr_msg->add_err('Mandatory sys_log_statuus missing in API JSON ' . json_encode($json_array));
-            $this->set_sys_log_statuus([]);
+            $usr_msg->add_error_text('Mandatory sys_log_statuum missing in API JSON ' . json_encode($json_array));
+            $this->set_sys_log_statuum([]);
         }
         if (array_key_exists(api::JSON_LIST_JOB_TYPES, $json_array)) {
             $this->set_job_types($json_array[api::JSON_LIST_JOB_TYPES]);
         } else {
-            $usr_msg->add_err('Mandatory job_types missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory job_types missing in API JSON ' . json_encode($json_array));
             $this->set_job_types([]);
         }
         if (array_key_exists(api::JSON_LIST_CHANGE_LOG_ACTIONS, $json_array)) {
             $this->set_change_action_list($json_array[api::JSON_LIST_CHANGE_LOG_ACTIONS]);
         } else {
-            $usr_msg->add_err('Mandatory change_action_list missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory change_action_list missing in API JSON ' . json_encode($json_array));
             $this->set_change_action_list([]);
         }
         if (array_key_exists(api::JSON_LIST_CHANGE_LOG_TABLES, $json_array)) {
             $this->set_change_table_list($json_array[api::JSON_LIST_CHANGE_LOG_TABLES]);
         } else {
-            $usr_msg->add_err('Mandatory change_table_list missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory change_table_list missing in API JSON ' . json_encode($json_array));
             $this->set_change_table_list([]);
         }
         if (array_key_exists(api::JSON_LIST_CHANGE_LOG_FIELDS, $json_array)) {
             $this->set_change_field_list($json_array[api::JSON_LIST_CHANGE_LOG_FIELDS]);
         } else {
-            $usr_msg->add_err('Mandatory change_field_list missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_error_text('Mandatory change_field_list missing in API JSON ' . json_encode($json_array));
             $this->set_change_field_list([]);
         }
         return $usr_msg;
@@ -322,7 +322,7 @@ class type_lists
 
     function set_phrase_types(?array $json_array = null): void
     {
-        $this->html_phrase_types = new phrase_types();
+        $this->html_phrase_types = new phrase_type_list();
         $this->html_phrase_types->set_from_json_array($json_array);
     }
 
@@ -406,13 +406,13 @@ class type_lists
 
     function set_languages(?array $json_array = null): void
     {
-        $this->html_languages = new languages();
+        $this->html_languages = new language_list();
         $this->html_languages->set_from_json_array($json_array);
     }
 
     function set_language_forms(?array $json_array = null): void
     {
-        $this->html_language_forms = new language_forms();
+        $this->html_language_forms = new language_form_list();
         $this->html_language_forms->set_from_json_array($json_array);
     }
 
@@ -422,10 +422,10 @@ class type_lists
         $this->html_verbs->set_from_json_array($json_array, verb::class);
     }
 
-    function set_sys_log_statuus(?array $json_array = null): void
+    function set_sys_log_statuum(?array $json_array = null): void
     {
-        $this->html_sys_log_statuus = new sys_log_status_list();
-        $this->html_sys_log_statuus->set_from_json_array($json_array);
+        $this->html_sys_log_statuum = new sys_log_status_list();
+        $this->html_sys_log_statuum->set_from_json_array($json_array);
     }
 
     function set_job_types(?array $json_array = null): void
@@ -468,12 +468,12 @@ class type_lists
 
     function get_view_by_id(int $id): ?view
     {
-        return $this->html_system_views->get_by_id($id);
+        return $this->html_system_views->get($id);
     }
 
     function get_view(string $code_id): view
     {
-        return $this->html_system_views->get_by_id($code_id);
+        return $this->html_system_views->get($code_id);
     }
 
     function get_html(string $code_id): string

@@ -83,7 +83,7 @@ class term_list extends sandbox_list_named
         $trm->set_id_from_obj($id, word::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
-            $trm = $this->get_by_id($trm_id);
+            $trm = $this->get($trm_id);
             if ($trm != null) {
                 $wrd = $trm->get_word();
             }
@@ -105,7 +105,7 @@ class term_list extends sandbox_list_named
         $trm->set_id_from_obj($id, triple::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
-            $trm = $this->get_by_id($trm_id);
+            $trm = $this->get($trm_id);
             if ($trm != null) {
                 $trp = $trm->get_triple();
             }
@@ -127,7 +127,7 @@ class term_list extends sandbox_list_named
         $trm->set_id_from_obj($id, formula::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
-            $trm = $this->get_by_id($trm_id);
+            $trm = $this->get($trm_id);
             if ($trm != null) {
                 $frm = $trm->get_formula();
             }
@@ -149,7 +149,7 @@ class term_list extends sandbox_list_named
         $trm->set_id_from_obj($id, verb::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
-            $trm = $this->get_by_id($trm_id);
+            $trm = $this->get($trm_id);
             if ($trm != null) {
                 $vrb = $trm->get_verb();
             }
@@ -176,7 +176,7 @@ class term_list extends sandbox_list_named
         $trm->set_obj_id($id);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
-            $trm = $this->get_by_id($trm_id);
+            $trm = $this->get($trm_id);
         }
         return $trm;
     }

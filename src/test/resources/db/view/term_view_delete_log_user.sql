@@ -26,7 +26,7 @@ SELECT term_view_delete_log_user
      3::smallint,
      89::smallint,
      'Start view'::text,
-     'standard'::text,
+     'main word'::text,
      'mathematics'::text,
      1::bigint,
      1::smallint,

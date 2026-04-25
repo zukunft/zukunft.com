@@ -35,10 +35,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\view;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
-include_once paths::MODEL_HELPER . 'type_object.php';
-include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 
 class view_link_type_list extends type_list
 {
@@ -58,7 +58,7 @@ class view_link_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(view_link_type::DEFAULT);
+        return parent::id(view_link_types::DEFAULT);
     }
 
 }

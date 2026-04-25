@@ -71,9 +71,9 @@ include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
@@ -115,9 +115,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
@@ -175,9 +175,9 @@ class test_db_load
     /**
      * save the just created word object in the database
      *
-     * @param string $wrd_name the name of the word which should be loaded
+     * @param string $wrd_name the name of the word, which should be loaded
      * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
-     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @param user|null $test_usr if not null, the user for whom the word should be created to test the user sandbox
      * @return word the word that is saved in the database by name
      */
     function add_word(
@@ -195,7 +195,7 @@ class test_db_load
         if ($wrd->id() == 0) {
             $wrd->set_name($wrd_name);
             if (!$wrd->save($usr_msg)) {
-                log_err('add formula failed due to: ' . $usr_msg->get_last_message());
+                log_err('add word failed due to: ' . $usr_msg->text());
             }
         }
         if ($wrd->id <= 0) {
@@ -205,14 +205,14 @@ class test_db_load
             if ($wrd->excluded) {
                 $wrd->include();
                 if (!$wrd->save($usr_msg)) {
-                    log_err('cannot include word ' . $wrd->dsp_id() . ' due to ' . $usr_msg->get_last_message());
+                    log_err('cannot include word ' . $wrd->dsp_id() . ' due to ' . $usr_msg->text());
                 }
             }
         }
         if ($wrd_type_code_id != null) {
             $wrd->type_id = $sys->typ_lst->phr_typ->id($wrd_type_code_id);
             if (!$wrd->save($usr_msg)) {
-                log_err('add formula failed due to: ' . $usr_msg->get_last_message());
+                log_err('add formula failed due to: ' . $usr_msg->text());
             }
         }
         return $wrd;
@@ -443,7 +443,7 @@ class test_db_load
                             $trp->set_name($name_given);
                         }
                         if (!$trp->save($usr_msg)) {
-                            log_err('save triple failed due to: ' . $usr_msg->get_last_message());
+                            log_err('save triple failed due to: ' . $usr_msg->text());
                         }
                         $trp->load_by_id($trp->id());
                     }
@@ -626,7 +626,7 @@ class test_db_load
             // TODO add this check to all add functions
             if (!$usr_msg->is_ok()) {
                 $reason = $usr_msg->all_message_text();
-                log_err('add formula failed due to: ' . $reason);
+                log_warning('add formula failed due to: ' . $reason);
             }
         }
         return $frm;
@@ -634,6 +634,8 @@ class test_db_load
 
     function test_formula(string $frm_name, string $frm_text, user_message $usr_msg): formula
     {
+        // reset the message for each test
+        $usr_msg->reset();
         $frm = $this->add_formula($frm_name, $frm_text, $usr_msg);
         $this->env->assert('formula', $frm->name(), $frm_name);
         return $frm;
@@ -927,6 +929,7 @@ class test_db_load
         if ($src->id() == 0) {
             $src->set_name($src_name);
             $usr_msg = new user_message();
+            $usr_msg->usr = $this->env->usr1;
             if (!$src->save($usr_msg)) {
                 log_err('add source failed due to: ' . $usr_msg->get_last_message());
             }
@@ -1117,13 +1120,16 @@ class test_db_load
         return $cmp;
     }
 
-    function test_component_lnk(string $dsp_name, string $cmp_name, int $pos): component_link
+    function test_component_lnk(
+        string $dsp_name,
+        string $cmp_name,
+        int $pos): component_link
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($this->env->usr1);
         $msk = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
         $lnk = new component_link($this->env->usr1);
-        $lnk->reset();
+        $lnk->reset(true);
         $lnk->set_view($msk);
         $lnk->set_component($cmp);
         $lnk->order_nbr = $pos;
@@ -1218,7 +1224,7 @@ class test_db_load
     }
 
     /**
-     * update the list of types json file
+     * update the list of types a json file
      * called upfront also from the reset db run because this is used for the unit tests
      *
      * @param all_tests $t the test object to collect the errors and calculate the execution times
@@ -1234,7 +1240,7 @@ class test_db_load
 
         $ui_cfg = new ui_config();
         $ui_cfg->reload($usr);
-        $t->assert_api($ui_cfg, '', [api_type::HEADER, api_type::INCL_COMPONENTS]);
+        $t->assert_api($ui_cfg, '', [api_types::HEADER, api_types::INCL_COMPONENTS]);
 
     }
 

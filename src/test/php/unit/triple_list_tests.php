@@ -48,8 +48,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_list_tests
@@ -63,6 +64,7 @@ class triple_list_tests
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_trp = new test_triples($t);
+        $t_vrb = new test_verbs($t);
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
 
@@ -80,7 +82,7 @@ class triple_list_tests
         // load by triple ids
         $test_name = 'load triples by ids';
         $trp_lst = new triple_list($usr);
-        $t->assert_sql_by_ids($test_name, $sc, $trp_lst, array(3,2,4));
+        $t->assert_sql_by_ids($test_name, $sc, $trp_lst, array(3, 2, 4));
 
         // load by phr
         $trp_lst = new triple_list($usr);
@@ -100,13 +102,15 @@ class triple_list_tests
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($phr);
         $phr_lst->add($phr2);
-        $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, null,  foaf_direction::UP);
+        $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, null, foaf_direction::UP);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst);
         $vrb = new verb(1);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb, foaf_direction::UP);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb, foaf_direction::DOWN);
         // TODO Prio 1 activate
         // $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb);
+        $vrb = $t_vrb->verb();
+        $this->assert_sql_by_vrb_lst($t, $db_con, $trp_lst, $vrb);
 
 
         $t->subheader($ts . 'im- and export');
@@ -120,7 +124,7 @@ class triple_list_tests
         $t->assert_api_to_ui($trp_lst, new triple_list_ui());
 
         $trp_lst = $t_trp->triple_list_short();
-        $t->assert_api_to_ui($trp_lst, new triple_list_ui(), [api_type::WITH_EXCLUDED]);
+        $t->assert_api_to_ui($trp_lst, new triple_list_ui(), [api_types::WITH_EXCLUDED]);
 
     }
 
@@ -183,6 +187,33 @@ class triple_list_tests
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst, $vrb, $direction);
+        $t->assert_qp($qp, $db_con->db_type);
+    }
+
+    /**
+     * test the SQL statement creation for all triples list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param triple_list $lst the empty triple list object
+     * @param verb $vrb if set to filter the selection
+     * @return void
+     */
+    private function assert_sql_by_vrb_lst(
+        test_cleanup $t,
+        sql_db       $db_con,
+        triple_list  $lst,
+        verb         $vrb): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_verb($db_con->sql_creator(), $vrb);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_verb($db_con->sql_creator(), $vrb);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

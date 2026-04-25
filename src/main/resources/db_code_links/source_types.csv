@@ -1,6 +1,7 @@
 source_type_id, type_name, code_id, description
 1, 'XML', 'xml',
-2, 'XBRL', 'xbrl',
+2, 'XBRL', 'xbrl','eXtensible Business Reporting Language is a freely available global framework for exchanging business information'
 3, 'CSV', 'csv',
 4, 'PDF', 'pdf',
 5, 'API', 'api',
+6, 'JSON', 'json',

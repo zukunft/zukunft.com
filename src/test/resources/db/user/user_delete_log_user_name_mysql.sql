@@ -18,7 +18,7 @@ BEGIN
 END;
 
 SELECT user_delete_log_user_name
-       (2,
+       (1,
         3,
         211,
         'zukunft.com system test',

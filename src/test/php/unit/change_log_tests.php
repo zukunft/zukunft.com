@@ -37,18 +37,20 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
-include_once html_paths::LOG . 'user_log_display.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'changes_norm.php';
 include_once paths::MODEL_LOG . 'changes_big.php';
 include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
+include_once html_paths::LOG . 'user_log_display.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
@@ -60,13 +62,11 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
-use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -150,6 +150,12 @@ class change_log_tests
         $t->assert_sql_index_create($log_lnk);
         $t->assert_sql_foreign_key_create($log_lnk);
 
+        $t->subheader($ts . 'table and field sql write');
+        $tbl = $t_log->log_table();
+        $t->assert_sql_insert($sc, $tbl);
+        $fld = $t_log->log_field();
+        $t->assert_sql_insert($sc, $fld);
+
         $t->subheader($ts . 'named sql write');
         $log = $t_log->log_word_add();
         $t->assert_sql_insert($sc, $log);
@@ -209,9 +215,9 @@ class change_log_tests
         $test_name = 'get the name changes of a word';
         $this->assert_sql_list_by_field(word::class, word_db::FLD_NAME, 1, $log_lst, $db_con, $t, $test_name);
         $this->assert_sql_list_by_field(triple::class, triple_db::FLD_NAME_GIVEN, 1, $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t_grp->group()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t_grp->group_16()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t_grp->group_17_plus()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group_db::FLD_NAME, $t_grp->group()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group_db::FLD_NAME, $t_grp->group_16()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group_db::FLD_NAME, $t_grp->group_17_plus()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_17_plus()->id(), $log_lst, $db_con, $t);
@@ -232,14 +238,23 @@ class change_log_tests
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
 
         // sql to load a log entry by field and row id
-        // TODO check that user specific changes are included in the list of changes
+        // TODO check that user-specific changes are included in the list of changes
         $log = new change($usr);
         $this->assert_sql_by_field_row($t, $db_con, $log);
 
         // sql to load a log entry by field and row id
-        // TODO check that user specific changes are included in the list of changes
+        // TODO check that user-specific changes are included in the list of changes
         // TODO add tests for all value types
         $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($usr));
+
+        // sql to load a field by field name and table id
+        $tbl = new change_table();
+        $t->assert_sql_by_name($sc, $tbl);
+        $t->assert_sql_by_code_id($sc, $tbl);
+
+        // sql to load a field by field name and table id
+        $fld = new change_field();
+        $this->assert_sql_field_by_name_and_id($t, $db_con, $fld);
 
         // sql to load a log entry by field and row id
         $log = new change_link($usr);
@@ -289,19 +304,42 @@ class change_log_tests
      *
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con does not need to be connected to a real database
+     * @param change_field $fld the user sandbox object e.g. a word
+     */
+    private function assert_sql_field_by_name_and_id(test_cleanup $t, sql_db $db_con, change_field $fld): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $fld->load_sql_by_name_and_table_id($db_con->sql_creator(), 'system_test_field_name', 1);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $fld->load_sql_by_name_and_table_id($db_con->sql_creator(), 'system_test_field_name', 1);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * check the load SQL statements to get a link log entry by table
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
      * @param change_link $log the user sandbox object e.g. a word
      */
     private function assert_sql_link_by_table(test_cleanup $t, sql_db $db_con, change_link $log): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log->load_sql_by_vars($db_con, 1);
+        $qp = $log->load_sql_by_table($db_con, 1);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $log->load_sql_by_vars($db_con, 1);
+            $qp = $log->load_sql_by_table($db_con, 1);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

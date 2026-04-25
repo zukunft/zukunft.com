@@ -37,12 +37,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::DB . 'sql_db.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_ELEMENT . 'element_type_list.php';
@@ -77,6 +79,8 @@ include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_field_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_USER . 'user_type_list.php';
+include_once paths::MODEL_USER . 'user_status_list.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -99,11 +103,16 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
@@ -122,9 +131,13 @@ class type_lists
 
     // system users
     public user_profile_list $usr_pro;
+    public user_type_list $usr_typ;
+    public user_status_list $usr_sta;
     public user_list $system_users;
 
     // system log
+    public sys_log_function_list $sys_log_fnc;
+    public sys_log_level_list $sys_log_lvl;
     public sys_log_status_list $sys_log_sta;
 
     // change log
@@ -133,6 +146,7 @@ class type_lists
     public change_field_list $cng_fld;
 
     // language and system jobs
+    public job_status_list $job_sta;
     public job_type_list $job_typ;
     public language_list $lan;
     public language_form_list $lan_for;
@@ -168,10 +182,14 @@ class type_lists
     {
         // system users
         $this->usr_pro = new user_profile_list();
+        $this->usr_typ = new user_type_list();
+        $this->usr_sta = new user_status_list();
         $this->system_users = new user_list();
 
         // system log
+        $this->sys_log_lvl = new sys_log_level_list();
         $this->sys_log_sta = new sys_log_status_list();
+        $this->sys_log_fnc = new sys_log_function_list();
 
         // change log
         $this->cng_act = new change_action_list();
@@ -179,6 +197,7 @@ class type_lists
         $this->cng_fld = new change_field_list();
 
         // language and system jobs
+        $this->job_sta = new job_status_list();
         $this->job_typ = new job_type_list();
         $this->lan = new language_list();
         $this->lan_for = new language_form_list();
@@ -222,6 +241,12 @@ class type_lists
 
         // user
         $result = $this->usr_pro->load($db_con);
+        if ($result) {
+            $result = $this->usr_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->usr_sta->load($db_con);
+        }
 
         // log
         if ($result) {
@@ -243,6 +268,9 @@ class type_lists
         }
         if ($result) {
             $result = $this->job_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->job_sta->load($db_con);
         }
 
         // sandbox
@@ -303,6 +331,14 @@ class type_lists
 
         // preload the little more complex objects
         $this->vrb->load($db_con);
+
+        // fallback to avoid getting stuck in load process
+        if ($this->vrb->is_empty()) {
+            log_warning('Verb list is empty, fallback to dummy data');
+            $this->vrb->load_dummy();
+        }
+
+
         // TODO move the a separate loader on the data_object level
         //$sys_msk_cac = new view_sys_list($usr);
         //$sys_msk_cac->load($db_con);
@@ -324,6 +360,15 @@ class type_lists
         if ($result) {
             $result = $this->cng_fld->load($db_con);
         }
+        if ($result) {
+            $result = $this->usr_pro->load($db_con);
+        }
+        if ($result) {
+            $result = $this->usr_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->usr_sta->load($db_con);
+        }
 
         return $result;
     }
@@ -339,13 +384,19 @@ class type_lists
     }
 
     /**
-     * load the backend only type lists
+     * load the backend-only type lists
      * @param sql_db $db_con an open database connection to be able to redirect the loading
      * @return bool false if the load is incomplete
      */
     function load_backend_only(sql_db $db_con): bool
     {
-        $result = $this->sys_log_sta->load($db_con);
+        $result = $this->sys_log_lvl->load($db_con);
+        if ($result) {
+            $result = $this->sys_log_fnc->load($db_con);
+        }
+        if ($result) {
+            $result = $this->sys_log_sta->load($db_con);
+        }
         /* TODO move the user cache
         if ($result) {
             $this->system_users = new user_list();
@@ -390,7 +441,11 @@ class type_lists
         $vars = [];
 
         $vars[json_fields::LIST_USER_PROFILES] = $this->usr_pro->api_json_array();
+        $vars[json_fields::LIST_USER_TYPES] = $this->usr_typ->api_json_array();
+        $vars[json_fields::LIST_USER_STATUUS] = $this->usr_sta->api_json_array();
 
+        $vars[json_fields::LIST_SYS_LOG_FUNCTIONS] = $this->sys_log_fnc->api_json_array();
+        $vars[json_fields::LIST_SYS_LOG_LEVELS] = $this->sys_log_lvl->api_json_array();
         $vars[json_fields::LIST_SYS_LOG_STATUUS] = $this->sys_log_sta->api_json_array();
 
         $vars[json_fields::LIST_CHANGE_LOG_ACTIONS] = $this->cng_act->api_json_array();
@@ -398,6 +453,7 @@ class type_lists
         $vars[json_fields::LIST_CHANGE_LOG_FIELDS] = $this->cng_fld->api_json_array();
 
         $vars[json_fields::LIST_JOB_TYPES] = $this->job_typ->api_json_array();
+        $vars[json_fields::LIST_JOB_STATUUS] = $this->job_sta->api_json_array();
         $vars[json_fields::LIST_LANGUAGES] = $this->lan->api_json_array();
         $vars[json_fields::LIST_LANGUAGE_FORMS] = $this->lan_for->api_json_array();
 
@@ -431,43 +487,47 @@ class type_lists
     function load_dummy(): void
     {
         // system users
-        $this->usr_pro ->load_dummy();
-        $this->system_users ->load_dummy();
+        $this->usr_pro->load_dummy();
+        $this->usr_typ->load_dummy();
+        $this->usr_sta->load_dummy();
+        $this->system_users->load_dummy();
 
         // system log
-        $this->sys_log_sta ->load_dummy();
+        $this->sys_log_fnc->load_dummy();
+        $this->sys_log_lvl->load_dummy();
+        $this->sys_log_sta->load_dummy();
 
         // change log
-        $this->cng_act ->load_dummy();
-        $this->cng_tbl ->load_dummy();
-        $this->cng_fld ->load_dummy();
+        $this->cng_act->load_dummy();
+        $this->cng_tbl->load_dummy();
+        $this->cng_fld->load_dummy();
 
         // language and system jobs
-        $this->job_typ ->load_dummy();
-        $this->lan ->load_dummy();
-        $this->lan_for ->load_dummy();
+        $this->job_typ->load_dummy();
+        $this->lan->load_dummy();
+        $this->lan_for->load_dummy();
 
         // sandbox
-        $this->shr_typ ->load_dummy();
-        $this->ptc_typ ->load_dummy();
+        $this->shr_typ->load_dummy();
+        $this->ptc_typ->load_dummy();
 
         // word, number and formula types
-        $this->vrb ->load_dummy();
-        $this->phr_typ ->load_dummy();
-        $this->ref_typ ->load_dummy();
-        $this->src_typ ->load_dummy();
-        $this->frm_typ ->load_dummy();
-        $this->frm_lnk_typ ->load_dummy();
-        $this->elm_typ ->load_dummy();
+        $this->vrb->load_dummy();
+        $this->phr_typ->load_dummy();
+        $this->ref_typ->load_dummy();
+        $this->src_typ->load_dummy();
+        $this->frm_typ->load_dummy();
+        $this->frm_lnk_typ->load_dummy();
+        $this->elm_typ->load_dummy();
 
         // view
-        $this->msk_typ ->load_dummy();
-        $this->msk_sty ->load_dummy();
-        $this->msk_lnk_typ ->load_dummy();
-        $this->cmp_typ ->load_dummy();
-        $this->cmp_lnk_typ ->load_dummy();
-        $this->pos_typ ->load_dummy();
-        $this->mrl_typ ->load_dummy();
+        $this->msk_typ->load_dummy();
+        $this->msk_sty->load_dummy();
+        $this->msk_lnk_typ->load_dummy();
+        $this->cmp_typ->load_dummy();
+        $this->cmp_lnk_typ->load_dummy();
+        $this->pos_typ->load_dummy();
+        $this->mrl_typ->load_dummy();
     }
 
 }

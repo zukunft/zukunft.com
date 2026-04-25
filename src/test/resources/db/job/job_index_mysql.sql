@@ -7,6 +7,7 @@
 ALTER TABLE jobs
     ADD KEY jobs_user_idx (user_id),
     ADD KEY jobs_job_type_idx (job_type_id),
+    ADD KEY jobs_job_status_idx (job_status_id),
     ADD KEY jobs_request_time_idx (request_time),
     ADD KEY jobs_start_time_idx (start_time),
     ADD KEY jobs_end_time_idx (end_time),

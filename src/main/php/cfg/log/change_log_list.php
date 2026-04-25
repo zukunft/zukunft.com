@@ -36,7 +36,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'list_db_read.php';
 //include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
@@ -44,6 +44,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_REF . 'source.php';
@@ -59,7 +60,8 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -81,7 +83,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-class change_log_list extends base_list
+class change_log_list extends list_db_read
 {
 
 
@@ -484,9 +486,9 @@ class change_log_list extends base_list
             $sc->add_where(change_field::FLD_TABLE, $table_field_id, null, 'l2');
         }
         if ($class == value::class) {
-            $sc->add_where(group::FLD_ID, $id);
+            $sc->add_where(group_db::FLD_ID, $id);
         } else {
-            $sc->add_where(change::FLD_ROW_ID, $id);
+            $sc->add_where(change_log::FLD_ROW_ID, $id);
         }
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
@@ -541,7 +543,7 @@ class change_log_list extends base_list
         }
         $qp = $log_named->load_sql($sc, $query_ext);
         if ($class == value::class) {
-            $sc->add_where(group::FLD_ID, $id);
+            $sc->add_where(group_db::FLD_ID, $id);
         } else {
             $sc->add_where(change::FLD_ROW_ID, $id);
         }

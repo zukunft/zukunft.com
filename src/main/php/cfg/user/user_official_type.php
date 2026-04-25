@@ -47,8 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 class user_official_type extends type_object
 {
 
-    // list of official user identification types
-    const string PASSPORT_EU = "passport_eu"; //
+    // TODO Prio 2 add a field with the calculated trust level
 
     /*
      * database link

@@ -99,7 +99,7 @@ class formula_link_write_tests
 
         $frm_lnk2 = new formula_link($t->usr1);
         $frm_lnk2->load_by_id($frm_lnk->id(), formula_link::class);
-        $frm_lnk2->reload_objects();
+        $frm_lnk2->reload_objects($usr_msg);
 
         // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
         if ($frm_lnk2->formula() != null) {
@@ -231,6 +231,7 @@ class formula_link_write_tests
         // the code changes and tests for formula link should be moved the component_link
 
         $t->subheader($ts . 'cleanup formula link write');
+        $usr_msg->reset(true);
         $frm = new formula($t->usr1);
         $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $wrd = new word($t->usr1);
@@ -245,7 +246,9 @@ class formula_link_write_tests
             $t->write_named_cleanup($wrd, $wrd_name);
         }
 
+        $usr_msg->reset(true);
         $frm->del($usr_msg);
+        $usr_msg->reset(true);
         $wrd->del($usr_msg);
 
     }

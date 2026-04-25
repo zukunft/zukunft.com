@@ -53,4 +53,17 @@ class trm_ids
     {
         return (count($this->lst));
     }
+
+    function is_empty(): bool
+    {
+        if (is_null($this->lst)) {
+            return true;
+        } else {
+            if (count($this->lst) == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 }

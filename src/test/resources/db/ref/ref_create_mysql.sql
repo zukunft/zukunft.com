@@ -30,7 +30,7 @@ ALTER TABLE refs
     MODIFY ref_id bigint NOT NULL AUTO_INCREMENT;
 
 --
--- table structure to save user specific changes to link external data to internal for synchronisation
+-- table structure to save user-specific changes to link external data to internal for synchronisation
 --
 
 CREATE TABLE IF NOT EXISTS user_refs

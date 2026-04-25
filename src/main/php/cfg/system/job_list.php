@@ -38,15 +38,17 @@ namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
-include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -54,8 +56,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 
-class job_list extends base_list
+class job_list extends list_db_write
 {
 
     /*
@@ -72,7 +75,7 @@ class job_list extends base_list
      */
 
     /**
-     * always set the user because a job list either user specific or linked to the system user
+     * always set the user because a job list either user-specific or linked to the system user
      * @param user $usr the user who requested to see the formulas
      */
     function __construct(user $usr)
@@ -99,13 +102,25 @@ class job_list extends base_list
         return $this->load($qp);
     }
 
+    /**
+     * load a list of batch jobs of the given status
+     * @param string $status_code_id the code id of the job status that should be loaded
+     * @return bool true if at least one open job found
+     */
+    function load_by_status(string $status_code_id = ''): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_status($db_con->sql_creator(), $status_code_id);
+        return $this->load($qp);
+    }
+
 
     /*
      * load internals
      */
 
     /**
-     * prepare sql to get all open job of one type
+     * prepare sql to get all open jobs of one type
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $type_code_id the code id of the job type that should be loaded
@@ -117,7 +132,27 @@ class job_list extends base_list
         $type_id = $sys->typ_lst->job_typ->id($type_code_id);
         $job = new job($this->usr);
         $qp = $job->load_sql($sc, 'job_type', self::class);
-        $sc->add_where(job::FLD_TYPE, $type_id);
+        $sc->add_where(job_db::FLD_TYPE, $type_id);
+        $sc->set_page($this->limit, $this->offset());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * prepare sql to get all open jobs of one status
+     *
+     * @param sql_creator $sc with the target db_status set
+     * @param string $status_code_id the code id of the job status that should be loaded
+     * @return sql_par
+     */
+    function load_sql_by_status(sql_creator $sc, string $status_code_id = ''): sql_par
+    {
+        global $sys;
+        $status_id = $sys->typ_lst->job_sta->id($status_code_id);
+        $job = new job($this->usr);
+        $qp = $job->load_sql($sc, 'job_status', self::class);
+        $sc->add_where(job_db::FLD_STATUS, $status_id);
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -163,30 +198,30 @@ class job_list extends base_list
      */
     function add(job $job): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         log_debug('job_list->add');
 
         // check if the job to add has all needed parameters
-        if ($job->type_code_id() != job_type_list::BASE_IMPORT) {
+        if ($job->type_code_id() != job_types::BASE_IMPORT) {
             if (!isset($job->frm)) {
-                $usr_msg->add_id_with_vars(msg_id::JOB_FORMULA_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
+                $msg->add(msg_id::JOB_FORMULA_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
             } elseif (!isset($job->phr_lst)) {
-                $usr_msg->add_id_with_vars(msg_id::JOB_WORD_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
+                $msg->add(msg_id::JOB_WORD_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
             }
         }
 
         // do not add similar jobs
-        if ($usr_msg->is_ok()) {
-            $usr_msg->add($this->has_similar($job));
+        if ($msg->is_ok()) {
+            $msg->merge($this->has_similar($job));
         }
 
         // finally add the job to the list if everything has been fine
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $this->add_obj($job);
         }
 
         log_debug('done');
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -197,7 +232,7 @@ class job_list extends base_list
      */
     private function has_similar(job $job): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // build the list of phrase ids
         $chk_phr_lst_ids = array();
@@ -209,12 +244,12 @@ class job_list extends base_list
             if ($chk_job->frm == $job->frm) {
                 if ($chk_job->usr == $job->get_user()) {
                     if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
-                        $usr_msg->add_id_with_vars(msg_id::JOB_ALREADY_ACTIVE, [msg_id::VAR_NAME => $chk_job->phr_lst->name()]);
+                        $msg->add(msg_id::JOB_ALREADY_ACTIVE, [msg_id::VAR_NAME => $chk_job->phr_lst->name()]);
                     }
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

@@ -36,6 +36,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -71,7 +72,8 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_id($sys_msk_cac->id(view_shared::FORMULA_DEL));
-    $back = $_GET[url_var::BACK] = '';
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]);
 
     // get the parameters
     $formula_id = $_GET[url_var::ID];           // id of the formula that can be changed

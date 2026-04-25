@@ -44,6 +44,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 // open database
@@ -83,7 +85,8 @@ if ($session_usr->id > 0) {
     // show the header even if all parameters are wrong
     $msk = new view($session_usr);
     $msk->id = $sys_msk_cac->id(views::FORMULA_TEST);
-    $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     echo $msk_dsp->dsp_navbar($dto, $back);
@@ -106,7 +109,7 @@ if ($session_usr->id > 0) {
 
     // get the configuration
     global $cfg;
-    $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
+    $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR], def::FALLBACK_RESPONSE_TIME);
 
     if ($frm_id == '') {
         echo $html->dsp_text_h2("Please select a formula");
@@ -174,11 +177,11 @@ if ($session_usr->id > 0) {
             ob_end_flush();
             log_debug("create the calculation queue ... ");
             $calc_pos = 0;
-            $last_msg_time =microtime(true);
+            $last_msg_time = microtime(true);
 
             // build the calculation queue
             // the standard value will always be checked first
-            // and after that the user specific value will be calculated if needed
+            // and after that the user-specific value will be calculated if needed
             // TODO: but only if the user has done some changes
             $calc_res_lst = new result_list($usr);
             foreach ($frm_lst->lst() as $frm) {

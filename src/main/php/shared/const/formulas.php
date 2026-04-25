@@ -58,16 +58,23 @@ class formulas
     const int NOT_SET_ID = 0;
     const string SCALE_TO_SEC = 'scale minute to sec';
     const string SCALE_TO_SEC_EXP = '"second" = "minute" * 60';
+    const string SCALE_TO_SEC_EXP_REF = '{w24}={w104}*60';
+    const string SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL = '{w24}={w}*60';
+    const string SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER = '{w24}={wO}*60';
+    const string SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID = '{w24}={d1}*60';
+    const string SCALE_TO_SEC_EXP_PHRASE_ID_NOT_VALID = '{wO}={w104}*60';
     const string SCALE_TO_SEC_COM = 'to convert times in minutes to seconds and the other way round';
     const string SCALE_TO_SEC_CODE_ID = 'scale_minute_to_sec';
     const int SCALE_TO_SEC_ID = 1;
     const string SCALE_HOUR = 'scale hour to sec';
     const int SCALE_HOUR_ID = 2;
+    const string SCALE_HOUR_EXP = '{w24}={w105}*3600';
     const string DIAMETER = '= "circumference" / "Pi"';
     const string DIAMETER_DB = '={w' . words::CIRCUMFERENCE_ID . '}/{w' . words::PI_ID . '}';
     const string THIS_NAME = 'this';
     const int THIS_ID = 18;
     const string THIS_EXP = '="Now"';
+    const string THIS_COM = 'hardcoded formula to select now, today, this year, ...';
     const string PRIOR = 'prior';
     const int PRIOR_ID = 20;
     const string PRIOR_EXP = '=value["time jump"->,"Now"->"follower"]';
@@ -76,9 +83,9 @@ class formulas
     const int INCREASE_ID = 21;
     const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . words::THIS_NAME . '" / "' . words::PRIOR_NAME . '" )';
-    const string INCREASE_DB = '{w' . words::PCT_ID . '}=({w' . words::THIS_ID . '}-{w' . words::PRIOR_ID . '})/{w' . words::PRIOR_ID . '}';
+    const string INCREASE_DB = '{w' . words::PCT_ID . '}=({f' . formulas::THIS_ID . '}-{f' . formulas::PRIOR_ID . '})/{f' . formulas::PRIOR_ID . '}';
     const string LITRE_TO_M3 = 'scale litre to m3';
-    const string BIGGEST_CITY = 'population in the city of Zurich in percent of '  . words::CH . '';
+    const string BIGGEST_CITY = 'population in the city of Zurich in percent of '  . words::CH;
     const string SCALE_MIO = 'scale millions to one';
     const string SCALE_MIO_EXP = '"one" = "millions" * 1000000';
     const string SCALE_MIO_DB = '{w' . words::ONE_ID . '} = {w' . words::MIO_ID . '} * 1000000';
@@ -92,7 +99,6 @@ class formulas
     // persevered formula names for unit and integration tests
     const string SYSTEM_TEST_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Formula via SQL function';
-    const string SYSTEM_TEST_ADD_VIA_SQL = 'System Test Formula via SQL insert';
     const string SYSTEM_TEST_ADD_COM = 'System Test Formula Description';
     const string SYSTEM_TEST_RENAMED = 'System Test Formula Renamed';
     const string SYSTEM_TEST_EXCLUDED = 'System Test Formula Excluded';
@@ -121,7 +127,6 @@ class formulas
         self::SCALE_TO_SEC,
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_ADD_VIA_FUNC,
-        self::SYSTEM_TEST_ADD_VIA_SQL,
         self::SYSTEM_TEST_RENAMED,
         self::SYSTEM_TEST_EXCLUDED,
         self::SYSTEM_TEST_THIS,
@@ -144,7 +149,6 @@ class formulas
     const array TEST_FORMULAS = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_ADD_VIA_FUNC,
-        self::SYSTEM_TEST_ADD_VIA_SQL,
         self::SYSTEM_TEST_RENAMED,
         self::SYSTEM_TEST_EXCLUDED,
         self::SYSTEM_TEST_THIS,

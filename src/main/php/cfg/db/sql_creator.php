@@ -44,15 +44,13 @@ include_once paths::DB . 'sql_pg.php';
 include_once paths::DB . 'sql.php';
 include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_LOG . 'change_value.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
 //include_once paths::MODEL_GROUP . 'group.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
-//include_once paths::MODEL_SYSTEM . 'ip_range.php';
-//include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
-//include_once paths::MODEL_SYSTEM . 'job.php';
 //include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_link.php';
@@ -80,12 +78,19 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+//include_once paths::MODEL_SYSTEM . 'ip_range.php';
+//include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+//include_once paths::MODEL_SYSTEM . 'job.php';
+//include_once paths::MODEL_SYSTEM . 'job_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_USER . 'user_profile.php';
+//include_once paths::MODEL_USER . 'user_status.php';
 //include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_USER . 'user_official_type.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
@@ -101,6 +106,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
@@ -118,9 +124,6 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
@@ -135,9 +138,16 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
@@ -202,12 +212,6 @@ class sql_creator
         job::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
-    // classes where the tables have no auto increase id
-    const array DB_TYPES_NO_SEQ = [
-        group::class,
-        value::class,
-        result::class
-    ];
 
     // name the positions in the field definition array
     private const int FLD_POS_NAME = 0;
@@ -234,12 +238,12 @@ class sql_creator
     private ?string $class;         // the object class name used for the table name and the standard fields are defined e.g. for type "cfg\word" the table "words" and the field "word_name" is used
     private ?string $table;         // name of the table that is used for the next query including the extension if one class lead to many tables e.g. values_prime
     private ?string $query_name;    // unique name of the query to precompile and use the query
-    private bool $usr_query;        // true, if the query is expected to retrieve user specific data
+    private bool $usr_query;        // true, if the query is expected to retrieve user-specific data
     private bool $grp_query;        // true, if the query should calculate the value for a group of database rows; cannot be combined with other query types
     // TODO replace by a sc_par_lst
     private bool $sub_query;        // true, if the query is a sub query for another query
     private bool $list_query;       // true, if the query is part of a list of queries used for a with statement
-    private bool $all_query;        // true, if the query is expected to retrieve the standard and the user specific data
+    private bool $all_query;        // true, if the query is expected to retrieve the standard and the user-specific data
     private string|array|null $id_field;  // primary key field or field list of the table used
     private string|array|null $id_field_dummy;  // an empty primary key field for a union query
     private string|array|null $id_field_num_dummy;  // an empty numeric primary key field for a union query
@@ -267,10 +271,10 @@ class sql_creator
     private ?array $field_lst_dummy;           // list of fields filled with dummy values for a union query
     private ?array $field_lst_num_dummy;       // list of numeric fields filled with dummy values for a union query
     private ?array $field_lst_date_dummy;      // list of datetime fields filled with dummy values for a union query
-    private ?array $usr_field_lst;             // list of user specific fields that should be returned to the next select query
-    private ?array $usr_num_field_lst;         // list of user specific numeric fields that should be returned to the next select query
-    private ?array $usr_geo_field_lst;         // list of user specific geo point fields that should be returned to the next select query
-    private ?array $usr_bool_field_lst;        // list of user specific boolean / tinyint fields that should be returned to the next select query
+    private ?array $usr_field_lst;             // list of user-specific fields that should be returned to the next select query
+    private ?array $usr_num_field_lst;         // list of user-specific numeric fields that should be returned to the next select query
+    private ?array $usr_geo_field_lst;         // list of user-specific geo point fields that should be returned to the next select query
+    private ?array $usr_bool_field_lst;        // list of user-specific boolean / tinyint fields that should be returned to the next select query
     private ?array $usr_only_field_lst;        // list of fields that are only in the user sandbox
     private ?array $grp_field_lst;             // list of fields where e.g. the min or max of a group should be calculated
 
@@ -317,11 +321,11 @@ class sql_creator
     //private ?array $join2_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the second join
     //private ?array $join3_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the third join
     //private ?array $join4_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the fourth join
-    private bool $join_usr_fields;             // true, if the joined query is also expected to retrieve user specific data
+    private bool $join_usr_fields;             // true, if the joined query is also expected to retrieve user-specific data
     private bool $join2_usr_fields;            // same as $join_usr_fields but for the second join
     private bool $join3_usr_fields;            // same as $join_usr_fields but for the third join
     private bool $join4_usr_fields;            // same as $join_usr_fields but for the fourth join
-    private bool $join_usr_query;              // true, if the joined query is also based on a user specific data link
+    private bool $join_usr_query;              // true, if the joined query is also based on a user-specific data link
     private bool $join2_usr_query;             // same as $usr_join_query but for the second join
     private bool $join3_usr_query;             // same as $usr_join_query but for the third join
     private bool $join4_usr_query;             // same as $usr_join_query but for the fourth join
@@ -534,7 +538,7 @@ class sql_creator
     }
 
     /**
-     * set the complete par list e.g. for unition queries to get the parameters from the previous union part
+     * set the complete par list e.g. for union queries to get the parameters from the previous union part
      * @param sql_field_list $fvt_lst list of parameters already set
      * @return void
      */
@@ -647,7 +651,7 @@ class sql_creator
 
     /**
      * define the fields that should be returned in a select query
-     * @param array $field_lst list of the non-user specific fields that should be loaded from the database
+     * @param array $field_lst list of the non-user-specific fields that should be loaded from the database
      */
     function set_fields(array $field_lst): void
     {
@@ -656,7 +660,7 @@ class sql_creator
 
     /**
      * define the fields that should be returned in a select query with dummy values for a union query
-     * @param array $field_lst list of the non-user specific fields that should be loaded from the database
+     * @param array $field_lst list of the non-user-specific fields that should be loaded from the database
      */
     function set_fields_dummy(array $field_lst): void
     {
@@ -665,7 +669,7 @@ class sql_creator
 
     /**
      * define the fields that should be returned in a select query with dummy values for a union query
-     * @param array $field_lst list of the non-user specific fields that should be loaded from the database
+     * @param array $field_lst list of the non-user-specific fields that should be loaded from the database
      */
     function set_fields_num_dummy(array $field_lst): void
     {
@@ -674,7 +678,7 @@ class sql_creator
 
     /**
      * define the fields that should be returned in a select query with dummy values for a union query
-     * @param array $field_lst list of the non-user specific fields that should be loaded from the database
+     * @param array $field_lst list of the non-user-specific fields that should be loaded from the database
      */
     function set_fields_date_dummy(array $field_lst): void
     {
@@ -750,9 +754,9 @@ class sql_creator
 
     /**
      * set the SQL statement for the user sandbox fields that should be returned in a select query
-     * which can be user specific
+     * which can be user-specific
      *
-     * @param array $usr_field_lst list of the user specific fields that should be loaded from the database
+     * @param array $usr_field_lst list of the user-specific fields that should be loaded from the database
      * @param bool $std_fld false if the standard fields e.g. the user id should not be added again
      * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
@@ -768,9 +772,9 @@ class sql_creator
 
     /**
      * set the SQL statement for the numeric user sandbox fields that should be returned in a select query
-     * which can be user specific
+     * which can be user-specific
      *
-     * @param array $usr_field_lst list of the numeric user specific fields that should be loaded from the database
+     * @param array $usr_field_lst list of the numeric user-specific fields that should be loaded from the database
      * @param bool $std_fld false if the standard fields e.g. the user id should not be added again
      * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
@@ -785,9 +789,9 @@ class sql_creator
 
     /**
      * set the SQL statement for the geo point user sandbox fields that should be returned in a select query
-     * which can be user specific
+     * which can be user-specific
      *
-     * @param array $usr_field_lst list of the geo point user specific fields that should be loaded from the database
+     * @param array $usr_field_lst list of the geo point user-specific fields that should be loaded from the database
      * @param bool $std_fld false if the standard fields e.g. the user id should not be added again
      * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
@@ -824,7 +828,7 @@ class sql_creator
      *                           if empty the field will be guessed
      * @param string $join_to_field if set the field name in the joined table that should be used for the join; only needed, if the joined field name differ from the type id field
      * @param string $join_select_field if set the field name in the joined table that should be used for a where selection
-     * @param int $join_select_id if $join_select_field is set the id (int) used for the selection
+     * @param int $join_select_id if $join_select_field is set, the id (int) used for the selection
      */
     function set_join_fields(array  $join_field_lst,
                              string $join_type,
@@ -895,7 +899,7 @@ class sql_creator
     {
         $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
-        // e.g. add the user fields to an existing not user specific join
+        // e.g. add the user fields to an existing not user-specific join
         if ($this->join_type == ''
             or (($this->join_field == $join_field or $join_field == '')
                 and ($this->join_to_field == $join_to_field or $join_to_field == ''))) {
@@ -945,7 +949,7 @@ class sql_creator
     {
         $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
-        // e.g. add the user fields to an existing not user specific join
+        // e.g. add the user fields to an existing not user-specific join
         if ($this->join_type == ''
             or (($this->join_field == $join_field and $join_field != '')
                 and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
@@ -995,7 +999,7 @@ class sql_creator
     {
         $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
-        // e.g. add the user fields to an existing not user specific join
+        // e.g. add the user fields to an existing not user-specific join
         if ($this->join_type == ''
             or (($this->join_field == $join_field and $join_field != '')
                 and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
@@ -1172,7 +1176,13 @@ class sql_creator
      * @param bool $prepare can be set to false the created sql parts of a union query
      * @return string the created SQL statement in the previous set dialect
      */
-    function sql(int $par_offset = 0, bool $has_id = true, bool $prepare = true): string
+    function sql(
+        int $par_offset = 0,
+        bool $has_id = true,
+        bool $prepare = true,
+        bool $union = false,
+        bool $num_id = false
+    ): string
     {
         // check if the minimum parameters are set
         if ($this->query_name == '') {
@@ -1183,7 +1193,7 @@ class sql_creator
             }
         }
         // prepare the SQL statement parts that have dependencies to each other
-        $fields = $this->fields($has_id);
+        $fields = $this->fields($has_id, $union, $num_id);
         $from = $this->from($fields, $par_offset);
         $where = $this->where($par_offset);
 
@@ -1309,7 +1319,7 @@ class sql_creator
                                 if ($par != '') {
                                     $par_name = sql::PAR_PREFIX_MYSQL . $par;
                                 } else {
-                                    if ($chg_row_fld == sql::NAME_SEP . group::FLD_ID) {
+                                    if ($chg_row_fld == sql::NAME_SEP . group_db::FLD_ID) {
                                         $par_name = $chg_row_fld;
                                     } else {
                                         $par_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
@@ -1329,7 +1339,7 @@ class sql_creator
                                 if (($par_name == change::FLD_OLD_ID or $par_name == change::FLD_NEW_ID) and $par_name != '') {
                                     $par_name = sql::PAR_PREFIX . $chg_add_fld;
                                 } else {
-                                    if ($par_name == change::FLD_ROW_ID and $sc_par_lst->is_update_part()) {
+                                    if ($par_name == change_log::FLD_ROW_ID and $sc_par_lst->is_update_part()) {
                                         $par_name = sql::PAR_PREFIX . $chg_row_fld;
                                     } else {
                                         $par_name = sql::PAR_PREFIX . $par_name;
@@ -1744,7 +1754,7 @@ class sql_creator
         $ext = sql::NAME_SEP . self::FILE_INSERT;
         if ($this->is_value_class($class)) {
             // to log changes of values or results always the group id is used instead e.g. the four id phrase fields
-            $id_fld = group::FLD_ID;
+            $id_fld = group_db::FLD_ID;
             $id_fld_new = sql::NAME_SEP . $id_fld;
         } else {
             $id_fld_new = $this->var_name_new_id($sc_par_lst);
@@ -1765,7 +1775,11 @@ class sql_creator
         foreach ($fld_lst as $fld) {
             // init the log object
             if ($this->is_value_class($class)) {
-                $log = $val->log_object();
+                if (in_array($fld, def::NAMED_ID_FIELDS)) {
+                    $log = $val->log_named_id_object();
+                } else {
+                    $log = $val->log_object();
+                }
             } else {
                 $log = new change($usr);
             }
@@ -1781,7 +1795,7 @@ class sql_creator
             }
 
             // create the sql for the log entry
-            $qp_log = $log->sql_insert(
+            $qp_log = $log->sql_insert_log(
                 $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new, $fvt_lst->get_par_name($fld));
 
             // add the fields used to the list
@@ -1790,10 +1804,16 @@ class sql_creator
             if (!str_ends_with($qp->sql, ';')) {
                 $qp->sql .= '; ';
             }
+            // if the user is changed the the user name is included in the field list
+            $usr_id = $fvt_lst->get_value(user_db::FLD_ID);
+            // ... and the user id is in the id var
+            if (is_string($usr_id)) {
+                $usr_id = $fvt_lst->get_id(user_db::FLD_ID);
+            }
             // add the user id to the field list
             $par_lst_out->add_field(
                 user_db::FLD_ID,
-                $fvt_lst->get_value(user_db::FLD_ID),
+                $usr_id,
                 sql_par_type::INT);
             // add the action id to the field list
             $par_lst_out->add_field(
@@ -1863,7 +1883,8 @@ class sql_creator
             or $class == value_time::class
             or $class == value_text::class
             or $class == value_geo::class
-            or $class == value_time_series::class) {
+            or $class == value_time_series::class
+            or $class == group::class) {
             return true;
         } else {
             return false;
@@ -1942,16 +1963,16 @@ class sql_creator
             }
 
             // TODO replace dummy value table with an enum value
-            $qp_log = $log->sql_insert(
+            $qp_log = $log->sql_insert_log(
                 $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_val, $fvt_lst->get_par_name($fld));
 
             // TODO get the fields used in the change log sql from the sql
             $qp->sql .= ' ' . $qp_log->sql . ';';
 
             // add the user_id if needed
-            $log_usr_id = $fvt_lst->get_value(user_db::FLD_ID);
+            $log_usr_id = $usr->id;
             if ($log_usr_id == null) {
-                $log_usr_id = $usr->id;
+                $log_usr_id = $fvt_lst->get_value(user_db::FLD_ID);
             }
             $par_lst_out->add_field(
                 user_db::FLD_ID,
@@ -2213,7 +2234,7 @@ class sql_creator
         $log->set_class($sbx::class);
         $log->set_field($num_fld);
 
-        $log->group_id = $fvt_lst->get_value(group::FLD_ID);
+        $log->group_id = $fvt_lst->get_value(group_db::FLD_ID);
         $val_old = null;
         if ($sc_par_lst->is_update()) {
             $val_old = $fvt_lst->get_old($num_fld);
@@ -2229,7 +2250,7 @@ class sql_creator
         $sc_par_lst->add(sql_type::INSERT_PART);
 
         // create the sql for the log entry
-        $qp = $log->sql_insert($sc_log, $sc_par_lst, '', '', $num_fld);
+        $qp = $log->sql_insert_log($sc_log, $sc_par_lst, '', '', $num_fld);
 
         // fill the parameter list in order of usage in the sql
         $par_lst_out = new sql_par_field_list();
@@ -2266,12 +2287,12 @@ class sql_creator
         }
         if (is_numeric($log->group_id)) {
             $par_lst_out->add_field(
-                group::FLD_ID,
+                group_db::FLD_ID,
                 intval($log->group_id),
                 sql_par_type::INT);
         } else {
             $par_lst_out->add_field(
-                group::FLD_ID,
+                group_db::FLD_ID,
                 $log->group_id,
                 sql_par_type::TEXT);
         }
@@ -2637,7 +2658,7 @@ class sql_creator
      * @param int|string|array $id the id or list of ids to select the row
      * @param int $offset for the par number e.g. 4 for $4
      * @param string $id_field_par with the parameter name for a single field e.g. "$4" or "new_word_id"
-     * @param bool $is_named true if named paremeters like "_word_name" should be used
+     * @param bool $is_named true if named parameters like "_word_name" should be used
      * @return string with the where statement
      */
     private function sql_where_no_par(
@@ -2704,12 +2725,12 @@ class sql_creator
 
     /**
      * define the fields that should be returned in a select query
-     * @param string $fld_name list of the non-user specific fields that should be loaded from the database
+     * @param string $fld_name list of the non-user-specific fields that should be loaded from the database
      * @param sql_par_type $spt the aggregation type for the field
      */
     function add_usr_grp_field(string $fld_name, sql_par_type $spt): void
     {
-        // assuming that the user specific part is selected in the sub query
+        // assuming that the user-specific part is selected in the sub query
         $this->add_par(sql_par_type::INT_SUB, $this->usr_id, sql_db::USR_TBL . '.' . user_db::FLD_ID);
 
         $this->grp_field_lst[] = $fld_name;
@@ -2889,10 +2910,16 @@ class sql_creator
 
     /**
      * create the field statement based on the fields
-     * @param $has_id
+     * @param bool $has_id
+     * @param bool $union true if e.g. int fields should be converted to a text field to be able to union mixed fields
+     * @param bool $num_id true if the id is numeric of a field where the id might be a text e.g. the group_id
      * @return string the sql field statement
      */
-    private function fields($has_id): string
+    private function fields(
+        bool $has_id,
+        bool $union,
+        bool $num_id
+    ): string
     {
         // init
         $result = '';
@@ -3084,7 +3111,19 @@ class sql_creator
 
             if (!$fld_used) {
                 if ($this->usr_query or $this->join_type != '') {
-                    $result .= ' ' . sql_db::STD_TBL . '.' . $field;
+                    if ($union) {
+                        if (in_array($field, def::MIXED_ID_FIELDS) and $num_id) {
+                            if ($this->db_type() == sql_db::POSTGRES) {
+                                $result .= ' ' . sql_db::STD_TBL . '.' . $field . sql::CAST_TEXT_PG;
+                            } else {
+                                $result .= ' ' . sql::CAST_TEXT_START . sql_db::STD_TBL . '.' . $field . sql::CAST_TEXT_END;
+                            }
+                        } else {
+                            $result .= ' ' . sql_db::STD_TBL . '.' . $field;
+                        }
+                    } else {
+                        $result .= ' ' . sql_db::STD_TBL . '.' . $field;
+                    }
                     if ($field == $this->id_field) {
                         // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
                         if ($this->all_query) {
@@ -3187,35 +3226,35 @@ class sql_creator
             }
         }
 
-        // add user specific fields
+        // add user-specific fields
         foreach ($this->usr_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= $this->set_field_usr_text($field);
         }
 
-        // add user specific numeric fields
+        // add user-specific numeric fields
         foreach ($this->usr_num_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= $this->set_field_usr_num($field);
         }
 
-        // add user specific geo point fields
+        // add user-specific geo point fields
         foreach ($this->usr_geo_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= $this->set_field_usr_geo($field);
         }
 
-        // add user specific boolean fields
+        // add user-specific boolean fields
         foreach ($this->usr_bool_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= $this->set_field_usr_bool($field);
         }
 
-        // add user specific join fields
+        // add user-specific join fields
         foreach ($this->join_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result = $this->sep($result);
@@ -3226,7 +3265,7 @@ class sql_creator
             }
         }
 
-        // add user specific geo point join fields
+        // add user-specific geo point join fields
         foreach ($this->join_usr_geo_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result = $this->sep($result);
@@ -3237,7 +3276,7 @@ class sql_creator
             }
         }
 
-        // add user specific numeric join fields
+        // add user-specific numeric join fields
         foreach ($this->join_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result = $this->sep($result);
@@ -3248,49 +3287,49 @@ class sql_creator
             }
         }
 
-        // add user specific second join fields
+        // add user-specific second join fields
         foreach ($this->join2_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= $this->set_field_usr_text($field_esc, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $this->name_sql_esc($field . '2'));
         }
 
-        // add user specific numeric second join fields
+        // add user-specific numeric second join fields
         foreach ($this->join2_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= $this->set_field_usr_num($field_esc, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $this->name_sql_esc($field . '2'));
         }
 
-        // add user specific third join fields
+        // add user-specific third join fields
         foreach ($this->join3_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= $this->set_field_usr_text($field_esc, sql_db::LNK3_TBL, sql_db::ULK3_TBL, $this->name_sql_esc($field . '3'));
         }
 
-        // add user specific numeric third join fields
+        // add user-specific numeric third join fields
         foreach ($this->join3_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= $this->set_field_usr_num($field_esc, sql_db::LNK3_TBL, sql_db::ULK3_TBL, $this->name_sql_esc($field . '3'));
         }
 
-        // add user specific fourth join fields
+        // add user-specific fourth join fields
         foreach ($this->join4_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= $this->set_field_usr_text($field_esc, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $this->name_sql_esc($field . '4'));
         }
 
-        // add user specific numeric fourth join fields
+        // add user-specific numeric fourth join fields
         foreach ($this->join4_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= $this->set_field_usr_num($field_esc, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $this->name_sql_esc($field . '4'));
         }
 
-        // add user specific count join fields
+        // add user-specific count join fields
         foreach ($this->join_usr_count_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result .= $this->set_field_usr_count($result, $field_esc, sql_db::LNK_TBL, $this->name_sql_esc($field . '_count'));
@@ -3682,7 +3721,7 @@ class sql_creator
             }
         }
 
-        // select by the user specific name
+        // select by the user-specific name
         if ($typ == sql_par_type::TEXT_USR) {
             $sql_where .= '(' . sql_db::USR_TBL . '.';
             $sql_where .= $fld . " = " . $par->name;
@@ -3816,7 +3855,7 @@ class sql_creator
 
                     $par_pos = $i + 1 + $par_offset;
 
-                    // select by the user specific name
+                    // select by the user-specific name
                     if ($typ == sql_par_type::TEXT_USR) {
                         $result .= '(' . sql_db::USR_TBL . '.';
                         $result .= $this->par_lst->name($i) . " = " . $this->par_name($par_pos);
@@ -4257,13 +4296,13 @@ class sql_creator
         $sql .= '-- table structure ';
         if ($tbl_comment != '') {
             if ($usr_tbl) {
-                $sql .= 'to save user specific changes ' . $tbl_comment;
+                $sql .= 'to save user-specific changes ' . $tbl_comment;
             } else {
                 $sql .= $tbl_comment;
             }
         } else {
             if ($usr_tbl) {
-                $sql .= 'for user specific changes of ' . $table_used;
+                $sql .= 'for user-specific changes of ' . $table_used;
             } else {
                 $sql .= 'for ' . $table_used;
             }
@@ -4690,7 +4729,7 @@ class sql_creator
             if ($this->db_type == sql_db::POSTGRES) {
                 // return the database row id if the table uses auto id series
                 if (!in_array($this::class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
-                    // for the change log and user specific changes the id of the new change log entry is not needed
+                    // for the change log and user-specific changes the id of the new change log entry is not needed
                     // because the id is combination of user_id amd the row_id and both are know already
                     if (!$no_id_return) {
                         $sql .= ' ' . sql::RETURNING . ' ';
@@ -4825,7 +4864,7 @@ class sql_creator
     */
 
     /**
-     * @return string the SQL statement to for the user specific data
+     * @return string the SQL statement to for the user-specific data
      */
     function select_by_id_not_owner(int $id, ?int $owner_id = 0): string
     {
@@ -4835,7 +4874,7 @@ class sql_creator
         }
         $this->add_par(sql_par_type::CONST, '(excluded <> 1 OR excluded is NULL)');
 
-        $fields = $this->fields(true);
+        $fields = $this->fields(true, false, false);
         $from = $this->from($fields);
         $id_fld = $this->id_field;
         if ($owner_id > 0) {
@@ -4897,16 +4936,14 @@ class sql_creator
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
+            and $class != user_profile::class
             and $class != user_type::class
             and $class != user_official_type::class
-            and $class != user_profile::class) {
+            and $class != user_status::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
         // standard exceptions for nice english
-        if ($result == 'sys_log_statuss_id') {
-            $result = 'sys_log_status_id';
-        }
         if ($result == 'blocked_ip_id') {
             $result = 'ip_range_id';
         }
@@ -5059,8 +5096,11 @@ class sql_creator
         if ($result == 'change_values_geo_bigs') {
             $result = 'change_values_geo_big';
         }
+        if ($result == 'sys_log_statuums') {
+            $result = 'sys_log_statuum';
+        }
         if ($result == 'sys_log_statuss') {
-            $result = 'sys_log_status';
+            $result = 'sys_log_statuum';
         }
         if ($result == 'sys_logs') {
             $result = 'sys_log';
@@ -5071,11 +5111,17 @@ class sql_creator
         if ($result == 'pod_statuss') {
             $result = 'pod_status';
         }
+        if ($result == 'api_typess') {
+            $result = 'api_types';
+        }
         if ($result == 'phrase_table_statuss') {
             $result = 'phrase_table_status';
         }
         if ($result == 'userss') {
             $result = 'users';
+        }
+        if ($result == 'user_statuss') {
+            $result = 'user_statuum';
         }
         if ($result == 'value_times') {
             $result = 'values_time';
@@ -5098,9 +5144,21 @@ class sql_creator
         if ($result == 'user_valuess') {
             $result = 'user_values';
         }
+        if ($result == 'user_statuss') {
+            $result = 'user_statuum';
+        }
         // for the database upgrade process only
+        if ($result == 'job_statuss') {
+            $result = 'job_statuum';
+        }
         if ($result == 'job_typess') {
             $result = 'job_types';
+        }
+        if ($result == 'share_typess') {
+            $result = 'share_types';
+        }
+        if ($result == 'protection_typess') {
+            $result = 'protection_types';
         }
         if ($result == 'component_typess') {
             $result = 'component_types';
@@ -5111,8 +5169,14 @@ class sql_creator
         if ($result == 'verbss') {
             $result = 'verbs';
         }
+        if ($result == 'phrase_typess') {
+            $result = 'phrase_types';
+        }
         if ($result == 'viewss') {
             $result = 'views';
+        }
+        if ($result == 'views_typess') {
+            $result = 'views_types';
         }
         /*
         if ($this->db_type == self::MYSQL) {
@@ -5211,9 +5275,6 @@ class sql_creator
         if ($result == 'element_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
-        if ($result == 'sys_log_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
-        }
         if ($result == 'formula_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
@@ -5233,10 +5294,19 @@ class sql_creator
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = user_profile::FLD_NAME;
+        }
+        if ($result == 'status_name') {
+            $result = user_status::FLD_NAME;
+        }
+        if ($result == 'sys_log_level_name') {
+            $result = sys_log_level::FLD_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sys_log_status::FLD_NAME;
+        }
+        if ($result == 'job_status_name') {
+            $result = job_status::FLD_NAME;
         }
         if ($result == 'job_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
@@ -5514,17 +5584,19 @@ class sql_creator
      */
     function del_sql_list_without_log(string $class, string $id_field, array $id_lst): sql_par
     {
-        $lib = new library();
-
         $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
         $this->set_class($class, new sql_type_list());
         $this->add_where($id_field, $id_lst, sql_par_type::INT_LIST);
         $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table) . ' ';
         $sql .= sql::WHERE . ' ' . $id_field . ' ';
-        $sql .= sql::IN . ' (' . $this->par_name(1) . ')';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql .= sql::ANY . ' (' . $this->par_name(1) . ')';
+        } else {
+            $sql .= sql::IN . ' (' . $this->par_name(1) . ')';
+        }
         $qp->name .= '_by_ids';
         $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
-        $qp->par = [implode(',', $id_lst)];
+        $qp->par = ['{' . implode(',', $id_lst) . '}'];
         return $qp;
     }
 
@@ -5554,11 +5626,11 @@ class sql_creator
 
     /**
      * interface function for sql_usr_field
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $field_format the enum of the sql field type e.g. INT
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     function get_usr_field(
         string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL,
@@ -5569,10 +5641,10 @@ class sql_creator
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and text fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
     private function set_field_usr_text(
@@ -5583,10 +5655,10 @@ class sql_creator
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
     private function set_field_usr_num(
@@ -5597,10 +5669,10 @@ class sql_creator
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and geo point fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
     private function set_field_usr_geo(
@@ -5611,7 +5683,7 @@ class sql_creator
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
     private function set_field_num_dummy(string $field): string
@@ -5621,7 +5693,7 @@ class sql_creator
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and datetime fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
     private function set_field_date_dummy(string $field): string
@@ -5632,9 +5704,9 @@ class sql_creator
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
      * @param string $fields with a list of the query result field names for the group statement
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
     private function set_field_usr_count(
@@ -5649,8 +5721,8 @@ class sql_creator
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and boolean / tinyint fields
-     * @param string $field the field name of the user specific field
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $field the field name of the user-specific field
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
     private function set_field_usr_bool(
@@ -5661,13 +5733,13 @@ class sql_creator
     }
 
     /**
-     * create the sql statement to get the user specific value if it is set or the value for all users
+     * create the sql statement to get the user-specific value if it is set or the value for all users
      * uses $db_type is the SQL database type which is in this case independent of the class setting to be able to use it anywhere
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $field_format the enum of the sql field type e.g. INT
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
     private function sql_usr_field(

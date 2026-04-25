@@ -26,5 +26,5 @@ SELECT source_delete_log
        (3,
         3,
         57,
-        'The International System of Units',
-        1);
+        'Federal Statistical Office',
+        7);

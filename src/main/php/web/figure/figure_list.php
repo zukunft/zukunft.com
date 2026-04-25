@@ -82,7 +82,7 @@ class figure_list extends ListBase
         $result = false;
         if (!in_array($to_add->id(), $this->id_lst())) {
             $this->add_direct($to_add);
-            $this->set_lst_dirty();
+            $this->set_hash_dirty();
             $result = true;
         }
         return $result;

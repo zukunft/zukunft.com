@@ -36,16 +36,24 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_ENUM . 'user_types.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateMalformedStringException;
+use DateTime;
 
 class test_users
 {
@@ -90,6 +98,7 @@ class test_users
     {
         $usr = new user();
         $usr->ip_addr = users::TEST_USER_IP;
+        $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
         return $usr;
     }
 
@@ -99,12 +108,59 @@ class test_users
      */
     function user_filled(): user
     {
+        global $sys;
+
+        $t_trm = new test_terms($this->env);
+        $t_msk = new test_views($this->env);
+        $t_src = new test_sources($this->env);
+
         $usr = new user();
-        $usr->set_name(users::TEST_USER_NAME);
+        $usr->name = users::TEST_USER_NAME;
         $usr->ip_addr = users::TEST_USER_IP;
         $usr->email = users::TEST_USER_MAIL;
-        $usr->set_description(users::TEST_USER_COM);
+
+        $usr->password = users::TEST_USER_PASSWORD_FIX_HASH;
+        $usr->activation_key = users::TEST_USER_ACTIVATION_KEY;
+        $timeout = new DateTime(users::TEST_USER_LOGIN_TIME);
+        try {
+            // TODO Prio 1 get timeout duration from the system config
+            $timeout->modify('+1 day');
+        } catch (DateMalformedStringException $e) {
+            log_err('timeout setting failed due to ' . $e->getMessage());
+        }
+        $usr->activation_timeout = $timeout;
+        $usr->db_now = new DateTime(users::TEST_USER_LOGIN_TIME);
+        $usr->last_login = new DateTime(users::TEST_USER_LOGIN_TIME);
+        $usr->last_logoff = new DateTime(users::TEST_USER_LOGOFF_TIME);
+
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);
+        $usr->code_id = users::TEST_USER_ACTIVATION_KEY;
+        $usr->type_id = $sys->typ_lst->usr_typ->id(user_types::GUEST);
+        $usr->right_level = user_profiles::NORMAL_LEVEL;
+        $usr->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
         $usr->excluded = true;
+
+        $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
+        $usr->description = users::TEST_USER_COM;
+        $usr->first_name = users::TEST_USER_NAME;
+        $usr->last_name = users::TEST_USER_LAST_NAME;
+
+        $usr->trm = $t_trm->term();
+        $usr->msk = $t_msk->view();
+        $usr->src = $t_src->source_reserved();
+
+        return $usr;
+    }
+
+    /**
+     * @return user a user that can be used for database write testing and that will be removed after testing
+     */
+    function user_add(): user
+    {
+        $usr = new user();
+        $usr->ip_addr = users::TEST_USER_IP;
+        $usr->name = users::TEST_USER_NAME;
+        $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
         return $usr;
     }
 
@@ -113,10 +169,13 @@ class test_users
      */
     function user_sys_test(): user
     {
+        global $sys;
+
         $usr = new user();
         $usr->set(users::SYSTEM_TEST_ID, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
-        $usr->set_profile(user_profiles::TEST);
-        $usr->set_description(users::SYSTEM_TEST_COM);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::TEST);
+        $usr->description = users::SYSTEM_TEST_COM;
+        $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
         return $usr;
     }
 
@@ -125,17 +184,19 @@ class test_users
      */
     function user_sys_admin(): user
     {
+        global $sys;
+
         $usr = new user();
         $usr->set(users::SYSTEM_ADMIN_ID, users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
-        $usr->set_profile(user_profiles::ADMIN);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::ADMIN);
         return $usr;
     }
 
-    function user_dev(): user
+    function user_dev(user_message $msg): user
     {
         $usr = new user();
         $usr->set(users::DEV_ID, users::DEV_NAME, users::DEV_EMAIL);
-        $usr->set_profile(user_profiles::DEV);
+        $usr->set_profile(user_profiles::DEV, $msg);
         return $usr;
     }
 

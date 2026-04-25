@@ -75,7 +75,7 @@ class group_list extends sandbox_list
      */
 
     /**
-     * fill the grou list based on a database records
+     * fill the group list based on a database records
      * @param array $db_rows is an array of an array with the database values
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one formula link has been added
@@ -136,7 +136,7 @@ class group_list extends sandbox_list
         $qp->name = $lib->class_to_name(group_list::class) . '_by_phr';
         $par_types = array();
         // loop over the possible tables where the group name overwrite might be stored in this pod
-        foreach (group::TBL_LIST as $tbl_typ) {
+        foreach (group_db::TBL_LIST as $tbl_typ) {
             $sc->reset();
             $qp_tbl = $this->load_sql_by_phr_single($sc, $phr, $tbl_typ);
             if ($sc->db_type() != sql_db::MYSQL) {
@@ -176,7 +176,7 @@ class group_list extends sandbox_list
     {
         $qp = $this->load_sql_init($sc, group::class, 'phr', $sc_par_lst);
         $grp_id = new group_id();
-        $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE);
+        $sc->add_where(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE);
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
@@ -213,7 +213,7 @@ class group_list extends sandbox_list
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->get_user()->id);
-        $sc->set_fields(group::FLD_NAMES);
+        $sc->set_fields(group_db::FLD_NAMES);
         return $qp;
     }
 
@@ -248,8 +248,8 @@ class group_list extends sandbox_list
         $qp->name = $class . '_by_ids_fast';
         $sc->set_name($qp->name);
 
-        $sc->add_where(group::FLD_ID, $grp_ids);
-        $sc->set_order(group::FLD_ID);
+        $sc->add_where(group_db::FLD_ID, $grp_ids);
+        $sc->set_order(group_db::FLD_ID);
         $sc->set_page($limit, $offset);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -299,8 +299,8 @@ class group_list extends sandbox_list
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(group::FLD_ID, $grp_ids);
-        $sc->set_order(group::FLD_ID);
+        $sc->add_where(group_db::FLD_ID, $grp_ids);
+        $sc->set_order(group_db::FLD_ID);
         $sc->set_page($limit, $offset);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -387,7 +387,7 @@ class group_list extends sandbox_list
     - $frm_used:   the words and triples that are used in the formula e.g. "this" and "next" for "increase"
 
     the function is should be based on the group table which is supposed to be always up to date
-    including the user specific exceptions based on the formula expression
+    including the user-specific exceptions based on the formula expression
 
     used to request an update for a formula result for each phrase group
     e.g. the formula is assigned to "company" ($frm_linked) and the "operating income" formula result should be calculated
@@ -534,11 +534,11 @@ class group_list extends sandbox_list
             foreach ($val_rows as $val_row) {
                 // add the phrase group of the value or formula result add the time using a combined index
                 // because a time word should never be part of a phrase group to have a useful number of groups
-                log_debug('add id ' . $val_row[group::FLD_ID]);
+                log_debug('add id ' . $val_row[group_db::FLD_ID]);
                 // log_debug('add time id ' . $val_row[value_db::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
                 $val_grp = new group($this->get_user());
-                $val_grp->load_by_id($val_row[group::FLD_ID]);
+                $val_grp->load_by_id($val_row[group_db::FLD_ID]);
                 $used_phr_lst = clone $val_grp->phrase_list();
                 log_debug('used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the formula name
@@ -547,7 +547,7 @@ class group_list extends sandbox_list
                 // exclude the result phrases
                 $phr_lst_res_name = '';
                 if (isset($phr_lst_res)) {
-                    $used_phr_lst->diff($phr_lst_res);
+                    $used_phr_lst->remove($phr_lst_res);
                     log_debug('removed result phrases ' . $phr_lst_res->dsp_id() . ' from used_phr_lst ' . $used_phr_lst->dsp_id());
                     $phr_lst_res_name = $phr_lst_res->dsp_id();
                 }
