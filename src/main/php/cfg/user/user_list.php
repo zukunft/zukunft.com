@@ -362,24 +362,6 @@ class user_list
     }
 
 
-    // fill the user objects of the list based on a sql
-    // TODO review
-    private function load_sql_old($sql, sql_db $db_con): void
-    {
-
-        $db_usr_lst = $db_con->get_old($sql);
-
-        if ($db_usr_lst != null) {
-            foreach ($db_usr_lst as $db_usr) {
-                $usr = new user;
-                $usr->id = $db_usr[user_db::FLD_ID];
-                $usr->name = $db_usr[user_db::FLD_NAME];
-                $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
-                $this->lst[] = $usr;
-            }
-        }
-    }
-
     // return a list of all users that have done at least one modification compared to the standard
     function load_active(): array
     {

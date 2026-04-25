@@ -2210,7 +2210,12 @@ class value_base extends sandbox_value
                 }
                 $lst->add_field(
                     source_db::FLD_ID,
+                    $this->source?->name(),
+                    sql_field_type::TEXT,
+                    $sbx->source?->name(),
+                    source_db::FLD_NAME,
                     $this->source_id(),
+                    $sbx->source?->id(),
                     sql_field_type::INT
                 );
             }

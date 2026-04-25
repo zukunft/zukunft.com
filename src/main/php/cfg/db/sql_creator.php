@@ -1775,7 +1775,11 @@ class sql_creator
         foreach ($fld_lst as $fld) {
             // init the log object
             if ($this->is_value_class($class)) {
-                $log = $val->log_object();
+                if (in_array($fld, def::NAMED_ID_FIELDS)) {
+                    $log = $val->log_named_id_object();
+                } else {
+                    $log = $val->log_object();
+                }
             } else {
                 $log = new change($usr);
             }

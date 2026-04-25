@@ -75,6 +75,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'ref_type.php';
 //include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_REF . 'source_db.php';
 //include_once paths::MODEL_REF . 'source_list.php';
 //include_once paths::MODEL_REF . 'source_type.php';
 //include_once paths::MODEL_RESULT . 'result.php';
@@ -159,6 +160,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -551,6 +553,12 @@ class def
         change_values_geo_norm::class,
         change_values_geo_big::class,
         change_link::class,
+    ];
+
+    // database fields that are an id where the linked name should be included in the change log
+    // e.g. if the source_id of an value is changed the related source name should be included in the log
+    const array NAMED_ID_FIELDS = [
+        source_db::FLD_ID,
     ];
 
     // TODO Prion 1 review and combine with CLASSES_NO_CHANGE_LOG

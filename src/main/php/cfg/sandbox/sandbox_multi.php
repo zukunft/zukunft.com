@@ -1953,6 +1953,18 @@ class sandbox_multi extends db_object_multi_user
         return $log;
     }
 
+    function log_named_id_object(): change|change_value|changes_norm|changes_big
+    {
+        if ($this->is_prime()) {
+            $log = new change($this->get_user());
+        } elseif ($this->is_big()) {
+            $log = new changes_big($this->get_user());
+        } else {
+            $log = new changes_norm($this->get_user());
+        }
+        return $log;
+    }
+
     /**
      * set the log entry parameter for a group object with a bigint key
      * for all not named objects like links, this function is overwritten

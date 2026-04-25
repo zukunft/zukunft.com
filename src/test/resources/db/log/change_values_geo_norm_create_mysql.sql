@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS change_values_geo_norm
     change_action_id smallint   NOT NULL COMMENT 'the crud action',
     group_id         char(112)  NOT NULL,
     change_field_id  smallint   NOT NULL,
-    old_value        point  DEFAULT NULL,
-    new_value        point  DEFAULT NULL,
+    old_value        point  DEFAULT NULL COMMENT 'the value before the change',
+    new_value        point  DEFAULT NULL COMMENT 'the value after the change',
     old_id           bigint DEFAULT NULL COMMENT 'old value id',
     new_id           bigint DEFAULT NULL COMMENT 'new value id',
     PRIMARY KEY (change_id)

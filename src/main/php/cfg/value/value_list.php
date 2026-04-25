@@ -1434,7 +1434,8 @@ class value_list extends sandbox_value_list
         // the id and the user must be set
         $db_con->set_class(value::class);
         $db_con->set_usr($this->get_user()->id);
-        $sql = $db_con->select_by_set_id();
+        // TODO Prio 1 review
+        /* $sql = $db_con->select_by_set_id();
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
             $val = new value($this->get_user());
@@ -1443,7 +1444,7 @@ class value_list extends sandbox_value_list
                 $result = false;
             }
             log_debug($lib->dsp_count($this->lst()));
-        }
+        } */
         log_debug($lib->dsp_count($this->lst()));
         return $result;
     }

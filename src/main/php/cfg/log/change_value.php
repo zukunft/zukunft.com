@@ -83,6 +83,8 @@ class change_value extends change_log
     const string TBL_COMMENT = 'to log all numeric value changes done by any user on all kind of values (table, prime, big and standard';
     const string FLD_FIELD_ID = 'change_field_id';
     const string FLD_GROUP_ID = 'group_id';
+    const string FLD_OLD_VALUE_COM = 'the value before the change';
+    const string FLD_NEW_VALUE_COM = 'the value after the change';
     const string FLD_ROW_ID = self::FLD_GROUP_ID;
 
     // all database field names
@@ -101,8 +103,8 @@ class change_value extends change_log
     // field list to log the actual change of the value with a standard group id
     const array FLD_LST_CHANGE = array(
         [change::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [change::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
-        [change::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
+        [change::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', change_value::FLD_OLD_VALUE_COM],
+        [change::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', change_value::FLD_NEW_VALUE_COM],
         [change::FLD_OLD_ID, change::FLD_OLD_ID_SQL_TYP, sql_field_default::NULL, '', '', change::FLD_OLD_ID_COM],
         [change::FLD_NEW_ID, change::FLD_NEW_ID_SQL_TYP, sql_field_default::NULL, '', '', change::FLD_NEW_ID_COM],
     );

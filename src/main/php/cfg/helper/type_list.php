@@ -775,9 +775,10 @@ class type_list extends ListOfIdNamedCodeObjects
      * return the database row id based on the name
      *
      * @param string $name of the type
+     * @param bool $log_err can be set to false if it is not an issue the id is missing
      * @return int the database id for the given code_id
      */
-    function id_by_name(string $name): int
+    function id_by_name(string $name, bool $log_err = true): int
     {
         $result = 0;
         if ($name != '' and $name != null) {
@@ -785,7 +786,9 @@ class type_list extends ListOfIdNamedCodeObjects
                 $result = parent::id_by_name($name);
             } else {
                 $result = self::CODE_ID_NOT_FOUND;
-                log_err('Type id not found for name "' . $name . '" in ' . implode(',', $this->names()));
+                if ($log_err) {
+                    log_err('Type id not found for name "' . $name . '" in ' . implode(',', $this->names()));
+                }
             }
         } else {
             log_debug('Type code id not not set');
