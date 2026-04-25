@@ -34,12 +34,12 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -116,7 +116,7 @@ class phrase_list_read_tests
         // all children
         $test_name = 'The default number of forecast years is a system configuration parameter';
         global $cfg;
-        $auto_years = $cfg->get_by([triples::AUTOMATIC_CREATE, words::YEAR], 10);
+        $auto_years = $cfg->get_by([triples::AUTOMATIC_CREATE, words::YEAR], def::FALLBACK_RETRY);
         $t->assert_greater($test_name, 0, $auto_years);
 
         // Canton is related to Switzerland and Zurich

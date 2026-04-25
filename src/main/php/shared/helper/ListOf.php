@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\shared\helper;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class ListOf
 {
@@ -62,7 +63,7 @@ class ListOf
         }
     }
 
-    function reset(bool $keep_user = false): void
+    function reset(): void
     {
         $this->set_lst(array());
     }
@@ -75,15 +76,25 @@ class ListOf
     /**
      * TODO check if a more specific return object can be used
      * get one object of the list by the key
+     * TODO Prio 2 maybe rename to get_by_array_key not to confuse it with add_by_key which adds an item with a complex key instead of just a name as unique key
+     *
      * @param string|int $key the key of the lst array
+     * @param user_message|null $msg to report missing keys
      * @return IdObject|TextIdObject|CombineObject|null the found user sandbox object or null if no id is found
      */
-    function get(string|int $key): IdObject|TextIdObject|CombineObject|null
+    function get_by_key(
+        string|int        $key,
+        user_message|null $msg = null
+    ): IdObject|TextIdObject|CombineObject|null
     {
         if (array_key_exists($key, $this->lst)) {
             return $this->lst[$key];
         } else {
-            log_err($key . ' missing in ' . $this::class);
+            $lib = new library();
+            $msg?->add(msg_id::MISSING_KEY, [
+                msg_id::VAR_NAME => $key,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+            ]);
             return null;
         }
     }
@@ -143,20 +154,21 @@ class ListOf
      */
 
     /**
+     * TODO Prio 3 if sandbox add function is always renamed to db_insert, rename to add
      * add an object to the list and by default avoid duplicates
      * in most cases overwritten by the child objects that are e.g. unique by the database id
      *
      * @param IdObject|TextIdObject|CombineObject $obj_to_add an object with a unique database id that should be added to the list
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
-     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     * @param Message $msg to report which entry is double
+     * @returns bool false if the object has not been added
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject $obj_to_add,
-        bool $allow_duplicates = false
-    ): user_message
+        bool                                $allow_duplicates = false,
+        Message                             $msg = new Message()
+    ): bool
     {
-        $usr_msg = new user_message();
-
         // check boolean first because in_array might take longer
         if ($allow_duplicates) {
             $this->add_direct($obj_to_add);
@@ -164,16 +176,19 @@ class ListOf
             if (!in_array($obj_to_add, $this->lst())) {
                 $this->add_direct($obj_to_add);
             } else {
-                $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
+                    msg_id::VAR_NAME => $obj_to_add->dsp_id(),
+                    msg_id::VAR_CLASS_NAME => $obj_to_add::class
+                ]);
             }
         }
-        return $usr_msg;
+        return $msg->is_ok();
     }
 
     /**
-     * add the object to the list without duplicate check
+     * add the object to the list without duplicate check,
      * but including the updating the hash tables that are not dirty
-     * is expected to be overwritten by all children that have a hash table
+     * are expected to be overwritten by all children that have a hash table
      *
      * @param IdObject|TextIdObject|CombineObject|value_types $obj_to_add
      * @return void
@@ -184,6 +199,8 @@ class ListOf
     }
 
     /**
+     * TODO Prio 3 rename to remove
+     *
      * unset an object of the list
      * TODO move to ListOfIdObjects ? And if not, explain in a comment why
      *
@@ -194,7 +211,7 @@ class ListOf
     {
         $result = false;
         $key_lst = array_keys($this->lst);
-        if (array_key_exists($key, $key_lst)) {
+        if (in_array($key, $key_lst)) {
             unset ($this->lst[$key]);
             $result = true;
         }

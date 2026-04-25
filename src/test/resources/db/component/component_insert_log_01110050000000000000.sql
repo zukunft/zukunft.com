@@ -46,13 +46,13 @@ SELECT component_insert_log_01110050000000000000
     ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10);
 
 SELECT component_insert_log_01110050000000000000 (
-               'Word'::text,
+               'system form field name'::text,
                3::bigint,
                1::smallint,
                51::smallint,
                743::smallint,
                52::smallint,
-               'simply show the word or triple name'::text,
+               'the name field in a form'::text,
                53::smallint,
                'word name'::text,
                8::smallint);

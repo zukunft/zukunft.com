@@ -47,11 +47,6 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 class job_type extends type_object
 {
 
-    // list of the job types that have a coded functionality
-    const string WORD_DELETE = "word_delete";
-    const string TRIPLE_DELETE = "triple_delete";
-
-
     /*
      * database link
      */

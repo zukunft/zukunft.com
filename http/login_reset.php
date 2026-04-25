@@ -36,11 +36,14 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 
 $html = new html_base();
+$msg_txt = '';
 
 // TODO include("auth.php");
 // all taken from
@@ -71,23 +74,31 @@ if ($db_con->is_open()) {
 
         $result = ''; // reset the html code var
 
-        $_SESSION['logged'] = FALSE;
+        $_SESSION[url_var::SESSION_LOGGED] = FALSE;
 
-        if (isset($_POST['submit'])) {
+        if (isset($_POST[url_var::POST_SUBMIT])) {
 
             // Lets search the database for the user name and password
             // don't use the sf shortcut here!
             // TODO prevent code injection
+            $usr_name = $_POST[url_var::USERNAME_HUMAN];
+            $usr_mail = $_POST[url_var::EMAIL_HUMAN];
             $db_usr = new user();
-            if ($db_usr->load_by_name_or_email($_POST['username'], $_POST['email'])) {
+            if ($db_usr->load_by_name_or_email($usr_name, $usr_mail)) {
 
                 // save activation key
                 $key = getRandomKey();
-                $db_con->set_class(user::class);
-                $db_con->set_usr($usr->id);
-                if (!$db_con->update_old($db_usr->id, array("activation_key", "activation_timeout"), array($db_con->sf($key), 'NOW() + INTERVAL 1 DAY'))) {
-                    log_err('Saving of activation key failed for user ' . $db_usr->id, 'login_reset');
+                $timeout = new DateTime();
+                try {
+                    // TODO Prio 1 get timeout duration from the system config
+                    $timeout->modify('+1 day');
+                } catch (DateMalformedStringException $e) {
+                    log_err('timeout setting failed due to ' . $e->getMessage());
                 }
+
+                $db_usr->activation_key = $key;
+                $db_usr->activation_timeout = $timeout;
+                $db_usr->save($usr_msg);
 
                 $mail_to = $db_usr->email;
                 $mail_subject = 'zukunft.com - password reset request';
@@ -103,12 +114,12 @@ if ($db_con->is_open()) {
                 //header("Location: view.php?sid=".SID.""); // Modify to go to the page you would like
                 exit;
             } else {
-                $msg .= '<p style="color:red">Username and email no found. Please try again.</p><br>';
+                $msg_txt .= '<p style="color:red">Username and email no found. Please try again.</p><br>';
             }
         }
     }
 
-    if (!$_SESSION['logged']) {
+    if (!$_SESSION[url_var::SESSION_LOGGED]) {
         $html = new html_base();
         $result .= $html->dsp_form_center();
         $result .= $html->logo_big();
@@ -120,7 +131,7 @@ if ($db_con->is_open()) {
         $result .= '<input name="username"><br><br> ';
         $result .= 'Email address:<br> ';
         $result .= '<input type="' . html_base::INPUT_EMAIL . '" name="email"><br><br> ';
-        $result .= $msg;
+        $result .= $msg_txt;
         $result .= '  <input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Reset password"> ';
         $result .= '</form>   ';
         $result .= '</div>   ';

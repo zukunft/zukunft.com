@@ -38,9 +38,9 @@ class results
     // a list of fixed values that are used for system tests
     // *_ID is the group id of the value
     // *_FORM is the default formatted value
-    CONST TV_INT = 123456;
-    CONST TV_FLOAT = 12.3456;
-    CONST TV_PCT = 0.01234;
-    CONST TV_INCREASE_LONG = '0.0078718332961637'; // the increase of the swiss inhabitants from 2019 to 2020
+    CONST int TV_INT = 123456;
+    CONST float TV_FLOAT = 12.3456;
+    CONST float TV_PCT = 0.01234;
+    CONST string TV_INCREASE_LONG = '0.0078718332961637'; // the increase of the swiss inhabitants from 2019 to 2020
 
 }

@@ -33,14 +33,13 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -48,12 +47,14 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -110,6 +111,8 @@ class word_tests
         $t->assert_sql_insert($sc, $wrd_view, [sql_type::LOG, sql_type::USER]);
         $wrd_no_view = $t_wrd->word_view_not_4_user();
         $t->assert_sql_save_fields($sc, $wrd_no_view, $wrd_view, [sql_type::LOG, sql_type::USER]);
+        $wrd_view = $t_wrd->word_excluded();
+        $t->assert_sql_insert($sc, $wrd_view, [sql_type::LOG, sql_type::USER]);
         // the insert log test is already tested by the horizontal test so check if an incomplete word object returns a user message
         $wrd = $t_wrd->word_incomplete();
         $t->assert_sql_insert_fail($sc, $wrd, [sql_type::LOG]);
@@ -119,8 +122,10 @@ class word_tests
         $wrd_renamed = $wrd->cloned(words::TEST_RENAMED);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
-        $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::USER]);
+        $wrd_renamed_admin = $wrd->cloned(words::TEST_RENAMED);
+        $wrd_renamed_admin->set_protection_by_code_id(protection_types::ADMIN);
+        $t->assert_sql_update($sc, $wrd_renamed_admin, $wrd, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update failed cases e.g. description update');
         $wrd = $t_wrd->word();
@@ -172,48 +177,48 @@ class word_tests
         $t->assert_json_file(new word($usr), $json_file);
 
         $t->subheader($ts . 'sync and fill');
-        $test_name = 'check if the word fill function set all database fields and the view is updated';
+        $test_name = 'check if the word fill function set all database fields';
         $usr_msg = new user_message();
         $wrd_imp = $t_wrd->word_filled();
-        $wrd_db = $t_wrd->word();
+        $wrd_db = new word($wrd_imp->get_user());
         $wrd_db->fill($wrd_imp, $usr_sys);
-        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
-        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [word_db::FLD_VIEW]);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
+        $t->assert($t->name . 'fill: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if importing of just the admin protection does overwrite the protection in the database';
         $wrd_db = $t_wrd->word_filled();
         $wrd_imp = $t_wrd->word();
         $wrd_db_after = clone $wrd_db;
         $wrd_db_after->fill($wrd_imp, $usr_sys);
-        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_db_after, $usr_msg)->names();
-        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [phrase::FLD_TYPE, sandbox::FLD_PROTECT]);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_db_after, $usr_msg)->names();
+        $t->assert($t->name . 'fill: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if importing just the word name does not overwrite any database fields';
         $wrd_db = $t_wrd->word_filled();
         $wrd_imp = $t_wrd->word_name_only();
         $wrd_db_after = clone $wrd_db;
         $wrd_db_after->fill($wrd_imp, $usr_sys);
-        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_db_after, $usr_msg)->names();
-        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, []);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_db_after, $usr_msg)->names();
+        $t->assert($t->name . 'fill: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if the word id is filled up';
         $wrd_imp = $t_wrd->word();
         $wrd_imp->id = 0;
         $wrd_db = $t_wrd->word();
         $wrd_imp->fill($wrd_db, $usr_sys);
-        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, []);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if description can be set to an empty string';
         $wrd_imp = $t_wrd->word();
         $wrd_imp->set_description('');
         $wrd_db = $t_wrd->word();
         $wrd_db->fill($wrd_imp, $usr_sys);
-        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sql_db::FLD_DESCRIPTION]);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [sql_db::FLD_DESCRIPTION]);
         $test_name = 'check if the code id cannot be set by normal user';
         $wrd_imp = $t_wrd->word();
         $wrd_imp->set_code_id('test code id', $usr_sys);
         $wrd_db = $t_wrd->word();
         $wrd_db->fill($wrd_imp, $usr);
-        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sql_db::FLD_CODE_ID]);
+        $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [sql_db::FLD_CODE_ID]);
 
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_wrd = $t_wrd->word_name_only();

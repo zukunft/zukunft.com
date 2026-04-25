@@ -5,6 +5,8 @@
     shared/library.php - some useful function e.g. for string handling
     ------------------
 
+    TODO Prio 2 move the functions that use project objects to object_mapper class
+
 
     This file is part of zukunft.com - calc with words
 
@@ -36,13 +38,15 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
 //include_once paths::MODEL_CONST . 'def.php';
+//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_REF . 'source_db.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_db.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
-use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
@@ -54,16 +58,22 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -73,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -125,14 +136,17 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
-use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
@@ -397,13 +411,19 @@ class library
     }
 
     /**
-     * @param string $text the text from which the left part should be taken e.g. "select" of "select>end ignore"
-     * @param string $maker e.g. ">end"
+     * @param string|null $text the text from which the left part should be taken e.g. "select" of "select>end ignore"
+     * @param string|null $maker e.g. ">end"
      * @return string the selected text e.g. "select"
      */
-    function str_left_of(string $text, string $maker): string
+    function str_left_of(?string $text, ?string $maker): string
     {
         $result = "";
+        if ($text == null) {
+            $text = "";
+        }
+        if ($maker == null) {
+            $maker = "";
+        }
         $pos = strpos($text, $maker);
         if ($pos > 0) {
             $result = substr($text, 0, strpos($text, $maker));
@@ -539,17 +559,21 @@ class library
      * and replace the variable names with the variable values
      *
      * @param array $msg_var_lst list with the variable names and the matching values
-     * @param object $mtr the translator object of the back or frontend
+     * @param object|null $mtr the translator object of the back or frontend
      * @return string the translated text for all messages with vars
      */
-    function msg_var_text(array $msg_var_lst, object $mtr): string
+    function msg_var_text(array $msg_var_lst, object|null $mtr = null): string
     {
         $part = '';
         foreach ($msg_var_lst as $msg_var) {
             if ($part != '') {
                 $part .= ', ';
             }
-            $msg_txt = $mtr->txt($msg_var[0]);
+            if ($mtr != null) {
+                $msg_txt = $mtr->txt($msg_var[0]);
+            } else {
+                $msg_txt = $msg_var[0];
+            }
             foreach ($msg_var[1] as $key => $var) {
                 $msg_txt = $this->msg_var_replace($msg_txt, $key, $var);
             }
@@ -566,10 +590,10 @@ class library
      *
      * @param string $msg_txt the message text before the variable replacement
      * @param string $key the variable name
-     * @param string $var the value to be used
+     * @param string|null $var the value to be used
      * @return string the message text after the variable replacement
      */
-    function msg_var_replace(string $msg_txt, string $key, string $var): string
+    function msg_var_replace(string $msg_txt, string $key, ?string $var): string
     {
         // avoid using escaped var makers (probably not 100% correct)
         $msg_txt = str_replace(
@@ -2780,10 +2804,16 @@ class library
     function class_to_name(string $class): string
     {
         $result = $this->str_right_of_or_all($class, '\\');
+        // TODO Prio 3 try to avoid these exceptions
         // for some lists and exceptions
         switch ($class) {
-            case view_relation_types::class;
+            case api_types::class;
+            case component_types::class;
             case phrase_types::class;
+            case protection_types::class;
+            case share_types::class;
+            case view_relation_types::class;
+            case view_types::class;
                 $result = str_replace('_types', '_type', $result);
                 break;
             case sys_log_status_list::class;
@@ -2825,11 +2855,11 @@ class library
                 $id_fld = user_profile::FLD_ID;
                 break;
             case sys_log::class;
-                $id_fld = sys_log::FLD_ID;
+                $id_fld = sys_log_db::FLD_ID;
                 break;
             case result::class:
             case value::class;
-                $id_fld = group::FLD_ID;
+                $id_fld = group_db::FLD_ID;
                 break;
         }
         return $id_fld;
@@ -2856,6 +2886,9 @@ class library
                 break;
             case formula::class;
                 $result = words::FORMULAS;
+                break;
+            case element::class;
+                $result = words::ELEMENTS;
                 break;
             case view::class;
                 $result = words::VIEWS;
@@ -2930,20 +2963,17 @@ class library
      */
     function class_to_empty_json(string $class): string
     {
-        switch ($class) {
-            case verb::class:
-            case triple::class:
-            case ref::class;
-            case formula_link::class;
-            case view_relation::class;
-            case term_view::class;
-            case component_link::class;
-                $json = test_api::JSON_ARRAY_ONLY;
-                break;
-            default:
-                $json = test_api::JSON_NAME_ONLY;
-        }
-        return $json;
+        return match ($class) {
+            user::class,
+            verb::class,
+            triple::class,
+            ref::class,
+            formula_link::class,
+            view_relation::class,
+            term_view::class,
+            component_link::class => test_api::JSON_ARRAY_ONLY,
+            default => test_api::JSON_NAME_ONLY,
+        };
     }
 
     /**
@@ -2984,8 +3014,7 @@ class library
             and $class != changes_big::class
             and $class != change_values_prime::class
             and $class != change_values_norm::class
-            and $class != change_values_big::class
-            and $class != sys_log_status::class) {
+            and $class != change_values_big::class) {
             $result .= sql_db::TABLE_EXTENSION;
         }
         // TODO remove these exception
@@ -3006,6 +3035,27 @@ class library
         }
         if ($result == 'value_geos') {
             $result = 'values_geo';
+        }
+        if ($result == 'user_statuss') {
+            $result = 'user_statuum';
+        }
+        if ($result == 'user_statuums') {
+            $result = 'user_statuum';
+        }
+        if ($result == 'job_statuss') {
+            $result = 'job_statuum';
+        }
+        if ($result == 'sys_log_statuss') {
+            $result = 'sys_log_statuum';
+        }
+        if ($result == 'sys_log_statuums') {
+            $result = 'sys_log_statuum';
+        }
+        if ($result == 'sys_logs') {
+            $result = 'sys_log';
+        }
+        if ($result == 'configs') {
+            $result = 'config';
         }
         return $result;
     }
@@ -3105,13 +3155,15 @@ class library
             case $this->class_to_name(component_link::class):
                 $result = $this->class_to_name(component::class);
                 break;
-            case $this->class_to_name(sys_log_type::class):
+            case $this->class_to_name(sys_log_level::class):
             case $this->class_to_name(sys_log_status::class):
             case $this->class_to_name(sys_log_function::class):
+            case $this->class_to_name(job_status::class):
             case $this->class_to_name(job_type::class):
-            case $this->class_to_name(user_type::class):
             case $this->class_to_name(user_profile::class):
+            case $this->class_to_name(user_type::class):
             case $this->class_to_name(user_official_type::class):
+            case $this->class_to_name(user_status::class):
             case $this->class_to_name(protection_type::class):
             case $this->class_to_name(share_type::class):
             case $this->class_to_name(phrase_type::class):
@@ -3188,6 +3240,22 @@ class library
         $url_part = parse_url($url);
         parse_str($url_part["query"], $url_array);
         return $url_array;
+    }
+
+    /**
+     * makes sure that the var text used in a url is not misused for unwanted redirections
+     * @param string|null $var the text as received from the user
+     * @return string the var without unwanted redirects so that it can be used as url
+     */
+    function filter_var(?string $var): string
+    {
+        $var = filter_var($var ?? '', FILTER_SANITIZE_URL);
+        // allow only path with '/', but not with '//'
+        if (!preg_match('#^/[^/]#', $var)) {
+            // the default value as fallback
+            $var = '';
+        }
+        return $var;
     }
 
     /**

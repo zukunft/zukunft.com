@@ -38,6 +38,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::WEB . 'frontend.php';
+//include_once paths::SHARED_CONST . 'def.php';
+//include_once paths::SHARED_CONST . 'files.php';
 //include_once paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once paths::SHARED_ENUM . 'messages.php';
 //include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -47,6 +49,8 @@ include_once html_paths::WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -89,15 +93,79 @@ class html_base
 
     const string IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
 
+    const string METHOD_POST = 'post';
+
     const string SIZE_FULL = 'full';
     const string SIZE_HALF = 'half';
 
     const string WIDTH_FULL = '800px';
     const string WIDTH_HALF = '400px';
 
+    // to sort
+    const string DOC_HTML = '<!DOCTYPE html>';
+    const string CLASS_MAIN = 'main-container';
+    const string CLASS_FOOTER = 'site-footer';
+    const string CLASS_INPUT_SECTION = 'search-section';
+    const string CLASS_INPUT = 'standard-input';
+    const string CLASS_BUTTON = 'btn';
+
+
+    /*
+     * page
+     */
+
+    /**
+     * create a simple html page based on header, body and footer html code
+     * @param string $lan the language code of the text
+     * @param string $head the header HTML code
+     * @param string $body the body HTML code
+     * @param string $foot the footer HTML code
+     * @returns string the HTML page code
+     */
+    function page_html(string $lan, string $head, string $body, string $foot): string
+    {
+        return self::DOC_HTML . $this->page_lan($head . $body . $foot, $lan);
+    }
+
+
     /*
      * header & footer
      */
+
+    /**
+     * the page header for simple html pages like the login page
+     * @param string $title simple the HTML title used
+     * @returns string the simple HTML header for unit tests
+     */
+    function header_html(string $title, string $pod_name): string
+    {
+        $txt = $this->charset();
+        $txt .= $this->viewport();
+        $txt .= $this->title($title, $pod_name);
+        $txt .= $this->stylesheet();
+        return $this->head($txt);
+    }
+
+    /**
+     * wrap the main body tag around html body code
+     * @param string $txt the html body code
+     * @return string the warped body code
+     */
+    function main_body(string $txt): string
+    {
+        return $this->body($this->main($txt));
+    }
+
+    /**
+     * the page footer for simple html pages like the login page
+     * @returns string the simple HTML footer for unit tests
+     */
+    function footer_html(): string
+    {
+        $txt = $this->nav($this->about() . ' &middot; ' . $this->privacy());
+        $txt .= $this->p($this->foot_text());
+        return $this->foot($txt);
+    }
 
     /**
      * @param string $title simple the HTML title used
@@ -213,7 +281,7 @@ class html_base
 
     /**
      * @param bool $no_about
-     * @returns string the general HTML footer
+     * @return string the general HTML footer
      */
     function footer(bool $no_about = false): string
     {
@@ -464,6 +532,18 @@ class html_base
         return $result;
     }
 
+    /**
+     * @returns string the increased zukunft.com logo to display it in the center
+     */
+    function logo_flex(): string
+    {
+        $result = '<div class="logo-section">';
+        $result .= '<a href="/http/view.php" title="zukunft.com Logo">';
+        $result .= '<img src="' . self::IMG_LOGO . '" alt="zukunft.com"  class="brand-logo">';
+        $result .= '</a>';
+        $result .= '</div>';
+        return $result;
+    }
 
     /*
      * the HTML table functions used in zukunft.com
@@ -684,7 +764,7 @@ class html_base
      */
     function form_text(string  $field,
                        ?string $txt_value = '',
-                       msg_id $label = msg_id::FORM_FIELD_NAME,
+                       msg_id  $label = msg_id::FORM_FIELD_NAME,
                        string  $type = '',
                        string  $attribute = ''): string
     {
@@ -761,10 +841,31 @@ class html_base
         return $result;
     }
 
+    function button_submit(string $submit_name): string
+    {
+        return $this->button($submit_name, html_base::INPUT_SUBMIT);
+    }
+
+    function form_submit(string $submit_name): string
+    {
+        return $this->form_input(html_base::INPUT_SUBMIT, url_var::POST_SUBMIT, $submit_name);
+    }
+
+    // TODO Prio 0 use this function for all html input fields
+    function form_input(string $type, string $name, string $value = ''): string
+    {
+        $txt = '<input type="' . $type . '" name="' . $name . '"';
+        if ($value != '') {
+            $txt .= ' value="' . $value . '"';
+        }
+        $txt .= ' class="' . self::CLASS_INPUT . '">';
+        return $txt;
+    }
+
     /**
      * @return string the HTML code of the about page
      */
-    function about(): string
+    function about_page(): string
     {
         $result = $this->header('about', "center_form"); // reset the html code var
 
@@ -1190,6 +1291,20 @@ class html_base
         return $result;
     }
 
+    /**
+     * centre a html page
+     * @param string $txt the html code that should be moved to the centre
+     * @return string the centred html code
+     */
+    function div_center(string $txt): string
+    {
+        if (self::UI_USE_BOOTSTRAP) {
+            return '<div class="container text-center">' . $txt . '</div>';
+        } else {
+            return '<div class="center_form">' . $txt . '</div>';
+        }
+    }
+
     function dsp_form_center(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
@@ -1321,19 +1436,6 @@ class html_base
      * base elements - functions for all html elements used in zukunft.com
      */
 
-    function button(string $text, string $style = '', string $type = ''): string
-    {
-        if ($style == '') {
-            $style = self::BS_BTN_SUCCESS;
-        }
-        $class = ' class="' . self::BS_BTN . ' ' . $style . '"';
-        if ($type == '') {
-            $type = self::INPUT_SUBMIT;
-        }
-        $type = ' type="' . $type . '"';
-        return '<button' . $class . $type . '>' . $text . '</button>';
-    }
-
     /**
      * create the html code for a label
      * TODO Prio 1
@@ -1409,27 +1511,19 @@ class html_base
 
     function div_form(string $text, string $style = ''): string
     {
-        return $this->div($text, 'form-group ' . $style);
+        return $this->div_bs($text, 'form-group ' . $style);
     }
 
     function div_row(string $text, string $style = ''): string
     {
-        return $this->div($text, 'row ' . $style);
-    }
-
-    function div(string $text, string $style = ''): string
-    {
-        if ($style == '') {
-            $style = view_styles::DEFAULT;
-        }
-        return '<div class="' . $style . '">' . $text . '</div>';
+        return $this->div_bs($text, 'row ' . $style);
     }
 
     function add_style(string $text, ?int $style_id = null): string
     {
         if ($style_id != null and $text != '') {
             $style_txt = $this->get_style_code($style_id);
-            $text = $this->div($text, $style_txt);
+            $text = $this->div_bs($text, $style_txt);
         }
         return $text;
     }
@@ -1439,7 +1533,11 @@ class html_base
         if ($style_id != null) {
             global $sys;
             $style = $sys->typ_lst->msk_sty->get($style_id);
-            return $style->get_code_id();
+            if ($style != null) {
+                return $style->get_code_id();
+            } else {
+                return '';
+            }
         } else {
             return '';
         }
@@ -1457,6 +1555,22 @@ class html_base
         $id = ' id="' . $form_name . '"';
 
         return '<form' . $action . $id . '>';
+    }
+
+    /**
+     * start a html form; the form name must be identical with the php script name
+     * @param string $action the script name
+     * @param string $method post, get of any other html form method
+     * @param string $txt the inner html code of the form
+     * @returns string the HTML code of form
+     */
+    function form_simple(string $action, string $method, string $txt): string
+    {
+        // switch on post forms for private values
+        $action = ' action="' . $action . '"';
+        $method = ' method="' . $method . '"';
+
+        return '<form' . $action . $method . '>' . $txt . '</form>';
     }
 
     /**
@@ -1529,6 +1643,20 @@ class html_base
         return '</div>';
     }
 
+    /*
+     * base
+     */
+
+    function br2(): string
+    {
+        return '<br><br>';
+    }
+
+    function br(): string
+    {
+        return '<br>';
+    }
+
 
     /*
      * display interface
@@ -1567,4 +1695,213 @@ class html_base
         echo $text;
         return $text;
     }
+
+
+    /*
+     * internal
+     */
+
+    /**
+     * wrap the html tag around html code
+     * TODO: to be adjusted depending on the display language
+     * @param string $txt the html code
+     * @param string $lan the language code of the text
+     * @return string the warped code
+     */
+    private function page_lan(string $txt, string $lan): string
+    {
+        return '<html lang="' . $lan . '">' . $txt . '</html>';
+    }
+
+    /**
+     * wrap the head tag around html header code
+     * @param string $txt the html header code
+     * @return string the warped header code
+     */
+    private function head(string $txt): string
+    {
+        return '<head>' . $txt . '</head>';
+    }
+
+    /**
+     * wrap the body tag around html body code
+     * @param string $txt the html body code
+     * @return string the warped body code
+     */
+    private function body(string $txt): string
+    {
+        return '<body>' . $txt . '</body>';
+    }
+
+    /**
+     * wrap the body tag around html body code
+     * @param string $txt the html body code
+     * @return string the warped body code
+     */
+    private function main(string $txt): string
+    {
+        return '<main class="' . self::CLASS_MAIN . '">' . $txt . '</main>';
+    }
+
+    /**
+     * wrap the footer tag around html footer code
+     * @param string $txt the html footer code
+     * @return string the warped footer code
+     */
+    private function foot(string $txt): string
+    {
+        return '<footer class="' . self::CLASS_FOOTER . '">' . $txt . '</footer>';
+    }
+
+    /**
+     * wrap the div tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the warped html code
+     */
+    function div(string $txt, string $style = ''): string
+    {
+        if ($style != '') {
+            $style = ' class="' . $style . '"';
+        }
+        return '<div' . $style . '>' . $txt . '</div>';
+    }
+
+    /**
+     * wrap the div tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the warped html code
+     */
+    function div_bs(string $txt, string $style = ''): string
+    {
+        if ($style == '') {
+            $style = view_styles::DEFAULT;
+        }
+        return '<div class="' . $style . '">' . $txt . '</div>';
+    }
+
+    /**
+     * wrap the nav tag around html code
+     * @param string $txt the html code
+     * @return string the warped html code
+     */
+    private function nav(string $txt): string
+    {
+        return '<nav>' . $txt . '</nav>';
+    }
+
+    /**
+     * wrap the paragraph tag around html code
+     * @param string $txt the html code
+     * @return string the warped paragraph code
+     */
+    public function p(string $txt): string
+    {
+        return '<p>' . $txt . '</p>';
+    }
+
+    /**
+     * wrap the paragraph button around html code
+     * @param string $txt the html code
+     * @return string the warped paragraph code
+     */
+    private function button(string $txt, string $typ, string $class = ''): string
+    {
+        if ($class != '') {
+            $class = self::CLASS_BUTTON . ' ' . $class;
+        } else {
+            $class = self::CLASS_BUTTON;
+        }
+        return '<button type="' . $typ . '" class="' . $class . '">' . $txt . '</button>';
+    }
+
+    function button_bs(string $text, string $style = '', string $type = ''): string
+    {
+        if ($style == '') {
+            $style = self::BS_BTN_SUCCESS;
+        }
+        $class = ' class="' . self::BS_BTN . ' ' . $style . '"';
+        if ($type == '') {
+            $type = self::INPUT_SUBMIT;
+        }
+        $type = ' type="' . $type . '"';
+        return '<button' . $class . $type . '>' . $text . '</button>';
+    }
+
+    /**
+     * TODO Prio 1 translate
+     * return the about text in the frontend language
+     * @return string the warped nav code
+     */
+    private function about(): string
+    {
+        return '<a href="/http/about.php" title="About">About</a>';
+    }
+
+    /**
+     * TODO Prio 1 translate
+     * return the about text in the frontend language
+     * @return string the warped nav code
+     */
+    private function privacy(): string
+    {
+        return '<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a>';
+    }
+
+    /**
+     * TODO Prio 1 translate
+     * return the about text in the frontend language
+     * @return string the warped nav code
+     */
+    private function foot_text(): string
+    {
+        $txt = 'All structured data is available under the ';
+        $txt .= '<a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> ';
+        $txt .= '<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> ';
+        $txt .= 'under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence';
+        return $txt;
+    }
+
+    /**
+     * @return string with the charset for the html pages
+     */
+    private function charset(): string
+    {
+        return '<meta charset="' . def::ENCODING . '">';
+    }
+
+    /**
+     * @return string to use the flex option on pages
+     */
+    private function viewport(): string
+    {
+        return '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
+    }
+
+    /**
+     * wrap the title tag around html title text
+     * @param string $txt the title text
+     * @return string the warped title text
+     */
+    private function title(string $txt, string $pod_name): string
+    {
+        if ($txt == "") {
+            $txt = $pod_name;
+        } else {
+            if ($pod_name <> "") {
+                $txt = $txt . ' (' . $pod_name . ')';
+            }
+        }
+        return '<title>' . $txt . '</title>';
+    }
+
+    /**
+     * @return string use a simple stylesheet without JavaScript
+     */
+    private function stylesheet(): string
+    {
+        return '<link rel="stylesheet" href="' . files::STYLE_HTML . '">';
+    }
+
 }

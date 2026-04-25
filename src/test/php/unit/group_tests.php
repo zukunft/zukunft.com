@@ -199,6 +199,7 @@ class group_tests
         $t->assert_sql_standard_by_name($sc, $grp);
         $this->assert_sql_by_phrase_list($t, $db_con);
 
+        // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql statements - write');
         $grp = new group($usr);
         $grp->set_phrase_list($t_phr->phrase_list_prime());
@@ -210,11 +211,13 @@ class group_tests
         $t->assert_sql_update($sc, $grp, $db_grp, [sql_type::USER]);
         $grp->set_phrase_list($t_phr->phrase_list_16());
         $t->assert_sql_insert($sc, $grp);
+        $t->assert_sql_insert($sc, $grp, [sql_type::LOG]);
         $grp->set_phrase_list($t_phr->phrase_list_17_plus());
+        $grp->description = groups::TN_READ_COM;
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
-        // TODO Prio 2 activate db write
-        $grp->set_phrase_list($t_phr->phrase_list_prime());
-        $t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
+        // test already done by the horizontal tests
+        //$grp->set_phrase_list($t_phr->phrase_list_prime());
+        //$t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
         $grp->set_phrase_list($t_phr->phrase_list_16());
         $t->assert_sql_delete($sc, $grp, [sql_type::LOG, sql_type::USER]);
         $grp->set_phrase_list($t_phr->phrase_list_17_plus());
@@ -234,11 +237,11 @@ class group_tests
 
         // sql to load the phrase links related to a group
         $grp_lnk = new group_link();
-        // TODO Prio 3 activate or use group id
+        // TODO Prio 2 activate or use group id
         //$t->assert_sql_by_id($sc, $grp_lnk);
 
         $grp->set_id(14);
-        // TODO Prio 3 activate or use group id
+        // TODO Prio 2 activate or use group id
         //$this->assert_sql_load_by_group_id($t, $db_con, $grp_lnk, $grp);
 
     }

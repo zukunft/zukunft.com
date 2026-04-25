@@ -18,7 +18,7 @@ END
 $$ LANGUAGE plpgsql;
 
 SELECT user_delete_log_user_name
-       (2::bigint,
+       (1::bigint,
         3::smallint,
         211::smallint,
         'zukunft.com system test'::text,

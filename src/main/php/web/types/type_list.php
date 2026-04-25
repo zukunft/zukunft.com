@@ -48,7 +48,7 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -59,7 +59,7 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
 class type_list
@@ -108,7 +108,7 @@ class type_list
                 $this->add_obj($ref_typ);
             } else {
                 if (!array_key_exists(json_fields::CODE_ID, $value)) {
-                    $usr_msg->add_err('code id is missing for ' . implode(',', $value));
+                    $usr_msg->add_error_text('code id is missing for ' . implode(',', $value));
                 }
                 if (array_key_exists(json_fields::DESCRIPTION, $value)) {
                     $typ = new type_object(
@@ -349,7 +349,7 @@ class type_list
     {
         $sel = new html_selector();
         if (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT)) {
-            $std = $this->get_by_code_id(phrase_type::DEFAULT);
+            $std = $this->get_by_code_id(phrase_types::DEFAULT);
             if ($std != null) {
                 $sel->lst = $this->lst_key_sort_by_name([$std->name()]);
             } else {

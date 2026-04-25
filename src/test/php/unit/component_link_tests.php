@@ -105,6 +105,8 @@ class component_link_tests
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         $lnk_filled = $t_cmp->component_link_filled();
         $t->assert_sql_insert($sc, $lnk_filled, [sql_type::LOG]);
+        $lnk = $t_cmp->component_link_half_filled();
+        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         $lnk = $t_cmp->component_link_incomplete();
         $t->assert_sql_insert_fail($sc, $lnk, [sql_type::LOG]);
         $lnk = $t_cmp->component_link();

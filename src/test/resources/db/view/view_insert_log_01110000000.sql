@@ -39,10 +39,10 @@ SELECT view_insert_log_01110000000
     ($1,$2, $3, $4, $5, $6, $7);
 
 SELECT view_insert_log_01110000000 (
-               'Start view'::text,
+               'Historic'::text,
                3::bigint,
                1::smallint,
                42::smallint,
                278::smallint,
                43::smallint,
-               'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.'::text);
+               'show mainly related words that are relevant in sciences'::text);

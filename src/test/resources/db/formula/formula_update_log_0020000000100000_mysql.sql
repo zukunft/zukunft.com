@@ -1,11 +1,11 @@
 DROP PROCEDURE IF EXISTS formula_update_log_0020000000100000;
 CREATE PROCEDURE formula_update_log_0020000000100000
-    (_user_id bigint,
-     _change_action_id smallint,
+    (_user_id               bigint,
+     _change_action_id      smallint,
      _field_id_formula_name smallint,
-     _formula_name_old text,
-     _formula_name text,
-     _formula_id bigint)
+     _formula_name_old      text,
+     _formula_name          text,
+     _formula_id            bigint)
 
 BEGIN
 

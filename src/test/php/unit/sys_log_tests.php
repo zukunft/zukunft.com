@@ -38,9 +38,10 @@ include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -49,22 +50,29 @@ class sys_log_tests
 {
 
     // const used for system testing
-    CONST TV_TIME = '2023-01-03T20:59:59+0100'; // time for unit tests
-    CONST TV_LOG_TEXT = 'the log text that describes the problem for the user or system admin';
-    CONST TV_LOG_TRACE = 'the technical trace back description for debugging';
-    CONST TV_FUNC_NAME = 'name of the function that has caused the exception';
-    CONST TV_SOLVE_ID = 'code id of the suggested solver of the problem';
-    CONST T2_TIME = '2023-01-03T21:45:01+0100'; // time for unit tests
-    CONST T2_LOG_TEXT = 'the log 2 text that describes the problem for the user or system admin';
-    CONST T2_LOG_TRACE = 'the technical trace 2 back description for debugging';
-    CONST T2_FUNC_NAME = 'name 2 of the function that has caused the exception';
-    CONST T2_SOLVE_ID = 'code id 2 of the suggested solver of the problem';
+    CONST string TV_TIME = '2023-01-03T20:59:59+0100'; // time for unit tests
+    CONST string TV_TIME_TWO = '2023-01-03T21:58:58+0100'; // a second time for unit tests
+    CONST string TV_TIME_ASSIGNED = '2023-01-04T09:12:34+0100'; // a third time for unit tests
+    CONST string TV_TIME_CLOSED = '2023-01-05T10:23:45+0100'; // a fourth time for unit tests
+    CONST string TV_LOG_TEXT = 'the log text that describes the problem for the user or system admin';
+    CONST string TV_LOG_TRACE = 'the technical trace back description for debugging';
+    CONST string TV_FUNC_NAME = 'name of the function that has caused the exception';
+    CONST string TV_SOLVE_ID = 'code id of the suggested solver of the problem';
+    CONST string TV_DESCRIPTION = 'the error has been replicated and the fix will be deployed';
+    CONST string T2_TIME = '2023-01-03T21:45:01+0100'; // time for unit tests
+    CONST string T2_LOG_TEXT = 'the log 2 text that describes the problem for the user or system admin';
+    CONST string T2_LOG_TRACE = 'the technical trace 2 back description for debugging';
+    CONST string T2_FUNC_NAME = 'name 2 of the function that has caused the exception';
+    CONST string T2_SOLVE_ID = 'code id 2 of the suggested solver of the problem';
 
     function run(test_cleanup $t): void
     {
 
+        global $sys;
+
         // init
         $sc = new sql_creator();
+        $t_sys = new test_sys_log($t);
         $t->name = 'sys_log->';
         $t->resource_path = 'db/sys_log/';
 
@@ -78,17 +86,26 @@ class sys_log_tests
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
-
         // sql to load one error by id
         $err = new sys_log();
         $t->assert_sql_by_id($sc, $err);
 
+        $t->subheader($ts . 'system log SQL write');
+        $log = $t_sys->sys_log();
+        $t->assert_sql_insert($sc, $log);
+        $log_db = $t_sys->sys_log_two();
+        $log = $t_sys->sys_log_filled();
+        $t->assert_sql_update($sc, $log, $log_db, [sql_type::LOG]);
+        $log_db = $t_sys->sys_log_filled();
+        $log = $t_sys->sys_log_closed();
+        $t->assert_sql_update($sc, $log, $log_db, [sql_type::LOG]);
+
 
         $t->subheader($ts . 'api');
 
-        $t_sys = new test_sys_log();
+        $t_sys = new test_sys_log($t);
         $log_lst = $t_sys->sys_log_list();
-        $t->assert_api($log_lst, '', [api_type::HEADER, api_type::INCL_COMPONENTS]);
+        $t->assert_api($log_lst, '', [api_types::HEADER, api_types::INCL_COMPONENTS]);
 
 
         $t->subheader($ts . 'system time type sql setup');

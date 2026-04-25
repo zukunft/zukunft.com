@@ -47,7 +47,7 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::VERB . 'verb.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -59,7 +59,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -75,7 +75,7 @@ class term extends combine_named
      * set the vars of this term html display object bases on the api message
      * @param array $json_array an api json message as a string
      * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $json_array, user_message $usr_msg): bool
     {
@@ -101,7 +101,7 @@ class term extends combine_named
             $this->set_obj($frm);
             //$this->set_id($frm->id());
         } else {
-            $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a term');
+            $usr_msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a term');
         }
         return $usr_msg->is_ok();
     }
@@ -227,7 +227,7 @@ class term extends combine_named
         $result = false;
         $wrd = new word();
         if ($wrd->load_by_id($id)) {
-            if ($wrd->type_id() == $sys->typ_lst->phr_typ->id(phrase_type::FORMULA_LINK)) {
+            if ($wrd->type_id() == $sys->typ_lst->phr_typ->id(phrase_types::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);

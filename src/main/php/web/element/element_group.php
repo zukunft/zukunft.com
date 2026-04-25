@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\web\element;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FIGURE . 'figure.php';
@@ -46,7 +47,8 @@ include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure;
@@ -60,8 +62,9 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 
 class element_group extends ListBase
 {
@@ -79,7 +82,16 @@ class element_group extends ListBase
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new element());
+        $usr_msg = new user_message();
+        if (array_key_exists(json_fields::LIST_ELEMENTS, $json_array)) {
+            $usr_msg->merge(parent::api_mapper_list($json_array[json_fields::LIST_ELEMENTS], new element()));
+        }
+        if (array_key_exists(json_fields::PHRASES, $json_array)) {
+            $phr_lst = new phrase_list();
+            $usr_msg->merge($phr_lst->api_mapper($json_array[json_fields::PHRASES]));
+            $this->phr_lst = $phr_lst;
+        }
+        return $usr_msg;
     }
 
     /*
@@ -152,7 +164,7 @@ class element_group extends ListBase
         // build the html code to display the value with the link
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
-            $api_json = $fig->api_json([api_type::INCL_PHRASES]);
+            $api_json = $fig->api_json([api_types::INCL_PHRASES]);
             $fig_dsp = new figure();
             $fig_dsp->set_from_json($api_json, $usr_msg);
             $result .= $fig_dsp->display_linked($back);
@@ -169,8 +181,8 @@ class element_group extends ListBase
      *  get a list of figures related to the formula element group and a context defined by a list of words
      *    e.g. 1 for the formula elements <"this"> and the context <"Switzerland" "inhabitants">
      *      the latest number of Swiss inhabitants should be returned
-     *    e.g. 2 for the formula elements <"journey time max premium" "percent"> and the context <"Zurich" "land lot" "minutes">
-     *      the result for <"journey time max premium" "percent" "Zurich" "land lot"> should be returned
+     *    e.g. 2 for the formula elements <"journey time max premium" "per cent"> and the context <"Zurich" "land lot" "minutes">
+     *      the result for <"journey time max premium" "per cent" "Zurich" "land lot"> should be returned
      *      and if no value is found, the next best match should be returned
      *    e.g. 3 for the formula element <"Share price"> and the context <"Nestlé">
      *      the result for <"Share price" "Nestlé" "2016" "CHF"> should be returned
@@ -212,7 +224,7 @@ class element_group extends ListBase
             log_debug('use element ' . $frm_elm->dsp_id() . ' also for value selection');
 
             // get the element word to be able to add it later to the value selection (differs for the element type)
-            if ($frm_elm->type == word::class) {
+            if ($frm_elm->type() == word::class) {
                 if ($frm_elm->id() > 0) {
                     $val_phr_lst->add($frm_elm->obj->phrase());
                     log_debug('include ' . $frm_elm->dsp_id() . ' in value selection');
@@ -221,7 +233,7 @@ class element_group extends ListBase
 
             // get the formula related word to be able to add it later to the value selection (differs for the element type)
             // e.g. 1: setting the $val_time_phr to 2020
-            if ($frm_elm->type == formula::class) {
+            if ($frm_elm->type() == formula::class) {
                 // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
                 if ($frm_elm->obj->is_predefined()) {
                     $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst);
@@ -300,6 +312,91 @@ class element_group extends ListBase
         return $fig_lst;
     }
 
+    /*
+     * repeat from backend
+     */
+
+    /**
+     * recreate the element group symbol based on the element list ($this->lst)
+     * repeat of the backend function, so TODO move to shared library
+     */
+    function build_symbol(): string
+    {
+        $this->symbol = '';
+
+        foreach ($this->lst() as $elm) {
+            // build the symbol for the number replacement
+            if ($this->symbol == '') {
+                if ($elm->symbol != null) {
+                    $this->symbol = $elm->symbol;
+                }
+            } else {
+                if ($elm->symbol != null) {
+                    $this->symbol .= ' ' . $elm->symbol;
+                }
+            }
+            log_debug('symbol "' . $elm->symbol . '" added to "' . $this->symbol . '"');
+        }
+
+        return $this->symbol;
+    }
+
+    /**
+     * set the time phrase based on a predefined formula such as "prior" or "next"
+     * e.g. if the predefined formula "prior" is used and the time is 2017 than 2016 should be used
+     */
+    private function set_formula_time_phrase(element $frm_elm, phrase_list $val_phr_lst): ?phrase
+    {
+        log_debug('for ' . $frm_elm->dsp_id() . ' and ' . $val_phr_lst->dsp_id());
+
+        $val_time_phr = new phrase($this->usr);
+
+        // guess the time word if needed
+        log_debug('assume time for ' . $val_phr_lst->dsp_id());
+        $val_time_phr = $val_phr_lst->assume_time();
+
+        // adjust the element time word if forced by the special formula
+        if (isset($val_time_phr)) {
+            if ($val_time_phr->id() == 0) {
+                // switched off because it is not working for "this"
+                log_err('No time found for "' . $frm_elm->obj->name . '".', 'element_group->figures');
+            } else {
+                log_debug('get predefined time result');
+                if (isset($frm_elm->obj)) {
+                    $val_time = $frm_elm->obj->special_time_phr($val_time_phr);
+                    if ($val_time->id() > 0) {
+                        $val_time_phr = $val_time;
+                        if ($val_time_phr->id() == 0) {
+                            $val_time_phr->load_by_name($val_time_phr->name());
+                        }
+                        if ($val_time_phr->name() == '') {
+                            $val_time_phr->load_by_id($val_time_phr->id());
+                        }
+                        log_debug('add element word for special formula result ' . $val_phr_lst->dsp_id() . ' taken from the result');
+                    }
+                }
+            }
+        }
+        if (isset($val_time_phr)) {
+            // before adding a special time word, remove all other time words from the word list
+            $val_phr_lst->ex_time();
+            $val_phr_lst->add($val_time_phr);
+            $this->phr_lst = $val_phr_lst;
+            log_debug('got the special formula word "' . $val_time_phr->name() . '" (' . $val_time_phr->id() . ')');
+        }
+
+        if (isset($val_time_phr)) {
+            log_debug('got ' . $val_time_phr->dsp_id());
+        }
+
+        return $val_time_phr;
+    }
+
+
+    /*
+     * deprecate
+     */
+
     /**
      * the HTML code to display a figure list
      */
@@ -317,7 +414,7 @@ class element_group extends ListBase
         // build the html code to display the value with the link
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
-            $api_json = $fig->api_json([api_type::INCL_PHRASES]);
+            $api_json = $fig->api_json([api_types::INCL_PHRASES]);
             $fig_dsp = new figure();
             $fig_dsp->set_from_json($api_json, $usr_msg);
             $result .= $fig_dsp->display_linked($back);

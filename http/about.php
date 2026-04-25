@@ -31,6 +31,7 @@
 
 include_once 'const.php';
 
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::WEB . 'frontend.php';
@@ -41,11 +42,13 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 // open database 
 $app = new frontend();
-$db_con = $app->start("about", "center_form", false);
+// TODO Prio 0 use message in all frontend calls
+$msg = new Message();
+$db_con = $app->start("about", $msg);
 
 // display the view
 $html = new html_base();
-echo $html->about();
+echo $html->about_page();
 
 // close the database  
 $app->end($db_con);

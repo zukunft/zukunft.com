@@ -5,6 +5,8 @@
     model/user/user_list.php - a list of users
     ------------------------
 
+    TODO Prio 2 base this list on ListOfIdObjects to avoid repeating e.g. of the is_empty function
+
 
     This file is part of zukunft.com - calc with words
 
@@ -80,7 +82,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
-// TODO base it on the base_list object
+// TODO base it on the base_list object or ListOfIdNamedCodeObjects
 class user_list
 {
     // internal db field name to count the changes by on user
@@ -96,7 +98,7 @@ class user_list
      */
 
     /**
-     * always set the user because a link list is always user specific
+     * always set the user because a link list is always user-specific
      * @param user|null $usr the user who requested to see e.g. the formula links
      */
     function __construct(?user $usr = null)
@@ -145,7 +147,7 @@ class user_list
      * @param sql_creator $sc with the target db_type set
      * @param array $ids list of user ids that should be loaded
      * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
+     * @param int $offset jump over these numbers of pages
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
@@ -186,7 +188,7 @@ class user_list
      * e.g. loading the admin includes the system user
      *
      * @param sql_creator $sc with the target db_type set
-     * @param int $profile_id list of user that have at least this profile level
+     * @param int $profile_id list of user that has at least this profile level
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_profile_and_higher(sql_creator $sc, int $profile_id): sql_par
@@ -326,7 +328,7 @@ class user_list
      * e.g. loading the admin includes the system user
      *
      * @param sql_db $db_con the database link as a parameter to load the system users at program start
-     * @param int $profile_id list of user that have at least this profile level
+     * @param int $profile_id list of user that has at least this profile level
      * @return bool true if at least one user found
      */
     function load_by_profile_and_higher(sql_db $db_con, int $profile_id): bool
@@ -359,24 +361,6 @@ class user_list
         return $this->usr;
     }
 
-
-    // fill the user objects of the list based on a sql
-    // TODO review
-    private function load_sql_old($sql, sql_db $db_con): void
-    {
-
-        $db_usr_lst = $db_con->get_old($sql);
-
-        if ($db_usr_lst != null) {
-            foreach ($db_usr_lst as $db_usr) {
-                $usr = new user;
-                $usr->id = $db_usr[user_db::FLD_ID];
-                $usr->name = $db_usr[user_db::FLD_NAME];
-                $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
-                $this->lst[] = $usr;
-            }
-        }
-    }
 
     // return a list of all users that have done at least one modification compared to the standard
     function load_active(): array
@@ -555,14 +539,14 @@ class user_list
      *
      * @param user $usr_to_add an object with a unique database id that should be added to the list
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
-     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     * @returns user_message if adding failed or something is strange, the messages for the user with the suggested solutions
      */
     function add(
         user $usr_to_add,
         bool $allow_duplicates = false
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // check boolean first because in_array might take longer
         if ($allow_duplicates) {
@@ -573,32 +557,32 @@ class user_list
                     if (!array_key_exists($usr_to_add->name(), $this->names())) {
                         $this->add_direct($usr_to_add);
                     } else {
-                        $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                        $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                     }
                 } else {
-                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                 }
             } elseif ($usr_to_add->name() != '') {
                 if (!array_key_exists($usr_to_add->name(), $this->names())) {
                     $this->add_direct($usr_to_add);
                 } else {
-                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                 }
-            } elseif ($usr_to_add->email() != '') {
-                if (!array_key_exists($usr_to_add->email(), $this->emails())) {
+            } elseif ($usr_to_add->email != '') {
+                if (!array_key_exists($usr_to_add->email, $this->emails())) {
                     $this->add_direct($usr_to_add);
                 } else {
-                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::LIST_USER_INVALID,
+                $msg->add(msg_id::LIST_USER_INVALID,
                     [
                         msg_id::VAR_USER_NAME => $usr_to_add->dsp_id(),
                         msg_id::VAR_USER_LIST_NAME => $this->names(),
                     ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -619,7 +603,7 @@ class user_list
      */
 
     /**
-     * create an array for the json api message
+     * create an array for the api json message
      *
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @param user|null $usr_req the user for whom the api message should be created which can differ from the session user
@@ -637,12 +621,78 @@ class user_list
 
 
     /*
+     * search
+     */
+
+    /**
+     * select an item by id
+     * TODO Prio 1 make the child of ListOfIdObjects and use the parent function
+     *
+     * @param int|string $id the unique database id of the object that should be returned
+     * @return object|null the found user sandbox object or null if no id is found
+     */
+    function get_by_id(int|string $id): object|null
+    {
+        $key_lst = $this->id_pos_lst();
+        if (array_key_exists($id, $key_lst)) {
+            $pos = $key_lst[$id];
+            return $this->lst()[$pos];
+        } else {
+            $lib = new library();
+            log_info($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
+            return null;
+        }
+    }
+
+    /**
+     * select a user by the code id
+     * TODO Prio 1 make the child of ListOfIdObjects and use the parent function
+     *
+     * @param string $code_id the unique database id of the object that should be returned
+     * @param bool $log by default true so that missing user request are logged; switch off to get the log user
+     * @return object|null the found user sandbox object or null if no id is found
+     */
+    function get_by_code_id(string $code_id, bool $log = true): object|null
+    {
+        $key_lst = $this->id_pos_lst();
+        if (array_key_exists($code_id, $this->code_id_hash)) {
+            $pos = $this->code_id_hash[$code_id];
+            return $this->lst()[$pos];
+        } else {
+            if ($log) {
+                $lib = new library();
+                log_info($code_id . ' not found in ' . $lib->dsp_array_keys($key_lst));
+            }
+            return null;
+        }
+    }
+
+    /**
+     * TODO Prio 1 make the child of ListOfIdObjects and use the parent function
+     * @returns array with all unique ids of this list with the keys within this list
+     */
+    protected function id_pos_lst(): array
+    {
+        $id_pos_lst = [];
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $key => $obj) {
+                if (!array_key_exists($obj->id(), $id_pos_lst)) {
+                    $id_pos_lst[$obj->id()] = $key;
+                }
+            }
+        }
+        return $id_pos_lst;
+    }
+
+
+
+    /*
      * save
      */
 
     /**
      * simple loop to save all users of the list
-     * because there are probably not many users to save at once
+     * because there are probably few users to save at once
      *
      * @param user|null $usr_req the user who has request the user adding or update
      * @param user_message $usr_msg_all in case of an issue the problem description what has failed and a suggested solution
@@ -666,7 +716,7 @@ class user_list
                     $usr->save_user($usr_msg, $usr_req);
                 }
                 // collect the user message for a consolidated list for the user
-                $usr_msg_all->add($usr_msg);
+                $usr_msg_all->merge($usr_msg);
             }
         }
     }

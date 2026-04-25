@@ -50,10 +50,12 @@ include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_RESULT . 'result.php';
-include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
@@ -62,13 +64,15 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-class element_group extends base_list
+class element_group extends list_db_write
 {
 
     public ?phrase_list $phr_lst = null; // phrase list object with the context to retrieve the element number
@@ -76,6 +80,23 @@ class element_group extends base_list
 
     public ?string $symbol = null; // the formula reference text for this element group; used to fill in the numbers into the formula
 
+
+    /**
+     * create an array for the api json message
+     *
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @returns array with the json fields to create an api message
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = [];
+        $vars[json_fields::LIST_ELEMENTS] = parent::api_json_array($typ_lst, $usr);
+        if ($this->phr_lst != null) {
+            $vars[json_fields::PHRASES] = $this->phr_lst->api_json_array($typ_lst, $usr);
+        }
+        return $vars;
+    }
 
     /*
      * display
@@ -208,10 +229,7 @@ class element_group extends base_list
             // e.g. 1: $val_phr_lst is Swiss inhabitants
             // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
             $val_phr_lst = clone $this->phr_lst;
-            $val_time_phr = $val_phr_lst->assume_time($trm_lst);
-            if (isset($val_time_phr)) {
-                log_debug('for time ' . $val_time_phr->dsp_id());
-            }
+            $val_time_phr = null;
 
             // build the symbol for the number replacement before adding the formula elements
             // e.g. 1: {f18}
@@ -222,7 +240,7 @@ class element_group extends base_list
             log_debug('use element ' . $frm_elm->dsp_id() . ' also for value selection');
 
             // get the element word to be able to add it later to the value selection (differs for the element type)
-            if ($frm_elm->type == word::class) {
+            if ($frm_elm->type() == word::class) {
                 if ($frm_elm->id() > 0) {
                     $val_phr_lst->add($frm_elm->obj->phrase());
                     log_debug('include ' . $frm_elm->dsp_id() . ' in value selection');
@@ -231,11 +249,11 @@ class element_group extends base_list
 
             // get the formula related word to be able to add it later to the value selection (differs for the element type)
             // e.g. 1: setting the $val_time_phr to 2020
-            if ($frm_elm->type == formula::class) {
+            if ($frm_elm->type() == formula::class) {
                 // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
-                if ($frm_elm->obj->is_predefined()) {
+                if ($frm_elm->obj->is_predefined() and $val_time_phr == null) {
                     $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst);
-                    if (isset($val_time_phr)) {
+                    if ($val_time_phr != null) {
                         log_debug('adjusted time ' . $val_time_phr->dsp_id());
                     }
                 } else {
@@ -244,6 +262,15 @@ class element_group extends base_list
                     }
                     log_debug('include formula word "' . $frm_elm->wrd_obj->name . '" (' . $frm_elm->wrd_id . ')');
                 }
+            }
+
+            // add the time to the list
+            $val_time_phr = $val_phr_lst->assume_time($trm_lst);
+            if ($val_time_phr != null) {
+                log_debug('for time ' . $val_time_phr->dsp_id());
+            }
+            if (!$val_phr_lst->has_time() and $val_time_phr != null) {
+                $val_phr_lst->add($val_time_phr);
             }
 
             // get the word group

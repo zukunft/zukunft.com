@@ -52,20 +52,24 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
 include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 
 class component_link_list extends sandbox_link_list
 {
@@ -153,7 +157,7 @@ class component_link_list extends sandbox_link_list
         $result = $cmp_lst->load_by_ids($ids, $db_con_given);
         if ($result) {
             foreach ($this->lst() as $lnk) {
-                $cmp = $cmp_lst->get_by_id($lnk->get_component()->id());
+                $cmp = $cmp_lst->get($lnk->get_component()->id());
                 if ($cmp != null) {
                     $lnk->set_component($cmp);
                 }
@@ -199,7 +203,7 @@ class component_link_list extends sandbox_link_list
         $qp = $this->load_sql($sc, component::FLD_ID);
         if ($cmp->id() > 0) {
             $sc->add_where(component::FLD_ID, $cmp->id());
-            $sc = (new view($this->get_user()))->set_join($sc);
+            $sc = new view($this->get_user())->set_join($sc);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -254,13 +258,20 @@ class component_link_list extends sandbox_link_list
 
     /**
      * add a view component link to the list without saving it to the database
-     * @return true if the link has been added
+     * @param component_link|db_object_seq_id|null $to_add the link user sandbox object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param user_message $msg to report which entry is double
+     * @return bool true if the link has been added
      */
-    function add_by_name(component_link $lnk_to_add, user_message $usr_msg): bool
+    function add_by_key(
+        component_link|db_object_seq_id|null $to_add,
+        bool                                 $allow_duplicates = false,
+        Message                              $msg = new Message()
+    ): bool
     {
         $added = false;
-        if ($this->can_add($lnk_to_add)) {
-            $this->add_link_by_key($lnk_to_add);
+        if ($this->can_add($to_add)) {
+            $this->add_link_by_key($to_add);
             $added = true;
         }
         return $added;
@@ -375,7 +386,7 @@ class component_link_list extends sandbox_link_list
                 $sbx->save($lnk_usr_msg);
             }
             // collect the user message for a consolidated list for the user
-            $usr_msg->add($lnk_usr_msg);
+            $usr_msg->merge($lnk_usr_msg);
         }
         return $usr_msg->is_ok();
     }

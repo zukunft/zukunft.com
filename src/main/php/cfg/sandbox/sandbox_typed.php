@@ -139,7 +139,7 @@ class sandbox_typed extends sandbox_named
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
      * @param user_message $usr_msg with the requesting user and if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -156,25 +156,25 @@ class sandbox_typed extends sandbox_named
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add the type to the database
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add the type to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::TYPE_CODE_ID, $in_ex_json)) {
-            $this->set_type($in_ex_json[json_fields::TYPE_CODE_ID], $usr_msg->usr);
+            $this->set_type($in_ex_json[json_fields::TYPE_CODE_ID], $msg->usr);
         } elseif (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_msg->usr);
+            $this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg->usr);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -212,19 +212,19 @@ class sandbox_typed extends sandbox_named
      */
     function set_type_id(?int $type_id, user $usr_req = new user()): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr_req->can_set_type_id()) {
             $this->type_id = $type_id;
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr_req->name(),
                 msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
                 msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -237,12 +237,12 @@ class sandbox_typed extends sandbox_named
      */
     function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add(msg_id::MISSING_OVERWRITE, [
             msg_id::VAR_NAME => 'set_type in sandbox_typed',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -261,20 +261,20 @@ class sandbox_typed extends sandbox_named
         user      $usr_req = new user()
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($code_id == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_code_id($code_id)) {
                 $this->set_type_id($typ_lst->id($code_id), $usr_req);
             } else {
-                $usr_msg->add_id_with_vars($msg_id, [
+                $msg->add($msg_id, [
                     msg_id::VAR_NAME => $code_id
                 ]);
                 $this->type_id = null;
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -295,20 +295,20 @@ class sandbox_typed extends sandbox_named
         user      $usr_req = new user()
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($name == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_name($name)) {
                 $this->set_type_id($typ_lst->id_by_name($name), $usr_req);
             } else {
-                $usr_msg->add_id_with_vars($msg_id, [
+                $msg->add($msg_id, [
                     msg_id::VAR_NAME => $name
                 ]);
                 $this->type_id = null;
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -326,7 +326,7 @@ class sandbox_typed extends sandbox_named
 
     /**
      * the code id of the type for the export json
-     * must be overwritten by the child objects
+     * the child must overwrite this function
      * @return string|null with the code id of the type
      */
     function type_code_id(): string|null
@@ -342,7 +342,7 @@ class sandbox_typed extends sandbox_named
     function type_name(): string
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'type_name',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -395,30 +395,50 @@ class sandbox_typed extends sandbox_named
      */
 
     /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param sandbox_typed|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param sandbox_typed|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return sandbox_typed|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        sandbox_typed|CombineObject|db_object_seq_id $std_obj,
+        sandbox_typed|CombineObject|db_object_seq_id $result
+    ): sandbox_typed|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->type_id !== $this->type_id) {
+            $result->type_id = $this->type_id;
+        }
+        return $result;
+    }
+
+    /**
      * create human-readable messages of the differences between the named sandbox objects
      * @param sandbox_typed|CombineObject|db_object_seq_id $obj which might be different to this named sandbox
      * @return user_message the human-readable messages of the differences between the named sandbox objects
      */
     function diff_msg(sandbox_typed|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         if ($this->type_id() != $obj->type_id()) {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::DIFF_TYPE, [
+            $msg->add(msg_id::DIFF_TYPE, [
                 msg_id::VAR_TYPE => $obj->type_name(),
                 msg_id::VAR_TYPE_CHK => $this->type_name(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
      * check if the typed object in the database needs to be updated
      *
      * @param sandbox_typed|CombineObject|IdObject $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the database
+     * @return bool true if this word has info that should be saved in the database
      */
     function needs_db_update(sandbox_typed|CombineObject|IdObject $db_obj): bool
     {
@@ -448,28 +468,9 @@ class sandbox_typed extends sandbox_named
     function fill(sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->type_id() != null) {
+        if ($this->type_id() === null and $obj->type_id() != null) {
             $this->set_type_id($obj->type_id(), $usr_req);
         }
-        return $usr_msg;
-    }
-
-
-    /*
-     * save - write to database
-     */
-
-    /**
-     * save all updated source fields excluding the name, because already done when adding a source
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param source $db_rec the database record before the saving
-     * @param source $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_fields_typed(sql_db $db_con, sandbox_typed $db_rec, sandbox_typed $std_rec): user_message
-    {
-        $usr_msg = parent::save_fields_named($db_con, $db_rec, $std_rec);
-        $usr_msg->add($this->save_field_type($db_con, $db_rec, $std_rec));
         return $usr_msg;
     }
 

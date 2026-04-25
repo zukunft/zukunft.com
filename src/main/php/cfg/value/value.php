@@ -49,8 +49,11 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
-include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -58,7 +61,11 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
@@ -73,7 +80,7 @@ class value extends value_base
     // object specific database and JSON object field names
     const string FLD_VALUE = 'numeric_value';
     const string FLD_COM = 'the numeric given by the user';
-    const string FLD_USER_COM = 'the user specific numeric value change';
+    const string FLD_USER_COM = 'the user-specific numeric value change';
 
     // database field with the sql type specification
     const array FLD_NAMES_STD = value_db::FLD_NAMES_STD;
@@ -110,6 +117,31 @@ class value extends value_base
     )
     {
         parent::__construct($usr, $val, $grp);
+    }
+
+    /**
+     * map a numeric value api json to this model value object
+     * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successfully
+     */
+    function api_mapper(array $api_json, user_message $msg): bool
+    {
+        parent::api_mapper($api_json, $msg);
+
+        if (array_key_exists(json_fields::NUMBER, $api_json)) {
+            $value = $api_json[json_fields::NUMBER];
+            if (is_numeric($value)) {
+                $this->set_value($value);
+            } else {
+                $msg->add(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                    msg_id::VAR_VALUE => $value,
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id()
+                ]);
+            }
+        }
+
+        return $msg->is_ok();
     }
 
 
@@ -190,6 +222,54 @@ class value extends value_base
         $vars[json_fields::NUMBER] = $this->get_value();
 
         return $vars;
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param value|sandbox_multi|db_object_multi $std_obj the norm object as saved in the database
+     * @param value|sandbox_multi|db_object_multi $result empty clone of the target user object
+     * @return value|sandbox_multi|db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        value|sandbox_multi|db_object_multi $std_obj,
+        value|sandbox_multi|db_object_multi $result
+    ): value|sandbox_multi|db_object_multi
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->number !== $this->number) {
+            $result->number = $this->number;
+        }
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     * if the given description is not set (null) the description is not removed
+     * if the given description is an empty string (not null), the description is removed
+     *
+     * @param value|sandbox_multi|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(value|sandbox_multi|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($this->number === null and $obj->number != null) {
+            $this->number = $obj->number;
+        }
+        return $usr_msg;
     }
 
 

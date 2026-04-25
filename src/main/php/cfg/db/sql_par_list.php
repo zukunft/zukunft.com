@@ -36,8 +36,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class sql_par_list
@@ -105,6 +107,11 @@ class sql_par_list
         return count($this->names());
     }
 
+    function is_empty(): bool
+    {
+        return count($this->lst) == 0;
+    }
+
     /**
      * @return user_message with the parameter names formatted for sql
      */
@@ -116,6 +123,23 @@ class sql_par_list
 
         foreach ($this->lst as $qp) {
             $db_con->insert($qp, 'add ' . $class . ' from list', $usr_msg);
+            $usr_msg->add_list_name_id($usr_msg, $qp->obj_name);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return user_message with the parameter names formatted for sql
+     */
+    function exe_direct(): user_message
+    {
+        global $db_con;
+
+        $usr_msg = new user_message();
+
+        // TODO Prio 2 execute block wise
+        foreach ($this->lst as $qp) {
+            $db_con->exe_direct($qp, $usr_msg);
             $usr_msg->add_list_name_id($usr_msg, $qp->obj_name);
         }
         return $usr_msg;
@@ -148,7 +172,7 @@ class sql_par_list
 
         foreach ($this->lst as $qp) {
             $del_msg = $db_con->delete($qp, 'delete ' . $class . ' from list', $usr_msg);
-            $usr_msg->add($del_msg);
+            $usr_msg->merge($del_msg);
             $usr_msg->add_list_name_id($del_msg, $qp->obj_name);
         }
         return $usr_msg;
@@ -168,12 +192,36 @@ class sql_par_list
     function sql_functions_missing(array $db_func_names): sql_par_list
     {
         $result = new sql_par_list();
+        $added_names = [];
         foreach ($this->lst as $qp) {
             if (!in_array($qp->name, $db_func_names)) {
-                $result->add($qp);
+                if (!in_array($qp->name, $added_names)) {
+                    $result->add($qp);
+                    $added_names[] = $qp->name;
+                }
             }
         }
         return $result;
     }
+
+
+    /*
+     * debug
+     */
+
+    function dsp_id(): string
+    {
+        $result = '';
+        foreach ($this->lst as $qp) {
+            if ($result != '') {
+                $result .= ', ';
+            }
+            if (strlen($result) < def::DEBUG_SQL_LIST_TEXT) {
+                $result .= $qp->dsp_id();
+            }
+        }
+        return $result;
+    }
+
 }
 

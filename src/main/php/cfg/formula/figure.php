@@ -41,7 +41,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'combine_object.php';
-include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -50,8 +50,8 @@ include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
-use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -70,9 +70,9 @@ class figure extends combine_object
     // the database and JSON object duplicate field names for combined value and result mainly to link figures
     const string FLD_ID = 'figure_id';
 
-    // the common figure database field names excluding the id and excluding the user specific fields
+    // the common figure database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
-        group::FLD_ID
+        group_db::FLD_ID
     );
 
 
@@ -131,7 +131,7 @@ class figure extends combine_object
      * map a figure api json to this model figure object
      * @param array $api_json the api array with the figure values that should be mapped
      * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {

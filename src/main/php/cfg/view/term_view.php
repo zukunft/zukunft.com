@@ -68,6 +68,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -95,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 
 class term_view extends sandbox_link
 {
@@ -119,7 +121,7 @@ class term_view extends sandbox_link
     const array FLD_NAMES_USR = array(
         sql_db::FLD_DESCRIPTION
     );
-    // all database field names, excluding the id, used to identify if there are some user specific changes
+    // all database field names, excluding the id, used to identify if there are some user-specific changes
     // TODO check if this is used in all relevant objects
     // TODO Prio 2 maybe add a priority
     const array ALL_SANDBOX_FLD_NAMES = array(
@@ -145,6 +147,11 @@ class term_view extends sandbox_link
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
 
+    // overwrite the parent link const
+    const string FLD_FROM = term::FLD_ID;
+    const string FLD_PREDICATE = view_link_type::FLD_ID;
+    const string FLD_TO = view_db::FLD_ID;
+
 
     /*
      * object vars
@@ -163,8 +170,8 @@ class term_view extends sandbox_link
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->reset();
-        $this->set_predicate(view_link_type::DEFAULT);
+        $this->reset(true);
+        $this->set_predicate(view_link_types::DEFAULT);
     }
 
     function reset(bool $keep_user = false): void
@@ -192,14 +199,18 @@ class term_view extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $msk = new view($this->get_user());
-            $msk->id = $db_row[view_db::FLD_ID];
-            $this->set_view($msk);
-            $trm = new term($this->get_user());
-            $trm->set_id($db_row[term::FLD_ID]);
-            $this->set_term($trm);
-            $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            if (key_exists(view_db::FLD_ID, $db_row)) {
+                $msk = new view($this->get_user());
+                $msk->id = $db_row[view_db::FLD_ID];
+                $this->set_view($msk);
+                $trm = new term($this->get_user());
+                $trm->set_id($db_row[term::FLD_ID]);
+                $this->set_term($trm);
+                $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            } else {
+                log_warning('view id missing for ' . $this->dsp_id());
+            }
         }
         return $result;
     }
@@ -209,7 +220,7 @@ class term_view extends sandbox_link
      * basically use the json field type instead of predicate and
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -230,20 +241,20 @@ class term_view extends sandbox_link
      * set the vars of this view link object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the data object that contains the already imported formulas
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         // reset the all parameters for these formula link object but keep the user
         $this->reset(true);
 
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         // import the view
         if (array_key_exists(json_fields::VIEW, $in_ex_json)) {
@@ -256,27 +267,27 @@ class term_view extends sandbox_link
             if (is_string($msk_json)) {
                 $msk = $dto?->get_view_by_name($msk_json);
                 if ($msk == null) {
-                    $usr_msg->add_id_with_vars(msg_id::VIEW_MISSING_IMPORT, [
+                    $msg->add(msg_id::VIEW_MISSING_IMPORT, [
                         msg_id::VAR_VIEW => $msk_json,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
-                    $msk = new view($usr_msg->usr);
+                    $msk = new view($msg->usr);
                     $msk->set_name($msk_json);
                 }
                 $this->set_view($msk);
             } elseif (is_array($msk_json)) {
-                $msk = new view($usr_msg->usr);
-                $msk->import_mapper($msk_json, $usr_msg, $dto);
-                if ($usr_msg->is_ok()) {
+                $msk = new view($msg->usr);
+                $msk->import_mapper($msk_json, $msg, $dto);
+                if ($msg->is_ok()) {
                     $this->set_view($msk);
                 }
             }
         } else {
-            $usr_msg->add_info_with_vars(msg_id::VIEW_CREATED, [
+            $msg->add_info_with_vars(msg_id::VIEW_CREATED, [
                 msg_id::VAR_VIEW_NAME => $in_ex_json[json_fields::NAME]
             ]);
-            $msk = new view($usr_msg->usr);
-            $msk->import_mapper($in_ex_json, $usr_msg, $dto);
+            $msk = new view($msg->usr);
+            $msk->import_mapper($in_ex_json, $msg, $dto);
             $this->set_view($msk);
         }
 
@@ -291,26 +302,26 @@ class term_view extends sandbox_link
             if (is_string($trm_json)) {
                 $trm = $dto?->get_term_by_name($trm_json);
                 if ($trm == null) {
-                    $usr_msg->add_id_with_vars(msg_id::TERM_MISSING_IMPORT, [
+                    $msg->add(msg_id::TERM_MISSING_IMPORT, [
                         msg_id::VAR_TERM => $trm_json,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
-                    $trm = new term($usr_msg->usr);
+                    $trm = new term($msg->usr);
                     $trm->set_name($trm_json);
                 }
                 $this->set_term($trm);
             } elseif (is_array($trm_json)) {
-                $trm = new term($usr_msg->usr);
-                $trm->import_mapper($trm_json, $usr_msg, $dto);
-                if ($usr_msg->is_ok()) {
+                $trm = new term($msg->usr);
+                $trm->import_mapper($trm_json, $msg, $dto);
+                if ($msg->is_ok()) {
                     $this->set_term($trm);
                 }
             }
         } else {
-            $usr_msg->add_info_with_vars(msg_id::TERM_CREATED, [
+            $msg->add_info_with_vars(msg_id::TERM_CREATED, [
                 msg_id::VAR_TERM_NAME => $in_ex_json[json_fields::NAME]
             ]);
-            $trm = new term($usr_msg->usr);
+            $trm = new term($msg->usr);
             //$phr->import_mapper($in_ex_json, $usr_msg, $dto);
             $this->set_term($trm);
         }
@@ -323,7 +334,7 @@ class term_view extends sandbox_link
             $this->description = $in_ex_json[json_fields::DESCRIPTION];;
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -453,6 +464,31 @@ class term_view extends sandbox_link
 
 
     /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param term_view|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param term_view|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return term_view|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        term_view|CombineObject|db_object_seq_id $std_obj,
+        term_view|CombineObject|db_object_seq_id $result
+    ): term_view|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->description !== $this->description) {
+            $result->description = $this->description;
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -461,14 +497,14 @@ class term_view extends sandbox_link
      * if the given type is not set (null) the type is not removed
      * if the given type is zero (not null) the type is removed
      *
-     * @param view_relation|sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param term_view|sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
      * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(view_relation|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    function fill(term_view|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->description != null) {
+        if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
         return $usr_msg;
@@ -497,15 +533,11 @@ class term_view extends sandbox_link
     /**
      * TODO check if the overwrites are correct for all objects
      *      and if a to_id() function is needed
-     * @return string with the term name
+     * @return string|null with the term name
      */
-    function to_value(): string
+    function to_value(): string|null
     {
-        if ($this->tob() == null) {
-            return '';
-        } else {
-            return $this->tob()->name();
-        }
+        return $this->tob()?->name();
     }
 
     /**
@@ -554,6 +586,26 @@ class term_view extends sandbox_link
      */
 
     /**
+     * load the object parameters for all users by the link id
+     *
+     * @param int $from_id the id of the from link object
+     * @param int $to_id the id of the to link object
+     * @param user_message $msg to collect the error messages and suggested solutions for the calling user
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard_by_link(
+        int          $from_id,
+        int          $to_id,
+        user_message $msg
+    ): bool
+    {
+        return parent::load_standard_by_link_parent(
+            view_db::FLD_ID, $from_id,
+            term::FLD_ID, $to_id, $msg
+        );
+    }
+
+    /**
      * create the common part of an SQL statement to retrieve a view term link from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -581,83 +633,53 @@ class term_view extends sandbox_link
      * TODO add a bool var "is_loaded" to db_object
      *      to indicate is the object has just been created and might be incomplete
      *      or if loaded from the db and is expected to have all vars in line with the db
-     * @return bool true if all the related objects has been loaded
+     * @param user_message $msg to collect the message due to missing links
+     * @return bool true if all the related objects have been loaded
      */
-    function reload_objects(): bool
+    function reload_objects(user_message $msg): bool
     {
-        $result = true;
-
         $msk = $this->get_view();
         if ($msk->id() == 0) {
             if ($msk->name() != '') {
-                $result = $msk->load_by_name($msk->name());
+                if (!$msk->load_by_name($msk->name())) {
+                    $msg->add(msg_id::LOAD_VIEW_BY_NAME_FAILED, [
+                        msg_id::VAR_VIEW => $this->get_view()->dsp_id()
+                    ]);
+                }
             } else {
                 log_warning('Cannot load view because neither id nor name is set');
             }
         } else {
             if ($msk->name() == '') {
-                $result = $msk->load_by_id($msk->id());
+                if (!$msk->load_by_id($msk->id())) {
+                    $msg->add(msg_id::LOAD_VIEW_BY_ID_FAILED, [
+                        msg_id::VAR_VIEW => $this->get_view()->dsp_id()
+                    ]);
+                }
             }
         }
 
         $trm = $this->term();
         if ($trm->id() == 0) {
             if ($trm->name() != '') {
-                $result = $trm->load_by_name($trm->name());
+                if (!$trm->load_by_name($trm->name())) {
+                    $msg->add(msg_id::LOAD_TERM_BY_NAME_FAILED, [
+                        msg_id::VAR_TERM => $this->term()->dsp_id()
+                    ]);
+                }
             } else {
                 log_warning('Cannot load term because neither id nor name is set');
             }
         } else {
             if ($trm->name() == '') {
-                $result = $trm->load_by_id($trm->id());
+                if (!$trm->load_by_id($trm->id())) {
+                    $msg->add(msg_id::LOAD_TERM_BY_ID_FAILED, [
+                        msg_id::VAR_TERM => $this->term()->dsp_id()
+                    ]);
+                }
             }
         }
-
-        return $result;
-    }
-
-    /**
-     * create an SQL statement to retrieve the parameters of the standard view term link from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        // try to get the search values from the objects
-        if ($this->id() <= 0) {
-            $this->id = 0;
-        }
-
-        $sc->set_class($this::class);
-        $qp = new sql_par($this::class);
-        if ($this->id() != 0) {
-            $qp->name .= 'std_id';
-        } else {
-            $qp->name .= 'std_link_ids';
-        }
-        $sc->set_name($qp->name);
-        $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)));
-        if ($this->id() > 0) {
-            $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->get_view()->id() > 0 and $this->term()->id() != 0) {
-            $sc->add_where(view_db::FLD_ID, $this->get_view()->id());
-            $sc->add_where(term::FLD_ID, $this->term()->id());
-        } else {
-            if ($this->get_view()->id() > 0) {
-                log_err('Cannot load default view term link because term id for ' . $this->term()->dsp_id() . 'is missing');
-            } else {
-                log_err('Cannot load default view term link because term id for ' . $this->get_view()->dsp_id() . 'is missing');
-            }
-        }
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        return parent::reload_objects($msg);
     }
 
 
@@ -683,7 +705,7 @@ class term_view extends sandbox_link
         }
 
         global $sys;
-        if ($this->predicate_id == $sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT)) {
+        if ($this->predicate_id == $sys->typ_lst->msk_lnk_typ->id(view_link_types::DEFAULT)) {
             unset($vars[json_fields::PREDICATE]);
         }
         if ($this->description != null) {
@@ -711,22 +733,23 @@ class term_view extends sandbox_link
             [
                 sql_db::FLD_DESCRIPTION,
                 view_link_type::FLD_ID,
-            ]
+            ],
+            parent::db_fields_all_sandbox()
         );
     }
 
     /**
      * add the type field to the list of changed database fields with name, value and type
      *
-     * @param sandbox|term_view $sbx the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param term_view|db_object_seq_id $obj the compare value to detect the changed fields
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|term_view $sbx,
-        user_message      $usr_msg,
-        sql_type_list     $sc_par_lst = new sql_type_list()
+        term_view|db_object_seq_id $obj,
+        user_message               $msg,
+        sql_type_list              $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -735,9 +758,9 @@ class term_view extends sandbox_link
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
 
-        if ($sbx->description !== $this->description) {
+        if ($obj->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -749,11 +772,11 @@ class term_view extends sandbox_link
                 sql_db::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
-                $sbx->description
+                $obj->description
             );
         }
 
-        if ($sbx->predicate_id() !== $this->predicate_id()) {
+        if ($obj->predicate_id() !== $this->predicate_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_link_type::FLD_ID,
@@ -762,7 +785,7 @@ class term_view extends sandbox_link
                 );
             }
             if ($this->predicate_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
+                $msg->add(msg_id::VIEW_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -771,10 +794,27 @@ class term_view extends sandbox_link
                 view_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
-                $sbx->predicate_id(),
-                $sys->typ_lst->phr_typ);
+                $obj->predicate_id(),
+                $sys->typ_lst->msk_lnk_typ);
         }
-        return $lst;
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    /**
+     * @return array with all fields names of this word object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
 
@@ -782,17 +822,17 @@ class term_view extends sandbox_link
      * message
      */
 
-    function message_from_invalid(user_message $usr_msg): void
+    function message_from_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_VIEW_IN_LINK_INVALID, [
+        $msg->add(msg_id::MANDATORY_VIEW_IN_LINK_INVALID, [
             msg_id::VAR_VIEW_NAME => $this->get_view()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);
     }
 
-    function message_to_invalid(user_message $usr_msg): void
+    function message_to_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_TERM_IN_LINK_INVALID, [
+        $msg->add(msg_id::MANDATORY_TERM_IN_LINK_INVALID, [
             msg_id::VAR_TERM_NAME => $this->term()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);

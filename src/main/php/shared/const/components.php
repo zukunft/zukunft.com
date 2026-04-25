@@ -123,7 +123,6 @@ class components
     // persevered view component names for unit and integration tests
     const string TEST_ADD_NAME = 'System Test View Component';
     const string TEST_ADD_VIA_FUNC_NAME = 'System Test Component added via sql function';
-    const string TEST_ADD_VIA_SQL_NAME = 'System Test Component added via sql insert';
     const string TEST_ADD_COM = 'System Test View Component description';
     const string TEST_RENAMED_NAME = 'System Test View Component Renamed';
     const string TEST_ADD_2_NAME = 'System Test View Component Two';
@@ -138,7 +137,6 @@ class components
     const array RESERVED_COMPONENTS = array(
         self::WORD_NAME,
         self::TEST_ADD_NAME,
-        self::TEST_ADD_VIA_SQL_NAME,
         self::TEST_ADD_VIA_FUNC_NAME,
         self::TEST_RENAMED_NAME,
         self::TEST_ADD_2_NAME,
@@ -157,7 +155,6 @@ class components
     // array of test component names used for testing and removed after the testing is completed
     const array TEST_COMPONENTS = array(
         self::TEST_ADD_NAME,
-        self::TEST_ADD_VIA_SQL_NAME,
         self::TEST_ADD_VIA_FUNC_NAME,
         self::TEST_RENAMED_NAME,
         self::TEST_ADD_2_NAME,

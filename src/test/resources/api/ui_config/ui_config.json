@@ -97,25 +97,171 @@
         "id": 15
       },
       {
+        "name": "system log",
+        "code_id": "log",
+        "description": "profile that can add everything but cannot update or delete anything",
+        "id": 16
+      },
+      {
         "name": "system test",
         "code_id": "test",
         "description": "for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
-        "id": 16
+        "id": 17
       },
       {
         "name": "benevolent dictator",
         "code_id": "bdfl",
         "description": "a fallback admin user for unexpected cases; hopefully never used",
-        "id": 17
+        "id": 18
       },
       {
         "name": "system",
         "code_id": "system",
         "description": "User to log internal tasks not directly initiated by an user like system testing and cleanup",
-        "id": 18
+        "id": 19
       }
     ],
-    "sys_log_statuus": [
+    "user_types": [
+      {
+        "name": "Guest",
+        "code_id": "guest",
+        "description": "read only",
+        "id": 1
+      },
+      {
+        "name": "IP address",
+        "code_id": "ip_address",
+        "description": "identified only by IP address",
+        "id": 2
+      },
+      {
+        "name": "Verified",
+        "code_id": "verified",
+        "description": "verified by email or mobile",
+        "id": 3
+      },
+      {
+        "name": "Secured",
+        "code_id": "secured",
+        "description": "verified with a high security e.g. via passport of a trusted country",
+        "id": 4
+      }
+    ],
+    "user_statuum": [
+      {
+        "name": "active",
+        "code_id": "active",
+        "description": "no restrictions are applied",
+        "id": 1
+      },
+      {
+        "name": "read-only",
+        "code_id": "read-only",
+        "description": "the write permission is switched off for the user",
+        "id": 2
+      },
+      {
+        "name": "local read and write",
+        "code_id": "geo-fenced",
+        "description": "the user can only be seen and write within a given geo fence",
+        "id": 3
+      },
+      {
+        "name": "write only with an area",
+        "code_id": "write-geo",
+        "description": "the user can only change data within a geo fence",
+        "id": 4
+      },
+      {
+        "name": "local read-only",
+        "code_id": "read-geo",
+        "description": "change of the user can only be seen within a geo fence",
+        "id": 5
+      },
+      {
+        "name": "excluded",
+        "code_id": "excluded",
+        "description": "all changes of the user are excluded from the results for other users",
+        "id": 6
+      },
+      {
+        "name": "admin only",
+        "code_id": "admin-only",
+        "description": "the user is excluded and even the change log can only be seen by an admin e.g. because the user has published something illegal",
+        "id": 7
+      }
+    ],
+    "sys_log_functions": [
+      {
+        "name": "no function name detected",
+        "code_id": "no function name detected",
+        "description": "fallback value if the function name is missing",
+        "id": 1
+      },
+      {
+        "name": "cfg\/system\/sys_log",
+        "code_id": "cfg\/system\/sys_log",
+        "description": "for errors on the system log functions itself",
+        "id": 2
+      },
+      {
+        "name": "Import system configuration",
+        "code_id": "import_base_config",
+        "description": "Import the default system and user configuration",
+        "id": 3
+      },
+      {
+        "name": "Import pod configuration",
+        "code_id": "import_pod_config",
+        "description": "Import the default pod configuration",
+        "id": 4
+      },
+      {
+        "name": "Import test configuration",
+        "code_id": "import_test_config",
+        "description": "Import the configuration for system consistency tests",
+        "id": 5
+      }
+    ],
+    "sys_log_levels": [
+      {
+        "name": "undefined",
+        "code_id": "undefined",
+        "description": "",
+        "id": 1
+      },
+      {
+        "name": "Debug",
+        "code_id": "log_debug",
+        "description": "Additional information only message that can be switched on upon request for more debugging",
+        "id": 2
+      },
+      {
+        "name": "Info",
+        "code_id": "log_info",
+        "description": "Information only message for debugging and execution time details",
+        "id": 3
+      },
+      {
+        "name": "Warning",
+        "code_id": "log_warning",
+        "description": "if a message has been shown to the user",
+        "id": 4
+      },
+      {
+        "name": "Error",
+        "code_id": "log_error",
+        "description": "if the process has not been completed",
+        "id": 5
+      },
+      {
+        "name": "FATAL ERROR",
+        "code_id": "log_fatal",
+        "description": "if other processes are also stopped",
+        "id": 6
+      }
+    ],
+    "sys_log_statuum": [
       {
         "name": "new",
         "code_id": "new",
@@ -827,6 +973,54 @@
         "code_id": "results",
         "description": "",
         "id": 111
+      },
+      {
+        "name": "phrase_types",
+        "code_id": "phrase_types",
+        "description": "",
+        "id": 112
+      },
+      {
+        "name": "sys_log_levels",
+        "code_id": "sys_log_levels",
+        "description": "",
+        "id": 113
+      },
+      {
+        "name": "sys_log_statuum",
+        "code_id": "sys_log_statuum",
+        "description": "",
+        "id": 114
+      },
+      {
+        "name": "sys_log_functions",
+        "code_id": "sys_log_functions",
+        "description": "",
+        "id": 115
+      },
+      {
+        "name": "change_actions",
+        "code_id": "change_actions",
+        "description": "",
+        "id": 116
+      },
+      {
+        "name": "job_statuum",
+        "code_id": "job_statuum",
+        "description": "",
+        "id": 117
+      },
+      {
+        "name": "system_time_types",
+        "code_id": "system_time_types",
+        "description": "",
+        "id": 118
+      },
+      {
+        "name": "user_statuum",
+        "code_id": "user_statuum",
+        "description": "",
+        "id": 119
       }
     ],
     "change_field_list": [
@@ -2037,8 +2231,8 @@
         "id": 201
       },
       {
-        "name": "31sys_log_type_id",
-        "code_id": "31sys_log_type_id",
+        "name": "31sys_log_level_id",
+        "code_id": "31sys_log_level_id",
         "description": "",
         "id": 202
       },
@@ -2099,7 +2293,7 @@
       {
         "name": "1password",
         "code_id": "1password",
-        "description": "",
+        "description": "the final solution should be to log only the time of the password change without saving the hash in the log due to security reasons",
         "id": 212
       },
       {
@@ -2325,8 +2519,8 @@
         "id": 249
       },
       {
-        "name": "34type_name",
-        "code_id": "34type_name",
+        "name": "34user_profile_name",
+        "code_id": "34user_profile_name",
         "description": "",
         "id": 250
       },
@@ -5827,6 +6021,222 @@
         "code_id": "111numeric_value",
         "description": "",
         "id": 833
+      },
+      {
+        "name": "112phrase_type_id",
+        "code_id": "112phrase_type_id",
+        "description": "",
+        "id": 834
+      },
+      {
+        "name": "112type_name",
+        "code_id": "112type_name",
+        "description": "",
+        "id": 835
+      },
+      {
+        "name": "112code_id",
+        "code_id": "112code_id",
+        "description": "",
+        "id": 836
+      },
+      {
+        "name": "112description",
+        "code_id": "112description",
+        "description": "",
+        "id": 837
+      },
+      {
+        "name": "113sys_log_level_id",
+        "code_id": "113sys_log_level_id",
+        "description": "",
+        "id": 838
+      },
+      {
+        "name": "113level_name",
+        "code_id": "113level_name",
+        "description": "",
+        "id": 839
+      },
+      {
+        "name": "113code_id",
+        "code_id": "113code_id",
+        "description": "",
+        "id": 840
+      },
+      {
+        "name": "113description",
+        "code_id": "113description",
+        "description": "",
+        "id": 841
+      },
+      {
+        "name": "114sys_log_status_id",
+        "code_id": "114sys_log_status_id",
+        "description": "",
+        "id": 842
+      },
+      {
+        "name": "114status_name",
+        "code_id": "114status_name",
+        "description": "",
+        "id": 843
+      },
+      {
+        "name": "114code_id",
+        "code_id": "114code_id",
+        "description": "",
+        "id": 844
+      },
+      {
+        "name": "114description",
+        "code_id": "114description",
+        "description": "",
+        "id": 845
+      },
+      {
+        "name": "115sys_log_function_id",
+        "code_id": "115sys_log_function_id",
+        "description": "",
+        "id": 846
+      },
+      {
+        "name": "115sys_log_function_name",
+        "code_id": "115sys_log_function_name",
+        "description": "",
+        "id": 847
+      },
+      {
+        "name": "115code_id",
+        "code_id": "115code_id",
+        "description": "",
+        "id": 848
+      },
+      {
+        "name": "115description",
+        "code_id": "115description",
+        "description": "",
+        "id": 849
+      },
+      {
+        "name": "116change_action_id",
+        "code_id": "116change_action_id",
+        "description": "",
+        "id": 850
+      },
+      {
+        "name": "116type_name",
+        "code_id": "116type_name",
+        "description": "",
+        "id": 851
+      },
+      {
+        "name": "116code_id",
+        "code_id": "116code_id",
+        "description": "",
+        "id": 852
+      },
+      {
+        "name": "116description",
+        "code_id": "116description",
+        "description": "",
+        "id": 853
+      },
+      {
+        "name": "117job_status_id",
+        "code_id": "117job_status_id",
+        "description": "",
+        "id": 854
+      },
+      {
+        "name": "117status_name",
+        "code_id": "117status_name",
+        "description": "",
+        "id": 855
+      },
+      {
+        "name": "117code_id",
+        "code_id": "117code_id",
+        "description": "",
+        "id": 856
+      },
+      {
+        "name": "117description",
+        "code_id": "117description",
+        "description": "",
+        "id": 857
+      },
+      {
+        "name": "117priority",
+        "code_id": "117priority",
+        "description": "",
+        "id": 858
+      },
+      {
+        "name": "27ip_range_key",
+        "code_id": "27ip_range_key",
+        "description": "",
+        "id": 859
+      },
+      {
+        "name": "31sys_log_update_time",
+        "code_id": "31sys_log_update_time",
+        "description": "",
+        "id": 860
+      },
+      {
+        "name": "118system_time_type_id",
+        "code_id": "118system_time_type_id",
+        "description": "",
+        "id": 861
+      },
+      {
+        "name": "118type_name",
+        "code_id": "118type_name",
+        "description": "",
+        "id": 862
+      },
+      {
+        "name": "118code_id",
+        "code_id": "118code_id",
+        "description": "",
+        "id": 863
+      },
+      {
+        "name": "118description",
+        "code_id": "118description",
+        "description": "",
+        "id": 864
+      },
+      {
+        "name": "112symbol",
+        "code_id": "112symbol",
+        "description": "",
+        "id": 865
+      },
+      {
+        "name": "119user_status_id",
+        "code_id": "119user_status_id",
+        "description": "",
+        "id": 866
+      },
+      {
+        "name": "119user_status_name",
+        "code_id": "119user_status_name",
+        "description": "",
+        "id": 867
+      },
+      {
+        "name": "119code_id",
+        "code_id": "119code_id",
+        "description": "",
+        "id": 868
+      },
+      {
+        "name": "119description",
+        "code_id": "119description",
+        "description": "",
+        "id": 869
       }
     ],
     "job_types": [
@@ -5851,43 +6261,43 @@
       {
         "name": "update formula",
         "code_id": "formula_update",
-        "description": "",
+        "description": "NULL",
         "id": 4
       },
       {
         "name": "add formula",
         "code_id": "formula_add",
-        "description": "",
+        "description": "NULL",
         "id": 5
       },
       {
         "name": "exclude formula",
         "code_id": "formula_del",
-        "description": "",
+        "description": "NULL",
         "id": 6
       },
       {
         "name": "link formula",
         "code_id": "formula_link",
-        "description": "",
+        "description": "NULL",
         "id": 7
       },
       {
         "name": "unlink a formula",
         "code_id": "formula_unlink",
-        "description": "",
+        "description": "NULL",
         "id": 8
       },
       {
         "name": "link a word",
         "code_id": "triple",
-        "description": "",
+        "description": "NULL",
         "id": 9
       },
       {
         "name": "unlink word",
         "code_id": "word_unlink",
-        "description": "",
+        "description": "NULL",
         "id": 10
       },
       {
@@ -5975,6 +6385,68 @@
         "id": 24
       }
     ],
+    "job_statuum": [
+      {
+        "name": "created",
+        "code_id": "new",
+        "description": "the job is not yet assigned to any calc engine",
+        "id": 1
+      },
+      {
+        "name": "assigned",
+        "code_id": "assigned",
+        "description": "the job has been assigned to a calc engine",
+        "id": 2
+      },
+      {
+        "name": "forced",
+        "code_id": "forced",
+        "description": "the priority of the job has been increased",
+        "id": 3
+      },
+      {
+        "name": "delayed",
+        "code_id": "delayed",
+        "description": "the priority of the job has been reduced",
+        "id": 4
+      },
+      {
+        "name": "working",
+        "code_id": "working",
+        "description": "the calc engine is reporting the progress",
+        "id": 5
+      },
+      {
+        "name": "not responding",
+        "code_id": "not_responding",
+        "description": "the calc engine is not reporting the progress",
+        "id": 6
+      },
+      {
+        "name": "waiting",
+        "code_id": "waiting",
+        "description": "the task is waiting for user input of other jobs",
+        "id": 7
+      },
+      {
+        "name": "done",
+        "code_id": "done",
+        "description": "the task has been completed successfully",
+        "id": 8
+      },
+      {
+        "name": "failed",
+        "code_id": "failed",
+        "description": "the task has been completed unsuccessful",
+        "id": 9
+      },
+      {
+        "name": "retry",
+        "code_id": "retry",
+        "description": "an admin has forced to retry the execution",
+        "id": 10
+      }
+    ],
     "languages": [
       {
         "name": "English",
@@ -5983,8 +6455,8 @@
         "id": 1
       },
       {
-        "name": "UK English",
-        "code_id": "en_uk",
+        "name": "US English",
+        "code_id": "en_us",
         "description": "the users can use this (and the other) languages to create its own namespace. So one user may use \"Zurich\" in UK English for \"Kanton Zurich\" and another user may use \"Zurich\" in UK English for \"Zurich AG\".",
         "id": 2
       },
@@ -5997,10 +6469,16 @@
     ],
     "language_forms": [
       {
+        "name": "base form",
+        "code_id": "standard",
+        "description": "the base language form",
+        "id": 1
+      },
+      {
         "name": "plural",
         "code_id": "plural",
-        "description": "The noun denotes a quantity greater than the default quantity represented by that noun. This default quantity is most commonly one.",
-        "id": 1
+        "description": "The noun denotes a quantity greater than the default quantity represented by that noun. This default quantity is most commonly one",
+        "id": 2
       }
     ],
     "share_types": [
@@ -6081,7 +6559,7 @@
         "plural": null,
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 1
@@ -6093,7 +6571,7 @@
         "plural": "are",
         "reverse": "are",
         "rev_plural": "are",
-        "frm_name": "of all",
+        "name_in_formula": "of all",
         "usage": null,
         "impact": null,
         "id": 2
@@ -6105,7 +6583,7 @@
         "plural": "is part of",
         "reverse": "contains",
         "rev_plural": "contains",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 3
@@ -6117,7 +6595,7 @@
         "plural": "can be part of",
         "reverse": "contains",
         "rev_plural": "contains",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 4
@@ -6129,7 +6607,7 @@
         "plural": "of",
         "reverse": "of",
         "rev_plural": "of",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 5
@@ -6139,9 +6617,9 @@
         "code_id": "with",
         "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
         "plural": "with",
-        "reverse": null,
-        "rev_plural": null,
-        "frm_name": null,
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 6
@@ -6153,7 +6631,7 @@
         "plural": "has",
         "reverse": "is used for",
         "rev_plural": "is used for",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 7
@@ -6165,7 +6643,7 @@
         "plural": "are the time jump for",
         "reverse": "has the default time jump",
         "rev_plural": "have the default time jump",
-        "frm_name": "time jump",
+        "name_in_formula": "time jump",
         "usage": null,
         "impact": null,
         "id": 8
@@ -6177,7 +6655,7 @@
         "plural": null,
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 9
@@ -6189,7 +6667,7 @@
         "plural": null,
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 10
@@ -6201,7 +6679,7 @@
         "plural": "is follower of",
         "reverse": "is followed by",
         "rev_plural": "is followed by",
-        "frm_name": "follower",
+        "name_in_formula": "follower",
         "usage": null,
         "impact": null,
         "id": 11
@@ -6213,7 +6691,7 @@
         "plural": "uses",
         "reverse": "is used by",
         "rev_plural": "are used by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 12
@@ -6225,7 +6703,7 @@
         "plural": "issues",
         "reverse": "is issued by",
         "rev_plural": "are issued by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 13
@@ -6237,7 +6715,7 @@
         "plural": "are measure type for",
         "reverse": "has the measure type",
         "rev_plural": "have the measure type",
-        "frm_name": "measure type",
+        "name_in_formula": "measure type",
         "usage": null,
         "impact": null,
         "id": 14
@@ -6249,7 +6727,7 @@
         "plural": "are an acronyms for",
         "reverse": "is an acronym of",
         "rev_plural": "are an acronyms of",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 15
@@ -6261,7 +6739,7 @@
         "plural": "can be used as a differentiator for",
         "reverse": "can be differentiated by",
         "rev_plural": "can be differentiated by",
-        "frm_name": "differentiator",
+        "name_in_formula": "differentiator",
         "usage": null,
         "impact": null,
         "id": 16
@@ -6273,7 +6751,7 @@
         "plural": "influences",
         "reverse": "is influenced by",
         "rev_plural": "is influenced by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 17
@@ -6285,7 +6763,7 @@
         "plural": "is alias of",
         "reverse": "is alias of",
         "rev_plural": "is alias of",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 18
@@ -6297,7 +6775,7 @@
         "plural": "can",
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 19
@@ -6309,7 +6787,7 @@
         "plural": "can be",
         "reverse": "can be",
         "rev_plural": "can be",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 20
@@ -6321,7 +6799,7 @@
         "plural": "can get",
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 21
@@ -6333,7 +6811,7 @@
         "plural": "can cause",
         "reverse": "can be caused by",
         "rev_plural": "can be caused by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 22
@@ -6345,7 +6823,7 @@
         "plural": "can have",
         "reverse": null,
         "rev_plural": null,
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 23
@@ -6357,7 +6835,7 @@
         "plural": "can use",
         "reverse": "can be used by",
         "rev_plural": "can be used by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 24
@@ -6369,7 +6847,7 @@
         "plural": "scaled by",
         "reverse": "is scaling for",
         "rev_plural": "are scaling for",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 25
@@ -6379,9 +6857,9 @@
         "code_id": "per",
         "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
         "plural": "per",
-        "reverse": null,
-        "rev_plural": null,
-        "frm_name": null,
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 26
@@ -6393,7 +6871,7 @@
         "plural": "times",
         "reverse": "times",
         "rev_plural": "times",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 27
@@ -6405,7 +6883,7 @@
         "plural": "are selectors for",
         "reverse": "is grouped by",
         "rev_plural": "are grouped by",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 28
@@ -6417,7 +6895,7 @@
         "plural": "are symbols for",
         "reverse": "can have symbol",
         "rev_plural": "can have symbols",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 29
@@ -6429,7 +6907,7 @@
         "plural": "and",
         "reverse": "and",
         "rev_plural": "and",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 30
@@ -6441,7 +6919,7 @@
         "plural": "on",
         "reverse": "distribute to",
         "rev_plural": "distribute to",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 31
@@ -6451,9 +6929,9 @@
         "code_id": "in",
         "description": "to specify the measure unit",
         "plural": "in",
-        "reverse": null,
-        "rev_plural": null,
-        "frm_name": null,
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 32
@@ -6463,9 +6941,9 @@
         "code_id": "to",
         "description": "to define a time period e.g. \"12:00 to 13:00\" or \"1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover",
         "plural": "to",
-        "reverse": null,
-        "rev_plural": null,
-        "frm_name": null,
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 33
@@ -6477,7 +6955,7 @@
         "plural": "are ranked by",
         "reverse": "is sort phrases for",
         "rev_plural": "are sort phrases for",
-        "frm_name": null,
+        "name_in_formula": null,
         "usage": null,
         "impact": null,
         "id": 34
@@ -6510,7 +6988,7 @@
       },
       {
         "name": "calc",
-        "code_id": "",
+        "code_id": "NULL",
         "description": "a calculated word in R; e.g. this year returns always a different term",
         "id": 5
       },
@@ -6686,7 +7164,7 @@
       {
         "name": "XBRL",
         "code_id": "xbrl",
-        "description": "",
+        "description": "eXtensible Business Reporting Language is a freely available global framework for exchanging business information",
         "id": 2
       },
       {
@@ -6706,6 +7184,12 @@
         "code_id": "api",
         "description": "",
         "id": 5
+      },
+      {
+        "name": "JSON",
+        "code_id": "json",
+        "description": "",
+        "id": 6
       }
     ],
     "formula_types": [
@@ -6774,16 +7258,28 @@
         "id": 2
       },
       {
-        "name": "formula",
-        "code_id": "formula",
-        "description": "to select the results of another formula using the given context",
-        "id": 3
-      },
-      {
         "name": "triple",
         "code_id": "triple",
         "description": "a reference to two predicate linked words used to select values using \"and\"",
+        "id": 3
+      },
+      {
+        "name": "formula",
+        "code_id": "formula",
+        "description": "to select the results of another formula using the given context",
         "id": 4
+      },
+      {
+        "name": "result word",
+        "code_id": "word_result",
+        "description": "a reference to a word that is added to the result phrases",
+        "id": 5
+      },
+      {
+        "name": "result triple",
+        "code_id": "triple_result",
+        "description": "a reference to a triple that is added to the result phrases",
+        "id": 6
       }
     ],
     "view_types": [
@@ -6964,7 +7460,7 @@
       {
         "name": "fixed word",
         "code_id": "phrase",
-        "description": "show the user specific name of a word or a triple as a text",
+        "description": "show the user-specific name of a word or a triple as a text",
         "id": 4
       },
       {
@@ -17265,22 +17761,22 @@
             "position_type": 2
           },
           {
-            "link_id": 816,
-            "id": 187,
-            "name": "system show field description",
-            "description": "the object description as read only",
-            "type_id": 147,
-            "code_id": "show_field_description",
-            "position": 6,
-            "position_type": 1
-          },
-          {
             "link_id": 817,
             "id": 214,
             "name": "system formatter row right",
             "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
             "type_id": 33,
             "code_id": "row_right",
+            "position": 6,
+            "position_type": 1
+          },
+          {
+            "link_id": 816,
+            "id": 187,
+            "name": "system show field description",
+            "description": "the object description as read only",
+            "type_id": 147,
+            "code_id": "show_field_description",
             "position": 6,
             "position_type": 1
           },
@@ -18645,17 +19141,6 @@
             "position_type": 1
           },
           {
-            "link_id": 925,
-            "id": 203,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 927,
             "id": 206,
             "name": "system form button export",
@@ -18663,6 +19148,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 925,
+            "id": 203,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -18771,17 +19267,6 @@
             "position_type": 1
           },
           {
-            "link_id": 936,
-            "id": 203,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 938,
             "id": 206,
             "name": "system form button export",
@@ -18789,6 +19274,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 936,
+            "id": 203,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -19023,17 +19519,6 @@
             "position_type": 1
           },
           {
-            "link_id": 958,
-            "id": 203,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 960,
             "id": 206,
             "name": "system form button export",
@@ -19041,6 +19526,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 958,
+            "id": 203,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },

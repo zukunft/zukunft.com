@@ -35,6 +35,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
@@ -56,6 +57,7 @@ $html = new html_base();
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
+$msg_txt = '';
 
 // load the session user parameters
 $usr = new user;
@@ -70,7 +72,8 @@ if ($usr->id() > 0) {
     // prepare the display to edit the view
     $msk = new view($usr);
     $msk->load_by_code_id(views::VIEW_ADD);
-    $back = $_GET[url_var::BACK] = '';
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]);
 
     // create the view object that the user can change
     $msk_edit = new view($usr);
@@ -91,7 +94,7 @@ if ($usr->id() > 0) {
             $upd_result = $msk_edit->entry_up($_GET['move_up']);
             if (str_replace('1', '', $upd_result) <> '') {
                 // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result;
+                $msg_txt .= $upd_result;
             }
         }
 
@@ -99,7 +102,7 @@ if ($usr->id() > 0) {
             $upd_result .= $msk_edit->entry_down($_GET['move_down']);
             if (str_replace('1', '', $upd_result) <> '') {
                 // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result;
+                $msg_txt .= $upd_result;
             }
         }
 
@@ -164,7 +167,7 @@ if ($usr->id() > 0) {
                 // $result .= dsp_go_back($back, $usr);
             } else {
                 // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result;
+                $msg_txt .= $upd_result;
             }
         }
 

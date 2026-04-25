@@ -94,7 +94,7 @@ COMMENT ON COLUMN results.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to cache the user specific changes of numeric results related to up to 16 phrases
+-- table structure to cache the user-specific changes of numeric results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results
@@ -110,11 +110,11 @@ CREATE TABLE IF NOT EXISTS user_results
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results                  IS 'to cache the user specific changes of numeric results related to up to 16 phrases';
+COMMENT ON TABLE user_results                  IS 'to cache the user-specific changes of numeric results related to up to 16 phrases';
 COMMENT ON COLUMN user_results.group_id        IS 'the 512-bit prime index to find the user numeric result';
 COMMENT ON COLUMN user_results.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results.user_id         IS 'the id of the user who has requested the change of the numeric result';
-COMMENT ON COLUMN user_results.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results.numeric_value   IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_results.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results.excluded        IS 'true if a user, but not all, have removed it';
@@ -158,7 +158,7 @@ COMMENT ON COLUMN results_prime.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_prime.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested numeric results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested numeric results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_prime
@@ -177,14 +177,14 @@ CREATE TABLE IF NOT EXISTS user_results_prime
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_prime                  IS 'to store the user specific changes for the most often requested numeric results related up to four prime phrase';
+COMMENT ON TABLE user_results_prime                  IS 'to store the user-specific changes for the most often requested numeric results related up to four prime phrase';
 COMMENT ON COLUMN user_results_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_prime.user_id         IS 'the id of the user who has requested the change of the numeric result';
-COMMENT ON COLUMN user_results_prime.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results_prime.numeric_value   IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_results_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_prime.excluded        IS 'true if a user, but not all, have removed it';
@@ -236,7 +236,7 @@ COMMENT ON COLUMN results_main.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_main.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested numeric results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested numeric results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_main
@@ -259,7 +259,7 @@ CREATE TABLE IF NOT EXISTS user_results_main
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_main                  IS 'to store the user specific changes to cache the formula second most often requested numeric results related up to eight prime phrase';
+COMMENT ON TABLE user_results_main                  IS 'to store the user-specific changes to cache the formula second most often requested numeric results related up to eight prime phrase';
 COMMENT ON COLUMN user_results_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a numeric result';
@@ -270,7 +270,7 @@ COMMENT ON COLUMN user_results_main.phrase_id_7     IS 'phrase id that is with t
 COMMENT ON COLUMN user_results_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_main.user_id         IS 'the id of the user who has requested the change of the numeric result';
-COMMENT ON COLUMN user_results_main.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results_main.numeric_value   IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_results_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_main.excluded        IS 'true if a user, but not all, have removed it';
@@ -308,7 +308,7 @@ COMMENT ON COLUMN results_big.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_big.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of numeric results related to more than 16 phrases
+-- table structure to store the user-specific changes of numeric results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_big
@@ -324,11 +324,11 @@ CREATE TABLE IF NOT EXISTS user_results_big
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_big                  IS 'to store the user specific changes of numeric results related to more than 16 phrases';
+COMMENT ON TABLE user_results_big                  IS 'to store the user-specific changes of numeric results related to more than 16 phrases';
 COMMENT ON COLUMN user_results_big.group_id        IS 'the text index for more than 16 phrases to find the numeric result';
 COMMENT ON COLUMN user_results_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_big.user_id         IS 'the id of the user who has requested the change of the numeric result';
-COMMENT ON COLUMN user_results_big.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results_big.numeric_value   IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_results_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_big.excluded        IS 'true if a user, but not all, have removed it';
@@ -430,7 +430,7 @@ COMMENT ON COLUMN results_text.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_text.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to cache the user specific changes of text results related to up to 16 phrases
+-- table structure to cache the user-specific changes of text results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text
@@ -446,11 +446,11 @@ CREATE TABLE IF NOT EXISTS user_results_text
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_text                  IS 'to cache the user specific changes of text results related to up to 16 phrases';
+COMMENT ON TABLE user_results_text                  IS 'to cache the user-specific changes of text results related to up to 16 phrases';
 COMMENT ON COLUMN user_results_text.group_id        IS 'the 512-bit prime index to find the user text result';
 COMMENT ON COLUMN user_results_text.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_text.user_id         IS 'the id of the user who has requested the change of the text result';
-COMMENT ON COLUMN user_results_text.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text.text_value      IS 'the user-specific text value change';
 COMMENT ON COLUMN user_results_text.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_text.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_text.excluded        IS 'true if a user, but not all, have removed it';
@@ -494,7 +494,7 @@ COMMENT ON COLUMN results_text_prime.share_type_id   IS 'to restrict the access'
 COMMENT ON COLUMN results_text_prime.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested text results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested text results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text_prime
@@ -513,14 +513,14 @@ CREATE TABLE IF NOT EXISTS user_results_text_prime
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_text_prime                  IS 'to store the user specific changes for the most often requested text results related up to four prime phrase';
+COMMENT ON TABLE user_results_text_prime                  IS 'to store the user-specific changes for the most often requested text results related up to four prime phrase';
 COMMENT ON COLUMN user_results_text_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_text_prime.user_id         IS 'the id of the user who has requested the change of the text result';
-COMMENT ON COLUMN user_results_text_prime.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text_prime.text_value      IS 'the user-specific text value change';
 COMMENT ON COLUMN user_results_text_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_text_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_text_prime.excluded        IS 'true if a user, but not all, have removed it';
@@ -572,7 +572,7 @@ COMMENT ON COLUMN results_text_main.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_text_main.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested text results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested text results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text_main
@@ -595,7 +595,7 @@ CREATE TABLE IF NOT EXISTS user_results_text_main
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_text_main                  IS 'to store the user specific changes to cache the formula second most often requested text results related up to eight prime phrase';
+COMMENT ON TABLE user_results_text_main                  IS 'to store the user-specific changes to cache the formula second most often requested text results related up to eight prime phrase';
 COMMENT ON COLUMN user_results_text_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a text result';
@@ -606,7 +606,7 @@ COMMENT ON COLUMN user_results_text_main.phrase_id_7     IS 'phrase id that is w
 COMMENT ON COLUMN user_results_text_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_text_main.user_id         IS 'the id of the user who has requested the change of the text result';
-COMMENT ON COLUMN user_results_text_main.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text_main.text_value      IS 'the user-specific text value change';
 COMMENT ON COLUMN user_results_text_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_text_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_text_main.excluded        IS 'true if a user, but not all, have removed it';
@@ -644,7 +644,7 @@ COMMENT ON COLUMN results_text_big.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_text_big.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of text results related to more than 16 phrases
+-- table structure to store the user-specific changes of text results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text_big
@@ -660,11 +660,11 @@ CREATE TABLE IF NOT EXISTS user_results_text_big
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_text_big                  IS 'to store the user specific changes of text results related to more than 16 phrases';
+COMMENT ON TABLE user_results_text_big                  IS 'to store the user-specific changes of text results related to more than 16 phrases';
 COMMENT ON COLUMN user_results_text_big.group_id        IS 'the text index for more than 16 phrases to find the text result';
 COMMENT ON COLUMN user_results_text_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_text_big.user_id         IS 'the id of the user who has requested the change of the text result';
-COMMENT ON COLUMN user_results_text_big.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text_big.text_value      IS 'the user-specific text value change';
 COMMENT ON COLUMN user_results_text_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_text_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_text_big.excluded        IS 'true if a user, but not all, have removed it';
@@ -766,7 +766,7 @@ COMMENT ON COLUMN results_time.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_time.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to cache the user specific changes of time results related to up to 16 phrases
+-- table structure to cache the user-specific changes of time results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time
@@ -782,11 +782,11 @@ CREATE TABLE IF NOT EXISTS user_results_time
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_time                  IS 'to cache the user specific changes of time results related to up to 16 phrases';
+COMMENT ON TABLE user_results_time                  IS 'to cache the user-specific changes of time results related to up to 16 phrases';
 COMMENT ON COLUMN user_results_time.group_id        IS 'the 512-bit prime index to find the user time result';
 COMMENT ON COLUMN user_results_time.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_time.user_id         IS 'the id of the user who has requested the change of the time result';
-COMMENT ON COLUMN user_results_time.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time.time_value      IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_results_time.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_time.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_time.excluded        IS 'true if a user, but not all, have removed it';
@@ -830,7 +830,7 @@ COMMENT ON COLUMN results_time_prime.share_type_id   IS 'to restrict the access'
 COMMENT ON COLUMN results_time_prime.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested time results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested time results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time_prime
@@ -849,14 +849,14 @@ CREATE TABLE IF NOT EXISTS user_results_time_prime
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_time_prime                  IS 'to store the user specific changes for the most often requested time results related up to four prime phrase';
+COMMENT ON TABLE user_results_time_prime                  IS 'to store the user-specific changes for the most often requested time results related up to four prime phrase';
 COMMENT ON COLUMN user_results_time_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_time_prime.user_id         IS 'the id of the user who has requested the change of the time result';
-COMMENT ON COLUMN user_results_time_prime.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time_prime.time_value      IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_results_time_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_time_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_time_prime.excluded        IS 'true if a user, but not all, have removed it';
@@ -908,7 +908,7 @@ COMMENT ON COLUMN results_time_main.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_time_main.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested time results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested time results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time_main
@@ -931,7 +931,7 @@ CREATE TABLE IF NOT EXISTS user_results_time_main
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_time_main                  IS 'to store the user specific changes to cache the formula second most often requested time results related up to eight prime phrase';
+COMMENT ON TABLE user_results_time_main                  IS 'to store the user-specific changes to cache the formula second most often requested time results related up to eight prime phrase';
 COMMENT ON COLUMN user_results_time_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a time result';
@@ -942,7 +942,7 @@ COMMENT ON COLUMN user_results_time_main.phrase_id_7     IS 'phrase id that is w
 COMMENT ON COLUMN user_results_time_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_time_main.user_id         IS 'the id of the user who has requested the change of the time result';
-COMMENT ON COLUMN user_results_time_main.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time_main.time_value      IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_results_time_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_time_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_time_main.excluded        IS 'true if a user, but not all, have removed it';
@@ -980,7 +980,7 @@ COMMENT ON COLUMN results_time_big.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_time_big.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of time results related to more than 16 phrases
+-- table structure to store the user-specific changes of time results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time_big
@@ -996,11 +996,11 @@ CREATE TABLE IF NOT EXISTS user_results_time_big
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_time_big                  IS 'to store the user specific changes of time results related to more than 16 phrases';
+COMMENT ON TABLE user_results_time_big                  IS 'to store the user-specific changes of time results related to more than 16 phrases';
 COMMENT ON COLUMN user_results_time_big.group_id        IS 'the text index for more than 16 phrases to find the time result';
 COMMENT ON COLUMN user_results_time_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_time_big.user_id         IS 'the id of the user who has requested the change of the time result';
-COMMENT ON COLUMN user_results_time_big.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time_big.time_value      IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_results_time_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_time_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_time_big.excluded        IS 'true if a user, but not all, have removed it';
@@ -1102,7 +1102,7 @@ COMMENT ON COLUMN results_geo.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_geo.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to cache the user specific changes of geo results related to up to 16 phrases
+-- table structure to cache the user-specific changes of geo results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo
@@ -1118,11 +1118,11 @@ CREATE TABLE IF NOT EXISTS user_results_geo
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_geo                  IS 'to cache the user specific changes of geo results related to up to 16 phrases';
+COMMENT ON TABLE user_results_geo                  IS 'to cache the user-specific changes of geo results related to up to 16 phrases';
 COMMENT ON COLUMN user_results_geo.group_id        IS 'the 512-bit prime index to find the user geo result';
 COMMENT ON COLUMN user_results_geo.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_geo.user_id         IS 'the id of the user who has requested the change of the geo result';
-COMMENT ON COLUMN user_results_geo.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo.geo_value       IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_results_geo.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_geo.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_geo.excluded        IS 'true if a user, but not all, have removed it';
@@ -1166,7 +1166,7 @@ COMMENT ON COLUMN results_geo_prime.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_geo_prime.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested geo results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested geo results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo_prime
@@ -1185,14 +1185,14 @@ CREATE TABLE IF NOT EXISTS user_results_geo_prime
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_geo_prime                  IS 'to store the user specific changes for the most often requested geo results related up to four prime phrase';
+COMMENT ON TABLE user_results_geo_prime                  IS 'to store the user-specific changes for the most often requested geo results related up to four prime phrase';
 COMMENT ON COLUMN user_results_geo_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_geo_prime.user_id         IS 'the id of the user who has requested the change of the geo result';
-COMMENT ON COLUMN user_results_geo_prime.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo_prime.geo_value       IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_results_geo_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_geo_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_geo_prime.excluded        IS 'true if a user, but not all, have removed it';
@@ -1244,7 +1244,7 @@ COMMENT ON COLUMN results_geo_main.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_geo_main.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested geo results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested geo results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo_main
@@ -1267,7 +1267,7 @@ CREATE TABLE IF NOT EXISTS user_results_geo_main
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_geo_main                  IS 'to store the user specific changes to cache the formula second most often requested geo results related up to eight prime phrase';
+COMMENT ON TABLE user_results_geo_main                  IS 'to store the user-specific changes to cache the formula second most often requested geo results related up to eight prime phrase';
 COMMENT ON COLUMN user_results_geo_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a geo result';
@@ -1278,7 +1278,7 @@ COMMENT ON COLUMN user_results_geo_main.phrase_id_7     IS 'phrase id that is wi
 COMMENT ON COLUMN user_results_geo_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_geo_main.user_id         IS 'the id of the user who has requested the change of the geo result';
-COMMENT ON COLUMN user_results_geo_main.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo_main.geo_value       IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_results_geo_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_geo_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_geo_main.excluded        IS 'true if a user, but not all, have removed it';
@@ -1316,7 +1316,7 @@ COMMENT ON COLUMN results_geo_big.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_geo_big.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of geo results related to more than 16 phrases
+-- table structure to store the user-specific changes of geo results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo_big
@@ -1332,11 +1332,11 @@ CREATE TABLE IF NOT EXISTS user_results_geo_big
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_geo_big                  IS 'to store the user specific changes of geo results related to more than 16 phrases';
+COMMENT ON TABLE user_results_geo_big                  IS 'to store the user-specific changes of geo results related to more than 16 phrases';
 COMMENT ON COLUMN user_results_geo_big.group_id        IS 'the text index for more than 16 phrases to find the geo result';
 COMMENT ON COLUMN user_results_geo_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_geo_big.user_id         IS 'the id of the user who has requested the change of the geo result';
-COMMENT ON COLUMN user_results_geo_big.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo_big.geo_value       IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_results_geo_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_geo_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_geo_big.excluded        IS 'true if a user, but not all, have removed it';

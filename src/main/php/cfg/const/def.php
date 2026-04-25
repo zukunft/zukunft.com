@@ -41,6 +41,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_COMPONENT . 'view_style.php';
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
+//include_once paths::MODEL_GROUP . 'group.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_FORMULA . 'formula_map.php';
@@ -71,30 +72,38 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_LOG . 'changes_big.php';
 //include_once paths::MODEL_LOG . 'changes_norm.php';
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_REF . 'ref_type.php';
+//include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_REF . 'source_db.php';
+//include_once paths::MODEL_REF . 'source_list.php';
+//include_once paths::MODEL_REF . 'source_type.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_RESULT . 'result_db.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SYSTEM . 'job.php';
+//include_once paths::MODEL_SYSTEM . 'job_status.php';
 //include_once paths::MODEL_SYSTEM . 'job_type.php';
 //include_once paths::MODEL_SYSTEM . 'pod.php';
 //include_once paths::MODEL_SYSTEM . 'session.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
-//include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_SYSTEM . 'system_time.php';
-//include_once paths::SHARED_TYPES . 'system_time_type.php';
-//include_once paths::MODEL_REF . 'ref.php';
-//include_once paths::MODEL_REF . 'ref_type.php';
-//include_once paths::MODEL_REF . 'source.php';
-//include_once paths::MODEL_REF . 'source_list.php';
-//include_once paths::MODEL_REF . 'source_type.php';
-//include_once paths::MODEL_USER . 'user_db.php';
-//include_once paths::MODEL_USER . 'user_official_type.php';
-//include_once paths::MODEL_RESULT . 'result.php';
-//include_once paths::MODEL_USER . 'user_profile.php';
 //include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_list.php';
+//include_once paths::MODEL_USER . 'user_profile.php';
+//include_once paths::MODEL_USER . 'user_status.php';
 //include_once paths::MODEL_USER . 'user_type.php';
+//include_once paths::MODEL_USER . 'user_official_type.php';
 //include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_time_series.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
@@ -107,8 +116,11 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_WORD . 'triple_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
-//include_once paths::SHARED_TYPES . 'protection_type.php';
-//include_once paths::SHARED_TYPES . 'share_type.php';
+//include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
+//include_once paths::SHARED_ENUM . 'user_statuum.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
+//include_once paths::SHARED_TYPES . 'protection_types.php';
+//include_once paths::SHARED_TYPES . 'share_types.php';
 //include_once paths::SHARED_TYPES . 'view_relation_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -126,6 +138,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
@@ -147,6 +160,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -156,23 +170,31 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -185,8 +207,10 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 
@@ -206,6 +230,8 @@ class def
     const int LIST_MIN_NAMES = 4; // number of object names that should at least be shown
     const int LIST_MIN_NUM = 20; // number of object ids that should at least be shown
     const int DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
+    const int DEBUG_SQL_LENGTH = 200; // the max number of chars of an SQL statement shown in the debug text
+    const int DEBUG_SQL_LIST_TEXT = 500; // the max number of chars of a list of SQL statements shown in the debug text
 
 
     /*
@@ -215,6 +241,21 @@ class def
     // TODO Prio 2 allow overwrite by the config value
     const int MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
     const int MAX_RECURSIVE = 10; // max number of recursive call to avoid endless looping in case of a program error
+
+
+    /*
+     * fallback
+     */
+
+    // TODO Prio 1 collect all fallback values here
+    // configuration values used as fallback if the value is missing in the system configuration
+    const int FALLBACK_IMPORT_PER_SEC = 100; // expected number of objects that could be imported per second
+    const int FALLBACK_IMPORT_BYTE_PER_SEC = 10000; // expected number of bytes per second that could be processed in import
+    const int FALLBACK_PERCENT_STEP = 1; // the percent step size for the progress bar and of process parts
+    const int FALLBACK_RETRY = 10; // the default number of retries for a failed process
+    const int FALLBACK_RECURSIVE_MAX = 99; // the maximal number of recursive calls of a function
+    const int FALLBACK_DB_PAGE_ROWS = 20; // the number of database rows that should be loaded at once
+    const float FALLBACK_RESPONSE_TIME = 1.0; // the response time to update the frontend in seconds
 
 
     /*
@@ -265,6 +306,7 @@ class def
         triple::class,
         source::class,
         ref::class,
+        group::class,
         value::class,
         formula::class,
         formula_link::class,
@@ -274,6 +316,26 @@ class def
         term_view::class,
         component::class,
         component_link::class,
+    ];
+
+    // classes that should not be delete (the only exception is that system users can delete test rows)
+    const array NO_DELETE_CLASSES = [
+        user::class,
+    ];
+
+    // classes where database rows should never be updated (the only exception is that system users can delete test rows)
+    const array NO_UPDATE_CLASSES = [
+        change_log::class,
+    ];
+
+    // classes that should not be delete (the only exception is that system users can delete test rows)
+    const array ONLY_ADMIN_CAN_DELETE_CLASSES = [
+        language::class,
+    ];
+
+    // classes that should not be delete (the only exception is that system users can delete test rows)
+    const array ONLY_ADMIN_CAN_UPDATE_CLASSES = [
+        language::class,
     ];
 
     // classes that are directly linked to the main classes and that should be included in the same code function docs part
@@ -292,7 +354,65 @@ class def
         component::class,
     ];
 
-    // classes that have a frontend and backend object but are not user specific
+    // list of classes that have a unique name
+    const array ONLY_ADMIN_CAN_RENAME_CLASSES = [
+        verb::class,
+    ];
+
+    // list of value classes
+    const array VALUE_CLASSES = [
+        value_base::class,
+        value::class,
+        value_time::class,
+        value_text::class,
+        value_geo::class,
+        value_time_series::class,
+    ];
+
+    // list of classes where the tables have no auto increase id instead the id is based on a phrase list based database id
+    const array DB_TYPES_NO_SEQ = [
+        value::class,
+        value_time::class,
+        value_text::class,
+        value_geo::class,
+        value_time_series::class,
+        result::class,
+        group::class,
+    ];
+
+    // list of classes that can be the object of a phrase
+    // TODO Prio 1 use this for all phrase checks
+    const array PHRASE_CLASSES = [
+        word::class,
+        triple::class,
+    ];
+
+    // list of classes that can be the object of a phrase
+    const array TERM_CLASSES = [
+        word::class,
+        verb::class,
+        triple::class,
+        formula::class,
+    ];
+
+    // list of classes where the link of two objects is the main unique key beside the database id
+    const array LINK_CLASSES = [
+        element::class,
+        ref::class,
+        component_link::class,
+    ];
+
+    // list of classes where the link of two objects and the
+    // predicate/type is part of the main unique key beside the database id
+    // e.g. a word / phrase could have several external references (wikipedia and Wikidata)
+    //      but if the type of a component link is changes the type should be overwritten in the database
+    //      because each component could be just added once to a view at position defined by the order number
+    const array LINK_TYPE_CLASSES = [
+        triple::class,
+        ref::class,
+    ];
+
+    // classes that have a frontend and backend object but are not user-specific
     const array SYSTEM_UI_CLASSES = [
         language::class,
         pod::class,
@@ -334,8 +454,10 @@ class def
 
     // type classes that have a csv file for the initial load
     const array BASE_CODE_LINK_FILES = [
-        sys_log_status::class,
-        sys_log_type::class,
+        sys_log_function::class,
+        sys_log_level::class,
+        sys_log_statuum::class,
+        job_status::class,
         job_type::class,
         change_action::class,
         change_table::class,
@@ -345,14 +467,15 @@ class def
         formula_type::class,
         language::class,
         language_form::class,
-        protection_type::class,
+        protection_types::class,
         ref_type::class,
-        share_type::class,
+        share_types::class,
         source_type::class,
         system_time_type::class,
         user_official_type::class,
         user_profile::class,
         user_type::class,
+        user_statuum::class,
         position_type::class,
         component_link_type::class,
         component_type::class,
@@ -388,7 +511,8 @@ class def
     // list of classes that have a csv with the code id for the initial user profile and type setup
     const array CLASS_WITH_USER_CODE_LINK_CSV = [
         user_profile::class,
-        user_type::class
+        user_type::class,
+        user_status::class,
     ];
 
     // list of classes that use the user sandbox
@@ -431,11 +555,23 @@ class def
         change_link::class,
     ];
 
+    // database fields that are an id where the linked name should be included in the change log
+    // e.g. if the source_id of an value is changed the related source name should be included in the log
+    const array NAMED_ID_FIELDS = [
+        source_db::FLD_ID,
+    ];
+
+    // TODO Prion 1 review and combine with CLASSES_NO_CHANGE_LOG
+    // list of classes that use a database table but where the changes never needs to be added to the change log
+    const array CLASSES_NO_LOG = [
+        job::class,
+    ];
+
     // list of classes that use a database table but where the changes do not need to be logged
     const array CLASSES_NO_CHANGE_LOG = [
-        sys_log_status::class,
         sys_log_function::class,
-        sys_log_type::class,
+        sys_log_status::class,
+        sys_log_level::class,
         system_time_type::class,
         system_time::class,
         change_action::class,
@@ -468,14 +604,15 @@ class def
     // list of all ab tables in order of dependencies
     const array DB_TABLE_LIST = [
         'config',
-        'sys_log_types',
-        'sys_log',
-        'sys_log_status',
         'sys_log_functions',
+        'sys_log_levels',
+        'sys_log_statuum',
+        'sys_log',
         'system_times',
         'system_time_types',
         'job_times',
         'jobs',
+        'job_statuum',
         'job_types',
         'user_official_types',
         'ip_ranges',
@@ -628,6 +765,7 @@ class def
         'users',
         'user_types',
         'user_profiles',
+        'user_statuum',
         'view_types',
         'view_styles',
         'component_types',
@@ -680,6 +818,7 @@ class def
         'change_fields_change_field_id_seq',
         'change_tables_change_table_id_seq',
         'config_config_id_seq',
+        'job_statuum_job_status_id_seq',
         'job_types_job_type_id_seq',
         'jobs_job_id_seq',
         'sys_log_status_sys_log_status_id_seq',
@@ -689,6 +828,12 @@ class def
         'users_user_id_seq',
         'user_profiles_user_profile_id_seq'
     ];
+
+    // id field names that can be either int or text e.g. the group_id
+    const array MIXED_ID_FIELDS = [
+        result_db::FLD_SOURCE_GRP,
+    ];
+
 
     // list of database fields that are also in test volatile
     // and that should be ignored in unit tests

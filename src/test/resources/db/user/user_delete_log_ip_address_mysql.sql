@@ -18,7 +18,7 @@ BEGIN
 END;
 
 SELECT user_delete_log_ip_address
-       (2,
+       (1,
         3,
         75,
         '258.257.256.255',

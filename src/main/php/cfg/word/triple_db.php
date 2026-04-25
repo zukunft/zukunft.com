@@ -75,6 +75,7 @@ class triple_db
     const string FLD_ID = 'triple_id';
     const string FLD_FROM_COM = 'the phrase_id that is linked which can be null e.g. if a symbol is assigned to a triple (m/s is symbol for meter per second)';
     const string FLD_FROM = 'from_phrase_id';
+    const string FLD_PREDICATE = verb_db::FLD_ID;
     const string FLD_VERB_COM = 'the verb_id that defines how the phrases are linked';
     const string FLD_TO_COM = 'the phrase_id to which the first phrase is linked';
     const string FLD_TO = 'to_phrase_id';
@@ -103,7 +104,7 @@ class triple_db
     // list of fields that MUST be set by one user
     const array FLD_LST_LINK = array(
         [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NULL, sql::INDEX, '', self::FLD_FROM_COM],
-        [verb_db::FLD_ID, sql_field_type::INT_SMALL_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
+        [self::FLD_PREDICATE, sql_field_type::INT_SMALL_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
         [self::FLD_TO, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TO_COM],
     );
     // list of must fields that CAN be changed by the user
@@ -129,7 +130,7 @@ class triple_db
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
-    // all database field names excluding the id and excluding the user specific fields
+    // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
         sql_db::FLD_USAGE,
@@ -142,14 +143,14 @@ class triple_db
         verb_db::FLD_ID,
         self::FLD_TO
     );
-    // list of the user specific database field names
+    // list of the user-specific database field names
     const array FLD_NAMES_USR = array(
         self::FLD_NAME,
         self::FLD_NAME_GIVEN,
         self::FLD_NAME_AUTO,
         sql_db::FLD_DESCRIPTION
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_WIGHT,
         phrase::FLD_TYPE,
@@ -159,7 +160,7 @@ class triple_db
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_NAME_GIVEN,

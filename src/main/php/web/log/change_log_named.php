@@ -85,11 +85,11 @@ class change_log_named extends change_log
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
         if (array_key_exists(json_fields::OLD_VALUE, $json_array)) {
             $this->old_value = $json_array[json_fields::OLD_VALUE];
         } else {
@@ -110,7 +110,7 @@ class change_log_named extends change_log
         } else {
             $this->new_id = null;
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

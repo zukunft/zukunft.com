@@ -34,10 +34,10 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class protection_read_tests

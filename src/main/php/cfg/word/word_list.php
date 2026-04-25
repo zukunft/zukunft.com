@@ -81,7 +81,7 @@ include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'library.php';
 
@@ -110,7 +110,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -509,7 +509,7 @@ class word_list extends sandbox_list_named
         foreach ($json_obj as $value) {
             $wrd = new word($this->get_user());
             if ($wrd->import_obj($value, $usr_msg, $dto)) {
-                $this->add_by_name($wrd);
+                $this->add_by_key($wrd);
             }
         }
 
@@ -611,7 +611,7 @@ class word_list extends sandbox_list_named
             // load all linked words
             $additional_added = $additional_added->load_linked_words($vrb, $direction);
             // get the words not added before
-            $additional_added->diff($added_wrd_lst);
+            $additional_added->remove($added_wrd_lst);
             // remember the added words
             $added_wrd_lst->merge($additional_added);
 
@@ -743,7 +743,7 @@ class word_list extends sandbox_list_named
         $wrd_lst = $wrd_lst->are();
         $wrd_lst = $wrd_lst->contains();
         $added_lst = clone $wrd_lst;
-        $added_lst->diff($this);
+        $added_lst->remove($this);
         if (count($added_lst->lst()) > 0) {
             log_debug('add ' . $added_lst->name() . ' to ' . $wrd_lst->name());
         }
@@ -755,7 +755,7 @@ class word_list extends sandbox_list_named
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
                 $next_lst = $next_lst->contains();
-                $next_lst->diff($added_lst);
+                $next_lst->remove($added_lst);
                 $added_lst->merge($next_lst);
                 if (count($next_lst->lst()) > 0) {
                     log_debug('add ' . $next_lst->name() . ' to ' . $wrd_lst->name());
@@ -823,7 +823,7 @@ class word_list extends sandbox_list_named
             $parents->merge($wrd_lst);
         }
         $result = clone $this;
-        $result->diff($parents);
+        $result->remove($parents);
         return $result;
     }
 
@@ -884,7 +884,7 @@ class word_list extends sandbox_list_named
      *
      * @param word_list $del_wrd_lst is the list of words that should be removed from this list object
      */
-    function diff(word_list $del_wrd_lst): void
+    function remove(word_list $del_wrd_lst): void
     {
         log_debug('->diff of ' . $del_wrd_lst->dsp_id() . ' and ' . $this->dsp_id());
 
@@ -919,7 +919,7 @@ class word_list extends sandbox_list_named
             if ($del_wrd_id > 0) {
                 if (in_array($del_wrd_id, $this->ids())) {
                     $del_pos = array_search($del_wrd_id, $this->ids());
-                    log_debug('exclude (' . $this->get_by_id($del_pos)?->name() . ')');
+                    log_debug('exclude (' . $this->get_by_key($del_pos)?->name() . ')');
                     $this->unset($del_pos);
                 }
             }
@@ -933,7 +933,7 @@ class word_list extends sandbox_list_named
     function ex_time(): void
     {
         $del_wrd_lst = $this->time_lst();
-        $this->diff($del_wrd_lst);
+        $this->remove($del_wrd_lst);
         log_debug($this->dsp_id());
     }
 
@@ -943,7 +943,7 @@ class word_list extends sandbox_list_named
     function ex_measure(): void
     {
         $del_wrd_lst = $this->measure_lst();
-        $this->diff($del_wrd_lst);
+        $this->remove($del_wrd_lst);
         log_debug($this->dsp_id());
     }
 
@@ -953,7 +953,7 @@ class word_list extends sandbox_list_named
     function ex_scaling(): void
     {
         $del_wrd_lst = $this->scaling_lst();
-        $this->diff($del_wrd_lst);
+        $this->remove($del_wrd_lst);
         log_debug($this->dsp_id());
     }
 
@@ -963,7 +963,7 @@ class word_list extends sandbox_list_named
     function ex_percent(): void
     {
         $del_wrd_lst = $this->percent_lst();
-        $this->diff($del_wrd_lst);
+        $this->remove($del_wrd_lst);
         log_debug($this->dsp_id());
     }
 
@@ -984,9 +984,9 @@ class word_list extends sandbox_list_named
         }
         asort($name_lst);
         log_debug('sorted "' . implode('","', $name_lst) . '" (' . $lib->dsp_array(array_keys($name_lst)) . ')');
-        foreach (array_keys($name_lst) as $sorted_id) {
-            log_debug('get ' . $sorted_id);
-            $wrd_to_add = $this->get($sorted_id);
+        foreach (array_keys($name_lst) as $sorted_key) {
+            log_debug('get ' . $sorted_key);
+            $wrd_to_add = $this->get_by_key($sorted_key);
             log_debug('got ' . $wrd_to_add->name());
             $result[] = $wrd_to_add;
         }
@@ -1251,9 +1251,9 @@ class word_list extends sandbox_list_named
         $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if (get_class($phr) == word::class) {
-                $phr_lst->add_by_name($phr->phrase());
+                $phr_lst->add_by_key($phr->phrase());
             } elseif (get_class($phr) == phrase::class) {
-                $phr_lst->add_by_name($phr);
+                $phr_lst->add_by_key($phr);
             } else {
                 log_err('unexpected object type ' . get_class($phr));
             }
@@ -1264,7 +1264,7 @@ class word_list extends sandbox_list_named
 
     /**
      * @return value the first (or later "best") value related to the word lst
-     * or an array with the value and the user_id if the result is user specific
+     * or an array with the value and the user_id if the result is user-specific
      */
     function value(): value
     {
@@ -1503,7 +1503,7 @@ class word_list extends sandbox_list_named
             $time_lst = new word_list($this->get_user());
             foreach ($trm_lst->lst() as $trm) {
                 if ($trm->is_time()) {
-                    $time_lst->add($trm->word());
+                    $time_lst->add($trm->get_word());
                 }
             }
             $wrd = $time_lst->max_time();

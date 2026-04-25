@@ -49,7 +49,7 @@ class source_ui_tests
         $ts = 'unit ui html source ';
         $t->header($ts);
 
-        $src = new source($t_src->source()->api_json());
+        $src = new source($t_src->source_reserved()->api_json());
         $test_page = $html->text_h2('source display test');
         $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
         $test_page .= 'with link: ' . $src->name_link() . '<br>';

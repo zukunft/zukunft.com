@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2025 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -38,6 +38,9 @@ enum change_actions: string
     // the basic change types that are logged
     const string SHOW = 'show';
     const string ADD = 'add';
+    const int ADD_ID = 1;
+    const string ADD_NAME = 'add';
+    const string ADD_COM = '';
     const string UPDATE = 'update';
     const string DELETE = 'del';
     const string SUB = 'sub';

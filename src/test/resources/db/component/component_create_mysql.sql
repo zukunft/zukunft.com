@@ -41,7 +41,7 @@ ALTER TABLE components
     MODIFY component_id bigint NOT NULL AUTO_INCREMENT;
 
 --
--- table structure to save user specific changes for the single components of a view
+-- table structure to save user-specific changes for the single components of a view
 --
 
 CREATE TABLE IF NOT EXISTS user_components

@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -67,7 +68,8 @@ if ($session_usr->id() > 0) {
     // show the header
     $msk = new view($session_usr);
     $msk->id = $sys_msk_cac->id(views::FORMULA_EXPLAIN);
-    $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     $result .= $msk_dsp->dsp_navbar($dto, $back);

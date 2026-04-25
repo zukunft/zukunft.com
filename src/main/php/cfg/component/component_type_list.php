@@ -33,13 +33,13 @@ namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_COMPONENT . 'component_type.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 
-use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 

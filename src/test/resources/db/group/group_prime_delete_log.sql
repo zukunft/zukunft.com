@@ -16,8 +16,8 @@ $$ BEGIN
 END $$ LANGUAGE plpgsql;
 
 SELECT group_prime_delete_log
-    (1::bigint,
+    (3::bigint,
      3::smallint,
      320::smallint,
-     'Pi'::text,
-     562956395970562::bigint);
+     'Pi (math)'::text,
+     32770::bigint);

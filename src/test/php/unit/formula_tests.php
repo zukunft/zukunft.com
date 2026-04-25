@@ -89,7 +89,7 @@ class formula_tests
         $t->subheader($ts . 'sql read default by name');
         $frm = new formula($usr);
         $frm->set_name(formulas::SCALE_MIO_EXP);
-        $t->assert_sql_standard($sc, $frm);
+        $t->assert_sql_standard_by_name($sc, $frm);
 
         $t->subheader($ts . 'sql write insert');
         $frm = $t_frm->formula();

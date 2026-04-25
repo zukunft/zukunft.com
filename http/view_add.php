@@ -35,6 +35,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -57,6 +58,7 @@ global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
+$msg_txt = '';
 
 // load the session user parameters
 $usr = new user;
@@ -70,7 +72,8 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_id($sys_msk_cac->id(views::VIEW_ADD));
-    $back = $_GET[url_var::BACK] = ''; //
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); //
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
     $msk_add = new view($usr);
@@ -90,7 +93,7 @@ if ($usr->id() > 0) {
 
         // check essential parameters
         if ($_GET[url_var::NAME] == "") {
-            $msg .= 'Name missing; Please press back and enter a name for the new view.';
+            $msg_txt .= 'Name missing; Please press back and enter a name for the new view.';
         } else {
 
             $add_result = $msk_add->save($usr_msg);
@@ -102,7 +105,7 @@ if ($usr->id() > 0) {
                 $result .= $html->dsp_go_back($back, $usr);
             } else {
                 // ... or in case of a problem prepare to show the message
-                $msg .= $add_result;
+                $msg_txt .= $add_result;
             }
         }
     }

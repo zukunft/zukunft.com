@@ -63,7 +63,7 @@ zukunft.com:
             tooltip-comment: "number of rows to be shown"
             word changes: 20
           time:
-            tooltip-comment: "time related user specific settings"
+            tooltip-comment: "time related user-specific settings"
             min columns:
               sys-conf-value: 3
               tooltip-comment: "minimum number of same time type word to display in a table e.g. if at least 3 years exist use a table to display"

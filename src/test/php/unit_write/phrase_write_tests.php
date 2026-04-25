@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -43,6 +44,8 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -60,6 +63,9 @@ class phrase_write_tests
         // init
         $lib = new library();
         $t_db = new test_db_load($t);
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write phrase ';
@@ -120,6 +126,13 @@ class phrase_write_tests
         }
         $target = words::COMPANY;
         $t->assert('phrase->is_mainly for ' . $phr->name(), $result, $target);
+
+        // cleanup - fallback delete
+        $t_wrd->cleanup($ts);
+        $t_trp->cleanup($ts);
+
+        // test if there are any test leftovers in the database and report which
+        $t->check_cleanup($usr_msg);
 
     }
 

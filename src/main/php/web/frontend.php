@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -68,12 +68,12 @@ include_once html_paths::TYPES . 'change_table_list.php';
 include_once html_paths::TYPES . 'change_field_list.php';
 include_once html_paths::TYPES . 'sys_log_status_list.php';
 include_once html_paths::TYPES . 'job_type_list.php';
-include_once html_paths::TYPES . 'languages.php';
-include_once html_paths::TYPES . 'language_forms.php';
+include_once html_paths::TYPES . 'language_list.php';
+include_once html_paths::TYPES . 'language_form_list.php';
 include_once html_paths::TYPES . 'share.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::TYPES . 'verbs.php';
-include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'phrase_type_list.php';
 include_once html_paths::TYPES . 'formula_type_list.php';
 include_once html_paths::TYPES . 'formula_link_type_list.php';
 include_once html_paths::TYPES . 'source_type_list.php';
@@ -98,6 +98,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
@@ -145,6 +146,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -159,6 +161,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
+use Random\RandomException;
 use Exception;
 
 class frontend
@@ -231,10 +234,11 @@ class frontend
      * TODO to be deprecated
      * start a frontend session with direct db access
      *
-     * @param string $title
+     * @param string $code_name
+     * @param Message $msg to collect any messages and suggested solutions for the user
      * @return sql_db
      */
-    function start(string $code_name): sql_db
+    function start(string $code_name, Message $msg = new Message()): sql_db
     {
         global $sys;
         global $errors;
@@ -244,7 +248,23 @@ class frontend
 
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
+        $session_is_fine = true;
         session_start();
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
+        } elseif (!empty($_POST[url_var::SESSION_TOKEN])) {
+            // TODO Prio 0 add the session token to each frontend form
+            if (!hash_equals($_SESSION[url_var::SESSION_TOKEN], $_POST[url_var::SESSION_TOKEN])) {
+                $msg_txt = 'Suspect request. Please close browser, delete cache and login again.';
+                log_fatal($msg_txt, 'view.php');
+                log_fatal('session token is' . $_SESSION[url_var::SESSION_TOKEN] . ' but POST token is ' . $_POST[url_var::SESSION_TOKEN], 'view.php');
+                $session_is_fine = false;
+            }
+        }
 
         /*
         require __DIR__ . '/vendor/autoload.php';
@@ -276,7 +296,11 @@ class frontend
         }
         */
 
-        return $this->open_db($code_name);
+        if ($session_is_fine) {
+            return $this->open_db($code_name);
+        } else {
+            return new sql_db();
+        }
     }
 
     /**
@@ -369,6 +393,13 @@ class frontend
         // resume session (based on cookies)
         // TODO review session start and end calls
         session_start();
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
+        }
 
         // just for cache loading
         // TODO Prio 2 switch to user setting later
@@ -431,11 +462,11 @@ class frontend
         global $sys;
 
         $sys->times->switch(system_time_type::LOAD_FRONTEND);
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($this->dto?->typ_lst_cache == null) {
             $api_msg = $this->api_get(type_lists::class);
             if ($api_msg == '' or $api_msg == null) {
-                $usr_msg->add_id_with_vars(msg_id::API_MESSAGE_EMPTY, [
+                $msg->add(msg_id::API_MESSAGE_EMPTY, [
                     msg_id::VAR_REQUEST => 'load cache'
                 ]);
             } else {
@@ -443,7 +474,7 @@ class frontend
             }
         }
         $sys->times->switch(system_time_type::DEFAULT);
-        return $usr_msg;
+        return $msg;
     }
 
     function set_cache(data_object $dto): void
@@ -596,6 +627,7 @@ class frontend
         data_object  $dto = new data_object()
     ): string
     {
+        $lib = new library();
 
         // init the view
         $result = ''; // reset the html code var
@@ -616,7 +648,11 @@ class frontend
 
         $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
         $view_words = $url_array[url_var::WORDS] ?? '';
-        $back = $url_array[url_var::BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
+        if (array_key_exists(url_var::BACK, $url_array)) {
+            $back = $lib->filter_var($url_array[url_var::BACK]); // the word id from which this value change has been called (maybe later any page)
+        } else {
+            $back = '';
+        }
 
         // TODO move to the frontend __construct
         // get the fixed frontend config

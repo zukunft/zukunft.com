@@ -51,6 +51,6 @@ SELECT user_insert_log_1001051000000
          'the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests',
          81,
          'system test',
-         16,
+         17,
          76,
          'test@zukunft.com');

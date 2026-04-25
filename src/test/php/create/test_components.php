@@ -45,16 +45,19 @@ include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once test_paths::CREATE . 'test_const.php';
+include_once test_paths::CREATE . 'test_objects.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -64,42 +67,53 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
-use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_components
+class test_components extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test components for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, components::TEST_COMPONENTS, new component($this->env->usr1));
     }
 
 
+    /*
+     * unit
+     */
+
     /**
-     * @return component_list with a list of suggested component for a word
+     * @return component_list with a list of suggested components for a word
      */
     function component_list_word(): component_list
     {
         $lst = new component_list($this->env->usr1);
         $lst->add($this->component_filled());
         return $lst;
+    }
+
+    function component_add(): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set_name(components::TEST_ADD_NAME);
+        return $cmp;
     }
 
     /**
@@ -126,7 +140,7 @@ class test_components
         $t_msk = new test_views($this->env);
         $lnk = new term_view($this->env->usr1);
         $lnk->set(1, $t_msk->view(), $t_wrd->word()->term());
-        $lnk->set_predicate_id($sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT));
+        $lnk->set_predicate_id($sys->typ_lst->msk_lnk_typ->id(view_link_types::DEFAULT));
         $lnk->description = 2;
         return $lnk;
     }
@@ -136,8 +150,8 @@ class test_components
         global $sys;
         $lnk = $this->view_link();
         $lnk->exclude();
-        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $lnk;
     }
 
@@ -157,8 +171,20 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::WORD_ID, components::WORD_NAME);
-        $cmp->set_type(component_type::PHRASE_NAME, $this->env->usr1);
+        $cmp->set_type(component_types::PHRASE_NAME, $this->env->usr1);
         $cmp->description = components::WORD_COM;
+        return $cmp;
+    }
+
+    /**
+     * @return component for db write testing that does not have a reserved name
+     */
+    function component_rename(): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME);
+        $cmp->set_type(component_types::PHRASE_NAME, $this->env->usr1);
+        $cmp->description = components::FORM_NAME_COM;
         return $cmp;
     }
 
@@ -174,7 +200,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::MATRIX_ID, components::MATRIX_NAME);
-        $cmp->set_type(component_type::CALC_SHEET, $this->env->usr1);
+        $cmp->set_type(component_types::CALC_SHEET, $this->env->usr1);
         $cmp->description = components::MATRIX_COM;
         return $cmp;
     }
@@ -189,7 +215,7 @@ class test_components
         $cmp = new component($this->env->usr1);
         $cmp->set(components::WORD_ID, components::WORD_NAME);
         $cmp->description = components::WORD_COM;
-        $cmp->set_type(component_type::TEXT, $this->env->usr1);
+        $cmp->set_type(component_types::TEXT, $this->env->usr1);
         $cmp->set_style(view_styles::COL_SM_4);
         $cmp->set_code_id(components::FORM_TITLE, $this->env->usr_system);
         $cmp->set_usage(test_const::DUMMY_USAGE_COMPONENT);
@@ -204,8 +230,8 @@ class test_components
         //$cmp->set_formula($this->formula());
         $cmp->set_link_type(component_link_type::EXPRESSION);
         $cmp->exclude();
-        $cmp->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $cmp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $cmp->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $cmp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $cmp;
     }
 
@@ -239,18 +265,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set_name(components::TEST_ADD_VIA_FUNC_NAME);
-        $cmp->set_type(component_type::TEXT, $this->env->usr1);
-        return $cmp;
-    }
-
-    /**
-     * @return component to test the sql insert without use of function
-     */
-    function component_add_by_sql(): component
-    {
-        $cmp = new component($this->env->usr1);
-        $cmp->set_name(components::TEST_ADD_VIA_SQL_NAME);
-        $cmp->set_type(component_type::TEXT, $this->env->usr1);
+        $cmp->set_type(component_types::TEXT, $this->env->usr1);
         return $cmp;
     }
 
@@ -258,7 +273,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::WORD_ID, components::FORM_TITLE_NAME);
-        $cmp->set_type(component_type::FORM_TITLE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_TITLE, $this->env->usr1);
         $cmp->description = components::FORM_TITLE_COM;
         $cmp->set_code_id(components::FORM_TITLE, $this->env->usr_system);
         return $cmp;
@@ -268,7 +283,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::MATRIX_ID, components::FORM_BACK_NAME);
-        $cmp->set_type(component_type::FORM_HIDDEN_BACK, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_HIDDEN_BACK, $this->env->usr1);
         $cmp->description = components::FORM_BACK_COM;
         $cmp->set_code_id(components::FORM_BACK, $this->env->usr_system);
         return $cmp;
@@ -278,7 +293,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(3, components::FORM_CONFIRM_NAME);
-        $cmp->set_type(component_type::FORM_HIDDEN_STEP, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_HIDDEN_STEP, $this->env->usr1);
         $cmp->description = components::FORM_CONFIRM_COM;
         $cmp->set_code_id(components::FORM_CONFIRM, $this->env->usr_system);
         return $cmp;
@@ -288,7 +303,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME);
-        $cmp->set_type(component_type::FORM_FIELD_NAME, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_FIELD_NAME, $this->env->usr1);
         $cmp->description = components::FORM_NAME_COM;
         $cmp->set_code_id(components::FORM_NAME, $this->env->usr_system);
         return $cmp;
@@ -298,7 +313,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(5, components::FORM_DESCRIPTION_NAME);
-        $cmp->set_type(component_type::FORM_FIELD_DESCRIPTION, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_FIELD_DESCRIPTION, $this->env->usr1);
         $cmp->description = components::FORM_DESCRIPTION_COM;
         $cmp->set_code_id(components::FORM_DESCRIPTION, $this->env->usr_system);
         return $cmp;
@@ -308,7 +323,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::FORM_PLURAL_ID, components::FORM_PLURAL_NAME);
-        $cmp->set_type(component_type::FORM_FIELD_PLURAL, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_FIELD_PLURAL, $this->env->usr1);
         $cmp->description = components::FORM_PLURAL_COM;
         $cmp->set_code_id(components::FORM_PLURAL, $this->env->usr_system);
         return $cmp;
@@ -318,7 +333,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(6, components::FORM_PHRASE_TYPE_NAME);
-        $cmp->set_type(component_type::FORM_SELECT_PHRASE_TYPE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_SELECT_PHRASE_TYPE, $this->env->usr1);
         $cmp->description = components::FORM_PHRASE_TYPE_COM;
         $cmp->set_code_id(components::FORM_PHRASE_TYPE, $this->env->usr_system);
         return $cmp;
@@ -328,7 +343,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(7, components::FORM_SHARE_TYPE_NAME);
-        $cmp->set_type(component_type::FORM_SHARE_TYPE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_SHARE_TYPE, $this->env->usr1);
         $cmp->description = components::FORM_SHARE_TYPE_COM;
         $cmp->set_code_id(components::FORM_SHARE_TYPE, $this->env->usr_system);
         return $cmp;
@@ -338,7 +353,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(8, components::FORM_PROTECTION_TYPE_NAME);
-        $cmp->set_type(component_type::FORM_PROTECTION_TYPE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_PROTECTION_TYPE, $this->env->usr1);
         $cmp->description = components::FORM_PROTECTION_TYPE_COM;
         $cmp->set_code_id(components::FORM_PROTECTION_TYPE, $this->env->usr_system);
         return $cmp;
@@ -348,7 +363,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(9, components::FORM_CANCEL_NAME);
-        $cmp->set_type(component_type::FORM_BUTTON_CANCEL, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_BUTTON_CANCEL, $this->env->usr1);
         $cmp->description = components::FORM_CANCEL_COM;
         $cmp->set_code_id(components::FORM_CANCEL, $this->env->usr_system);
         return $cmp;
@@ -358,7 +373,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(10, components::FORM_SAVE_NAME);
-        $cmp->set_type(component_type::FORM_BUTTON_SAVE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_BUTTON_SAVE, $this->env->usr1);
         $cmp->description = components::FORM_SAVE_COM;
         $cmp->set_code_id(components::FORM_SAVE, $this->env->usr_system);
         return $cmp;
@@ -368,7 +383,7 @@ class test_components
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(11, components::FORM_END_NAME);
-        $cmp->set_type(component_type::FORM_END, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_END, $this->env->usr1);
         $cmp->description = components::FORM_END_COM;
         $cmp->set_code_id(components::FORM_END, $this->env->usr_system);
         return $cmp;
@@ -398,6 +413,21 @@ class test_components
         return $lnk;
     }
 
+    /**
+     * @return component_link with view and component set by id only (no name),
+     *         excluded and with share and protection set,
+     *         to check if the sql insert function handles partial excluded objects correctly
+     */
+    function component_link_half_filled(): component_link
+    {
+        global $sys;
+        $lnk = $this->component_link();
+        $lnk->exclude();
+        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
+        return $lnk;
+    }
+
     function component_matrix_link(): component_link
     {
         $t_msk = new test_views($this->env);
@@ -417,8 +447,8 @@ class test_components
         $lnk->set_pos_type(position_types::SIDE);
         $lnk->set_style(view_styles::COL_SM_8);
         $lnk->exclude();
-        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $lnk;
     }
 

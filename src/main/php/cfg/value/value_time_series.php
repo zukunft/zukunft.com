@@ -48,6 +48,7 @@ include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -89,13 +91,13 @@ class value_time_series extends sandbox_value
     const string FLD_LAST_UPDATE_COM = 'timestamp of the last update of any value of the list for fast update detection';
     const string FLD_LAST_UPDATE = 'last_update';
 
-    // all database field names excluding the id and excluding the user specific fields
+    // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         user_db::FLD_ID,
-        group::FLD_ID
+        group_db::FLD_ID
     );
 
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
         sql_db::FLD_EXCLUDED,
@@ -170,7 +172,7 @@ class value_time_series extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_multi($db_row, '', self::FLD_ID);
         if ($result) {
-            $this->grp()->set_id($db_row[group::FLD_ID]);
+            $this->grp()->set_id($db_row[group_db::FLD_ID]);
             if ($db_row[source_db::FLD_ID] > 0) {
                 $this->source = new source($this->get_user());
                 $this->source->id = $db_row[source_db::FLD_ID];
@@ -182,14 +184,20 @@ class value_time_series extends sandbox_value
 
     /**
      * create the SQL to load the default time series always by the id
+     *
+     * @param int|string $id the unique result id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
+    function load_sql_standard(
+        int|string  $id,
+        sql_creator $sc,
+        array $fld_lst = []
+    ): sql_par
     {
         $fld_lst = array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR);
-        return parent::load_sql_standard($sc, $fld_lst);
+        return parent::load_sql_standard($id, $sc, $fld_lst);
     }
 
     /**
@@ -213,18 +221,6 @@ class value_time_series extends sandbox_value
         //$sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
 
         return $qp;
-    }
-
-    /**
-     * load the standard value use by most users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if a time series has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        return parent::load_standard($qp);
     }
 
     /**
@@ -270,8 +266,8 @@ class value_time_series extends sandbox_value
      */
     function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, group::FLD_ID);
-        $sc->add_where(group::FLD_ID, $grp->id());
+        $qp = $this->load_sql($sc, group_db::FLD_ID);
+        $sc->add_where(group_db::FLD_ID, $grp->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -288,7 +284,7 @@ class value_time_series extends sandbox_value
      */
     function load_by_id(
         int|string $id,
-        ?sql_type $typ = null
+        ?sql_type  $typ = null
     ): int
     {
         return parent::load_by_id($id);
@@ -315,42 +311,23 @@ class value_time_series extends sandbox_value
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, ?bool $use_func = null): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug('->add');
 
         global $db_con;
 
-        // log the insert attempt first
-        $log = $this->log_add();
-        if ($log->id() > 0) {
-            $db_con->set_class(value_time_series::class);
-            $this->id = $db_con->insert_old(
-                array(group::FLD_ID, user_db::FLD_ID, self::FLD_LAST_UPDATE),
-                array($this->grp()->id(), $this->get_user()->id(), sql::NOW));
-            if ($this->id() > 0) {
-                // update the reference in the log
-                if (!$log->add_ref($this->id())) {
-                    $usr_msg->add_id(msg_id::VALUE_TIME_SERIES_LOG_REF_FAILED);
-                }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg, false, true);
 
-                // update the phrase links for fast searching
-                /*
-                $upd_result = $this->upd_phr_links();
-                if ($upd_result != '') {
-                    $result->add_message_text('Adding the phrase links of the value time series failed because ' . $upd_result);
-                    $this->set_id(0);
-                }
-                */
-
-                // create an empty db_rec element to force saving of all set fields
-                //$db_vts = new value_time_series($this->get_user());
-                //$db_vts->id = $this->id();
-                // TODO add the data list saving
-            }
+        if ($this->id() > 0) {
+            // create an empty db_rec element to force saving of all set fields
+            $db_vts = new value_time_series($this->get_user());
+            //$db_vts->id = $this->id();
+            // TODO add the data list saving
         }
 
         return $usr_msg->is_ok();
@@ -378,12 +355,11 @@ class value_time_series extends sandbox_value
      */
 
     /**
-     * insert or update a time series in the database or save user specific time series numbers
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @param user_message the message that should be shown to the user in case something went wrong
+     * insert or update a time series in the database or save user-specific time series numbers
+     * @param user_message $msg the message that should be shown to the user in case something went wrong
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $msg): bool
     {
         log_debug('->save');
 
@@ -404,7 +380,7 @@ class value_time_series extends sandbox_value
         }
 
         if ($this->id() <= 0) {
-            $this->add($usr_msg);
+            $this->add($msg);
         } else {
             // update a value
             // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
@@ -414,8 +390,7 @@ class value_time_series extends sandbox_value
             $db_rec = new value_time_series($this->get_user());
             $db_rec->load_by_id($this->id());
             $std_rec = new value_time_series($this->get_user()); // user must also be set to allow to take the ownership
-            $std_rec->id = $this->id();
-            $std_rec->load_standard();
+            $std_rec->load_standard($this->id(), $msg);
 
             // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
             if ($this->owner_id() <= 0) {
@@ -423,23 +398,23 @@ class value_time_series extends sandbox_value
             }
 
             // check if the id parameters are supposed to be changed
-            $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
+            $this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
             // TODO add function based db saving
-            if ($usr_msg->is_ok()) {
+            if ($msg->is_ok()) {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec, $usr_msg));
+                $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
             }
 
         }
 
-        if (!$usr_msg->is_ok()) {
-            log_err($usr_msg->get_last_message());
+        if (!$msg->is_ok()) {
+            log_err($msg->get_last_message());
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

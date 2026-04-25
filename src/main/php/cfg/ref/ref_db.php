@@ -80,25 +80,25 @@ class ref_db
     const string FLD_SOURCE = 'source_id';
     const string FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
 
-    // field names that cannot be user specific
+    // field names that cannot be user-specific
     const array FLD_NAMES = array(
         phrase::FLD_ID,
         self::FLD_TYPE
     );
-    // list of user specific text field names
+    // list of user-specific text field names
     const array FLD_NAMES_USR = array(
         self::FLD_EX_KEY,
         self::FLD_URL,
         sql_db::FLD_DESCRIPTION
     );
-    // list of user specific numeric field names
+    // list of user-specific numeric field names
     const array FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_EX_KEY,
         self::FLD_URL,

@@ -143,17 +143,17 @@ class value extends sandbox_value
     /**
      * set the vars of this value object bases on the api json array
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
 
-        if (array_key_exists(json_fields::SOURCE, $json_array)) {
-            $this->set_source_id($json_array[json_fields::SOURCE]);
+        if (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
+            $this->set_source_id($json_array[json_fields::SOURCE_ID]);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -249,7 +249,7 @@ class value extends sandbox_value
         $vars[json_fields::PHRASES] = $this->grp->phr_lst()->api_array();
         $vars[json_fields::NUMBER] = $this->number();
         if ($this->src != null) {
-            $vars[json_fields::SOURCE] = $this->source_id();
+            $vars[json_fields::SOURCE_ID] = $this->source_id();
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -391,7 +391,7 @@ class value extends sandbox_value
     /**
      * @return string interface function to align the value with the other sandbox objects
      */
-    function name(): string
+    function name(): string|null
     {
         return $this->grp->name();
     }
@@ -616,7 +616,7 @@ class value extends sandbox_value
         return $result;
     }
 
-    // same as dsp_tbl_std, but in the user specific color
+    // same as dsp_tbl_std, but in the user-specific color
     function dsp_tbl_usr($back): string
     {
         log_debug('value->dsp_tbl_usr');
@@ -654,7 +654,7 @@ class value extends sandbox_value
         $log_dsp->size = $size;
         $log_dsp->call = $call;
         $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_old();
+        //$result .= $log_dsp->dsp_hist_old();
 
         log_debug("done");
         return $result;
@@ -673,7 +673,7 @@ class value extends sandbox_value
         $log_dsp->size = $size;
         $log_dsp->call = $call;
         $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_links();
+        //$result .= $log_dsp->dsp_hist_links();
 
         log_debug("done");
         return $result;

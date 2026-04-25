@@ -93,7 +93,7 @@ class change_log_read_tests
         $trp = $t_trp->triple_pi();
         $val = $t_val->value();
         $frm = $t_frm->formula();
-        $src = $t_src->source();
+        $src = $t_src->source_reserved();
         $ref = $t_ref->reference();
         $msk = $t_msk->view();
         $cmp = $t_cmp->component();

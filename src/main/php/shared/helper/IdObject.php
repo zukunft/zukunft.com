@@ -75,8 +75,9 @@ class IdObject
     /**
      * reset the vars of this object
      * used to search for the standard object, because the search is word, value, formula or ... specific
+     * @param bool $keep_user set to true to keep the original user for sandbox objects
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->id = 0;
         $this->modified = true;
@@ -89,6 +90,19 @@ class IdObject
     function clone_all(): IdObject
     {
         return clone $this;
+    }
+
+    /**
+     * create an almost empty clone of the object
+     * if the object has an owner, keep the owner upon request
+     *
+     * @return $this a clone with all vars empty except the user if requested
+     */
+    function clone_reset(bool $keep_user = false): IdObject
+    {
+        $obj_cpy = clone $this;
+        $obj_cpy->reset($keep_user);
+        return $obj_cpy;
     }
 
     /**

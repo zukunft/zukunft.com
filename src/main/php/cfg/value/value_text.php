@@ -50,6 +50,7 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_LOG . 'change_value_text.php';
 include_once paths::MODEL_LOG . 'change_values_text_prime.php';
 include_once paths::MODEL_LOG . 'change_values_text_norm.php';
@@ -58,6 +59,8 @@ include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -66,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value_text;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
@@ -74,9 +78,11 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use DateTime;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use DateTime;
 
 class value_text extends value_base
 {
@@ -88,7 +94,7 @@ class value_text extends value_base
     // object specific database and JSON object field names
     const string FLD_VALUE = 'text_value';
     const string FLD_COM = 'the text value given by the user';
-    const string FLD_USER_COM = 'the user specific text value change';
+    const string FLD_USER_COM = 'the user-specific text value change';
 
     // database field with the sql type specification
     const array FLD_ALL_VALUE = array(
@@ -102,18 +108,18 @@ class value_text extends value_base
         self::FLD_VALUE,
         source_db::FLD_ID,
     );
-    // list of the user specific database field names for text values
+    // list of the user-specific database field names for text values
     const array FLD_NAMES_USR = array(
         self::FLD_VALUE,
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_VALUE,
         source_db::FLD_ID,
@@ -148,6 +154,24 @@ class value_text extends value_base
     )
     {
         parent::__construct($usr, $val, $grp);
+    }
+
+    /**
+     * map a time value api json to this model value object
+     * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successfully
+     */
+    function api_mapper(array $api_json, user_message $msg): bool
+    {
+        parent::api_mapper($api_json, $msg);
+
+        if (array_key_exists(json_fields::TEXT_VALUE, $api_json)) {
+            $value = $api_json[json_fields::TEXT_VALUE];
+            $this->set_text_value($value);
+        }
+
+        return $msg->is_ok();
     }
 
 
@@ -247,6 +271,54 @@ class value_text extends value_base
         } else {
             return new change_values_text_norm($this->get_user());
         }
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param value_text|sandbox_multi|db_object_multi $std_obj the norm object as saved in the database
+     * @param value_text|sandbox_multi|db_object_multi $result empty clone of the target user object
+     * @return value_text|sandbox_multi|db_object_multi the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        value_text|sandbox_multi|db_object_multi $std_obj,
+        value_text|sandbox_multi|db_object_multi $result
+    ): value_text|sandbox_multi|db_object_multi
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->txt_val !== $this->txt_val) {
+            $result->txt_val = $this->txt_val;
+        }
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     * if the given description is not set (null) the description is not removed
+     * if the given description is an empty string (not null), the description is removed
+     *
+     * @param value_text|sandbox_multi|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(value_text|sandbox_multi|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($this->txt_val === null and $obj->txt_val != null) {
+            $this->txt_val = $obj->txt_val;
+        }
+        return $usr_msg;
     }
 
 

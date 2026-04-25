@@ -250,7 +250,7 @@ class data_object
         $json_array = json_decode($json_api_msg, true);
         if (array_key_exists(json_fields::WORDS, $json_array)) {
             $msg = $this->wrd_lst->api_mapper($json_array[json_fields::WORDS]);
-            $usr_msg->add($msg);
+            $usr_msg->merge($msg);
         }
         return $usr_msg->is_ok();
     }
@@ -424,7 +424,7 @@ class data_object
             if ($msk->id > 0) {
                 foreach ($msk->component_list()->lst() as $cmp) {
                     if ($cmp->id == 0) {
-                        $filled = $this->component_list()->get_by_id($cmp->id);
+                        $filled = $this->component_list()->get($cmp->id);
                         if ($filled != null) {
                             $cmp->fill($filled);
                         }

@@ -42,14 +42,6 @@ class view_link_type extends type_object
 {
 
     /*
-     * code links
-     */
-
-    // list of selection types for a view starting from a word, triple or formula
-    const string DEFAULT = "main_word"; // use the main word as start for the view
-
-
-    /*
      * database link
      */
 

@@ -39,8 +39,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 /**
@@ -108,7 +110,7 @@ class sql_par
         // add extension that cannot be created by the sql_type_list e.g. "_0012" for the changed fields
         $name .= $ext;
 
-        // add "_user" to queries the handle user specific values
+        // add "_user" to queries the handle user-specific values
         if ($sc_par_lst->is_usr_tbl()) {
             $name .= sql::NAME_EXT_USER;
         }
@@ -144,6 +146,7 @@ class sql_par
      *
      * @param sql_par $qp
      * @param bool $unique true if the parameters should be unique
+     * @param sql_type_list $sc_par_typ the sql type list for the sql statement creation
      * @return sql_par
      */
     function merge(
@@ -186,6 +189,17 @@ class sql_par
             $this->par = array_merge($this->par, $qp->par);
         }
         return $this;
+    }
+
+
+    /*
+     * debug
+     */
+
+    function dsp_id(): string
+    {
+        return $this->name . ': "' . substr($this->sql, 0, def::DEBUG_SQL_LENGTH)
+            . '" with the parameters (' . implode(', ', $this->par) . ')';
     }
 
 }

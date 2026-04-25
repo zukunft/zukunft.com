@@ -52,6 +52,7 @@ class ref_tests
     function run(test_cleanup $t): void
     {
 
+        // TODO Prio 1 use the users of $t->env->usr_... instead
         global $usr;
         global $usr_sys;
 
@@ -80,6 +81,8 @@ class ref_tests
         $ref = new ref($usr);
         $ref->id = 3;
         $t->assert_sql_standard($sc, $ref);
+        $ref = $t_ref->reference();
+        $t->assert_sql_standard_by_type_link($sc, $ref);
 
         $t->subheader($ts . 'sql read all type');
         $ref_type_list = new ref_type_list();
@@ -101,6 +104,7 @@ class ref_tests
         $t->subheader($ts . 'sql write update');
         $ref = $t_ref->reference_change();
         $ref_changed = $ref->cloned_linked(refs::CHANGE_NEW_KEY);
+        $ref_changed->description = null;
         $t->assert_sql_update($sc, $ref_changed, $ref);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::USER]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG]);

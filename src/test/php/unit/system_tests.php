@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -31,16 +31,15 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SERVICE . 'config.php';
-include_once paths::MODEL_SYSTEM . 'ip_range.php';
-include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
 include_once paths::MODEL_SYSTEM . 'session.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CREATE . 'test_components.php';
@@ -69,9 +68,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
@@ -84,11 +80,11 @@ use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -130,6 +126,7 @@ class system_tests
         global $usr_sys;
         global $sys;
         global $mtr;
+        global $cfg;
 
         // init
         $lib = new library();
@@ -144,14 +141,9 @@ class system_tests
         $t->header($ts);
 
         $t->subheader($ts . 'config SQL setup');
-        $cfg = new config();
-        $t->assert_sql_table_create($cfg);
-        $t->assert_sql_index_create($cfg);
-
-        $t->subheader($ts . 'ip range SQL setup');
-        $ipr = new ip_range();
-        $t->assert_sql_table_create($ipr);
-        $t->assert_sql_index_create($ipr);
+        $sys_cfg = new config();
+        $t->assert_sql_table_create($sys_cfg);
+        $t->assert_sql_index_create($sys_cfg);
 
         $t->subheader($ts . 'session SQL setup');
         $ses = new session();
@@ -179,8 +171,8 @@ class system_tests
         $t_cmp = new test_components($t);
         $t_lan = new test_languages();
         $t_log = new test_log($t);
-        $t_sys = new test_sys_log();
-        $t_job = new test_jobs();
+        $t_sys = new test_sys_log($t);
+        $t_job = new test_jobs($t);
         $t->assert_dsp_id($t_wrd->word(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_wrd->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_vrb->verb(), 'not set/not_set (verb_id 1) for user 1 (zukunft.com system test)');
@@ -196,13 +188,13 @@ class system_tests
         $t->assert_dsp_id($t_trm->term_list_short(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
         $t->assert_dsp_id($t_val->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_val->value_list_short(), 'Pi (math): 3.1415926535898 / Zurich City inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 213,196,139,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_src->source(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_src->source_reserved(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_ref->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
         $t->assert_dsp_id($t_frm->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->formula_list_short(), 'scale minute to sec (formula_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->formula_link(), 'from "scale minute to sec" (formula_id 1) to "minute" (word_id 104) as phrase as (formula_link_id 1)');
         $t->assert_dsp_id($t_frm->element(), 'word "minute" (' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id ' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id 1/104) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::MINUTE_ID . '}*60)');
         $t->assert_dsp_id($t_res->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_res->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / ' . words::PCT_ID . ',,,) for user 1 (zukunft.com system test)');
@@ -214,7 +206,7 @@ class system_tests
         $t->assert_dsp_id($t_cmp->component_list(), '"Word","form field share type" (component_id 1,7) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_cmp->component_link(), 'from "Start view" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
         $t->assert_dsp_id($t_cmp->component_link_list(), '"Word","spreadsheet" (component_link_id 1,2) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_lan->language(), 'English/english (language_id 1)');
+        $t->assert_dsp_id($t_lan->language(), 'English/en (language_id 1)');
         $t->assert_dsp_id($t_log->log_word_add(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_norm(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
@@ -224,7 +216,7 @@ class system_tests
         $t->assert_dsp_id($t_log->log_value_prime(), 'log add words,word_name  3.1415927');
         $t->assert_dsp_id($t_log->log_value_big(), 'log add words,word_name  3.1415927');
         $t->assert_dsp_id($t_sys->sys_log(), 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin');
-        $t->assert_dsp_id($t_job->job(), 'base_import for id 1 (1) for user 1 (zukunft.com system)');
+        $t->assert_dsp_id($t_job->job(), 'base_import (1) for user 1 (zukunft.com system)');
 
 
         $ts = 'unit translation ';
@@ -256,42 +248,23 @@ class system_tests
         $t->subheader($ts . 'IP filter');
 
         /*
-         * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
+         * config
          */
 
-        $ip_range = new ip_range();
-        $t->assert_sql_by_id($sc, $ip_range);
+        $t->subheader($ts . 'config');
 
-        // sql to load by ip range
-        $db_con->db_type = sql_db::POSTGRES;
-        $ip_range->reset();
-        $ip_range->from = '66.249.64.95';
-        $ip_range->to = '66.249.64.95';
-        $ip_range->set_user($usr);
-        $created_sql = $ip_range->load_sql_by_vars($db_con)->sql;
-        $expected_sql = $t->file('db/system/ip_range.sql');
-        $t->assert('ip_range->load_sql by ip range', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $ip_range->load_sql_by_vars($db_con)->name;
-        if (!in_array($sql_name, $t->unique_sql_names)) {
-            $result = true;
-            $t->unique_sql_names[] = $sql_name;
-        }
-        $t->assert_true('ip_range->load_sql by id range', $result);
-
-        // ... and the same for MySQL by replication the SQL builder statements
-        $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $ip_range->load_sql_by_vars($db_con)->sql;
-        $expected_sql = $t->file('db/system/ip_range_mysql.sql');
-        $t->assert('ip_range->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $test_name = 'get a system configuration value';
+        $pod_url = $cfg->get_by([words::POD, words::URL]);
+        $t->assert($test_name, $pod_url, def::POD_NAME);
+        $test_name = 'use fallback value if configuration value is missing';
+        $pod_url = $cfg->get_by([words::POD, words::TEST_ADD], def::POD_NAME);
+        $t->assert($test_name, $pod_url, def::POD_NAME);
 
 
-        $t->subheader($ts . 'ip list sql');
 
-        $ip_lst = new ip_range_list();
-        $t->assert_sql_by_obj_vars($db_con, $ip_lst);
+        /*
+         * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
+         */
 
 
         $t->subheader($ts . 'user list loading sql');
@@ -311,13 +284,13 @@ class system_tests
         $t->subheader($ts . 'system config sql');
 
         $db_con->db_type = sql_db::POSTGRES;
-        $cfg = new config();
-        $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
+        $sys_cfg = new config();
+        $created_sql = $sys_cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get.sql');
         $t->assert('config->get_sql', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
+        $created_sql = $sys_cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get_mysql.sql');
         $t->assert('config->get_sql for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
@@ -365,65 +338,13 @@ class system_tests
         $t->assert_sql_all($db_con, $cng_fld_cac);
          */
 
-        /*
-         * im- and export tests
-         */
-
-        $t->subheader($ts . 'im- and export');
-
-        $usr_msg = new user_message($t->usr1);
-
-        $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
-        $ip_range = new ip_range();
-        $ip_range->set_user($usr);
-        // switch to system user for import
-        $usr_tmp = $usr;
-        $usr = $usr_sys;
-        $ip_range->import_obj($json_in, $usr_msg, new data_object($usr), $t);
-        // switch back to original user
-        $usr = $usr_tmp;
-        $json_ex = $ip_range->export_json([]);
-        $result = $lib->json_is_similar($json_in, $json_ex);
-        $t->assert_true('ip_range->import check', $result);
-
-
-        /*
-         * ip range tests
-         */
-
-        $t->subheader($ts . 'ip range');
-
-
-        $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
-        $ip_range = new ip_range();
-        $ip_range->set_user($usr);
-        // switch to system user for import
-        $usr_tmp = $usr;
-        $usr = $usr_sys;
-        $ip_range->import_obj($json_in, $usr_msg, new data_object($usr), $t);
-        // switch back to original user
-        $usr = $usr_tmp;
-        $test_ip = '66.249.64.95';
-        $result = $ip_range->includes($test_ip);
-        $t->assert_true('ip_range->includes check', $result);
-
-
-        // negative case before
-        $test_ip = '66.249.64.94';
-        $result = $ip_range->includes($test_ip);
-        $t->assert_false('ip_range->includes check', $result);
-
-        // negative case after
-        $test_ip = '66.249.65.95';
-        $result = $ip_range->includes($test_ip);
-        $t->assert_false('ip_range->includes check', $result);
-
 
         /*
          * system consistency SQL creation tests
          */
 
         $t->subheader($ts . 'system consistency');
+
 
         // sql to check the system consistency
         $db_con->set_class(formula::class);
@@ -433,6 +354,8 @@ class system_tests
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
+        $result = false;
+        $sql_name = 'missing_owner_by_formula.sql';
         if (!in_array($qp->name, $t->unique_sql_names)) {
             $result = true;
             $t->unique_sql_names[] = $sql_name;
@@ -469,6 +392,26 @@ class system_tests
         $qp = $db_con->remove_prefix_sql($lib->class_to_name(verb::class), 'code_id');
         $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id_mysql.sql');
         $t->assert('database_upgrade->remove_prefix of verb code_id for MySQL', $lib->trim($qp->sql), $lib->trim($expected_sql));
+
+
+        /*
+         * list
+         */
+
+        $t->subheader($ts . 'list db read');
+
+        $test_name = 'list db read';
+
+        $t->subheader($ts . 'list db write');
+
+        $usr_msg->reset();
+        $test_name = 'database delete calls based on element list';
+        $sc = $db_con->sql_creator();
+        $elm_lst = $t_frm->element_list();
+        $del_calls = $elm_lst->sql_delete_call_with_par($sc, $usr_msg);
+        $target = 'element_delete_log: "DELETE FROM elements  WHERE element_id = ?;" with the parameters (1)';
+        $t->assert($test_name, $del_calls->dsp_id(), $target);
+
 
         /*
          * system log SQL creation tests
@@ -507,36 +450,27 @@ class system_tests
 
         $t->subheader($ts . 'system log frontend API');
 
-        $t_sys = new test_sys_log();
+        $t_sys = new test_sys_log($t);
         $log = $t_sys->sys_log();
         $api_msg = $log->api_json();
         $log_dsp = new sys_log_ui($api_msg);
         $created = $log_dsp->api_json();
         $expected = file_get_contents(test_files::SYS_LOG);
-        $t->assert('sys_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
+        $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG . ')', $lib->trim_json($created), $lib->trim_json($expected));
 
         // html code for the system log entry for normal users
         $created = $log_dsp->display();
         $expected = file_get_contents(test_files::SYS_LOG_HTML);
-        $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
+        $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG_HTML . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
         // ... and the same for admin users
         $usr_sys_dsp = new user($usr_sys->api_json());
         $created = $log_dsp->display_admin($usr_sys_dsp);
         $expected = file_get_contents(test_files::SYS_LOG_ADMIN);
-        $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
+        $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG_ADMIN . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
         // create a second system log entry to create a list
-        $log2 = new sys_log();
-        $log2->id = 2;
-        $log2->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $log2->usr_name = $usr->name;
-        $log2->log_text = sys_log_tests::T2_LOG_TEXT;
-        //$log2->log_trace = (new Exception)->getTraceAsString();
-        $log2->log_trace = sys_log_tests::T2_LOG_TRACE;
-        $log2->function_name = sys_log_tests::T2_FUNC_NAME;
-        $log2->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $log2->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
+        $log2 = $t_sys->sys_log_filled();
 
         $log_lst = new sys_log_list();
         $log_lst->add($log);
@@ -544,18 +478,18 @@ class system_tests
 
         $log_lst_dsp = new sys_log_list_ui($log_lst->api_json());
         $usr1_dsp = new user($t->usr1->api_json());
-        $created = $log_lst_dsp->api_json([api_type::HEADER], $usr1_dsp);
-        $expected = file_get_contents(test_files::SYS_LOG_LIST_API);
+        $created = $log_lst_dsp->api_json([api_types::HEADER], $usr1_dsp);
+        $expected = file_get_contents(test_files::SYS_LOG_LIST_TEST);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
-        $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
+        $t->assert('sys_log_list_dsp->get_json (file ' . test_files::SYS_LOG_LIST_TEST . ')', $lib->trim_json($created), $lib->trim_json($expected));
 
         $created = $log_lst_dsp->get_html($usr1_dsp);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_HTML);
-        $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
+        $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_HTML . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
         $created = $log_lst_dsp->get_html_page($usr1_dsp);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_PAGE);
-        $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
+        $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_PAGE . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
     }
 

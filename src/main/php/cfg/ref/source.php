@@ -100,10 +100,12 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_typed;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -204,7 +206,7 @@ class source extends sandbox_code_id
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the triple values that should be mapped
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -221,23 +223,23 @@ class source extends sandbox_code_id
      * set the object vars of this source object based on the import json array
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::URL, $in_ex_json)) {
             $this->url = $in_ex_json[json_fields::URL];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -341,49 +343,8 @@ class source extends sandbox_code_id
 
 
     /*
-     * load
-     */
-
-    /**
-     * load the source parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @return bool true if the standard source has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_standard($db_con->sql_creator());
-        $result = parent::load_standard($qp);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        return $result;
-    }
-
-
-    /*
      * load sql
      */
-
-    /**
-     * create the SQL to load the default source always by the id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
-     */
-    function load_sql_standard(sql_creator $sc): sql_par
-    {
-        $sc->set_class($this::class);
-        $sc->set_fields(array_merge(
-            source_db::FLD_NAMES,
-            source_db::FLD_NAMES_USR,
-            source_db::FLD_NAMES_NUM_USR,
-            array(user_db::FLD_ID)
-        ));
-
-        return parent::load_sql_standard($sc);
-    }
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a source from the database
@@ -426,7 +387,7 @@ class source extends sandbox_code_id
 
     /**
      * check if the source in the database needs to be updated
-     * e.g. for import  if this source has only the name set, the protection should not be updated in the database
+     * e.g. for import if this source has only the name set, the protection should not be updated in the database
      *
      * @param source|CombineObject|IdObject $db_obj the source as saved in the database
      * @return bool true if this source has infos that should be saved in the database
@@ -442,6 +403,47 @@ class source extends sandbox_code_id
         return $result;
     }
 
+    /**
+     * Create an object where only the vars are set
+     * where the var of this object differs from the var of the given object.
+     *
+     * @param source|CombineObject|db_object_seq_id $std_obj the norm object as saved in the database
+     * @param source|CombineObject|db_object_seq_id $result empty clone of the target user object
+     * @return source|CombineObject|db_object_seq_id the object where only the vars are set that are changed compared to the given $obj
+     */
+    function delta(
+        source|CombineObject|db_object_seq_id $std_obj,
+        source|CombineObject|db_object_seq_id $result
+    ): source|CombineObject|db_object_seq_id
+    {
+        parent::delta($std_obj, $result);
+        if ($std_obj->url !== $this->url) {
+            $result->url = $this->url;
+        }
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this source object based on the given object
+     *
+     * @param source|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(source|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($this->url === null and $obj->url != null) {
+            $this->url = $obj->url;
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * sql fields
@@ -450,6 +452,18 @@ class source extends sandbox_code_id
     function name_field(): string
     {
         return source_db::FLD_NAME;
+    }
+
+    /**
+     * @return array with all fields names of this source object
+     */
+    protected function all_fields(): array
+    {
+        return array_merge(
+            source_db::FLD_NAMES,
+            source_db::FLD_NAMES_USR,
+            source_db::FLD_NAMES_NUM_USR,
+            array(user_db::FLD_ID));
     }
 
     function all_sandbox_fields(): array
@@ -506,48 +520,6 @@ class source extends sandbox_code_id
     {
         $sc->set_class(source::class);
         return $sc->load_sql_not_changed($this->id(), $this->owner_id());
-    }
-
-
-    /*
-     * save
-     */
-
-    /**
-     * set the update parameters for the source url
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param source $db_rec the database record before the saving
-     * @param source $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private function save_field_url(sql_db $db_con, source $db_rec, source $std_rec): user_message
-    {
-        $usr_msg = new user_message;
-        if ($db_rec->url <> $this->url) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->url;
-            $log->new_value = $this->url;
-            $log->std_value = $std_rec->url;
-            $log->row_id = $this->id();
-            $log->set_field(source_db::FLD_URL);
-            $usr_msg->add($this->save_field_user($db_con, $log));
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * save all updated source fields excluding the name, because already done when adding a source
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param source|sandbox $db_obj the database record before the saving
-     * @param source|sandbox $norm_obj the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_all_fields(sql_db $db_con, source|sandbox $db_obj, source|sandbox $norm_obj): user_message
-    {
-        $usr_msg = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
-        $usr_msg->add($this->save_field_url($db_con, $db_obj, $norm_obj));
-        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $usr_msg;
     }
 
 
@@ -633,15 +605,15 @@ class source extends sandbox_code_id
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|source $sbx the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param source|db_object_seq_id $obj the compare value to detect the changed fields
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list of the database field names that have been updated
      */
     function db_fields_changed(
-        sandbox|source $sbx,
-        user_message   $usr_msg,
-        sql_type_list  $sc_par_lst = new sql_type_list()
+        source|db_object_seq_id $obj,
+        user_message            $msg,
+        sql_type_list           $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -650,8 +622,8 @@ class source extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
-        if ($sbx->type_id() !== $this->type_id()) {
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
+        if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_TYPE,
@@ -663,10 +635,10 @@ class source extends sandbox_code_id
                 source_db::FLD_TYPE,
                 $this->type_id(),
                 type_object::FLD_ID_SQL_TYP,
-                $sbx->type_id()
+                $obj->type_id()
             );
         }
-        if ($sbx->url !== $this->url) {
+        if ($obj->url !== $this->url) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_URL,
@@ -678,10 +650,10 @@ class source extends sandbox_code_id
                 source_db::FLD_URL,
                 $this->url,
                 source_db::FLD_URL_SQL_TYP,
-                $sbx->url
+                $obj->url
             );
         }
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
 }

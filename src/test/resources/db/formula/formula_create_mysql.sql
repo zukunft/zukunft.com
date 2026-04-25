@@ -33,7 +33,7 @@ ALTER TABLE formulas
     MODIFY formula_id bigint NOT NULL AUTO_INCREMENT;
 
 --
--- table structure to save user specific changes the mathematical expression to calculate results based on values and results
+-- table structure to save user-specific changes the mathematical expression to calculate results based on values and results
 --
 
 CREATE TABLE IF NOT EXISTS user_formulas

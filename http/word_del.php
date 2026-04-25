@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -70,7 +71,8 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(views::WORD_DEL);
-    $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); // the original calling page that should be shown after the change if finished
 
     // get the parameters
     $wrd_id = $_GET[url_var::ID];

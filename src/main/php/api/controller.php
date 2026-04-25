@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -48,10 +49,11 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class controller
@@ -113,7 +115,7 @@ class controller
                 $id = $dbo->id();
             }
             // TODO Prio 1 return only the id of the added word?
-            $result = $dbo->api_json([api_type::HEADER], $usr);
+            $result = $dbo->api_json([api_types::HEADER], $usr);
         } else {
             // ... or in case of a problem prepare to show the message
             $msg .= $usr_msg->all_message_text();
@@ -158,7 +160,7 @@ class controller
         // if update was fine ...
         if ($usr_msg->is_ok()) {
             // TODO Prio 1 return only the id of the added word?
-            $result = $dbo->api_json([api_type::HEADER], $usr);
+            $result = $dbo->api_json([api_types::HEADER], $usr);
         } else {
             // ... or in case of a problem prepare to show the message
             $msg .= $usr_msg->all_message_text();
@@ -198,7 +200,7 @@ class controller
             $dbo->del($usr_msg);
 
             if ($usr_msg->is_ok()) {
-                $result = $dbo->api_json([api_type::HEADER], $usr);
+                $result = $dbo->api_json([api_types::HEADER], $usr);
             } else {
                 // ... or in case of a problem prepare to show the message
                 $msg .= $usr_msg->all_message_text();
@@ -236,7 +238,7 @@ class controller
         // required headers
         if (!headers_sent()) {
             header("Access-Control-Allow-Origin: *");
-            header("Content-Type: application/json; charset=UTF-8");
+            header("Content-Type: application/json; charset=" . def::ENCODING);
             header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
         }
 
@@ -282,7 +284,7 @@ class controller
         // required headers
         if (!headers_sent()) {
             header("Access-Control-Allow-Origin: *");
-            header("Content-Type: application/json; charset=UTF-8");
+            header("Content-Type: application/json; charset=" . def::ENCODING);
             header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
         }
 
@@ -300,14 +302,18 @@ class controller
                 if ($this->put($request_body, $obj, $usr_msg)) {
 
                     // set response code - 200 OK
-                    http_response_code(200);
+                    if (!headers_sent()) {
+                        http_response_code(200);
+                    }
                     echo json_encode(
                         array(url_var::ID => $usr_msg->get_row_id())
                     );
                 } else {
 
                     // set response code - 400 Bad Request
-                    http_response_code(400);
+                    if (!headers_sent()) {
+                        http_response_code(400);
+                    }
                     echo json_encode(
                         array(json_fields::MSG => $usr_msg->get_row_id())
                     );
@@ -318,7 +324,9 @@ class controller
                 if ($msg == '') {
 
                     // set response code - 200 OK
-                    http_response_code(200);
+                    if (!headers_sent()) {
+                        http_response_code(200);
+                    }
 
                     // return e.g. the word object
                     echo $api_obj;
@@ -326,7 +334,9 @@ class controller
                 } else {
 
                     // set response code - 400 Bad Request
-                    http_response_code(400);
+                    if (!headers_sent()) {
+                        http_response_code(400);
+                    }
 
                     // tell the user no object found
                     echo json_encode(
@@ -347,14 +357,18 @@ class controller
                     // return the result
                     if (is_numeric($result)) {
                         // set response code - 200 OK
-                        http_response_code(200);
+                        if (!headers_sent()) {
+                            http_response_code(200);
+                        }
                         echo json_encode(
                             array(url_var::ID => $result)
                         );
                     } else {
 
                         // set response code - 400 Bad Request
-                        http_response_code(400);
+                        if (!headers_sent()) {
+                            http_response_code(400);
+                        }
                         echo json_encode(
                             array(json_fields::MSG => $result)
                         );
@@ -369,10 +383,14 @@ class controller
                         $obj->del($usr_msg);
                         if ($usr_msg->is_ok()) {
                             // set response code - 200 OK
-                            http_response_code(200);
+                            if (!headers_sent()) {
+                                http_response_code(200);
+                            }
                         } else {
                             // set response code - 409 Conflict
-                            http_response_code(409);
+                            if (!headers_sent()) {
+                                http_response_code(409);
+                            }
 
                             echo json_encode(
                                 array(url_var::RESULT => $usr_msg->get_last_message())
@@ -382,7 +400,9 @@ class controller
                 } else {
 
                     // set response code - 400 Bad Request
-                    http_response_code(400);
+                    if (!headers_sent()) {
+                        http_response_code(400);
+                    }
                     // set response code - 410 Gone
                     // http_response_code(410);
                     // set response code - 403 Forbidden
@@ -396,7 +416,9 @@ class controller
                 break;
             default:
                 // set response code - 400 Bad Request
-                http_response_code(400);
+                if (!headers_sent()) {
+                    http_response_code(400);
+                }
                 break;
         }
     }

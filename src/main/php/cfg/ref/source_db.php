@@ -67,7 +67,7 @@ class source_db
     const string FLD_ID = 'source_id';
     const string FLD_NAME_COM = 'the unique name of the source used e.g. as the primary search key';
     const string FLD_NAME = 'source_name';
-    const string FLD_DESCRIPTION_COM = 'the user specific description of the source for mouse over helps';
+    const string FLD_DESCRIPTION_COM = 'the user-specific description of the source for mouse over helps';
     const string FLD_TYPE_COM = 'link to the source type';
     const string FLD_TYPE = 'source_type_id';
     const string FLD_URL_COM = 'the url of the source';
@@ -92,25 +92,25 @@ class source_db
         [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_USAGE_COM],
     );
 
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array FLD_NAMES = array(
         self::FLD_NAME,
         sql_db::FLD_CODE_ID,
         sql_db::FLD_USAGE
     );
-    // list of the user specific database field names
+    // list of the user-specific database field names
     const array FLD_NAMES_USR = array(
         self::FLD_URL,
         sql_db::FLD_DESCRIPTION
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
         sql_db::FLD_DESCRIPTION,

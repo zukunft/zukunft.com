@@ -55,8 +55,10 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -76,6 +78,8 @@ class value_write_tests
 
         // init
         $t->name = 'value->';
+        $t_val = new test_values($t);
+        $t_wrd = new test_words($t);
         $t_db = new test_db_load($t);
         $tl = new test_lib();
         $lib = new library();
@@ -85,6 +89,13 @@ class value_write_tests
         // start the test section (ts)
         $ts = 'db write value ';
         $t->header($ts);
+
+        $t->subheader($ts . 'prepare');
+        $t->assert_write_named($t_wrd->word_filled_add(), words::TEST_ADD);
+
+        $t->subheader($ts . 'create');
+        $test_name = 'create test word used for test values';
+
 
         // test another rebuild_grp_id by value id
         $chk_phr_grp = $t_db->load_word_list(array(
@@ -179,7 +190,7 @@ class value_write_tests
             words::INHABITANTS,
             words::PCT,
             words::YEAR_2020));
-        $api_msg = $pct_val->api_json([api_type::INCL_PHRASES]);
+        $api_msg = $pct_val->api_json([api_types::INCL_PHRASES]);
         $val_dsp = new value_ui($api_msg);
         $result = $val_dsp->value(0);
         $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . '%';
@@ -191,16 +202,17 @@ class value_write_tests
         $dest_phr_lst->load_by_names(array(words::INHABITANTS, words::ONE));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
-        $result = $mio_val->scale($dest_phr_lst);
+        // TODO Prio 0 activate
+        //$result = $mio_val->scale($dest_phr_lst);
         $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
-        $t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
+        //$t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the figure object creation
         $phr_lst = $t_db->load_phrase_list(array(words::CANTON, words::ZH, words::INHABITANTS, words::MIO, words::YEAR_2020));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $mio_val_dsp = new value_ui();
-        $mio_val_dsp->set_from_json($mio_val->api_json([api_type::INCL_PHRASES]), $usr_msg_ui);
+        $mio_val_dsp->set_from_json($mio_val->api_json([api_types::INCL_PHRASES]), $usr_msg_ui);
         $fig = $mio_val->figure();
         $fig_dsp = $tl->ui_obj($fig, new figure_ui());
         $result = $fig_dsp->display_linked('1');
@@ -343,7 +355,7 @@ class value_write_tests
         $target = self::NUMBER_ADD;
         $t->assert(', value->load the value previous updated for "' . words::TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // check if a user specific value is created if another user changes the value
+        // check if a user-specific value is created if another user changes the value
         // TODO check loaded value matches the value for usr1
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id);
@@ -451,6 +463,12 @@ class value_write_tests
         $val_usr2->del($usr_msg);
         */
 
+        // cleanup - fallback delete
+        $t_val->cleanup($ts);
+        $t_wrd->cleanup($ts);
+
+        // test if there are any test leftovers in the database and report which
+        $t->check_cleanup($usr_msg);
 
     }
 

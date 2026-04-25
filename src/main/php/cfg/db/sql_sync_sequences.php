@@ -143,7 +143,7 @@ class sql_sync_sequences
                 } catch (Exception $e) {
                     $db_con->log_db_exception('sequence reset', $e, $sql, $log_level);
                 }
-                $usr_msg->add($this->sync_postgres($result, $db_con));
+                $usr_msg->merge($this->sync_postgres($result, $db_con));
                 break;
             case sql_db::MYSQL:
                 $sql = "
@@ -153,7 +153,7 @@ class sql_sync_sequences
                     AND EXTRA = 'auto_increment';
                 ";
                 $result = mysqli_query($db_con->mysql, $sql);
-                $usr_msg->add($this->sync_mysql($result, $db_con));
+                $usr_msg->merge($this->sync_mysql($result, $db_con));
         }
         return $usr_msg;
     }

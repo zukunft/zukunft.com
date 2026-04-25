@@ -6,10 +6,5 @@
     "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
     "type_id": 1,
     "class": "word"
-  },
-  {
-    "id": 1184,
-    "name": "mathematics (System Test Word Parent)",
-    "class": "triple"
   }
 ]

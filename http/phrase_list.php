@@ -35,6 +35,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -75,7 +76,8 @@ if ($usr->id() > 0) {
     $msk_db = new view($usr);
     $msk_db->load_by_code_id(view_shared::WORD_ADD);
     $msk = new view_ui($msk_db->api_json());
-    $back = $_GET[url_var::BACK] = ''; // the calling page which should be displayed after saving
+    $lib = new library();
+    $back = $lib->filter_var($_GET[url_var::BACK]); // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);
@@ -138,14 +140,14 @@ if ($usr->id() > 0) {
             $trp = new triple($usr);
             $trp->load_by_link_id($phr_id, $vrb_id, $phr_to);
             if ($trp->id() > 0) {
-                $trp->reload_objects();
+                $trp->reload_objects($usr_msg);
                 log_debug('forward link ' . $phr_id . ' ' . $vrb_id . ' ' . $phr_to . '');
                 $msg .= '"' . $trp->from_name . ' ' . $trp->get_verb_name() . ' ' . $trp->to_name . '" already exists. ';
             }
             $trp_rev = new triple($usr);
             $trp_rev->load_by_link_id($phr_to, $vrb_id, $phr_id);
             if ($trp_rev->id() > 0) {
-                $trp_rev->reload_objects();
+                $trp_rev->reload_objects($usr_msg);
                 $msg .= 'The reverse of "' . $trp_rev->from_name . ' ' . $trp_rev->get_verb_name() . ' ' . $trp_rev->to_name . '" already exists. Do you really want to add both sides? ';
             }
         }

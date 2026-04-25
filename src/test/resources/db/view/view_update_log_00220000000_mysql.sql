@@ -30,9 +30,9 @@ SELECT view_update_log_00220000000
        (3,
         2,
         42,
-        'Start view',
+        'Historic',
         'System Test View Renamed',
-        1,
+        99,
         43,
-        'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.',
+        'show mainly related words that are relevant in sciences',
         null);

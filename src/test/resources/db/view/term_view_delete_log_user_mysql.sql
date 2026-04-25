@@ -27,7 +27,7 @@ SELECT term_view_delete_log_user
      3,
      89,
      'Start view',
-     'standard',
+     'main word',
      'mathematics',
      1,
      1,

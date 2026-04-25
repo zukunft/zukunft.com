@@ -30,19 +30,19 @@ COMMENT ON COLUMN config.description IS 'text to explain the config value to an 
 -- table structure for system log types e.g. info,warning and error
 --
 
-CREATE TABLE IF NOT EXISTS sys_log_types
+CREATE TABLE IF NOT EXISTS sys_log_levels
 (
-    sys_log_type_id SERIAL PRIMARY KEY,
-    type_name         varchar(255)     NOT NULL,
-    code_id           varchar(255) DEFAULT NULL,
-    description       text         DEFAULT NULL
+    sys_log_level_id SERIAL PRIMARY KEY,
+    level_name  varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
 );
 
-COMMENT ON TABLE sys_log_types IS 'for system log types e.g. info,warning and error';
-COMMENT ON COLUMN sys_log_types.sys_log_type_id IS 'the internal unique primary index';
-COMMENT ON COLUMN sys_log_types.type_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN sys_log_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN sys_log_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON TABLE sys_log_levels IS 'for system log types e.g. info,warning and error';
+COMMENT ON COLUMN sys_log_levels.sys_log_level_id IS 'the internal unique primary index';
+COMMENT ON COLUMN sys_log_levels.level_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN sys_log_levels.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN sys_log_levels.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 -- --------------------------------------------------------
 
@@ -50,21 +50,21 @@ COMMENT ON COLUMN sys_log_types.description IS 'text to explain the type to the 
 -- table structure to define the status of internal errors
 --
 
-CREATE TABLE IF NOT EXISTS sys_log_status
+CREATE TABLE IF NOT EXISTS sys_log_statuum
 (
     sys_log_status_id SERIAL PRIMARY KEY,
-    type_name         varchar(255)     NOT NULL,
-    code_id           varchar(255) DEFAULT NULL,
-    description       text         DEFAULT NULL,
-    action            varchar(255) DEFAULT NULL
+    status_name varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL,
+    action      varchar(255) DEFAULT NULL
 );
 
-COMMENT ON TABLE sys_log_status IS 'to define the status of internal errors';
-COMMENT ON COLUMN sys_log_status.sys_log_status_id IS 'the internal unique primary index';
-COMMENT ON COLUMN sys_log_status.type_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN sys_log_status.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN sys_log_status.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-COMMENT ON COLUMN sys_log_status.action IS 'description of the action to get to this status';
+COMMENT ON TABLE sys_log_statuum IS 'to define the status of internal errors';
+COMMENT ON COLUMN sys_log_statuum.sys_log_status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN sys_log_statuum.status_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN sys_log_statuum.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN sys_log_statuum.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON COLUMN sys_log_statuum.action IS 'description of the action to get to this status';
 
 
 -- --------------------------------------------------------
@@ -97,12 +97,13 @@ CREATE TABLE IF NOT EXISTS sys_log
 (
     sys_log_id          BIGSERIAL PRIMARY KEY,
     sys_log_time        timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    sys_log_type_id     smallint   NOT NULL,
+    user_id             bigint DEFAULT NULL,
     sys_log_function_id smallint   NOT NULL,
+    sys_log_trace       text   DEFAULT NULL,
+    sys_log_level_id    smallint   NOT NULL,
+    sys_log_update_time timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sys_log_text        text   DEFAULT NULL,
     sys_log_description text   DEFAULT NULL,
-    sys_log_trace       text   DEFAULT NULL,
-    user_id             bigint DEFAULT NULL,
     solver_id           bigint DEFAULT NULL,
     sys_log_status_id   smallint   NOT NULL DEFAULT 1
 );
@@ -110,12 +111,13 @@ CREATE TABLE IF NOT EXISTS sys_log
 COMMENT ON TABLE sys_log IS 'for system error tracking and to measure execution times';
 COMMENT ON COLUMN sys_log.sys_log_id IS 'the internal unique primary index';
 COMMENT ON COLUMN sys_log.sys_log_time IS 'timestamp of the creation';
-COMMENT ON COLUMN sys_log.sys_log_type_id IS 'the level e.g. debug,info,warning,error or fatal';
+COMMENT ON COLUMN sys_log.user_id IS 'the id of the user who has caused the log entry';
 COMMENT ON COLUMN sys_log.sys_log_function_id IS 'the function or function group for the entry e.g. db_write to measure the db write times';
+COMMENT ON COLUMN sys_log.sys_log_trace IS 'the generated code trace to local the path to the error cause';
+COMMENT ON COLUMN sys_log.sys_log_level_id IS 'the level e.g. debug,info,warning,error or fatal';
+COMMENT ON COLUMN sys_log.sys_log_update_time IS 'timestamp of the last update of this system error';
 COMMENT ON COLUMN sys_log.sys_log_text IS 'the short text of the log entry to identify the error and to reduce the number of double entries';
 COMMENT ON COLUMN sys_log.sys_log_description IS 'the long description with all details of the log entry to solve ti issue';
-COMMENT ON COLUMN sys_log.sys_log_trace IS 'the generated code trace to local the path to the error cause';
-COMMENT ON COLUMN sys_log.user_id IS 'the id of the user who has caused the log entry';
 COMMENT ON COLUMN sys_log.solver_id IS 'user id of the user that is trying to solve the problem';
 
 -- --------------------------------------------------------
@@ -159,6 +161,28 @@ COMMENT ON COLUMN system_times.start_time IS 'start time of the monitoring perio
 COMMENT ON COLUMN system_times.end_time IS 'end time of the monitoring period';
 COMMENT ON COLUMN system_times.system_time_type_id IS 'the area of the execution time e.g. db write';
 COMMENT ON COLUMN system_times.milliseconds IS 'the execution time in milliseconds';
+
+-- --------------------------------------------------------
+
+--
+-- table structure predefined status of batch task as a database table e.g. so that admin can change the description
+--
+
+CREATE TABLE IF NOT EXISTS job_statuum
+(
+    job_status_id SERIAL PRIMARY KEY,
+    status_name varchar(255) NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL,
+    priority    smallint     DEFAULT NULL
+);
+
+COMMENT ON TABLE job_statuum IS 'predefined status of batch task as a database table e.g. so that admin can change the description';
+COMMENT ON COLUMN job_statuum.job_status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN job_statuum.status_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN job_statuum.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN job_statuum.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON COLUMN job_statuum.priority IS 'execution priority offset based on the job status';
 
 -- --------------------------------------------------------
 
@@ -215,6 +239,7 @@ CREATE TABLE IF NOT EXISTS jobs
     job_id BIGSERIAL PRIMARY KEY,
     user_id         bigint        NOT NULL,
     job_type_id     smallint      NOT NULL,
+    job_status_id   smallint      NOT NULL DEFAULT 1,
     request_time    timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     start_time      timestamp DEFAULT NULL,
     end_time        timestamp DEFAULT NULL,
@@ -222,13 +247,15 @@ CREATE TABLE IF NOT EXISTS jobs
     change_field_id smallint  DEFAULT NULL,
     row_id          bigint    DEFAULT NULL,
     source_id       bigint    DEFAULT NULL,
-    ref_id          bigint    DEFAULT NULL
+    ref_id          bigint    DEFAULT NULL,
+    priority        smallint  DEFAULT NULL
 );
 
 COMMENT ON TABLE jobs IS 'for each concrete job run';
 COMMENT ON COLUMN jobs.job_id IS 'the internal unique primary index';
 COMMENT ON COLUMN jobs.user_id IS 'the id of the user who has requested the job by editing the scheduler the last time';
 COMMENT ON COLUMN jobs.job_type_id IS 'the id of the job type that should be started';
+COMMENT ON COLUMN jobs.job_status_id IS 'the id of the job status at the moment';
 COMMENT ON COLUMN jobs.request_time IS 'timestamp of the request for the job execution';
 COMMENT ON COLUMN jobs.start_time IS 'timestamp when the system has started the execution';
 COMMENT ON COLUMN jobs.end_time IS 'timestamp when the job has been completed or canceled';
@@ -237,6 +264,7 @@ COMMENT ON COLUMN jobs.change_field_id IS 'e.g. for undo jobs the id of the fiel
 COMMENT ON COLUMN jobs.row_id IS 'e.g. for undo jobs the id of the row that should be changed';
 COMMENT ON COLUMN jobs.source_id IS 'used for import to link the source';
 COMMENT ON COLUMN jobs.ref_id IS 'used for import to link the reference';
+COMMENT ON COLUMN jobs.priority IS 'the base priority of the job';
 
 -- --------------------------------------------------------
 
@@ -267,15 +295,15 @@ COMMENT ON COLUMN user_types.description IS 'text to explain the type to the use
 CREATE TABLE IF NOT EXISTS user_profiles
 (
     user_profile_id SERIAL PRIMARY KEY,
-    type_name    varchar(255) NOT NULL,
-    code_id      varchar(255) DEFAULT NULL,
-    description  text         DEFAULT NULL,
-    right_level  smallint     DEFAULT NULL
+    user_profile_name varchar(255) NOT NULL,
+    code_id           varchar(255) DEFAULT NULL,
+    description       text         DEFAULT NULL,
+    right_level       smallint     DEFAULT NULL
 );
 
 COMMENT ON TABLE user_profiles IS 'to define the user roles and read and write rights';
 COMMENT ON COLUMN user_profiles.user_profile_id IS 'the internal unique primary index';
-COMMENT ON COLUMN user_profiles.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN user_profiles.user_profile_name IS 'the unique type name as shown to the user and used for the selection';
 COMMENT ON COLUMN user_profiles.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN user_profiles.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 COMMENT ON COLUMN user_profiles.right_level IS 'the access right level to prevent not permitted right gaining';
@@ -299,6 +327,26 @@ COMMENT ON COLUMN user_official_types.user_official_type_id IS 'the internal uni
 COMMENT ON COLUMN user_official_types.type_name IS 'the unique type name as shown to the user and used for the selection';
 COMMENT ON COLUMN user_official_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN user_official_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to reduce short-term the internal permissions for a user without changing the profile
+--
+
+CREATE TABLE IF NOT EXISTS user_statuum
+(
+    user_status_id SERIAL PRIMARY KEY,
+    user_status_name varchar(255) NOT NULL,
+    code_id          varchar(255) DEFAULT NULL,
+    description      text         DEFAULT NULL
+);
+
+COMMENT ON TABLE user_statuum IS 'to reduce short-term the internal permissions for a user without changing the profile';
+COMMENT ON COLUMN user_statuum.user_status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN user_statuum.user_status_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN user_statuum.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN user_statuum.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 -- --------------------------------------------------------
 
@@ -372,15 +420,17 @@ COMMENT ON COLUMN users.user_status_id IS 'e.g. to exclude inactive users';
 
 CREATE TABLE IF NOT EXISTS ip_ranges
 (
-    ip_range_id BIGSERIAL PRIMARY KEY,
-    ip_from     varchar(46) NOT NULL,
-    ip_to       varchar(46) NOT NULL,
-    reason      text        NOT NULL,
-    is_active   smallint    NOT NULL DEFAULT 1
+    ip_range_id  BIGSERIAL PRIMARY KEY,
+    ip_range_key text        NOT NULL,
+    ip_from      varchar(46)          DEFAULT NULL,
+    ip_to        varchar(46)          DEFAULT NULL,
+    reason       text                 DEFAULT NULL,
+    is_active    smallint    NOT NULL DEFAULT 1
 );
 
 COMMENT ON TABLE ip_ranges IS 'of ip addresses that should be blocked';
 COMMENT ON COLUMN ip_ranges.ip_range_id IS 'the internal unique primary index';
+COMMENT ON COLUMN ip_ranges.ip_range_key IS 'combines the from and to ip address to one key';
 
 -- --------------------------------------------------------
 
@@ -563,7 +613,9 @@ CREATE TABLE IF NOT EXISTS change_values_prime
     group_id         bigint    NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
-    new_value        double precision DEFAULT NULL
+    new_value        double precision DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_prime IS 'to log all changes done by any user on values with a prime group id';
@@ -571,6 +623,10 @@ COMMENT ON COLUMN change_values_prime.change_id IS 'the prime key to identify th
 COMMENT ON COLUMN change_values_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_prime.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_prime.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_prime.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_prime.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -587,7 +643,9 @@ CREATE TABLE IF NOT EXISTS change_values_time_prime
     group_id         bigint    NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        timestamp DEFAULT NULL,
-    new_value        timestamp DEFAULT NULL
+    new_value        timestamp DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_time_prime IS 'to log all time value changes done by any user on values with a prime group id';
@@ -595,6 +653,10 @@ COMMENT ON COLUMN change_values_time_prime.change_id IS 'the prime key to identi
 COMMENT ON COLUMN change_values_time_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_time_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_time_prime.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_time_prime.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_time_prime.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_time_prime.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -611,7 +673,9 @@ CREATE TABLE IF NOT EXISTS change_values_text_prime
     group_id         bigint    NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        text  DEFAULT NULL,
-    new_value        text  DEFAULT NULL
+    new_value        text  DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_text_prime IS 'to log all text value changes done by any user on values with a prime group id';
@@ -619,6 +683,10 @@ COMMENT ON COLUMN change_values_text_prime.change_id IS 'the prime key to identi
 COMMENT ON COLUMN change_values_text_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_prime.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_text_prime.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_text_prime.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_text_prime.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -635,7 +703,9 @@ CREATE TABLE IF NOT EXISTS change_values_geo_prime
     group_id         bigint    NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        point DEFAULT NULL,
-    new_value        point DEFAULT NULL
+    new_value        point DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_geo_prime IS 'to log all geo value changes done by any user on values with a prime group id';
@@ -643,6 +713,10 @@ COMMENT ON COLUMN change_values_geo_prime.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_geo_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_prime.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_geo_prime.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_geo_prime.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_geo_prime.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_geo_prime.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_geo_prime.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -659,7 +733,9 @@ CREATE TABLE IF NOT EXISTS change_values_norm
     group_id         char(112) NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
-    new_value        double precision DEFAULT NULL
+    new_value        double precision DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_norm IS 'to log all changes done by any user on values with a standard group id';
@@ -667,6 +743,10 @@ COMMENT ON COLUMN change_values_norm.change_id IS 'the prime key to identify the
 COMMENT ON COLUMN change_values_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_norm.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_norm.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_norm.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_norm.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -683,7 +763,9 @@ CREATE TABLE IF NOT EXISTS change_values_time_norm
     group_id         char(112) NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        timestamp DEFAULT NULL,
-    new_value        timestamp DEFAULT NULL
+    new_value        timestamp DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_time_norm IS 'to log all time value changes done by any user on values with a standard group id';
@@ -691,6 +773,10 @@ COMMENT ON COLUMN change_values_time_norm.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_time_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_time_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_time_norm.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_time_norm.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_time_norm.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_time_norm.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -707,7 +793,9 @@ CREATE TABLE IF NOT EXISTS change_values_text_norm
     group_id         char(112) NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        text  DEFAULT NULL,
-    new_value        text  DEFAULT NULL
+    new_value        text  DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_text_norm IS 'to log all text value changes done by any user on values with a standard group id';
@@ -715,6 +803,10 @@ COMMENT ON COLUMN change_values_text_norm.change_id IS 'the prime key to identif
 COMMENT ON COLUMN change_values_text_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_norm.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_text_norm.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_text_norm.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_text_norm.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -731,7 +823,9 @@ CREATE TABLE IF NOT EXISTS change_values_geo_norm
     group_id         char(112) NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        point DEFAULT NULL,
-    new_value        point DEFAULT NULL
+    new_value        point DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_geo_norm IS 'to log all geo value changes done by any user on values with a standard group id';
@@ -739,6 +833,10 @@ COMMENT ON COLUMN change_values_geo_norm.change_id IS 'the prime key to identify
 COMMENT ON COLUMN change_values_geo_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_norm.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_geo_norm.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_geo_norm.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_geo_norm.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_geo_norm.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_geo_norm.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -755,7 +853,9 @@ CREATE TABLE IF NOT EXISTS change_values_big
     group_id         text      NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
-    new_value        double precision DEFAULT NULL
+    new_value        double precision DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_big IS 'to log all changes done by any user on values with a big group id';
@@ -763,6 +863,10 @@ COMMENT ON COLUMN change_values_big.change_id IS 'the prime key to identify the 
 COMMENT ON COLUMN change_values_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_big.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_big.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_big.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_big.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -779,7 +883,9 @@ CREATE TABLE IF NOT EXISTS change_values_time_big
     group_id         text      NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        timestamp DEFAULT NULL,
-    new_value        timestamp DEFAULT NULL
+    new_value        timestamp DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_time_big IS 'to log all time value changes done by any user on values with a big group id';
@@ -787,6 +893,10 @@ COMMENT ON COLUMN change_values_time_big.change_id IS 'the prime key to identify
 COMMENT ON COLUMN change_values_time_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_time_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_time_big.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_time_big.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_time_big.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_time_big.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -803,7 +913,9 @@ CREATE TABLE IF NOT EXISTS change_values_text_big
     group_id         text      NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        text DEFAULT NULL,
-    new_value        text DEFAULT NULL
+    new_value        text DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_text_big IS 'to log all text value changes done by any user on values with a big group id';
@@ -811,6 +923,10 @@ COMMENT ON COLUMN change_values_text_big.change_id IS 'the prime key to identify
 COMMENT ON COLUMN change_values_text_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_text_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_text_big.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_text_big.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_text_big.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_text_big.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -827,7 +943,9 @@ CREATE TABLE IF NOT EXISTS change_values_geo_big
     group_id         text      NOT NULL,
     change_field_id  smallint  NOT NULL,
     old_value        point DEFAULT NULL,
-    new_value        point DEFAULT NULL
+    new_value        point DEFAULT NULL,
+    old_id           bigint DEFAULT NULL,
+    new_id           bigint DEFAULT NULL
 );
 
 COMMENT ON TABLE change_values_geo_big IS 'to log all geo value changes done by any user on values with a big group id';
@@ -835,6 +953,10 @@ COMMENT ON COLUMN change_values_geo_big.change_id IS 'the prime key to identify 
 COMMENT ON COLUMN change_values_geo_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_big.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_values_geo_big.change_action_id IS 'the crud action';
+COMMENT ON COLUMN change_values_geo_big.old_value IS 'the value before the change';
+COMMENT ON COLUMN change_values_geo_big.new_value IS 'the value after the change';
+COMMENT ON COLUMN change_values_geo_big.old_id IS 'old value id';
+COMMENT ON COLUMN change_values_geo_big.new_id IS 'new value id';
 
 -- --------------------------------------------------------
 
@@ -1055,7 +1177,7 @@ COMMENT ON COLUMN words.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN words.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words
+-- table structure to save user-specific changes for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words
 --
 
 CREATE TABLE IF NOT EXISTS user_words
@@ -1174,7 +1296,7 @@ COMMENT ON COLUMN triples.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN triples.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to link one word or triple with a verb to another word or triple
+-- table structure to save user-specific changes to link one word or triple with a verb to another word or triple
 --
 
 CREATE TABLE IF NOT EXISTS user_triples
@@ -1267,7 +1389,7 @@ CREATE TABLE IF NOT EXISTS phrase_types
     code_id        varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL,
     scaling_factor bigint       DEFAULT NULL,
-    word_symbol    varchar(255) DEFAULT NULL
+    symbol         varchar(255) DEFAULT NULL
 );
 
 COMMENT ON TABLE phrase_types IS 'for the phrase type to set the predefined behaviour of a word or triple';
@@ -1276,7 +1398,7 @@ COMMENT ON COLUMN phrase_types.type_name IS 'the unique type name as shown to th
 COMMENT ON COLUMN phrase_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN phrase_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 COMMENT ON COLUMN phrase_types.scaling_factor IS 'e.g. for percent the scaling factor is 100';
-COMMENT ON COLUMN phrase_types.word_symbol IS 'e.g. for percent the symbol is %';
+COMMENT ON COLUMN phrase_types.symbol IS 'e.g. for percent the symbol is %';
 
 -- --------------------------------------------------------
 
@@ -1295,11 +1417,11 @@ CREATE TABLE IF NOT EXISTS groups
 COMMENT ON TABLE groups IS 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
 COMMENT ON COLUMN groups.group_id IS 'the 512-bit prime index to find the group';
 COMMENT ON COLUMN groups.user_id IS 'the owner / creator of the group';
-COMMENT ON COLUMN groups.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
-COMMENT ON COLUMN groups.description IS 'the user specific description for mouse over helps';
+COMMENT ON COLUMN groups.group_name IS 'the user-specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+COMMENT ON COLUMN groups.description IS 'the user-specific description for mouse over helps';
 
 --
--- table structure to save user specific changes to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
+-- table structure to save user-specific changes to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups
@@ -1313,8 +1435,8 @@ CREATE TABLE IF NOT EXISTS user_groups
 COMMENT ON TABLE user_groups IS 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
 COMMENT ON COLUMN user_groups.group_id IS 'the 512-bit prime index to find the user group';
 COMMENT ON COLUMN user_groups.user_id IS 'the changer of the group';
-COMMENT ON COLUMN user_groups.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
-COMMENT ON COLUMN user_groups.description IS 'the user specific description for mouse over helps';
+COMMENT ON COLUMN user_groups.group_name IS 'the user-specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+COMMENT ON COLUMN user_groups.description IS 'the user-specific description for mouse over helps';
 
 --
 -- table structure to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
@@ -1331,11 +1453,11 @@ CREATE TABLE IF NOT EXISTS groups_prime
 COMMENT ON TABLE groups_prime IS 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
 COMMENT ON COLUMN groups_prime.group_id IS 'the 64-bit prime index to find the group';
 COMMENT ON COLUMN groups_prime.user_id IS 'the owner / creator of the group';
-COMMENT ON COLUMN groups_prime.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
-COMMENT ON COLUMN groups_prime.description IS 'the user specific description for mouse over helps';
+COMMENT ON COLUMN groups_prime.group_name IS 'the user-specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+COMMENT ON COLUMN groups_prime.description IS 'the user-specific description for mouse over helps';
 
 --
--- table structure to save user specific changes to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
+-- table structure to save user-specific changes to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups_prime
@@ -1349,8 +1471,8 @@ CREATE TABLE IF NOT EXISTS user_groups_prime
 COMMENT ON TABLE user_groups_prime IS 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
 COMMENT ON COLUMN user_groups_prime.group_id IS 'the 64-bit prime index to find the user group';
 COMMENT ON COLUMN user_groups_prime.user_id IS 'the changer of the group';
-COMMENT ON COLUMN user_groups_prime.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
-COMMENT ON COLUMN user_groups_prime.description IS 'the user specific description for mouse over helps';
+COMMENT ON COLUMN user_groups_prime.group_name IS 'the user-specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+COMMENT ON COLUMN user_groups_prime.description IS 'the user-specific description for mouse over helps';
 
 --
 -- table structure to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
@@ -1367,11 +1489,11 @@ CREATE TABLE IF NOT EXISTS groups_big
 COMMENT ON TABLE groups_big IS 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
 COMMENT ON COLUMN groups_big.group_id IS 'the variable text index to find group';
 COMMENT ON COLUMN groups_big.user_id IS 'the owner / creator of the group';
-COMMENT ON COLUMN groups_big.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
-COMMENT ON COLUMN groups_big.description IS 'the user specific description for mouse over helps';
+COMMENT ON COLUMN groups_big.group_name IS 'the user-specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+COMMENT ON COLUMN groups_big.description IS 'the user-specific description for mouse over helps';
 
 --
--- table structure to save user specific changes to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
+-- table structure to save user-specific changes to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups_big
@@ -1385,8 +1507,8 @@ CREATE TABLE IF NOT EXISTS user_groups_big
 COMMENT ON TABLE user_groups_big IS 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
 COMMENT ON COLUMN user_groups_big.group_id IS 'the text index for more than 16 phrases to find the group';
 COMMENT ON COLUMN user_groups_big.user_id IS 'the changer of the group';
-COMMENT ON COLUMN user_groups_big.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
-COMMENT ON COLUMN user_groups_big.description IS 'the user specific description for mouse over helps';
+COMMENT ON COLUMN user_groups_big.group_name IS 'the user-specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+COMMENT ON COLUMN user_groups_big.description IS 'the user-specific description for mouse over helps';
 
 -- --------------------------------------------------------
 
@@ -1433,7 +1555,7 @@ COMMENT ON TABLE sources                 IS 'for the original sources for the nu
 COMMENT ON COLUMN sources.source_id      IS 'the internal unique primary index';
 COMMENT ON COLUMN sources.user_id        IS 'the owner / creator of the source';
 COMMENT ON COLUMN sources.source_name    IS 'the unique name of the source used e.g. as the primary search key';
-COMMENT ON COLUMN sources.description    IS 'the user specific description of the source for mouse over helps';
+COMMENT ON COLUMN sources.description    IS 'the user-specific description of the source for mouse over helps';
 COMMENT ON COLUMN sources.source_type_id IS 'link to the source type';
 COMMENT ON COLUMN sources.url            IS 'the url of the source';
 COMMENT ON COLUMN sources.code_id        IS 'to select sources used by this program';
@@ -1443,7 +1565,7 @@ COMMENT ON COLUMN sources.share_type_id  IS 'to restrict the access';
 COMMENT ON COLUMN sources.protect_id     IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes for the original sources for the numeric, time and geo values
+-- table structure to save user-specific changes for the original sources for the numeric, time and geo values
 --
 
 CREATE TABLE IF NOT EXISTS user_sources
@@ -1465,7 +1587,7 @@ COMMENT ON TABLE user_sources                 IS 'for the original sources for t
 COMMENT ON COLUMN user_sources.source_id      IS 'with the user_id the internal unique primary index';
 COMMENT ON COLUMN user_sources.user_id        IS 'the changer of the source';
 COMMENT ON COLUMN user_sources.source_name    IS 'the unique name of the source used e.g. as the primary search key';
-COMMENT ON COLUMN user_sources.description    IS 'the user specific description of the source for mouse over helps';
+COMMENT ON COLUMN user_sources.description    IS 'the user-specific description of the source for mouse over helps';
 COMMENT ON COLUMN user_sources.source_type_id IS 'link to the source type';
 COMMENT ON COLUMN user_sources.url            IS 'the url of the source';
 COMMENT ON COLUMN user_sources.code_id        IS 'to select sources used by this program';
@@ -1530,7 +1652,7 @@ COMMENT ON COLUMN refs.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN refs.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to link external data to internal for synchronisation
+-- table structure to save user-specific changes to link external data to internal for synchronisation
 --
 
 CREATE TABLE IF NOT EXISTS user_refs
@@ -1625,7 +1747,7 @@ COMMENT ON COLUMN values.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure for user specific changes of numeric values related to up to 16 phrases
+-- table structure for user-specific changes of numeric values related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_values
@@ -1640,10 +1762,10 @@ CREATE TABLE IF NOT EXISTS user_values
     protect_id    smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values                IS 'for user specific changes of numeric values related to up to 16 phrases';
+COMMENT ON TABLE user_values                IS 'for user-specific changes of numeric values related to up to 16 phrases';
 COMMENT ON COLUMN user_values.group_id      IS 'the 512-bit prime index to find the user numeric value';
 COMMENT ON COLUMN user_values.user_id       IS 'the changer of the numeric value';
-COMMENT ON COLUMN user_values.numeric_value IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_values.numeric_value IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_values.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key numeric value';
 COMMENT ON COLUMN user_values.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values.excluded      IS 'true if a user, but not all, have removed it';
@@ -1685,7 +1807,7 @@ COMMENT ON COLUMN values_prime.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_prime.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested numeric values related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested numeric values related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_values_prime
@@ -1703,13 +1825,13 @@ CREATE TABLE IF NOT EXISTS user_values_prime
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_prime                IS 'to store the user specific changes for the most often requested numeric values related up to four prime phrase';
+COMMENT ON TABLE user_values_prime                IS 'to store the user-specific changes for the most often requested numeric values related up to four prime phrase';
 COMMENT ON COLUMN user_values_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a numeric value';
 COMMENT ON COLUMN user_values_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a numeric value';
 COMMENT ON COLUMN user_values_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a numeric value';
 COMMENT ON COLUMN user_values_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a numeric value';
 COMMENT ON COLUMN user_values_prime.user_id       IS 'the changer of the numeric value';
-COMMENT ON COLUMN user_values_prime.numeric_value IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_values_prime.numeric_value IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_values_prime.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key numeric value';
 COMMENT ON COLUMN user_values_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_prime.excluded      IS 'true if a user, but not all, have removed it';
@@ -1745,7 +1867,7 @@ COMMENT ON COLUMN values_big.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_big.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of numeric values related to more than 16 phrases
+-- table structure to store the user-specific changes of numeric values related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_values_big
@@ -1760,10 +1882,10 @@ CREATE TABLE IF NOT EXISTS user_values_big
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_big                IS 'to store the user specific changes of numeric values related to more than 16 phrases';
+COMMENT ON TABLE user_values_big                IS 'to store the user-specific changes of numeric values related to more than 16 phrases';
 COMMENT ON COLUMN user_values_big.group_id      IS 'the text index for more than 16 phrases to find the numeric value';
 COMMENT ON COLUMN user_values_big.user_id       IS 'the changer of the numeric value';
-COMMENT ON COLUMN user_values_big.numeric_value IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_values_big.numeric_value IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_values_big.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key numeric value';
 COMMENT ON COLUMN user_values_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_big.excluded      IS 'true if a user, but not all, have removed it';
@@ -1839,7 +1961,7 @@ COMMENT ON COLUMN values_text.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_text.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure for user specific changes of text values related to up to 16 phrases
+-- table structure for user-specific changes of text values related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_values_text
@@ -1854,10 +1976,10 @@ CREATE TABLE IF NOT EXISTS user_values_text
     protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_text                IS 'for user specific changes of text values related to up to 16 phrases';
+COMMENT ON TABLE user_values_text                IS 'for user-specific changes of text values related to up to 16 phrases';
 COMMENT ON COLUMN user_values_text.group_id      IS 'the 512-bit prime index to find the user text value';
 COMMENT ON COLUMN user_values_text.user_id       IS 'the changer of the text value';
-COMMENT ON COLUMN user_values_text.text_value    IS 'the user specific text value change';
+COMMENT ON COLUMN user_values_text.text_value    IS 'the user-specific text value change';
 COMMENT ON COLUMN user_values_text.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key text value';
 COMMENT ON COLUMN user_values_text.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_text.excluded      IS 'true if a user, but not all, have removed it';
@@ -1899,7 +2021,7 @@ COMMENT ON COLUMN values_text_prime.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_text_prime.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested text values related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested text values related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_values_text_prime
@@ -1917,13 +2039,13 @@ CREATE TABLE IF NOT EXISTS user_values_text_prime
     protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_text_prime                IS 'to store the user specific changes for the most often requested text values related up to four prime phrase';
+COMMENT ON TABLE user_values_text_prime                IS 'to store the user-specific changes for the most often requested text values related up to four prime phrase';
 COMMENT ON COLUMN user_values_text_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a text value';
 COMMENT ON COLUMN user_values_text_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a text value';
 COMMENT ON COLUMN user_values_text_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a text value';
 COMMENT ON COLUMN user_values_text_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a text value';
 COMMENT ON COLUMN user_values_text_prime.user_id       IS 'the changer of the text value';
-COMMENT ON COLUMN user_values_text_prime.text_value    IS 'the user specific text value change';
+COMMENT ON COLUMN user_values_text_prime.text_value    IS 'the user-specific text value change';
 COMMENT ON COLUMN user_values_text_prime.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key text value';
 COMMENT ON COLUMN user_values_text_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_text_prime.excluded      IS 'true if a user, but not all, have removed it';
@@ -1959,7 +2081,7 @@ COMMENT ON COLUMN values_text_big.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_text_big.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of text values related to more than 16 phrases
+-- table structure to store the user-specific changes of text values related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_values_text_big
@@ -1974,10 +2096,10 @@ CREATE TABLE IF NOT EXISTS user_values_text_big
     protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_text_big                IS 'to store the user specific changes of text values related to more than 16 phrases';
+COMMENT ON TABLE user_values_text_big                IS 'to store the user-specific changes of text values related to more than 16 phrases';
 COMMENT ON COLUMN user_values_text_big.group_id      IS 'the text index for more than 16 phrases to find the text value';
 COMMENT ON COLUMN user_values_text_big.user_id       IS 'the changer of the text value';
-COMMENT ON COLUMN user_values_text_big.text_value    IS 'the user specific text value change';
+COMMENT ON COLUMN user_values_text_big.text_value    IS 'the user-specific text value change';
 COMMENT ON COLUMN user_values_text_big.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key text value';
 COMMENT ON COLUMN user_values_text_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_text_big.excluded      IS 'true if a user, but not all, have removed it';
@@ -2053,7 +2175,7 @@ COMMENT ON COLUMN values_time.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_time.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure for user specific changes of time values related to up to 16 phrases
+-- table structure for user-specific changes of time values related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_values_time
@@ -2068,10 +2190,10 @@ CREATE TABLE IF NOT EXISTS user_values_time
     protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_time                IS 'for user specific changes of time values related to up to 16 phrases';
+COMMENT ON TABLE user_values_time                IS 'for user-specific changes of time values related to up to 16 phrases';
 COMMENT ON COLUMN user_values_time.group_id      IS 'the 512-bit prime index to find the user time value';
 COMMENT ON COLUMN user_values_time.user_id       IS 'the changer of the time value';
-COMMENT ON COLUMN user_values_time.time_value    IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_values_time.time_value    IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_values_time.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key time value';
 COMMENT ON COLUMN user_values_time.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_time.excluded      IS 'true if a user, but not all, have removed it';
@@ -2113,7 +2235,7 @@ COMMENT ON COLUMN values_time_prime.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_time_prime.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested time values related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested time values related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_values_time_prime
@@ -2131,13 +2253,13 @@ CREATE TABLE IF NOT EXISTS user_values_time_prime
     protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_time_prime                IS 'to store the user specific changes for the most often requested time values related up to four prime phrase';
+COMMENT ON TABLE user_values_time_prime                IS 'to store the user-specific changes for the most often requested time values related up to four prime phrase';
 COMMENT ON COLUMN user_values_time_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a time value';
 COMMENT ON COLUMN user_values_time_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a time value';
 COMMENT ON COLUMN user_values_time_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a time value';
 COMMENT ON COLUMN user_values_time_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a time value';
 COMMENT ON COLUMN user_values_time_prime.user_id       IS 'the changer of the time value';
-COMMENT ON COLUMN user_values_time_prime.time_value    IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_values_time_prime.time_value    IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_values_time_prime.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key time value';
 COMMENT ON COLUMN user_values_time_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_time_prime.excluded      IS 'true if a user, but not all, have removed it';
@@ -2173,7 +2295,7 @@ COMMENT ON COLUMN values_time_big.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_time_big.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of time values related to more than 16 phrases
+-- table structure to store the user-specific changes of time values related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_values_time_big
@@ -2188,10 +2310,10 @@ CREATE TABLE IF NOT EXISTS user_values_time_big
     protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_time_big                IS 'to store the user specific changes of time values related to more than 16 phrases';
+COMMENT ON TABLE user_values_time_big                IS 'to store the user-specific changes of time values related to more than 16 phrases';
 COMMENT ON COLUMN user_values_time_big.group_id      IS 'the text index for more than 16 phrases to find the time value';
 COMMENT ON COLUMN user_values_time_big.user_id       IS 'the changer of the time value';
-COMMENT ON COLUMN user_values_time_big.time_value    IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_values_time_big.time_value    IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_values_time_big.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key time value';
 COMMENT ON COLUMN user_values_time_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_time_big.excluded      IS 'true if a user, but not all, have removed it';
@@ -2267,7 +2389,7 @@ COMMENT ON COLUMN values_geo.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_geo.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure for user specific changes of geo values related to up to 16 phrases
+-- table structure for user-specific changes of geo values related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_values_geo
@@ -2282,10 +2404,10 @@ CREATE TABLE IF NOT EXISTS user_values_geo
     protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_geo                IS 'for user specific changes of geo values related to up to 16 phrases';
+COMMENT ON TABLE user_values_geo                IS 'for user-specific changes of geo values related to up to 16 phrases';
 COMMENT ON COLUMN user_values_geo.group_id      IS 'the 512-bit prime index to find the user geo value';
 COMMENT ON COLUMN user_values_geo.user_id       IS 'the changer of the geo value';
-COMMENT ON COLUMN user_values_geo.geo_value     IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_values_geo.geo_value     IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_values_geo.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key geo value';
 COMMENT ON COLUMN user_values_geo.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_geo.excluded      IS 'true if a user, but not all, have removed it';
@@ -2327,7 +2449,7 @@ COMMENT ON COLUMN values_geo_prime.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_geo_prime.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested geo values related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested geo values related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_values_geo_prime
@@ -2345,13 +2467,13 @@ CREATE TABLE IF NOT EXISTS user_values_geo_prime
     protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_geo_prime                IS 'to store the user specific changes for the most often requested geo values related up to four prime phrase';
+COMMENT ON TABLE user_values_geo_prime                IS 'to store the user-specific changes for the most often requested geo values related up to four prime phrase';
 COMMENT ON COLUMN user_values_geo_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a geo value';
 COMMENT ON COLUMN user_values_geo_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a geo value';
 COMMENT ON COLUMN user_values_geo_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a geo value';
 COMMENT ON COLUMN user_values_geo_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a geo value';
 COMMENT ON COLUMN user_values_geo_prime.user_id       IS 'the changer of the geo value';
-COMMENT ON COLUMN user_values_geo_prime.geo_value     IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_values_geo_prime.geo_value     IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_values_geo_prime.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key geo value';
 COMMENT ON COLUMN user_values_geo_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_geo_prime.excluded      IS 'true if a user, but not all, have removed it';
@@ -2387,7 +2509,7 @@ COMMENT ON COLUMN values_geo_big.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_geo_big.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of geo values related to more than 16 phrases
+-- table structure to store the user-specific changes of geo values related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_values_geo_big
@@ -2402,10 +2524,10 @@ CREATE TABLE IF NOT EXISTS user_values_geo_big
     protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_geo_big                IS 'to store the user specific changes of geo values related to more than 16 phrases';
+COMMENT ON TABLE user_values_geo_big                IS 'to store the user-specific changes of geo values related to more than 16 phrases';
 COMMENT ON COLUMN user_values_geo_big.group_id      IS 'the text index for more than 16 phrases to find the geo value';
 COMMENT ON COLUMN user_values_geo_big.user_id       IS 'the changer of the geo value';
-COMMENT ON COLUMN user_values_geo_big.geo_value     IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_values_geo_big.geo_value     IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_values_geo_big.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key geo value';
 COMMENT ON COLUMN user_values_geo_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_geo_big.excluded      IS 'true if a user, but not all, have removed it';
@@ -2634,7 +2756,6 @@ CREATE TABLE IF NOT EXISTS elements
 (
     element_id BIGSERIAL PRIMARY KEY,
     formula_id      bigint           NOT NULL,
-    order_nbr       bigint           NOT NULL,
     element_type_id smallint         NOT NULL,
     user_id         bigint       DEFAULT NULL,
     ref_id          bigint       DEFAULT NULL,
@@ -2710,7 +2831,7 @@ COMMENT ON COLUMN formulas.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN formulas.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes the mathematical expression to calculate results based on values and results
+-- table structure to save user-specific changes the mathematical expression to calculate results based on values and results
 --
 
 CREATE TABLE IF NOT EXISTS user_formulas
@@ -2761,8 +2882,8 @@ CREATE TABLE IF NOT EXISTS formula_link_types
     type_name            varchar(255)     NOT NULL,
     code_id              varchar(255) DEFAULT NULL,
     description          text         DEFAULT NULL,
-    formula_id           bigint           NOT NULL,
-    phrase_type_id       smallint         NOT NULL
+    formula_id           bigint       DEFAULT NULL,
+    phrase_type_id       smallint     DEFAULT NULL
 );
 
 COMMENT ON TABLE formula_link_types IS 'to assign predefined behaviour to a formula link';
@@ -2798,7 +2919,7 @@ COMMENT ON COLUMN formula_links.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN formula_links.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure to save user-specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS user_formula_links
@@ -2915,7 +3036,7 @@ COMMENT ON COLUMN results.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to cache the user specific changes of numeric results related to up to 16 phrases
+-- table structure to cache the user-specific changes of numeric results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results
@@ -2931,11 +3052,11 @@ CREATE TABLE IF NOT EXISTS user_results
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results                  IS 'to cache the user specific changes of numeric results related to up to 16 phrases';
+COMMENT ON TABLE user_results                  IS 'to cache the user-specific changes of numeric results related to up to 16 phrases';
 COMMENT ON COLUMN user_results.group_id        IS 'the 512-bit prime index to find the user numeric result';
 COMMENT ON COLUMN user_results.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results.user_id         IS 'the id of the user who has requested the change of the numeric result';
-COMMENT ON COLUMN user_results.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results.numeric_value   IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_results.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results.excluded        IS 'true if a user, but not all, have removed it';
@@ -2979,7 +3100,7 @@ COMMENT ON COLUMN results_prime.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_prime.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested numeric results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested numeric results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_prime
@@ -2998,14 +3119,14 @@ CREATE TABLE IF NOT EXISTS user_results_prime
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_prime                  IS 'to store the user specific changes for the most often requested numeric results related up to four prime phrase';
+COMMENT ON TABLE user_results_prime                  IS 'to store the user-specific changes for the most often requested numeric results related up to four prime phrase';
 COMMENT ON COLUMN user_results_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_prime.user_id         IS 'the id of the user who has requested the change of the numeric result';
-COMMENT ON COLUMN user_results_prime.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results_prime.numeric_value   IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_results_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_prime.excluded        IS 'true if a user, but not all, have removed it';
@@ -3057,7 +3178,7 @@ COMMENT ON COLUMN results_main.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_main.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested numeric results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested numeric results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_main
@@ -3080,7 +3201,7 @@ CREATE TABLE IF NOT EXISTS user_results_main
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_main                  IS 'to store the user specific changes to cache the formula second most often requested numeric results related up to eight prime phrase';
+COMMENT ON TABLE user_results_main                  IS 'to store the user-specific changes to cache the formula second most often requested numeric results related up to eight prime phrase';
 COMMENT ON COLUMN user_results_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a numeric result';
@@ -3091,7 +3212,7 @@ COMMENT ON COLUMN user_results_main.phrase_id_7     IS 'phrase id that is with t
 COMMENT ON COLUMN user_results_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_main.user_id         IS 'the id of the user who has requested the change of the numeric result';
-COMMENT ON COLUMN user_results_main.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results_main.numeric_value   IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_results_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_main.excluded        IS 'true if a user, but not all, have removed it';
@@ -3129,7 +3250,7 @@ COMMENT ON COLUMN results_big.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_big.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of numeric results related to more than 16 phrases
+-- table structure to store the user-specific changes of numeric results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_big
@@ -3145,11 +3266,11 @@ CREATE TABLE IF NOT EXISTS user_results_big
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_big                  IS 'to store the user specific changes of numeric results related to more than 16 phrases';
+COMMENT ON TABLE user_results_big                  IS 'to store the user-specific changes of numeric results related to more than 16 phrases';
 COMMENT ON COLUMN user_results_big.group_id        IS 'the text index for more than 16 phrases to find the numeric result';
 COMMENT ON COLUMN user_results_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_big.user_id         IS 'the id of the user who has requested the change of the numeric result';
-COMMENT ON COLUMN user_results_big.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results_big.numeric_value   IS 'the user-specific numeric value change';
 COMMENT ON COLUMN user_results_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_big.excluded        IS 'true if a user, but not all, have removed it';
@@ -3251,7 +3372,7 @@ COMMENT ON COLUMN results_text.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_text.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to cache the user specific changes of text results related to up to 16 phrases
+-- table structure to cache the user-specific changes of text results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text
@@ -3267,11 +3388,11 @@ CREATE TABLE IF NOT EXISTS user_results_text
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_text                  IS 'to cache the user specific changes of text results related to up to 16 phrases';
+COMMENT ON TABLE user_results_text                  IS 'to cache the user-specific changes of text results related to up to 16 phrases';
 COMMENT ON COLUMN user_results_text.group_id        IS 'the 512-bit prime index to find the user text result';
 COMMENT ON COLUMN user_results_text.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_text.user_id         IS 'the id of the user who has requested the change of the text result';
-COMMENT ON COLUMN user_results_text.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text.text_value      IS 'the user-specific text value change';
 COMMENT ON COLUMN user_results_text.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_text.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_text.excluded        IS 'true if a user, but not all, have removed it';
@@ -3315,7 +3436,7 @@ COMMENT ON COLUMN results_text_prime.share_type_id   IS 'to restrict the access'
 COMMENT ON COLUMN results_text_prime.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested text results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested text results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text_prime
@@ -3334,14 +3455,14 @@ CREATE TABLE IF NOT EXISTS user_results_text_prime
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_text_prime                  IS 'to store the user specific changes for the most often requested text results related up to four prime phrase';
+COMMENT ON TABLE user_results_text_prime                  IS 'to store the user-specific changes for the most often requested text results related up to four prime phrase';
 COMMENT ON COLUMN user_results_text_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_text_prime.user_id         IS 'the id of the user who has requested the change of the text result';
-COMMENT ON COLUMN user_results_text_prime.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text_prime.text_value      IS 'the user-specific text value change';
 COMMENT ON COLUMN user_results_text_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_text_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_text_prime.excluded        IS 'true if a user, but not all, have removed it';
@@ -3393,7 +3514,7 @@ COMMENT ON COLUMN results_text_main.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_text_main.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested text results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested text results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text_main
@@ -3416,7 +3537,7 @@ CREATE TABLE IF NOT EXISTS user_results_text_main
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_text_main                  IS 'to store the user specific changes to cache the formula second most often requested text results related up to eight prime phrase';
+COMMENT ON TABLE user_results_text_main                  IS 'to store the user-specific changes to cache the formula second most often requested text results related up to eight prime phrase';
 COMMENT ON COLUMN user_results_text_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a text result';
@@ -3427,7 +3548,7 @@ COMMENT ON COLUMN user_results_text_main.phrase_id_7     IS 'phrase id that is w
 COMMENT ON COLUMN user_results_text_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_text_main.user_id         IS 'the id of the user who has requested the change of the text result';
-COMMENT ON COLUMN user_results_text_main.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text_main.text_value      IS 'the user-specific text value change';
 COMMENT ON COLUMN user_results_text_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_text_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_text_main.excluded        IS 'true if a user, but not all, have removed it';
@@ -3465,7 +3586,7 @@ COMMENT ON COLUMN results_text_big.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_text_big.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of text results related to more than 16 phrases
+-- table structure to store the user-specific changes of text results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_text_big
@@ -3481,11 +3602,11 @@ CREATE TABLE IF NOT EXISTS user_results_text_big
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_text_big                  IS 'to store the user specific changes of text results related to more than 16 phrases';
+COMMENT ON TABLE user_results_text_big                  IS 'to store the user-specific changes of text results related to more than 16 phrases';
 COMMENT ON COLUMN user_results_text_big.group_id        IS 'the text index for more than 16 phrases to find the text result';
 COMMENT ON COLUMN user_results_text_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_text_big.user_id         IS 'the id of the user who has requested the change of the text result';
-COMMENT ON COLUMN user_results_text_big.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text_big.text_value      IS 'the user-specific text value change';
 COMMENT ON COLUMN user_results_text_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_text_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_text_big.excluded        IS 'true if a user, but not all, have removed it';
@@ -3587,7 +3708,7 @@ COMMENT ON COLUMN results_time.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_time.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to cache the user specific changes of time results related to up to 16 phrases
+-- table structure to cache the user-specific changes of time results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time
@@ -3603,11 +3724,11 @@ CREATE TABLE IF NOT EXISTS user_results_time
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_time                  IS 'to cache the user specific changes of time results related to up to 16 phrases';
+COMMENT ON TABLE user_results_time                  IS 'to cache the user-specific changes of time results related to up to 16 phrases';
 COMMENT ON COLUMN user_results_time.group_id        IS 'the 512-bit prime index to find the user time result';
 COMMENT ON COLUMN user_results_time.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_time.user_id         IS 'the id of the user who has requested the change of the time result';
-COMMENT ON COLUMN user_results_time.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time.time_value      IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_results_time.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_time.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_time.excluded        IS 'true if a user, but not all, have removed it';
@@ -3651,7 +3772,7 @@ COMMENT ON COLUMN results_time_prime.share_type_id   IS 'to restrict the access'
 COMMENT ON COLUMN results_time_prime.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested time results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested time results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time_prime
@@ -3670,14 +3791,14 @@ CREATE TABLE IF NOT EXISTS user_results_time_prime
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_time_prime                  IS 'to store the user specific changes for the most often requested time results related up to four prime phrase';
+COMMENT ON TABLE user_results_time_prime                  IS 'to store the user-specific changes for the most often requested time results related up to four prime phrase';
 COMMENT ON COLUMN user_results_time_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_time_prime.user_id         IS 'the id of the user who has requested the change of the time result';
-COMMENT ON COLUMN user_results_time_prime.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time_prime.time_value      IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_results_time_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_time_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_time_prime.excluded        IS 'true if a user, but not all, have removed it';
@@ -3729,7 +3850,7 @@ COMMENT ON COLUMN results_time_main.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_time_main.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested time results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested time results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time_main
@@ -3752,7 +3873,7 @@ CREATE TABLE IF NOT EXISTS user_results_time_main
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_time_main                  IS 'to store the user specific changes to cache the formula second most often requested time results related up to eight prime phrase';
+COMMENT ON TABLE user_results_time_main                  IS 'to store the user-specific changes to cache the formula second most often requested time results related up to eight prime phrase';
 COMMENT ON COLUMN user_results_time_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a time result';
@@ -3763,7 +3884,7 @@ COMMENT ON COLUMN user_results_time_main.phrase_id_7     IS 'phrase id that is w
 COMMENT ON COLUMN user_results_time_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_time_main.user_id         IS 'the id of the user who has requested the change of the time result';
-COMMENT ON COLUMN user_results_time_main.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time_main.time_value      IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_results_time_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_time_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_time_main.excluded        IS 'true if a user, but not all, have removed it';
@@ -3801,7 +3922,7 @@ COMMENT ON COLUMN results_time_big.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_time_big.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of time results related to more than 16 phrases
+-- table structure to store the user-specific changes of time results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_time_big
@@ -3817,11 +3938,11 @@ CREATE TABLE IF NOT EXISTS user_results_time_big
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_time_big                  IS 'to store the user specific changes of time results related to more than 16 phrases';
+COMMENT ON TABLE user_results_time_big                  IS 'to store the user-specific changes of time results related to more than 16 phrases';
 COMMENT ON COLUMN user_results_time_big.group_id        IS 'the text index for more than 16 phrases to find the time result';
 COMMENT ON COLUMN user_results_time_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_time_big.user_id         IS 'the id of the user who has requested the change of the time result';
-COMMENT ON COLUMN user_results_time_big.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time_big.time_value      IS 'the user-specific timestamp change';
 COMMENT ON COLUMN user_results_time_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_time_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_time_big.excluded        IS 'true if a user, but not all, have removed it';
@@ -3923,7 +4044,7 @@ COMMENT ON COLUMN results_geo.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_geo.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to cache the user specific changes of geo results related to up to 16 phrases
+-- table structure to cache the user-specific changes of geo results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo
@@ -3939,11 +4060,11 @@ CREATE TABLE IF NOT EXISTS user_results_geo
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_geo                  IS 'to cache the user specific changes of geo results related to up to 16 phrases';
+COMMENT ON TABLE user_results_geo                  IS 'to cache the user-specific changes of geo results related to up to 16 phrases';
 COMMENT ON COLUMN user_results_geo.group_id        IS 'the 512-bit prime index to find the user geo result';
 COMMENT ON COLUMN user_results_geo.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_geo.user_id         IS 'the id of the user who has requested the change of the geo result';
-COMMENT ON COLUMN user_results_geo.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo.geo_value       IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_results_geo.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_geo.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_geo.excluded        IS 'true if a user, but not all, have removed it';
@@ -3987,7 +4108,7 @@ COMMENT ON COLUMN results_geo_prime.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_geo_prime.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested geo results related up to four prime phrase
+-- table structure to store the user-specific changes for the most often requested geo results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo_prime
@@ -4006,14 +4127,14 @@ CREATE TABLE IF NOT EXISTS user_results_geo_prime
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_geo_prime                  IS 'to store the user specific changes for the most often requested geo results related up to four prime phrase';
+COMMENT ON TABLE user_results_geo_prime                  IS 'to store the user-specific changes for the most often requested geo results related up to four prime phrase';
 COMMENT ON COLUMN user_results_geo_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_geo_prime.user_id         IS 'the id of the user who has requested the change of the geo result';
-COMMENT ON COLUMN user_results_geo_prime.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo_prime.geo_value       IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_results_geo_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_geo_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_geo_prime.excluded        IS 'true if a user, but not all, have removed it';
@@ -4065,7 +4186,7 @@ COMMENT ON COLUMN results_geo_main.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_geo_main.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes to cache the formula second most often requested geo results related up to eight prime phrase
+-- table structure to store the user-specific changes to cache the formula second most often requested geo results related up to eight prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo_main
@@ -4088,7 +4209,7 @@ CREATE TABLE IF NOT EXISTS user_results_geo_main
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_geo_main                  IS 'to store the user specific changes to cache the formula second most often requested geo results related up to eight prime phrase';
+COMMENT ON TABLE user_results_geo_main                  IS 'to store the user-specific changes to cache the formula second most often requested geo results related up to eight prime phrase';
 COMMENT ON COLUMN user_results_geo_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a geo result';
@@ -4099,7 +4220,7 @@ COMMENT ON COLUMN user_results_geo_main.phrase_id_7     IS 'phrase id that is wi
 COMMENT ON COLUMN user_results_geo_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_geo_main.user_id         IS 'the id of the user who has requested the change of the geo result';
-COMMENT ON COLUMN user_results_geo_main.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo_main.geo_value       IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_results_geo_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_geo_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_geo_main.excluded        IS 'true if a user, but not all, have removed it';
@@ -4137,7 +4258,7 @@ COMMENT ON COLUMN results_geo_big.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results_geo_big.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of geo results related to more than 16 phrases
+-- table structure to store the user-specific changes of geo results related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_results_geo_big
@@ -4153,11 +4274,11 @@ CREATE TABLE IF NOT EXISTS user_results_geo_big
     protect_id      smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_results_geo_big                  IS 'to store the user specific changes of geo results related to more than 16 phrases';
+COMMENT ON TABLE user_results_geo_big                  IS 'to store the user-specific changes of geo results related to more than 16 phrases';
 COMMENT ON COLUMN user_results_geo_big.group_id        IS 'the text index for more than 16 phrases to find the geo result';
 COMMENT ON COLUMN user_results_geo_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_geo_big.user_id         IS 'the id of the user who has requested the change of the geo result';
-COMMENT ON COLUMN user_results_geo_big.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo_big.geo_value       IS 'the user-specific geolocation change';
 COMMENT ON COLUMN user_results_geo_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_results_geo_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_geo_big.excluded        IS 'true if a user, but not all, have removed it';
@@ -4425,7 +4546,7 @@ COMMENT ON COLUMN views.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN views.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to store all user interfaces entry points
+-- table structure to save user-specific changes to store all user interfaces entry points
 --
 
 CREATE TABLE IF NOT EXISTS user_views
@@ -4504,7 +4625,7 @@ COMMENT ON COLUMN term_views.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN term_views.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to link view to a word, triple, verb or formula with an n:m relation
+-- table structure to save user-specific changes to link view to a word, triple, verb or formula with an n:m relation
 --
 
 CREATE TABLE IF NOT EXISTS user_term_views
@@ -4575,7 +4696,7 @@ COMMENT ON COLUMN view_relations.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN view_relations.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view
+-- table structure to save user-specific changes to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view
 --
 
 CREATE TABLE IF NOT EXISTS user_view_relations
@@ -4713,7 +4834,7 @@ COMMENT ON COLUMN components.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN components.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes for the single components of a view
+-- table structure to save user-specific changes for the single components of a view
 --
 
 CREATE TABLE IF NOT EXISTS user_components
@@ -4769,7 +4890,7 @@ CREATE TABLE IF NOT EXISTS component_links
     component_id           bigint   NOT NULL,
     user_id                bigint            DEFAULT NULL,
     order_nbr              bigint   NOT NULL DEFAULT 1,
-    component_link_type_id smallint NOT NULL DEFAULT 1,
+    component_link_type_id smallint          DEFAULT NULL,
     position_type_id       smallint NOT NULL DEFAULT 1,
     view_style_id          smallint          DEFAULT NULL,
     excluded               smallint          DEFAULT NULL,
@@ -4780,6 +4901,7 @@ CREATE TABLE IF NOT EXISTS component_links
 COMMENT ON TABLE component_links IS 'to link components to views with an n:m relation';
 COMMENT ON COLUMN component_links.component_link_id IS 'the internal unique primary index';
 COMMENT ON COLUMN component_links.user_id IS 'the owner / creator of the component_link';
+COMMENT ON COLUMN component_links.component_link_type_id IS 'if null the default type always is used';
 COMMENT ON COLUMN component_links.position_type_id IS 'the position of the component e.g. right or below';
 COMMENT ON COLUMN component_links.view_style_id IS 'the display style for this component link';
 COMMENT ON COLUMN component_links.excluded IS 'true if a user, but not all, have removed it';
@@ -4787,7 +4909,7 @@ COMMENT ON COLUMN component_links.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN component_links.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to link components to views with an n:m relation
+-- table structure to save user-specific changes to link components to views with an n:m relation
 --
 
 CREATE TABLE IF NOT EXISTS user_component_links
@@ -5256,18 +5378,18 @@ CREATE INDEX config_code_idx ON config (code_id);
 -- --------------------------------------------------------
 
 --
--- indexes for table sys_log_types
+-- indexes for table sys_log_levels
 --
 
-CREATE INDEX sys_log_types_type_name_idx ON sys_log_types (type_name);
+CREATE INDEX sys_log_levels_level_name_idx ON sys_log_levels (level_name);
 
 -- --------------------------------------------------------
 
 --
--- indexes for table sys_log_status
+-- indexes for table sys_log_statuum
 --
 
-CREATE INDEX sys_log_status_type_name_idx ON sys_log_status (type_name);
+CREATE INDEX sys_log_statuum_status_name_idx ON sys_log_statuum (status_name);
 
 -- --------------------------------------------------------
 
@@ -5284,9 +5406,10 @@ CREATE INDEX sys_log_functions_sys_log_function_name_idx ON sys_log_functions (s
 --
 
 CREATE INDEX sys_log_sys_log_time_idx ON sys_log (sys_log_time);
-CREATE INDEX sys_log_sys_log_type_idx ON sys_log (sys_log_type_id);
-CREATE INDEX sys_log_sys_log_function_idx ON sys_log (sys_log_function_id);
 CREATE INDEX sys_log_user_idx ON sys_log (user_id);
+CREATE INDEX sys_log_sys_log_function_idx ON sys_log (sys_log_function_id);
+CREATE INDEX sys_log_sys_log_level_idx ON sys_log (sys_log_level_id);
+CREATE INDEX sys_log_sys_log_update_time_idx ON sys_log (sys_log_update_time);
 CREATE INDEX sys_log_solver_idx ON sys_log (solver_id);
 CREATE INDEX sys_log_sys_log_status_idx ON sys_log (sys_log_status_id);
 
@@ -5307,6 +5430,14 @@ CREATE INDEX system_time_types_type_name_idx ON system_time_types (type_name);
 CREATE INDEX system_times_start_time_idx ON system_times (start_time);
 CREATE INDEX system_times_end_time_idx ON system_times (end_time);
 CREATE INDEX system_times_system_time_type_idx ON system_times (system_time_type_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table job_statuum
+--
+
+CREATE INDEX job_statuum_status_name_idx ON job_statuum (status_name);
 
 -- --------------------------------------------------------
 
@@ -5335,6 +5466,7 @@ CREATE INDEX job_times_parameter_idx ON job_times (parameter);
 
 CREATE INDEX jobs_user_idx ON jobs (user_id);
 CREATE INDEX jobs_job_type_idx ON jobs (job_type_id);
+CREATE INDEX jobs_job_status_idx ON jobs (job_status_id);
 CREATE INDEX jobs_request_time_idx ON jobs (request_time);
 CREATE INDEX jobs_start_time_idx ON jobs (start_time);
 CREATE INDEX jobs_end_time_idx ON jobs (end_time);
@@ -5358,7 +5490,7 @@ CREATE INDEX user_types_type_name_idx ON user_types (type_name);
 -- indexes for table user_profiles
 --
 
-CREATE INDEX user_profiles_type_name_idx ON user_profiles (type_name);
+CREATE INDEX user_profiles_user_profile_name_idx ON user_profiles (user_profile_name);
 
 -- --------------------------------------------------------
 
@@ -5367,6 +5499,14 @@ CREATE INDEX user_profiles_type_name_idx ON user_profiles (type_name);
 --
 
 CREATE INDEX user_official_types_type_name_idx ON user_official_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table user_statuum
+--
+
+CREATE INDEX user_statuum_user_status_name_idx ON user_statuum (user_status_name);
 
 -- --------------------------------------------------------
 
@@ -5386,6 +5526,7 @@ CREATE INDEX users_user_type_idx ON users (user_type_id);
 -- indexes for table ip_ranges
 --
 
+CREATE INDEX ip_ranges_ip_range_key_idx ON ip_ranges (ip_range_key);
 CREATE INDEX ip_ranges_ip_from_idx ON ip_ranges (ip_from);
 CREATE INDEX ip_ranges_ip_to_idx ON ip_ranges (ip_to);
 
@@ -6940,10 +7081,11 @@ ALTER TABLE system_times
 --
 
 ALTER TABLE sys_log
-    ADD CONSTRAINT sys_log_sys_log_function_fk FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
     ADD CONSTRAINT sys_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sys_log_sys_log_function_fk FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
+    ADD CONSTRAINT sys_log_sys_log_level_fk FOREIGN KEY (sys_log_level_id) REFERENCES sys_log_levels (sys_log_level_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
-    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
+    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_statuum (sys_log_status_id);
 
 --
 -- constraints for table job_times
@@ -6960,6 +7102,7 @@ ALTER TABLE job_times
 ALTER TABLE jobs
     ADD CONSTRAINT jobs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id),
+    ADD CONSTRAINT jobs_job_status_fk FOREIGN KEY (job_status_id) REFERENCES job_statuum (job_status_id),
     ADD CONSTRAINT jobs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT jobs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id);
 
@@ -6973,7 +7116,8 @@ ALTER TABLE users
     ADD CONSTRAINT users_triple_fk FOREIGN KEY (name_triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT users_triple2_fk FOREIGN KEY (geo_triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT users_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+    ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT users_user_status_fk FOREIGN KEY (user_status_id) REFERENCES user_statuum (user_status_id);
 
 --
 -- constraints for table change_fields

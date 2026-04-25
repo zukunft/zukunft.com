@@ -37,7 +37,9 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -89,7 +91,7 @@ class view_tests
         $msk = new view($usr);
         $msk->set_name(views::START_NAME);
         //$t->assert_load_sql($db_con, $msk);
-        $t->assert_sql_standard($sc, $msk);
+        $t->assert_sql_standard_by_name($sc, $msk);
 
         $t->subheader($ts . 'sql write insert');
         $msk = $t_msk->view_added();
@@ -108,7 +110,9 @@ class view_tests
         $msk_renamed = $msk->cloned(views::TEST_RENAMED_NAME);
         $t->assert_sql_update($sc, $msk_renamed, $msk);
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::USER]);
-        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG]);
+        $msk_renamed_admin = $msk->cloned(views::TEST_RENAMED_NAME);
+        $msk_renamed_admin->set_protection_by_code_id(protection_types::ADMIN);
+        $t->assert_sql_update($sc, $msk_renamed_admin, $msk, [sql_type::LOG]);
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql write delete');
@@ -137,9 +141,9 @@ class view_tests
         $msk = $t_msk->view_with_components();
         $t->assert_api($msk, 'view_with_component_id');
         $msk = $t_msk->view_with_components();
-        $t->assert_api($msk, 'view_with_components', [api_type::INCL_COMPONENTS]);
+        $t->assert_api($msk, 'view_with_components', [api_types::INCL_COMPONENTS]);
         $msk = $t_msk->view_with_components();
-        $t->assert_api($msk, 'view_with_component_details', [api_type::INCL_COMPONENTS, api_type::LINK_DETAILS]);
+        $t->assert_api($msk, 'view_with_component_details', [api_types::INCL_COMPONENTS, api_types::LINK_DETAILS]);
         $t->assert_api_to_ui($msk, new view_ui());
 
         $t->subheader($ts . 'im- and export');
@@ -200,16 +204,30 @@ class view_tests
         $t->assert_sql_by_id($sc, $mrl);
 
         $t->subheader($ts . 'sql write insert');
-        $mrl = $t_msk->view_relation();
-        // TODO Prio 0 switch on the tests
-        //$t->assert_sql_insert($sc, $mrl, [sql_type::LOG]);
-        //$t->assert_sql_insert($sc, $mrl, [sql_type::LOG, sql_type::USER]);
+        $mrl = $t_msk->view_relation_filled_add();
+        $t->assert_sql_insert($sc, $mrl, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $mrl, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql write update');
-        $mrl = $t_msk->view_relation();
+        $mrl = $t_msk->view_relation_filled();
         $mrl_moved = clone $mrl;
         $mrl_moved->start_pos = $mrl->start_pos + 1;
-        //$t->assert_sql_update($sc, $mrl_moved, $mrl, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $mrl_moved, $mrl, [sql_type::LOG]);
+
+        // sql write delete is already tested in the horizontal tests
+
+
+        /*
+         * view relation list
+         */
+
+        // start the test section (ts)
+        $ts = 'unit view relation list ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'sql');
+        $mrl_lst = new view_relation_list($t->usr1);
+        $this->assert_sql_by_view($t, $sc, $mrl_lst, $t_msk->view());
 
 
         /*
@@ -232,6 +250,37 @@ class view_tests
         $t->assert('view->display', $result, $target);
         */
 
+    }
+
+    /**
+     * check the SQL statement to load a db object by id
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param view_relation_list $mrl the view relation object
+     * @param view $msk the view to which the related view should be loaded
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_view(
+        test_cleanup  $t,
+        sql_creator   $sc,
+        view_relation_list $mrl,
+        view $msk
+    ): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $mrl->load_sql_by_view($sc, $msk);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $mrl->load_sql_by_view($sc, $msk);
+            $result = $t->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
     }
 
 }

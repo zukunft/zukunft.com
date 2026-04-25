@@ -38,7 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once html_paths::WORD . 'word_list.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CONST . 'files.php';
@@ -52,7 +52,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -184,7 +184,7 @@ class word_list_tests
         $t->assert($t->name . '->merge and check by ids', $wrd_lst->ids(), array(1, 2, 3));
 
         // diff of two lists
-        $wrd_lst->diff($wrd_lst2);
+        $wrd_lst->remove($wrd_lst2);
         $t->assert($t->name . '->diff and check by ids', $wrd_lst->ids(), array(1));
 
         // diff by ids

@@ -40,11 +40,11 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 
 class phrase_types extends type_list
 {

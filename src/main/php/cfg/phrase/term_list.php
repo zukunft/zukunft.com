@@ -40,9 +40,12 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -53,9 +56,12 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -71,8 +77,8 @@ class term_list extends sandbox_list_named
      */
 
     /**
-     * fill the term list based on a database records
-     * actually just set the term object for the parent function
+     * fill the term list based on the given database records
+     * actually set the term object for the parent function
      *
      * @param array|null $db_rows is an array of an array with the database values
      * @param bool $load_all force to include also the excluded terms e.g. for admins
@@ -110,17 +116,17 @@ class term_list extends sandbox_list_named
                     }
                 }
                 if ($obj::class == verb::class) {
-                    if ($obj->get_plural() != '') {
-                        $result[$obj->get_plural()] = $key;
+                    if ($obj->plural != '') {
+                        $result[$obj->plural] = $key;
                     }
-                    if ($obj->get_reverse() != '') {
-                        $result[$obj->get_reverse()] = $key;
+                    if ($obj->reverse != '') {
+                        $result[$obj->reverse] = $key;
                     }
-                    if ($obj->get_reverse_plural() != '') {
-                        $result[$obj->get_reverse_plural()] = $key;
+                    if ($obj->rev_plural != '') {
+                        $result[$obj->rev_plural] = $key;
                     }
-                    if ($obj->get_formula_name() != '') {
-                        $result[$obj->get_formula_name()] = $key;
+                    if ($obj->frm_name != '') {
+                        $result[$obj->frm_name] = $key;
                     }
                 }
             }
@@ -137,27 +143,119 @@ class term_list extends sandbox_list_named
      */
 
     /**
-     * create the common part of an SQL statement to retrieve a list of terms from the database
-     * uses the term view which includes only the main fields
+     * load the terms selected by the id
      *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name of the query use to prepare and call the query
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     * @param trm_ids $ids of term ids that should be loaded
+     * @param bool $load_all force to include also the excluded terms e.g. for admins
+     *                       and the details of each term e.g. the triple from and to objects
+     * @return bool true if at least one term has been loaded
      */
-    protected function load_sql(sql_creator $sc, string $query_name): sql_par
+    function load_by_ids(trm_ids $ids, bool $load_all = false): bool
     {
-        $qp = new sql_par(self::class);
-        $qp->name .= $query_name;
+        global $db_con;
 
-        $sc->set_class(term::class);
-        $sc->set_name($qp->name);
-
-        $sc->set_fields(term::FLD_NAMES);
-        $sc->set_usr_fields(term::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(term::FLD_NAMES_NUM_USR);
-
-        return $qp;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        $result = $this->load($qp);
+        if ($load_all) {
+            // reload the missing triple and formula parameters
+            // TODO Prio 1 reload including excluded terms
+            if ($result) {
+                $trp_lst = $this->triple_list();
+                $result = $trp_lst->load_by_ids($trp_lst->ids());
+                $this->fill_by_id($trp_lst);
+            }
+            if ($result) {
+                global $sys;
+                if ($sys?->typ_lst?->vrb != null) {
+                    $vrb_lst = $this->verb_list();
+                    foreach ($vrb_lst->lst() as $vrb) {
+                        $vrb_db = $sys->typ_lst->vrb->get($vrb->id());
+                        if ($vrb_db != null) {
+                            $vrb->fill($vrb_db, $this->get_user());
+                        }
+                    }
+                }
+            }
+            if ($result) {
+                $frm_lst = $this->formula_list();
+                $result = $frm_lst->load_by_ids($frm_lst->ids());
+                $this->fill_by_id($frm_lst);
+            }
+        }
+        return $result;
     }
+
+    /**
+     * load a list of term names
+     * @param string $pattern the pattern to filter the terms
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these numbers of pages
+     * @return bool true if at least one term found
+     */
+    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    {
+        return parent::load_sbx_names(new term($this->get_user()), $pattern, $limit, $offset);
+    }
+
+    /**
+     * load the terms that match the given pattern
+     * @param string $pattern part of the name that should be used to select the terms
+     */
+    function load_like(string $pattern): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the terms that based on the given query parameters
+     * @param sql_par $qp the query parameters created by the calling function
+     * @param bool $load_all force to include also the excluded terms e.g. for admins
+     * @return bool true if at least one term has been loaded
+     */
+    protected function load(sql_par $qp, bool $load_all = false): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $trm_lst = $db_con->get($qp);
+        foreach ($trm_lst as $db_row) {
+            $trm = new term($this->get_user());
+            $trm->row_mapper_sandbox($db_row);
+            if ($trm->id() != 0) {
+                $this->add($trm);
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * add the terms based on the given list of term id to this list
+     * @param trm_ids $id_lst the term ids that should be added to this list
+     * @return bool true if at least one term has been added
+     */
+    function load_additional_by_id(trm_ids $id_lst): bool
+    {
+        $result = false;
+        if (!$id_lst->is_empty()) {
+            $trm_lst = new term_list($this->get_user());
+            $trm_lst->load_by_ids($id_lst);
+            if (!$trm_lst->is_empty()) {
+                $result = true;
+                $this->merge($trm_lst);
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * load sql
+     */
 
     /**
      * create an SQL statement to retrieve a list of terms from the database
@@ -165,7 +263,7 @@ class term_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param trm_ids $ids term ids that should be loaded
      * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
+     * @param int $offset jump over these numbers of pages
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
@@ -202,65 +300,26 @@ class term_list extends sandbox_list_named
     }
 
     /**
-     * load the terms that based on the given query parameters
-     * @param sql_par $qp the query parameters created by the calling function
-     * @param bool $load_all force to include also the excluded terms e.g. for admins
-     * @return bool true if at least one term has been loaded
-     */
-    protected function load(sql_par $qp, bool $load_all = false): bool
-    {
-        global $db_con;
-        $result = false;
-
-        $trm_lst = $db_con->get($qp);
-        foreach ($trm_lst as $db_row) {
-            $trm = new term($this->get_user());
-            $trm->row_mapper_sandbox($db_row);
-            if ($trm->id() != 0) {
-                $this->add($trm);
-                $result = true;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * load a list of term names
-     * @param string $pattern the pattern to filter the terms
-     * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
-     * @return bool true if at least one term found
-     */
-    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
-    {
-        return parent::load_sbx_names(new term($this->get_user()), $pattern, $limit, $offset);
-    }
-
-    /**
-     * load the terms selected by the id
+     * create the common part of an SQL statement to retrieve a list of terms from the database
+     * uses the term view which includes only the main fields
      *
-     * @param trm_ids $ids of term ids that should be loaded
-     * @return bool true if at least one term has been loaded
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the query use to prepare and call the query
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_by_ids(trm_ids $ids): bool
+    protected function load_sql(sql_creator $sc, string $query_name): sql_par
     {
-        global $db_con;
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
 
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($qp);
-    }
+        $sc->set_class(term::class);
+        $sc->set_name($qp->name);
 
-    /**
-     * load the terms that matches the given pattern
-     * @param string $pattern part of the name that should be used to select the terms
-     */
-    function load_like(string $pattern): bool
-    {
-        global $db_con;
+        $sc->set_fields(term::FLD_NAMES);
+        $sc->set_usr_fields(term::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(term::FLD_NAMES_NUM_USR);
 
-        $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
-        return $this->load($qp);
+        return $qp;
     }
 
 
@@ -318,7 +377,7 @@ class term_list extends sandbox_list_named
         $trm->set_obj_id($id);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
-            $trm = $this->get_by_id($trm_id);
+            $trm = $this->get($trm_id);
         }
         return $trm;
     }
@@ -332,7 +391,7 @@ class term_list extends sandbox_list_named
     {
         $trm_lst = new term_list($this->get_user());
         foreach ($ids->lst as $id) {
-            $trm = $trm_lst->get_by_id($id);
+            $trm = $trm_lst->get($id);
             $trm_lst->add($trm);
         }
         return $trm_lst;
@@ -351,7 +410,7 @@ class term_list extends sandbox_list_named
         $trm->set_id_from_obj($id, word::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
-            $trm = $this->get_by_id($trm_id);
+            $trm = $this->get($trm_id);
             if ($trm != null) {
                 $wrd = $trm->get_word();
             }
@@ -372,7 +431,7 @@ class term_list extends sandbox_list_named
         $trm->set_id_from_obj($id, triple::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
-            $trm = $this->get_by_id($trm_id);
+            $trm = $this->get($trm_id);
             if ($trm != null) {
                 $trp = $trm->get_triple();
             }
@@ -393,7 +452,7 @@ class term_list extends sandbox_list_named
         $trm->set_id_from_obj($id, formula::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
-            $trm = $this->get_by_id($trm_id);
+            $trm = $this->get($trm_id);
             if ($trm != null) {
                 $frm = $trm->get_formula();
             }
@@ -414,7 +473,7 @@ class term_list extends sandbox_list_named
         $trm->set_id_from_obj($id, verb::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
-            $trm = $this->get_by_id($trm_id);
+            $trm = $this->get($trm_id);
             if ($trm != null) {
                 $vrb = $trm->get_verb();
             }
@@ -440,6 +499,51 @@ class term_list extends sandbox_list_named
             }
         }
         return $phr_lst;
+    }
+
+    /**
+     * get the triples out of a term list
+     * @return triple_list the list of triples picked from the term list
+     */
+    function triple_list(): triple_list
+    {
+        $trp_lst = new triple_list($this->get_user());
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_triple()) {
+                $trp_lst->add($trm->obj());
+            }
+        }
+        return $trp_lst;
+    }
+
+    /**
+     * get the verbs out of a term list
+     * @return verb_list the list of verbs picked from the term list
+     */
+    function verb_list(): verb_list
+    {
+        $vrb_lst = new verb_list($this->get_user());
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_verb()) {
+                $vrb_lst->add($trm->obj());
+            }
+        }
+        return $vrb_lst;
+    }
+
+    /**
+     * get the formulas out of a term list
+     * @return formula_list the list of formulas picked from the term list
+     */
+    function formula_list(): formula_list
+    {
+        $trp_lst = new formula_list($this->get_user());
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_formula()) {
+                $trp_lst->add($trm->obj());
+            }
+        }
+        return $trp_lst;
     }
 
 
@@ -504,7 +608,7 @@ class term_list extends sandbox_list_named
     {
         if (!$lst_to_add->is_empty()) {
             foreach ($lst_to_add->lst() as $trm_to_add) {
-                $this->add_by_name($trm_to_add);
+                $this->add_by_key($trm_to_add);
             }
         }
         return $this;

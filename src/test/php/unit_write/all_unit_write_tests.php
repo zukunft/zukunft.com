@@ -41,12 +41,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -68,7 +70,7 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CREATE . 'test_db_load.php';
-include_once test_paths::UTILS . 'all_tests.php';
+//include_once test_paths::UTILS . 'all_tests.php';
 include_once test_paths::UNIT . 'lib_tests.php';
 include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
@@ -133,11 +135,18 @@ class all_unit_write_tests extends all_unit_read_tests
                 // create the test dataset to check the basic write functions
                 $t->set_users();
                 $t_db->create_test_db_entries($t);
-                // run the db write tests
+
+                // run the general db write tests
                 new user_write_tests()->run($t);
+                // TODO Prio 0 activate
+                //new sys_log_write_tests()->run($t);
+                //new horizontal_write_tests()->run($t);
+
+                // run object specific db write tests
                 new word_write_tests()->run($t);
                 new word_list_write_tests()->run($t);
-                new verb_write_tests()->run($t);
+                // TODO Prio 1 activate
+                //new verb_write_tests()->run($t);
                 new triple_write_tests()->run($t);
                 new phrase_write_tests()->run($t);
                 new phrase_list_write_tests()->run($t);
@@ -146,10 +155,15 @@ class all_unit_write_tests extends all_unit_read_tests
                 new graph_tests()->run($t);
                 new term_write_tests()->run($t);
                 //new term_list_tests()->run($t);
-                new value_write_tests()->run($t);
                 new source_write_tests()->run($t);
                 new ref_write_tests()->run($t);
+                new value_write_tests()->run($t);
+                //new value_list_write_tests()->run($t);
                 new expression_write_tests()->run($t);
+                new element_write_tests()->run($t);
+                new element_write_tests()->run_list($t);
+                // TODO Prio 1 activate
+                //new element_group_write_tests()->run($t);
                 new formula_write_tests()->run($t);
                 new formula_write_tests()->run_list($t);
                 new formula_link_write_tests()->run($t);
@@ -158,9 +172,6 @@ class all_unit_write_tests extends all_unit_read_tests
                 new result_write_tests()->run($t);
                 // TODO Prio 1 activate
                 //new result_write_tests()->run_list($t);
-                new element_write_tests()->run($t);
-                new element_write_tests()->run_list($t);
-                new element_group_write_tests()->run($t);
                 new job_write_tests()->run($t);
                 new job_write_tests()->run_list($t);
                 new view_write_tests()->run($t);
@@ -198,7 +209,8 @@ class all_unit_write_tests extends all_unit_read_tests
             }
 
             // testing cleanup to remove any remaining test records
-            $t->cleanup();
+            $usr_msg = new user_message($usr);
+            $t->cleanup($usr_msg);
 
             // start the integration tests by loading the base and sample data
             // TODO Prio 1 activate
@@ -232,8 +244,9 @@ class all_unit_write_tests extends all_unit_read_tests
         if ($db_con->has_table($ip_tbl_name)) {
             $usr->get();
         } else {
+            // TODO Prio 2 avoid setting the system user profile directly
             $usr->id = users::SYSTEM_ID;
-            $usr->set_profile(user_profiles::ADMIN);
+            $usr->profile_id = user_profiles::SYSTEM_ID;
         }
 
         // remember the user
@@ -243,8 +256,9 @@ class all_unit_write_tests extends all_unit_read_tests
         if ($db_con->has_table($ip_tbl_name)) {
             $usr->load_by_id(users::SYSTEM_ID);
         } else {
+            // TODO Prio 2 avoid setting the system user profile directly
             $usr->id = users::SYSTEM_ID;
-            $usr->set_profile(user_profiles::ADMIN);
+            $usr->profile_id = user_profiles::SYSTEM_ID;
         }
 
         // drop all old database tables (the least dependent tables first)
@@ -270,6 +284,7 @@ class all_unit_write_tests extends all_unit_read_tests
         $usr = new user;
         $usr->load_by_id(users::SYSTEM_ID);
         $sys_usr = $usr;
+        $usr_msg = new user_message($sys_usr);
 
         // run reset the main database tables
         $db_con->run_db_truncate($sys_usr);
@@ -298,7 +313,8 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // reload the base configuration
         $job = new job($sys_usr);
-        $job->add(job_type_list::BASE_IMPORT);
+        $job->set_type(job_types::BASE_IMPORT, $sys_usr);
+        $job->save($usr_msg);
 
         $import = new import_file();
         $import->import_base_config($sys_usr);
@@ -315,15 +331,10 @@ class all_unit_write_tests extends all_unit_read_tests
         $t_db->create_test_db_entries($t);
 
         // remove the test dataset for a clean database
-        // TODO use the user message object instead of a string
-        $cleanup_result = $t->cleanup();
-        if (!$cleanup_result) {
-            log_err('Cleanup not successful, because ...');
-        } else {
-            if (!$t->cleanup_check()) {
-                log_err('Cleanup check not successful.');
-            }
-        }
+        $t->cleanup($usr_msg);
+
+        // test if there are any test leftovers in the database and report which
+        $t->check_cleanup($usr_msg);
 
         // reload the session user parameters
         $usr = new user;
@@ -352,7 +363,7 @@ class all_unit_write_tests extends all_unit_read_tests
     {
         $result = '';
         log_info('test import',
-            'import_test_files',
+            sys_log_functions::IMPORT_TEST_CONFIG_NAME,
             'import of the some test json files',
             'import_test_files',
             $usr, true
@@ -364,7 +375,8 @@ class all_unit_write_tests extends all_unit_read_tests
             $result .= $imf->json_file($filename, $usr, false)->get_last_message();
         }
         foreach (test_files::TEST_DIRECT_IMPORT_FILE_LIST as $filename) {
-            $result .= $imf->json_file($filename, $usr)->get_last_message();
+            // TODO Prio 1 fix error reports
+            $result .= $imf->json_file($filename, $usr, true, true)->get_last_message();
         }
 
 

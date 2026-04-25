@@ -24,7 +24,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -36,9 +36,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\element;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
-include_once paths::MODEL_ELEMENT . 'element_type.php';
+include_once paths::SHARED_TYPES . 'element_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 
 class element_type_list extends type_list
 {
@@ -58,7 +59,7 @@ class element_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(element_type::WORD_SELECTOR);
+        return parent::id(element_types::WORD_SELECTOR);
     }
 
 }

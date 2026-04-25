@@ -8,7 +8,7 @@
     the suggested var name in the backend is global $sys
     this object contains objects and vars from the database that are often used
     and thet are user independent
-    the user specific cache is in the data_object which has the var name global $cac
+    the user-specific cache is in the data_object which has the var name global $cac
 
 
     This file is part of zukunft.com - calc with words
@@ -44,16 +44,22 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
+include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 
 class system_object
 {
@@ -84,7 +90,8 @@ class system_object
     public type_lists $typ_lst;
 
     // the system users as a private var to restrict the access
-    private user_list $sys_usr_lst;
+    // TODO Prio check where this is used and make sure it is only used for system testing
+    public user_list $sys_usr_lst;
 
 
     /*
@@ -92,7 +99,7 @@ class system_object
      */
 
     /**
-     * always set the user because always someone must have requested to create the list
+     * always set the user because someone must always have requested to create the list
      * e.g. an admin can have requested to import words for another user
      */
     function __construct(string $script_name)
@@ -135,6 +142,28 @@ class system_object
 
 
     /*
+     * user
+     */
+
+    function user_log(): user
+    {
+        $usr = $this->sys_usr_lst->get_by_code_id(users::SYSTEM_ID, false);
+        if ($usr == null) {
+            $usr = new user();
+            $usr->load_by_code_id(users::SYSTEM_LOG_CODE_ID);
+            if ($usr->has_db_id()) {
+                $this->sys_usr_lst->add($usr);
+            } else {
+                $usr->name = users::SYSTEM_LOG_NAME;
+                $usr->code_id = users::SYSTEM_LOG_CODE_ID;
+                $usr->profile_id = $this->typ_lst->usr_pro->get_by_code_id(user_profiles::LOG, false);
+            }
+        }
+        return $usr;
+    }
+
+
+    /*
      * interface
      */
 
@@ -156,6 +185,16 @@ class system_object
     function system_users(): user_list
     {
         return $this->sys_usr_lst;
+    }
+
+
+    /*
+     * modify
+     */
+
+    function add_verb(verb $vrb): void
+    {
+        $this->typ_lst->vrb->add($vrb);
     }
 
 }

@@ -8,6 +8,7 @@ PREPARE user_list_by_count_changes FROM
             s.first_name,
             s.last_name,
             s.term_id,
+            s.view_id,
             s.source_id,
             s.user_profile_id,
             l.changes

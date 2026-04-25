@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -70,8 +71,8 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
-use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -93,6 +94,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
+use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
@@ -119,7 +121,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
@@ -145,7 +147,7 @@ class test_lib
 
     function ui_value(value $val): value_ui
     {
-        $api_msg = $val->api_json([api_type::INCL_PHRASES]);
+        $api_msg = $val->api_json([api_types::INCL_PHRASES]);
         return new value_ui($api_msg);
     }
 
@@ -265,11 +267,11 @@ class test_lib
      * TODO add missing frontend objects like
      * TODO Prio 0 easy add missing mapping error log message to all other object mapper
      * get the frontend object related to the given backend object
-     * @param db_object_seq_id|sandbox_value|base_list|type_list $dbo the given backend object
+     * @param db_object_seq_id|sandbox_multi|list_db_read|type_list $dbo the given backend object
      * @return false|db_object_ui|list_ui the corresponding frontend object
      */
     public function obj_to_ui_obj(
-        db_object_seq_id|sandbox_value|base_list|type_list $dbo
+        db_object_seq_id|sandbox_multi|list_db_read|type_list $dbo
     ): false|db_object_ui|list_ui
     {
         $result =  match ($dbo::class) {
@@ -280,8 +282,7 @@ class test_lib
             source::class => new source_ui(),
             ref::class => new ref_ui(),
             value::class => new value_ui(),
-            // TODO Prio 0 activate and add to MAIN_CLASSES
-            //group::class => new group_ui(),
+            group::class => new group_ui(),
             formula::class => new formula_ui(),
             formula_link::class => new formula_link_ui(),
             result::class => new result_ui(),
@@ -343,6 +344,8 @@ class test_lib
         global $usr_sys;
         global $usr;
 
+        $msg = new backend_user_message();
+
         // create a dummy system user for unit testing
         $usr_sys = new user;
         $usr_sys->id = users::SYSTEM_ID;
@@ -352,7 +355,7 @@ class test_lib
         $usr = new user;
         $usr->id = users::SYSTEM_TEST_ID;
         $usr->name = users::SYSTEM_TEST_NAME;
-        $usr->set_profile(user_profiles::EMAIL);
+        $usr->set_profile(user_profiles::EMAIL, $msg);
 
         return $usr;
     }

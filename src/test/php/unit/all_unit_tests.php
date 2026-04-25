@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -47,13 +48,14 @@ include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once test_paths::CREATE . 'test_types.php';
 include_once test_paths::CREATE . 'unit_env.php';
+include_once test_paths::UNIT . 'base_object_tests.php';
 include_once test_paths::UNIT . 'coding_rule_tests.php';
 include_once test_paths::UNIT . 'permission_tests.php';
 include_once test_paths::UNIT_API . 'api_tests.php';
 include_once test_paths::UNIT_UI . 'all_ui_tests.php';
 include_once test_paths::UNIT_UI . 'base_ui_tests.php';
 include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
-include_once test_paths::UTILS . 'all_tests.php';
+//include_once test_paths::UTILS . 'all_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -107,6 +109,8 @@ class all_unit_tests extends test_cleanup
         new lib_tests()->run($all); // test functions not yet split into single unit tests
         new math_tests()->run($this);
         new system_tests()->run($this);
+        new config_tests()->run($this);
+        new ip_range_tests()->run($this);
         new coding_rule_tests()->run($this);
         new sql_tests()->run($this);
         new sys_log_tests()->run($this); // TODO add assert_api_to_ui
@@ -115,6 +119,7 @@ class all_unit_tests extends test_cleanup
         new pod_tests()->run($this);
         new user_tests()->run($this);
         new user_list_tests()->run($this);
+        new base_object_tests()->run($this);
         new sandbox_tests()->run($this);
         new language_tests()->run($this); // TODO add assert_api_to_ui
         new type_tests()->run($this); // TODO add assert_api_to_ui
@@ -193,24 +198,45 @@ class all_unit_tests extends test_cleanup
      */
     private function users_for_unit_tests(): void
     {
-        global $usr;
+        global $sys;
+
         // TODO Prio 1 remove global system user for security reasons
+        global $usr;
         global $usr_sys;
+
+        // create a dummy admin user for unit testing
+        $usr_admin = new user;
+        $usr_admin->id = users::SYSTEM_ADMIN_ID;
+        $usr_admin->name = users::SYSTEM_ADMIN_NAME;
+        $usr_admin->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM);
+        $this->usr_admin = $usr_admin;
+
+        $msg = new user_message();
+        $msg->usr = $this->usr_admin;
 
         // create a dummy user for testing
         $usr = new user;
         $usr->id = users::SYSTEM_TEST_ID;
         $usr->name = users::SYSTEM_TEST_NAME;
-        $usr->set_profile(user_profiles::EMAIL);
+        $usr->set_profile(user_profiles::EMAIL, $msg);
         $this->usr1 = $usr;
+
+        // create a second dummy user for testing
+        $usr2 = new user;
+        $usr2->id = users::SYSTEM_TEST_PARTNER_ID;
+        $usr2->name = users::SYSTEM_TEST_PARTNER_NAME;
+        $usr2->set_profile(user_profiles::EMAIL, $msg);
+        $this->usr2 = $usr2;
 
         // create a dummy system user for unit testing
         $usr_sys = new user;
         $usr_sys->id = users::SYSTEM_ID;
         $usr_sys->name = users::SYSTEM_NAME;
+        $this->usr_system = $usr_sys;
 
-        $t_usr = new test_users();
-        $this->usr_dev = $t_usr->user_dev();
+        $t_usr = new test_users($this);
+        $this->usr_dev = $t_usr->user_dev($msg);
+        $this->usr_normal = $t_usr->user_filled();
 
     }
 

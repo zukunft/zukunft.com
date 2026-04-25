@@ -43,7 +43,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -75,9 +75,9 @@ class value_read_tests
         $phr_lst = $val->grp()->phrase_list();
         if ($phr_lst->count() > 0) {
             $phr = $phr_lst->lst()[0];
-            $t->assert($ts . $test_name, $phr->description(), triples::PI_COM);
-            $test_name = words::PI . ' phrase code id ' . phrase_type::TRIPLE_HIDDEN;
-            $t->assert($ts . $test_name, $phr->type_code_id(), phrase_type::TRIPLE_HIDDEN);
+            $t->assert($ts . $test_name, $phr->get_description(), triples::PI_COM);
+            $test_name = words::PI . ' phrase code id ' . phrase_types::TRIPLE_HIDDEN;
+            $t->assert($ts . $test_name, $phr->type_code_id(), phrase_types::TRIPLE_HIDDEN);
         } else {
             log_err($ts . $test_name . ' has no phrases');
         }
@@ -152,6 +152,14 @@ class value_read_tests
             $result = $val->number();
             $target = values::CH_INHABITANTS_2019_IN_MIO;
             $t->assert(', value->load for value id "' . $ch_inhabitants->id() . '"', $result, $target);
+
+            // test load by phrase list first to get the value id
+            $phr_lst = $t_db->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2019));
+            $val_by_phr_lst = new value($t->usr1);
+            $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id());
+            $result = $val_by_phr_lst->number();
+            $target = values::CH_INHABITANTS_2019_IN_MIO;
+            $t->assert(', value->load for another word list ' . $phr_lst->dsp_name(), $result, $target);
 
             // test load by phrase list first to get the value id
             $phr_lst = $t_db->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));

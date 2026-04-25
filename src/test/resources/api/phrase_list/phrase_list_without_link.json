@@ -11,7 +11,7 @@
     "id": 2,
     "name": "constant",
     "description": "fixed and well-defined number",
-    "type_id": 17,
+    "type_id": 1,
     "protection": 3,
     "class": "word"
   },

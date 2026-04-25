@@ -44,7 +44,10 @@ include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
+// formula_map.php always includes result_list.php, so including it here would create a circular dependency
+//include_once paths::MODEL_FORMULA . 'formula_map.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -56,7 +59,6 @@ include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
-include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -67,9 +69,6 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
-use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_list;
@@ -78,9 +77,14 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -89,7 +93,6 @@ use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
@@ -145,10 +148,10 @@ class result_list extends sandbox_value_list
      *      -> measure it based on real life data
      *      -> a solution could be to include the source group and the formula in the result group id
      *
-     * @param formula $frm a named object used for selection e.g. a formula
+     * @param formula|formula_map $frm a named object used for selection e.g. a formula
      * @return bool true if loading has been successful
      */
-    function load_by_frm(formula $frm): bool
+    function load_by_frm(formula|formula_map $frm): bool
     {
         global $db_con;
 
@@ -269,7 +272,7 @@ class result_list extends sandbox_value_list
         foreach (result_db::TBL_LIST_EX_STD as $tbl_typ) {
             $qp_tbl = $this->load_sql_by_frm_single($sc, $frm, $tbl_typ);
 
-            $qp->merge($qp_tbl);
+            $qp->merge($qp_tbl, true);
         }
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
         return $qp;
@@ -340,7 +343,7 @@ class result_list extends sandbox_value_list
                 $spt = sql_par_type::LIKE_OR;
             }
             $grp_id = new group_id();
-            $sc->add_where_par(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
+            $sc->add_where_par(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
         }
 
         // add the user parameter
@@ -380,21 +383,31 @@ class result_list extends sandbox_value_list
      *     *
      * @param sql_creator $sc with the target db_type set
      * @param formula $frm if set to get all results for this phrase
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param array $sc_par_arr the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_by_frm_single(sql_creator $sc, formula $frm, array $sc_par_lst): sql_par
+    function load_sql_by_frm_single(
+        sql_creator $sc,
+        formula $frm,
+        array $sc_par_arr
+    ): sql_par
     {
         $qp = $this->load_sql_init(
             $sc,
             result::class,
             'frm',
-            $sc_par_lst,
+            $sc_par_arr,
             new sql_field_list(),
             new sql_type_list()
         );
         $sc->add_where(formula_db::FLD_ID, $frm->id());
-        $qp->sql = $sc->sql(0, true, false);
+        // detect if the group id is numeric and if yes force the conversion to text
+        $num_id = false;
+        $sc_par_lst = new sql_type_list($sc_par_arr);
+        if ($sc_par_lst->is_prime() or $sc_par_lst->is_main()) {
+            $num_id = true;
+        }
+        $qp->sql = $sc->sql(0, true, false, true, $num_id);
         $qp->par = $sc->get_par();
 
         return $qp;
@@ -474,9 +487,9 @@ class result_list extends sandbox_value_list
                 $pos++;
             }
         } elseif ($grp->is_big()) {
-            $sc->add_where(group::FLD_ID, $grp->id(), sql_par_type::TEXT);
+            $sc->add_where(group_db::FLD_ID, $grp->id(), sql_par_type::TEXT);
         } else {
-            $sc->add_where(group::FLD_ID, $grp->id());
+            $sc->add_where(group_db::FLD_ID, $grp->id());
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -554,7 +567,7 @@ class result_list extends sandbox_value_list
                 if ($by_source) {
                     $sql_by .= result_db::FLD_SOURCE_GRP;
                 } else {
-                    $sql_by .= group::FLD_ID;
+                    $sql_by .= group_db::FLD_ID;
                 }
             } elseif (get_class($obj) == word::class) {
                 $sql_by .= word_db::FLD_ID;
@@ -585,7 +598,7 @@ class result_list extends sandbox_value_list
                     if ($by_source) {
                         $link_fields[] = result_db::FLD_SOURCE_GRP;
                     } else {
-                        $link_fields[] = group::FLD_ID;
+                        $link_fields[] = group_db::FLD_ID;
                     }
                     $qp->sql = $db_con->select_by_field_list($link_fields);
                 } elseif (get_class($obj) == word::class) {
@@ -836,7 +849,7 @@ class result_list extends sandbox_value_list
 
             // build the single calculation request
             $calc_row = array();
-            $calc_row['usr_id'] = $this->get_user()->id();
+            $calc_row[url_var::SESSION_USER_ID] = $this->get_user()->id();
             $calc_row['frm_id'] = $frm_row[formula_db::FLD_ID];
             $calc_row['frm_name'] = $frm_row[formula_db::FLD_NAME];
             $calc_row['frm_text'] = $frm_row[formula_db::FLD_FORMULA_TEXT];
@@ -851,7 +864,7 @@ class result_list extends sandbox_value_list
 
     /**
      * add all formula results to the list that may needs to be updated if a formula is updated for one user
-     * TODO: only request the user specific calculation if needed
+     * TODO: only request the user-specific calculation if needed
      */
     function frm_upd_lst_usr(
         formula $frm,
@@ -1006,6 +1019,7 @@ class result_list extends sandbox_value_list
     {
         log_debug('add ' . $frm->dsp_id() . ' to queue ...');
         $lib = new library();
+        $usr_msg = new user_message();
 
         // to inform the user about the progress
         $last_msg_time = microtime(true); // the start time
@@ -1032,8 +1046,9 @@ class result_list extends sandbox_value_list
         $trm_back = new term($this->get_user());
         $trm_back->load_by_id($back);
         $trm_lst_back->add($trm_back);
-        $phr_lst_preset_following = $exp->element_special_following($trm_lst_back);
-        $frm_lst_preset_following = $exp->element_special_following_frm($trm_lst_back);
+        $trm_lst_back = $frm->load_exp_terms($usr_msg, $trm_lst_back, $exp);
+        $phr_lst_preset_following = $exp->terms_following($usr_msg, $trm_lst_back);
+        $frm_lst_preset_following = $exp->element_special_following_frm($usr_msg, $trm_lst_back);
 
         // combine all used predefined phrases/formulas
         $phr_lst_preset = $phr_lst_preset_following;
@@ -1043,7 +1058,7 @@ class result_list extends sandbox_value_list
         }
 
         // exclude the special elements from the phrase list to avoid double usage
-        $phr_lst_frm_used->diff($phr_lst_preset);
+        $phr_lst_frm_used->remove($phr_lst_preset);
         if ($phr_lst_preset->dsp_name() <> '""') {
             log_debug('Excluding the predefined phrases ' . $phr_lst_preset->dsp_name() . ' the formula uses ' . $phr_lst_frm_used->dsp_name());
         }
@@ -1075,7 +1090,7 @@ class result_list extends sandbox_value_list
 
         // get the phrase name of the formula e.g. "percent"
         $exp = $frm->expression();
-        $phr_lst_res = $exp->result_phrases();
+        $phr_lst_res = $exp->load_result_phrases();
         if (isset($phr_lst_res)) {
             log_debug('For ' . $frm->usr_text . ' formula results with the result phrases ' . $phr_lst_res->dsp_name() . ' should not be used for calculation to avoid loops');
         }
@@ -1096,7 +1111,7 @@ class result_list extends sandbox_value_list
         $phr_grp_lst_val->get_by_res_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // ... such as "this"
         $phr_grp_lst_used = clone $phr_grp_lst_val;
 
-        // first calculate the standard results for all user and then the user specific results
+        // first calculate the standard results for all user and then the user-specific results
         // than loop over the users and check if the user has changed any value, formula or formula assignment
         $usr_lst = new user_list($this->get_user());
         $usr_lst->load_active();
@@ -1125,7 +1140,7 @@ class result_list extends sandbox_value_list
     {
         $result = new result($this->get_user());
         if (!$this->is_empty()) {
-            $result = $this->get(0);
+            $result = $this->get_by_key(0);
         }
         return $result;
     }

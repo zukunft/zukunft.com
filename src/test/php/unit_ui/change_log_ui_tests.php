@@ -40,7 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -63,7 +63,7 @@ class change_log_ui_tests
 
         // prepare test data
         $back = new back_trace();
-        $api_typ_lst = new api_type_list([api_type::TEST_MODE]);
+        $api_typ_lst = new api_type_list([api_types::TEST_MODE]);
 
         $test_page .= '<br>changes as a text<br>';
         $chg = $t_log->log_word_add();

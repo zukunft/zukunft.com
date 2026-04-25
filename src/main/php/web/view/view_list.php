@@ -56,7 +56,7 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
@@ -81,7 +81,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_list extends ListBase
@@ -227,12 +227,12 @@ class view_list extends ListBase
 
     public function ex_system(): view_list
     {
-        return $this->ex_type(view_type::SYSTEM_TYPES);
+        return $this->ex_type(view_types::SYSTEM_TYPES);
     }
 
     public function ex_non_phrase(): view_list
     {
-        return $this->ex_type(view_type::NON_PHRASE_TYPES);
+        return $this->ex_type(view_types::NON_PHRASE_TYPES);
     }
 
     /**

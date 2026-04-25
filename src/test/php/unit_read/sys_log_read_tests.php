@@ -35,7 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sys_log_read_tests
@@ -70,7 +70,7 @@ class sys_log_read_tests
         $t->assert('system errors', $result, true);
 
         $t->subheader($ts . 'api');
-        $t->assert_api($err_lst, 'sys_log_list_setup', [api_type::HEADER], true);
+        $t->assert_api($err_lst, 'sys_log_list_setup', [api_types::HEADER], true);
 
     }
 
