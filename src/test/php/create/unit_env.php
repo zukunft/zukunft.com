@@ -126,6 +126,8 @@ class unit_env
         $this->init_source_types();
         $this->init_share_types();
         $this->init_protection_types();
+        $this->init_cache_statuum();
+        $this->init_cache_types();
         $this->init_languages();
         $this->init_language_forms();
         $this->init_job_statuum();
@@ -395,6 +397,26 @@ class unit_env
 
         $sys->typ_lst->ptc_typ = new protection_type_list();
         $sys->typ_lst->ptc_typ->load_dummy();
+
+    }
+
+    /**
+     * create the cache types array for the unit tests without database connection
+     */
+    private function init_cache_types(): void
+    {
+        global $sys;
+        $sys->typ_lst->cac_typ->load_dummy();
+
+    }
+
+    /**
+     * create the cache status array for the unit tests without database connection
+     */
+    private function init_cache_statuum(): void
+    {
+        global $sys;
+        $sys->typ_lst->cac_sta->load_dummy();
 
     }
 

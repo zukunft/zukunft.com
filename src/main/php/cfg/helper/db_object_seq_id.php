@@ -909,23 +909,32 @@ class db_object_seq_id extends db_object
     {
         $qp = null;
         if ($this->can_delete($usr_msg)) {
+
             // clone the sql parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
+
             // set the sql query type
             $sc_par_lst_used->add(sql_type::DELETE);
+
             // set the query name
             $qp = $this->sql_common($sc, $sc_par_lst_used);
             $sc->set_name($qp->name);
-            // fields and values that the word has additional to the standard named user sandbox object
-            // for a new sandbox object the owner should be set, so remove the user id to force writing the user
-            $sbx_empty = $this->clone_reset(true);
-            // to get the list of the changed fields,
-            // the list of all fields is not needed because only the id fields are written to the log in case of a delete
-            $fvt_lst = $sbx_empty->db_fields_changed($this, $usr_msg, $sc_par_lst_used);
-            // actual create the sql statement to delete the type object
-            // and log who has deleted it and when
-            $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst, $usr_msg, $sc_par_lst_used);
+
+            if ($sc_par_lst_used->do_log()) {
+                // fields and values that the word has additional to the standard named user sandbox object
+                // for a new sandbox object the owner should be set, so remove the user id to force writing the user
+                $sbx_empty = $this->clone_reset(true);
+                // to get the list of the changed fields,
+                // the list of all fields is not needed because only the id fields are written to the log in case of a delete
+                $fvt_lst = $sbx_empty->db_fields_changed($this, $usr_msg, $sc_par_lst_used);
+                // actual create the sql statement to delete the type object
+                // and log who has deleted it and when
+                $sc_par_lst_used->add(sql_type::NAMED_PAR);
+
+                $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst, $usr_msg, $sc_par_lst_used);
+            } else {
+                $qp = $this->sql_delete_no_log($sc, $qp, $sc_par_lst_used);
+            }
         }
 
         return $qp;
@@ -1055,6 +1064,23 @@ class db_object_seq_id extends db_object
 
         $qp->call_sql .= $call_val_str . ');';
 
+        return $qp;
+    }
+
+    /**
+     * @param sql_creator $sc the sql creator object with the db type set
+     * @param sql_par $qp the query parameter with the name already set
+     * @param sql_type_list $sc_par_lst
+     * @return sql_par
+     */
+    private function sql_delete_no_log(
+        sql_creator        $sc,
+        sql_par            $qp,
+        sql_type_list      $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst);
+        $qp->par = [$this->id()];
         return $qp;
     }
 

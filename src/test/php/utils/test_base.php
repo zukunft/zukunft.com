@@ -213,6 +213,7 @@ include_once test_paths::UNIT . 'user_tests.php';
 include_once test_paths::UNIT . 'user_list_tests.php';
 include_once test_paths::UNIT . 'sandbox_tests.php';
 include_once test_paths::UNIT . 'type_tests.php';
+include_once test_paths::UNIT . 'db_cache_tests.php';
 include_once test_paths::UNIT . 'horizontal_tests.php';
 include_once test_paths::UNIT . 'word_tests.php';
 include_once test_paths::UNIT . 'word_list_tests.php';

@@ -1021,6 +1021,24 @@
         "code_id": "user_statuum",
         "description": "",
         "id": 119
+      },
+      {
+        "name": "db_cache_statuum",
+        "code_id": "db_cache_statuum",
+        "description": "",
+        "id": 120
+      },
+      {
+        "name": "db_cache_types",
+        "code_id": "db_cache_types",
+        "description": "",
+        "id": 121
+      },
+      {
+        "name": "db_caches",
+        "code_id": "db_caches",
+        "description": "",
+        "id": 122
       }
     ],
     "change_field_list": [
@@ -6237,6 +6255,160 @@
         "code_id": "119description",
         "description": "",
         "id": 869
+      },
+      {
+        "name": "120status_id",
+        "code_id": "120status_id",
+        "description": "",
+        "id": 870
+      },
+      {
+        "name": "120status_name",
+        "code_id": "120status_name",
+        "description": "",
+        "id": 871
+      },
+      {
+        "name": "120code_id",
+        "code_id": "120code_id",
+        "description": "",
+        "id": 872
+      },
+      {
+        "name": "120description",
+        "code_id": "120description",
+        "description": "",
+        "id": 873
+      },
+      {
+        "name": "121type_id",
+        "code_id": "121type_id",
+        "description": "",
+        "id": 874
+      },
+      {
+        "name": "121type_name",
+        "code_id": "121type_name",
+        "description": "",
+        "id": 875
+      },
+      {
+        "name": "121code_id",
+        "code_id": "121code_id",
+        "description": "",
+        "id": 876
+      },
+      {
+        "name": "121description",
+        "code_id": "121description",
+        "description": "",
+        "id": 877
+      },
+      {
+        "name": "122db_cache_id",
+        "code_id": "122db_cache_id",
+        "description": "",
+        "id": 878
+      },
+      {
+        "name": "122type_id",
+        "code_id": "122type_id",
+        "description": "",
+        "id": 879
+      },
+      {
+        "name": "122data",
+        "code_id": "122data",
+        "description": "",
+        "id": 880
+      },
+      {
+        "name": "122user_id",
+        "code_id": "122user_id",
+        "description": "",
+        "id": 881
+      },
+      {
+        "name": "122status_id",
+        "code_id": "122status_id",
+        "description": "",
+        "id": 882
+      },
+      {
+        "name": "122last_update",
+        "code_id": "122last_update",
+        "description": "",
+        "id": 883
+      }
+    ],
+    "db_cache_types": [
+      {
+        "name": "system configuration",
+        "code_id": "system_config",
+        "description": "the complete json of the system configuration",
+        "id": 1
+      },
+      {
+        "name": "user configuration",
+        "code_id": "user_config",
+        "description": "the complete json of the user overwrites in the system configuration",
+        "id": 2
+      },
+      {
+        "name": "system frontend configuration",
+        "code_id": "ui_config",
+        "description": "the frontend part of the system configuration",
+        "id": 3
+      },
+      {
+        "name": "user frontend configuration",
+        "code_id": "user_ui_config",
+        "description": "the frontend part of the user configuration",
+        "id": 4
+      },
+      {
+        "name": "page data",
+        "code_id": "page_cache",
+        "description": "the data objects used for one page e.g. the start view",
+        "id": 5
+      },
+      {
+        "name": "ui cache",
+        "code_id": "ui_cache",
+        "description": "the most often used data objects by one user that should b e loaded upfront into the frontend",
+        "id": 6
+      }
+    ],
+    "db_cache_statuum": [
+      {
+        "name": "clean",
+        "code_id": "clean",
+        "description": "no reason known why the cache should NOT be used",
+        "id": 1
+      },
+      {
+        "name": "dirty",
+        "code_id": "dirty",
+        "description": "some values of this cache has been updated so this cache should not be used until the backend process has updated it",
+        "id": 2
+      },
+      {
+        "name": "outdated",
+        "code_id": "outdated",
+        "description": "the cache has not been updated since a long time and should be checked for differences due to program errors",
+        "id": 3
+      },
+      {
+        "name": "updating",
+        "code_id": "updating",
+        "description": "the update of the cache is in progress by the backend so the read process might wait for the updated version to prevent double job starts",
+        "id": 4
+      },
+      {
+        "name": "unused",
+        "code_id": "unused",
+        "description": "the cache has not been used for a long time and might be removed to release disk space",
+        "id": 5
       }
     ],
     "job_types": [

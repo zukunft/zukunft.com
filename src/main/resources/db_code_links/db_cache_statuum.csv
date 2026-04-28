@@ -1,0 +1,6 @@
+status_id, status_name, description, code_id
+1, 'clean', 'no reason known why the cache should NOT be used', 'clean'
+2, 'dirty', 'some values of this cache has been updated so this cache should not be used until the backend process has updated it', 'dirty'
+3, 'outdated', 'the cache has not been updated since a long time and should be checked for differences due to program errors', 'outdated'
+4, 'updating', 'the update of the cache is in progress by the backend so the read process might wait for the updated version to prevent double job starts', 'updating'
+5, 'unused', 'the cache has not been used for a long time and might be removed to release disk space', 'unused'

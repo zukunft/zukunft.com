@@ -743,13 +743,19 @@ class test_api extends test_base
             $expected = $this->json_remove_volatile($expected, $ignore_id);
         }
 
-        // TODO remove, for faster debugging only
-        $json_actual = json_encode($actual);
-        $json_expected = json_encode($expected);
-        if ($contains) {
-            return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true);
+        if ($expected === null) {
+            log_err('the file ' . $filename . ' for ' . $class_for_file . ' is missing');
+            return false;
         } else {
-            return $this->assert_json($class . ' API GET', $actual, $expected);
+
+            // TODO remove, for faster debugging only
+            $json_actual = json_encode($actual);
+            $json_expected = json_encode($expected);
+            if ($contains) {
+                return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true);
+            } else {
+                return $this->assert_json($class . ' API GET', $actual, $expected);
+            }
         }
     }
 

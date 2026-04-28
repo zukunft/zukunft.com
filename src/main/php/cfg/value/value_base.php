@@ -97,6 +97,8 @@ include_once paths::MODEL_FORMULA . 'figure.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_HELPER . 'db_cache_status_list.php';
+include_once paths::MODEL_HELPER . 'db_cache_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_LOG . 'change.php';

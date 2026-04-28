@@ -42,6 +42,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
 //include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_HELPER . 'db_cache_status.php';
+//include_once paths::MODEL_HELPER . 'db_cache_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_FORMULA . 'formula_map.php';
@@ -139,6 +141,8 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
@@ -483,7 +487,9 @@ class def
         view_type::class,
         view_style::class,
         view_relation_types::class,
-        phrase_types::class
+        phrase_types::class,
+        db_cache_status::class,
+        db_cache_type::class,
     ];
 
     // log type classes that have a csv file for the initial load
@@ -614,6 +620,8 @@ class def
         'jobs',
         'job_statuum',
         'job_types',
+        'db_cache_statuum',
+        'db_cache_types',
         'user_official_types',
         'ip_ranges',
         'sessions',
@@ -821,6 +829,8 @@ class def
         'job_statuum_job_status_id_seq',
         'job_types_job_type_id_seq',
         'jobs_job_id_seq',
+        'db_cache_statuum_status_id_seq',
+        'db_cache_types_type_id_seq',
         'sys_log_status_sys_log_status_id_seq',
         'sys_log_functions_sys_log_function_id_seq',
         'share_types_share_type_id_seq',

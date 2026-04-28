@@ -192,6 +192,80 @@ ALTER TABLE system_times
 -- --------------------------------------------------------
 
 --
+-- table structure for predefined database cache type e.g. system config or user config
+--
+
+CREATE TABLE IF NOT EXISTS db_cache_types
+(
+    type_id smallint    NOT NULL COMMENT 'the internal unique primary index',
+    type_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id     varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    PRIMARY KEY (type_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for predefined database cache type e.g. system config or user config';
+
+--
+-- AUTO_INCREMENT for table db_cache_types
+--
+ALTER TABLE db_cache_types
+    MODIFY type_id smallint NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure  for predefined database cache status e.g. dirty,updating or outdated
+--
+
+CREATE TABLE IF NOT EXISTS db_cache_statuum
+(
+    status_id smallint    NOT NULL COMMENT 'the internal unique primary index',
+    status_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    PRIMARY KEY (status_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for predefined database cache status e.g. dirty,updating or outdated';
+
+--
+-- AUTO_INCREMENT for table db_cache_statuum
+--
+ALTER TABLE db_cache_statuum
+    MODIFY status_id smallint NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure precollected data for faster response times in the json format
+--
+
+CREATE TABLE IF NOT EXISTS db_caches
+(
+    db_cache_id        bigint        NOT NULL COMMENT 'the internal unique primary index',
+    type_id   smallint      NOT NULL COMMENT 'to separate the system, user and frontend configuration',
+    data               text      DEFAULT NULL COMMENT 'the cached data as text',
+    user_id            bigint        NOT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
+    status_id smallint      NOT NULL DEFAULT 1 COMMENT 'clean, dirty, updating, outdated or unused',
+    last_update        timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp of the last update of the cache',
+    PRIMARY KEY (db_cache_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'precollected data for faster response times in the json format';
+
+--
+-- AUTO_INCREMENT for table db_caches
+--
+ALTER TABLE db_caches
+    MODIFY db_cache_id bigint NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
 -- table structure predefined status of batch task as a database table e.g. so that admin can change the description
 --
 
@@ -4597,6 +4671,36 @@ ALTER TABLE job_types
 -- --------------------------------------------------------
 
 --
+-- indexes for table db_cache_types
+--
+
+ALTER TABLE db_cache_types
+    ADD KEY db_cache_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table db_cache_statuum
+--
+
+ALTER TABLE db_cache_statuum
+    ADD KEY db_cache_statuum_status_name_idx (status_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table db_caches
+--
+
+ALTER TABLE db_caches
+    ADD KEY db_caches_type_idx (type_id),
+    ADD KEY db_caches_user_idx (user_id),
+    ADD KEY db_caches_status_idx (status_id),
+    ADD KEY db_caches_last_update_idx (last_update);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table job_times
 --
 
@@ -6319,6 +6423,15 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_sys_log_level_fk FOREIGN KEY (sys_log_level_id) REFERENCES sys_log_levels (sys_log_level_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_statuum (sys_log_status_id);
+
+--
+-- constraints for table db_caches
+--
+
+ALTER TABLE db_caches
+    ADD CONSTRAINT db_caches_db_cache_type_fk   FOREIGN KEY (type_id)   REFERENCES db_cache_types   (type_id),
+    ADD CONSTRAINT db_caches_user_fk            FOREIGN KEY (user_id)            REFERENCES users            (user_id),
+    ADD CONSTRAINT db_caches_db_cache_status_fk FOREIGN KEY (status_id) REFERENCES db_cache_statuum (status_id);
 
 --
 -- constraints for table job_times

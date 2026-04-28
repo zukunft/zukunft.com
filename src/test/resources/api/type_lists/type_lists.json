@@ -1021,6 +1021,24 @@
         "code_id": "user_statuum",
         "description": "",
         "id": 119
+      },
+      {
+        "name": "db_cache_statuum",
+        "code_id": "db_cache_statuum",
+        "description": "",
+        "id": 120
+      },
+      {
+        "name": "db_cache_types",
+        "code_id": "db_cache_types",
+        "description": "",
+        "id": 121
+      },
+      {
+        "name": "db_caches",
+        "code_id": "db_caches",
+        "description": "",
+        "id": 122
       }
     ],
     "change_field_list": [
@@ -6237,6 +6255,90 @@
         "code_id": "119description",
         "description": "",
         "id": 869
+      },
+      {
+        "name": "120status_id",
+        "code_id": "120status_id",
+        "description": "",
+        "id": 870
+      },
+      {
+        "name": "120status_name",
+        "code_id": "120status_name",
+        "description": "",
+        "id": 871
+      },
+      {
+        "name": "120code_id",
+        "code_id": "120code_id",
+        "description": "",
+        "id": 872
+      },
+      {
+        "name": "120description",
+        "code_id": "120description",
+        "description": "",
+        "id": 873
+      },
+      {
+        "name": "121type_id",
+        "code_id": "121type_id",
+        "description": "",
+        "id": 874
+      },
+      {
+        "name": "121type_name",
+        "code_id": "121type_name",
+        "description": "",
+        "id": 875
+      },
+      {
+        "name": "121code_id",
+        "code_id": "121code_id",
+        "description": "",
+        "id": 876
+      },
+      {
+        "name": "121description",
+        "code_id": "121description",
+        "description": "",
+        "id": 877
+      },
+      {
+        "name": "122db_cache_id",
+        "code_id": "122db_cache_id",
+        "description": "",
+        "id": 878
+      },
+      {
+        "name": "122type_id",
+        "code_id": "122type_id",
+        "description": "",
+        "id": 879
+      },
+      {
+        "name": "122data",
+        "code_id": "122data",
+        "description": "",
+        "id": 880
+      },
+      {
+        "name": "122user_id",
+        "code_id": "122user_id",
+        "description": "",
+        "id": 881
+      },
+      {
+        "name": "122status_id",
+        "code_id": "122status_id",
+        "description": "",
+        "id": 882
+      },
+      {
+        "name": "122last_update",
+        "code_id": "122last_update",
+        "description": "",
+        "id": 883
       }
     ],
     "job_types": [

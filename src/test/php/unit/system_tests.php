@@ -49,6 +49,7 @@ include_once test_paths::CREATE . 'test_groups.php';
 include_once test_paths::CREATE . 'test_jobs.php';
 include_once test_paths::CREATE . 'test_languages.php';
 include_once test_paths::CREATE . 'test_log.php';
+include_once test_paths::CREATE . 'test_db_caches.php';
 include_once test_paths::CREATE . 'test_phrases.php';
 include_once test_paths::CREATE . 'test_refs.php';
 include_once test_paths::CREATE . 'test_results.php';

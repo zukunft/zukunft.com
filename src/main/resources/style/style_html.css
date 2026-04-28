@@ -33,6 +33,15 @@ body {
     margin: 1rem 0; /* Adds vertical space (16px) above and below these sections */
 }
 
+.search-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px 20px;
+    width: 100%;
+}
+
 /* signup and login section */
 .cta-section {
     width: 50%; /* Sets the container for the logo to 60% of the screen width */

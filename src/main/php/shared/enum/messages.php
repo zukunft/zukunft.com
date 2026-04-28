@@ -1194,6 +1194,17 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not found';
 
+    case CACHE_STATUS_MISSING = 'cache status '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case CACHE_TYPE_MISSING = 'cache type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+
     case SYS_LOG_TYPE_MISSING = 'system log type '
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
         . ' for '

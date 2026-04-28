@@ -203,6 +203,9 @@ class json_fields
     const string STATUS = 'status'; // name or code id of the user or job status and also used for the sys log
     const string STATUS_ID = 'status_id'; // database id of the user or job status and also used for the sys log
 
+    // database cache job fields
+    const string CACHE_DATA = 'data'; // the json text of the cache with all the cached values
+
     // change log fields
     const string TIME = 'time'; // e.g. the timestamp of a log entry
     const string TEXT = 'text'; // the description of the change as a fixed text
@@ -303,6 +306,8 @@ class json_fields
     const string LIST_SYS_LOG_STATUUS = 'sys_log_statuum';
     const string LIST_JOB_STATUUS = 'job_statuum';
     const string LIST_JOB_TYPES = 'job_types';
+    const string LIST_DB_CACHE_STATUUS = 'db_cache_statuum';
+    const string LIST_DB_CACHE_TYPES = 'db_cache_types';
     const string LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const string LIST_CHANGE_LOG_TABLES = 'change_table_list';
     const string LIST_CHANGE_LOG_FIELDS = 'change_field_list';

@@ -58,6 +58,10 @@ include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 //include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula_type.php';
 //include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+include_once paths::MODEL_HELPER . 'db_cache_status.php';
+//include_once paths::MODEL_HELPER . 'db_cache_status_list.php';
+include_once paths::MODEL_HELPER . 'db_cache_type.php';
+//include_once paths::MODEL_HELPER . 'db_cache_type_list.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 //include_once paths::MODEL_REF . 'ref_type_list.php';
 include_once paths::MODEL_REF . 'source_type.php';
@@ -143,6 +147,10 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
@@ -434,6 +442,8 @@ class type_list extends ListOfIdNamedCodeObjects
             sys_log_level::class => new sys_log_level(),
             sys_log_status::class, sys_log_statuum::class => new sys_log_status(),
             system_time_type::class => new system_time_type(),
+            db_cache_status::class => new db_cache_status(),
+            db_cache_type::class => new db_cache_type(),
             user_profile::class => new user_profile(),
             user_type::class => new user_type(),
             user_official_type::class => new user_official_type(),
@@ -477,6 +487,8 @@ class type_list extends ListOfIdNamedCodeObjects
             sys_log_function_list::class => sys_log_function::class,
             sys_log_level_list::class => sys_log_level::class,
             sys_log_status_list::class => sys_log_status::class,
+            db_cache_status_list::class => db_cache_status::class,
+            db_cache_type_list::class => db_cache_type::class,
             user_profile_list::class => user_profile::class,
             user_type_list::class => user_type::class,
             user_status_list::class => user_status::class,
@@ -547,6 +559,8 @@ class type_list extends ListOfIdNamedCodeObjects
                     $type_name = strval($db_row[$db_con->get_name_field($class)]);
                 } elseif ($class == job_status::class) {
                     $type_name = strval($db_row[job_status::FLD_NAME]);
+                } elseif ($class == db_cache_status::class) {
+                    $type_name = strval($db_row[db_cache_status::FLD_NAME]);
                 } else {
                     // TODO use a unique type name for each type
                     if (array_key_exists(sql_db::FLD_TYPE_NAME, $db_row)) {

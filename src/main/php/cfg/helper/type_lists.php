@@ -40,6 +40,8 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::MODEL_HELPER . 'db_cache_status_list.php';
+include_once paths::MODEL_HELPER . 'db_cache_type_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
@@ -145,6 +147,10 @@ class type_lists
     public change_table_list $cng_tbl;
     public change_field_list $cng_fld;
 
+    // cache
+    public db_cache_status_list $cac_sta;
+    public db_cache_type_list $cac_typ;
+
     // language and system jobs
     public job_status_list $job_sta;
     public job_type_list $job_typ;
@@ -195,6 +201,10 @@ class type_lists
         $this->cng_act = new change_action_list();
         $this->cng_tbl = new change_table_list();
         $this->cng_fld = new change_field_list();
+
+        // cache
+        $this->cac_sta = new db_cache_status_list();
+        $this->cac_typ = new db_cache_type_list();
 
         // language and system jobs
         $this->job_sta = new job_status_list();
@@ -258,6 +268,14 @@ class type_lists
 
         // load the type database enum
         // these tables are expected to be so small that it is more efficient to load all database records once at start
+
+        // cache
+        if ($result) {
+            $result = $this->cac_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->cac_sta->load($db_con);
+        }
 
         // language and system jobs
         if ($result) {
@@ -452,6 +470,9 @@ class type_lists
         $vars[json_fields::LIST_CHANGE_LOG_TABLES] = $this->cng_tbl->api_json_array();
         $vars[json_fields::LIST_CHANGE_LOG_FIELDS] = $this->cng_fld->api_json_array();
 
+        $vars[json_fields::LIST_DB_CACHE_TYPES] = $this->cac_typ->api_json_array();
+        $vars[json_fields::LIST_DB_CACHE_STATUUS] = $this->cac_sta->api_json_array();
+
         $vars[json_fields::LIST_JOB_TYPES] = $this->job_typ->api_json_array();
         $vars[json_fields::LIST_JOB_STATUUS] = $this->job_sta->api_json_array();
         $vars[json_fields::LIST_LANGUAGES] = $this->lan->api_json_array();
@@ -502,8 +523,13 @@ class type_lists
         $this->cng_tbl->load_dummy();
         $this->cng_fld->load_dummy();
 
+        // cache
+        $this->cac_typ->load_dummy();
+        $this->cac_sta->load_dummy();
+
         // language and system jobs
         $this->job_typ->load_dummy();
+        $this->job_sta->load_dummy();
         $this->lan->load_dummy();
         $this->lan_for->load_dummy();
 

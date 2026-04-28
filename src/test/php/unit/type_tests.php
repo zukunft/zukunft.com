@@ -37,6 +37,8 @@ use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
@@ -91,14 +93,24 @@ class type_tests
         $t->assert_sql_index_create($log_fuc);
 
         $t->subheader($ts . 'job status sql setup');
-        $job_typ = new job_status('');
-        $t->assert_sql_table_create($job_typ);
-        $t->assert_sql_index_create($job_typ);
+        $job_sta = new job_status('');
+        $t->assert_sql_table_create($job_sta);
+        $t->assert_sql_index_create($job_sta);
 
         $t->subheader($ts . 'job type sql setup');
         $job_typ = new job_type('');
         $t->assert_sql_table_create($job_typ);
         $t->assert_sql_index_create($job_typ);
+
+        $t->subheader($ts . 'db_cache status sql setup');
+        $dbc_sta = new db_cache_status('');
+        $t->assert_sql_table_create($dbc_sta);
+        $t->assert_sql_index_create($dbc_sta);
+
+        $t->subheader($ts . 'db_cache type sql setup');
+        $dbc_typ = new db_cache_type('');
+        $t->assert_sql_table_create($dbc_typ);
+        $t->assert_sql_index_create($dbc_typ);
 
         $t->subheader($ts . 'user profile sql setup');
         $usr_prf = new user_profile('');
@@ -199,6 +211,10 @@ class type_tests
         $typ = $t_typ->job_status();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->job_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->db_cache_status();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->db_cache_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->user_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
