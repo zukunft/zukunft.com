@@ -179,3 +179,8 @@ component_type_id, type_name, description, code_id
 178, 'system field view modification start position', 'show the position where the modification should start', 'system_show_view_start_pos'
 179, 'admin form field language symbol', 'form field for admin users only to add or change the language symbol', 'admin_form_field_language_symbol'
 180, 'field language symbol', 'show the language symbol', 'field_language_symbol'
+181, 'system admin response times', 'show the most relevant delays in response to user request', 'system_admin_url_delay'
+182, 'system admin failed logins', 'show last and most critical failed login trails to be able to detect hacking attempts', 'system_admin_login_fails'
+183, 'system admin unassigned errors', 'show new detected internal errors that do not yet have a human check priority and that are not yet assigned to a developer', 'system_admin_errors_unassigned'
+184, 'system admin pending error fixes', 'show a list of errors where the fix has been expected but that are not yet fixed', 'system_admin_errors_delayed_fix'
+185, 'system admin delayed jobs', 'list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs', 'system_admin_jobs_delayed'

@@ -783,6 +783,43 @@
       "code_id": "system_body_process"
     },
     {
+      "name": "system title admin",
+      "description": "show the language specific title for the administrator dashboard",
+      "type": "system_title",
+      "code_id": "system_title_admin",
+      "ui_msg_code_id": "system_title_admin"
+    },
+    {
+      "name": "system admin response times",
+      "description": "show the most relevant delays in response to user request",
+      "type": "system_admin_url_delay",
+      "code_id": "system_admin_url_delay"
+    },
+    {
+      "name": "system admin failed logins",
+      "description": "show last and most critical failed login trails to be able to detect hacking attempts",
+      "type": "system_admin_login_fails",
+      "code_id": "system_admin_login_fails"
+    },
+    {
+      "name": "system admin unassigned errors",
+      "description": "show new detected internal errors that do not yet have a human check priority and that are not yet assigned to a developer",
+      "type": "system_admin_errors_unassigned",
+      "code_id": "system_admin_errors_unassigned"
+    },
+    {
+      "name": "system admin pending error fixes",
+      "description": "show a list of errors where the fix has been expected but that are not yet fixed",
+      "type": "system_admin_errors_delayed_fix",
+      "code_id": "system_admin_errors_delayed_fix"
+    },
+    {
+      "name": "system admin delayed jobs",
+      "description": "list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs",
+      "type": "system_admin_jobs_delayed",
+      "code_id": "system_admin_jobs_delayed"
+    },
+    {
       "name": "system form hidden back stack",
       "description": "field that contains the stack for the undo actions",
       "type": "system_form_back_stack",
@@ -6625,6 +6662,38 @@
         {
           "position": "2",
           "name": "system body process"
+        }
+      ]
+    },
+    {
+      "name": "Admin dashboard",
+      "description": "Show a overview of the most relevant issues that an administrator should check",
+      "type": "system",
+      "code_id": "admin_main",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title admin"
+        },
+        {
+          "position": "2",
+          "name": "system admin response times"
+        },
+        {
+          "position": "3",
+          "name": "system admin failed logins"
+        },
+        {
+          "position": "4",
+          "name": "system admin unassigned errors"
+        },
+        {
+          "position": "5",
+          "name": "system admin pending error fixes"
+        },
+        {
+          "position": "6",
+          "name": "system admin delayed jobs"
         }
       ]
     },

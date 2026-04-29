@@ -1574,7 +1574,7 @@ class group extends sandbox_multi
         $db_chk = clone $this;
         $db_chk->reset(true);
         // check with the standard namespace
-        if ($db_chk->load_standard_by_name($this->name())) {
+        if ($db_chk->load_standard_by_name($this->name(), $msg)) {
             if ($db_chk->id() > 0) {
                 log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
                 $sim = $db_chk;

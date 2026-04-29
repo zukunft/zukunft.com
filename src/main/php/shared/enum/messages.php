@@ -1593,6 +1593,9 @@ enum messages: string
     case FORM_TITLE_PROCESS_LIST = 'system_title_process_list';
     case FORM_TITLE_PROCESS = 'system_title_process';
 
+    // admin dashboard
+    case FORM_TITLE_ADMIN = 'system_title_admin';
+
     // fixed system page titles
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';

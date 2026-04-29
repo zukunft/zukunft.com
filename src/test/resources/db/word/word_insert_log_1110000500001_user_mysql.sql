@@ -36,6 +36,6 @@ SELECT word_insert_log_1110000500001_user
          188,
          85,
          null,
-         99,
+         100,
          87,
          3);
