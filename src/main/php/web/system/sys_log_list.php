@@ -35,14 +35,6 @@ namespace Zukunft\ZukunftCom\main\php\web\system;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use Zukunft\ZukunftCom\main\php\api\api_message;
-use Zukunft\ZukunftCom\main\php\api\controller;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\user\user;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -51,9 +43,19 @@ include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class sys_log_list
 {
@@ -231,7 +233,7 @@ class sys_log_list
             $result = $html->tbl($rows);
         }
 
-        return $result;
+        return $html->main($result);
     }
 
     /**
@@ -254,7 +256,10 @@ class sys_log_list
 
     function get_html_page(?user $usr = null, string $back = ''): string
     {
-        return $this->get_html_header('System log') . $this->get_html($usr, $back) . $this->get_html_footer();
+        return $this->get_html_header('System log')
+            . $this->get_html_navbar()
+            . $this->get_html($usr, $back)
+            . $this->get_html_footer();
     }
 
     /*
@@ -270,6 +275,12 @@ class sys_log_list
         }
         $html = new html_base();
         return $html->header($title);
+    }
+
+    function get_html_navbar(): string
+    {
+        $html = new html_base();
+        return $html->navbar(views::SYSTEM_LOG_ID);
     }
 
     function get_html_footer(): string

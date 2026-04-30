@@ -601,7 +601,7 @@ class test_cleanup extends test_api
     private function html_page(string $body, string $title): string
     {
         $html = new html_base();
-        return $html->header_test($title) . $body . $html->footer();
+        return $html->header_test($title) . $html->navbar(views::START_ID) . $html->main($body) . $html->footer();
     }
 
 }

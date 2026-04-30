@@ -116,6 +116,7 @@ class system_view_ui_tests
         $usr_ui = $msp_ui->convertToUi($t->usr1, $usr_msg);
         $usr_msg->usr = $usr_ui;
 
+
         // test the system views by id
         // similar to horizontal_ui_tests which tests the curl view for the main objects
         $t->subheader($ts . 'by id');
@@ -124,6 +125,19 @@ class system_view_ui_tests
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($t->usr1);
+        $usr_dsp = $tl->cast_user($t->usr1);
+
+        /*
+        $test_name = 'test the start page upfront to have at least the header and footer fine for all pages';
+        $url = 'http://localhost/http/view.php';
+        $url_part = parse_url($url);
+        parse_str($url_part["query"], $url_array);
+        $html = $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
+        $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'start_page';
+        $t->assert_html_page($test_name, $html, $file_path);
+        */
+
+        // loop over the system views
         for ($msk_typ = 1; $msk_typ < 2; $msk_typ++) {
             for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
                 $dbo = $this->view_id_to_dbo($id, $t->usr1);
@@ -136,7 +150,6 @@ class system_view_ui_tests
                 }
                 $url_part = parse_url($url);
                 parse_str($url_part["query"], $url_array);
-                $usr_dsp = $tl->cast_user($t->usr1);
                 $html = $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
                 $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
                 // create the filename of the expected result

@@ -215,7 +215,7 @@ class test_app
 
         if ($echo_header) {
             $html = new html_base();
-            echo $html->footer();
+            echo $html->footer_old();
         }
 
         $this->write_time($db_con);

@@ -9,13 +9,109 @@ body {
    text-align: center; /* Centers all inline text content globally */
 }
 
+/* header / navbar */
+.site-header {
+    background: #f9fafb; /* Light grey-blue background for the top header */
+    border-bottom: 1px solid #b9c6d6; /* Subtle darker grey-blue line under the header */
+    padding: 0.5rem 1rem; /* Comfortable inner spacing on all sides */
+    display: flex; /* Lay out logo, search and nav in a row */
+    flex-wrap: wrap; /* Allow wrapping on narrow screens */
+    align-items: center; /* Vertically center all header items */
+    justify-content: space-between; /* Spread items: logo left, nav right */
+    z-index: 1030; /* Keep header above the page content */
+    position: relative; /* anchor for the centered form inside */
+}
+
+.site-header .form-inline,
+.site-header form {
+    position: absolute; /* take the form out of the normal flex flow */
+    left: 50%; /* move its left edge to the screen middle */
+    transform: translateX(-50%); /* shift back by half its own width to truly center it */
+}
+
+.site-header .btn {
+    white-space: nowrap; /* never break the button text across lines */
+    flex-shrink: 0; /* don't let the button get squeezed by the input */
+}
+
+/* header popup menu */
+/* language and user dropdown menus in the header */
+.view-menu,
+.lang-menu,
+.user-menu {
+    position: relative;            /* anchor for the floating menu */
+    display: inline-block;         /* sit beside other navbar items */
+}
+
+.view-menu > summary,
+.lang-menu > summary,
+.user-menu > summary {
+    cursor: pointer;               /* show a hand cursor over the icon */
+    list-style: none;              /* hide the default disclosure triangle */
+}
+
+.view-menu > summary::-webkit-details-marker,
+.lang-menu > summary::-webkit-details-marker,
+.user-menu > summary::-webkit-details-marker {
+    display: none;                 /* hide the triangle in Safari */
+}
+
+.view-menu ul,
+.lang-menu ul,
+.user-menu ul {
+    position: absolute;            /* float over the page */
+    top: 100%;                     /* directly below the icon */
+    right: 0;                      /* align to right edge of icon */
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.5rem 0;
+    margin: 0;
+    list-style: none;              /* no bullets */
+    min-width: 8rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1040;                 /* above the navbar */
+}
+
+.view-menu ul a,
+.lang-menu ul a,
+.user-menu ul a {
+    display: block;                /* make the whole row clickable */
+    padding: 0.4rem 1rem;
+    white-space: nowrap;           /* keep menu items on one line */
+}
+
+.view-menu ul a:hover,
+.lang-menu ul a:hover,
+.user-menu ul a:hover {
+    background: #f0f0f0;
+}
+
+
+/* main content area: grow to fill space so footer is pushed to the bottom */
 .main-container {
     flex: 1; /* Makes this section expand to fill all available vertical space */
     display: flex; /* Enables flexbox to center content within this container */
     flex-direction: column; /* Stacks the logo, search, and login sections vertically */
     justify-content: center; /* Centers content vertically within the available space */
     align-items: center; /* Centers content horizontally */
-    padding: 20px; /* Adds space inside the container so content doesn't hit the edges */
+    padding: 2rem 20px 20px; /* 2rem on top for the fixed navbar, 20px on the other sides */
+}
+
+.main-container > form {
+    width: 90%; /* match the table's full-width behaviour */
+}
+
+/* form labels: align left instead of inheriting the body's center alignment */
+.main-container form label {
+    display: block;        /* put label on its own line above the input */
+    text-align: left;      /* override the body-level text-align: center */
+}
+
+/* spacing between form action buttons (Cancel, Save, etc.) */
+.main-container form .btn + .btn,
+.main-container form .btn-space {
+    margin-left: 0.5rem;   /* gap between adjacent buttons */
 }
 
 /* logo section */
@@ -120,7 +216,8 @@ a:hover {
 }
 
 .site-footer {
+    flex-shrink: 0; /* Prevents the footer from shrinking when content is tight */
+    margin-top: auto; /* Pushes the footer to the bottom when content is short */
     padding: 20px; /* Adds space inside the footer */
     font-size: 0.8rem; /* Makes the footer text slightly smaller than main text */
-    border-top: 1px solid #eee; /* Adds a very faint line to separate the footer from content */
 }

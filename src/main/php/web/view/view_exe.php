@@ -128,7 +128,7 @@ class view_exe extends view_base
         } else {
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open();
-            $result .= $this->dsp_navbar($cfg, $back);
+            //$result .= $this->dsp_navbar($cfg, $back);
             $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $pattern, $test_mode);
             $result .= $this->dsp_type_close();
         }

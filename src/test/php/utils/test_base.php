@@ -53,6 +53,7 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
@@ -4582,7 +4583,7 @@ class test_base
     function html_page(string $body): string
     {
         $html = new html_base();
-        return $html->header_test('test') . $body . $html->footer();
+        return $html->header_test('test') . $html->navbar(views::START_ID) . $html->main($body) . $html->footer();
     }
 
     function class_without_namespace(string $class_name_with_namespace): string

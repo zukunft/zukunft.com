@@ -186,7 +186,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 185,1,Canton,,,1,,,,,,,,
 186,1,configuration,,,1,,,,,configuration,,,3
 187,1,City,,,1,,,,,,,,
-188,1,company,,,1,108,,,,,,,3
+188,1,company,,,1,109,,,,,,,3
 189,1,eye,,,1,,,,,,,,
 190,1,fact,,,1,,,,,,,,
 191,1,Geneva,,,1,,,,,,,,

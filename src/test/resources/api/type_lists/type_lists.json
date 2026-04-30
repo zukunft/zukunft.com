@@ -20377,6 +20377,14 @@
             "position_type": 1
           }
         ]
+      },
+      {
+        "id": 107,
+        "name": "System log",
+        "description": "show the most relevant system log entries (placeholder only at the moment)",
+        "type_id": null,
+        "code_id": "system_log",
+        "components": []
       }
     ]
   }

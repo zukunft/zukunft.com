@@ -314,6 +314,9 @@ class views
     const string MATH_CONST_NAME = 'math const';
     const string MATH_CONST_COM = 'Show a mathematical constance and the related words and formulas';
 
+    // TODO Prio 3 resort the views and group it
+    const string SYSTEM_LOG = 'system_log';
+    const int SYSTEM_LOG_ID = 107;
 
     /*
      * const string for system testing
@@ -689,6 +692,7 @@ class views
         self::GRAPH_ID => self::GRAPH,
         self::SIMPLE_ID => self::SIMPLE,
         self::MATH_CONST_ID => self::MATH_CONST,
+        self::SYSTEM_LOG_ID => self::SYSTEM_LOG,
     ];
 
     const array SYSTEM_VIEWS = [

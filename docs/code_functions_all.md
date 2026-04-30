@@ -4923,8 +4923,11 @@
     \-- main_body - section for function main_body not yet defined that it should be header & footer in /html/html_base.php
     \-- footer_html - section for function footer_html not yet defined that it should be header & footer in /html/html_base.php
     \-- header - section for function header not yet defined that it should be header & footer in /html/html_base.php
-    \-- header_test - section for function header_test not yet defined that it should be header & footer in /html/html_base.php
+    \-- navbar - section for function navbar not yet defined that it should be header & footer in /html/html_base.php
     \-- footer - section for function footer not yet defined that it should be header & footer in /html/html_base.php
+    \-- header_old - section for function header_old not yet defined that it should be header & footer in /html/html_base.php
+    \-- header_test - section for function header_test not yet defined that it should be header & footer in /html/html_base.php
+    \-- footer_old - section for function footer_old not yet defined that it should be header & footer in /html/html_base.php
     \-- ref - section for function ref not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- url - section for function url not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
@@ -5006,6 +5009,7 @@
     \-- echo_html - section for function echo_html not yet defined that it should be display interface in /html/html_base.php
     \-- echo - section for function echo not yet defined that it should be display interface in /html/html_base.php
     \-- ui_progress - section for function ui_progress not yet defined that it should be display interface in /html/html_base.php
+    \-- main - section for function main not yet defined that it should be internal in /html/html_base.php
     \-- div - section for function div not yet defined that it should be internal in /html/html_base.php
     \-- div_bs - section for function div_bs not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
@@ -5339,6 +5343,7 @@
     \-- get_html - section for function get_html is expected to be set and get in /system/sys_log_list.php
     \-- get_html_page - section for function get_html_page is expected to be set and get in /system/sys_log_list.php
     \-- get_html_header - section for function get_html_header is expected to be set and get in /system/sys_log_list.php
+    \-- get_html_navbar - section for function get_html_navbar is expected to be set and get in /system/sys_log_list.php
     \-- get_html_footer - section for function get_html_footer is expected to be set and get in /system/sys_log_list.php
 \-- ref_type_list
     \-- order error - order of section set and get has difference at url should be before default_id of default_id,url does not match api_mapper,id,1,obj_id,grp,number,add,set_from_json,refresh_words_via_api,set_formula_list,formula_list,set_view_list,merge_view_list,view_list,has_view_list,set_component_list,component_list,has_phrases,add_phrases,ref_list_cloned,value_list_cloned,has_changes,add_changes,change_log,set_time,time,set_user_id,user_id,set_user_name,user_name,set_text,text,set_status,status,word_by_id,triple_by_id,formula_by_id,verb_by_id,get_by_phrase,url,formula_id,set_name,name,name_or_null,set_description,get_description,get_plural,set_type_id,type_id,url_mapper,view_id,share_id,protection_id,is_excluded,set_trace,trace,set_function_id,prg_part,set_solver_id,owner_id,set_from_json_array,default_id,order of section set and get has difference at url should be before default_id of default_id,url does not match api_mapper,id,1,obj_id,grp,number,add,set_from_json,refresh_words_via_api,set_formula_list,formula_list,set_view_list,merge_view_list,view_list,has_view_list,set_component_list,component_list,has_phrases,add_phrases,ref_list_cloned,value_list_cloned,has_changes,add_changes,change_log,set_time,time,set_user_id,user_id,set_user_name,user_name,set_text,text,set_status,status,word_by_id,triple_by_id,formula_by_id,verb_by_id,get_by_phrase,url,formula_id,set_name,name,name_or_null,set_description,get_description,get_plural,set_type_id,type_id,url_mapper,view_id,share_id,protection_id,is_excluded,set_trace,trace,set_function_id,prg_part,set_solver_id,owner_id,set_from_json_array,default_id
@@ -5509,7 +5514,7 @@
     \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /view/view.php
     \-- selector_page - section for function selector_page not yet defined that it should be to review in /view/view.php
     \-- log_err - section for function log_err is expected to be log in /view/view.php
-    \-- order error - order of section to review has difference at log_err should be before selector_page of dsp_edit,dsp_hist,dsp_hist_links,selector_page,log_err does not match dsp_add,dsp_edit,form_edit_new,1,html,text,word_name,btn_unlink,dsp_hist,dsp_hist_links,log_err,log_debug,phrase_selector,btn_add_value,dsp_graph,tbl,get_html_header,get_html_footer,selector_page
+    \-- order error - order of section to review has difference at log_err should be before selector_page of dsp_edit,dsp_hist,dsp_hist_links,selector_page,log_err does not match dsp_add,dsp_edit,form_edit_new,1,html,text,word_name,btn_unlink,dsp_hist,dsp_hist_links,log_err,log_debug,phrase_selector,btn_add_value,dsp_graph,tbl,get_html_header,get_html_navbar,get_html_footer,selector_page
 \-- view_base
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/view_base.php
     \-- api_array - section for function api_array not yet defined that it should be api in /view/view_base.php
@@ -5823,6 +5828,8 @@
     \-- tbl
         \-- job_list - show all batch_jobs of the list as table row (ex display)
     \-- get_html_header
+        \-- sys_log_list - @return string the HTML code for the table headline
+    \-- get_html_navbar
         \-- sys_log_list - @return string the HTML code for the table headline
     \-- get_html_footer
         \-- sys_log_list - @return string the HTML code for the table headline
@@ -6716,6 +6723,8 @@
 \-- internal
     \-- view_id_to_dbo_ui
         \-- frontend - get an api json as a string from the backend
+    \-- main
+        \-- html_base - wrap the body tag around html body code
     \-- div
         \-- html_base - wrap the div tag around html code
     \-- div_bs
@@ -6797,9 +6806,15 @@
         \-- html_base - the page footer for simple html pages like the login page
     \-- header
         \-- html_base - @param string $title simple the HTML title used
+    \-- navbar
+        \-- html_base - the html code for the navigation bar
+    \-- footer
+        \-- html_base - @param bool $no_about
+    \-- header_old
+        \-- html_base - @param string $title simple the HTML title used
     \-- header_test
         \-- html_base - @param string $title simple the HTML title used
-    \-- footer
+    \-- footer_old
         \-- html_base - @param bool $no_about
 \-- wrapper for the basic html elements used
     \-- ref
