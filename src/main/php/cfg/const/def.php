@@ -622,6 +622,7 @@ class def
         'job_types',
         'db_cache_statuum',
         'db_cache_types',
+        'db_caches',
         'user_official_types',
         'ip_ranges',
         'sessions',
