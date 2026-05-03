@@ -223,10 +223,9 @@ class config_numbers extends value_list
     {
         global $sys;
         $usr_msg = new user_message($usr);
-        if ($this->is_cache_valid($usr, $phr)) {
-            $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
-            $this->read_cache($usr, $usr_msg, $phr);
-        } else {
+        $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
+        $this->read_cache($usr, $usr_msg, $phr);
+        if (!$this->is_cache_valid($usr, $phr)) {
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
             $phr_sys_cfg = new phrase($usr);
             $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
@@ -255,6 +254,32 @@ class config_numbers extends value_list
 
     private function is_cache_valid(user $usr, ?phrase $phr = null): bool
     {
+        if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
+            return $this->is_db_cache_valid($usr, $phr);
+        } else {
+            return $this->is_file_cache_valid($usr, $phr);
+        }
+    }
+
+    private function is_db_cache_valid(user $usr, ?phrase $phr = null): bool
+    {
+        global $sys;
+        $file_path = $this->cache_file($usr, $phr);
+        if (file_exists($file_path)) {
+            $cac_time = filemtime($file_path);
+            $cfg_time = filemtime(files::SYSTEM_CONFIG);
+            if ($cfg_time < $cac_time) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private function is_file_cache_valid(user $usr, ?phrase $phr = null): bool
+    {
         $file_path = $this->cache_file($usr, $phr);
         if (file_exists($file_path)) {
             $cac_time = filemtime($file_path);
@@ -271,6 +296,23 @@ class config_numbers extends value_list
 
     private function write_cache(user $usr, ?phrase $phr = null): void
     {
+        if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
+            $this->write_db_cache($usr, $phr);
+        } else {
+            $this->write_file_cache($usr, $phr);
+        }
+    }
+
+    private function write_db_cache(user $usr, ?phrase $phr = null): void
+    {
+        $file_name = $this->cache_file($usr, $phr);
+        $array = $this->cache_array();
+        $json = json_encode($array);
+        file_put_contents($file_name, $json);
+    }
+
+    private function write_file_cache(user $usr, ?phrase $phr = null): void
+    {
         $file_name = $this->cache_file($usr, $phr);
         $array = $this->cache_array();
         $json = json_encode($array);
@@ -278,6 +320,29 @@ class config_numbers extends value_list
     }
 
     private function read_cache(user $usr, user_message $usr_msg, ?phrase $phr = null): void
+    {
+        if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
+            $this->read_db_cache($usr, $usr_msg, $phr);
+        } else {
+            $this->read_file_cache($usr, $usr_msg, $phr);
+        }
+    }
+
+    private function read_db_cache(
+        user $usr,
+        user_message $usr_msg,
+        ?phrase $phr = null
+    ): void
+    {
+        global $cfg;
+        $cac = new db_cache($usr);
+        $file_name = $this->cache_file($usr, $phr);
+        $json = file_get_contents($file_name);
+        $array = json_decode($json, true);
+        $this->api_mapper($array, $usr_msg);
+    }
+
+    private function read_file_cache(user $usr, user_message $usr_msg, ?phrase $phr = null): void
     {
         $file_name = $this->cache_file($usr, $phr);
         $json = file_get_contents($file_name);

@@ -62,6 +62,10 @@ const ENV_WWW_ROOT = 'WWW_ROOT';
 const ENV_SYSTEM_TIME_LIMIT_INFO = 'SYSTEM_TIME_LIMIT_INFO';
 const ENV_SYSTEM_TIME_LIMIT_WARN = 'SYSTEM_TIME_LIMIT_WARN';
 const ENV_SYSTEM_TIME_LIMIT_ERR = 'SYSTEM_TIME_LIMIT_ERR';
+const ENV_CACHE = 'CACHE';
+const ENV_CACHE_DATABASE = 'database';
+const ENV_CACHE_FILE = 'file';
+const ENV_CACHE_FALLBACK = 'database';
 
 const ENV_VARS = [
     ENV_OS,
@@ -88,6 +92,7 @@ const ENV_VARS = [
     ENV_MYSQL_PORT,
     ENV_MYSQL_ZUKUNFT_VERSION,
     ENV_WWW_ROOT,
+    ENV_CACHE,
 ];
 
 const ENV_SECRETS = [
@@ -120,6 +125,11 @@ const ENV_LEVELS = [
 const ENV_DB_LIST = [
     POSTGRES,
     MYSQL,
+];
+
+const ENV_CACHE_TYPES = [
+    ENV_CACHE_DATABASE,
+    ENV_CACHE_FILE,
 ];
 
 // the default values used also for unit tests
@@ -159,6 +169,11 @@ foreach ($env as $line) {
                 if ($key == ENV_DB) {
                     if (!in_array($var, ENV_DB_LIST)) {
                         log_err($key . ' not expected to be ' . $var . ' (only ' . implode(',', ENV_DB_LIST) . ' allowed)');
+                    }
+                }
+                if ($key == ENV_CACHE) {
+                    if (!in_array($var, ENV_CACHE_TYPES)) {
+                        log_err($key . ' not expected to be ' . $var . ' (only ' . implode(',', ENV_CACHE_TYPES) . ' allowed)');
                     }
                 }
                 if ($line != '') {
@@ -205,3 +220,6 @@ define('SYSTEM_TIME_TIME_LIMIT_INFO', getenv(ENV_SYSTEM_TIME_LIMIT_INFO) ?: 2);
 define('SYSTEM_TIME_TIME_LIMIT_WARN', getenv(ENV_SYSTEM_TIME_LIMIT_WARN) ?: 3);
 // write an error log entry if the execution time of the script is longer than 5 seconds
 define('SYSTEM_TIME_TIME_LIMIT_ERR', getenv(ENV_SYSTEM_TIME_LIMIT_ERR) ?: 5);
+
+// the location type for the system cache which can be the database or with some permission adjustments a file folder
+define('CACHE_LOCATION', getenv(ENV_CACHE) ?: ENV_CACHE_FALLBACK);
