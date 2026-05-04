@@ -137,8 +137,7 @@ class system_page extends component
     // TODO Prio 0 fill with real code
     function preview(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'preview placeholder';
     }
 
     // TODO Prio 0 fill with real code
@@ -151,134 +150,115 @@ class system_page extends component
     // TODO Prio 0 fill with real code
     function setup_body(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'setup_body placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function signup_body(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'signup_body placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function login_body(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'login_body placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function activate_body(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'activate_body placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function reset_body(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'reset_body placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function logout_body(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'logout_body placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function body_search(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'body_search placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function body_search_full(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'body_search_full placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function value_details(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'value_details placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function result_explain(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'result_explain placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function formula_test(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'formula_test placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function sandbox(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'sandbox placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function undo(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'undo placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function user_setting(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'user_setting placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function process(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'process placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function error_log(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'error_log placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function error_update(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'error_update placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function process_progress(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'process_progress placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function process_list(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'process_list placeholder';
     }
 
 }

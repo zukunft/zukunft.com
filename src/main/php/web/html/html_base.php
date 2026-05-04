@@ -1039,6 +1039,10 @@ class html_base
         $result .= '8707 Uetikon am See<br>';
         $result .= 'Switzerland<br><br>';
         $result .= '<a href="mailto:timon@zukunft.com">timon@zukunft.com</a><br><br>';
+        $result .= 'One of the main ideas is to use ';
+        $result .= '<a href="https://dx.doi.org/10.2139/ssrn.6497759">Real-Time Delphi Based on the Giant Global Graph: A Framework for Fair and Evidence-Based Decision-Making</a>. ';
+        $result .= 'Once implemented it might be possible ';
+        $result .= '<a href="https://doi.org/10.5281/zenodo.19443909">Implementing the Categorical Imperative in Practice</a>.<br><br>';
         $result .= 'zukunft.com AG also supports the ';
         $result .= $this->ref("https://github.com/zukunft/tream", "Open Source", "github.com link") . ' Portfolio Management System<br><br>';
         $result .= '<a href="https://tream.biz/p4a/applications/tream/" title="TREAM demo">';

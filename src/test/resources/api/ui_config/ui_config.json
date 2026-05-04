@@ -221,6 +221,18 @@
         "code_id": "import_test_config",
         "description": "Import the configuration for system consistency tests",
         "id": 5
+      },
+      {
+        "name": "api\/config",
+        "code_id": "api\/config",
+        "description": "request the configuration via api",
+        "id": 6
+      },
+      {
+        "name": "cfg\/application",
+        "code_id": "cfg\/application",
+        "description": "fallback entry to log system errors",
+        "id": 7
       }
     ],
     "sys_log_levels": [

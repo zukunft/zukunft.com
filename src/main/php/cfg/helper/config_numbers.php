@@ -224,29 +224,32 @@ class config_numbers extends value_list
         global $sys;
         $usr_msg = new user_message($usr);
         $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
-        $this->read_cache($usr, $usr_msg, $phr);
-        if (!$this->is_cache_valid($usr, $phr)) {
-            $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-            $phr_sys_cfg = new phrase($usr);
-            $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
-            // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
-            $this->load_by_phr($phr_sys_cfg);
-            // TODO Prio 2 speed: it may be faster if the phrase is included in the sql select
-            if ($phr != null) {
-                // TODO Prio 1 activate
-                //$this->filter_by_phrase($phr);
-                log_debug('filter by phrase');
-            }
-            if (!$this->is_empty()) {
-                log_debug($this->count() . ' config values loaded');
-                $this->load_phrases();
+        if (!$this->read_cache($usr, $usr_msg, $phr)) {
+            if (!$this->is_cache_valid($usr, $phr)) {
+                $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+                $phr_sys_cfg = new phrase($usr);
+                $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
+                // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
+                $this->load_by_phr($phr_sys_cfg);
+                // TODO Prio 2 speed: it may be faster if the phrase is included in the sql select
+                if ($phr != null) {
+                    // TODO Prio 1 activate
+                    //$this->filter_by_phrase($phr);
+                    log_debug('filter by phrase');
+                }
+                if (!$this->is_empty()) {
+                    log_debug($this->count() . ' config values loaded');
+                    $this->load_phrases();
+                } else {
+                    log_err('no config values loaded');
+                    $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+                }
+                if ($usr_msg->is_ok()) {
+                    $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
+                    $this->write_cache($usr, $phr);
+                }
             } else {
-                log_err('no config values loaded');
-                $usr_msg->add_id(msg_id::CONFIG_EMPTY);
-            }
-            if ($usr_msg->is_ok()) {
-                $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
-                $this->write_cache($usr, $phr);
+                log_err('cannot read cache, but seems to be valid, which should never be the case');
             }
         }
         return $usr_msg;
@@ -319,35 +322,60 @@ class config_numbers extends value_list
         file_put_contents($file_name, $json);
     }
 
-    private function read_cache(user $usr, user_message $usr_msg, ?phrase $phr = null): void
+    private function read_cache(user $usr, user_message $usr_msg, ?phrase $phr = null): bool
     {
         if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
-            $this->read_db_cache($usr, $usr_msg, $phr);
+            return $this->read_db_cache($usr, $usr_msg, $phr);
         } else {
-            $this->read_file_cache($usr, $usr_msg, $phr);
+            return $this->read_file_cache($usr, $usr_msg, $phr);
         }
     }
 
     private function read_db_cache(
-        user $usr,
+        user         $usr,
         user_message $usr_msg,
-        ?phrase $phr = null
-    ): void
+        ?phrase      $phr = null
+    ): bool
     {
         global $cfg;
         $cac = new db_cache($usr);
         $file_name = $this->cache_file($usr, $phr);
         $json = file_get_contents($file_name);
-        $array = json_decode($json, true);
-        $this->api_mapper($array, $usr_msg);
+        if ($json !== false) {
+            // TODO Prio 2 improve error handling for all json_decode calls
+            $array = json_decode($json, true);
+            if (is_array($array)) {
+                $this->api_mapper($array, $usr_msg);
+                return true;
+            } else {
+                log_err('config json seems to have a problem ' . $json);
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
-    private function read_file_cache(user $usr, user_message $usr_msg, ?phrase $phr = null): void
+    private function read_file_cache(
+        user         $usr,
+        user_message $usr_msg,
+        ?phrase      $phr = null
+    ): bool
     {
         $file_name = $this->cache_file($usr, $phr);
         $json = file_get_contents($file_name);
-        $array = json_decode($json, true);
-        $this->api_mapper($array, $usr_msg);
+        if ($json !== false) {
+            $array = json_decode($json, true);
+            if (is_array($array)) {
+                $this->api_mapper($array, $usr_msg);
+                return true;
+            } else {
+                log_err('config json seems to have a problem ' . $json);
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     private function cache_file(user $usr, ?phrase $phr = null): string

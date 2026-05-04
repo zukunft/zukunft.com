@@ -247,7 +247,10 @@ class test_app
                 $sys_usr->load_by_id(users::SYSTEM_ID);
                 $msg = new user_message($sys_usr);
                 $sys_script->save($msg);
-                $sys_script_id = $sys_script->id();
+                if ($msg->is_ok()) {
+                    $sys_script_id = $sys_script->id();
+                    $sys->typ_lst->sys_log_fnc->add($sys_script);
+                }
             }
             $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
             $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);
