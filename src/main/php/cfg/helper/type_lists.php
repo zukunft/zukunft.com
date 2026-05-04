@@ -365,6 +365,20 @@ class type_lists
     }
 
     /**
+     * load the cache types objects upfront
+     * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @return bool true if the loading is complete
+     */
+    function load_cache(sql_db $db_con): bool
+    {
+        $result = $this->cac_typ->load($db_con);
+        if ($result) {
+            $result = $this->cac_sta->load($db_con);
+        }
+        return $result;
+    }
+
+    /**
      * reload the cache used for logging the changes
      * @param sql_db $db_con an open database connection to be able to redirect the loading
      * @return bool false if the load is incomplete

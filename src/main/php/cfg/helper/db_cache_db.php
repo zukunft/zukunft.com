@@ -60,7 +60,7 @@ class db_cache_db
     // means: database fields only used for the database cache
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const string FLD_ID = 'cache_id';
+    const string FLD_ID = 'db_cache_id';
     const string FLD_TYPE = 'type_id';
     const string FLD_TYPE_COM = 'to separate the system, user and frontend configuration';
     const string FLD_DATA = 'data';

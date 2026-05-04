@@ -158,7 +158,7 @@ class db_cache extends db_object_seq_id_user
                 $this->type_id = $db_row[db_cache_db::FLD_TYPE];
             }
             if (array_key_exists(db_cache_db::FLD_DATA, $db_row)) {
-                $this->data = $db_row[db_cache_db::FLD_DATA];
+                $this->data = json_decode($db_row[db_cache_db::FLD_DATA], true);
             }
             if (array_key_exists(user_db::FLD_ID, $db_row)) {
                 if ($this->usr === null) {
@@ -176,6 +176,18 @@ class db_cache extends db_object_seq_id_user
             log_debug('Batch db_cache ' . $this->id() . ' loaded');
         }
         return $result;
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function set_type(string $code_id): void
+    {
+        global $sys;
+        $lst = $sys->typ_lst->dbc_typ;
+        $this->type_id = $lst->get_by_code_id($code_id);
     }
 
 
@@ -210,7 +222,12 @@ class db_cache extends db_object_seq_id_user
         global $sys;
         $typ_lst = $sys->typ_lst->cac_typ;
         $id = $typ_lst->id($typ_code_id);
-        return parent::load_sql_by_id_str($sc, $id);
+        $qp = $this->load_sql($sc, sql_db::FLD_ID);
+        $sc->add_where(db_cache_db::FLD_TYPE, $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
     }
 
     /**
@@ -319,9 +336,9 @@ class db_cache extends db_object_seq_id_user
         if ($obj->data != $this->data) {
             $lst->add_field(
                 db_cache_db::FLD_DATA,
-                $this->data,
+                json_encode($this->data),
                 sql_field_type::TEXT,
-                $obj->data
+                json_encode($obj->data)
             );
         }
         if ($obj->status_id !== $this->status_id) {
@@ -369,6 +386,34 @@ class db_cache extends db_object_seq_id_user
     function name_field(): string
     {
         return db_cache_db::FLD_TYPE;
+    }
+
+
+    /*
+     * db helper
+     */
+
+    /**
+     * check if the database cache can be added to the database
+     * e.g. reject if a reserved name is used and the user is not a system test user or an admin user
+     *
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
+     */
+    protected function check(user_message $msg): bool
+    {
+        // the cache type and status must be valid
+        // TODO Prio 3 add other checks e.g. the update time
+        if ($this->type_id <= 0) {
+            $msg->add_err(msg_id::CACHE_TYPE_INVALID, [
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
+        } elseif ($this->status_id <= 0) {
+            $msg->add_err(msg_id::CACHE_STATUS_INVALID, [
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
+        }
+        return $msg->is_ok();
     }
 
 

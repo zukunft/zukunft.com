@@ -42,6 +42,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
 //include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_HELPER . 'db_cache.php';
 //include_once paths::MODEL_HELPER . 'db_cache_status.php';
 //include_once paths::MODEL_HELPER . 'db_cache_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
@@ -141,6 +142,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -571,6 +573,7 @@ class def
     // list of classes that use a database table but where the changes never needs to be added to the change log
     const array CLASSES_NO_LOG = [
         job::class,
+        db_cache::class,
     ];
 
     // list of classes that use a database table but where the changes do not need to be logged
@@ -588,6 +591,7 @@ class def
         'change*',
         session::class,
         job::class,
+        db_cache::class,
         element::class,
         'phrase*',
         'user_phrase*',

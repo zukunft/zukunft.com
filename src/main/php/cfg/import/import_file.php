@@ -104,7 +104,7 @@ class import_file
         // load the config e.g. after initial setup
         if ($cfg == null) {
             $cfg = new config_numbers($usr);
-            $cfg->load_cfg($usr);
+            $cfg->load_cfg(null, $usr);
         }
 
         // get the relevant config values
@@ -242,9 +242,10 @@ class import_file
             if (!$msg->is_ok() or $validate) {
 
                 // load the system configuration from the database
+                $sys->load_cache_type($db_con);
                 // TODO Prio 3 base the validation on the export yaml
                 $cfg = new config_numbers($usr);
-                $cfg->load_cfg($usr);
+                $cfg->load_cfg(null, $usr);
 
                 // check based on the number of values
                 $cfg_nbr = $cfg->count();

@@ -1335,6 +1335,14 @@ enum messages: string
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' because no matching type has been assigned in the code';
 
+    case CACHE_TYPE_INVALID = 'the database cache type for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
+
+    case CACHE_STATUS_INVALID = 'the database cache status for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
+
     case JOB_TYPE_INVALID = 'the job type for job '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is not valid';

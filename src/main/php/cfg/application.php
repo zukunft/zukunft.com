@@ -289,9 +289,10 @@ class application
 
             // load system configuration
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+            $sys->load_cache_type($db_con);
             // TODO cache the system config json and detect
             $cfg = new config_numbers($usr_sys);
-            $cfg->load_cfg($usr_sys);
+            $cfg->load_cfg(null, $usr_sys);
             $mtr = new Translator($cfg->language());
 
             // preload all types from the database

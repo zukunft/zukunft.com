@@ -233,6 +233,12 @@
         "code_id": "cfg\/application",
         "description": "fallback entry to log system errors",
         "id": 7
+      },
+      {
+        "name": "cfg\/helper\/config_numbers",
+        "code_id": "cfg\/helper\/config_numbers",
+        "description": "loader for the system and user configuration",
+        "id": 8
       }
     ],
     "sys_log_levels": [
