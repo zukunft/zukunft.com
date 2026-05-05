@@ -352,6 +352,9 @@ class component_exe extends component
             component_types::VERB_NAME => $base->verb_name($dbo),
 
 
+            // triple only -
+            component_types::TRIPLE_NAME => $base->triple_name($dbo),
+
             // value only -
             component_types::VALUE_NAME => $base->value_name($dbo),
             component_types::GROUP_NAME => $base->group_name($dbo),

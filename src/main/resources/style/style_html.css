@@ -1,12 +1,12 @@
 /* base design */
 body {
-   font-family: sans-serif; /* Sets the font to a clean, no-serif style */
-   margin: 0; /* Removes the default browser margin from the edges */
-   display: flex; /* Enables flexbox layout for the entire page body */
-   flex-direction: column; /* Stacks the body content (main and footer) vertically */
-   min-height: 100vh; /* Ensures the page is at least as tall as the full screen */
-   color: #9ea09e; /* Sets the default text color to the zukunft.com specific grey */
-   text-align: center; /* Centers all inline text content globally */
+    font-family: sans-serif; /* Sets the font to a clean, no-serif style */
+    margin: 0; /* Removes the default browser margin from the edges */
+    display: flex; /* Enables flexbox layout for the entire page body */
+    flex-direction: column; /* Stacks the body content (main and footer) vertically */
+    min-height: 100vh; /* Ensures the page is at least as tall as the full screen */
+    color: #9ea09e; /* Sets the default text color to the zukunft.com specific grey */
+    text-align: center; /* Centers all inline text content globally */
 }
 
 /* header / navbar */
@@ -39,46 +39,46 @@ body {
 .view-menu,
 .lang-menu,
 .user-menu {
-    position: relative;            /* anchor for the floating menu */
-    display: inline-block;         /* sit beside other navbar items */
+    position: relative; /* anchor for the floating menu */
+    display: inline-block; /* sit beside other navbar items */
 }
 
 .view-menu > summary,
 .lang-menu > summary,
 .user-menu > summary {
-    cursor: pointer;               /* show a hand cursor over the icon */
-    list-style: none;              /* hide the default disclosure triangle */
+    cursor: pointer; /* show a hand cursor over the icon */
+    list-style: none; /* hide the default disclosure triangle */
 }
 
 .view-menu > summary::-webkit-details-marker,
 .lang-menu > summary::-webkit-details-marker,
 .user-menu > summary::-webkit-details-marker {
-    display: none;                 /* hide the triangle in Safari */
+    display: none; /* hide the triangle in Safari */
 }
 
 .view-menu ul,
 .lang-menu ul,
 .user-menu ul {
-    position: absolute;            /* float over the page */
-    top: 100%;                     /* directly below the icon */
-    right: 0;                      /* align to right edge of icon */
+    position: absolute; /* float over the page */
+    top: 100%; /* directly below the icon */
+    right: 0; /* align to right edge of icon */
     background: white;
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 0.5rem 0;
     margin: 0;
-    list-style: none;              /* no bullets */
+    list-style: none; /* no bullets */
     min-width: 8rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1040;                 /* above the navbar */
+    z-index: 1040; /* above the navbar */
 }
 
 .view-menu ul a,
 .lang-menu ul a,
 .user-menu ul a {
-    display: block;                /* make the whole row clickable */
+    display: block; /* make the whole row clickable */
     padding: 0.4rem 1rem;
-    white-space: nowrap;           /* keep menu items on one line */
+    white-space: nowrap; /* keep menu items on one line */
 }
 
 .view-menu ul a:hover,
@@ -93,9 +93,10 @@ body {
     flex: 1; /* Makes this section expand to fill all available vertical space */
     display: flex; /* Enables flexbox to center content within this container */
     flex-direction: column; /* Stacks the logo, search, and login sections vertically */
-    justify-content: center; /* Centers content vertically within the available space */
+    justify-content: flex-start; /* anchor content to the top instead of vertical center */
     align-items: center; /* Centers content horizontally */
-    padding: 2rem 20px 20px; /* 2rem on top for the fixed navbar, 20px on the other sides */
+    padding: 2rem 20px 20px; /* small gap below the fixed navbar on top, 20px on the other sides */
+    margin-top: 0; /* remove any inherited top margin */
 }
 
 .main-container > form {
@@ -104,14 +105,14 @@ body {
 
 /* form labels: align left instead of inheriting the body's center alignment */
 .main-container form label {
-    display: block;        /* put label on its own line above the input */
-    text-align: left;      /* override the body-level text-align: center */
+    display: block; /* put label on its own line above the input */
+    text-align: left; /* override the body-level text-align: center */
 }
 
 /* spacing between form action buttons (Cancel, Save, etc.) */
 .main-container form .btn + .btn,
 .main-container form .btn-space {
-    margin-left: 0.5rem;   /* gap between adjacent buttons */
+    margin-left: 0.5rem; /* gap between adjacent buttons */
 }
 
 /* logo section */
@@ -156,15 +157,27 @@ body {
 
 /* logo size adjustments for different screens */
 @media (max-width: 1200px) {
-    .brand-logo { width: 60%; } /* Increase logo width to 70% on laptops */
+    .brand-logo {
+        width: 60%;
+    }
+
+    /* Increase logo width to 70% on laptops */
 }
 
 @media (max-width: 900px) {
-    .brand-logo { width: 80%; } /* Increase logo width to 80% on tablets */
+    .brand-logo {
+        width: 80%;
+    }
+
+    /* Increase logo width to 80% on tablets */
 }
 
 @media (max-width: 600px) {
-    .brand-logo { width: 90%; } /* Increase logo width to 90% on mobile phones */
+    .brand-logo {
+        width: 90%;
+    }
+
+    /* Increase logo width to 90% on mobile phones */
 }
 
 /* search input field */
