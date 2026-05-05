@@ -299,6 +299,7 @@ class html_base
      */
     function footer(bool $no_about = false): string
     {
+        global $sys;
         $result = '<footer class="site-footer">' . "\n";
 
         // for the about page this does not make sense
@@ -312,6 +313,7 @@ class html_base
         $result .= '<a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> ' . "\n";
         $result .= 'Licence unless otherwise stated and the ' . "\n";
         $result .= '<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> ' . "\n";
+        $result .= 'of this version ' . SYSTEM_CODE_VERSION . "\n";
         $result .= 'under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence. ' . "\n";
         $result .= '</p> ' . "\n";
 
@@ -456,7 +458,7 @@ class html_base
         }
         $result .= '<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; ';
         $result .= 'All structured data is available under the <a href="//creativecommons.org/publicdomain/zero/1.0/" title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License';
-        $result .= ' and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License';
+        $result .= ' and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> of this version 0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License';
         // for the about page this does not make sense
         $result .= '</small>';
         $result .= '</div>';

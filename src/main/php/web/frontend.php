@@ -281,7 +281,7 @@ class frontend
             log_info('environment ' . getenv(ENVIRONMENT));
         }
 
-        $sys->pod_name = $code_name;
+        $sys->pod_name = getenv(ENVIRONMENT);
 
         $errors = 0;
 
