@@ -280,8 +280,8 @@ class html_base
         $result .= '<details class="user-menu">' . "\n";
         $result .= '<summary><i class="fas fa-user-circle"></i></summary>' . "\n";
         $result .= '<ul>' . "\n";
-        $result .= '<li><a href="/signin">Sign in</a></li>' . "\n";
-        $result .= '<li><a href="/signup">Sign up</a></li>' . "\n";
+        $result .= '<li><a href="/http/login.php">log in</a></li>' . "\n";
+        $result .= '<li><a href="/http/signup.php">Sign in</a></li>' . "\n";
         $result .= '<li><a href="/settings">Settings</a></li>' . "\n";
         $result .= '</ul>' . "\n";
         $result .= '</details>' . "\n";

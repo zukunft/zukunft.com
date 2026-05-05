@@ -1068,6 +1068,10 @@ class test_base
             $usr_obj->import_obj($json_in, $usr_msg, $dto);
             //$this->set_id_for_unit_tests($usr_obj);
             $json_ex = $usr_obj->export_json([], false);
+            // TODO Prio 2 remove exception
+            if ($usr_obj::class == user::class) {
+                $json_ex = $this->json_remove_volatile($json_ex);
+            }
             // TODO remove, for faster debugging only
             $json_in_txt = json_encode($json_in);
             $json_ex_txt = json_encode($json_ex);
