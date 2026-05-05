@@ -393,6 +393,10 @@ class library
         return str_replace($esc_chr . $chr_to_esc, $chr_to_esc, $txt_to_esc);
     }
 
+    function unquote(string $text): string
+    {
+        return trim($text, "\"'");
+    }
 
     /*
      * select string part functions
@@ -3045,6 +3049,9 @@ class library
         if ($result == 'job_statuss') {
             $result = 'job_statuum';
         }
+        if ($result == 'db_cache_statuss') {
+            $result = 'db_cache_statuum';
+        }
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_statuum';
         }
@@ -3160,6 +3167,8 @@ class library
             case $this->class_to_name(sys_log_function::class):
             case $this->class_to_name(job_status::class):
             case $this->class_to_name(job_type::class):
+            case $this->class_to_name(db_cache_status::class):
+            case $this->class_to_name(db_cache_type::class):
             case $this->class_to_name(user_profile::class):
             case $this->class_to_name(user_type::class):
             case $this->class_to_name(user_official_type::class):

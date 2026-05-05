@@ -39,6 +39,7 @@ the object structure is:
     \-- group_id - e.g. to create a group_id based on a phrase list
     \-- result_id - e.g. to create a id based on a mix of source, result or both phrases and the formula id
 +-- data_object - a header object for all data objects e.g. phrase_list, values, formulas
++-- db_cache_db - the database const for the database cache tables
 \-- db_object_no_id
     \-- value_ts_data - for a single time series value data entry
 +-- id_list - a base object for a list of database IDs
@@ -109,6 +110,7 @@ the object structure is:
                 \-- user - a person who uses zukunft.com
             \-- db_object_seq_id_user
                 \-- element - either a word, triple, verb or formula with a link to a formula
+                \-- db_cache - the database based cached e.g. for faster system configuration loading
                 \-- change_log
                     \-- change
                         \-- changes_big - log group changes for values with more than 16 phrases
@@ -158,6 +160,8 @@ the object structure is:
                 \-- element_type - to assign coded functionality to a formula element
                 \-- formula_link_type - the formula link type object with the ENUM values for hardcoded formulas
                 \-- formula_type - the formula type object with the ENUM values for hardcoded formulas
+                \-- db_cache_status - a predefined database cache status e.g. dirty, updating or outdated
+                \-- db_cache_type - a predefined database cache type e.g. system config or user config
                 \-- language - to define a language for the user interface
                 \-- language_form - to define a language form e.g. plural
                 \-- change_action - the change type done by a user
@@ -236,6 +240,8 @@ the object structure is:
                     \-- element_type_list - to link coded functionality to a formula element type
                     \-- formula_link_type_list - to link coded functionality to a formula link
                     \-- formula_type_list - list to link coded functionality to a formula
+                    \-- db_cache_status_list - list of predefined system batch database cache statuum
+                    \-- db_cache_type_list - list of predefined system batch database cache types
                     \-- language_form_list - a database based enum list of all languages
                     \-- language_list - a database based enum list of all languages
                     \-- change_action_list - the const for the change log action table
@@ -344,6 +350,8 @@ the object structure is:
 +-- api_type_listShared - a list of parameters to configure the api message
 +-- component_link_typesShared - db based ENUM of the component link types
 +-- component_typesShared - db based ENUM of the component types
++-- db_cache_statuumShared - ENUM of the used db_cache statuum
++-- db_cache_typesShared - ENUM of the used db_cache types
 +-- element_typesShared - db based ENUM of the formula link types
 +-- file_typesShared - ENUM of the used file types
 +-- formula_link_typesShared - db based ENUM of the formula link types

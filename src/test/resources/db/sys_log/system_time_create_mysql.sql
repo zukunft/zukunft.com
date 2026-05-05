@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS system_times
     start_time          timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'start time of the monitoring period',
     end_time            timestamp DEFAULT NULL COMMENT 'end time of the monitoring period',
     system_time_type_id smallint      NOT NULL COMMENT 'the area of the execution time e.g. db write',
+    `url`               text      DEFAULT NULL COMMENT 'the request url as received from the frontend by a user action',
     milliseconds        bigint        NOT NULL COMMENT 'the execution time in milliseconds',
     PRIMARY KEY (system_time_id)
 )

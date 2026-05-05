@@ -195,6 +195,161 @@ class html_base
         //$url_ext_lib = $server_url . api::EXT_LIB_PATH;
         $url_ext_lib = '/' . api::EXT_LIB_PATH;
 
+        $result = '<!DOCTYPE html>' . "\n";
+        $result .= '<html lang="en">' . "\n"; // TODO: to be adjusted depending on the display language
+        $result .= '<head>' . "\n";
+        $result .= '<meta charset="utf-8">' . "\n";
+        // make sheet flood
+        $result .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
+        if ($title <> "") {
+            $result .= '<title>' . $title . ' (zukunft.com)</title>' . "\n";
+        } else {
+            $result .= '<title>zukunft.com</title>' . "\n";
+        }
+        if (self::UI_USE_BOOTSTRAP) {
+            // include the bootstrap stylesheets
+            $result .= '<link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">' . "\n";
+            // load the icon font
+            $result .= '<link rel="stylesheet" href="' . $url_ext_lib . 'fontawesome/css/all.css">' . "\n";
+            // TODO Prio 1 use const
+            $result .= '<link rel="stylesheet" href="/src/main/resources/style/style_html.css">' . "\n";
+            // include the bootstrap JavaScript plugins
+            // TODO Prio 1 check if still needed
+            //$result .= '  <script src="' . $url_ext_lib . $bs_path . api::BS_JS . '"></script>' . "\n";
+            // adjust the styles where needed
+            // TODO Prio 1 check if still needed
+            //$result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />' . "\n";
+            // TODO Prio 1 check if still needed
+            //$result .= '  <script defer src="' . $url_ext_lib . 'fontawesome/js/all.js"></script>' . "\n";
+        } else {
+            // use a simple stylesheet without Javascript
+            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />' . "\n";
+        }
+        $result .= '</head>';
+        if (self::UI_USE_BOOTSTRAP) {
+            $result .= '<body>';
+        } else {
+            if ($style <> "") {
+                $result .= '<body class="' . $style . '">';
+            } else {
+                $result .= '<body>' . "\n";
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * the html code for the navigation bar
+     *
+     * @param int $msk_id
+     * @return string the general HTML footer
+     */
+    function navbar(int $msk_id = 0): string
+    {
+        $result = '<nav class="navbar site-header fixed-top">' . "\n";
+        $result .= '<a class="navbar-brand" href="/http/view.php" title="zukunft.com">' . "\n";
+        $result .= '<img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;">' . "\n";
+        $result .= '</a>' . "\n";
+        $result .= '<form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">' . "\n";
+        $result .= '<label for="kp" class="visually-hidden">Search</label>' . "\n";
+        $result .= '<input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">' . "\n";
+        $result .= '<button class="btn btn-outline-primary" type="submit">Get numbers</button>' . "\n";
+        $result .= '</form>' . "\n";
+        $result .= '<div class="col-md-2">' . "\n";
+        $result .= '<ul class="nav navbar-nav">' . "\n";
+        $result .= '<li class="active">' . "\n";
+        $result .= '<details class="view-menu">' . "\n";
+        $result .= '<summary><i class="fas fa-edit"></i></summary>' . "\n";
+        $result .= '<ul>' . "\n";
+        $result .= '<li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>' . "\n";
+        $result .= '<li><a href="?view=more">... more</a></li>' . "\n";
+        $result .= '<li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>' . "\n";
+        $result .= '<li><a href="/http/view.php?m=view_add">add view</a></li>' . "\n";
+        $result .= '</ul>' . "\n";
+        $result .= '</details>' . "\n";
+        $result .= '<details class="lang-menu">' . "\n";
+        $result .= '<summary><i class="fas fa-globe"></i></summary>' . "\n";
+        $result .= '<ul>' . "\n";
+        $result .= '<li><a href="?lang=en">English</a></li>' . "\n";
+        $result .= '<li><a href="?lang=de">Deutsch</a></li>' . "\n";
+        $result .= '<li><a href="?lang=fr">Français</a></li>' . "\n";
+        $result .= '<li><a href="?lang=more">... more</a></li>' . "\n";
+        $result .= '</ul>' . "\n";
+        $result .= '</details>' . "\n";
+        $result .= '<details class="user-menu">' . "\n";
+        $result .= '<summary><i class="fas fa-user-circle"></i></summary>' . "\n";
+        $result .= '<ul>' . "\n";
+        $result .= '<li><a href="/http/login.php">log in</a></li>' . "\n";
+        $result .= '<li><a href="/http/signup.php">Sign in</a></li>' . "\n";
+        $result .= '<li><a href="/settings">Settings</a></li>' . "\n";
+        $result .= '</ul>' . "\n";
+        $result .= '</details>' . "\n";
+        $result .= '</li>' . "\n";
+        $result .= '</ul>' . "\n";
+        $result .= '</div>' . "\n";
+        $result .= '</nav>' . "\n";
+
+        return $result;
+    }
+
+    /**
+     * @param bool $no_about
+     * @return string the general HTML footer
+     */
+    function footer(bool $no_about = false): string
+    {
+        $result = '<footer class="site-footer">' . "\n";
+
+        // for the about page this does not make sense
+        $result .= '<p> ' . "\n";
+        if (!$no_about) {
+            $url = $this->url(rest_ctrl::URL_ABOUT);
+            $result .= $this->ref($url, "About") . ' &middot; ' . "\n";
+            $result .= '<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; ' . "\n";
+        }
+        $result .= 'All structured data is available under the ';
+        $result .= '<a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> ' . "\n";
+        $result .= 'Licence unless otherwise stated and the ' . "\n";
+        $result .= '<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> ' . "\n";
+        $result .= 'under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence. ' . "\n";
+        $result .= '</p> ' . "\n";
+
+        $result .= '</footer>' . "\n";
+        $result .= '</body>' . "\n";
+        $result .= '</html>' . "\n";
+
+        return $result;
+    }
+
+    /**
+     * @param string $title simple the HTML title used
+     * @param string $style e.g. to center for the login page
+     * @returns string the general HTML header
+     */
+    function header_old(
+        string $title,
+        string $style = "",
+        string $server_url = '',
+        string $bs_path = '',
+        string $bs_css_path = ''
+    ): string
+    {
+        // set the fallback values
+        if ($server_url == '') {
+            $server_url = api::HOST_PROD;
+        }
+        if ($bs_path == '') {
+            $bs_path = api::BS_PATH_PROD;
+        }
+        if ($bs_css_path == '') {
+            $bs_css_path = api::BS_CSS_PATH_PROD;
+        }
+
+        // set vars to shorten the lines
+        //$url_ext_lib = $server_url . api::EXT_LIB_PATH;
+        $url_ext_lib = '/' . api::EXT_LIB_PATH;
+
         $result = '<!DOCTYPE html>';
         $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language
         if ($title <> "") {
@@ -219,8 +374,7 @@ class html_base
         }
         $result .= '</head>';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<body>';
-            $result .= '  <div class="container">';
+            $result .= '<body>' . "\n";
         } else {
             if ($style <> "") {
                 $result .= '<body class="' . $style . '">';
@@ -254,27 +408,27 @@ class html_base
 
         $result = '<!DOCTYPE html>';
         $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language
+        $result .= '<head>' . "\n";
+        $result .= '<meta charset="utf-8">' . "\n";
+        // make sheet flood
+        $result .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
         if ($title <> "") {
-            $result .= '<head><title>' . $title . ' (zukunft.com)</title>';
+            $result .= '<title>' . $title . ' (zukunft.com)</title>';
         } else {
-            $result .= '<head><title>zukunft.com</title>';
+            $result .= '<title>zukunft.com</title>';
         }
-        $result .= '  <meta charset="utf-8">';
         if (self::UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
             $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">';
-            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />';
             // load the icon font
             $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . 'fontawesome/css/all.css">';
+            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_html.css" />';
         } else {
             // use a simple stylesheet without Javascript
-            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />';
+            $result .= '<link rel="stylesheet" href="/src/main/resources/style/style_html.css">' . "\n";
         }
         $result .= '</head>';
         $result .= '<body>';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= '  <div class="container">';
-        }
 
         return $result;
     }
@@ -283,7 +437,7 @@ class html_base
      * @param bool $no_about
      * @return string the general HTML footer
      */
-    function footer(bool $no_about = false): string
+    function footer_old(bool $no_about = false): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
@@ -885,6 +1039,10 @@ class html_base
         $result .= '8707 Uetikon am See<br>';
         $result .= 'Switzerland<br><br>';
         $result .= '<a href="mailto:timon@zukunft.com">timon@zukunft.com</a><br><br>';
+        $result .= 'One of the main ideas is to use ';
+        $result .= '<a href="https://dx.doi.org/10.2139/ssrn.6497759">Real-Time Delphi Based on the Giant Global Graph: A Framework for Fair and Evidence-Based Decision-Making</a>. ';
+        $result .= 'Once implemented it might be possible ';
+        $result .= '<a href="https://doi.org/10.5281/zenodo.19443909">Implementing the Categorical Imperative in Practice</a>.<br><br>';
         $result .= 'zukunft.com AG also supports the ';
         $result .= $this->ref("https://github.com/zukunft/tream", "Open Source", "github.com link") . ' Portfolio Management System<br><br>';
         $result .= '<a href="https://tream.biz/p4a/applications/tream/" title="TREAM demo">';
@@ -1738,7 +1896,7 @@ class html_base
      * @param string $txt the html body code
      * @return string the warped body code
      */
-    private function main(string $txt): string
+    function main(string $txt): string
     {
         return '<main class="' . self::CLASS_MAIN . '">' . $txt . '</main>';
     }

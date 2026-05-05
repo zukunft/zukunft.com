@@ -341,6 +341,11 @@
         "Pi",
         "Euler's constant"
       ]
+    },
+    {
+      "name": "System log",
+      "description": "show the most relevant system log entries (placeholder only at the moment)",
+      "code_id": "system_log"
     }
   ]
 }

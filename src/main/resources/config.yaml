@@ -257,6 +257,12 @@ zukunft.com:
               target:
                 sys-conf-value: 1
                 tooltip-comment: "seconds after the user should see a screen update e.g. during long calculations every 2 sec the user should seen the screen updated"
+              log:
+                sys-conf-value: 1.2
+                tooltip-comment: "if a user response takes more seconds the requesting url if written to the system time log for analysis"
+              detail:
+                sys-conf-value: 2
+                tooltip-comment: "if a user response takes more seconds a log of the single execution steps is written to the system time log"
           time:
             tooltip-comment: "time related user-specific settings"
             min columns:

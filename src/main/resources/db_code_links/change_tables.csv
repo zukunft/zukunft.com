@@ -118,3 +118,6 @@ change_table_id, change_table_name, description, code_id
 117,'job_statuum',,'job_statuum'
 118,'system_time_types',,'system_time_types'
 119,'user_statuum',,'user_statuum'
+120,'db_cache_statuum',,'db_cache_statuum'
+121,'db_cache_types',,'db_cache_types'
+122,'db_caches',,'db_caches'

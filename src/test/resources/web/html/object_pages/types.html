@@ -1,77 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>test types (zukunft.com)</title>
+<head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test types (zukunft.com)</title>
     <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
     <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_html.css"/>
 </head>
 <body>
-<div class="container">
-    <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
-            src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="kp"></label><input
-                class="form-control mr-sm-2" type="search" name="pattern" id="kp" placeholder="word or formula">
-            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
-        </form>
-        <div class="col-md-2">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="/http/view.php?m=74" title=""></a></li>
-                <li class="active"></li>
-                <li class="active"><a href="/http/view.php?m=view_edit&id=1" title="adjust the view"><i
-                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=1"
-                                                       title="create a new view"><i class="far fa-plus-square"></i></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <br><br><br><br><br>
+<nav class="navbar site-header fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
+        src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
+    <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3"><label for="kp"
+                                                                                                         class="visually-hidden">Search</label><input
+            class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
+            style="min-width: 40vw; max-width: 800px;">
+        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
+    </form>
+    <div class="col-md-2">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <details class="view-menu">
+                    <summary><i class="fas fa-edit"></i></summary>
+                    <ul>
+                        <li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>
+                        <li><a href="?view=more">... more</a></li>
+                        <li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>
+                        <li><a href="/http/view.php?m=view_add">add view</a></li>
+                    </ul>
+                </details>
+                <details class="lang-menu">
+                    <summary><i class="fas fa-globe"></i></summary>
+                    <ul>
+                        <li><a href="?lang=en">English</a></li>
+                        <li><a href="?lang=de">Deutsch</a></li>
+                        <li><a href="?lang=fr">Français</a></li>
+                        <li><a href="?lang=more">... more</a></li>
+                    </ul>
+                </details>
+                <details class="user-menu">
+                    <summary><i class="fas fa-user-circle"></i></summary>
+                    <ul>
+                        <li><a href="/http/login.php">log in</a></li>
+                        <li><a href="/http/signup.php">Sign in</a></li>
+                        <li><a href="/settings">Settings</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main class="main-container">
     <div class="row col-md-12">All type selectors</div>
     <table class="table">
         <thead>
         <tr>
             <th scope="col">Priority</th>
             <th scope="col">Problem</th>
-            <th class="text-right" scope="col">Costs in <a href="/http/view.php?m=88&id=255"
+            <th class="text-right" scope="col">Costs in <a href="/http/view.php?m=89&id=255"
                                                            title="trillion">trillion</a> <a
-                    href="/http/view.php?m=88&id=258" title="USD">USD</a></th>
+                    href="/http/view.php?m=89&id=258" title="USD">USD</a></th>
             <th scope="col">Solution</th>
-            <th class="text-right" scope="col">Gain in <a href="/http/view.php?m=88&id=158" title="billion">billion</a>
-                <a href="/http/view.php?m=88&id=254" title="htp">htp</a></th>
+            <th class="text-right" scope="col">Gain in <a href="/http/view.php?m=89&id=158" title="billion">billion</a>
+                <a href="/http/view.php?m=89&id=254" title="htp">htp</a></th>
         </tr>
         </thead>
         <tbody>
         <tr>
             <th scope="row">1</th>
-            <td><a href="/http/view.php?m=90&id=99" title="global warming">global warming</a></td>
+            <td><a href="/http/view.php?m=91&id=99" title="global warming">global warming</a></td>
             <td class="text-right">31.5</td>
             <td>reduce climate gas emissions</td>
             <td class="text-right">35.2</td>
         </tr>
         <tr>
             <th scope="row">2</th>
-            <td><a href="/http/view.php?m=88&id=226" title="populism">populism</a></td>
+            <td><a href="/http/view.php?m=89&id=226" title="populism">populism</a></td>
             <td class="text-right">23.8</td>
             <td>avoid wrong decisions</td>
             <td class="text-right">34.1</td>
         </tr>
         <tr>
             <th scope="row">3</th>
-            <td><a href="/http/view.php?m=88&id=242" title="health">health</a></td>
+            <td><a href="/http/view.php?m=89&id=242" title="health">health</a></td>
             <td class="text-right">20.4</td>
             <td>research</td>
             <td class="text-right">34.1</td>
         </tr>
         <tr>
             <th scope="row">4</th>
-            <td><a href="/http/view.php?m=88&id=244" title="poverty">poverty</a></td>
+            <td><a href="/http/view.php?m=89&id=244" title="poverty">poverty</a></td>
             <td class="text-right">13.6</td>
             <td>taxes</td>
             <td class="text-right">8.8</td>
         </tr>
         <tr>
             <th scope="row">5</th>
-            <td><a href="/http/view.php?m=88&id=246" title="education">education</a></td>
+            <td><a href="/http/view.php?m=89&id=246" title="education">education</a></td>
             <td class="text-right">9.4</td>
             <td>spending</td>
             <td class="text-right">14.3</td>
@@ -316,6 +341,11 @@
             <option value="35">spreadsheet</option>
             <option value="64">system about</option>
             <option value="105">system activate</option>
+            <option value="185">system admin delayed jobs</option>
+            <option value="182">system admin failed logins</option>
+            <option value="184">system admin pending error fixes</option>
+            <option value="181">system admin response times</option>
+            <option value="183">system admin unassigned errors</option>
             <option value="65">system body error log</option>
             <option value="66">system body error update</option>
             <option value="68">system body process list</option>
@@ -461,14 +491,12 @@
         <br>
         <button type="submit" class="btn btn-outline-success btn-space">view</button>
     </form>
-</div>
-<footer>
-    <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot; <a
-            href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
-        available under the <a href="//creativecommons.org/publicdomain/zero/1.0/"
-                               title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License
-        and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a
-                href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License</small></div>
-</footer>
+</main>
+<footer class="site-footer"><p><a href="/http/about.php" title="About">About</a> &middot; <a
+        href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
+    available under the <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative
+        Commons CC0</a> Licence unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com"
+                                                                   title="program code">program code</a> under the <a
+            href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence.</p></footer>
 </body>
 </html>

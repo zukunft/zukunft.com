@@ -354,9 +354,10 @@ class frontend
 
             // load system configuration
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+            $sys->load_cache_type($db_con);
             // TODO cache the system config json and detect
             $cfg = new config_numbers($usr_sys);
-            $cfg->load_cfg($usr_sys);
+            $cfg->load_cfg(null, $usr_sys);
             $mtr = new Translator($cfg->language());
 
             // preload all types from the database
@@ -410,7 +411,7 @@ class frontend
 
         // html header
         $html = new html_base();
-        echo $html->header($title, '', api::HOST_DEV, api::BS_PATH_DEV, api::BS_CSS_PATH_DEV);
+        echo $html->header_old($title, '', api::HOST_DEV, api::BS_PATH_DEV, api::BS_CSS_PATH_DEV);
 
         if (self::HOST_SYS_LOG != '') {
             $result .= $this->log_info('start ' . $this->code_name);
@@ -768,7 +769,8 @@ class frontend
                 } else {
                     $html = new html_base();
                     $result .= $html->header($title, '');
-                    $result .= $dsp_text;
+                    $result .= $html->navbar($view_id);
+                    $result .= $html->main($dsp_text);
                     $result .= $html->footer();
                 }
             }

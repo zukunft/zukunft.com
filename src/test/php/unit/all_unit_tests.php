@@ -123,6 +123,7 @@ class all_unit_tests extends test_cleanup
         new sandbox_tests()->run($this);
         new language_tests()->run($this); // TODO add assert_api_to_ui
         new type_tests()->run($this); // TODO add assert_api_to_ui
+        new db_cache_tests()->run($this);
 
         // do the user object unit tests
         new horizontal_tests()->run($this);

@@ -53,6 +53,7 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
@@ -213,6 +214,7 @@ include_once test_paths::UNIT . 'user_tests.php';
 include_once test_paths::UNIT . 'user_list_tests.php';
 include_once test_paths::UNIT . 'sandbox_tests.php';
 include_once test_paths::UNIT . 'type_tests.php';
+include_once test_paths::UNIT . 'db_cache_tests.php';
 include_once test_paths::UNIT . 'horizontal_tests.php';
 include_once test_paths::UNIT . 'word_tests.php';
 include_once test_paths::UNIT . 'word_list_tests.php';
@@ -1066,6 +1068,10 @@ class test_base
             $usr_obj->import_obj($json_in, $usr_msg, $dto);
             //$this->set_id_for_unit_tests($usr_obj);
             $json_ex = $usr_obj->export_json([], false);
+            // TODO Prio 2 remove exception
+            if ($usr_obj::class == user::class) {
+                $json_ex = $this->json_remove_volatile($json_ex);
+            }
             // TODO remove, for faster debugging only
             $json_in_txt = json_encode($json_in);
             $json_ex_txt = json_encode($json_ex);
@@ -4581,7 +4587,7 @@ class test_base
     function html_page(string $body): string
     {
         $html = new html_base();
-        return $html->header_test('test') . $body . $html->footer();
+        return $html->header_test('test') . $html->navbar(views::START_ID) . $html->main($body) . $html->footer();
     }
 
     function class_without_namespace(string $class_name_with_namespace): string

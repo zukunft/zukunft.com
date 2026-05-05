@@ -142,7 +142,7 @@ class system_views_read_tests
         $html = new html_base();
         $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../main/resources/style/style.css" /> </head> <body class="center_form">'));
         $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
-        $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
+        $result = htmlspecialchars(trim($html->header_old('Header test', 'center_form')));
         $t->dsp_contains(", dsp_header", $target, $result);
 
         // check if the about page contains at least some basic keywords

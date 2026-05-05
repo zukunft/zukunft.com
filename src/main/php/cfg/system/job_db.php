@@ -98,7 +98,6 @@ class job_db
 
     // all database field names excluding the id used to identify if there are some user-specific changes
     const array FLD_NAMES = array(
-        self::FLD_ID,
         self::FLD_TYPE,
         self::FLD_STATUS,
         self::FLD_TIME_REQUEST,

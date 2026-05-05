@@ -4,3 +4,6 @@ sys_log_function_id, sys_log_function_name, code_id, description
 3, 'Import system configuration', 'import_base_config', 'Import the default system and user configuration'
 4, 'Import pod configuration', 'import_pod_config', 'Import the default pod configuration'
 5, 'Import test configuration', 'import_test_config', 'Import the configuration for system consistency tests'
+6, 'api/config', 'api/config', 'request the configuration via api'
+7, 'cfg/application', 'cfg/application', 'fallback entry to log system errors'
+8, 'cfg/helper/config_numbers', 'cfg/helper/config_numbers', 'loader for the system and user configuration'

@@ -1194,6 +1194,17 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not found';
 
+    case CACHE_STATUS_MISSING = 'cache status '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case CACHE_TYPE_MISSING = 'cache type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+
     case SYS_LOG_TYPE_MISSING = 'system log type '
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
         . ' for '
@@ -1323,6 +1334,14 @@ enum messages: string
     case CLASS_LIST_UNEXPECTED = 'Cannot create type for the list class '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' because no matching type has been assigned in the code';
+
+    case CACHE_TYPE_INVALID = 'the database cache type for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
+
+    case CACHE_STATUS_INVALID = 'the database cache status for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
 
     case JOB_TYPE_INVALID = 'the job type for job '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
@@ -1581,6 +1600,9 @@ enum messages: string
     case FORM_TITLE_PROCESS_ASYNC = 'system_title_process_async';
     case FORM_TITLE_PROCESS_LIST = 'system_title_process_list';
     case FORM_TITLE_PROCESS = 'system_title_process';
+
+    // admin dashboard
+    case FORM_TITLE_ADMIN = 'system_title_admin';
 
     // fixed system page titles
     case SYSTEM_TITLE_ABOUT = 'system_title_about';

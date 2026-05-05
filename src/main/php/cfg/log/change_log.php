@@ -367,7 +367,7 @@ class change_log extends db_object_seq_id_user
                         $db_changed = true;
                     }
                 } else {
-                    log_err("Cannot add field name " . $field_name . ' for table id ' . $this->table_id . '. Probably field needs to be added to the src/main/resources/db_code_links/change_fields.csv');
+                    log_err('Cannot add field name "' . $field_name . '" for table id ' . $this->table_id . '. Probably field needs to be added to the src/main/resources/db_code_links/change_fields.csv');
                 }
             }
         } else {

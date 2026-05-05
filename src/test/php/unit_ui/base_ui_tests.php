@@ -105,7 +105,7 @@ class base_ui_tests
 
         $created_html = $html->about_page();
         $expected_html = $t->file(test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'about.html');
-        $t->assert('about', $lib->trim_html($expected_html), $lib->trim_html($created_html));
+        $t->assert('about', $lib->trim_html($created_html), $lib->trim_html($expected_html));
 
 
         $t->subheader($ts . 'selector');

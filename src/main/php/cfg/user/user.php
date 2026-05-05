@@ -1288,22 +1288,24 @@ class user extends db_id_object_non_sandbox
         $test_result = $ip_lst->includes($ip_addr);
         if (!$test_result->is_ok()) {
             $this->id = 0; // switch off the permission
+            log_info('ip_check rejects due to ' . $test_result->text());
         }
         return $test_result->all_message_text();
     }
 
     /**
+     * set the ip of the
      * @return string the ip address of the active user
      */
-    private function get_ip(): string
+    private function get_ip(): void
     {
         if (array_key_exists(rest_ctrl::REMOTE_ADDR, $_SERVER)) {
             $this->ip_addr = $_SERVER[rest_ctrl::REMOTE_ADDR];
         }
+        // TODO Prio 1 switch this off!!
         if ($this->ip_addr == null) {
             $this->ip_addr = users::SYSTEM_ADMIN_IP;
         }
-        return $this->ip_addr;
     }
 
     /**
@@ -1321,7 +1323,7 @@ class user extends db_id_object_non_sandbox
         if ($this->ip_addr == '') {
             $this->get_ip();
         } else {
-            log_debug(' (' . $this->ip_addr . ')', $debug - 1);
+            log_debug('by given ip addr ' . $this->ip_addr, $debug - 1);
         }
         // even if the user has an open session, but the ip is blocked, drop the user
         $result .= $this->ip_check($this->ip_addr);
@@ -1329,33 +1331,38 @@ class user extends db_id_object_non_sandbox
         if ($result == '') {
             // if the user has logged in use the logged in account
             if (isset($_SESSION[url_var::SESSION_LOGGED])) {
+                log_debug('use session');
                 if ($_SESSION[url_var::SESSION_LOGGED]) {
                     $this->load_by_id($_SESSION[url_var::SESSION_USER_ID]);
-                    log_debug('use (' . $this->id . ')');
+                    log_debug('use session id ' . $this->id);
                 }
             } else {
-                // else use the IP address (for testing don't overwrite any testing ip)
-                $this->load_by_ip($this->get_ip());
-                if ($this->id <= 0) {
-                    // use the ip address as the username and add the user
-                    $this->name = $this->get_ip();
-
-                    // allow to fill the database only if a local user has logged in
-                    if ($this->name == users::SYSTEM_ADMIN_IP) {
-
-                        // create the main system user upfront direct from the code
-                        // but only if needed and allowed which is only the case directly after the database structure creation
-                        // TODO switch this fallback off because it should anyway never be called
-                        $this->create_system_user($usr_msg);
-
-                    } else {
-                        $this->save_user($usr_msg);
-                    }
-                    $result = $usr_msg->get_last_message();
-                }
+                log_info('ip check result is ' . $result);
             }
         }
-        log_debug(' "' . $this->name . '" (' . $this->id . ')');
+        if ($this->id <= 0 and $result == '') {
+            // else use the IP address (for testing don't overwrite any testing ip)
+            log_debug('load by ip addr ' . $this->ip_addr);
+            $this->load_by_ip($this->ip_addr);
+            if ($this->id <= 0) {
+                // use the ip address as the username and add the user
+                $this->name = $this->ip_addr;
+
+                // allow to fill the database only if a local user has logged in
+                if ($this->name == users::SYSTEM_ADMIN_IP) {
+
+                    // create the main system user upfront direct from the code
+                    // but only if needed and allowed which is only the case directly after the database structure creation
+                    // TODO switch this fallback off because it should anyway never be called
+                    $this->create_system_user($usr_msg);
+
+                } else {
+                    $this->save_user($usr_msg);
+                }
+                $result = $usr_msg->get_last_message();
+            }
+        }
+        log_debug(' done with "' . $this->name . '" (' . $this->id . ')');
         return $result;
     }
 
@@ -1481,6 +1488,7 @@ class user extends db_id_object_non_sandbox
 
     /**
      * true if the login user is in general allowed to insert anything in this user
+     * TODO Prio 2 review and add mor profiles
      *
      * @param user $usr_req the user who has request the user adding
      * @return bool true if the logged-in user is the user itself or an admin
@@ -1497,6 +1505,9 @@ class user extends db_id_object_non_sandbox
         } elseif ($usr_req->is_normal()) {
             $can_add = true;
             log_info('user ' . $this->dsp_id() . ' is added by user ' . $usr_req->dsp_id());
+        } elseif ($this->is_normal()) {
+            $can_add = true;
+            log_info('normal user ' . $this->dsp_id() . ' is added by user ' . $usr_req->dsp_id());
         } else {
             log_warning('privileged user ' . $usr_req->dsp_id() . ' has requested to added by non admin user ' . $this->dsp_id() . ' without permission');
         }
@@ -2388,7 +2399,7 @@ class user extends db_id_object_non_sandbox
         global $usr;
 
         if ($usr_req == null) {
-            $usr_req = $usr;
+            $usr_req = clone $usr;
         }
 
         // configure the global database connection object for the select, insert, update and delete queries
@@ -2578,8 +2589,10 @@ class user extends db_id_object_non_sandbox
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
             $msg_txt = 'add and log ' . $this->dsp_id();
-            if ($db_con->insert($qp, $msg_txt, $msg)) {
-                $this->id = $msg->get_row_id();
+            if ($db_con->is_open()) {
+                if ($db_con->insert($qp, $msg_txt, $msg)) {
+                    $this->id = $msg->get_row_id();
+                }
             }
         } else {
             log_debug('no permission to add user ' . $this->dsp_id());

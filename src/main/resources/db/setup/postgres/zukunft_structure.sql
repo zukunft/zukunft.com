@@ -152,6 +152,7 @@ CREATE TABLE IF NOT EXISTS system_times
     start_time          timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     end_time            timestamp DEFAULT NULL,
     system_time_type_id smallint      NOT NULL,
+    url                 text      DEFAULT NULL,
     milliseconds        bigint        NOT NULL
 );
 
@@ -160,7 +161,71 @@ COMMENT ON COLUMN system_times.system_time_id IS 'the internal unique primary in
 COMMENT ON COLUMN system_times.start_time IS 'start time of the monitoring period';
 COMMENT ON COLUMN system_times.end_time IS 'end time of the monitoring period';
 COMMENT ON COLUMN system_times.system_time_type_id IS 'the area of the execution time e.g. db write';
+COMMENT ON COLUMN system_times.url IS 'the request url as received from the frontend by a user action';
 COMMENT ON COLUMN system_times.milliseconds IS 'the execution time in milliseconds';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for predefined database cache type e.g. system config or user config
+--
+
+CREATE TABLE IF NOT EXISTS db_cache_types
+(
+    type_id SERIAL PRIMARY KEY,
+    type_name   varchar(255) NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
+);
+
+COMMENT ON TABLE db_cache_types IS 'for predefined database cache type e.g. system config or user config';
+COMMENT ON COLUMN db_cache_types.type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN db_cache_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN db_cache_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN db_cache_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for predefined database cache status e.g. dirty,updating or outdated
+--
+
+CREATE TABLE IF NOT EXISTS db_cache_statuum
+(
+    status_id SERIAL PRIMARY KEY,
+    status_name varchar(255) NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
+);
+
+COMMENT ON TABLE db_cache_statuum IS 'for predefined database cache status e.g. dirty,updating or outdated';
+COMMENT ON COLUMN db_cache_statuum.status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN db_cache_statuum.status_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN db_cache_statuum.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN db_cache_statuum.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
+-- table structure precollected data for faster response times in the json format
+--
+
+CREATE TABLE IF NOT EXISTS db_caches
+(
+    db_cache_id        BIGSERIAL PRIMARY KEY,
+    type_id   smallint NOT NULL,
+    data               text DEFAULT NULL,
+    user_id            bigint NOT NULL,
+    status_id smallint NOT NULL DEFAULT 1,
+    last_update        timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP);
+
+COMMENT ON TABLE db_caches IS 'precollected data for faster response times in the json format';
+COMMENT ON COLUMN db_caches.db_cache_id IS 'the internal unique primary index';
+COMMENT ON COLUMN db_caches.type_id IS 'to separate the system,user and frontend configuration';
+COMMENT ON COLUMN db_caches.data IS 'the cached data as text';
+COMMENT ON COLUMN db_caches.user_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
+COMMENT ON COLUMN db_caches.status_id IS 'clean,dirty,updating,outdated or unused';
+COMMENT ON COLUMN db_caches.last_update IS 'timestamp of the last update of the cache';
 
 -- --------------------------------------------------------
 
@@ -5434,6 +5499,33 @@ CREATE INDEX system_times_system_time_type_idx ON system_times (system_time_type
 -- --------------------------------------------------------
 
 --
+-- indexes for table db_cache_types
+--
+
+CREATE INDEX db_cache_types_type_name_idx ON db_cache_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table db_cache_statuum
+--
+
+CREATE INDEX db_cache_statuum_status_name_idx ON db_cache_statuum (status_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table db_caches
+--
+
+CREATE INDEX db_caches_type_idx   ON db_caches (type_id);
+CREATE INDEX db_caches_user_idx            ON db_caches (user_id);
+CREATE INDEX db_caches_status_idx ON db_caches (status_id);
+CREATE INDEX db_caches_last_update_idx     ON db_caches (last_update);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table job_statuum
 --
 
@@ -7086,6 +7178,15 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_sys_log_level_fk FOREIGN KEY (sys_log_level_id) REFERENCES sys_log_levels (sys_log_level_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_statuum (sys_log_status_id);
+
+--
+-- constraints for table db_caches
+--
+
+ALTER TABLE db_caches
+    ADD CONSTRAINT db_caches_db_cache_type_fk   FOREIGN KEY (type_id)   REFERENCES db_cache_types   (type_id),
+    ADD CONSTRAINT db_caches_user_fk            FOREIGN KEY (user_id)            REFERENCES users            (user_id),
+    ADD CONSTRAINT db_caches_db_cache_status_fk FOREIGN KEY (status_id) REFERENCES db_cache_statuum (status_id);
 
 --
 -- constraints for table job_times

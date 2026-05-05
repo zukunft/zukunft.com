@@ -132,6 +132,16 @@ class system_object
     }
 
     /**
+     * load the cache types and statuum upfront from the database
+     * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @return bool
+     */
+    function load_cache_type(sql_db $db_con): bool
+    {
+        return $this->typ_lst->load_cache($db_con);
+    }
+
+    /**
      * load all system users that have a code id
      */
     function load_system_users(sql_db $db_con): bool

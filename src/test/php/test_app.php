@@ -179,9 +179,10 @@ class test_app
 
             // load system configuration
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+            $sys->load_cache_type($db_con);
             // TODO cache the system config json and detect
             $cfg = new config_numbers($usr_sys);
-            $cfg->load_cfg($usr_sys);
+            $cfg->load_cfg(null, $usr_sys);
             $mtr = new Translator($cfg->language());
 
             // preload all types from the database
@@ -215,7 +216,7 @@ class test_app
 
         if ($echo_header) {
             $html = new html_base();
-            echo $html->footer();
+            echo $html->footer_old();
         }
 
         $this->write_time($db_con);
@@ -247,7 +248,10 @@ class test_app
                 $sys_usr->load_by_id(users::SYSTEM_ID);
                 $msg = new user_message($sys_usr);
                 $sys_script->save($msg);
-                $sys_script_id = $sys_script->id();
+                if ($msg->is_ok()) {
+                    $sys_script_id = $sys_script->id();
+                    $sys->typ_lst->sys_log_fnc->add($sys_script);
+                }
             }
             $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
             $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);

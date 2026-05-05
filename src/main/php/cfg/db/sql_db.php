@@ -58,6 +58,9 @@ include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_cache.php';
+include_once paths::MODEL_HELPER . 'db_cache_status.php';
+include_once paths::MODEL_HELPER . 'db_cache_type.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
@@ -159,6 +162,8 @@ include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_HELPER . 'Message.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
+include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -186,6 +191,9 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -279,6 +287,8 @@ use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -379,6 +389,9 @@ class sql_db
         sys_log::class,
         system_time_type::class,
         system_time::class,
+        db_cache_status::class,
+        db_cache_type::class,
+        db_cache::class,
         job_status::class,
         job_type::class,
         job_time::class,
@@ -501,6 +514,9 @@ class sql_db
         sys_log::class,
         sys_log_status::class,
         sys_log_function::class,
+        db_cache::class,
+        db_cache_status::class,
+        db_cache_type::class,
         share_type::class,
         protection_type::class,
         user::class,
@@ -573,6 +589,7 @@ class sql_db
         change_link::class,
         sys_log::class,
         job::class,
+        db_cache::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
     const array CLASSES_WITH_USER_CHANGES = [
@@ -2402,6 +2419,13 @@ class sql_db
         if ($result == 'job_typess') {
             $result = 'job_types';
         }
+        // for the database upgrade process only
+        if ($result == 'db_cache_statuss') {
+            $result = 'db_cache_statuum';
+        }
+        if ($result == 'db_cache_typess') {
+            $result = 'db_cache_types';
+        }
         if ($result == 'component_typess') {
             $result = 'component_types';
         }
@@ -2476,6 +2500,12 @@ class sql_db
         }
         if ($result == 'blocked_ip_id') {
             $result = 'ip_range_id';
+        }
+        if ($result == 'db_cache_status_id') {
+            $result = 'status_id';
+        }
+        if ($result == 'db_cache_type_id') {
+            $result = 'type_id';
         }
         return $result;
     }
@@ -2579,6 +2609,12 @@ class sql_db
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'job_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'db_cache_status_name') {
+            $result = db_cache_status::FLD_NAME;
+        }
+        if ($result == 'db_cache_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)

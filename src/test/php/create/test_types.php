@@ -46,6 +46,8 @@ include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_ELEMENT . 'element_type.php';
 include_once paths::MODEL_FORMULA . 'formula_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_HELPER . 'db_cache_status.php';
+include_once paths::MODEL_HELPER . 'db_cache_type.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
@@ -90,6 +92,8 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'component_link_types.php';
+include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED_TYPES . 'formula_types.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
@@ -119,6 +123,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
@@ -163,6 +169,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
@@ -296,6 +304,30 @@ class test_types
             job_types::VALUE_UPDATE_NAME,
             job_types::VALUE_UPDATE_COM,
             job_types::VALUE_UPDATE_ID);
+    }
+
+    /**
+     * @return db_cache_status "update value" as the main db_cache type
+     */
+    function db_cache_status(): db_cache_status
+    {
+        return new db_cache_status(
+            db_cache_statuum::CLEAN,
+            db_cache_statuum::CLEAN_NAME,
+            db_cache_statuum::CLEAN_COM,
+            db_cache_statuum::CLEAN_ID);
+    }
+
+    /**
+     * @return db_cache_type "update value" as the main db_cache type
+     */
+    function db_cache_type(): db_cache_type
+    {
+        return new db_cache_type(
+            db_cache_types::SYSTEM_CONFIG,
+            db_cache_types::SYSTEM_CONFIG_NAME,
+            db_cache_types::SYSTEM_CONFIG_COM,
+            db_cache_types::SYSTEM_CONFIG_ID);
     }
 
     /**
