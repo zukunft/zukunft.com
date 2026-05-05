@@ -36,9 +36,11 @@ class db_cache_types
 
     // list of the db_cache types that have a coded functionality
     const string SYSTEM_CONFIG = "system_config";
-    const int SYSTEM_CONFIG_ID = 1;
+    const int SYSTEM_CONFIG_ID = 1; // used for unit testing
     const string SYSTEM_CONFIG_NAME = "system configuration";
     const string SYSTEM_CONFIG_COM = "the complete json of the system configuration";
+    const string TYPES = "types";
+    const int TYPES_ID = 2; // fixed for direct loading
     const string USER_CONFIG = "user_config";
     const string USER_FRONTEND_CONFIG = "user_ui_config";
     const string FRONTEND_CONFIG = "ui_config";

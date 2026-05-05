@@ -107,11 +107,11 @@ class db_cache extends db_object_seq_id_user
      */
 
     // database fields
-    public ?int $type_id = null;          // id of the db_cache type e.g. "system config", "frontend config", ... because getting the type is fast from the preloaded type list
-    public ?array $data = null;           // the object data as an json array
-    public ?user $usr = null;             // the complete user object or null for fast handling
-    public ?int $status_id = null;        // id of the db_cache status e.g. "clean", "dirty", ...
-    public ?DateTime $last_update = null; // time when the db_cache has last been refreshed
+    public ?int $type_id = null;           // id of the db_cache type e.g. "system config", "frontend config", ... because getting the type is fast from the preloaded type list
+    public array|string|null $data = null; // the object data as an json array
+    public ?user $usr = null;              // the complete user object or null for fast handling
+    public ?int $status_id = null;         // id of the db_cache status e.g. "clean", "dirty", ...
+    public ?DateTime $last_update = null;  // time when the db_cache has last been refreshed
 
 
     /*
@@ -203,10 +203,24 @@ class db_cache extends db_object_seq_id_user
      */
     function load_by_type(string $typ_code_id): int
     {
+        global $sys;
+        $typ_lst = $sys->typ_lst->cac_typ;
+        $id = $typ_lst->id($typ_code_id);
+        return $this->load_by_type_id($id);
+    }
+
+    /**
+     * load the cache of the given type
+     *
+     * @param int $id the id of the user sandbox object
+     * @return int the id of the data cache entry
+     */
+    function load_by_type_id(int $id): int
+    {
         global $db_con;
 
-        log_debug($typ_code_id);
-        $qp = $this->load_sql_by_type($db_con->sql_creator(), $typ_code_id);
+        log_debug($id);
+        $qp = $this->load_sql_by_type_id($db_con->sql_creator(), $id);
         return $this->load($qp);
     }
 
@@ -214,14 +228,11 @@ class db_cache extends db_object_seq_id_user
      * create an SQL statement to retrieve a batch db_cache by id from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param string $typ_code_id the code id of the user sandbox object
+     * @param int $id the id of the cache type
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_by_type(sql_creator $sc, string $typ_code_id): sql_par
+    function load_sql_by_type_id(sql_creator $sc, int $id): sql_par
     {
-        global $sys;
-        $typ_lst = $sys->typ_lst->cac_typ;
-        $id = $typ_lst->id($typ_code_id);
         $qp = $this->load_sql($sc, sql_db::FLD_ID);
         $sc->add_where(db_cache_db::FLD_TYPE, $id);
         $qp->sql = $sc->sql();
@@ -334,12 +345,21 @@ class db_cache extends db_object_seq_id_user
                 $sys->typ_lst->cac_typ);
         }
         if ($obj->data != $this->data) {
-            $lst->add_field(
-                db_cache_db::FLD_DATA,
-                json_encode($this->data),
-                sql_field_type::TEXT,
-                json_encode($obj->data)
-            );
+            if (is_string($this->data)) {
+                $lst->add_field(
+                    db_cache_db::FLD_DATA,
+                    $this->data,
+                    sql_field_type::TEXT,
+                    $obj->data
+                );
+            } else {
+                $lst->add_field(
+                    db_cache_db::FLD_DATA,
+                    json_encode($this->data),
+                    sql_field_type::TEXT,
+                    json_encode($obj->data)
+                );
+            }
         }
         if ($obj->status_id !== $this->status_id) {
             if ($this->status_id <= 0 or $this->status_id == null) {

@@ -66,6 +66,8 @@ const ENV_CACHE = 'CACHE';
 const ENV_CACHE_DATABASE = 'database';
 const ENV_CACHE_FILE = 'file';
 const ENV_CACHE_FALLBACK = 'database';
+const ENV_CACHE_MAX_AGE = 'CACHE_TIME';
+const ENV_CACHE_MAX_AGE_FALLBACK = '-1 day';
 
 const ENV_VARS = [
     ENV_OS,
@@ -93,6 +95,7 @@ const ENV_VARS = [
     ENV_MYSQL_ZUKUNFT_VERSION,
     ENV_WWW_ROOT,
     ENV_CACHE,
+    ENV_CACHE_MAX_AGE,
 ];
 
 const ENV_SECRETS = [
@@ -223,3 +226,4 @@ define('SYSTEM_TIME_TIME_LIMIT_ERR', getenv(ENV_SYSTEM_TIME_LIMIT_ERR) ?: 5);
 
 // the location type for the system cache which can be the database or with some permission adjustments a file folder
 define('CACHE_LOCATION', getenv(ENV_CACHE) ?: ENV_CACHE_FALLBACK);
+define('CACHE_MAX_AGE', getenv(ENV_CACHE_MAX_AGE) ?: ENV_CACHE_MAX_AGE_FALLBACK);

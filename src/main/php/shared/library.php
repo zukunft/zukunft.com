@@ -393,6 +393,10 @@ class library
         return str_replace($esc_chr . $chr_to_esc, $chr_to_esc, $txt_to_esc);
     }
 
+    function unquote(string $text): string
+    {
+        return trim($text, "\"'");
+    }
 
     /*
      * select string part functions

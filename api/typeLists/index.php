@@ -61,8 +61,7 @@ if ($db_con->is_open()) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
         $ui_cfg = new ui_config();
-        $ui_cfg->reload($usr);
-        $result = $ui_cfg->api_json([api_types::HEADER, api_types::INCL_COMPONENTS], $usr);
+        $result = $ui_cfg->get([api_types::HEADER, api_types::INCL_COMPONENTS], $usr);
     }
 
     $ctrl = new controller();

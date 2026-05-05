@@ -312,7 +312,7 @@ class config_numbers extends value_list
             // TODO Prio 1 use a trigger to set the time but refresh at least once a day
             $cfg_time = new DateTime;
             try {
-                $cfg_time->modify('-1 day');
+                $cfg_time->modify(CACHE_MAX_AGE);
             } catch (Exception $e) {
                 echo 'Error: ' . $e->getMessage();
             }

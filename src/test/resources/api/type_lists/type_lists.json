@@ -6367,34 +6367,40 @@
         "id": 1
       },
       {
+        "name": "system types",
+        "code_id": "types",
+        "description": "the complete json message with the system types and views that rarely change",
+        "id": 2
+      },
+      {
         "name": "user configuration",
         "code_id": "user_config",
         "description": "the complete json of the user overwrites in the system configuration",
-        "id": 2
+        "id": 3
       },
       {
         "name": "system frontend configuration",
         "code_id": "ui_config",
         "description": "the frontend part of the system configuration",
-        "id": 3
+        "id": 4
       },
       {
         "name": "user frontend configuration",
         "code_id": "user_ui_config",
         "description": "the frontend part of the user configuration",
-        "id": 4
+        "id": 5
       },
       {
         "name": "page data",
         "code_id": "page_cache",
         "description": "the data objects used for one page e.g. the start view",
-        "id": 5
+        "id": 6
       },
       {
         "name": "ui cache",
         "code_id": "ui_cache",
         "description": "the most often used data objects by one user that should b e loaded upfront into the frontend",
-        "id": 6
+        "id": 7
       }
     ],
     "db_cache_statuum": [

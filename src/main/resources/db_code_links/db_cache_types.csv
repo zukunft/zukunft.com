@@ -1,7 +1,8 @@
 type_id, type_name, description, code_id
 1, 'system configuration', 'the complete json of the system configuration', 'system_config'
-2, 'user configuration', 'the complete json of the user overwrites in the system configuration', 'user_config'
-3, 'system frontend configuration', 'the frontend part of the system configuration', 'ui_config'
-4, 'user frontend configuration', 'the frontend part of the user configuration', 'user_ui_config'
-5, 'page data', 'the data objects used for one page e.g. the start view', 'page_cache'
-6, 'ui cache', 'the most often used data objects by one user that should b e loaded upfront into the frontend', 'ui_cache'
+2, 'system types', 'the complete json message with the system types and views that rarely change', 'types'
+3, 'user configuration', 'the complete json of the user overwrites in the system configuration', 'user_config'
+4, 'system frontend configuration', 'the frontend part of the system configuration', 'ui_config'
+5, 'user frontend configuration', 'the frontend part of the user configuration', 'user_ui_config'
+6, 'page data', 'the data objects used for one page e.g. the start view', 'page_cache'
+7, 'ui cache', 'the most often used data objects by one user that should b e loaded upfront into the frontend', 'ui_cache'

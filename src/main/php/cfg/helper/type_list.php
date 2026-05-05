@@ -801,7 +801,7 @@ class type_list extends ListOfIdNamedCodeObjects
             } else {
                 $result = self::CODE_ID_NOT_FOUND;
                 if ($log_err) {
-                    log_err('Type id not found for name "' . $name . '" in ' . implode(',', $this->names()));
+                    log_warning('Type id not found for name "' . $name . '" in ' . implode(',', $this->names()));
                 }
             }
         } else {
