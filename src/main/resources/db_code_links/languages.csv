@@ -1,4 +1,8 @@
-language_id, language_name, code_id, wikimedia_code, description
-1, 'English', 'en', 'en', 'the system language, so each word must be unique for all users in this language'
-2, 'US English', 'en_us', 'en', 'the users can use this (and the other) languages to create its own namespace. So one user may use "Zurich" in UK English for "Kanton Zurich" and another user may use "Zurich" in UK English for "Zurich AG".'
-3, 'German', 'de', 'de', 'a normal translation to German'
+language_id, language_name, code_id, wikimedia_code, description, local_name, usage
+1, 'English', 'en', 'en', 'the system language, so each word must be unique for all users in this language', 'English', 2000000000
+2, 'US English', 'en_us', 'en', 'the users can use this (and the other) languages to create its own namespace. So one user may use "Zurich" in US English for "Kanton Zurich" and another user may use "Zurich" in UK English for "Zurich AG".', 'US English', 350000000
+3, 'German', 'de', 'de', 'a translation to standard German', 'Deutsch', 120000000
+4, 'French', 'fr', 'fr', 'Le français est une langue indo-européenne de la famille des langues romanes dont les locuteurs sont appelés francophones', 'Français', 320000000
+5, 'Spanish', 'es', 'es', 'El español o castellano es una lengua romance procedente del latín hablado, perteneciente a la familia de lenguas indoeuropeas', 'Español', 500000000
+6, 'Chinese', 'zh', 'zh', '漢語又稱中文 是源自东亚的一类分析语，为汉民族的母语', '漢語', 1300000000
+7, 'Arabic', 'ar', 'ar', 'ٱللُّغَةُ ٱلْعَرَبِيَّة هي أكثر اللغات السامية تحدثًا، وإحدى أكثر اللغات انتشاراً في العالم، يتحدثها أكثر من 467 مليون نسمة.', 'العربية', 380000000

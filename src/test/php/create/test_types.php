@@ -593,15 +593,19 @@ class test_types
     }
 
     /**
-     * @return language "always" as the main component link type for unit testing
+     * @return language "German" e.g. to test the translation
      */
     function language(): language
     {
-        return new language(
-            languages::DEFAULT,
-            languages::DEFAULT_NAME,
-            languages::DEFAULT_COM,
-            languages::DEFAULT_ID);
+        $lan =  new language(
+            languages::TRANSLATE_TEST,
+            languages::TRANSLATE_TEST_NAME,
+            languages::TRANSLATE_TEST_COM,
+            languages::TRANSLATE_TEST_ID);
+        $lan->wiki_code = languages::TRANSLATE_TEST_WIKI;
+        $lan->local_name = languages::TRANSLATE_TEST_LOCAL_NAME;
+        $lan->usage = languages::TRANSLATE_USAGE;
+        return $lan;
     }
 
     /**

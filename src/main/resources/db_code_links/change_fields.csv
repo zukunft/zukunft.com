@@ -882,3 +882,5 @@ change_field_id,change_field_name,table_id,description
 881,user_id,122,
 882,status_id,122,
 883,last_update,122,
+884,local_name,39,
+885,usage,39,

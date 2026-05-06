@@ -107,6 +107,7 @@ class json_fields
 
     // language
     const string WIKI_CODE = 'wikimedia_code';
+    const string LOCAL_NAME = 'local_name';
 
     // language forms
     const string LANGUAGE = 'language_id';

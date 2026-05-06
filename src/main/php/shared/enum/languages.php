@@ -41,5 +41,14 @@ enum languages: string
     const string DEFAULT_NAME = "English";
     const string DEFAULT_COM = "the system language, so each word must be unique for all users in this language";
     const string TN_READ = "English";
+    const string DEFAULT_LOCAL_NAME = "English";
+
+    const string TRANSLATE_TEST = "de";
+    const string TRANSLATE_TEST_WIKI = "de";
+    const int TRANSLATE_TEST_ID = 3;
+    const string TRANSLATE_TEST_NAME = "German";
+    const string TRANSLATE_TEST_COM = "a translation to standard German";
+    const string TRANSLATE_TEST_LOCAL_NAME = "Deutsch";
+    const int TRANSLATE_USAGE = 95000000;
 
 }

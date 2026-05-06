@@ -45,12 +45,26 @@ class test_languages
 
     function language(): language
     {
-        return new language(
+        $lan = new language(
             languages::DEFAULT,
             languages::DEFAULT_NAME,
             languages::DEFAULT_COM,
             languages::DEFAULT_ID
         );
+        $lan->local_name = languages::DEFAULT_LOCAL_NAME;
+        return $lan;
+    }
+
+    function language_translate(): language
+    {
+        $lan = new language(
+            languages::TRANSLATE_TEST,
+            languages::TRANSLATE_TEST_NAME,
+            languages::TRANSLATE_TEST_COM,
+            languages::TRANSLATE_TEST_ID
+        );
+        $lan->local_name = languages::TRANSLATE_TEST_LOCAL_NAME;
+        return $lan;
     }
 
 }

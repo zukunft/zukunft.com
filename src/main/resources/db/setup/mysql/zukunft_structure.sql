@@ -1269,10 +1269,12 @@ ALTER TABLE share_types
 CREATE TABLE IF NOT EXISTS languages
 (
     language_id    smallint         NOT NULL COMMENT 'the internal unique primary index',
-    language_name  varchar(255)     NOT NULL,
+    language_name  varchar(255)     NOT NULL COMMENT 'the name of the language in the system language,which is English',
     code_id        varchar(100) DEFAULT NULL,
     description    text         DEFAULT NULL,
     wikimedia_code varchar(100) DEFAULT NULL,
+    local_name     varchar(255) DEFAULT NULL COMMENT 'the name of the language in the language',
+    `usage`        bigint       DEFAULT NULL COMMENT 'the number of speakers worldwide',
     PRIMARY KEY (language_id)
 )
     ENGINE = InnoDB
@@ -5056,7 +5058,8 @@ ALTER TABLE share_types
 --
 
 ALTER TABLE languages
-    ADD KEY languages_language_name_idx (language_name);
+    ADD KEY languages_language_name_idx (language_name),
+    ADD KEY languages_local_name_idx (local_name);
 
 -- --------------------------------------------------------
 

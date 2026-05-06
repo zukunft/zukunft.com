@@ -1176,11 +1176,16 @@ CREATE TABLE IF NOT EXISTS languages
     language_name  varchar(255)     NOT NULL,
     code_id        varchar(100) DEFAULT NULL,
     description    text         DEFAULT NULL,
-    wikimedia_code varchar(100) DEFAULT NULL
+    wikimedia_code varchar(100) DEFAULT NULL,
+    local_name     varchar(255) DEFAULT NULL,
+    usage          bigint       DEFAULT NULL
 );
 
 COMMENT ON TABLE languages IS 'for table languages';
 COMMENT ON COLUMN languages.language_id IS 'the internal unique primary index';
+COMMENT ON COLUMN languages.language_name IS 'the name of the language in the system language, which is English';
+COMMENT ON COLUMN languages.local_name IS 'the name of the language in the language';
+COMMENT ON COLUMN languages.usage IS 'the number of speakers worldwide';
 
 -- --------------------------------------------------------
 
@@ -5865,6 +5870,7 @@ CREATE INDEX share_types_type_name_idx ON share_types (type_name);
 --
 
 CREATE INDEX languages_language_name_idx ON languages (language_name);
+CREATE INDEX languages_local_name_idx ON languages (local_name);
 
 -- --------------------------------------------------------
 

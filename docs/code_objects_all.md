@@ -75,7 +75,7 @@ the object structure is:
 +-- apiShared - constants used for the backend to frontend api of zukunft.com
 +-- expressionShared - common parts of the formula expressing handling used in front- and backend
 +-- charsShared - const symbols used for the formula expressions
-+-- componentsShared - const components with name and id used by the system
++-- componentsShared - all component code id used in the code and some with name, id and comment used by the system
 +-- defShared - general system definitions used in frontend and backend
 +-- filesShared - resource file names used in backend and frontend
 +-- formulasShared - predefined formulas used in the backend and frontend as code id
