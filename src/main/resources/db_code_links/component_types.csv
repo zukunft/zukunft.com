@@ -184,3 +184,5 @@ component_type_id, type_name, description, code_id
 183, 'system admin unassigned errors', 'show new detected internal errors that do not yet have a human check priority and that are not yet assigned to a developer', 'system_admin_errors_unassigned'
 184, 'system admin pending error fixes', 'show a list of errors where the fix has been expected but that are not yet fixed', 'system_admin_errors_delayed_fix'
 185, 'system admin delayed jobs', 'list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs', 'system_admin_jobs_delayed'
+186, 'selection page', 'show a list e.g. of languages and let the user pick on that should be used', 'select_list'
+187, 'button request new', 'show a button to request a new e.g. type item that needs to be confirmed and / or modified by an admin', 'button_request'

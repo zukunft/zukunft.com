@@ -514,6 +514,7 @@ class html_base
 
     /**
      * build a url for link a zukunft.com element
+     * TODO Prio 0 deprecate and use url_new for all url creations if possible
      *
      * @param string $obj_name the object that is requested e.g. a view
      * @param int|string $id the id of the parameter e.g. 1 for math const
@@ -2021,6 +2022,26 @@ class html_base
         $txt .= '<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> ';
         $txt .= 'under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence';
         return $txt;
+    }
+
+    /**
+     * html list item entry
+     * @param string $txt the html code that should be a list item
+     * @return string the html code of a list item
+     */
+    function list_item(string $txt): string
+    {
+        return '<li>' . $txt . '</li>';
+    }
+
+    /**
+     * html unsorted list
+     * @param string $txt the html code of the list entries
+     * @return string the html code of a unsorted list
+     */
+    function list_unsorted(string $txt): string
+    {
+        return '<ul>' . $txt . '</ul>';
     }
 
     /**

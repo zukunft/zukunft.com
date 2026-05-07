@@ -1203,6 +1203,20 @@ class test_base
     }
 
     /**
+     * like asser but using the html filter
+     *
+     * @param string $test_name the description of the test
+     * @param string $result
+     * @param string $target
+     * @return bool true if the html has no relevant differences
+     */
+    function assert_html(string $test_name, string $result, string $target): bool
+    {
+        $lib = new library();
+        return $this->assert($test_name, $lib->trim_html($result), $lib->trim_html($target));
+    }
+
+    /**
      * check if the created html matches a defined html file
      *
      * @param string $test_name the description of the test

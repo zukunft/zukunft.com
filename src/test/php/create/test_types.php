@@ -598,12 +598,12 @@ class test_types
     function language(): language
     {
         $lan =  new language(
-            languages::TRANSLATE_TEST,
-            languages::TRANSLATE_TEST_NAME,
-            languages::TRANSLATE_TEST_COM,
-            languages::TRANSLATE_TEST_ID);
-        $lan->wiki_code = languages::TRANSLATE_TEST_WIKI;
-        $lan->local_name = languages::TRANSLATE_TEST_LOCAL_NAME;
+            languages::TRANSLATE,
+            languages::TRANSLATE_NAME,
+            languages::TRANSLATE_COM,
+            languages::TRANSLATE_ID);
+        $lan->wiki_code = languages::TRANSLATE_WIKI;
+        $lan->local_name = languages::TRANSLATE_LOCAL_NAME;
         $lan->usage = languages::TRANSLATE_USAGE;
         return $lan;
     }

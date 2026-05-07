@@ -7,7 +7,6 @@
 
     The main sections of this object are
     - object vars:       the variables of this word object
-    - set and get:       to capsule the vars from unexpected changes
     - api:               set the object vars based on the api json message and create a json for the backend
 
 
@@ -40,72 +39,54 @@ namespace Zukunft\ZukunftCom\main\php\web\system;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SANDBOX . 'sandbox_typed.php';
-include_once html_paths::USER . 'user_message.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
-use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_typed;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-class language extends sandbox_typed
+class language extends type_object
 {
 
     /*
      * object vars
      */
 
-    private ?string $url;
-    public string $symbol;
+    public ?string $wiki_code = null; // the language code from Wikimedia for synchronisation
+    public ?string $local_name = null; // the name in the language
+    public ?int $usage = null; // estimation how many users the language has for sorting
 
 
     /*
-     * set and get
+     * selectors
      */
 
-    function set_url(?string $url): void
+    function select_list_item(string $url): string
     {
-        $this->url = $url;
-    }
-
-    function url(): ?string
-    {
-        return $this->url;
+        $html = new html_base();
+        $url = $url . url_var::ADD . url_var::LANGUAGE . url_var::EQ . $this->code_id;
+        $txt = $html->ref($url, $this->get_local_name(), $this->name);
+        return $html->list_item($txt);
     }
 
 
     /*
-     * api
+     * internal
      */
 
-    /**
-     * set the vars of this language frontend object bases on the api json array
-     * @param array $json_array an api json message
-     * @param user_message $msg ok or a warning e.g. if the server version does not match
-     * @return bool true if the mapping has been completed successfully
-     */
-    function api_mapper(array $json_array, user_message $msg): bool
+    private function get_local_name(): string
     {
-        parent::api_mapper($json_array, $msg);
-        if (array_key_exists(json_fields::URL, $json_array)) {
-            $this->set_url($json_array[json_fields::URL]);
+        if ($this->local_name == null) {
+            return $this->name;
+        } elseif ($this->local_name == '') {
+            return $this->name;
         } else {
-            $this->set_url(null);
+            return $this->local_name;
         }
-        return $msg->is_ok();
-    }
-
-    /**
-     * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
-     */
-    function api_array(): array
-    {
-        $vars = parent::api_array();
-        $vars[json_fields::URL] = $this->url();
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
     /*

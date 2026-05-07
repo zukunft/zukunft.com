@@ -154,7 +154,7 @@ class sandbox_list_named extends sandbox_list
             $additional_diff = $this->count() - $i;
             $dots = msg_id::THREE_POINTS->text();
             $and_txt = msg_id::AND_MORE_BEFORE->text();
-            $more_txt = msg_id::AND_MORE_AFTER->text();
+            $more_txt = msg_id::MORE->text();
             $msg .= $dots . ' ' . $and_txt . ' ' . $additional_diff . ' ' . $more_txt;
         }
         return implode(', ', $arr) . $msg;

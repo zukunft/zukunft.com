@@ -622,14 +622,15 @@ class type_list extends ListOfIdNamedCodeObjects
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
-    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
+    function api_json_array(api_type_list $typ_lst = new api_type_list(), user|null $usr = null): array
     {
         $vars = [];
         foreach ($this->lst() as $typ) {
-            // TODO undo this exception
+            // TODO Prio 3 avoid this exceptions
             if ($typ::class == ref_type::class
                 or $typ::class == verb::class
-                or $typ::class == view::class) {
+                or $typ::class == view::class
+                or $typ::class == language::class) {
                 $typ_vars = $typ->api_json_array($typ_lst);
             } else {
                 $typ_vars[json_fields::NAME] = $typ->name();

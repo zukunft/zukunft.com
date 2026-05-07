@@ -104,10 +104,9 @@ class language extends type_object
      * object vars
      */
 
-    // the language code from Wikimedia for synchronisation
-    public ?string $wiki_code = null;
-    public ?string $local_name = null;
-    public ?int $usage = null;
+    public ?string $wiki_code = null; // the language code from Wikimedia for synchronisation
+    public ?string $local_name = null; // the name in the language
+    public ?int $usage = null; // estimation how many users the language has for sorting
 
 
     /*

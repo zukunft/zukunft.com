@@ -10,6 +10,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add horitontal write test that includes all cases of changing any unique key e.g. the name, code_id, linked object and group_id for values
     TODO finish the frontend component tests
     TODO create the frontend page reaction flow tests
+    TODO add unit test for all frontend components
 
     TODO Release 0.0.4
     TODO use the name "nud" (New User Default) for the default data that should be used if the user has not done an overwrite
@@ -150,6 +151,11 @@ A proper issue ticket should be created for these TODOs notes:
     TODO use global $ui_cac for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
+
+    TODO start with 3 item for a default selection (2 if the account is used on a smartphone) 
+         and increase this values to 5 (8, 13, 21) if 3 times (5, 8, 13, 21) more has been pressed
+         decrease the value if the account has not been used for 3 (5, 8, 13, 21) month or less has been pressed
+         for some easy item e.g. languages additional 2 (3, 5, 8, 13) or double, triple select items are shown 
 
     TODO add a documentation how to add a phrase type (and make the process easier)
 

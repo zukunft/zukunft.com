@@ -1764,6 +1764,26 @@
       "type": "system_form_field_weight",
       "code_id": "form_field_weight",
       "ui_msg_code_id": "form_field_weight"
+    },
+    {
+      "name": "title language select",
+      "description": "show the page title to select a language",
+      "type": "system_title",
+      "code_id": "title_language_select",
+      "ui_msg_code_id": "title_language_select"
+    },
+    {
+      "name": "list of all languages",
+      "description": "show as many languages on on page as useful and allow the user to select one to change the frontend language and if there are more than can be displayed at once it needs be to pages allow to switch the pages",
+      "type": "select_list",
+      "code_id": "list_select_languages"
+    },
+    {
+      "name": "request additional language",
+      "description": "a button to request an additional language",
+      "type": "button_request",
+      "code_id": "button_add_languages",
+      "ui_msg_code_id": "button_add_languages"
     }
   ],
   "views": [
@@ -6731,6 +6751,25 @@
         {
           "position": "6",
           "name": "Export XML"
+        }
+      ]
+    },
+    {
+      "name": "Language selection",
+      "description": "List all language in an overview page to select the ui language and allow to request an additional language",
+      "code_id": "language_select",
+      "components": [
+        {
+          "position": "1",
+          "name": "title language select"
+        },
+        {
+          "position": "2",
+          "name": "list of all languages"
+        },
+        {
+          "position": "3",
+          "name": "request additional language"
         }
       ]
     }
