@@ -38,6 +38,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::SYSTEM . 'language.php';
+include_once html_paths::TYPES . 'language_list.php';
 //include_once paths::SHARED_CONST . 'def.php';
 //include_once paths::SHARED_CONST . 'files.php';
 //include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -56,6 +58,8 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\system\language;
+use Zukunft\ZukunftCom\main\php\web\types\language_list;
 
 class html_base
 {
@@ -247,6 +251,15 @@ class html_base
      */
     function navbar(int $msk_id = 0): string
     {
+        global $sys;
+
+        $api_json = $sys->typ_lst->lan->api_json_array();
+        $ui_lst = new language_list();
+        $ui_lst->set_from_json_array($api_json, language::class);
+        $html = new html_base();
+        $url = $html->url_new($msk_id);
+        $lan_lst = $ui_lst->select_list_item($url);
+
         $result = '<nav class="navbar site-header fixed-top">' . "\n";
         $result .= '<a class="navbar-brand" href="/http/view.php" title="zukunft.com">' . "\n";
         $result .= '<img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;">' . "\n";
@@ -270,12 +283,7 @@ class html_base
         $result .= '</details>' . "\n";
         $result .= '<details class="lang-menu">' . "\n";
         $result .= '<summary><i class="fas fa-globe"></i></summary>' . "\n";
-        $result .= '<ul>' . "\n";
-        $result .= '<li><a href="?lang=en">English</a></li>' . "\n";
-        $result .= '<li><a href="?lang=de">Deutsch</a></li>' . "\n";
-        $result .= '<li><a href="?lang=fr">Français</a></li>' . "\n";
-        $result .= '<li><a href="?lang=more">... more</a></li>' . "\n";
-        $result .= '</ul>' . "\n";
+        $result .= $lan_lst . "\n";
         $result .= '</details>' . "\n";
         $result .= '<details class="user-menu">' . "\n";
         $result .= '<summary><i class="fas fa-user-circle"></i></summary>' . "\n";

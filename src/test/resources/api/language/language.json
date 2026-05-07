@@ -2,5 +2,9 @@
   "id": 1,
   "name": "English",
   "code_id": "en",
-  "description": "the system language, so each word must be unique for all users in this language"
+  "description": "the system language, so each word must be unique for all users in this language",
+  "wiki_code": "en",
+  "local_name": "English",
+  "usage": 2000000000,
+  "wikimedia_code": "en"
 }

@@ -382,10 +382,13 @@ class type_list extends ListOfIdNamedCodeObjects
         $qp = new sql_par($db_type);
         $qp->name = $db_type . sql::NAME_SEP . $query_name;
         $sc->set_name($qp->name);
+        // TODO Prio 0 use the object load_sql function overwrites
         if ($class == verb::class) {
             $sc->set_fields(verb_db::FLD_NAMES);
         } elseif ($class == ref_type::class) {
             $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, ref_type_list::FLD_URL));
+        } elseif ($class == language::class) {
+            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, language::FLD_WIKI_CODE, language::FLD_LOCAL_NAME, sql_db::FLD_USAGE));
         } else {
             $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
         }
@@ -571,7 +574,27 @@ class type_list extends ListOfIdNamedCodeObjects
                     }
                 }
                 $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
-                $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
+                // TODO Prio 0 use a class to object function
+                if ($class == language::class) {
+                    $type_obj = new language($type_code_id, $type_name, $type_comment, $type_id);
+                } else {
+                    $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
+                }
+
+                // TODO Prio 1 add other missing type fields
+                // TODO Prio 2 remove exceptions and use object mapper instead
+                if ($type_obj::class == language::class) {
+                    if (array_key_exists(language::FLD_WIKI_CODE, $db_row)) {
+                        $type_obj->wiki_code = strval($db_row[language::FLD_WIKI_CODE]);
+                    }
+                    if (array_key_exists(language::FLD_LOCAL_NAME, $db_row)) {
+                        $type_obj->local_name = strval($db_row[language::FLD_LOCAL_NAME]);
+                    }
+                    if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
+                        $type_obj->usage = strval($db_row[sql_db::FLD_USAGE]);
+                    }
+                }
+
                 $this->add($type_obj);
             }
         }
@@ -666,6 +689,9 @@ class type_list extends ListOfIdNamedCodeObjects
             $id_col = 0;
             $name_col = 0;
             $desc_col = 0;
+            $wiki_code_col = 0;
+            $local_name_col = 0;
+            $usage_col = 0;
             // change log field specific
             $table_col = 0;
             if (($handle = fopen($csv_path, "r")) !== FALSE) {
@@ -691,10 +717,21 @@ class type_list extends ListOfIdNamedCodeObjects
                             $name_col = array_search(change_field::FLD_NAME, $col_names);
                         } elseif (in_array(user_profile::FLD_NAME, $col_names)) {
                             $name_col = array_search(user_profile::FLD_NAME, $col_names);
+                        } elseif (in_array(language::FLD_NAME, $col_names)) {
+                            $name_col = array_search(language::FLD_NAME, $col_names);
                         } elseif (in_array(language_form::FLD_NAME, $col_names)) {
                             $name_col = array_search(language_form::FLD_NAME, $col_names);
                         }
 
+                        if (in_array(language::FLD_WIKI_CODE, $col_names)) {
+                            $wiki_code_col = array_search(language::FLD_WIKI_CODE, $col_names);
+                        }
+                        if (in_array(language::FLD_LOCAL_NAME, $col_names)) {
+                            $local_name_col = array_search(language::FLD_LOCAL_NAME, $col_names);
+                        }
+                        if (in_array(sql_db::FLD_USAGE, $col_names)) {
+                            $usage_col = array_search(sql_db::FLD_USAGE, $col_names);
+                        }
                         if (in_array(change_field::FLD_TABLE, $col_names)) {
                             $table_col = array_search(change_field::FLD_TABLE, $col_names);
                         }
@@ -702,10 +739,17 @@ class type_list extends ListOfIdNamedCodeObjects
                             $desc_col = array_search(json_fields::DESCRIPTION, $col_names);
                         }
                     } else {
-                        if ($table_col > 0) {
-                            $typ_obj = new type_object($data[$table_col] . $data[$name_col]);
+                        if ($list::class == language_list::class) {
+                            $typ_obj = new language();
+                            $typ_obj->wiki_code = $data[$wiki_code_col];
+                            $typ_obj->local_name = $data[$local_name_col];
+                            $typ_obj->usage = $data[$usage_col];
                         } else {
-                            $typ_obj = new type_object($data[$name_col]);
+                            if ($table_col > 0) {
+                                $typ_obj = new type_object($data[$table_col] . $data[$name_col]);
+                            } else {
+                                $typ_obj = new type_object($data[$name_col]);
+                            }
                         }
                         $typ_obj->id = $data[$id_col];
                         $typ_obj->set_name($data[$name_col]);
