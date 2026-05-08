@@ -75,7 +75,7 @@ the object structure is:
 +-- apiShared - constants used for the backend to frontend api of zukunft.com
 +-- expressionShared - common parts of the formula expressing handling used in front- and backend
 +-- charsShared - const symbols used for the formula expressions
-+-- componentsShared - const components with name and id used by the system
++-- componentsShared - all component code id used in the code and some with name, id and comment used by the system
 +-- defShared - general system definitions used in frontend and backend
 +-- filesShared - resource file names used in backend and frontend
 +-- formulasShared - predefined formulas used in the backend and frontend as code id
@@ -335,7 +335,6 @@ the object structure is:
                                 \-- viewUi - the main frontend object to create the html code
                         \-- tripleUi - create the HTML code to display a triple (two linked words or triples)
                         \-- wordUi - create HTML code to display a words based on the api json message
-                    \-- languageUi - the extension of the language API objects to create language base html code
                 \-- verbUi - the display extension of the api verb object
             \-- sandbox_valueUi
                 \-- resultUi - the display extension of the api result object
@@ -427,5 +426,6 @@ the object structure is:
     \-- verb_listUi - al list of verb objects
 +-- type_listsUi - parent object for all preloaded types used in the html frontend
 \-- type_objectUi
+    \-- languageUi - the extension of the language API objects to create language base html code
     \-- ref_typeUi - the child class for reference types which has additional the url
 ```

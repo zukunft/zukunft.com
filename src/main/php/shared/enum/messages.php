@@ -227,6 +227,8 @@ enum messages: string
     case LOADED = 'loaded';
     case DONE = 'done';
     case TOTAL = 'total';
+    case MORE = 'more';
+    case AND_MORE = '... more';
     case EXAMPLE_SHORT = 'e.g.';
     case NO_PRIVILEGES = 'cannot be changed';
 
@@ -1449,7 +1451,6 @@ enum messages: string
     // text to be shown in frontend
     // TODO add translation
     case AND_MORE_BEFORE = 'and';
-    case AND_MORE_AFTER = 'more';
     case THREE_POINTS = '...';
 
     // text to be shown in buttons
@@ -1616,6 +1617,7 @@ enum messages: string
     case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
+    case TITLE_LANGUAGE_SELECT = 'title_language_select';
 
 
     /*
@@ -1784,6 +1786,8 @@ enum messages: string
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
+
+    case BUTTON_ADD_LANGUAGES = 'button_add_languages';
 
     case UNDO = 'undo';
     case FIND = 'find';

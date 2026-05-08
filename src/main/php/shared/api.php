@@ -47,12 +47,7 @@ class api
     const string HOST_PROD = 'https://www.zukunft.com/';
     const string HOST_SAME = '/';
     const string BS_PATH_DEV = 'bootstrap/';
-    const string BS_PATH_UAT = 'bootstrap/';
-    const string BS_PATH_PROD = 'bootstrap/';
-    const string BS_JS = 'js' . DIRECTORY_SEPARATOR . 'bootstrap.js';
     const string BS_CSS_PATH_DEV = 'bootstrap/';
-    const string BS_CSS_PATH_UAT = 'bootstrap/';
-    const string BS_CSS_PATH_PROD = 'bootstrap/';
     const string BS_CSS = 'css' . DIRECTORY_SEPARATOR . 'bootstrap.css';
     const string EXT_LIB_PATH = 'external_lib' . DIRECTORY_SEPARATOR;
     const string HOST_SYS_LOG = '';

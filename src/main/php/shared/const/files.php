@@ -70,4 +70,8 @@ class files
 
     // for html
     const string STYLE_HTML = self::STYLE_PATH . 'style_html' . self::CSS;
+    const string STYLE_FALLBACK = self::STYLE_PATH . 'style' . self::CSS;
+    const string STYLE_BS = paths::EXT_LIB_BS_CSS . 'bootstrap' . self::CSS;
+    const string STYLE_FONT = paths::EXT_LIB_FONT_CSS . 'all' . self::CSS;
+
 }

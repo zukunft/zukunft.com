@@ -2,7 +2,7 @@
 
 /*
 
-    shared/const/components.php - const components with name and id used by the system
+    shared/const/components.php - all component code id used in the code and some with name, id and comment used by the system
     ---------------------------
 
 
@@ -41,6 +41,8 @@ class components
     // *_ID is the mask id that is expected never to change
     // *_NAME is the name of the view if it differs from the code id
     // *_COM is the comment or description used for the tooltip
+
+    // general components used several times
     const string WORD_NAME = 'Word';
     const string WORD_COM = 'simply show the word or triple name';
     const int WORD_ID = 1;

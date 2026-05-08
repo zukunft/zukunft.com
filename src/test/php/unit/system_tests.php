@@ -256,10 +256,10 @@ class system_tests
 
         $test_name = 'get a system configuration value';
         $pod_url = $cfg->get_by([words::POD, words::URL]);
-        $t->assert($test_name, $pod_url, def::POD_NAME);
+        $t->assert($test_name, $pod_url, POD_NAME);
         $test_name = 'use fallback value if configuration value is missing';
-        $pod_url = $cfg->get_by([words::POD, words::TEST_ADD], def::POD_NAME);
-        $t->assert($test_name, $pod_url, def::POD_NAME);
+        $pod_url = $cfg->get_by([words::POD, words::TEST_ADD], POD_NAME);
+        $t->assert($test_name, $pod_url, POD_NAME);
 
 
 

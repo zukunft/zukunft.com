@@ -1203,6 +1203,20 @@ class test_base
     }
 
     /**
+     * like asser but using the html filter
+     *
+     * @param string $test_name the description of the test
+     * @param string $result
+     * @param string $target
+     * @return bool true if the html has no relevant differences
+     */
+    function assert_html(string $test_name, string $result, string $target): bool
+    {
+        $lib = new library();
+        return $this->assert($test_name, $lib->trim_html($result), $lib->trim_html($target));
+    }
+
+    /**
      * check if the created html matches a defined html file
      *
      * @param string $test_name the description of the test
@@ -4587,7 +4601,10 @@ class test_base
     function html_page(string $body): string
     {
         $html = new html_base();
-        return $html->header_test('test') . $html->navbar(views::START_ID) . $html->main($body) . $html->footer();
+        return $html->header('test')
+            . $html->navbar(views::START_ID)
+            . $html->main($body)
+            . $html->footer();
     }
 
     function class_without_namespace(string $class_name_with_namespace): string

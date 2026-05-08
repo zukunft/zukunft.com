@@ -39,6 +39,9 @@ const ENVIRONMENT = 'ENV';
 const ENV_BRANCH = 'BRANCH';
 const ENV_DB = 'DB';
 const ENV_IP_ADMIN = 'IP_ADMIN';
+const ENV_CODE_VERSION = 'CODE_VERSION';
+const ENV_UI_VERSION = 'UI_VERSION';
+const ENV_POD_NAME = 'POD_NAME';
 const ENV_PGSQL_DATABASE = 'PGSQL_DATABASE';
 const ENV_PGSQL_USERNAME = 'PGSQL_USERNAME';
 const ENV_PGSQL_PASSWORD = 'PGSQL_PASSWORD';
@@ -68,6 +71,8 @@ const ENV_CACHE_FILE = 'file';
 const ENV_CACHE_FALLBACK = 'database';
 const ENV_CACHE_MAX_AGE = 'CACHE_TIME';
 const ENV_CACHE_MAX_AGE_FALLBACK = '-1 day';
+const SYSTEM_VERSION_FALLBACK = '0.0.3';
+const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
 
 const ENV_VARS = [
     ENV_OS,
@@ -75,6 +80,9 @@ const ENV_VARS = [
     ENV_BRANCH,
     ENV_DB,
     ENV_IP_ADMIN,
+    ENV_CODE_VERSION,
+    ENV_UI_VERSION,
+    ENV_POD_NAME,
     ENV_PGSQL_DATABASE,
     ENV_PGSQL_USERNAME,
     ENV_PGSQL_PASSWORD,
@@ -192,6 +200,10 @@ foreach ($env as $line) {
 // SYSTEM configuration from environment variables or the default fallback value
 // fixed IP of the main system admin as a second line of defence to prevent remote manipulation
 define('SYSTEM_ADMIN_IP', getenv(ENV_IP_ADMIN) ?: SYSTEM_ADMIN_IP_FALLBACK);
+
+define('SYSTEM_CODE_VERSION', getenv(ENV_CODE_VERSION) ?: SYSTEM_VERSION_FALLBACK);
+define('SYSTEM_UI_VERSION', getenv(ENV_UI_VERSION) ?: SYSTEM_VERSION_FALLBACK);
+define('POD_NAME', getenv(ENV_POD_NAME) ?: POD_NAME_FALLBACK);
 
 // Database configuration from environment variables or the default fallback value
 define('SQL_DB_TYPE', getenv(ENV_DB) ?: POSTGRES);

@@ -254,69 +254,74 @@ class views
     const string COMPLETE = 'complete';
     const int COMPLETE_ID = 87;
     const string BASE_UNITS = 'base_units';
-    const int BASE_UNITS_ID = 88;
+    const int BASE_UNITS_ID = 89;
 
     // default views
     // TODO easy add missing default views e.g. for formula
     const string WORD = 'word_default';
-    const int WORD_ID = 89;
+    const int WORD_ID = 90;
     const string WORD_NAME = 'Word';
     const string VERB = 'verb_default';
-    const int VERB_ID = 90;
+    const int VERB_ID = 91;
     const string VERB_NAME = 'Verb';
     const string TRIPLE = 'triple_default';
-    const int TRIPLE_ID = 91;
+    const int TRIPLE_ID = 92;
     const string SOURCE = 'source_default';
-    const int SOURCE_ID = 92;
+    const int SOURCE_ID = 93;
     const string REF = 'ref_default';
-    const int REF_ID = 93;
+    const int REF_ID = 94;
     const string LANGUAGE = 'language_default';
-    const int LANGUAGE_ID = 94;
+    const int LANGUAGE_ID = 95;
     const string VALUE = 'value_default';
-    const int VALUE_ID = 95;
+    const int VALUE_ID = 96;
     const string FORMULA = 'formula_default';
-    const int FORMULA_ID = 96;
+    const int FORMULA_ID = 97;
     const string RESULT = 'result_default';
-    const int RESULT_ID = 97;
+    const int RESULT_ID = 98;
 
     // base views for users
     const string RANKING = 'ranking';
-    const int RANKING_ID = 98;
+    const int RANKING_ID = 99;
     const string SCIENCE = 'science';
-    const int SCIENCE_ID = 99;
+    const int SCIENCE_ID = 100;
     const string SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
     const string HISTORIC = 'hist';
-    const int HISTORIC_ID = 100;
+    const int HISTORIC_ID = 101;
     const string HISTORIC_NAME = 'Historic';
     const string HISTORIC_COM = 'show mainly related words that are relevant in sciences';
     const string BIOLOGICAL = 'bio';
-    const int BIOLOGICAL_ID = 101;
+    const int BIOLOGICAL_ID = 102;
     const string BIOLOGICAL_NAME = 'Biological';
     const string BIOLOGICAL_COM = 'show what is relevant from the biological point of view';
     const string EDUCATION = 'edu';
-    const int EDUCATION_ID = 102;
+    const int EDUCATION_ID = 103;
     const string EDUCATION_NAME = 'Education';
     const string EDUCATION_COM = 'show mainly related words that are relevant in sciences';
     const string TOURISTIC = 'touristic';
-    const int TOURISTIC_ID = 103;
+    const int TOURISTIC_ID = 104;
     const string TOURISTIC_NAME = 'Touristic';
     const string TOURISTIC_COM = 'show mainly related words that are relevant in sciences';
     const string GRAPH = 'graph';
-    const int GRAPH_ID = 104;
+    const int GRAPH_ID = 105;
     const string GRAPH_NAME = 'Graph';
     const string GRAPH_COM = 'show mainly related words that are relevant in sciences';
     const string SIMPLE = 'simple';
-    const int SIMPLE_ID = 105;
+    const int SIMPLE_ID = 106;
     const string SIMPLE_NAME = 'Simple';
     const string SIMPLE_COM = 'show mainly related words that are relevant in sciences';
     const string MATH_CONST = 'math_const';
-    const int MATH_CONST_ID = 106;
+    const int MATH_CONST_ID = 107;
     const string MATH_CONST_NAME = 'math const';
     const string MATH_CONST_COM = 'Show a mathematical constance and the related words and formulas';
 
     // TODO Prio 3 resort the views and group it
     const string SYSTEM_LOG = 'system_log';
-    const int SYSTEM_LOG_ID = 107;
+    const int SYSTEM_LOG_ID = 108;
+
+    // to sort
+    const string LANGUAGE_SELECT = 'language_select';
+    const int LANGUAGE_SELECT_ID = 88;
+
 
     /*
      * const string for system testing
@@ -693,6 +698,7 @@ class views
         self::SIMPLE_ID => self::SIMPLE,
         self::MATH_CONST_ID => self::MATH_CONST,
         self::SYSTEM_LOG_ID => self::SYSTEM_LOG,
+        self::LANGUAGE_SELECT_ID => self::LANGUAGE_SELECT,
     ];
 
     const array SYSTEM_VIEWS = [

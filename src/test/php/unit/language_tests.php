@@ -32,10 +32,16 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_forms;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\types\language_list;
+use Zukunft\ZukunftCom\main\php\web\system\language as ui_language;
+use Zukunft\ZukunftCom\test\php\create\test_languages;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class language_tests
@@ -45,6 +51,7 @@ class language_tests
     {
 
         // init
+        $t_lan = new test_languages();
         $t->name = 'language->';
         $t->resource_path = 'db/language/';
 
@@ -80,6 +87,26 @@ class language_tests
         global $sys;
         $lan_typ = $sys->typ_lst->lan_for->get_by_code_id(language_forms::PLURAL);
         $t->assert_api($lan_typ, 'language_form');
+
+
+        // start the test section (ts)
+        $ts = 'unit language list ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'api');
+        $lst = $t_lan->language_list();
+        $t->assert_api($lst, 'language_list');
+
+        $t->subheader($ts . 'ui');
+        $test_name = 'header language select list';
+        $lst = $t_lan->language_list();
+        $api_json = $lst->api_json_array();
+        $ui_lst = new language_list();
+        $ui_lst->set_from_json_array($api_json, ui_language::class);
+        $html = new html_base();
+        $url = $html->url_new(views::START_ID);
+        $target = $t->file('unit/language/header_select_list.html');
+        $t->assert_html($test_name, $ui_lst->select_list_item($url), $target);
 
     }
 

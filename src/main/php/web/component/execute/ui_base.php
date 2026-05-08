@@ -72,6 +72,15 @@ class ui_base
      * TODO move to a component exe part class
      * @return string a dummy text
      */
+    function triple_name(?db_object $dbo = null): string
+    {
+        return $dbo->name();
+    }
+
+    /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
     function value_name(?db_object $dbo = null): string
     {
         return $dbo->name();

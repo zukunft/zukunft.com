@@ -123,4 +123,12 @@ class paths
     const string REL_RES = self::REL_MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string REL_IMAGE = self::REL_RES . 'images' . DIRECTORY_SEPARATOR;
 
+    // external libraries
+    const string EXT_LIB = DIRECTORY_SEPARATOR . 'external_lib' . DIRECTORY_SEPARATOR;
+    const string EXT_LIB_BS = self::EXT_LIB . 'bootstrap' . DIRECTORY_SEPARATOR;
+    const string EXT_LIB_BS_CSS = self::EXT_LIB_BS . 'css' . DIRECTORY_SEPARATOR;
+    const string EXT_LIB_BS_JS = self::EXT_LIB_BS . 'js' . DIRECTORY_SEPARATOR;
+    const string EXT_LIB_FONT = self::EXT_LIB . 'fontawesome' . DIRECTORY_SEPARATOR;
+    const string EXT_LIB_FONT_CSS = self::EXT_LIB_FONT . 'css' . DIRECTORY_SEPARATOR;
+
 }

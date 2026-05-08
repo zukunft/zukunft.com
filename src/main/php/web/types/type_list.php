@@ -8,6 +8,8 @@
     this base object is without set_from_json function,
     because the setting is done once for all type objects with the parent object
 
+    TODO Prio 1 : check that all type list objetc have the same additional vars as the backend object and check the api fillings
+
 
     This file is part of zukunft.com - calc with words
 
@@ -36,11 +38,10 @@
 namespace Zukunft\ZukunftCom\main\php\web\types;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::TYPES . 'ref_type.php';
@@ -53,14 +54,15 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\system\language;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class type_list
 {
@@ -71,7 +73,7 @@ class type_list
     const string SELECT_SEPARATOR = ' --- ';
 
     // the protected main var without id list because this is only loaded once
-    private array $lst = [];
+    protected array $lst = [];
     private array $hash = []; // hash list with the code id for fast selection
 
 
@@ -106,6 +108,23 @@ class type_list
                     $ref_typ->url = $value[json_fields::URL];
                 }
                 $this->add_obj($ref_typ);
+            } elseif ($class == language::class) {
+                $lan = new language(
+                    $value[json_fields::ID],
+                    $value[json_fields::CODE_ID],
+                    $value[json_fields::NAME],
+                    $value[json_fields::DESCRIPTION]
+                );
+                if (key_exists(json_fields::WIKI_CODE, $value)) {
+                    $lan->wiki_code = $value[json_fields::WIKI_CODE];
+                }
+                if (key_exists(json_fields::LOCAL_NAME, $value)) {
+                    $lan->local_name = $value[json_fields::LOCAL_NAME];
+                }
+                if (key_exists(json_fields::USAGE, $value)) {
+                    $lan->usage = $value[json_fields::USAGE];
+                }
+                $this->add_obj($lan);
             } else {
                 if (!array_key_exists(json_fields::CODE_ID, $value)) {
                     $usr_msg->add_error_text('code id is missing for ' . implode(',', $value));

@@ -76,7 +76,7 @@ class values
     const string NESN_SALES_2016_FORM = '89\'469';
 
     CONST string TIME = '2025-06-07 12:30:00 UTC'; // to test time values
-    CONST string TEXT = def::POD_NAME; // to test text values
+    CONST string TEXT = POD_NAME; // to test text values
     CONST string GEO = '47.263179, 8.684730'; // to test geo values
     CONST string DB_TEXT = 'old db text sample value'; // to test updating text values
 

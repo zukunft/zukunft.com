@@ -200,6 +200,8 @@ class component_types
     const int FORM_FIELD_EXTERNAL_KEY_ID = 167;
 
     // triple only fields
+    const string TRIPLE_NAME = "triple_name";
+    const int TRIPLE_NAME_ID = 57;
     const string FORM_FIELD_WEIGHT = "system_form_field_weight";
     const int FORM_FIELD_WEIGHT_ID = 150;
 
@@ -768,6 +770,7 @@ class component_types
         [self::LIST_VIEWS, self::LIST_VIEWS_ID],
         [self::LINK_LIST_WORD, self::LINK_LIST_WORD_ID],
         [self::RANK_PHRASE, self::USAGE_WORD_ID],
+        [self::TRIPLE_NAME, self::TRIPLE_NAME_ID],
         [self::VALUE_NAME, self::VALUE_NAME_ID],
         [self::GROUP_NAME, self::GROUP_NAME_ID],
         [self::VALUE_NUMERIC, self::VALUE_NUMERIC_ID],

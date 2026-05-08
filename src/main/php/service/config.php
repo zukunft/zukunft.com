@@ -332,7 +332,7 @@ class config extends db_object_seq_id
 
         $cfg_value = $this->get_db($code_id, $db_con);
         if ($cfg_value != $target_value) {
-            $result = $this->set(config::SITE_NAME, def::POD_NAME, $db_con, $description);
+            $result = $this->set(config::SITE_NAME, POD_NAME, $db_con, $description);
         }
         return $result;
     }

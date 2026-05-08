@@ -42,13 +42,17 @@
 namespace Zukunft\ZukunftCom\main\php\web\types;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+//include_once html_paths::HTML . 'html_base.php';
 //include_once paths::SHARED_TYPES . 'phrase_types.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once paths::SHARED_CONST . 'views.php';
 //include_once html_paths::WORD . 'word.php';
 
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 
@@ -131,6 +135,19 @@ class type_object
     function comment(): string
     {
         return $this->comment;
+    }
+
+    /**
+     * display a word with a link to the main page for the word
+     * @param string|null $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the html code
+     */
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::GROUP_EDIT_ID): string
+    {
+        $html = new html_base();
+        $url = $html->url_new($msk_id, $this->id(), '', $back);
+        return $html->ref($url, $this->name(), $this->comment, $style);
     }
 
 

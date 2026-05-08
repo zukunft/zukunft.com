@@ -6357,6 +6357,18 @@
         "code_id": "122last_update",
         "description": "",
         "id": 883
+      },
+      {
+        "name": "39local_name",
+        "code_id": "39local_name",
+        "description": "",
+        "id": 884
+      },
+      {
+        "name": "39usage",
+        "code_id": "39usage",
+        "description": "",
+        "id": 885
       }
     ],
     "db_cache_types": [
@@ -6645,22 +6657,74 @@
     ],
     "languages": [
       {
+        "id": 1,
         "name": "English",
         "code_id": "en",
         "description": "the system language, so each word must be unique for all users in this language",
-        "id": 1
+        "wiki_code": "en",
+        "local_name": "English",
+        "usage": 2000000000,
+        "wikimedia_code": "en"
       },
       {
+        "id": 2,
         "name": "US English",
         "code_id": "en_us",
-        "description": "the users can use this (and the other) languages to create its own namespace. So one user may use \"Zurich\" in UK English for \"Kanton Zurich\" and another user may use \"Zurich\" in UK English for \"Zurich AG\".",
-        "id": 2
+        "description": "the users can use this (and the other) languages to create its own namespace. So one user may use \"Zurich\" in US English for \"Kanton Zurich\" and another user may use \"Zurich\" in UK English for \"Zurich AG\".",
+        "wiki_code": "en",
+        "local_name": "US English",
+        "usage": 350000000,
+        "wikimedia_code": "en"
       },
       {
+        "id": 3,
         "name": "German",
         "code_id": "de",
-        "description": "a normal translation to German",
-        "id": 3
+        "description": "a translation to standard German",
+        "wiki_code": "de",
+        "local_name": "Deutsch",
+        "usage": 120000000,
+        "wikimedia_code": "de"
+      },
+      {
+        "id": 4,
+        "name": "French",
+        "code_id": "fr",
+        "description": "Le fran\u00e7ais est une langue indo-europ\u00e9enne de la famille des langues romanes dont les locuteurs sont appel\u00e9s francophones",
+        "wiki_code": "fr",
+        "local_name": "Fran\u00e7ais",
+        "usage": 320000000,
+        "wikimedia_code": "fr"
+      },
+      {
+        "id": 5,
+        "name": "Spanish",
+        "code_id": "es",
+        "description": "El espa\u00f1ol o castellano es una lengua romance procedente del lat\u00edn hablado, perteneciente a la familia de lenguas indoeuropeas",
+        "wiki_code": "es",
+        "local_name": "Espa\u00f1ol",
+        "usage": 500000000,
+        "wikimedia_code": "es"
+      },
+      {
+        "id": 6,
+        "name": "Chinese",
+        "code_id": "zh",
+        "description": "\u6f22\u8a9e\u53c8\u7a31\u4e2d\u6587 \u662f\u6e90\u81ea\u4e1c\u4e9a\u7684\u4e00\u7c7b\u5206\u6790\u8bed\uff0c\u4e3a\u6c49\u6c11\u65cf\u7684\u6bcd\u8bed",
+        "wiki_code": "zh",
+        "local_name": "\u6f22\u8a9e",
+        "usage": 1300000000,
+        "wikimedia_code": "zh"
+      },
+      {
+        "id": 7,
+        "name": "Arabic",
+        "code_id": "ar",
+        "description": "\u0671\u0644\u0644\u064f\u0651\u063a\u064e\u0629\u064f \u0671\u0644\u0652\u0639\u064e\u0631\u064e\u0628\u0650\u064a\u064e\u0651\u0629 \u0647\u064a \u0623\u0643\u062b\u0631 \u0627\u0644\u0644\u063a\u0627\u062a \u0627\u0644\u0633\u0627\u0645\u064a\u0629 \u062a\u062d\u062f\u062b\u064b\u0627\u060c \u0648\u0625\u062d\u062f\u0649 \u0623\u0643\u062b\u0631 \u0627\u0644\u0644\u063a\u0627\u062a \u0627\u0646\u062a\u0634\u0627\u0631\u0627\u064b \u0641\u064a \u0627\u0644\u0639\u0627\u0644\u0645\u060c \u064a\u062a\u062d\u062f\u062b\u0647\u0627 \u0623\u0643\u062b\u0631 \u0645\u0646 467 \u0645\u0644\u064a\u0648\u0646 \u0646\u0633\u0645\u0629.",
+        "wiki_code": "ar",
+        "local_name": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
+        "usage": 380000000,
+        "wikimedia_code": "ar"
       }
     ],
     "language_forms": [
@@ -8744,6 +8808,18 @@
         "code_id": "system_admin_jobs_delayed",
         "description": "list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs",
         "id": 185
+      },
+      {
+        "name": "selection page",
+        "code_id": "select_list",
+        "description": "show a list e.g. of languages and let the user pick on that should be used",
+        "id": 186
+      },
+      {
+        "name": "button request new",
+        "code_id": "button_request",
+        "description": "show a button to request a new e.g. type item that needs to be confirmed and \/ or modified by an admin",
+        "id": 187
       }
     ],
     "component_link_types": [
@@ -17987,22 +18063,22 @@
             "position_type": 2
           },
           {
-            "link_id": 816,
-            "id": 193,
-            "name": "system show field description",
-            "description": "the object description as read only",
-            "type_id": 147,
-            "code_id": "show_field_description",
-            "position": 6,
-            "position_type": 1
-          },
-          {
             "link_id": 817,
             "id": 220,
             "name": "system formatter row right",
             "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
             "type_id": 33,
             "code_id": "row_right",
+            "position": 6,
+            "position_type": 1
+          },
+          {
+            "link_id": 816,
+            "id": 193,
+            "name": "system show field description",
+            "description": "the object description as read only",
+            "type_id": 147,
+            "code_id": "show_field_description",
             "position": 6,
             "position_type": 1
           },
@@ -19367,17 +19443,6 @@
             "position_type": 1
           },
           {
-            "link_id": 925,
-            "id": 209,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 927,
             "id": 212,
             "name": "system form button export",
@@ -19385,6 +19450,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 925,
+            "id": 209,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -19493,17 +19569,6 @@
             "position_type": 1
           },
           {
-            "link_id": 936,
-            "id": 209,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 938,
             "id": 212,
             "name": "system form button export",
@@ -19511,6 +19576,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 936,
+            "id": 209,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -19745,17 +19821,6 @@
             "position_type": 1
           },
           {
-            "link_id": 958,
-            "id": 209,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 960,
             "id": 212,
             "name": "system form button export",
@@ -19763,6 +19828,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 958,
+            "id": 209,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -20025,13 +20101,54 @@
       },
       {
         "id": 88,
+        "name": "Language selection",
+        "description": "List all language in an overview page to select the ui language and allow to request an additional language",
+        "type_id": null,
+        "code_id": "language_select",
+        "components": [
+          {
+            "link_id": 981,
+            "id": 266,
+            "name": "title language select",
+            "description": "show the page title to select a language",
+            "type_id": 63,
+            "code_id": "title_language_select",
+            "ui_msg_code_id": "title_language_select",
+            "position": 1,
+            "position_type": 1
+          },
+          {
+            "link_id": 982,
+            "id": 267,
+            "name": "list of all languages",
+            "description": "show as many languages on on page as useful and allow the user to select one to change the frontend language and if there are more than can be displayed at once it needs be to pages allow to switch the pages",
+            "type_id": 186,
+            "code_id": "list_select_languages",
+            "position": 2,
+            "position_type": 1
+          },
+          {
+            "link_id": 983,
+            "id": 268,
+            "name": "request additional language",
+            "description": "a button to request an additional language",
+            "type_id": 187,
+            "code_id": "button_add_languages",
+            "ui_msg_code_id": "button_add_languages",
+            "position": 3,
+            "position_type": 1
+          }
+        ]
+      },
+      {
+        "id": 89,
         "name": "base units",
         "description": "view the base units with the formulas",
         "type_id": 6,
         "code_id": "base_units",
         "components": [
           {
-            "link_id": 981,
+            "link_id": 984,
             "id": 1,
             "name": "Word",
             "description": "simply show the word or triple name",
@@ -20042,14 +20159,14 @@
         ]
       },
       {
-        "id": 89,
+        "id": 90,
         "name": "Word (default)",
         "description": "the default view for words",
         "type_id": 11,
         "code_id": "word_default",
         "components": [
           {
-            "link_id": 982,
+            "link_id": 985,
             "id": 1,
             "name": "Word",
             "description": "simply show the word or triple name",
@@ -20058,8 +20175,8 @@
             "position_type": 1
           },
           {
-            "link_id": 983,
-            "id": 277,
+            "link_id": 986,
+            "id": 280,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -20069,15 +20186,15 @@
         ]
       },
       {
-        "id": 90,
+        "id": 91,
         "name": "Verb",
         "description": "the default view for verbs",
         "type_id": 12,
         "code_id": "verb_default",
         "components": [
           {
-            "link_id": 984,
-            "id": 267,
+            "link_id": 987,
+            "id": 270,
             "name": "Verb",
             "description": "simply show the verb name",
             "type_id": 37,
@@ -20085,8 +20202,8 @@
             "position_type": 1
           },
           {
-            "link_id": 985,
-            "id": 268,
+            "link_id": 988,
+            "id": 271,
             "name": "related triples",
             "description": "triples where this verb is used",
             "type_id": 47,
@@ -20096,15 +20213,15 @@
         ]
       },
       {
-        "id": 91,
+        "id": 92,
         "name": "Triple (default)",
         "description": "the default view for triples",
         "type_id": 13,
         "code_id": "triple_default",
         "components": [
           {
-            "link_id": 986,
-            "id": 269,
+            "link_id": 989,
+            "id": 272,
             "name": "triple name",
             "description": "simply show the name of a triple",
             "type_id": 57,
@@ -20112,35 +20229,8 @@
             "position_type": 1
           },
           {
-            "link_id": 987,
-            "id": 277,
-            "name": "related values",
-            "description": "show the most relevant and related values",
-            "type_id": 11,
-            "position": 2,
-            "position_type": 1
-          }
-        ]
-      },
-      {
-        "id": 92,
-        "name": "Source",
-        "description": "the default view for sources",
-        "type_id": 14,
-        "code_id": "source_default",
-        "components": [
-          {
-            "link_id": 988,
-            "id": 270,
-            "name": "source name",
-            "description": "simply show the name of a source",
-            "type_id": 58,
-            "position": 1,
-            "position_type": 1
-          },
-          {
-            "link_id": 989,
-            "id": 277,
+            "link_id": 990,
+            "id": 280,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -20151,23 +20241,23 @@
       },
       {
         "id": 93,
-        "name": "Reference",
-        "description": "the default view for references",
-        "type_id": 15,
-        "code_id": "ref_default",
+        "name": "Source",
+        "description": "the default view for sources",
+        "type_id": 14,
+        "code_id": "source_default",
         "components": [
           {
-            "link_id": 990,
-            "id": 271,
-            "name": "reference name",
-            "description": "simply show the name of a reference",
-            "type_id": 59,
+            "link_id": 991,
+            "id": 273,
+            "name": "source name",
+            "description": "simply show the name of a source",
+            "type_id": 58,
             "position": 1,
             "position_type": 1
           },
           {
-            "link_id": 991,
-            "id": 277,
+            "link_id": 992,
+            "id": 280,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -20178,23 +20268,23 @@
       },
       {
         "id": 94,
-        "name": "Language",
-        "description": "the default view for languages",
-        "type_id": 16,
-        "code_id": "language_default",
+        "name": "Reference",
+        "description": "the default view for references",
+        "type_id": 15,
+        "code_id": "ref_default",
         "components": [
           {
-            "link_id": 992,
-            "id": 272,
-            "name": "language name",
-            "description": "simply show the name of a language",
-            "type_id": 60,
+            "link_id": 993,
+            "id": 274,
+            "name": "reference name",
+            "description": "simply show the name of a reference",
+            "type_id": 59,
             "position": 1,
             "position_type": 1
           },
           {
-            "link_id": 993,
-            "id": 277,
+            "link_id": 994,
+            "id": 280,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -20205,14 +20295,41 @@
       },
       {
         "id": 95,
+        "name": "Language",
+        "description": "the default view for languages",
+        "type_id": 16,
+        "code_id": "language_default",
+        "components": [
+          {
+            "link_id": 995,
+            "id": 275,
+            "name": "language name",
+            "description": "simply show the name of a language",
+            "type_id": 60,
+            "position": 1,
+            "position_type": 1
+          },
+          {
+            "link_id": 996,
+            "id": 280,
+            "name": "related values",
+            "description": "show the most relevant and related values",
+            "type_id": 11,
+            "position": 2,
+            "position_type": 1
+          }
+        ]
+      },
+      {
+        "id": 96,
         "name": "Display Number",
         "description": "the default view for values",
         "type_id": 17,
         "code_id": "value_default",
         "components": [
           {
-            "link_id": 994,
-            "id": 276,
+            "link_id": 997,
+            "id": 279,
             "name": "main value",
             "description": "show one most relevant value",
             "type_id": 38,
@@ -20222,14 +20339,14 @@
         ]
       },
       {
-        "id": 96,
+        "id": 97,
         "name": "Formula",
         "description": "Show a formula and the related results and words",
         "type_id": 18,
         "code_id": "formula_default",
         "components": [
           {
-            "link_id": 995,
+            "link_id": 998,
             "id": 1,
             "name": "Word",
             "description": "simply show the word or triple name",
@@ -20238,16 +20355,16 @@
             "position_type": 1
           },
           {
-            "link_id": 996,
-            "id": 266,
+            "link_id": 999,
+            "id": 269,
             "name": "Expression",
             "type_id": 62,
             "position": 2,
             "position_type": 1
           },
           {
-            "link_id": 997,
-            "id": 278,
+            "link_id": 1000,
+            "id": 281,
             "name": "related results",
             "description": "show the most relevant and related results",
             "type_id": 61,
@@ -20257,15 +20374,15 @@
         ]
       },
       {
-        "id": 97,
+        "id": 98,
         "name": "Result",
         "description": "the default view for results",
         "type_id": 19,
         "code_id": "result_default",
         "components": [
           {
-            "link_id": 998,
-            "id": 278,
+            "link_id": 1001,
+            "id": 281,
             "name": "related results",
             "description": "show the most relevant and related results",
             "type_id": 61,
@@ -20275,15 +20392,15 @@
         ]
       },
       {
-        "id": 98,
+        "id": 99,
         "name": "Ranking",
         "description": "the default view for all phrases where a better could be selected",
         "type_id": null,
         "code_id": "ranking",
         "components": [
           {
-            "link_id": 999,
-            "id": 279,
+            "link_id": 1002,
+            "id": 282,
             "name": "phrase",
             "description": "simply show the name of a word or triple",
             "type_id": 8,
@@ -20291,8 +20408,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1000,
-            "id": 280,
+            "link_id": 1003,
+            "id": 283,
             "name": "ranking parameters",
             "description": "the parameters used to calculate a ranking",
             "type_id": 45,
@@ -20300,8 +20417,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1001,
-            "id": 281,
+            "link_id": 1004,
+            "id": 284,
             "name": "ranking list",
             "description": "list sorted by the calculated ranking",
             "type_id": 46,
@@ -20311,7 +20428,7 @@
         ]
       },
       {
-        "id": 99,
+        "id": 100,
         "name": "Science",
         "description": "show mainly related words that are relevant in sciences",
         "type_id": null,
@@ -20319,7 +20436,7 @@
         "components": []
       },
       {
-        "id": 100,
+        "id": 101,
         "name": "Historic",
         "description": "show the related words in historic order",
         "type_id": null,
@@ -20327,7 +20444,7 @@
         "components": []
       },
       {
-        "id": 101,
+        "id": 102,
         "name": "Biological",
         "description": "show what is relevant from the biological point of view",
         "type_id": null,
@@ -20335,7 +20452,7 @@
         "components": []
       },
       {
-        "id": 102,
+        "id": 103,
         "name": "Education",
         "description": "sort related topics by difficulty",
         "type_id": null,
@@ -20343,7 +20460,7 @@
         "components": []
       },
       {
-        "id": 103,
+        "id": 104,
         "name": "Touristic",
         "description": "show things to see",
         "type_id": null,
@@ -20351,7 +20468,7 @@
         "components": []
       },
       {
-        "id": 104,
+        "id": 105,
         "name": "Graph",
         "description": "show the related topics as a visual graph",
         "type_id": null,
@@ -20359,7 +20476,7 @@
         "components": []
       },
       {
-        "id": 105,
+        "id": 106,
         "name": "Simple",
         "description": "show only the most relevant facts",
         "type_id": null,
@@ -20367,14 +20484,14 @@
         "components": []
       },
       {
-        "id": 106,
+        "id": 107,
         "name": "Mathematical constance",
         "description": "Show a mathematical constance and the related words and formulas",
         "type_id": null,
         "code_id": "math_const",
         "components": [
           {
-            "link_id": 1002,
+            "link_id": 1005,
             "id": 1,
             "name": "Word",
             "description": "simply show the word or triple name",
@@ -20383,8 +20500,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1003,
-            "id": 275,
+            "link_id": 1006,
+            "id": 278,
             "name": "related words",
             "description": "show the most relevant and related words or triples",
             "type_id": 9,
@@ -20392,8 +20509,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1004,
-            "id": 274,
+            "link_id": 1007,
+            "id": 277,
             "name": "formulas",
             "description": "simply show all related formulas",
             "type_id": 12,
@@ -20403,7 +20520,7 @@
         ]
       },
       {
-        "id": 107,
+        "id": 108,
         "name": "System log",
         "description": "show the most relevant system log entries (placeholder only at the moment)",
         "type_id": null,
