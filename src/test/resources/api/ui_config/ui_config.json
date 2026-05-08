@@ -8820,6 +8820,12 @@
         "code_id": "button_request",
         "description": "show a button to request a new e.g. type item that needs to be confirmed and \/ or modified by an admin",
         "id": 187
+      },
+      {
+        "name": "phrases with details related to",
+        "code_id": "phrases_related",
+        "description": "show the related phrase with as much details as fit to the screen",
+        "id": 188
       }
     ],
     "component_link_types": [
@@ -20520,7 +20526,7 @@
         ]
       },
       {
-        "id": 108,
+        "id": 109,
         "name": "System log",
         "description": "show the most relevant system log entries (placeholder only at the moment)",
         "type_id": null,

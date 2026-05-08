@@ -48,7 +48,7 @@ zukunft.com:
           file size:
             MB: 10
         time percent:
-          tooltip-comment: "the expected execution time for the database import in percent of the total process"
+          tooltip-comment: "the expected execution time for the database import in percent of the total process; values in percent, must sum to 100 and file read and decode may be only 1% in total"
           file read: 0.4
           decode: 0.6
           object creation: 24
@@ -62,6 +62,9 @@ zukunft.com:
             decode:
               sys-conf-value: 40
               tooltip-comment: "the estimated MB per second for decoding the import json file"
+            object creation:
+              sys-conf-value: 5
+              tooltip-comment: "the estimated MB per second for the object creation"
             object storing:
               sys-conf-value: 5
               tooltip-comment: "the estimated MB per second for storing the objects in the database"
@@ -217,6 +220,44 @@ zukunft.com:
             daily:
               ip user: 1000
               tooltip-comment: "maximal number of changes that an user without login can do per day"
+        account:
+          peers: 50
+          tooltip-comment: "the initial number of best predictors that are assigned as peers on account opening"
+        ranking:
+          tooltip-comment: "to rank the users by there contribution quality and prediction abilities"
+          prediction:
+            factors:
+              time:
+                sys-conf-value: 2
+                tooltip-comment: "a prediction with double the time period is used with factor e.g. of 2"
+              impact:
+                sys-conf-value: 2
+                tooltip-comment: "a prediction with double the impact is used with factor e.g. of 2"
+              usage:
+                sys-conf-value: 2
+                tooltip-comment: "a prediction that is used by two times more user accounts is used with factor e.g. of 2"
+              factor wrong:
+                sys-conf-value: 1.5
+                tooltip-comment: "wrong prediction are scaled with this factor e.g. 2 to force users to make only few but good predictions"
+          contribution:
+            weights:
+              impact:
+                sys-conf-value: 2
+                tooltip-comment: "a value or formula with double the impact on others is used with factor e.g. of 2 for the ranking"
+              usage:
+                sys-conf-value: 2
+                tooltip-comment: "a value or formula that is used by two times more user accounts used with factor e.g. of 2 for the ranking"
+              factor wrong:
+                sys-conf-value: 1.5
+                tooltip-comment: "wrong values or formulas are scaled with this factor e.g. 2 to force users to make only few but good contributions"
+          combination:
+            weights:
+              contribution:
+                sys-conf-value: "80%"
+                tooltip-comment: "a valid contribution makes e.g. 80% of the total user ranking"
+              prediction:
+                sys-conf-value: "20%"
+                tooltip-comment: "a valid predictions makes e.g. 20% of the total user ranking"
         url:
           tooltip-comment: "the setting for the url"
           format:

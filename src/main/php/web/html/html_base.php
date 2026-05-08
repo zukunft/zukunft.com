@@ -131,7 +131,15 @@ class html_base
     const string ALT = 'alt';
     const string STYLE = 'style';
     const string CLASS_HTML = 'class';
-    const string TITLE_HTML = 'title';
+    const string TITLE_HTML = 'title'; // title attribute e.g. for tooltips
+    const string TITLE = 'title';      // <title> element in <head>
+    const string TYPE = 'type';
+    const string P = 'p';
+    const string DIV = 'div';
+    const string UL = 'ul';
+    const string LI = 'li';
+    const string BUTTON = 'button';
+    const string HTML = 'html';
 
     // to sort
     const string CLASS_MAIN = 'main-container';
@@ -331,10 +339,10 @@ class html_base
     function footer(bool $no_about = false): string
     {
         global $sys;
-        $result = '<footer class="site-footer">' . "\n";
+        $result = '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
 
         // for the about page this does not make sense
-        $result .= '<p> ' . "\n";
+        $result .= '<' . self::P . '> ' . "\n";
         if (!$no_about) {
             $url = $this->url(rest_ctrl::URL_ABOUT);
             $result .= $this->ref($url, "About") . ' &middot; ' . "\n";
@@ -346,11 +354,11 @@ class html_base
         $result .= '<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> ' . "\n";
         $result .= 'of this version ' . SYSTEM_CODE_VERSION . "\n";
         $result .= 'under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence. ' . "\n";
-        $result .= '</p> ' . "\n";
+        $result .= '</' . self::P . '> ' . "\n";
 
-        $result .= '</footer>' . "\n";
+        $result .= '</' . self::FOOTER . '>' . "\n";
         $result .= '</' . self::BODY . '>' . "\n";
-        $result .= '</html>' . "\n";
+        $result .= '</' . self::HTML . '>' . "\n";
 
         return $result;
     }
@@ -1813,7 +1821,7 @@ class html_base
         if ($style != '') {
             $style = ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
-        return '<div' . $style . '>' . $txt . '</div>';
+        return '<' . self::DIV . $style . '>' . $txt . '</' . self::DIV . '>';
     }
 
     /**
@@ -1841,7 +1849,7 @@ class html_base
         if ($style == '') {
             $style = view_styles::DEFAULT;
         }
-        return '<div ' . self::CLASS_HTML . '="' . $style . '">' . $txt . '</div>';
+        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . $style . '">' . $txt . '</' . self::DIV . '>';
     }
 
     /**
@@ -1851,7 +1859,7 @@ class html_base
      */
     public function p(string $txt): string
     {
-        return '<p>' . $txt . '</p>';
+        return '<' . self::P . '>' . $txt . '</' . self::P . '>';
     }
 
     /**
@@ -1866,7 +1874,7 @@ class html_base
         } else {
             $class = self::CLASS_BUTTON;
         }
-        return '<button type="' . $typ . '" class="' . $class . '">' . $txt . '</button>';
+        return '<' . self::BUTTON . ' ' . self::TYPE . '="' . $typ . '" ' . self::CLASS_HTML . '="' . $class . '">' . $txt . '</' . self::BUTTON . '>';
     }
 
     function button_bs(string $text, string $style = '', string $type = ''): string
@@ -1878,8 +1886,8 @@ class html_base
         if ($type == '') {
             $type = self::INPUT_SUBMIT;
         }
-        $type = ' type="' . $type . '"';
-        return '<button' . $class . $type . '>' . $text . '</button>';
+        $type = ' ' . self::TYPE . '="' . $type . '"';
+        return '<' . self::BUTTON . $class . $type . '>' . $text . '</' . self::BUTTON . '>';
     }
 
     /**
@@ -1923,7 +1931,7 @@ class html_base
      */
     function list_item(string $txt): string
     {
-        return '<li>' . $txt . '</li>';
+        return '<' . self::LI . '>' . $txt . '</' . self::LI . '>';
     }
 
     /**
@@ -1933,7 +1941,7 @@ class html_base
      */
     function list_unsorted(string $txt): string
     {
-        return '<ul>' . $txt . '</ul>';
+        return '<' . self::UL . '>' . $txt . '</' . self::UL . '>';
     }
 
     /**
@@ -1997,7 +2005,7 @@ class html_base
                 $txt = $txt . ' (' . $pod_name . ')';
             }
         }
-        return '<title>' . $txt . '</title>';
+        return '<' . self::TITLE . '>' . $txt . '</' . self::TITLE . '>';
     }
 
     /**

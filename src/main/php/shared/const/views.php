@@ -316,7 +316,7 @@ class views
 
     // TODO Prio 3 resort the views and group it
     const string SYSTEM_LOG = 'system_log';
-    const int SYSTEM_LOG_ID = 108;
+    const int SYSTEM_LOG_ID = 109;
 
     // to sort
     const string LANGUAGE_SELECT = 'language_select';
