@@ -42,7 +42,7 @@ class def
 
     // configuration values used as fallback if the value is missing in the system configuration
     const int FALLBACK_DB_PAGE_ROWS = 20; // the number of database rows that should be loaded at once
-    const string ENCODING = 'UTF-8'; // the default encoding for the backend
+    const string ENCODING = 'utf-8'; // the default encoding for the backend
     const string FILE_PHP = '.php'; // the file extension for the code scripts
 
 }

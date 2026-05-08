@@ -4929,6 +4929,7 @@
     \-- navbar - section for function navbar not yet defined that it should be header & footer in /html/html_base.php
     \-- footer - section for function footer not yet defined that it should be header & footer in /html/html_base.php
     \-- ref - section for function ref not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
+    \-- img - section for function img not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- url - section for function url not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_new - section for function url_new not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
@@ -5011,6 +5012,7 @@
     \-- ui_progress - section for function ui_progress not yet defined that it should be display interface in /html/html_base.php
     \-- main - section for function main not yet defined that it should be internal in /html/html_base.php
     \-- div - section for function div not yet defined that it should be internal in /html/html_base.php
+    \-- nav - section for function nav not yet defined that it should be internal in /html/html_base.php
     \-- div_bs - section for function div_bs not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
@@ -6731,6 +6733,8 @@
         \-- html_base - wrap the body tag around html body code
     \-- div
         \-- html_base - wrap the div tag around html code
+    \-- nav
+        \-- html_base - wrap the nav tag around html code
     \-- div_bs
         \-- html_base - wrap the div tag around html code
     \-- button_bs
@@ -6820,6 +6824,8 @@
         \-- html_base - @param bool $no_about
 \-- wrapper for the basic html elements used
     \-- ref
+        \-- html_base - @param bool $no_about
+    \-- img
         \-- html_base - @param bool $no_about
     \-- span
         \-- html_base - @param string $text the text that should be formatted

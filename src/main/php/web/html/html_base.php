@@ -101,8 +101,6 @@ class html_base
     // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
     const int UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
 
-    const string IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
-
     const string METHOD_POST = 'post';
 
     const string SIZE_FULL = 'full';
@@ -111,13 +109,43 @@ class html_base
     const string WIDTH_FULL = '800px';
     const string WIDTH_HALF = '400px';
 
-    // to sort
+    // all html code elements used
     const string DOC_HTML = '<!DOCTYPE html>';
+    const string HTML_START = '<html lang=';
+    const string META = 'meta';
+    const string NAME = 'name';
+    const string CONTENT = 'content';
+    const string CHARSET = 'charset';
+    const string HEAD = 'head';
+    const string BODY = 'body';
+    const string MAIN = 'main';
+    const string FOOTER = 'footer';
+    const string LINK = 'link';
+    const string REL = 'rel';
+    const string STYLESHEET = 'stylesheet';
+    const string A = 'a';
+    const string HREF = 'href';
+    const string NAV = 'nav';
+    const string IMG = 'img';
+    const string SRC = 'src';
+    const string ALT = 'alt';
+    const string STYLE = 'style';
+    const string CLASS_HTML = 'class';
+    const string TITLE_HTML = 'title';
+
+    // to sort
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
     const string CLASS_INPUT_SECTION = 'search-section';
     const string CLASS_INPUT = 'standard-input';
     const string CLASS_BUTTON = 'btn';
+    const string CLASS_NAV = 'navbar site-header fixed-top';
+    const string CLASS_LOGO = 'navbar-brand';
+    const string CLASS_LOGO_BS = 'height: 4em;';
+    const string CLASS_LOGO_HTML = 'height: 5em;';
+    const string CLASS_LOGO_BIG = 'height: 30%;';
+    const string CLASS_LOGO_FLEX = 'brand-logo';
+    const string CLASS_LOGO_SECTION = 'logo-section';
 
 
     /*
@@ -187,51 +215,59 @@ class html_base
     function header(
         string $title,
         string $style = "",
-        string $lan = languages::DEFAULT,
-        string $server_url = '',
-        string $bs_path = '',
-        string $bs_css_path = ''
+        string $lan = languages::DEFAULT
     ): string
     {
-        // set the fallback values
-        if ($server_url == '') {
-            $server_url = api::HOST_PROD;
+        $result = $this->doctype() . "\n";
+        $result .= $this->lang($lan) . "\n";
+        $result .= $this->head($this->head_fill($title)) . "\n";
+        if (self::UI_USE_BOOTSTRAP) {
+            $result .= '<' . self::BODY . '>';
+        } else {
+            if ($style <> "") {
+                $result .= '<' . self::BODY . ' ' . self::CLASS_HTML . '="' . $style . '">';
+            } else {
+                $result .= '<' . self::BODY . '>' . "\n";
+            }
         }
 
-        $result = '<!DOCTYPE html>' . "\n";
-        $result .= '<html lang="' . $lan . '">' . "\n"; // TODO: to be adjusted depending on the display language
-        $result .= '<head>' . "\n";
-        $result .= '<meta charset="utf-8">' . "\n";
-        // make sheet flood
-        $result .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-        $result .= $this->title($title, POD_NAME) . "\n";
+        return $result;
+    }
+
+    /**
+     * @param string $title the title of the html page
+     * @return string with the html code for the head section of the html header
+     */
+    private function head_fill(string $title): string
+    {
+        $txt = $this->charset() . "\n";
+        $txt .= $this->make_flood() . "\n";
+        $txt .= $this->title($title, POD_NAME) . "\n";
+        $txt .= $this->head_style() . "\n";
+        return $txt;
+    }
+
+    /**
+     * @return string with the html code for the style of the html head
+     */
+    private function head_style(): string
+    {
         if (self::UI_USE_BOOTSTRAP) {
             // TODO Prio 3 check if the other bootstrap css also needs to be included
             // include the bootstrap stylesheets
-            $result .= $this->stylesheet_bs() . "\n";
+            $txt = $this->stylesheet_bs() . "\n";
             // include the icon font
-            $result .= $this->stylesheet_font() . "\n";
+            $txt .= $this->stylesheet_font() . "\n";
             // include the default zukunft.com frontend style
-            $result .= $this->stylesheet() . "\n";
+            $txt .= $this->stylesheet() . "\n";
             // TODO Prio 2 check if still needed
             // include the bootstrap JavaScript plugins
             //$result .= $this->stylesheet_bs_js_all() . "\n";
         } else {
             // use a simple stylesheet without Javascript
-            $result .= $this->stylesheet_fallback() . "\n";
+            $txt = $this->stylesheet_fallback() . "\n";
         }
-        $result .= '</head>';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<body>';
-        } else {
-            if ($style <> "") {
-                $result .= '<body class="' . $style . '">';
-            } else {
-                $result .= '<body>' . "\n";
-            }
-        }
-
-        return $result;
+        return $txt;
     }
 
     /**
@@ -251,10 +287,7 @@ class html_base
         $url = $html->url_new($msk_id);
         $lan_lst = $ui_lst->select_list_item($url);
 
-        $result = '<nav class="navbar site-header fixed-top">' . "\n";
-        $result .= '<a class="navbar-brand" href="/http/view.php" title="zukunft.com">' . "\n";
-        $result .= '<img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;">' . "\n";
-        $result .= '</a>' . "\n";
+        $result = $this->logo() . "\n";
         $result .= '<form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">' . "\n";
         $result .= '<label for="kp" class="visually-hidden">Search</label>' . "\n";
         $result .= '<input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">' . "\n";
@@ -287,9 +320,8 @@ class html_base
         $result .= '</li>' . "\n";
         $result .= '</ul>' . "\n";
         $result .= '</div>' . "\n";
-        $result .= '</nav>' . "\n";
 
-        return $result;
+        return $this->nav($result, self::CLASS_NAV);
     }
 
     /**
@@ -317,7 +349,7 @@ class html_base
         $result .= '</p> ' . "\n";
 
         $result .= '</footer>' . "\n";
-        $result .= '</body>' . "\n";
+        $result .= '</' . self::BODY . '>' . "\n";
         $result .= '</html>' . "\n";
 
         return $result;
@@ -332,19 +364,27 @@ class html_base
 
     function ref(string $url, string $name, string $title = '', string $style = ''): string
     {
-        $result = '<a href="' . $url . '"';
+        $result = '<' . self::A . ' ' . self::HREF . '="' . $url . '"';
         if ($title != '') {
-            $result .= ' title="' . $title . '"';
+            $result .= ' ' . self::TITLE_HTML . '="' . $title . '"';
         } else {
-            $result .= ' title="' . $name . '"';
+            $result .= ' ' . self::TITLE_HTML . '="' . $name . '"';
         }
         if ($style != '') {
-            $result .= ' class="' . $style . '"';
+            $result .= ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
         $result .= '>';
         $result .= $name;
-        $result .= '</a>';
+        $result .= '</' . self::A . '>';
         return $result;
+    }
+
+    function img(string $img_path, string $alt, string $style = ''): string
+    {
+        return '<' . self::IMG
+            . ' ' . self::SRC . '="' . $img_path . '"'
+            . ' ' . self::ALT . '="' . $alt . '"'
+            . ' ' . self::STYLE . '="' . $style . '">';
     }
 
     /**
@@ -523,16 +563,12 @@ class html_base
      */
     function logo(): string
     {
-        $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<a class="navbar-brand" href="/http/view.php" title="zukunft.com">';
-            $result .= '<img src="' . self::IMG_LOGO . '" alt="zukunft.com" style="height: 4em;">';
+            $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_BS);
         } else {
-            $result .= '<a href="/http/view.php" title="zukunft.com">';
-            $result .= '<img src="' . self::IMG_LOGO . '" alt="zukunft.com" style="height: 5em;">';
+            $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_HTML);
         }
-        $result .= '</a>';
-        return $result;
+        return $this->ref(api::MAIN_SCRIPT_REL, $img, POD_NAME, self::CLASS_LOGO);
     }
 
     /**
@@ -540,10 +576,8 @@ class html_base
      */
     function logo_big(): string
     {
-        $result = '<a href="/http/view.php" title="zukunft.com Logo">';
-        $result .= '<img src="' . self::IMG_LOGO . '" alt="zukunft.com" style="height: 30%;">';
-        $result .= '</a>';
-        return $result;
+        $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_BIG);
+        return $this->ref(api::MAIN_SCRIPT_REL, $img, POD_NAME, self::CLASS_LOGO);
     }
 
     /**
@@ -551,12 +585,9 @@ class html_base
      */
     function logo_flex(): string
     {
-        $result = '<div class="logo-section">';
-        $result .= '<a href="/http/view.php" title="zukunft.com Logo">';
-        $result .= '<img src="' . self::IMG_LOGO . '" alt="zukunft.com"  class="brand-logo">';
-        $result .= '</a>';
-        $result .= '</div>';
-        return $result;
+        $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_FLEX);
+        $ref = $this->ref(api::MAIN_SCRIPT_REL, $img, POD_NAME, self::CLASS_LOGO);
+        return $this->div($ref, self::CLASS_LOGO_SECTION);
     }
 
     /*
@@ -1738,7 +1769,7 @@ class html_base
      */
     private function head(string $txt): string
     {
-        return '<head>' . $txt . '</head>';
+        return '<' . self::HEAD . '>' . $txt . '</' . self::HEAD . '>';
     }
 
     /**
@@ -1748,7 +1779,7 @@ class html_base
      */
     private function body(string $txt): string
     {
-        return '<body>' . $txt . '</body>';
+        return '<' . self::BODY . '>' . $txt . '</' . self::BODY . '>';
     }
 
     /**
@@ -1758,7 +1789,7 @@ class html_base
      */
     function main(string $txt): string
     {
-        return '<main class="' . self::CLASS_MAIN . '">' . $txt . '</main>';
+        return '<' . self::MAIN . ' ' . self::CLASS_HTML . '="' . self::CLASS_MAIN . '">' . $txt . '</' . self::MAIN . '>';
     }
 
     /**
@@ -1768,7 +1799,7 @@ class html_base
      */
     private function foot(string $txt): string
     {
-        return '<footer class="' . self::CLASS_FOOTER . '">' . $txt . '</footer>';
+        return '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . $txt . '</' . self::FOOTER . '>';
     }
 
     /**
@@ -1780,9 +1811,23 @@ class html_base
     function div(string $txt, string $style = ''): string
     {
         if ($style != '') {
-            $style = ' class="' . $style . '"';
+            $style = ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
         return '<div' . $style . '>' . $txt . '</div>';
+    }
+
+    /**
+     * wrap the nav tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the warped html code
+     */
+    function nav(string $txt, string $style = ''): string
+    {
+        if ($style != '') {
+            $style = ' ' . self::CLASS_HTML . '="' . $style . '"';
+        }
+        return '<' . self::NAV . ' ' . $style . '>' . $txt . '</' . self::NAV . '>';
     }
 
     /**
@@ -1796,17 +1841,7 @@ class html_base
         if ($style == '') {
             $style = view_styles::DEFAULT;
         }
-        return '<div class="' . $style . '">' . $txt . '</div>';
-    }
-
-    /**
-     * wrap the nav tag around html code
-     * @param string $txt the html code
-     * @return string the warped html code
-     */
-    private function nav(string $txt): string
-    {
-        return '<nav>' . $txt . '</nav>';
+        return '<div ' . self::CLASS_HTML . '="' . $style . '">' . $txt . '</div>';
     }
 
     /**
@@ -1839,7 +1874,7 @@ class html_base
         if ($style == '') {
             $style = self::BS_BTN_SUCCESS;
         }
-        $class = ' class="' . self::BS_BTN . ' ' . $style . '"';
+        $class = ' ' . self::CLASS_HTML . '="' . self::BS_BTN . ' ' . $style . '"';
         if ($type == '') {
             $type = self::INPUT_SUBMIT;
         }
@@ -1902,25 +1937,51 @@ class html_base
     }
 
     /**
-     * @return string with the charset for the html pages
-     */
-    private function charset(): string
-    {
-        return '<meta charset="' . def::ENCODING . '">';
-    }
-
-    /**
      * @return string to use the flex option on pages
      */
     private function viewport(): string
     {
-        return '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
+        return '<' . self::META . ' name="viewport" content="width=device-width, initial-scale=1.0">';
     }
 
 
     /*
      * internal
      */
+
+    /**
+     * @return string the html file header
+     */
+    private function doctype(): string
+    {
+        return self::DOC_HTML;
+    }
+
+    /**
+     * @return string the html language selection
+     */
+    private function lang(string $lan): string
+    {
+        return self::HTML_START . '"' . $lan . '">';
+    }
+
+    /**
+     * @return string with the charset for the html pages
+     */
+    private function charset(): string
+    {
+        return '<' . self::META . ' ' . self::CHARSET . '="' . def::ENCODING . '">';
+    }
+
+    /**
+     * @return string with the charset for the html pages
+     */
+    private function make_flood(): string
+    {
+        return '<' . self::META . ' '
+            . self::NAME . '="viewport" '
+            . self::CONTENT . '="width=device-width, initial-scale=1.0">';
+    }
 
     /**
      * wrap the title tag around html title text
@@ -1984,7 +2045,7 @@ class html_base
      */
     private function link_style(string $stylesheet): string
     {
-        return '<link rel="stylesheet" href="' . $stylesheet . '">';
+        return '<' . self::LINK . ' ' . self::REL . '="' . self::STYLESHEET . '" ' . self::HREF . '="' . $stylesheet . '">';
     }
 
 }

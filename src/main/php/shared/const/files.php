@@ -43,6 +43,7 @@ class files
 
     const string JSON = '.json';
     const string CSS = '.css';
+    const string SVG = '.svg';
 
 
     /*
@@ -73,5 +74,6 @@ class files
     const string STYLE_FALLBACK = self::STYLE_PATH . 'style' . self::CSS;
     const string STYLE_BS = paths::EXT_LIB_BS_CSS . 'bootstrap' . self::CSS;
     const string STYLE_FONT = paths::EXT_LIB_FONT_CSS . 'all' . self::CSS;
+    const string LOGO = paths::IMAGE_RES . 'ZUKUNFT_logo' . self::SVG;
 
 }

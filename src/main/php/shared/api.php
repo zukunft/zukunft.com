@@ -46,11 +46,6 @@ class api
     const string HOST_UAT = 'https://test.zukunft.com/';
     const string HOST_PROD = 'https://www.zukunft.com/';
     const string HOST_SAME = '/';
-    const string BS_PATH_DEV = 'bootstrap/';
-    const string BS_CSS_PATH_DEV = 'bootstrap/';
-    const string BS_CSS = 'css' . DIRECTORY_SEPARATOR . 'bootstrap.css';
-    const string EXT_LIB_PATH = 'external_lib' . DIRECTORY_SEPARATOR;
-    const string HOST_SYS_LOG = '';
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const string CONFIG_ALL = 'all';
@@ -59,7 +54,9 @@ class api
 
     // the url name of the main script that is used in combination with the host url
     const string MAIN_SCRIPT_PATH = 'http' . DIRECTORY_SEPARATOR;
+    const string MAIN_SCRIPT_REL_PATH = DIRECTORY_SEPARATOR . 'http' . DIRECTORY_SEPARATOR;
     const string MAIN_SCRIPT = self::MAIN_SCRIPT_PATH . 'view.php';
+    const string MAIN_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'view.php';
     const string URL_DEV = api::HOST_DEV . api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ;
 
 
