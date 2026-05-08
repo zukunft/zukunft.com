@@ -35,6 +35,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::WEB . 'frontend.php';
@@ -43,6 +44,7 @@ include_once html_paths::TYPES . 'language_list.php';
 //include_once paths::SHARED_CONST . 'def.php';
 //include_once paths::SHARED_CONST . 'files.php';
 //include_once paths::SHARED_CONST . 'rest_ctrl.php';
+//include_once paths::SHARED_ENUM . 'languages.php';
 //include_once paths::SHARED_ENUM . 'messages.php';
 //include_once paths::SHARED_TYPES . 'view_styles.php';
 //include_once paths::SHARED . 'api.php';
@@ -172,13 +174,16 @@ class html_base
     }
 
     /**
+     * create the html code fpr the page header
      * @param string $title simple the HTML title used
      * @param string $style e.g. to center for the login page
+     * @param string $lan the language html code id
      * @returns string the general HTML header
      */
     function header(
         string $title,
         string $style = "",
+        string $lan = languages::DEFAULT,
         string $server_url = '',
         string $bs_path = '',
         string $bs_css_path = ''
@@ -200,16 +205,12 @@ class html_base
         $url_ext_lib = '/' . api::EXT_LIB_PATH;
 
         $result = '<!DOCTYPE html>' . "\n";
-        $result .= '<html lang="en">' . "\n"; // TODO: to be adjusted depending on the display language
+        $result .= '<html lang="' . $lan . '">' . "\n"; // TODO: to be adjusted depending on the display language
         $result .= '<head>' . "\n";
         $result .= '<meta charset="utf-8">' . "\n";
         // make sheet flood
         $result .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-        if ($title <> "") {
-            $result .= '<title>' . $title . ' (zukunft.com)</title>' . "\n";
-        } else {
-            $result .= '<title>zukunft.com</title>' . "\n";
-        }
+        $result .= $this->title($title, POD_NAME) . "\n";
         if (self::UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
             $result .= '<link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">' . "\n";

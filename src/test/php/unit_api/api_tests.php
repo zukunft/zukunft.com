@@ -188,7 +188,7 @@ class api_tests
         $cfg = new config();
         $cfg->load();
         $test_name = 'the default configuration api message must at least contain the pod name';
-        $t->assert($test_name, $cfg->get_by([words::POD, words::URL]), def::POD_NAME);
+        $t->assert($test_name, $cfg->get_by([words::POD, words::URL]), POD_NAME);
 
         $cfg_all = new config();
         $cfg_all->load(api::CONFIG_ALL);

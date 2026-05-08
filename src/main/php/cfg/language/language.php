@@ -82,7 +82,9 @@ class language extends type_object
     const string FLD_ID = 'language_id';
     const string FLD_NAME = 'language_name';
     const string FLD_NAME_COM = 'the name of the language in the system language, which is English';
+    const string FLD_CODE_ID_COM = 'the ISO 639-1 language code plus BCP 47 plus additional language codes requested by zukunft.com users';
     const string FLD_WIKI_CODE = 'wikimedia_code';
+    const string FLD_WIKI_CODE_COM = 'wikimedia language code e.g. no instead of nb (Norwegian Bokmål in ISO) for a full link to wikipedia';
     const string FLD_LOCAL_NAME = 'local_name';
     const string FLD_LOCAL_NAME_COM = 'the name of the language in the language';
     const string FLD_USAGE_COM = 'the number of speakers worldwide';
@@ -92,9 +94,9 @@ class language extends type_object
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     const array FLD_LST_ALL = array(
-        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
+        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_WIKI_CODE, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
+        [self::FLD_WIKI_CODE, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_WIKI_CODE_COM],
         [self::FLD_LOCAL_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_LOCAL_NAME_COM],
         [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
     );

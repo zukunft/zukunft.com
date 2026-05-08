@@ -97,6 +97,7 @@ include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'languages.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
@@ -145,6 +146,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
@@ -281,7 +283,7 @@ class frontend
             log_info('environment ' . getenv(ENVIRONMENT));
         }
 
-        $sys->pod_name = getenv(ENVIRONMENT);
+        $sys->pod_name = POD_NAME;
 
         $errors = 0;
 
@@ -646,6 +648,7 @@ class frontend
         $step = $url_array[url_var::STEP];
         $action = $url_array[url_var::ACTION] ?? null;
         $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
+        $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
 
         $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
         $view_words = $url_array[url_var::WORDS] ?? '';
@@ -768,7 +771,7 @@ class frontend
                     $result .= 'Please add a component to the view by clicking on Edit on the top right.';
                 } else {
                     $html = new html_base();
-                    $result .= $html->header($title, '');
+                    $result .= $html->header($title, '', $lan);
                     $result .= $html->navbar($view_id);
                     $result .= $html->main($dsp_text);
                     $result .= $html->footer();

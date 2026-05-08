@@ -6816,7 +6816,7 @@
     \-- footer_html
         \-- html_base - the page footer for simple html pages like the login page
     \-- header
-        \-- html_base - @param string $title simple the HTML title used
+        \-- html_base - create the html code fpr the page header
     \-- navbar
         \-- html_base - the html code for the navigation bar
     \-- footer

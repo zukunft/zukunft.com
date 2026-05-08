@@ -223,7 +223,8 @@ class application
             log_info('environment ' . getenv(ENVIRONMENT));
         }
 
-        $sys->pod_name = $code_name;
+        // TODO Prio 0 combine with frontend.php
+        $sys->pod_name = POD_NAME;
 
         $errors = 0;
 
