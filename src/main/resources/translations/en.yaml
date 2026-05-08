@@ -251,3 +251,9 @@ messages:
   rename_word:
     text: "Rename"
     tooltip: "change the word name only for as an exception"
+  privacy_policy: "Privacy Policy"
+  cc0: "Creative Commons CC0"
+  cc0_license: "CC0 License"
+  program_code: "program code"
+  agpl3: "AGPL3"
+  open_source: "Open Source"

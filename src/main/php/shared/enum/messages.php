@@ -1789,6 +1789,14 @@ enum messages: string
 
     case BUTTON_ADD_LANGUAGES = 'button_add_languages';
 
+    // footer links
+    case PRIVACY_POLICY = 'privacy_policy';
+    case CC0 = 'cc0';
+    case CC0_LICENSE = 'cc0_license';
+    case PROGRAM_CODE = 'program_code';
+    case AGPL3 = 'agpl3';
+    case OPEN_SOURCE = 'open_source';
+
     case UNDO = 'undo';
     case FIND = 'find';
     case REMOVE_FILTER = 'remove filter';

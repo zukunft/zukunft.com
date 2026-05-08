@@ -13,7 +13,7 @@ zukunft.com:
           tooltip-comment: "initial delay in seconds for the first connection retry"
         max delay:
           sec: 3600
-          tooltip-comment: "target delay time for a frontend updates so that the user always knows what the system is doing"
+          tooltip-comment: "the give up time for database connection retries"
       block size:
         tooltip-comment: "group the database statements for faster execution"
         insert: 200
@@ -30,7 +30,7 @@ zukunft.com:
           limit:
             storage size:
               MB: 500
-              tooltip-comment: "if this storage size limit is reached a warning message to the admin user is created to remove the olf log"
+              tooltip-comment: "if this storage size limit is reached a warning message to the admin user is created to remove the old log"
             time:
               days: 100
               tooltip-comment: "if the log type is round robin older log entries are automatically deleted"
@@ -38,7 +38,7 @@ zukunft.com:
         config:
           limit:
             days: 150
-            tooltip-comment: "if the cache is older than e.g. 150 days it will be recreated prevent issues to to potential refresh bugs"
+            tooltip-comment: "if the cache is older than e.g. 150 days it will be recreated prevent issues due to potential refresh bugs"
           validate:
             type: "names"
             tooltip-comment: "if 'names' the phrase names are included in the cache for better readability. if 'full' all phrase parameters are included or 'none' if only the group id of the value is used"
@@ -48,7 +48,7 @@ zukunft.com:
           file size:
             MB: 10
         time percent:
-          tooltip-comment: "the expected execution time for the database import in percent of the total process; values in percent, must sum to 100 and file read and decode may be only 1% in total"
+          tooltip-comment: "the expected execution time for the database import in percent of the total process; values in percent, must sum to 100 and file read and decode file read and decode together account for only ~1% in total"
           file read: 0.4
           decode: 0.6
           object creation: 24
@@ -69,8 +69,8 @@ zukunft.com:
               sys-conf-value: 5
               tooltip-comment: "the estimated MB per second for storing the objects in the database"
             total:
-              sys-conf-value: 16386
-              tooltip-comment: "the estimated bytes per second that can be processed when importing a json"
+              sys-conf-value: 2.1
+              tooltip-comment: "the estimated MB per second that can be processed when importing a json"
           objects second:
             load:
               words:
@@ -224,7 +224,7 @@ zukunft.com:
           peers: 50
           tooltip-comment: "the initial number of best predictors that are assigned as peers on account opening"
         ranking:
-          tooltip-comment: "to rank the users by there contribution quality and prediction abilities"
+          tooltip-comment: "to rank the users by their contribution quality and prediction abilities"
           prediction:
             factors:
               time:
@@ -311,7 +311,7 @@ zukunft.com:
               tooltip-comment: "minimum number of same time type word to display in a table e.g. if at least 3 years exist use a table to display"
             max columns:
               sys-conf-value: 10
-              tooltip-comment: "maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years"
+              tooltip-comment: "maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the last 10 years"
             future percent:
               sys-conf-value: 20
               tooltip-comment: "the default number of future outlook e.g. if there are 10 years of hist and 3 years of outlook display 8 years of hist and 2 years outlook"
@@ -336,14 +336,14 @@ zukunft.com:
         tooltip-comment: "if the selection list contains more than the initial entries, the number of alphabetic sorted entries show initially and added with each click on more"
       phrase:
         preselect:
-          min percent: 30%
+          min: "30%"
           tooltip-comment: "used to preselect phrases for the next value: if 30% or more of the phrases of a list are the same, the probability is high that the next phrase is the same"
     year:
       automatic create: 10
       tooltip-comment: "the number of futures years automatically created by the system"
     view:
       freeze: 20
-      tooltip-comment: "the number of view by one user to automatically freeze the view for the user"
+      tooltip-comment: "the number of views by one user to automatically lock/freeze the view for the user, so that changes from other user does not change the view any more"
     component:
       list:
         entries:
@@ -359,7 +359,7 @@ zukunft.com:
       tooltip-comment: "to configure the internal system test"
       output format:
         sys-conf-value: 0
-        tooltip-comment: "the general formatting style of the test results e.g. 0 for pur text or 1 for html code"
+        tooltip-comment: "the general formatting style of the test results e.g. 0 for pure text or 1 for html code"
       level:
         sys-conf-value: 3
         tooltip-comment: "to define what should be shown: 4: all, 3: timeouts, 2: warnings or 1: only errors"
@@ -382,8 +382,10 @@ zukunft.com:
           not trusted: "hw-i.ru"
         country:
           trusted: "Switzerland"
-      launch: 2025-06-07
-      point: 2025-06-07
+      launch: 2026-06-07
+      point:
+        sys-conf-value: "50.478517691532666, 12.33581966347697"
+        tooltip-comment: "the geo location of the main pod to estimate the time delays"
       limits:
         tooltip-comment: "limits per pod that, like all other pod settings, can only be changed by an admin user and that are used as a second line of defence to prevent unwanted behavior"
         max login:
@@ -435,21 +437,21 @@ zukunft.com:
       hardware:
         usage:
           CPU:
-            target: 50%
-            info: 70%
-            warning: 90%
+            target: "50%"
+            info: "70%"
+            warning: "90%"
           network:
-            target: 30%
-            info: 50%
-            warning: 70%
+            target: "30%"
+            info: "50%"
+            warning: "70%"
           memory:
-            target: 40%
-            info: 60%
-            warning: 80%
+            target: "40%"
+            info: "60%"
+            warning: "80%"
           storage:
-            target: 50%
-            info: 70%
-            warning: 80%
+            target: "50%"
+            info: "70%"
+            warning: "80%"
           response time:
             millisecond:
               target: 100

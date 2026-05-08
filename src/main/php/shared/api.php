@@ -57,6 +57,8 @@ class api
     const string MAIN_SCRIPT_REL_PATH = DIRECTORY_SEPARATOR . 'http' . DIRECTORY_SEPARATOR;
     const string MAIN_SCRIPT = self::MAIN_SCRIPT_PATH . 'view.php';
     const string MAIN_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'view.php';
+    const string ABOUT_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'about.php';
+    const string PRIVACY_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'privacy_policy.html';
     const string URL_DEV = api::HOST_DEV . api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ;
 
 

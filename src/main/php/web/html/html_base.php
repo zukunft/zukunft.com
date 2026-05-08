@@ -339,21 +339,22 @@ class html_base
     function footer(bool $no_about = false): string
     {
         global $sys;
+        global $mtr;
         $result = '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
 
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";
         if (!$no_about) {
             $url = $this->url(rest_ctrl::URL_ABOUT);
-            $result .= $this->ref($url, "About") . ' &middot; ' . "\n";
-            $result .= '<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; ' . "\n";
+            $result .= $this->ref($url, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT)) . ' &middot; ' . "\n";
+            $result .= $this->ref(api::PRIVACY_SCRIPT_REL, $mtr->txt(msg_id::PRIVACY_POLICY)) . ' &middot; ' . "\n";
         }
         $result .= 'All structured data is available under the ';
-        $result .= '<a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> ' . "\n";
+        $result .= $this->ref('https://creativecommons.org/publicdomain/zero/1.0/', $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ' . "\n";
         $result .= 'Licence unless otherwise stated and the ' . "\n";
-        $result .= '<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> ' . "\n";
+        $result .= $this->ref('https://github.com/zukunft/zukunft.com', $mtr->txt(msg_id::PROGRAM_CODE)) . ' ' . "\n";
         $result .= 'of this version ' . SYSTEM_CODE_VERSION . "\n";
-        $result .= 'under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence. ' . "\n";
+        $result .= 'under the ' . $this->ref('https://www.gnu.org/licenses/agpl.html', $mtr->txt(msg_id::AGPL3)) . ' Licence. ' . "\n";
         $result .= '</' . self::P . '> ' . "\n";
 
         $result .= '</' . self::FOOTER . '>' . "\n";
@@ -857,6 +858,7 @@ class html_base
      */
     function form_end_with_submit(string $submit_name, string $back, $del_call = ''): string
     {
+        global $mtr;
         $result = '';
         $but = new button();
         if (self::UI_USE_BOOTSTRAP) {
@@ -867,13 +869,13 @@ class html_base
             }
             if ($back <> "") {
                 if (is_numeric($back)) {
-                    $result .= '<a href="/http/view.php?words=' . $back . '" class="btn btn-outline-secondary btn-space" role="button">Cancel</a>';
+                    $result .= $this->ref(api::MAIN_SCRIPT_REL . '?' . url_var::WORDS_HUMAN . '=' . $back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
                 } else {
-                    $result .= '<a href="' . $back . '" class="btn btn-outline-secondary btn-space" role="button">Cancel</a>';
+                    $result .= $this->ref($back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
                 }
             }
             if ($del_call <> '') {
-                $result .= '<a href="' . $del_call . '" class="btn btn-outline-danger" role="button">delete</a>';
+                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_POPUP_TITLE_DELETE), '', 'btn btn-outline-danger');
             }
         } else {
             if ($submit_name == "") {
@@ -929,6 +931,7 @@ class html_base
 
     function about_body(): string
     {
+        global $mtr;
         $result = $this->dsp_form_center();
         $result .= $this->logo_big();
         $result .= '<br><br>';
@@ -937,16 +940,15 @@ class html_base
         $result .= 'Blumentalstrasse 15<br>';
         $result .= '8707 Uetikon am See<br>';
         $result .= 'Switzerland<br><br>';
-        $result .= '<a href="mailto:timon@zukunft.com">timon@zukunft.com</a><br><br>';
+        $result .= $this->ref('mailto:timon@zukunft.com', 'timon@zukunft.com') . '<br><br>';
         $result .= 'One of the main ideas is to use ';
-        $result .= '<a href="https://dx.doi.org/10.2139/ssrn.6497759">Real-Time Delphi Based on the Giant Global Graph: A Framework for Fair and Evidence-Based Decision-Making</a>. ';
+        $result .= $this->ref('https://dx.doi.org/10.2139/ssrn.6497759', 'Real-Time Delphi Based on the Giant Global Graph: A Framework for Fair and Evidence-Based Decision-Making') . '. ';
         $result .= 'Once implemented it might be possible ';
-        $result .= '<a href="https://doi.org/10.5281/zenodo.19443909">Implementing the Categorical Imperative in Practice</a>.<br><br>';
+        $result .= $this->ref('https://doi.org/10.5281/zenodo.19443909', 'Implementing the Categorical Imperative in Practice') . '.<br><br>';
         $result .= 'zukunft.com AG also supports the ';
-        $result .= $this->ref("https://github.com/zukunft/tream", "Open Source", "github.com link") . ' Portfolio Management System<br><br>';
-        $result .= '<a href="https://tream.biz/p4a/applications/tream/" title="TREAM demo">';
-        $result .= '<img src="/src/main/resources/images/TREAM_logo.jpg" alt="TREAM" style="height: 20%;">';
-        $result .= '</a><br><br>';
+        $result .= $this->ref("https://github.com/zukunft/tream", $mtr->txt(msg_id::OPEN_SOURCE), "github.com link") . ' Portfolio Management System<br><br>';
+        $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'height: 20%;');
+        $result .= $this->ref('https://tream.biz/p4a/applications/tream/', $tream_img, 'TREAM demo') . '<br><br>';
         $result .= '</div>   ';
         $result .= $this->footer(true);
 
@@ -1167,9 +1169,9 @@ class html_base
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<a href="' . $call . '" class="btn btn-outline-secondary btn-space" role="button">' . $btn_name . '</a>';
+            $result .= $this->ref($call, $btn_name, '', 'btn btn-outline-secondary btn-space');
         } else {
-            $result .= '<a href="' . $call . '">' . $btn_name . '</a>';
+            $result .= $this->ref($call, $btn_name);
         }
         return $result;
     }
@@ -1311,6 +1313,7 @@ class html_base
 // end a html form
     function dsp_form_end($submit_name, $back, $del_call = ''): string
     {
+        global $mtr;
         $but = new button();
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
@@ -1321,13 +1324,13 @@ class html_base
             }
             if ($back <> "") {
                 if (is_numeric($back)) {
-                    $result .= '<a href="/http/view.php?words=' . $back . '" class="btn btn-outline-secondary btn-space" role="button">Cancel</a>';
+                    $result .= $this->ref(api::MAIN_SCRIPT_REL . '?' . url_var::WORDS_HUMAN . '=' . $back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
                 } else {
-                    $result .= '<a href="' . $back . '" class="btn btn-outline-secondary btn-space" role="button">Cancel</a>';
+                    $result .= $this->ref($back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
                 }
             }
             if ($del_call <> '') {
-                $result .= '<a href="' . $del_call . '" class="btn btn-outline-danger" role="button">delete</a>';
+                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_POPUP_TITLE_DELETE), '', 'btn btn-outline-danger');
             }
         } else {
             if ($submit_name == "") {
@@ -1897,7 +1900,8 @@ class html_base
      */
     private function about(): string
     {
-        return '<a href="/http/about.php" title="About">About</a>';
+        global $mtr;
+        return $this->ref(api::ABOUT_SCRIPT_REL, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT));
     }
 
     /**
@@ -1907,7 +1911,8 @@ class html_base
      */
     private function privacy(): string
     {
-        return '<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a>';
+        global $mtr;
+        return $this->ref(api::PRIVACY_SCRIPT_REL, $mtr->txt(msg_id::PRIVACY_POLICY));
     }
 
     /**
@@ -1917,10 +1922,11 @@ class html_base
      */
     private function foot_text(): string
     {
+        global $mtr;
         $txt = 'All structured data is available under the ';
-        $txt .= '<a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> ';
-        $txt .= '<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> ';
-        $txt .= 'under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence';
+        $txt .= $this->ref('https://creativecommons.org/publicdomain/zero/1.0/', $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ';
+        $txt .= $this->ref('https://github.com/zukunft/zukunft.com', $mtr->txt(msg_id::PROGRAM_CODE)) . ' ';
+        $txt .= 'under the ' . $this->ref('https://www.gnu.org/licenses/agpl.html', $mtr->txt(msg_id::AGPL3)) . ' Licence';
         return $txt;
     }
 
