@@ -7,6 +7,10 @@
 
     depending on the settings either pure HTML, BOOTSTRAP HTML or vue.js code is created
 
+    The main sections of this object are
+    - internal:          html code functions that are used only by this class
+
+
 
     This file is part of zukunft.com - calc with words
 
@@ -193,16 +197,6 @@ class html_base
         if ($server_url == '') {
             $server_url = api::HOST_PROD;
         }
-        if ($bs_path == '') {
-            $bs_path = api::BS_PATH_PROD;
-        }
-        if ($bs_css_path == '') {
-            $bs_css_path = api::BS_CSS_PATH_PROD;
-        }
-
-        // set vars to shorten the lines
-        //$url_ext_lib = $server_url . api::EXT_LIB_PATH;
-        $url_ext_lib = '/' . api::EXT_LIB_PATH;
 
         $result = '<!DOCTYPE html>' . "\n";
         $result .= '<html lang="' . $lan . '">' . "\n"; // TODO: to be adjusted depending on the display language
@@ -212,23 +206,19 @@ class html_base
         $result .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
         $result .= $this->title($title, POD_NAME) . "\n";
         if (self::UI_USE_BOOTSTRAP) {
+            // TODO Prio 3 check if the other bootstrap css also needs to be included
             // include the bootstrap stylesheets
-            $result .= '<link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">' . "\n";
-            // load the icon font
-            $result .= '<link rel="stylesheet" href="' . $url_ext_lib . 'fontawesome/css/all.css">' . "\n";
-            // TODO Prio 1 use const
-            $result .= '<link rel="stylesheet" href="/src/main/resources/style/style_html.css">' . "\n";
+            $result .= $this->stylesheet_bs() . "\n";
+            // include the icon font
+            $result .= $this->stylesheet_font() . "\n";
+            // include the default zukunft.com frontend style
+            $result .= $this->stylesheet() . "\n";
+            // TODO Prio 2 check if still needed
             // include the bootstrap JavaScript plugins
-            // TODO Prio 1 check if still needed
-            //$result .= '  <script src="' . $url_ext_lib . $bs_path . api::BS_JS . '"></script>' . "\n";
-            // adjust the styles where needed
-            // TODO Prio 1 check if still needed
-            //$result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />' . "\n";
-            // TODO Prio 1 check if still needed
-            //$result .= '  <script defer src="' . $url_ext_lib . 'fontawesome/js/all.js"></script>' . "\n";
+            //$result .= $this->stylesheet_bs_js_all() . "\n";
         } else {
             // use a simple stylesheet without Javascript
-            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />' . "\n";
+            $result .= $this->stylesheet_fallback() . "\n";
         }
         $result .= '</head>';
         if (self::UI_USE_BOOTSTRAP) {
@@ -333,154 +323,12 @@ class html_base
         return $result;
     }
 
-    /**
-     * @param string $title simple the HTML title used
-     * @param string $style e.g. to center for the login page
-     * @returns string the general HTML header
-     */
-    function header_old(
-        string $title,
-        string $style = "",
-        string $server_url = '',
-        string $bs_path = '',
-        string $bs_css_path = ''
-    ): string
-    {
-        // set the fallback values
-        if ($server_url == '') {
-            $server_url = api::HOST_PROD;
-        }
-        if ($bs_path == '') {
-            $bs_path = api::BS_PATH_PROD;
-        }
-        if ($bs_css_path == '') {
-            $bs_css_path = api::BS_CSS_PATH_PROD;
-        }
-
-        // set vars to shorten the lines
-        //$url_ext_lib = $server_url . api::EXT_LIB_PATH;
-        $url_ext_lib = '/' . api::EXT_LIB_PATH;
-
-        $result = '<!DOCTYPE html>';
-        $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language
-        if ($title <> "") {
-            $result .= '<head><title>' . $title . ' (zukunft.com)</title>';
-        } else {
-            $result .= '<head><title>zukunft.com</title>' . "\n";
-        }
-        $result .= '  <meta charset="utf-8">';
-        if (self::UI_USE_BOOTSTRAP) {
-            // include the bootstrap stylesheets
-            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">' . "\n";
-            // include the bootstrap JavaScript plugins
-            $result .= '  <script src="' . $url_ext_lib . $bs_path . api::BS_JS . '"></script>' . "\n";
-            // adjust the styles where needed
-            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />' . "\n";
-            // load the icon font
-            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . 'fontawesome/css/all.css">';
-            $result .= '  <script defer src="' . $url_ext_lib . 'fontawesome/js/all.js"></script>' . "\n";
-        } else {
-            // use a simple stylesheet without Javascript
-            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />' . "\n";
-        }
-        $result .= '</head>';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<body>' . "\n";
-        } else {
-            if ($style <> "") {
-                $result .= '<body class="' . $style . '">';
-            } else {
-                $result .= '<body>' . "\n";
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param string $title simple the HTML title used
-     * @returns string the simple HTML header for unit tests
-     */
-    function header_test(string $title, string $server_url = '', string $bs_path = '', string $bs_css_path = ''): string
-    {
-        if ($server_url == '') {
-            $server_url = api::HOST_DEV;
-            $server_url_rel = api::HOST_DEV_RELATIVE;
-        }
-        if ($bs_path == '') {
-            $bs_path = api::BS_PATH_DEV;
-        }
-        if ($bs_css_path == '') {
-            $bs_css_path = api::BS_CSS_PATH_DEV;
-        }
-
-        // set vars to shorten the lines
-        $url_ext_lib = $server_url_rel . api::EXT_LIB_PATH;
-
-        $result = '<!DOCTYPE html>';
-        $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language
-        $result .= '<head>' . "\n";
-        $result .= '<meta charset="utf-8">' . "\n";
-        // make sheet flood
-        $result .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-        if ($title <> "") {
-            $result .= '<title>' . $title . ' (zukunft.com)</title>';
-        } else {
-            $result .= '<title>zukunft.com</title>';
-        }
-        if (self::UI_USE_BOOTSTRAP) {
-            // include the bootstrap stylesheets
-            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">';
-            // load the icon font
-            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . 'fontawesome/css/all.css">';
-            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_html.css" />';
-        } else {
-            // use a simple stylesheet without Javascript
-            $result .= '<link rel="stylesheet" href="/src/main/resources/style/style_html.css">' . "\n";
-        }
-        $result .= '</head>';
-        $result .= '<body>';
-
-        return $result;
-    }
-
-    /**
-     * @param bool $no_about
-     * @return string the general HTML footer
-     */
-    function footer_old(bool $no_about = false): string
-    {
-        $result = '';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result = '    </div>';
-        }
-        $result .= '  <footer>';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= '  <div class="text-center">';
-        } else {
-            $result .= '  <div class="footer">';
-        }
-        $result .= '<small>';
-        if (!$no_about) {
-            $url = $this->url(rest_ctrl::URL_ABOUT);
-            $result .= $this->ref($url, "About") . ' &middot; ';
-        }
-        $result .= '<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; ';
-        $result .= 'All structured data is available under the <a href="//creativecommons.org/publicdomain/zero/1.0/" title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License';
-        $result .= ' and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> of this version 0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License';
-        // for the about page this does not make sense
-        $result .= '</small>';
-        $result .= '</div>';
-        $result .= '</footer>';
-        $result .= '</body>';
-        $result .= '</html>';
-
-        return $result;
-    }
 
     /*
      * wrapper for the basic html elements used
      */
+
+    // TODO Prio 1 use this everywhere if possible
 
     function ref(string $url, string $name, string $title = '', string $style = ''): string
     {
@@ -2069,6 +1917,11 @@ class html_base
         return '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
     }
 
+
+    /*
+     * internal
+     */
+
     /**
      * wrap the title tag around html title text
      * @param string $txt the title text
@@ -2091,7 +1944,47 @@ class html_base
      */
     private function stylesheet(): string
     {
-        return '<link rel="stylesheet" href="' . files::STYLE_HTML . '">';
+        return $this->link_style(files::STYLE_HTML);
+    }
+
+    /**
+     * @return string use a simple stylesheet without JavaScript and without bootstrap (maybe not needed any more)
+     */
+    private function stylesheet_fallback(): string
+    {
+        return $this->link_style(files::STYLE_FALLBACK);
+    }
+
+    /**
+     * @return string the bootstrap stylesheet
+     */
+    private function stylesheet_bs(): string
+    {
+        return $this->link_style(files::STYLE_BS);
+    }
+
+    /**
+     * @return string all JavaScript bootstrap stylesheets
+     */
+    private function stylesheet_bs_js_all(): string
+    {
+        return $this->link_style(paths::EXT_LIB_BS_JS);
+    }
+
+    /**
+     * @return string the font stylesheet
+     */
+    private function stylesheet_font(): string
+    {
+        return $this->link_style(files::STYLE_FONT);
+    }
+
+    /**
+     * @return string use a simple stylesheet without JavaScript
+     */
+    private function link_style(string $stylesheet): string
+    {
+        return '<link rel="stylesheet" href="' . $stylesheet . '">';
     }
 
 }

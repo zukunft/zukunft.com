@@ -4928,9 +4928,6 @@
     \-- header - section for function header not yet defined that it should be header & footer in /html/html_base.php
     \-- navbar - section for function navbar not yet defined that it should be header & footer in /html/html_base.php
     \-- footer - section for function footer not yet defined that it should be header & footer in /html/html_base.php
-    \-- header_old - section for function header_old not yet defined that it should be header & footer in /html/html_base.php
-    \-- header_test - section for function header_test not yet defined that it should be header & footer in /html/html_base.php
-    \-- footer_old - section for function footer_old not yet defined that it should be header & footer in /html/html_base.php
     \-- ref - section for function ref not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- url - section for function url not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
@@ -6820,12 +6817,6 @@
     \-- navbar
         \-- html_base - the html code for the navigation bar
     \-- footer
-        \-- html_base - @param bool $no_about
-    \-- header_old
-        \-- html_base - @param string $title simple the HTML title used
-    \-- header_test
-        \-- html_base - @param string $title simple the HTML title used
-    \-- footer_old
         \-- html_base - @param bool $no_about
 \-- wrapper for the basic html elements used
     \-- ref
