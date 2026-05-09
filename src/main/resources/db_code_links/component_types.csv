@@ -187,3 +187,4 @@ component_type_id, type_name, description, code_id
 186, 'selection page', 'show a list e.g. of languages and let the user pick on that should be used', 'select_list'
 187, 'button request new', 'show a button to request a new e.g. type item that needs to be confirmed and / or modified by an admin', 'button_request'
 188, 'phrases with details related to', 'show the related phrase with as much details as fit to the screen', 'phrases_related'
+189, 'phrases with details on 1/3 screen', 'show a number of related phrases with so many details that it fits 1/3 of the screen; the number of related phrases if taken from the user configuration var selections/target', 'phrases_related_1/3'

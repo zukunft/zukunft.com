@@ -6730,15 +6730,15 @@
     \-- view_id_to_dbo_ui
         \-- frontend - get an api json as a string from the backend
     \-- main
-        \-- html_base - wrap the body tag around html body code
+        \-- html_base - wrap the main tag around html body code
     \-- div
         \-- html_base - wrap the div tag around html code
     \-- nav
         \-- html_base - wrap the nav tag around html code
     \-- div_bs
-        \-- html_base - wrap the div tag around html code
+        \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
     \-- button_bs
-        \-- html_base - wrap the paragraph button around html code
+        \-- html_base - wrap the button tag around html code
     \-- list_item
         \-- html_base - html list item entry
     \-- list_unsorted
@@ -6817,16 +6817,16 @@
     \-- footer_html
         \-- html_base - the page footer for simple html pages like the login page
     \-- header
-        \-- html_base - create the html code fpr the page header
+        \-- html_base - create the html code for the page header
     \-- navbar
         \-- html_base - the html code for the navigation bar
     \-- footer
-        \-- html_base - @param bool $no_about
+        \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
 \-- wrapper for the basic html elements used
     \-- ref
-        \-- html_base - @param bool $no_about
+        \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
     \-- img
-        \-- html_base - @param bool $no_about
+        \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
     \-- span
         \-- html_base - @param string $text the text that should be formatted
 \-- wrapper for internal references used in the html code
@@ -6847,11 +6847,11 @@
         \-- html_base - TODO change based on the environment
 \-- images
     \-- logo
-        \-- html_base - @returns string the zukunft.com logo with a link to the home page
+        \-- html_base - @return string the zukunft.com logo with a link to the home page
     \-- logo_big
-        \-- html_base - @returns string the increased zukunft.com logo to display it in the center
+        \-- html_base - @return string the enlarged zukunft.com logo for centered display e.g. on the about page
     \-- logo_flex
-        \-- html_base - @returns string the increased zukunft.com logo to display it in the center
+        \-- html_base - @return string the enlarged zukunft.com logo wrapped in a flex div for responsive centering
 \-- the HTML table functions used in zukunft.com
     \-- th
         \-- html_base - show a text of link within a table header cell
@@ -6887,13 +6887,13 @@
     \-- form_hidden
         \-- html_base - add the hidden field
     \-- form_end_with_submit
-        \-- html_base - end a html form
+        \-- html_base - end a html form with save, cancel and optional delete buttons
     \-- button_submit
-        \-- html_base - end a html form
+        \-- html_base - end a html form with save, cancel and optional delete buttons
     \-- form_submit
-        \-- html_base - end a html form
+        \-- html_base - end a html form with save, cancel and optional delete buttons
     \-- form_input
-        \-- html_base - end a html form
+        \-- html_base - end a html form with save, cancel and optional delete buttons
     \-- about_page
         \-- html_base - @return string the HTML code of the about page
     \-- about_body
@@ -6904,42 +6904,42 @@
     \-- list_sort
         \-- html_base - display a list that can be sorted using the fixed field "order_nbr"
     \-- list
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
 \-- to dismiss / replace
     \-- dsp_tbl_width
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_tbl_width_half
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_line_small
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_text_h1
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_text_h2
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_text_h3
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_go_back
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_btn_text
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_err
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_link_hist_box
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_tbl_start
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_tbl_start_half
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_tbl_start_hist
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_tbl_start_select
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_tbl_end
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_form_start
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- dsp_form_end
-        \-- html_base - display a list of elements
+        \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- div_center
         \-- html_base - centre a html page
     \-- dsp_form_center

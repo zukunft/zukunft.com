@@ -216,7 +216,7 @@ class value_write_tests
         $fig = $mio_val->figure();
         $fig_dsp = $tl->ui_obj($fig, new figure_ui());
         $result = $fig_dsp->display_linked('1');
-        $target = '<a href="/http/result_edit.php?id=' . $mio_val_dsp->id() . '&back=1" title="1.55">1.55</a>';
+        $target = '<a href="/http/result_edit.php?id=' . $mio_val_dsp->id() . '&back=1">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation
@@ -227,14 +227,14 @@ class value_write_tests
         // test the HTML code creation including the hyperlink
         $result = $mio_val_dsp->value_edit('1');
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="/http/view.php?m=value_edit&id=' . $mio_val_dsp->id() . '&back=1" title="1.55">1.55</a>';
+        $target = '<a href="/http/view.php?m=value_edit&id=' . $mio_val_dsp->id() . '&back=1">1.55</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
         $mio_val_dsp->number = values::SAMPLE_INT;
         $result = $mio_val_dsp->value_edit('1');
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="/http/view.php?m=value_edit&id=' . $mio_val_dsp->id() . '&back=1" title="123\'456">123\'456</a>';
+        $target = '<a href="/http/view.php?m=value_edit&id=' . $mio_val_dsp->id() . '&back=1">123\'456</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // convert the user input for the database

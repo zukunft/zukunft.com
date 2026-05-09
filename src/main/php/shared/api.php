@@ -55,10 +55,14 @@ class api
     // the url name of the main script that is used in combination with the host url
     const string MAIN_SCRIPT_PATH = 'http' . DIRECTORY_SEPARATOR;
     const string MAIN_SCRIPT_REL_PATH = DIRECTORY_SEPARATOR . 'http' . DIRECTORY_SEPARATOR;
+    const string SETTINGS_REL = DIRECTORY_SEPARATOR . 'settings';
     const string MAIN_SCRIPT = self::MAIN_SCRIPT_PATH . 'view.php';
     const string MAIN_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'view.php';
     const string ABOUT_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'about.php';
     const string PRIVACY_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'privacy_policy.html';
+    const string FIND_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'find.php';
+    const string LOGIN_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'login.php';
+    const string SIGNUP_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'signup.php';
     const string URL_DEV = api::HOST_DEV . api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ;
 
 

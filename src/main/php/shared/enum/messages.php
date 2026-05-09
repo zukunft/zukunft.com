@@ -1797,6 +1797,35 @@ enum messages: string
     case AGPL3 = 'agpl3';
     case OPEN_SOURCE = 'open_source';
 
+    // footer text fragments
+    case FOOTER_DATA_LICENCE = 'footer_data_licence';
+    case FOOTER_LICENCE_UNLESS = 'footer_licence_unless';
+    case FOOTER_OF_VERSION = 'footer_of_version';
+    case FOOTER_UNDER_THE = 'footer_under_the';
+    case FOOTER_LICENCE = 'footer_licence';
+
+    // navbar text
+    case NAVBAR_SEARCH = 'navbar_search';
+    case NAVBAR_SEARCH_PLACEHOLDER = 'navbar_search_placeholder';
+    case NAVBAR_GET_NUMBERS = 'navbar_get_numbers';
+    case NAVBAR_ALTERNATIVE_VIEW = 'navbar_alternative_view';
+    case NAVBAR_CHANGE_VIEW = 'navbar_change_view';
+    case NAVBAR_ADD_VIEW = 'navbar_add_view';
+    case NAVBAR_LOGIN = 'navbar_login';
+    case NAVBAR_SIGNUP = 'navbar_signup';
+    case NAVBAR_SETTINGS = 'navbar_settings';
+
+    // about page text
+    case ABOUT_SPONSORED_BY = 'about_sponsored_by';
+    case ABOUT_MAIN_IDEA = 'about_main_idea';
+    case ABOUT_PAPER_DELPHI = 'about_paper_delphi';
+    case ABOUT_ONCE_IMPLEMENTED = 'about_once_implemented';
+    case ABOUT_PAPER_IMPERATIVE = 'about_paper_imperative';
+    case ABOUT_SUPPORTS = 'about_supports';
+    case ABOUT_PORTFOLIO_MGMT = 'about_portfolio_mgmt';
+    case ABOUT_TREAM_DEMO = 'about_tream_demo';
+    case ABOUT_GITHUB_LINK = 'about_github_link';
+
     case UNDO = 'undo';
     case FIND = 'find';
     case REMOVE_FILTER = 'remove filter';

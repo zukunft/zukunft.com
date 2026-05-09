@@ -268,6 +268,21 @@ zukunft.com:
           language:
             sys-conf-value: en
             tooltip-comment: "the language of the user frontend"
+          selections:
+            tooltip-comment: "the default number of item to select"
+            target:
+              web:
+                sys-conf-value: 3
+                tooltip-comment: "starting number of selection items show to the user on normal screens"
+              web mobile:
+                sys-conf-value: 2
+                tooltip-comment: "starting number of selection items show to the user on small screens"
+              increase list:
+                sys-conf-value: "5,8,13,21"
+                tooltip-comment: "list of items that is show if the user presses e.g. 3 time more 5 items are shown"
+              decrease days:
+                sys-conf-value: 20
+                tooltip-comment: "if a user is offline for these number of days the number of selection items is decrease by one step to make the reentry easier"
           lists:
             tooltip-comment: "general parameters for lists e.g. the number of default entries"
             limit:
