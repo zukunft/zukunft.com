@@ -166,7 +166,7 @@ class html_base
      * @param string $head the header HTML code
      * @param string $body the body HTML code
      * @param string $foot the footer HTML code
-     * @returns string the HTML page code
+     * @return string the HTML page code
      */
     function page_html(string $lan, string $head, string $body, string $foot): string
     {
@@ -180,8 +180,9 @@ class html_base
 
     /**
      * the page header for simple html pages like the login page
-     * @param string $title simple the HTML title used
-     * @returns string the simple HTML header for unit tests
+     * @param string $title the HTML page title
+     * @param string $pod_name the name of this deployment shown in the browser tab
+     * @return string the HTML head section for simple pages
      */
     function header_html(string $title, string $pod_name): string
     {
@@ -195,7 +196,7 @@ class html_base
     /**
      * wrap the main body tag around html body code
      * @param string $txt the html body code
-     * @return string the warped body code
+     * @return string the wrapped body code
      */
     function main_body(string $txt): string
     {
@@ -204,7 +205,7 @@ class html_base
 
     /**
      * the page footer for simple html pages like the login page
-     * @returns string the simple HTML footer for unit tests
+     * @return string the HTML footer section for simple pages
      */
     function footer_html(): string
     {
@@ -214,11 +215,11 @@ class html_base
     }
 
     /**
-     * create the html code fpr the page header
-     * @param string $title simple the HTML title used
-     * @param string $style e.g. to center for the login page
+     * create the html code for the page header
+     * @param string $title the HTML page title
+     * @param string $style CSS class applied to the body tag e.g. center_form for the login page
      * @param string $lan the language html code id
-     * @returns string the general HTML header
+     * @return string the HTML header and opening body tag
      */
     function header(
         string $title,
@@ -281,8 +282,8 @@ class html_base
     /**
      * the html code for the navigation bar
      *
-     * @param int $msk_id
-     * @return string the general HTML footer
+     * @param int $msk_id the mask id used to build the language switch URL
+     * @return string the navigation bar HTML code
      */
     function navbar(int $msk_id = 0): string
     {
@@ -295,23 +296,24 @@ class html_base
         $url = $html->url_new($msk_id);
         $lan_lst = $ui_lst->select_list_item($url);
 
+        global $mtr;
         $result = $this->logo() . "\n";
-        $result .= '<form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">' . "\n";
-        $result .= '<label for="kp" class="visually-hidden">Search</label>' . "\n";
-        $result .= '<input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">' . "\n";
-        $result .= '<button class="btn btn-outline-primary" type="submit">Get numbers</button>' . "\n";
+        $result .= '<form action="' . api::FIND_SCRIPT_REL . '" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">' . "\n";
+        $result .= '<label for="kp" class="visually-hidden">' . $mtr->txt(msg_id::NAVBAR_SEARCH) . '</label>' . "\n";
+        $result .= '<input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="' . $mtr->txt(msg_id::NAVBAR_SEARCH_PLACEHOLDER) . '" style="min-width: 40vw; max-width: 800px;">' . "\n";
+        $result .= '<' . self::BUTTON . ' class="btn btn-outline-primary" type="submit">' . $mtr->txt(msg_id::NAVBAR_GET_NUMBERS) . '</' . self::BUTTON . '>' . "\n";
         $result .= '</form>' . "\n";
         $result .= '<div class="col-md-2">' . "\n";
         $result .= '<ul class="nav navbar-nav">' . "\n";
         $result .= '<li class="active">' . "\n";
         $result .= '<details class="view-menu">' . "\n";
         $result .= '<summary><i class="fas fa-edit"></i></summary>' . "\n";
-        $result .= '<ul>' . "\n";
-        $result .= '<li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>' . "\n";
-        $result .= '<li><a href="?view=more">... more</a></li>' . "\n";
-        $result .= '<li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>' . "\n";
-        $result .= '<li><a href="/http/view.php?m=view_add">add view</a></li>' . "\n";
-        $result .= '</ul>' . "\n";
+        $result .= '<' . self::UL . '>' . "\n";
+        $result .= $this->list_item($this->ref('/http/view.php?m=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE))) . "\n";
+        $result .= $this->list_item($this->ref('/http/view.php?m=view_edit&id=1', $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref('/http/view.php?m=view_add', $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
+        $result .= '</' . self::UL . '>' . "\n";
         $result .= '</details>' . "\n";
         $result .= '<details class="lang-menu">' . "\n";
         $result .= '<summary><i class="fas fa-globe"></i></summary>' . "\n";
@@ -319,11 +321,11 @@ class html_base
         $result .= '</details>' . "\n";
         $result .= '<details class="user-menu">' . "\n";
         $result .= '<summary><i class="fas fa-user-circle"></i></summary>' . "\n";
-        $result .= '<ul>' . "\n";
-        $result .= '<li><a href="/http/login.php">log in</a></li>' . "\n";
-        $result .= '<li><a href="/http/signup.php">Sign in</a></li>' . "\n";
-        $result .= '<li><a href="/settings">Settings</a></li>' . "\n";
-        $result .= '</ul>' . "\n";
+        $result .= '<' . self::UL . '>' . "\n";
+        $result .= $this->list_item($this->ref(api::LOGIN_SCRIPT_REL, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
+        $result .= $this->list_item($this->ref(api::SIGNUP_SCRIPT_REL, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
+        $result .= $this->list_item($this->ref(api::SETTINGS_REL, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
+        $result .= '</' . self::UL . '>' . "\n";
         $result .= '</details>' . "\n";
         $result .= '</li>' . "\n";
         $result .= '</ul>' . "\n";
@@ -333,8 +335,8 @@ class html_base
     }
 
     /**
-     * @param bool $no_about
-     * @return string the general HTML footer
+     * @param bool $no_about true to omit the about link e.g. when already on the about page
+     * @return string the full page footer including body and html closing tags
      */
     function footer(bool $no_about = false): string
     {
@@ -349,12 +351,12 @@ class html_base
             $result .= $this->ref($url, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT)) . ' &middot; ' . "\n";
             $result .= $this->ref(api::PRIVACY_SCRIPT_REL, $mtr->txt(msg_id::PRIVACY_POLICY)) . ' &middot; ' . "\n";
         }
-        $result .= 'All structured data is available under the ';
+        $result .= $mtr->txt(msg_id::FOOTER_DATA_LICENCE) . ' ';
         $result .= $this->ref('https://creativecommons.org/publicdomain/zero/1.0/', $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ' . "\n";
-        $result .= 'Licence unless otherwise stated and the ' . "\n";
+        $result .= $mtr->txt(msg_id::FOOTER_LICENCE_UNLESS) . ' ' . "\n";
         $result .= $this->ref('https://github.com/zukunft/zukunft.com', $mtr->txt(msg_id::PROGRAM_CODE)) . ' ' . "\n";
-        $result .= 'of this version ' . SYSTEM_CODE_VERSION . "\n";
-        $result .= 'under the ' . $this->ref('https://www.gnu.org/licenses/agpl.html', $mtr->txt(msg_id::AGPL3)) . ' Licence. ' . "\n";
+        $result .= $mtr->txt(msg_id::FOOTER_OF_VERSION) . ' ' . SYSTEM_CODE_VERSION . "\n";
+        $result .= $mtr->txt(msg_id::FOOTER_UNDER_THE) . ' ' . $this->ref('https://www.gnu.org/licenses/agpl.html', $mtr->txt(msg_id::AGPL3)) . ' ' . $mtr->txt(msg_id::FOOTER_LICENCE) . '. ' . "\n";
         $result .= '</' . self::P . '> ' . "\n";
 
         $result .= '</' . self::FOOTER . '>' . "\n";
@@ -374,10 +376,8 @@ class html_base
     function ref(string $url, string $name, string $title = '', string $style = ''): string
     {
         $result = '<' . self::A . ' ' . self::HREF . '="' . $url . '"';
-        if ($title != '') {
+        if ($title != '' && $title != $name) {
             $result .= ' ' . self::TITLE_HTML . '="' . $title . '"';
-        } else {
-            $result .= ' ' . self::TITLE_HTML . '="' . $name . '"';
         }
         if ($style != '') {
             $result .= ' ' . self::CLASS_HTML . '="' . $style . '"';
@@ -568,7 +568,7 @@ class html_base
      */
 
     /**
-     * @returns string the zukunft.com logo with a link to the home page
+     * @return string the zukunft.com logo with a link to the home page
      */
     function logo(): string
     {
@@ -581,7 +581,7 @@ class html_base
     }
 
     /**
-     * @returns string the increased zukunft.com logo to display it in the center
+     * @return string the enlarged zukunft.com logo for centered display e.g. on the about page
      */
     function logo_big(): string
     {
@@ -590,7 +590,7 @@ class html_base
     }
 
     /**
-     * @returns string the increased zukunft.com logo to display it in the center
+     * @return string the enlarged zukunft.com logo wrapped in a flex div for responsive centering
      */
     function logo_flex(): string
     {
@@ -844,7 +844,7 @@ class html_base
      * add the hidden field
      * @param string $name the internal name of the field
      * @param string $value the value that should be returned
-     * @@returns string the html code to add a hidden field
+     * @return string the html code to add a hidden field
      */
     function form_hidden(string $name, string $value): string
     {
@@ -854,7 +854,11 @@ class html_base
     }
 
     /**
-     * end a html form
+     * end a html form with save, cancel and optional delete buttons
+     * @param string $submit_name label for the save button; empty uses the default translated label
+     * @param string $back the URL or word id to return to after cancelling
+     * @param string $del_call the URL to call for the delete action; empty omits the delete button
+     * @return string the HTML code for the form buttons and closing form tag
      */
     function form_end_with_submit(string $submit_name, string $back, $del_call = ''): string
     {
@@ -863,7 +867,7 @@ class html_base
         $but = new button();
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
-                $result .= '<button type="submit" class="btn btn-outline-success btn-space">Save</button>';
+                $result .= '<' . self::BUTTON . ' type="submit" class="btn btn-outline-success btn-space">' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '</' . self::BUTTON . '>';
             } else {
                 $result .= '<button type="submit" class="btn btn-outline-success btn-space">' . $submit_name . '</button>';
             }
@@ -922,7 +926,8 @@ class html_base
      */
     function about_page(): string
     {
-        $result = $this->header('about', "center_form"); // reset the html code var
+        global $mtr;
+        $result = $this->header($mtr->txt(msg_id::SYSTEM_TITLE_ABOUT), "center_form");
 
         $result .= $this->about_body();
 
@@ -935,20 +940,20 @@ class html_base
         $result = $this->dsp_form_center();
         $result .= $this->logo_big();
         $result .= '<br><br>';
-        $result .= 'is sponsored by <br><br>';
+        $result .= $mtr->txt(msg_id::ABOUT_SPONSORED_BY) . '<br><br>';
         $result .= 'zukunft.com AG<br>';
         $result .= 'Blumentalstrasse 15<br>';
         $result .= '8707 Uetikon am See<br>';
         $result .= 'Switzerland<br><br>';
         $result .= $this->ref('mailto:timon@zukunft.com', 'timon@zukunft.com') . '<br><br>';
-        $result .= 'One of the main ideas is to use ';
-        $result .= $this->ref('https://dx.doi.org/10.2139/ssrn.6497759', 'Real-Time Delphi Based on the Giant Global Graph: A Framework for Fair and Evidence-Based Decision-Making') . '. ';
-        $result .= 'Once implemented it might be possible ';
-        $result .= $this->ref('https://doi.org/10.5281/zenodo.19443909', 'Implementing the Categorical Imperative in Practice') . '.<br><br>';
-        $result .= 'zukunft.com AG also supports the ';
-        $result .= $this->ref("https://github.com/zukunft/tream", $mtr->txt(msg_id::OPEN_SOURCE), "github.com link") . ' Portfolio Management System<br><br>';
+        $result .= $mtr->txt(msg_id::ABOUT_MAIN_IDEA) . ' ';
+        $result .= $this->ref('https://dx.doi.org/10.2139/ssrn.6497759', $mtr->txt(msg_id::ABOUT_PAPER_DELPHI)) . '. ';
+        $result .= $mtr->txt(msg_id::ABOUT_ONCE_IMPLEMENTED) . ' ';
+        $result .= $this->ref('https://doi.org/10.5281/zenodo.19443909', $mtr->txt(msg_id::ABOUT_PAPER_IMPERATIVE)) . '.<br><br>';
+        $result .= $mtr->txt(msg_id::ABOUT_SUPPORTS) . ' ';
+        $result .= $this->ref("https://github.com/zukunft/tream", $mtr->txt(msg_id::OPEN_SOURCE), $mtr->txt(msg_id::ABOUT_GITHUB_LINK)) . ' ' . $mtr->txt(msg_id::ABOUT_PORTFOLIO_MGMT) . '<br><br>';
         $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'height: 20%;');
-        $result .= $this->ref('https://tream.biz/p4a/applications/tream/', $tream_img, 'TREAM demo') . '<br><br>';
+        $result .= $this->ref('https://tream.biz/p4a/applications/tream/', $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO)) . '<br><br>';
         $result .= '</div>   ';
         $result .= $this->footer(true);
 
@@ -1034,16 +1039,12 @@ class html_base
     }
 
     /**
-     * display a list of elements
-     * the list should be paged and the items should be edible
-     *
-     * e,g, to display a list of verbs
-     * similar to the table function, which is used for values and formula results
+     * display a paged, editable list of elements e.g. verbs
      *
      * @param array $item_lst a list of objects that have at least an id and a name
-     * @param string $class the object that is requested e.g. a view
+     * @param string $class the object class name e.g. a view
      * @param string $back the target for the back / ctrl-z function
-     * @returns string with the html code to display the list
+     * @return string the html code to display the list
      */
     function list(array $item_lst, string $class, string $back = ''): string
     {
@@ -1318,7 +1319,7 @@ class html_base
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
-                $result .= '<button type="submit" class="btn btn-outline-success btn-space">Save</button>';
+                $result .= '<' . self::BUTTON . ' type="submit" class="btn btn-outline-success btn-space">' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '</' . self::BUTTON . '>';
             } else {
                 $result .= '<button type="submit" class="btn btn-outline-success btn-space">' . $submit_name . '</button>';
             }
@@ -1606,7 +1607,7 @@ class html_base
     /**
      * start a html form; the form name must be identical with the php script name
      * @param string $form_name the name and id of the form
-     * @returns string the HTML code to start a form
+     * @return string the HTML code to start a form
      */
     function form_start(string $form_name): string
     {
@@ -1620,9 +1621,9 @@ class html_base
     /**
      * start a html form; the form name must be identical with the php script name
      * @param string $action the script name
-     * @param string $method post, get of any other html form method
+     * @param string $method post, get or any other html form method
      * @param string $txt the inner html code of the form
-     * @returns string the HTML code of form
+     * @return string the HTML code of the form
      */
     function form_simple(string $action, string $method, string $txt): string
     {
@@ -1766,7 +1767,7 @@ class html_base
      * TODO: to be adjusted depending on the display language
      * @param string $txt the html code
      * @param string $lan the language code of the text
-     * @return string the warped code
+     * @return string the wrapped code
      */
     private function page_lan(string $txt, string $lan): string
     {
@@ -1776,7 +1777,7 @@ class html_base
     /**
      * wrap the head tag around html header code
      * @param string $txt the html header code
-     * @return string the warped header code
+     * @return string the wrapped header code
      */
     private function head(string $txt): string
     {
@@ -1786,7 +1787,7 @@ class html_base
     /**
      * wrap the body tag around html body code
      * @param string $txt the html body code
-     * @return string the warped body code
+     * @return string the wrapped body code
      */
     private function body(string $txt): string
     {
@@ -1794,9 +1795,9 @@ class html_base
     }
 
     /**
-     * wrap the body tag around html body code
+     * wrap the main tag around html body code
      * @param string $txt the html body code
-     * @return string the warped body code
+     * @return string the wrapped main section code
      */
     function main(string $txt): string
     {
@@ -1806,7 +1807,7 @@ class html_base
     /**
      * wrap the footer tag around html footer code
      * @param string $txt the html footer code
-     * @return string the warped footer code
+     * @return string the wrapped footer code
      */
     private function foot(string $txt): string
     {
@@ -1817,7 +1818,7 @@ class html_base
      * wrap the div tag around html code
      * @param string $txt the html code
      * @param string $style the html class name
-     * @return string the warped html code
+     * @return string the wrapped html code
      */
     function div(string $txt, string $style = ''): string
     {
@@ -1831,7 +1832,7 @@ class html_base
      * wrap the nav tag around html code
      * @param string $txt the html code
      * @param string $style the html class name
-     * @return string the warped html code
+     * @return string the wrapped html code
      */
     function nav(string $txt, string $style = ''): string
     {
@@ -1842,10 +1843,10 @@ class html_base
     }
 
     /**
-     * wrap the div tag around html code
+     * wrap the div tag around html code using the bootstrap default class if no style is given
      * @param string $txt the html code
      * @param string $style the html class name
-     * @return string the warped html code
+     * @return string the wrapped html code
      */
     function div_bs(string $txt, string $style = ''): string
     {
@@ -1858,7 +1859,7 @@ class html_base
     /**
      * wrap the paragraph tag around html code
      * @param string $txt the html code
-     * @return string the warped paragraph code
+     * @return string the wrapped paragraph code
      */
     public function p(string $txt): string
     {
@@ -1866,9 +1867,11 @@ class html_base
     }
 
     /**
-     * wrap the paragraph button around html code
-     * @param string $txt the html code
-     * @return string the warped paragraph code
+     * wrap the button tag around html code
+     * @param string $txt the button label html code
+     * @param string $typ the button type e.g. submit
+     * @param string $class additional CSS classes for the button
+     * @return string the wrapped button code
      */
     private function button(string $txt, string $typ, string $class = ''): string
     {
@@ -1894,9 +1897,7 @@ class html_base
     }
 
     /**
-     * TODO Prio 1 translate
-     * return the about text in the frontend language
-     * @return string the warped nav code
+     * @return string the link to the about page in the frontend language
      */
     private function about(): string
     {
@@ -1905,9 +1906,7 @@ class html_base
     }
 
     /**
-     * TODO Prio 1 translate
-     * return the about text in the frontend language
-     * @return string the warped nav code
+     * @return string the link to the privacy policy page in the frontend language
      */
     private function privacy(): string
     {
@@ -1916,17 +1915,19 @@ class html_base
     }
 
     /**
-     * TODO Prio 1 translate
-     * return the about text in the frontend language
-     * @return string the warped nav code
+     * @return string the footer for the about page in the frontend language
      */
     private function foot_text(): string
     {
         global $mtr;
-        $txt = 'All structured data is available under the ';
-        $txt .= $this->ref('https://creativecommons.org/publicdomain/zero/1.0/', $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ';
-        $txt .= $this->ref('https://github.com/zukunft/zukunft.com', $mtr->txt(msg_id::PROGRAM_CODE)) . ' ';
-        $txt .= 'under the ' . $this->ref('https://www.gnu.org/licenses/agpl.html', $mtr->txt(msg_id::AGPL3)) . ' Licence';
+        $txt = $mtr->txt(msg_id::FOOTER_DATA_LICENCE) . ' ';
+        $txt .= $this->ref('https://creativecommons.org/publicdomain/zero/1.0/',
+                $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ';
+        $txt .= $this->ref('https://github.com/zukunft/zukunft.com',
+                $mtr->txt(msg_id::PROGRAM_CODE)) . ' ';
+        $txt .= $mtr->txt(msg_id::FOOTER_UNDER_THE) . ' ';
+        $txt .= $this->ref('https://www.gnu.org/licenses/agpl.html',
+                $mtr->txt(msg_id::AGPL3)) . ' ' . $mtr->txt(msg_id::FOOTER_LICENCE);
         return $txt;
     }
 
@@ -1988,7 +1989,7 @@ class html_base
     }
 
     /**
-     * @return string with the charset for the html pages
+     * @return string the viewport meta tag for responsive pages
      */
     private function make_flood(): string
     {
@@ -2007,7 +2008,7 @@ class html_base
         if ($txt == "") {
             $txt = $pod_name;
         } else {
-            if ($pod_name <> "") {
+            if ($pod_name <> "" && $txt != $pod_name) {
                 $txt = $txt . ' (' . $pod_name . ')';
             }
         }
@@ -2055,7 +2056,8 @@ class html_base
     }
 
     /**
-     * @return string use a simple stylesheet without JavaScript
+     * @param string $stylesheet path to the stylesheet file
+     * @return string the HTML link element for the stylesheet
      */
     private function link_style(string $stylesheet): string
     {
