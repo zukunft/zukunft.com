@@ -3165,7 +3165,7 @@ class triple extends sandbox_link_named
      */
     function display_linked(): string
     {
-        return '<a href="/http/view.php?link=' . $this->id() . '" title="' . $this->name() . '">' . $this->name() . '</a>';
+        return '<a href="' . api::MAIN_SCRIPT_REL . '?link=' . $this->id() . '" title="' . $this->name() . '">' . $this->name() . '</a>';
     }
 
 }

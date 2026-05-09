@@ -5696,9 +5696,9 @@
         \-- figure_list - @param string $back the back trace url for the undo functionality
         \-- list_named - @param string $back the back trace url for the undo functionality
     \-- br2
-        \-- html_base - @return string html code to end a form
+        \-- html_base - @return string html code to end a row div
     \-- br
-        \-- html_base - @return string html code to end a form
+        \-- html_base - @return string html code to end a row div
     \-- term_by_obj_id
         \-- term_list - get a term from the term list selected by the word, triple, formula or verb id
     \-- name_tip
@@ -6984,7 +6984,7 @@
     \-- row_right
         \-- html_base - @return string html code to combine the next elements to one row and align to the right
     \-- row_end
-        \-- html_base - @return string html code to end a form
+        \-- html_base - @return string html code to end a row div
 \-- display interface
     \-- echo_html
         \-- html_base - display a html text immediately to the user

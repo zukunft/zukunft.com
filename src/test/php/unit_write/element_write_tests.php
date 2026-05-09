@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\element\element;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -111,7 +112,7 @@ class element_write_tests
 
                 $elm_dsp = new element($elm->api_json());
                 $result = $elm_dsp->link($back);
-                $url = '<a href="/http/view.php?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
+                $url = '<a href="' . api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
                 if ($pos == 0) {
                     $target = $url . $wrd_country->id . '&back=0" title="Country">Country</a>';
                 } elseif ($pos == 1) {

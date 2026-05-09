@@ -98,6 +98,7 @@ include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -135,6 +136,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -1766,7 +1768,7 @@ class phrase extends combine_named
 
     function name_linked(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
+        return '<a href="' . api::MAIN_SCRIPT_REL . '?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
     }
 
     /**
@@ -1796,7 +1798,7 @@ class phrase extends combine_named
      */
     function display(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id() . '">' . $this->name() . '</a>';
+        return '<a href="' . api::MAIN_SCRIPT_REL . '?words=' . $this->id() . '">' . $this->name() . '</a>';
     }
 
     /**
@@ -1804,7 +1806,7 @@ class phrase extends combine_named
      */
     function display_linked(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
+        return '<a href="' . api::MAIN_SCRIPT_REL . '?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
     }
 
     /**
@@ -1815,7 +1817,7 @@ class phrase extends combine_named
      */
     function dsp_link_style($style): string
     {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '" class="' . $style . '">' . $this->name() . '</a>';
+        return '<a href="' . api::MAIN_SCRIPT_REL . '?words=' . $this->id() . '" title="' . $this->obj()->description . '" class="' . $style . '">' . $this->name() . '</a>';
     }
 
     // create a selector that contains the time words

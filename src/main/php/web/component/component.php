@@ -63,6 +63,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -557,10 +559,10 @@ class component extends sandbox_code_id
         // show the view component name
         if ($this->id() <= 0) {
             $form_name = views::COMPONENT_ADD;
-            $result .= $html->dsp_text_h2('Create a view element for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>');
+            $result .= $html->dsp_text_h2('Create a view element for <a href="' . api::MAIN_SCRIPT_REL . '?words=' . $wrd->id() . '">' . $wrd->name() . '</a>');
         } else {
             $form_name = views::COMPONENT_EDIT;
-            $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>) ');
+            $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for <a href="' . api::MAIN_SCRIPT_REL . '?words=' . $wrd->id() . '">' . $wrd->name() . '</a>) ');
         }
         $result .= '<div class="row">';
 

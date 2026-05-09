@@ -53,8 +53,10 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use DateTime;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -267,7 +269,7 @@ class value_tests
 
         // TODO move to ui tests
         $val_dsp = new value_ui($val->api_json([api_types::INCL_PHRASES]));
-        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32770">3.14</a>');
+        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="' . api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=value_edit&id=32770">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
 

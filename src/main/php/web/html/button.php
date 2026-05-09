@@ -39,12 +39,14 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::PHRASE . 'phrase_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class button
@@ -176,7 +178,7 @@ class button
         }
         $this->title = 'back';
         if (is_numeric($back)) {
-            $this->call = '/http/view.php?words=' . $back;
+            $this->call = api::MAIN_SCRIPT_REL . '?words=' . $back;
         } else {
             $this->call = $back;
         }

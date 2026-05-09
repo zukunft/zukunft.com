@@ -45,4 +45,13 @@ class def
     const string ENCODING = 'utf-8'; // the default encoding for the backend
     const string FILE_PHP = '.php'; // the file extension for the code scripts
 
+
+    /*
+     * external links
+     */
+
+    const string LINK_CC0 = 'https://creativecommons.org/publicdomain/zero/1.0/';
+    const string LINK_GITHUB = 'https://github.com/zukunft/zukunft.com';
+    const string LINK_AGPL = 'https://www.gnu.org/licenses/agpl.html';
+
 }

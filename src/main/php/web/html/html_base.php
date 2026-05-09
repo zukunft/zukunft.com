@@ -39,7 +39,6 @@
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::WEB . 'frontend.php';
@@ -48,6 +47,7 @@ include_once html_paths::TYPES . 'language_list.php';
 //include_once paths::SHARED_CONST . 'def.php';
 //include_once paths::SHARED_CONST . 'files.php';
 //include_once paths::SHARED_CONST . 'rest_ctrl.php';
+//include_once paths::SHARED_CONST . 'views.php';
 //include_once paths::SHARED_ENUM . 'languages.php';
 //include_once paths::SHARED_ENUM . 'messages.php';
 //include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -60,6 +60,8 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -140,6 +142,34 @@ class html_base
     const string LI = 'li';
     const string BUTTON = 'button';
     const string HTML = 'html';
+    const string FORM = 'form';
+    const string ACTION = 'action';
+    const string METHOD = 'method';
+    const string ENCTYPE = 'enctype';
+    const string INPUT = 'input';
+    const string LABEL = 'label';
+    const string FOR = 'for';
+    const string VALUE = 'value';
+    const string ID = 'id';
+    const string PLACEHOLDER = 'placeholder';
+    const string BR = 'br';
+    const string TABLE = 'table';
+    const string TR = 'tr';
+    const string TD = 'td';
+    const string TH = 'th';
+    const string THEAD = 'thead';
+    const string TBODY = 'tbody';
+    const string SMALL = 'small';
+    const string SCOPE = 'scope';
+    const string DETAILS = 'details';
+    const string SUMMARY = 'summary';
+    const string I = 'i';
+    const string H1 = 'h1';
+    const string H2 = 'h2';
+    const string H3 = 'h3';
+    const string H4 = 'h4';
+    const string H5 = 'h5';
+    const string H6 = 'h6';
 
     // to sort
     const string CLASS_MAIN = 'main-container';
@@ -298,38 +328,38 @@ class html_base
 
         global $mtr;
         $result = $this->logo() . "\n";
-        $result .= '<form action="' . api::FIND_SCRIPT_REL . '" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">' . "\n";
-        $result .= '<label for="kp" class="visually-hidden">' . $mtr->txt(msg_id::NAVBAR_SEARCH) . '</label>' . "\n";
-        $result .= '<input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="' . $mtr->txt(msg_id::NAVBAR_SEARCH_PLACEHOLDER) . '" style="min-width: 40vw; max-width: 800px;">' . "\n";
-        $result .= '<' . self::BUTTON . ' class="btn btn-outline-primary" type="submit">' . $mtr->txt(msg_id::NAVBAR_GET_NUMBERS) . '</' . self::BUTTON . '>' . "\n";
-        $result .= '</form>' . "\n";
-        $result .= '<div class="col-md-2">' . "\n";
-        $result .= '<ul class="nav navbar-nav">' . "\n";
-        $result .= '<li class="active">' . "\n";
-        $result .= '<details class="view-menu">' . "\n";
-        $result .= '<summary><i class="fas fa-edit"></i></summary>' . "\n";
+        $result .= '<' . self::FORM . ' ' . self::ACTION . '="' . api::FIND_SCRIPT_REL . '" ' . self::CLASS_HTML . '="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">' . "\n";
+        $result .= '<' . self::LABEL . ' ' . self::FOR . '="kp" ' . self::CLASS_HTML . '="visually-hidden">' . $mtr->txt(msg_id::NAVBAR_SEARCH) . '</' . self::LABEL . '>' . "\n";
+        $result .= '<' . self::INPUT . ' ' . self::CLASS_HTML . '="form-control me-2" ' . self::TYPE . '="search" ' . self::NAME . '="pattern" ' . self::ID . '="kp" ' . self::PLACEHOLDER . '="' . $mtr->txt(msg_id::NAVBAR_SEARCH_PLACEHOLDER) . '" ' . self::STYLE . '="min-width: 40vw; max-width: 800px;">' . "\n";
+        $result .= '<' . self::BUTTON . ' ' . self::CLASS_HTML . '="btn btn-outline-primary" ' . self::TYPE . '="submit">' . $mtr->txt(msg_id::NAVBAR_GET_NUMBERS) . '</' . self::BUTTON . '>' . "\n";
+        $result .= '</' . self::FORM . '>' . "\n";
+        $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="col-md-2">' . "\n";
+        $result .= '<' . self::UL . ' ' . self::CLASS_HTML . '="nav navbar-nav">' . "\n";
+        $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
+        $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
+        $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         $result .= '<' . self::UL . '>' . "\n";
-        $result .= $this->list_item($this->ref('/http/view.php?m=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
         $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE))) . "\n";
-        $result .= $this->list_item($this->ref('/http/view.php?m=view_edit&id=1', $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
-        $result .= $this->list_item($this->ref('/http/view.php?m=view_add', $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=view_edit&id=1', $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=view_add', $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
         $result .= '</' . self::UL . '>' . "\n";
-        $result .= '</details>' . "\n";
-        $result .= '<details class="lang-menu">' . "\n";
-        $result .= '<summary><i class="fas fa-globe"></i></summary>' . "\n";
+        $result .= '</' . self::DETAILS . '>' . "\n";
+        $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
+        $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         $result .= $lan_lst . "\n";
-        $result .= '</details>' . "\n";
-        $result .= '<details class="user-menu">' . "\n";
-        $result .= '<summary><i class="fas fa-user-circle"></i></summary>' . "\n";
+        $result .= '</' . self::DETAILS . '>' . "\n";
+        $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="user-menu">' . "\n";
+        $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-user-circle"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         $result .= '<' . self::UL . '>' . "\n";
         $result .= $this->list_item($this->ref(api::LOGIN_SCRIPT_REL, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
         $result .= $this->list_item($this->ref(api::SIGNUP_SCRIPT_REL, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
         $result .= $this->list_item($this->ref(api::SETTINGS_REL, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
         $result .= '</' . self::UL . '>' . "\n";
-        $result .= '</details>' . "\n";
-        $result .= '</li>' . "\n";
-        $result .= '</ul>' . "\n";
-        $result .= '</div>' . "\n";
+        $result .= '</' . self::DETAILS . '>' . "\n";
+        $result .= '</' . self::LI . '>' . "\n";
+        $result .= '</' . self::UL . '>' . "\n";
+        $result .= '</' . self::DIV . '>' . "\n";
 
         return $this->nav($result, self::CLASS_NAV);
     }
@@ -534,32 +564,28 @@ class html_base
 
     function text_h1(string $title, string $style = ''): string
     {
-        return $this->text_h($title, 2, 1, $style);
+        return $this->text_h($title, self::H2, self::H1, $style);
     }
 
     function text_h2(string $title, string $style = ''): string
     {
-        return $this->text_h($title, 4, 2, $style);
+        return $this->text_h($title, self::H4, self::H2, $style);
     }
 
     function text_h3(string $title, string $style = ''): string
     {
-        return $this->text_h($title, 5, 3, $style);
+        return $this->text_h($title, self::H5, self::H3, $style);
     }
 
-    private function text_h(string $title, int $bs_i, int $i, string $style = ''): string
+    private function text_h(string $title, string $bs_tag, string $tag, string $style = ''): string
     {
-        $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<h' . $bs_i . '>' . $title . '</h' . $bs_i . '>';
+            return '<' . $bs_tag . '>' . $title . '</' . $bs_tag . '>';
+        } elseif ($style != '') {
+            return '<' . $tag . ' ' . self::CLASS_HTML . '="' . $style . '">' . $title . '</' . $tag . '>';
         } else {
-            if ($style <> "") {
-                $result .= '<h' . $i . ' class="' . $style . '">' . $title . '</h' . $i . '>';
-            } else {
-                $result .= "<h' . $i . '>" . $title . "</h' . $i . '>";
-            }
+            return '<' . $tag . '>' . $title . '</' . $tag . '>';
         }
-        return $result;
     }
 
 
@@ -614,15 +640,15 @@ class html_base
     {
         if ($scope != '') {
             if ($style != '') {
-                return '<th class="' . $style . '" scope="' . $scope . '">' . $header_text . '</th>';
+                return '<' . self::TH . ' ' . self::CLASS_HTML . '="' . $style . '" ' . self::SCOPE . '="' . $scope . '">' . $header_text . '</' . self::TH . '>';
             } else {
-                return '<th scope="' . $scope . '">' . $header_text . '</th>';
+                return '<' . self::TH . ' ' . self::SCOPE . '="' . $scope . '">' . $header_text . '</' . self::TH . '>';
             }
         } else {
             if ($style != '') {
-                return '<th class="' . $style . '">' . $header_text . '</th>';
+                return '<' . self::TH . ' ' . self::CLASS_HTML . '="' . $style . '">' . $header_text . '</' . self::TH . '>';
             } else {
-                return '<th>' . $header_text . '</th>';
+                return '<' . self::TH . '>' . $header_text . '</' . self::TH . '>';
             }
         }
     }
@@ -632,7 +658,7 @@ class html_base
      */
     function lf(): string
     {
-        return '<br>';
+        return '<' . self::BR . '>';
     }
 
     /**
@@ -656,7 +682,7 @@ class html_base
      */
     function tr(string $row_text): string
     {
-        return '<tr>' . $row_text . '</tr>';
+        return '<' . self::TR . '>' . $row_text . '</' . self::TR . '>';
     }
 
     /**
@@ -674,9 +700,9 @@ class html_base
             $intent = $intent - 1;
         }
         if ($style != '') {
-            return '<td class="' . $style . '">' . $cell_text . '</td>';
+            return '<' . self::TD . ' ' . self::CLASS_HTML . '="' . $style . '">' . $cell_text . '</' . self::TD . '>';
         } else {
-            return '<td>' . $cell_text . '</td>';
+            return '<' . self::TD . '>' . $cell_text . '</' . self::TD . '>';
         }
     }
 
@@ -693,7 +719,7 @@ class html_base
             $html_rows .= '&nbsp;';
             $intent = $intent - 1;
         }
-        return '<thead>' . $html_rows . '</thead>';
+        return '<' . self::THEAD . '>' . $html_rows . '</' . self::THEAD . '>';
     }
 
     /**
@@ -709,7 +735,7 @@ class html_base
             $html_rows .= '&nbsp;';
             $intent = $intent - 1;
         }
-        return '<tbody>' . $html_rows . '</tbody>';
+        return '<' . self::TBODY . '>' . $html_rows . '</' . self::TBODY . '>';
     }
 
     /**
@@ -731,9 +757,9 @@ class html_base
     private function tbl_start(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table table-striped table-bordered">';
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table table-striped table-bordered">';
         } else {
-            $result = '<table style="width:' . $this->tbl_width() . '">';
+            $result = '<' . self::TABLE . ' ' . self::STYLE . '="width:' . $this->tbl_width() . '">';
         }
         return $result;
     }
@@ -741,9 +767,9 @@ class html_base
     function tbl_start_half(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . view_styles::COL_SM_5 . ' table-striped table-bordered">';
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table ' . view_styles::COL_SM_5 . ' table-striped table-bordered">';
         } else {
-            $result = '<table style="width:' . $this->tbl_width_half() . '">';
+            $result = '<' . self::TABLE . ' ' . self::STYLE . '="width:' . $this->tbl_width_half() . '">';
         }
         return $result;
     }
@@ -751,16 +777,16 @@ class html_base
     function tbl_start_hist(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table table-borderless text-muted">';
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table table-borderless text-muted">';
         } else {
-            $result = '<table class="change_hist"';
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="change_hist"';
         }
         return $result;
     }
 
     function tbl_start_pur(): string
     {
-        return '<table class="table">';
+        return '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table">';
     }
 
     /**
@@ -769,16 +795,16 @@ class html_base
     function tbl_start_select(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . view_styles::COL_SM_10 . ' table-borderless">' . "\n";
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table ' . view_styles::COL_SM_10 . ' table-borderless">' . "\n";
         } else {
-            $result = '<table style="width:' . $this->tbl_width_half() . '">' . "\n";
+            $result = '<' . self::TABLE . ' ' . self::STYLE . '="width:' . $this->tbl_width_half() . '">' . "\n";
         }
         return $result;
     }
 
     private function tbl_end(): string
     {
-        return '</table>' . "\n";
+        return '</' . self::TABLE . '>' . "\n";
     }
 
     /*
@@ -807,7 +833,7 @@ class html_base
      */
     function fr(string $row_text): string
     {
-        return '<div class="' . rest_ctrl::CLASS_FORM_ROW . '">' . $row_text . '</div>';
+        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . rest_ctrl::CLASS_FORM_ROW . '">' . $row_text . '</' . self::DIV . '>';
     }
 
     /**
@@ -833,9 +859,9 @@ class html_base
             $result .= $this->form_field($field, $label, $txt_value, $type, $attribute);
         } else {
             $result .= $field .
-                ': <input type="' . html_base::INPUT_TEXT .
-                '" name="' . $field .
-                '" value="' . $txt_value . '">';
+                ': <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_TEXT .
+                '" ' . self::NAME . '="' . $field .
+                '" ' . self::VALUE . '="' . $txt_value . '">';
         }
         return $result;
     }
@@ -848,9 +874,9 @@ class html_base
      */
     function form_hidden(string $name, string $value): string
     {
-        return '<input type="' . html_base::INPUT_HIDDEN .
-            '" name="' . $name .
-            '" value="' . $value . '">';
+        return '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_HIDDEN .
+            '" ' . self::NAME . '="' . $name .
+            '" ' . self::VALUE . '="' . $value . '">';
     }
 
     /**
@@ -867,9 +893,9 @@ class html_base
         $but = new button();
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
-                $result .= '<' . self::BUTTON . ' type="submit" class="btn btn-outline-success btn-space">' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '</' . self::BUTTON . '>';
+                $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '</' . self::BUTTON . '>';
             } else {
-                $result .= '<button type="submit" class="btn btn-outline-success btn-space">' . $submit_name . '</button>';
+                $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $submit_name . '</' . self::BUTTON . '>';
             }
             if ($back <> "") {
                 if (is_numeric($back)) {
@@ -883,11 +909,10 @@ class html_base
             }
         } else {
             if ($submit_name == "") {
-                $result .= '<input type="' . html_base::INPUT_SUBMIT .
-                    '">';
+                $result .= '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT . '">';
             } else {
-                $result .= '<input type="' . html_base::INPUT_SUBMIT .
-                    '" value="' . $submit_name . '">';
+                $result .= '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT .
+                    '" ' . self::VALUE . '="' . $submit_name . '">';
             }
             if ($back <> "") {
                 $result .= $but->back($back);
@@ -896,7 +921,7 @@ class html_base
                 $result .= $but->del(msg_id::DEL, $del_call);
             }
         }
-        $result .= '</form>';
+        $result .= '</' . self::FORM . '>';
         return $result;
     }
 
@@ -913,11 +938,11 @@ class html_base
     // TODO Prio 0 use this function for all html input fields
     function form_input(string $type, string $name, string $value = ''): string
     {
-        $txt = '<input type="' . $type . '" name="' . $name . '"';
+        $txt = '<' . self::INPUT . ' ' . self::TYPE . '="' . $type . '" ' . self::NAME . '="' . $name . '"';
         if ($value != '') {
-            $txt .= ' value="' . $value . '"';
+            $txt .= ' ' . self::VALUE . '="' . $value . '"';
         }
-        $txt .= ' class="' . self::CLASS_INPUT . '">';
+        $txt .= ' ' . self::CLASS_HTML . '="' . self::CLASS_INPUT . '">';
         return $txt;
     }
 
@@ -939,13 +964,13 @@ class html_base
         global $mtr;
         $result = $this->dsp_form_center();
         $result .= $this->logo_big();
-        $result .= '<br><br>';
-        $result .= $mtr->txt(msg_id::ABOUT_SPONSORED_BY) . '<br><br>';
-        $result .= 'zukunft.com AG<br>';
-        $result .= 'Blumentalstrasse 15<br>';
-        $result .= '8707 Uetikon am See<br>';
-        $result .= 'Switzerland<br><br>';
-        $result .= $this->ref('mailto:timon@zukunft.com', 'timon@zukunft.com') . '<br><br>';
+        $result .= '<' . self::BR . '><' . self::BR . '>';
+        $result .= $mtr->txt(msg_id::ABOUT_SPONSORED_BY) . '<' . self::BR . '><' . self::BR . '>';
+        $result .= 'zukunft.com AG<' . self::BR . '>';
+        $result .= 'Blumentalstrasse 15<' . self::BR . '>';
+        $result .= '8707 Uetikon am See<' . self::BR . '>';
+        $result .= 'Switzerland<' . self::BR . '><' . self::BR . '>';
+        $result .= $this->ref('mailto:timon@zukunft.com', 'timon@zukunft.com') . '<' . self::BR . '><' . self::BR . '>';
         $result .= $mtr->txt(msg_id::ABOUT_MAIN_IDEA) . ' ';
         $result .= $this->ref('https://dx.doi.org/10.2139/ssrn.6497759', $mtr->txt(msg_id::ABOUT_PAPER_DELPHI)) . '. ';
         $result .= $mtr->txt(msg_id::ABOUT_ONCE_IMPLEMENTED) . ' ';
@@ -953,8 +978,8 @@ class html_base
         $result .= $mtr->txt(msg_id::ABOUT_SUPPORTS) . ' ';
         $result .= $this->ref("https://github.com/zukunft/tream", $mtr->txt(msg_id::OPEN_SOURCE), $mtr->txt(msg_id::ABOUT_GITHUB_LINK)) . ' ' . $mtr->txt(msg_id::ABOUT_PORTFOLIO_MGMT) . '<br><br>';
         $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'height: 20%;');
-        $result .= $this->ref('https://tream.biz/p4a/applications/tream/', $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO)) . '<br><br>';
-        $result .= '</div>   ';
+        $result .= $this->ref('https://tream.biz/p4a/applications/tream/', $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO)) . '<' . self::BR . '><' . self::BR . '>';
+        $result .= '</' . self::DIV . '>   ';
         $result .= $this->footer(true);
 
         return $result;
@@ -983,7 +1008,7 @@ class html_base
      */
     private function line_small($line_text): string
     {
-        return "<small>" . $line_text . "</small><br>";
+        return '<' . self::SMALL . '>' . $line_text . '</' . self::SMALL . '><' . self::BR . '>';
     }
 
     /**
@@ -1032,7 +1057,7 @@ class html_base
             $result .= ' ';
             // TODO Prio 1 review
             //$result .= $but->del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
-            $result .= '<br>';
+            $result .= '<' . self::BR . '>';
         }
 
         return $result;
@@ -1057,13 +1082,13 @@ class html_base
             if ($item->id() != null) {
                 $url = $this->url($class_name . rest_ctrl::UPDATE, $item->id(), $back);
                 $result .= $this->ref($url, $item->name());
-                $result .= '<br>';
+                $result .= '<' . self::BR . '>';
             }
         }
         $url_add = $this->url($class_name . rest_ctrl::CREATE, 0, $back);
         $msg_id = $lib->class_to_add_msg_id($class);
         $result .= (new button($url_add, $back))->add($msg_id);
-        $result .= '<br>';
+        $result .= '<' . self::BR . '>';
 
         return $result;
     }
@@ -1090,7 +1115,7 @@ class html_base
 // display an explaining subtitle e.g. (in mio CHF)
     function dsp_line_small($line_text): string
     {
-        return "<small>" . $line_text . "</small><br>";
+        return '<' . self::SMALL . '>' . $line_text . '</' . self::SMALL . '><' . self::BR . '>';
     }
 
 
@@ -1101,47 +1126,35 @@ class html_base
 // simply to display headline text
     function dsp_text_h1($title, $style = ''): string
     {
-        $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= "<h2>" . $title . "</h2>";
+            return '<' . self::H2 . '>' . $title . '</' . self::H2 . '>';
+        } elseif ($style != '') {
+            return '<' . self::H1 . ' ' . self::CLASS_HTML . '="' . $style . '">' . $title . '</' . self::H1 . '>';
         } else {
-            if ($style <> "") {
-                $result .= '<h1 class="' . $style . '">' . $title . '</h1>';
-            } else {
-                $result .= "<h1>" . $title . "</h1>";
-            }
+            return '<' . self::H1 . '>' . $title . '</' . self::H1 . '>';
         }
-        return $result;
     }
 
     function dsp_text_h2($title, $style = ''): string
     {
-        $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= "<h4>" . $title . "</h4>";
+            return '<' . self::H4 . '>' . $title . '</' . self::H4 . '>';
+        } elseif ($style != '') {
+            return '<' . self::H2 . ' ' . self::CLASS_HTML . '="' . $style . '">' . $title . '</' . self::H2 . '>';
         } else {
-            if ($style <> "") {
-                $result .= '<h2 class="' . $style . '">' . $title . '</h2>';
-            } else {
-                $result .= "<h2>" . $title . "</h2>";
-            }
+            return '<' . self::H2 . '>' . $title . '</' . self::H2 . '>';
         }
-        return $result;
     }
 
     function dsp_text_h3($title, $style = ''): string
     {
-        $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= "<h6>" . $title . "</h6>";
+            return '<' . self::H6 . '>' . $title . '</' . self::H6 . '>';
+        } elseif ($style != '') {
+            return '<' . self::H3 . ' ' . self::CLASS_HTML . '="' . $style . '">' . $title . '</' . self::H3 . '>';
         } else {
-            if ($style <> "") {
-                $result .= '<h3 class="' . $style . '">' . $title . '</h3>';
-            } else {
-                $result .= '<h3>' . $title . '</h3>';
-            }
+            return '<' . self::H3 . '>' . $title . '</' . self::H3 . '>';
         }
-        return $result;
     }
 
 // after simple add views e.g. for a value automatically go back to the calling page
@@ -1203,47 +1216,47 @@ class html_base
         $hist_id = str_replace(' ', '_', strtolower($hist_name));
         $link_id = str_replace(' ', '_', strtolower($link_name));
 
-        $result .= '<div class="' . view_styles::COL_SM_5 . '">';
-        $result .= '<ul class="nav nav-tabs">';
-        $result .= '  <li class="nav-item">';
-        $result .= '    <a class="nav-link active" id="' . $comp_id . '-tab" data-toggle="tab" href="#' . $comp_id . '" role="tab" aria-controls="' . $comp_id . '" aria-selected="true">' . $comp_name . '</a>';
-        $result .= '  </li>';
+        $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . view_styles::COL_SM_5 . '">';
+        $result .= '<' . self::UL . ' ' . self::CLASS_HTML . '="nav nav-tabs">';
+        $result .= '  <' . self::LI . ' ' . self::CLASS_HTML . '="nav-item">';
+        $result .= '    <' . self::A . ' ' . self::CLASS_HTML . '="nav-link active" ' . self::ID . '="' . $comp_id . '-tab" data-toggle="tab" ' . self::HREF . '="#' . $comp_id . '" role="tab" aria-controls="' . $comp_id . '" aria-selected="true">' . $comp_name . '</' . self::A . '>';
+        $result .= '  </' . self::LI . '>';
         if ($nbrs_name <> '') {
-            $result .= '  <li class="nav-item">';
-            $result .= '    <a class="nav-link"        id="' . $nbrs_id . '-tab" data-toggle="tab" href="#' . $nbrs_id . '" role="tab" aria-controls="' . $nbrs_id . '" aria-selected="false">' . $nbrs_name . '</a>';
-            $result .= '  </li>';
+            $result .= '  <' . self::LI . ' ' . self::CLASS_HTML . '="nav-item">';
+            $result .= '    <' . self::A . ' ' . self::CLASS_HTML . '="nav-link" ' . self::ID . '="' . $nbrs_id . '-tab" data-toggle="tab" ' . self::HREF . '="#' . $nbrs_id . '" role="tab" aria-controls="' . $nbrs_id . '" aria-selected="false">' . $nbrs_name . '</' . self::A . '>';
+            $result .= '  </' . self::LI . '>';
         }
-        $result .= '  <li class="nav-item">';
-        $result .= '    <a class="nav-link"        id="' . $hist_id . '-tab" data-toggle="tab" href="#' . $hist_id . '" role="tab" aria-controls="' . $hist_id . '" aria-selected="false">' . $hist_name . '</a>';
-        $result .= '  </li>';
-        $result .= '  <li class="nav-item">';
-        $result .= '    <a class="nav-link"        id="' . $link_id . '-tab" data-toggle="tab" href="#' . $link_id . '" role="tab" aria-controls="' . $link_id . '" aria-selected="false">' . $link_name . '</a>';
-        $result .= '  </li>';
-        $result .= '</ul>';
-        $result .= '<div class="tab-content border-right border-bottom border-left rounded-bottom" id="comp-hist-tab-content">';
-        $result .= '  <div class="tab-pane fade active show" id="' . $comp_id . '" role="tabpanel" aria-labelledby="' . $comp_id . '-tab">';
-        $result .= '    <div class="container">';
+        $result .= '  <' . self::LI . ' ' . self::CLASS_HTML . '="nav-item">';
+        $result .= '    <' . self::A . ' ' . self::CLASS_HTML . '="nav-link" ' . self::ID . '="' . $hist_id . '-tab" data-toggle="tab" ' . self::HREF . '="#' . $hist_id . '" role="tab" aria-controls="' . $hist_id . '" aria-selected="false">' . $hist_name . '</' . self::A . '>';
+        $result .= '  </' . self::LI . '>';
+        $result .= '  <' . self::LI . ' ' . self::CLASS_HTML . '="nav-item">';
+        $result .= '    <' . self::A . ' ' . self::CLASS_HTML . '="nav-link" ' . self::ID . '="' . $link_id . '-tab" data-toggle="tab" ' . self::HREF . '="#' . $link_id . '" role="tab" aria-controls="' . $link_id . '" aria-selected="false">' . $link_name . '</' . self::A . '>';
+        $result .= '  </' . self::LI . '>';
+        $result .= '</' . self::UL . '>';
+        $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="tab-content border-right border-bottom border-left rounded-bottom" ' . self::ID . '="comp-hist-tab-content">';
+        $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade active show" ' . self::ID . '="' . $comp_id . '" role="tabpanel" aria-labelledby="' . $comp_id . '-tab">';
+        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
         $result .= $comp_html;
-        $result .= '    </div>';
-        $result .= '  </div>';
+        $result .= '    </' . self::DIV . '>';
+        $result .= '  </' . self::DIV . '>';
         if ($nbrs_name <> '') {
-            $result .= '  <div class="tab-pane fade" id="' . $nbrs_id . '" role="tabpanel" aria-labelledby="' . $nbrs_id . '-tab">';
-            $result .= '    <div class="container">';
+            $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade" ' . self::ID . '="' . $nbrs_id . '" role="tabpanel" aria-labelledby="' . $nbrs_id . '-tab">';
+            $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
             $result .= $nbrs_html;
-            $result .= '    </div>';
-            $result .= '  </div>';
+            $result .= '    </' . self::DIV . '>';
+            $result .= '  </' . self::DIV . '>';
         }
-        $result .= '  <div class="tab-pane fade" id="' . $hist_id . '" role="tabpanel" aria-labelledby="' . $hist_id . '-tab">';
-        $result .= '    <div class="container">';
+        $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade" ' . self::ID . '="' . $hist_id . '" role="tabpanel" aria-labelledby="' . $hist_id . '-tab">';
+        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
         $result .= $hist_html;
-        $result .= '    </div>';
-        $result .= '  </div>';
-        $result .= '  <div class="tab-pane fade" id="' . $link_id . '" role="tabpanel" aria-labelledby="' . $link_id . '-tab">';
-        $result .= '    <div class="container">';
+        $result .= '    </' . self::DIV . '>';
+        $result .= '  </' . self::DIV . '>';
+        $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade" ' . self::ID . '="' . $link_id . '" role="tabpanel" aria-labelledby="' . $link_id . '-tab">';
+        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
         $result .= $link_html;
-        $result .= '    </div>';
-        $result .= '  </div>';
-        $result .= '</div>'; // of tab content
+        $result .= '    </' . self::DIV . '>';
+        $result .= '  </' . self::DIV . '>';
+        $result .= '</' . self::DIV . '>'; // of tab content
 
         return $result;
     }
@@ -1255,9 +1268,9 @@ class html_base
     function dsp_tbl_start(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table table-striped table-bordered">' . "\n";
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table table-striped table-bordered">' . "\n";
         } else {
-            $result = '<table style="width:' . $this->dsp_tbl_width() . '">' . "\n";
+            $result = '<' . self::TABLE . ' ' . self::STYLE . '="width:' . $this->dsp_tbl_width() . '">' . "\n";
         }
         return $result;
     }
@@ -1265,9 +1278,9 @@ class html_base
     function dsp_tbl_start_half(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . view_styles::COL_SM_5 . ' table-borderless">' . "\n";
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table ' . view_styles::COL_SM_5 . ' table-borderless">' . "\n";
         } else {
-            $result = '<table style="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
+            $result = '<' . self::TABLE . ' ' . self::STYLE . '="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
         }
         return $result;
     }
@@ -1275,9 +1288,9 @@ class html_base
     function dsp_tbl_start_hist(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table table-borderless text-muted">' . "\n";
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table table-borderless text-muted">' . "\n";
         } else {
-            $result = '<table class="change_hist"' . "\n";
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="change_hist"' . "\n";
         }
         return $result;
     }
@@ -1286,16 +1299,16 @@ class html_base
     function dsp_tbl_start_select(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . view_styles::COL_SM_10 . ' table-borderless">' . "\n";
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table ' . view_styles::COL_SM_10 . ' table-borderless">' . "\n";
         } else {
-            $result = '<table style="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
+            $result = '<' . self::TABLE . ' ' . self::STYLE . '="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
         }
         return $result;
     }
 
     function dsp_tbl_end(): string
     {
-        $result = '</table>' . "\n";
+        $result = '</' . self::TABLE . '>' . "\n";
         return $result;
     }
 
@@ -1308,7 +1321,7 @@ class html_base
     {
         // switch on post forms for private values
         // return '<form action="'.$form_name.'.php" method="post" id="'.$form_name.'">';
-        return '<form action="' . $form_name . '.php" id="' . $form_name . '">';
+        return '<' . self::FORM . ' ' . self::ACTION . '="' . $form_name . '.php" ' . self::ID . '="' . $form_name . '">';
     }
 
 // end a html form
@@ -1319,9 +1332,9 @@ class html_base
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
-                $result .= '<' . self::BUTTON . ' type="submit" class="btn btn-outline-success btn-space">' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '</' . self::BUTTON . '>';
+                $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '</' . self::BUTTON . '>';
             } else {
-                $result .= '<button type="submit" class="btn btn-outline-success btn-space">' . $submit_name . '</button>';
+                $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $submit_name . '</' . self::BUTTON . '>';
             }
             if ($back <> "") {
                 if (is_numeric($back)) {
@@ -1335,11 +1348,10 @@ class html_base
             }
         } else {
             if ($submit_name == "") {
-                $result .= '<input type="' . html_base::INPUT_SUBMIT .
-                    '">';
+                $result .= '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT . '">';
             } else {
-                $result .= '<input type="' . html_base::INPUT_SUBMIT .
-                    '" value="' . $submit_name . '">';
+                $result .= '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT .
+                    '" ' . self::VALUE . '="' . $submit_name . '">';
             }
             if ($back <> "") {
                 $result .= $but->back($back);
@@ -1348,7 +1360,7 @@ class html_base
                 $result .= $but->del(msg_id::DEL, $del_call);
             }
         }
-        $result .= '</form>';
+        $result .= '</' . self::FORM . '>';
         return $result;
     }
 
@@ -1360,26 +1372,26 @@ class html_base
     function div_center(string $txt): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            return '<div class="container text-center">' . $txt . '</div>';
+            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="container text-center">' . $txt . '</' . self::DIV . '>';
         } else {
-            return '<div class="center_form">' . $txt . '</div>';
+            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="center_form">' . $txt . '</' . self::DIV . '>';
         }
     }
 
     function dsp_form_center(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            return '<div class="container text-center">';
+            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="container text-center">';
         } else {
-            return '<div class="center_form">';
+            return '<' . self::DIV . ' ' . self::CLASS_HTML . '="center_form">';
         }
     }
 
 // add the element id, which should always be using the field "id"
     function dsp_form_id($id): string
     {
-        return '<input type="' . html_base::INPUT_HIDDEN .
-            '" name="id" value="' . $id . '">';
+        return '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_HIDDEN .
+            '" ' . self::NAME . '="' . self::ID . '" ' . self::VALUE . '="' . $id . '">';
     }
 
     /**
@@ -1390,9 +1402,9 @@ class html_base
      */
     function dsp_form_hidden(string $field, int $id): string
     {
-        return '<input type="' . html_base::INPUT_HIDDEN .
-            '" name="' . $field .
-            '" value="' . $id . '">';
+        return '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_HIDDEN .
+            '" ' . self::NAME . '="' . $field .
+            '" ' . self::VALUE . '="' . $id . '">';
     }
 
     // TODO Prio 0 easy deprecate and use
@@ -1404,9 +1416,9 @@ class html_base
             $result .= $this->form_field($field, $label, $txt_value, $class, $attribute);
         } else {
             $result .= '' . $field .
-                ': <input type="' . html_base::INPUT_TEXT .
-                '" name="' . $field .
-                '" value="' . $txt_value . '">';
+                ': <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_TEXT .
+                '" ' . self::NAME . '="' . $field .
+                '" ' . self::VALUE . '="' . $txt_value . '">';
         }
         return $result;
     }
@@ -1419,9 +1431,9 @@ class html_base
             $result .= $this->form_field($field, $label, $txt_value, $class, $attribute);
         } else {
             $result .= '' . $field .
-                ': <input type="' . html_base::INPUT_TEXT .
-                '" name="' . $field .
-                '" class="resizedTextbox" value="' . $txt_value . '">';
+                ': <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_TEXT .
+                '" ' . self::NAME . '="' . $field .
+                '" ' . self::CLASS_HTML . '="resizedTextbox" ' . self::VALUE . '="' . $txt_value . '">';
         }
         return $result;
     }
@@ -1436,17 +1448,17 @@ class html_base
             $label = $field;
         }
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<div class="form-check-inline">';
-            $result .= '<label class="form-check-label">';
-            $result .= '<input class="form-check-input" type="checkbox" name="' . $field . '"';
+            $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="form-check-inline">';
+            $result .= '<' . self::LABEL . ' ' . self::CLASS_HTML . '="form-check-label">';
+            $result .= '<' . self::INPUT . ' ' . self::CLASS_HTML . '="form-check-input" ' . self::TYPE . '="checkbox" ' . self::NAME . '="' . $field . '"';
             if ($is_checked) {
                 $result .= ' checked';
             }
-            $result .= '>' . $label . '</label>';
-            $result .= '</div>';
+            $result .= '>' . $label . '</' . self::LABEL . '>';
+            $result .= '</' . self::DIV . '>';
         } else {
-            $result .= '  <input type="' . html_base::INPUT_CHECKBOX .
-                '" name="' . $field . '"';
+            $result .= '  <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_CHECKBOX .
+                '" ' . self::NAME . '="' . $field . '"';
             if ($is_checked) {
                 $result .= ' checked';
             }
@@ -1481,13 +1493,14 @@ class html_base
           $result .= '</script> ';
         } else {
         */
-        $result .= ' <form action="/view.php?m=import" method="post" enctype="multipart/form-data">';
+        $result .= ' <' . self::FORM . ' ' . self::ACTION . '="'
+            . api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::IMPORT . '" ' . self::METHOD . '="post" ' . self::ENCTYPE . '="multipart/form-data">';
         $result .= '   Select JSON to upload:';
-        $result .= '   <input type="' . html_base::INPUT_FILE .
-            '" name="fileToUpload" id="fileToUpload">';
-        $result .= '   <input type="' . html_base::INPUT_SUBMIT .
-            '" value="Upload JSON" name="submit">';
-        $result .= ' </form>';
+        $result .= '   <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_FILE .
+            '" ' . self::NAME . '="fileToUpload" ' . self::ID . '="fileToUpload">';
+        $result .= '   <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_SUBMIT .
+            '" ' . self::VALUE . '="Upload JSON" ' . self::NAME . '="submit">';
+        $result .= ' </' . self::FORM . '>';
         //}
         return $result;
     }
@@ -1509,7 +1522,7 @@ class html_base
         if ($for == '') {
             $for = strtolower($text);
         }
-        return '<label for="' . $for . '">' . $text . '</label>';
+        return '<' . self::LABEL . ' ' . self::FOR . '="' . $for . '">' . $text . '</' . self::LABEL . '>';
     }
 
     /**
@@ -1567,7 +1580,7 @@ class html_base
             $placeholder = ' placeholder="' . $placeholder . '"';
         }
         $id = ' id="' . $id . '"';
-        return '<input' . $class . $type . $name . $id . $value . $placeholder . '>';
+        return '<' . self::INPUT . $class . $type . $name . $id . $value . $placeholder . '>';
     }
 
     function div_form(string $text, string $style = ''): string
@@ -1612,10 +1625,10 @@ class html_base
     function form_start(string $form_name): string
     {
         // switch on post forms for private values
-        $action = ' action="' . api::HOST_SAME . api::MAIN_SCRIPT . '"';
-        $id = ' id="' . $form_name . '"';
+        $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT . '"';
+        $id = ' ' . self::ID . '="' . $form_name . '"';
 
-        return '<form' . $action . $id . '>';
+        return '<' . self::FORM . $action . $id . '>';
     }
 
     /**
@@ -1628,10 +1641,10 @@ class html_base
     function form_simple(string $action, string $method, string $txt): string
     {
         // switch on post forms for private values
-        $action = ' action="' . $action . '"';
-        $method = ' method="' . $method . '"';
+        $action = ' ' . self::ACTION . '="' . $action . '"';
+        $method = ' ' . self::METHOD . '="' . $method . '"';
 
-        return '<form' . $action . $method . '>' . $txt . '</form>';
+        return '<' . self::FORM . $action . $method . '>' . $txt . '</' . self::FORM . '>';
     }
 
     /**
@@ -1670,7 +1683,7 @@ class html_base
      */
     function form_end(): string
     {
-        return '</form>';
+        return '</' . self::FORM . '>';
     }
 
     /**
@@ -1678,7 +1691,7 @@ class html_base
      */
     function row_start(): string
     {
-        $result = '<div class="row ';
+        $result = '<' . self::DIV . ' ' . self::CLASS_HTML . '="row ';
         $result .= view_styles::COL_SM_12;
         $result .= '">';
         return $result;
@@ -1690,18 +1703,18 @@ class html_base
     function row_right(): string
     {
         $result = $this->lf();
-        $result .= '<div class="row ';
+        $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="row ';
         $result .= view_styles::COL_SM_12;
         $result .= ' justify-content-end">';
         return $result;
     }
 
     /**
-     * @return string html code to end a form
+     * @return string html code to end a row div
      */
     function row_end(): string
     {
-        return '</div>';
+        return '</' . self::DIV . '>';
     }
 
     /*
@@ -1710,12 +1723,12 @@ class html_base
 
     function br2(): string
     {
-        return '<br><br>';
+        return '<' . self::BR . '><' . self::BR . '>';
     }
 
     function br(): string
     {
-        return '<br>';
+        return '<' . self::BR . '>';
     }
 
 
@@ -1732,7 +1745,7 @@ class html_base
      */
     function echo_html(string $txt): void
     {
-        echo $txt . '<br>';
+        echo $txt . '<' . self::BR . '>';
     }
 
     /**
@@ -1921,12 +1934,12 @@ class html_base
     {
         global $mtr;
         $txt = $mtr->txt(msg_id::FOOTER_DATA_LICENCE) . ' ';
-        $txt .= $this->ref('https://creativecommons.org/publicdomain/zero/1.0/',
+        $txt .= $this->ref(def::LINK_CC0,
                 $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ';
-        $txt .= $this->ref('https://github.com/zukunft/zukunft.com',
+        $txt .= $this->ref(def::LINK_GITHUB,
                 $mtr->txt(msg_id::PROGRAM_CODE)) . ' ';
         $txt .= $mtr->txt(msg_id::FOOTER_UNDER_THE) . ' ';
-        $txt .= $this->ref('https://www.gnu.org/licenses/agpl.html',
+        $txt .= $this->ref(def::LINK_AGPL,
                 $mtr->txt(msg_id::AGPL3)) . ' ' . $mtr->txt(msg_id::FOOTER_LICENCE);
         return $txt;
     }
@@ -2061,7 +2074,8 @@ class html_base
      */
     private function link_style(string $stylesheet): string
     {
-        return '<' . self::LINK . ' ' . self::REL . '="' . self::STYLESHEET . '" ' . self::HREF . '="' . $stylesheet . '">';
+        return '<' . self::LINK . ' ' . self::REL . '="' . self::STYLESHEET . '" '
+            . self::HREF . '="' . $stylesheet . '">';
     }
 
 }

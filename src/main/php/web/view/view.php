@@ -392,10 +392,10 @@ class view extends view_exe
         // the header to add or change a view
         if ($this->id() <= 0) {
             $script = "view_add";
-            $result .= $html->dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+            $result .= $html->dsp_text_h2('Create a new view (for <a href="' . api::MAIN_SCRIPT_REL . '?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
         } else {
             $script = "view_edit";
-            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="' . api::MAIN_SCRIPT_REL . '?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
         }
         $result .= '<div class="row">';
 
@@ -581,7 +581,7 @@ class view extends view_exe
 
         $dsp_lst = new view_list();
 
-        $call = '/http/view.php?words=' . $wrd_id;
+        $call = api::MAIN_SCRIPT_REL . '?words=' . $wrd_id;
         $field = 'new_id';
 
         foreach ($dsp_lst as $dsp) {

@@ -45,6 +45,8 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
@@ -227,14 +229,14 @@ class value_write_tests
         // test the HTML code creation including the hyperlink
         $result = $mio_val_dsp->value_edit('1');
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="/http/view.php?m=value_edit&id=' . $mio_val_dsp->id() . '&back=1">1.55</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=value_edit&id=' . $mio_val_dsp->id() . '&back=1">1.55</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
         $mio_val_dsp->number = values::SAMPLE_INT;
         $result = $mio_val_dsp->value_edit('1');
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="/http/view.php?m=value_edit&id=' . $mio_val_dsp->id() . '&back=1">123\'456</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=value_edit&id=' . $mio_val_dsp->id() . '&back=1">123\'456</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // convert the user input for the database
