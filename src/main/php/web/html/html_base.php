@@ -111,7 +111,7 @@ class html_base
 
     // all html code elements used
     const string DOC_HTML = '<!DOCTYPE html>';
-    const string HTML_START = '<html lang=';
+    const string LANG = 'lang';
     const string META = 'meta';
     const string NAME = 'name';
     const string CONTENT = 'content';
@@ -1771,7 +1771,7 @@ class html_base
      */
     private function page_lan(string $txt, string $lan): string
     {
-        return '<html lang="' . $lan . '">' . $txt . '</html>';
+        return '<' . self::HTML . ' ' . self::LANG . '="' . $lan . '">' . $txt . '</' . self::HTML . '>';
     }
 
     /**
@@ -1977,7 +1977,7 @@ class html_base
      */
     private function lang(string $lan): string
     {
-        return self::HTML_START . '"' . $lan . '">';
+        return '<' . self::HTML . ' ' . self::LANG . '="' . $lan . '">';
     }
 
     /**
