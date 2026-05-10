@@ -42,6 +42,7 @@ const ENV_IP_ADMIN = 'IP_ADMIN';
 const ENV_CODE_VERSION = 'CODE_VERSION';
 const ENV_UI_VERSION = 'UI_VERSION';
 const ENV_POD_NAME = 'POD_NAME';
+const ENV_THIS_URL = 'THIS_URL';
 const ENV_PGSQL_DATABASE = 'PGSQL_DATABASE';
 const ENV_PGSQL_USERNAME = 'PGSQL_USERNAME';
 const ENV_PGSQL_PASSWORD = 'PGSQL_PASSWORD';
@@ -71,8 +72,13 @@ const ENV_CACHE_FILE = 'file';
 const ENV_CACHE_FALLBACK = 'database';
 const ENV_CACHE_MAX_AGE = 'CACHE_TIME';
 const ENV_CACHE_MAX_AGE_FALLBACK = '-1 day';
+const ENV_ADMIN_USER = 'ADMIN_USER';  // can be set for a ui free setup
+const ENV_ADMIN_PW = 'ADMIN_PW'; // can be set for a ui free setup; in test and prod should be taken from the secret store
+const ENV_CO_ADMIN_USER = 'CO_ADMIN_USER'; // the suggestion is to have always a deputy admin as fallback
+const ENV_CO_ADMIN_PW = 'CO_ADMIN_PW'; // if empty requested on initial startup
 const SYSTEM_VERSION_FALLBACK = '0.0.3';
 const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
+const THIS_URL_FALLBACK = 'http://localhost';  // the default pod url if not defined
 
 const ENV_VARS = [
     ENV_OS,
@@ -83,6 +89,7 @@ const ENV_VARS = [
     ENV_CODE_VERSION,
     ENV_UI_VERSION,
     ENV_POD_NAME,
+    ENV_THIS_URL,
     ENV_PGSQL_DATABASE,
     ENV_PGSQL_USERNAME,
     ENV_PGSQL_PASSWORD,
@@ -104,6 +111,10 @@ const ENV_VARS = [
     ENV_WWW_ROOT,
     ENV_CACHE,
     ENV_CACHE_MAX_AGE,
+    ENV_ADMIN_USER,
+    ENV_ADMIN_PW,
+    ENV_CO_ADMIN_USER,
+    ENV_CO_ADMIN_PW,
 ];
 
 const ENV_SECRETS = [
@@ -204,6 +215,7 @@ define('SYSTEM_ADMIN_IP', getenv(ENV_IP_ADMIN) ?: SYSTEM_ADMIN_IP_FALLBACK);
 define('SYSTEM_CODE_VERSION', getenv(ENV_CODE_VERSION) ?: SYSTEM_VERSION_FALLBACK);
 define('SYSTEM_UI_VERSION', getenv(ENV_UI_VERSION) ?: SYSTEM_VERSION_FALLBACK);
 define('POD_NAME', getenv(ENV_POD_NAME) ?: POD_NAME_FALLBACK);
+define('THIS_URL', getenv(ENV_THIS_URL) ?: THIS_URL_FALLBACK);
 
 // Database configuration from environment variables or the default fallback value
 define('SQL_DB_TYPE', getenv(ENV_DB) ?: POSTGRES);
@@ -235,6 +247,12 @@ define('SYSTEM_TIME_TIME_LIMIT_INFO', getenv(ENV_SYSTEM_TIME_LIMIT_INFO) ?: 2);
 define('SYSTEM_TIME_TIME_LIMIT_WARN', getenv(ENV_SYSTEM_TIME_LIMIT_WARN) ?: 3);
 // write an error log entry if the execution time of the script is longer than 5 seconds
 define('SYSTEM_TIME_TIME_LIMIT_ERR', getenv(ENV_SYSTEM_TIME_LIMIT_ERR) ?: 5);
+
+// only used as default values for the initial setup to enable a automatic setup without ui interactions
+define('ADMIN_USER', getenv(ENV_ADMIN_USER) ?: '');
+define('ADMIN_PW', getenv(ENV_ADMIN_PW) ?: '');
+define('CO_ADMIN_USER', getenv(ENV_CO_ADMIN_USER) ?: '');
+define('CO_ADMIN_PW', getenv(ENV_CO_ADMIN_PW) ?: '');
 
 // the location type for the system cache which can be the database or with some permission adjustments a file folder
 define('CACHE_LOCATION', getenv(ENV_CACHE) ?: ENV_CACHE_FALLBACK);

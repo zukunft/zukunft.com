@@ -321,6 +321,8 @@ class views
     // to sort
     const string LANGUAGE_SELECT = 'language_select';
     const int LANGUAGE_SELECT_ID = 88;
+    const string PHRASE = 'phrase_default';
+    const int PHRASE_ID = 110;
 
 
     /*
@@ -699,6 +701,7 @@ class views
         self::MATH_CONST_ID => self::MATH_CONST,
         self::SYSTEM_LOG_ID => self::SYSTEM_LOG,
         self::LANGUAGE_SELECT_ID => self::LANGUAGE_SELECT,
+        self::PHRASE_ID => self::PHRASE,
     ];
 
     const array SYSTEM_VIEWS = [

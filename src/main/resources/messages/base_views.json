@@ -386,6 +386,11 @@
       "name": "System log",
       "description": "show the most relevant system log entries (placeholder only at the moment)",
       "code_id": "system_log"
+    },
+    {
+      "name": "Phrase (default)",
+      "description": "the default view for a word or triple",
+      "code_id": "phrase_default"
     }
   ]
 }

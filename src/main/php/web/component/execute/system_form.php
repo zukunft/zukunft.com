@@ -1450,7 +1450,7 @@ class system_form extends component
         $base_ci = $views->system_to_base($msk_ci);
         $base_id = $views->code_id_to_id($base_ci);
         $result = '';
-        $url = api::HOST_SAME . api::MAIN_SCRIPT
+        $url = api::HOST_SAME . api::MAIN_SCRIPT_EXT
             . url_var::PAR . url_var::MASK . url_var::EQ . $base_id;
         if ($id != 0) {
             $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;

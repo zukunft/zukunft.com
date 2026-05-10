@@ -136,7 +136,6 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -1766,11 +1765,6 @@ class phrase extends combine_named
         return '"' . $this->name() . '"';
     }
 
-    function name_linked(): string
-    {
-        return '<a href="' . api::MAIN_SCRIPT_REL . '?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
-    }
-
     /**
      * get the related phrases
      * @param foaf_direction $direction up to select the parent phrases and dow for the children
@@ -1791,33 +1785,6 @@ class phrase extends combine_named
             }
         }
         return $phr_lst;
-    }
-
-    /**
-     * return the html code to display a word
-     */
-    function display(): string
-    {
-        return '<a href="' . api::MAIN_SCRIPT_REL . '?words=' . $this->id() . '">' . $this->name() . '</a>';
-    }
-
-    /**
-     * simply to display a single word or triple link
-     */
-    function display_linked(): string
-    {
-        return '<a href="' . api::MAIN_SCRIPT_REL . '?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
-    }
-
-    /**
-     * similar to dsp_link
-     *
-     * @param $style
-     * @return string
-     */
-    function dsp_link_style($style): string
-    {
-        return '<a href="' . api::MAIN_SCRIPT_REL . '?words=' . $this->id() . '" title="' . $this->obj()->description . '" class="' . $style . '">' . $this->name() . '</a>';
     }
 
     // create a selector that contains the time words

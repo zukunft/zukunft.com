@@ -69,15 +69,15 @@ class display_list extends html_base
             // list of all possible view components
             $row_nbr = $row_nbr + 1;
             $edit_script = $this->edit_url($this->class_edit);
-            $result .= '<a href="/http/' . $edit_script . '?id=' . $entry->id . '&back=' . $this->script_parameter . '">' . $entry->name . '</a> ';
+            $result .= $this->ref('/http/' . $edit_script . '?id=' . $entry->id . '&back=' . $this->script_parameter, $entry->name) . ' ';
             if ($row_nbr > 1) {
-                $result .= '<a href="/http/' . $this->script_name . '?id=' . $this->script_parameter . '&move_up=' . $entry->id . '">up</a>';
+                $result .= $this->ref('/http/' . $this->script_name . '?id=' . $this->script_parameter . '&move_up=' . $entry->id, 'up');
             }
             if ($row_nbr > 1 and $row_nbr < $num_rows) {
                 $result .= '/';
             }
             if ($row_nbr < $num_rows) {
-                $result .= '<a href="/http/' . $this->script_name . '?id=' . $this->script_parameter . '&move_down=' . $entry->id . '">down</a>';
+                $result .= $this->ref('/http/' . $this->script_name . '?id=' . $this->script_parameter . '&move_down=' . $entry->id, 'down');
             }
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '</td><td>';

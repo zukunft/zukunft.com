@@ -311,7 +311,7 @@ class view_list extends ListBase
                  WHERE code_id IS NULL
               ORDER BY view_name;";
         $sql = sql_lst_usr("view", $this->user());
-        $call = api::MAIN_SCRIPT_REL . '?words=' . $wrd_id;
+        $call = api::MAIN_SCRIPT_REL . '?' . url_var::VIEW . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
         //$db_con = New mysql;

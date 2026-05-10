@@ -53,17 +53,18 @@ class api
     const string CONFIG_USER = 'user';
 
     // the url name of the main script that is used in combination with the host url
-    const string MAIN_SCRIPT_PATH = 'http' . DIRECTORY_SEPARATOR;
-    const string MAIN_SCRIPT_REL_PATH = DIRECTORY_SEPARATOR . 'http' . DIRECTORY_SEPARATOR;
+    const string SCRIPT_PATH_NAME = 'http' . DIRECTORY_SEPARATOR;
+    const string SCRIPT_PATH = DIRECTORY_SEPARATOR . self::SCRIPT_PATH_NAME;
     const string SETTINGS_REL = DIRECTORY_SEPARATOR . 'settings';
-    const string MAIN_SCRIPT = self::MAIN_SCRIPT_PATH . 'view.php';
-    const string MAIN_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'view.php';
-    const string ABOUT_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'about.php';
-    const string PRIVACY_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'privacy_policy.html';
-    const string FIND_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'find.php';
-    const string LOGIN_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'login.php';
-    const string SIGNUP_SCRIPT_REL = self::MAIN_SCRIPT_REL_PATH . 'signup.php';
-    const string URL_DEV = api::HOST_DEV . api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ;
+    const string MAIN_SCRIPT_EXT = self::SCRIPT_PATH_NAME . 'view.php';
+    const string MAIN_SCRIPT = self::SCRIPT_PATH . 'view.php';
+    const string ABOUT_SCRIPT = self::SCRIPT_PATH . 'about.php';
+    const string PRIVACY_SCRIPT = self::SCRIPT_PATH . 'privacy_policy.html';
+    const string FIND_SCRIPT = self::SCRIPT_PATH . 'find.php';
+    const string LOGIN_SCRIPT = self::SCRIPT_PATH . 'login.php';
+    const string SIGNUP_SCRIPT = self::SCRIPT_PATH . 'signup.php';
+    const string ERROR_LOG_SCRIPT = self::SCRIPT_PATH . 'error_log.php';
+    const string URL_DEV = api::HOST_DEV . api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ;
 
 
     /*

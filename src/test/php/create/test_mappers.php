@@ -735,7 +735,7 @@ class test_mappers
      */
     function test_url(string $url_part): string
     {
-        return api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR . $url_part;
+        return api::HOST_TESTING . api::MAIN_SCRIPT_EXT . url_var::PAR . $url_part;
     }
 
     /**

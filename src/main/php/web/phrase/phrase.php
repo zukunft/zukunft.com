@@ -47,11 +47,15 @@ include_once html_paths::VERB . 'verb_list.php';
 //include_once html_paths::WORD . 'word.php';
 //include_once html_paths::WORD . 'word_list.php';
 include_once html_paths::WORD . 'triple.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -60,9 +64,12 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class phrase extends combine_named
 {
@@ -383,6 +390,42 @@ class phrase extends combine_named
         } else {
             return $this->obj()->main_word();
         }
+    }
+
+    /**
+     * similar to dsp_link
+     *
+     * @param $style
+     * @return string
+     */
+    function dsp_link_style($style): string
+    {
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+            . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description, $style);
+    }
+
+    /**
+     * return the html code to display a word
+     */
+    function display(): string
+    {
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+            . url_var::ID . '=' . $this->id(), $this->name());
+    }
+
+    /**
+     * simply to display a single word or triple link
+     */
+    function display_linked(): string
+    {
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+            . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description);
+    }
+
+    function name_linked(): string
+    {
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+            . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description);
     }
 
     /**

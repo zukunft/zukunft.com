@@ -56,6 +56,7 @@ include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
@@ -77,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -264,7 +266,8 @@ class view_exe extends view_base
         // for the word array build an object
         if ($this->type_id() == 1) {
             $result = $result . '<br><br>';
-            //$result = $result . '<a href="' . api::MAIN_SCRIPT_REL . '?words='.implode (",", $word_array).'&type=3">Really?</a>';
+            //$result = $result . '<a href="' . api::MAIN_SCRIPT_REL . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+            // . url_var::ID . '='.implode (",", $word_array).'&type=3">Really?</a>';
             $result = $result . '</h1>';
         }
         return $result;
@@ -315,11 +318,15 @@ class view_exe extends view_base
         if ($this->id() <= 0) {
             $this->log_debug('create a view');
             $script = "view_add";
-            $result .= $html->dsp_text_h2('Create a new view (for <a href="' . api::MAIN_SCRIPT_REL . '?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+            $result .= $html->dsp_text_h2('Create a new view (for '
+                . $html->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+                    . url_var::ID . '=' . $wrd->id(), $wrd->name()) . ')');
         } else {
             $this->log_debug($this->dsp_id() . ' for user ' . $usr->name() . ' (called from ' . $back . ')');
             $script = "view_edit";
-            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="' . api::MAIN_SCRIPT_REL . '?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for '
+                . $html->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+                    . url_var::ID . '=' . $wrd->id(), $wrd->name()) . ')');
         }
         $result .= '<div class="row">';
 
@@ -508,19 +515,20 @@ class view_exe extends view_base
         $this->log_debug($this->id() . ',' . $wrd_id);
 
         $result = '';
+        $html = new html_base();
 
         $dsp_lst = new view_list();
 
-        $call = api::MAIN_SCRIPT_REL . '?words=' . $wrd_id;
+        $call = api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
         foreach ($dsp_lst as $dsp) {
             $view_id = $dsp->id();
             $view_name = $dsp->name();
             if ($view_id == $this->id()) {
-                $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
+                $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
             } else {
-                $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
+                $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
             $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
             $result .= btn_edit('design the view', $call_edit) . ' ';

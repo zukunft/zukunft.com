@@ -559,10 +559,14 @@ class component extends sandbox_code_id
         // show the view component name
         if ($this->id() <= 0) {
             $form_name = views::COMPONENT_ADD;
-            $result .= $html->dsp_text_h2('Create a view element for <a href="' . api::MAIN_SCRIPT_REL . '?words=' . $wrd->id() . '">' . $wrd->name() . '</a>');
+            $result .= $html->dsp_text_h2('Create a view element for '
+                . $html->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+                    . url_var::ID . '=' . $wrd->id(), $wrd->name()));
         } else {
             $form_name = views::COMPONENT_EDIT;
-            $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for <a href="' . api::MAIN_SCRIPT_REL . '?words=' . $wrd->id() . '">' . $wrd->name() . '</a>) ');
+            $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for '
+                . $html->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+                    . url_var::ID . '=' . $wrd->id(), $wrd->name()) . ') ');
         }
         $result .= '<div class="row">';
 

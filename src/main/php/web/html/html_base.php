@@ -328,7 +328,7 @@ class html_base
 
         global $mtr;
         $result = $this->logo() . "\n";
-        $result .= '<' . self::FORM . ' ' . self::ACTION . '="' . api::FIND_SCRIPT_REL . '" ' . self::CLASS_HTML . '="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">' . "\n";
+        $result .= '<' . self::FORM . ' ' . self::ACTION . '="' . api::FIND_SCRIPT . '" ' . self::CLASS_HTML . '="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">' . "\n";
         $result .= '<' . self::LABEL . ' ' . self::FOR . '="kp" ' . self::CLASS_HTML . '="visually-hidden">' . $mtr->txt(msg_id::NAVBAR_SEARCH) . '</' . self::LABEL . '>' . "\n";
         $result .= '<' . self::INPUT . ' ' . self::CLASS_HTML . '="form-control me-2" ' . self::TYPE . '="search" ' . self::NAME . '="pattern" ' . self::ID . '="kp" ' . self::PLACEHOLDER . '="' . $mtr->txt(msg_id::NAVBAR_SEARCH_PLACEHOLDER) . '" ' . self::STYLE . '="min-width: 40vw; max-width: 800px;">' . "\n";
         $result .= '<' . self::BUTTON . ' ' . self::CLASS_HTML . '="btn btn-outline-primary" ' . self::TYPE . '="submit">' . $mtr->txt(msg_id::NAVBAR_GET_NUMBERS) . '</' . self::BUTTON . '>' . "\n";
@@ -339,10 +339,10 @@ class html_base
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         $result .= '<' . self::UL . '>' . "\n";
-        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
         $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE))) . "\n";
-        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=view_edit&id=1', $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
-        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=view_add', $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_edit&id=1', $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_add', $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
         $result .= '</' . self::UL . '>' . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
@@ -352,8 +352,8 @@ class html_base
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="user-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-user-circle"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         $result .= '<' . self::UL . '>' . "\n";
-        $result .= $this->list_item($this->ref(api::LOGIN_SCRIPT_REL, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
-        $result .= $this->list_item($this->ref(api::SIGNUP_SCRIPT_REL, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
+        $result .= $this->list_item($this->ref(api::LOGIN_SCRIPT, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
+        $result .= $this->list_item($this->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
         $result .= $this->list_item($this->ref(api::SETTINGS_REL, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
         $result .= '</' . self::UL . '>' . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
@@ -379,7 +379,7 @@ class html_base
         if (!$no_about) {
             $url = $this->url(rest_ctrl::URL_ABOUT);
             $result .= $this->ref($url, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT)) . ' &middot; ' . "\n";
-            $result .= $this->ref(api::PRIVACY_SCRIPT_REL, $mtr->txt(msg_id::PRIVACY_POLICY)) . ' &middot; ' . "\n";
+            $result .= $this->ref(api::PRIVACY_SCRIPT, $mtr->txt(msg_id::PRIVACY_POLICY)) . ' &middot; ' . "\n";
         }
         $result .= $mtr->txt(msg_id::FOOTER_DATA_LICENCE) . ' ';
         $result .= $this->ref('https://creativecommons.org/publicdomain/zero/1.0/', $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ' . "\n";
@@ -603,7 +603,7 @@ class html_base
         } else {
             $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_HTML);
         }
-        return $this->ref(api::MAIN_SCRIPT_REL, $img, POD_NAME, self::CLASS_LOGO);
+        return $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO);
     }
 
     /**
@@ -612,7 +612,7 @@ class html_base
     function logo_big(): string
     {
         $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_BIG);
-        return $this->ref(api::MAIN_SCRIPT_REL, $img, POD_NAME, self::CLASS_LOGO);
+        return $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO);
     }
 
     /**
@@ -621,7 +621,7 @@ class html_base
     function logo_flex(): string
     {
         $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_FLEX);
-        $ref = $this->ref(api::MAIN_SCRIPT_REL, $img, POD_NAME, self::CLASS_LOGO);
+        $ref = $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO);
         return $this->div($ref, self::CLASS_LOGO_SECTION);
     }
 
@@ -899,7 +899,7 @@ class html_base
             }
             if ($back <> "") {
                 if (is_numeric($back)) {
-                    $result .= $this->ref(api::MAIN_SCRIPT_REL . '?' . url_var::WORDS_HUMAN . '=' . $back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
+                    $result .= $this->ref(api::MAIN_SCRIPT . '?' . url_var::WORDS_HUMAN . '=' . $back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
                 } else {
                     $result .= $this->ref($back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
                 }
@@ -1338,7 +1338,7 @@ class html_base
             }
             if ($back <> "") {
                 if (is_numeric($back)) {
-                    $result .= $this->ref(api::MAIN_SCRIPT_REL . '?' . url_var::WORDS_HUMAN . '=' . $back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
+                    $result .= $this->ref(api::MAIN_SCRIPT . '?' . url_var::WORDS_HUMAN . '=' . $back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
                 } else {
                     $result .= $this->ref($back, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', 'btn btn-outline-secondary btn-space');
                 }
@@ -1494,7 +1494,7 @@ class html_base
         } else {
         */
         $result .= ' <' . self::FORM . ' ' . self::ACTION . '="'
-            . api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::IMPORT . '" ' . self::METHOD . '="post" ' . self::ENCTYPE . '="multipart/form-data">';
+            . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::IMPORT . '" ' . self::METHOD . '="post" ' . self::ENCTYPE . '="multipart/form-data">';
         $result .= '   Select JSON to upload:';
         $result .= '   <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_FILE .
             '" ' . self::NAME . '="fileToUpload" ' . self::ID . '="fileToUpload">';
@@ -1625,7 +1625,7 @@ class html_base
     function form_start(string $form_name): string
     {
         // switch on post forms for private values
-        $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT . '"';
+        $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT_EXT . '"';
         $id = ' ' . self::ID . '="' . $form_name . '"';
 
         return '<' . self::FORM . $action . $id . '>';
@@ -1915,7 +1915,7 @@ class html_base
     private function about(): string
     {
         global $mtr;
-        return $this->ref(api::ABOUT_SCRIPT_REL, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT));
+        return $this->ref(api::ABOUT_SCRIPT, $mtr->txt(msg_id::SYSTEM_TITLE_ABOUT));
     }
 
     /**
@@ -1924,7 +1924,7 @@ class html_base
     private function privacy(): string
     {
         global $mtr;
-        return $this->ref(api::PRIVACY_SCRIPT_REL, $mtr->txt(msg_id::PRIVACY_POLICY));
+        return $this->ref(api::PRIVACY_SCRIPT, $mtr->txt(msg_id::PRIVACY_POLICY));
     }
 
     /**

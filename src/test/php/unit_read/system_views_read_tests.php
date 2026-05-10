@@ -156,15 +156,15 @@ class system_views_read_tests
         // $t->dsp_contains(', frontend about.php '.$result.' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         $is_connected = $t->dsp_web_test(
-            api::MAIN_SCRIPT_PATH . 'privacy_policy.html',
+            api::SCRIPT_PATH_NAME . 'privacy_policy.html',
             'Swiss purpose of data protection',
             ', frontend privacy_policy.php contains at least');
         $is_connected = $t->dsp_web_test(
-            api::MAIN_SCRIPT_PATH . 'error_update.php?id=1',
+            api::SCRIPT_PATH_NAME . 'error_update.php?id=1',
             'not permitted',
             ', frontend error_update.php contains at least', $is_connected);
         $t->dsp_web_test(
-            api::MAIN_SCRIPT_PATH . 'find.php?pattern=' . words::ABB,
+            api::SCRIPT_PATH_NAME . 'find.php?pattern=' . words::ABB,
             words::ABB,
             ', frontend find.php contains at least', $is_connected);
 

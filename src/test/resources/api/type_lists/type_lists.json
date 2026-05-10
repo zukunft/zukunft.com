@@ -20538,6 +20538,14 @@
         "type_id": null,
         "code_id": "system_log",
         "components": []
+      },
+      {
+        "id": 110,
+        "name": "Phrase (default)",
+        "description": "the default view for a word or triple",
+        "type_id": null,
+        "code_id": "phrase_default",
+        "components": []
       }
     ]
   }
