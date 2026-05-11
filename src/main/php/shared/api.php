@@ -39,12 +39,6 @@ class api
      * URL
      */
 
-    // TODO review (move to .env and/or application.yaml)
-    const string HOST_TESTING = 'http://localhost/';
-    const string HOST_DEV = 'http://localhost/';
-    const string HOST_DEV_RELATIVE = '/';
-    const string HOST_UAT = 'https://test.zukunft.com/';
-    const string HOST_PROD = 'https://www.zukunft.com/';
     const string HOST_SAME = '/';
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
@@ -64,7 +58,7 @@ class api
     const string LOGIN_SCRIPT = self::SCRIPT_PATH . 'login.php';
     const string SIGNUP_SCRIPT = self::SCRIPT_PATH . 'signup.php';
     const string ERROR_LOG_SCRIPT = self::SCRIPT_PATH . 'error_log.php';
-    const string URL_DEV = api::HOST_DEV . api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ;
+    const string URL_DEV = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ;
 
 
     /*
@@ -167,7 +161,7 @@ class api
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
-        return self::HOST_DEV . url_var::API_PATH . $lib->camelize_ex_1($class);
+        return THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($class);
     }
 
 }

@@ -334,7 +334,7 @@ class base_ui_tests
 
         $url = $html->url(views::WORD_ADD);
         $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
-        $target = '<h6></h6><a href="/http/word_add.php&confirm=1">Yes</a>/<a href="/http/word_add.php&confirm=-1">No</a>';
+        $target = '<h6></h6><a href="/http/word_add.php&confirm=1">yes</a>/<a href="/http/word_add.php&confirm=-1">no</a>';
         $result = (new button($url, $back))->yes_no();
         $t->assert(", btn_yesno", $result, $target);
 

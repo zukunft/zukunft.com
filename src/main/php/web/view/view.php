@@ -392,13 +392,12 @@ class view extends view_exe
         // the header to add or change a view
         if ($this->id() <= 0) {
             $script = "view_add";
-            $result .= $html->dsp_text_h2('Create a new view (for ' . $html->ref(api::MAIN_SCRIPT . '?'
-                    . url_var::VIEW . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd->id(), $wrd->name()) . ')');
+            $result .= $html->dsp_text_h2('Create a new view (for '
+                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         } else {
             $script = "view_edit";
             $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for '
-                . $html->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
-                    .url_var::ID . '=' . $wrd->id(), $wrd->name()) . ')');
+                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         }
         $result .= '<div class="row">';
 
@@ -494,10 +493,8 @@ class view extends view_exe
         } else {
             $dsp_list = new display_list;
             $dsp_list->lst = $this->cmp_lst->lst();
-            $dsp_list->script_name = "view_edit.php";
-            $dsp_list->class_edit = view::class;
             $dsp_list->script_parameter = $this->id() . "&back=" . $back . "&word=" . $wrd->id();
-            $result .= $dsp_list->display($back);
+            $result .= $dsp_list->display(view::class, $back);
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '<tr><td>';
             }

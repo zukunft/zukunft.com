@@ -202,9 +202,12 @@ class button
     function confirm(string $title, string $description, string $call): string
     {
         $html = new html_base();
+        global $mtr;
         $result = $html->dsp_text_h3($title);
         $result .= $description . '<br><br>';
-        $result .= $html->ref($call . '&confirm=1', 'Yes') . ' / ' . $html->ref($call . '&confirm=-1', 'No');
+        $result .= $html->ref($call . '&' . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . url_var::STEP_CONFIRM, $mtr->txt(msg_id::YES))
+            . ' / '
+            . $html->ref($call . '&' . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . url_var::STEP_CANCEL, $mtr->txt(msg_id::NO));
         //$result = $title.'<a href="'.$call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$call.'&confirm=-1" title="No">No</a>';
         //$result = '<a href="'.$call.'" onclick="return confirm(\''.$title.'\')">'.$title.'</a>';
         //$result = "<a onClick=\"javascript: return confirm('".$title."');\" href='".$call."'>x</a>";
@@ -229,8 +232,11 @@ class button
             $this->title .= $explain;
         }
 
+        global $mtr;
         $result = $html->dsp_text_h3($this->title);
-        $result .= $html->ref($this->call . '&confirm=1', 'Yes') . '/' . $html->ref($this->call . '&confirm=-1', 'No');
+        $result .= $html->ref($this->call . '&' . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . url_var::STEP_CONFIRM, $mtr->txt(msg_id::YES))
+            . '/'
+            . $html->ref($this->call . '&' . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . url_var::STEP_CANCEL, $mtr->txt(msg_id::NO));
         //$result = $this->title.'<a href="'.$this->call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$this->call.'&confirm=-1" title="No">No</a>';
         //$result = '<a href="'.$this->call.'" onclick="return confirm(\''.$this->title.'\')">'.$this->title.'</a>';
         //$result = "<a onClick=\"javascript: return confirm('".$this->title."');\" href='".$this->call."'>x</a>";

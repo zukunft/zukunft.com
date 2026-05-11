@@ -4906,6 +4906,8 @@
     \-- btn_back - section for function btn_back not yet defined that it should be HTML code in /html/button.php
     \-- btn_add_value - section for function btn_add_value not yet defined that it should be HTML code in /html/button.php
     \-- btn_add_value_fast - section for function btn_add_value_fast not yet defined that it should be HTML code in /html/button.php
+\-- display_list
+    \-- display - section for function display missing in /html/display_list.php
 \-- html_base
     \-- page_html - section for function page_html not yet defined that it should be page in /html/html_base.php
     \-- header_html - section for function header_html not yet defined that it should be header & footer in /html/html_base.php
@@ -4915,6 +4917,7 @@
     \-- navbar - section for function navbar not yet defined that it should be header & footer in /html/html_base.php
     \-- footer - section for function footer not yet defined that it should be header & footer in /html/html_base.php
     \-- ref - section for function ref not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
+    \-- ref_view - section for function ref_view not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- img - section for function img not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- url - section for function url not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
@@ -6572,7 +6575,7 @@
     \-- dsp_log_view
         \-- hist_log - 
     \-- display
-        \-- display_list - 
+        \-- display_list - TODO Prio 1 review
         \-- html_selector - 
     \-- end_selector
         \-- html_selector - @returns string the HTML code to end a selector field
@@ -6828,9 +6831,11 @@
         \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
 \-- wrapper for the basic html elements used
     \-- ref
-        \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
+        \-- html_base - create the html code for a link
+    \-- ref_view
+        \-- html_base - create the html code to show an object
     \-- img
-        \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
+        \-- html_base - create the html code to show an object
     \-- span
         \-- html_base - @param string $text the text that should be formatted
 \-- wrapper for internal references used in the html code
@@ -6844,11 +6849,11 @@
         \-- html_base - build a url for an external webside
 \-- text formatting
     \-- text_h1
-        \-- html_base - TODO change based on the environment
+        \-- html_base - build a url for an external webside
     \-- text_h2
-        \-- html_base - TODO change based on the environment
+        \-- html_base - build a url for an external webside
     \-- text_h3
-        \-- html_base - TODO change based on the environment
+        \-- html_base - build a url for an external webside
 \-- images
     \-- logo
         \-- html_base - @return string the zukunft.com logo with a link to the home page

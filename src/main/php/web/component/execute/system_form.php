@@ -1455,7 +1455,8 @@ class system_form extends component
         if ($id != 0) {
             $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
         }
-        $result .= $html->ref($url, 'Cancel', '', html_base::BS_BTN . ' ' . html_base::BS_BTN_CANCEL);
+        global $mtr;
+        $result .= $html->ref($url, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', html_base::BS_BTN . ' ' . html_base::BS_BTN_CANCEL);
         return $result;
     }
 
@@ -1465,7 +1466,8 @@ class system_form extends component
     function button_save(): string
     {
         $html = new html_base();
-        return $html->button_bs('Save');
+        global $mtr;
+        return $html->button_bs($mtr->txt(msg_id::FORM_BUTTON_SAVE));
     }
 
     /**
@@ -1474,7 +1476,8 @@ class system_form extends component
     function button_del(): string
     {
         $html = new html_base();
-        return $html->button_bs('Delete', html_base::BS_BTN_DEL);
+        global $mtr;
+        return $html->button_bs($mtr->txt(msg_id::FORM_BUTTON_DEL), html_base::BS_BTN_DEL);
     }
 
     /**

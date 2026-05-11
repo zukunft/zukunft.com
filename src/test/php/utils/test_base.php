@@ -362,8 +362,6 @@ include_once html_paths::USER . 'user_display_old.php';
 
 class test_base
 {
-    // the url which should be used for testing (maybe later api::HOST_UAT)
-    const string URL = api::HOST_PROD;
 
     const string TEST_TYPE_CONTAINS = 'contains';
     const string TEST_TYPE_NOT = 'not';
@@ -947,7 +945,7 @@ class test_base
     {
         $lib = new library();
         $test_name = $lib->class_to_name($test_name);
-        $url = api::HOST_TESTING . url_var::API_PATH . 'json';
+        $url = THIS_URL . url_var::API_PATH . 'json';
         $data = array($fld => $id);
         $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
@@ -4420,7 +4418,7 @@ class test_base
         $msg_net_off = 'Cannot gat the policy, probably not connected to the internet';
         if ($is_connected) {
             try {
-                $result = file_get_contents(self::URL . $url_path);
+                $result = file_get_contents(THIS_URL . $url_path);
             } catch (Exception $e) {
                 $result = false;
                 $msg_net_off .= ': ' . $e->getMessage();

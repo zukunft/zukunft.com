@@ -134,7 +134,7 @@ class all_ui_tests extends all_unit_tests
         $t->subheader($ts . 'check about page e.g. to check the library');
 
         $test_name = 'check about page e.g. to check the library';
-        $result = file_get_contents(api::HOST_TESTING .  'http/about.php');
+        $result = file_get_contents(THIS_URL .  'http/about.php');
         $target = 'zukunft.com AG';
         $t->assert_text_contains($test_name, $result, $target);
 

@@ -319,14 +319,12 @@ class view_exe extends view_base
             $this->log_debug('create a view');
             $script = "view_add";
             $result .= $html->dsp_text_h2('Create a new view (for '
-                . $html->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
-                    . url_var::ID . '=' . $wrd->id(), $wrd->name()) . ')');
+                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         } else {
             $this->log_debug($this->dsp_id() . ' for user ' . $usr->name() . ' (called from ' . $back . ')');
             $script = "view_edit";
             $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for '
-                . $html->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
-                    . url_var::ID . '=' . $wrd->id(), $wrd->name()) . ')');
+                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         }
         $result .= '<div class="row">';
 
@@ -425,10 +423,8 @@ class view_exe extends view_base
             $this->log_debug('loaded');
             $dsp_list = new display_list;
             $dsp_list->lst = $this->cmp_lst->lst();
-            $dsp_list->script_name = "view_edit.php";
-            $dsp_list->class_edit = view_exe::class;
             $dsp_list->script_parameter = $this->id() . "&back=" . $back . "&word=" . $wrd->id();
-            $result .= $dsp_list->display($back);
+            $result .= $dsp_list->display(view_exe::class, $this->id(), $back);
             $this->log_debug('displayed');
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '<tr><td>';

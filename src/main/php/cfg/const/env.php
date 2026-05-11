@@ -43,6 +43,7 @@ const ENV_CODE_VERSION = 'CODE_VERSION';
 const ENV_UI_VERSION = 'UI_VERSION';
 const ENV_POD_NAME = 'POD_NAME';
 const ENV_THIS_URL = 'THIS_URL';
+const ENV_SYS_LOG_URL = 'SYS_LOG_URL';
 const ENV_PGSQL_DATABASE = 'PGSQL_DATABASE';
 const ENV_PGSQL_USERNAME = 'PGSQL_USERNAME';
 const ENV_PGSQL_PASSWORD = 'PGSQL_PASSWORD';
@@ -78,7 +79,7 @@ const ENV_CO_ADMIN_USER = 'CO_ADMIN_USER'; // the suggestion is to have always a
 const ENV_CO_ADMIN_PW = 'CO_ADMIN_PW'; // if empty requested on initial startup
 const SYSTEM_VERSION_FALLBACK = '0.0.3';
 const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
-const THIS_URL_FALLBACK = 'http://localhost';  // the default pod url if not defined
+const THIS_URL_FALLBACK = 'http://localhost/';  // the default pod url if not defined
 
 const ENV_VARS = [
     ENV_OS,
@@ -90,6 +91,7 @@ const ENV_VARS = [
     ENV_UI_VERSION,
     ENV_POD_NAME,
     ENV_THIS_URL,
+    ENV_SYS_LOG_URL,
     ENV_PGSQL_DATABASE,
     ENV_PGSQL_USERNAME,
     ENV_PGSQL_PASSWORD,
@@ -216,6 +218,7 @@ define('SYSTEM_CODE_VERSION', getenv(ENV_CODE_VERSION) ?: SYSTEM_VERSION_FALLBAC
 define('SYSTEM_UI_VERSION', getenv(ENV_UI_VERSION) ?: SYSTEM_VERSION_FALLBACK);
 define('POD_NAME', getenv(ENV_POD_NAME) ?: POD_NAME_FALLBACK);
 define('THIS_URL', getenv(ENV_THIS_URL) ?: THIS_URL_FALLBACK);
+define('SYS_LOG_URL', getenv(ENV_SYS_LOG_URL) ?: '');
 
 // Database configuration from environment variables or the default fallback value
 define('SQL_DB_TYPE', getenv(ENV_DB) ?: POSTGRES);

@@ -1457,6 +1457,11 @@ enum messages: string
     case ADD = 'add';
     case EDIT = 'edit';
     case DEL = 'del';
+    case YES = 'yes';
+    case NO = 'no';
+    case UP = 'up';
+    case DOWN = 'down';
+    case CLOSE = 'close';
     case SEARCH_MAIN = 'search_main';
     case WORD_ADD = 'word_add';
     case WORD_EDIT = 'word_edit';

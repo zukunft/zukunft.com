@@ -88,7 +88,6 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -560,13 +559,11 @@ class component extends sandbox_code_id
         if ($this->id() <= 0) {
             $form_name = views::COMPONENT_ADD;
             $result .= $html->dsp_text_h2('Create a view element for '
-                . $html->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
-                    . url_var::ID . '=' . $wrd->id(), $wrd->name()));
+                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()));
         } else {
             $form_name = views::COMPONENT_EDIT;
             $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for '
-                . $html->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
-                    . url_var::ID . '=' . $wrd->id(), $wrd->name()) . ') ');
+                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ') ');
         }
         $result .= '<div class="row">';
 

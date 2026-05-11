@@ -133,7 +133,7 @@ class change_log_list extends ListBase
     {
         $lib = new library();
         $log_class = $lib->class_to_name(change_log_list::class);
-        $url = api::HOST_TESTING . url_var::API_PATH . $lib->camelize_ex_1($log_class);
+        $url = THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($log_class);
         $class = $lib->class_to_api_name($class);
         $data = [];
         $data[url_var::LOG_CLASS] = $class;

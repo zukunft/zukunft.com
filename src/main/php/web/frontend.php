@@ -177,16 +177,6 @@ class frontend
 
 
     /*
-     * servers
-     */
-
-    // TODO Prio 1 review (get from .env and not move to application.yaml and detect and fix it on initial program start)
-    const string HOST_DEV = 'http://localhost/';
-    const string HOST_UAT = 'https://test.zukunft.com/';
-    const string HOST_PROD = 'https://www.zukunft.com/';
-    const string HOST_SYS_LOG = '';
-
-    /*
      * vars
      */
 
@@ -413,9 +403,9 @@ class frontend
 
         // html header
         $html = new html_base();
-        echo $html->header($title, '', language_codes::SYS, api::HOST_DEV);
+        echo $html->header($title, '', language_codes::SYS, THIS_URL);
 
-        if (self::HOST_SYS_LOG != '') {
+        if (SYS_LOG_URL != '') {
             $result .= $this->log_info('start ' . $this->code_name);
         }
         return $result;
@@ -449,7 +439,7 @@ class frontend
         // Closing connection
         $db_con->close();
 
-        if (self::HOST_SYS_LOG != '') {
+        if (SYS_LOG_URL != '') {
             return $this->log_info('end ' . $this->code_name);
         } else {
             return '';
@@ -843,7 +833,7 @@ class frontend
     {
         $lib = new library();
         $class = $lib->class_to_name_pur($class);
-        $url = self::HOST_DEV . url_var::API_PATH . $lib->camelize_ex_1($class);
+        $url = THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {

@@ -569,8 +569,7 @@ class user extends db_object
     function display(): string
     {
         $html = new html_base();
-        return $html->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::USER_ID
-            . '&' . url_var::ID . '=' . $this->id, $this->name);
+        return $html->ref_view(views::USER_ID, $this->id, $this->name);
     }
 
 

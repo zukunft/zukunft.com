@@ -382,11 +382,11 @@ class html_base
             $result .= $this->ref(api::PRIVACY_SCRIPT, $mtr->txt(msg_id::PRIVACY_POLICY)) . ' &middot; ' . "\n";
         }
         $result .= $mtr->txt(msg_id::FOOTER_DATA_LICENCE) . ' ';
-        $result .= $this->ref('https://creativecommons.org/publicdomain/zero/1.0/', $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ' . "\n";
+        $result .= $this->ref(def::LINK_CC0, $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ' . "\n";
         $result .= $mtr->txt(msg_id::FOOTER_LICENCE_UNLESS) . ' ' . "\n";
-        $result .= $this->ref('https://github.com/zukunft/zukunft.com', $mtr->txt(msg_id::PROGRAM_CODE)) . ' ' . "\n";
+        $result .= $this->ref(def::LINK_GITHUB, $mtr->txt(msg_id::PROGRAM_CODE)) . ' ' . "\n";
         $result .= $mtr->txt(msg_id::FOOTER_OF_VERSION) . ' ' . SYSTEM_CODE_VERSION . "\n";
-        $result .= $mtr->txt(msg_id::FOOTER_UNDER_THE) . ' ' . $this->ref('https://www.gnu.org/licenses/agpl.html', $mtr->txt(msg_id::AGPL3)) . ' ' . $mtr->txt(msg_id::FOOTER_LICENCE) . '. ' . "\n";
+        $result .= $mtr->txt(msg_id::FOOTER_UNDER_THE) . ' ' . $this->ref(def::LINK_AGPL, $mtr->txt(msg_id::AGPL3)) . ' ' . $mtr->txt(msg_id::FOOTER_LICENCE) . '. ' . "\n";
         $result .= '</' . self::P . '> ' . "\n";
 
         $result .= '</' . self::FOOTER . '>' . "\n";
@@ -403,6 +403,15 @@ class html_base
 
     // TODO Prio 1 use this everywhere if possible
 
+    /**
+     * create the html code for a link
+     *
+     * @param string $url the target url
+     * @param string $name the text shown to the user for the link e.g. 'global warming' to show the triple global warming
+     * @param string $title
+     * @param string $style
+     * @return string
+     */
     function ref(string $url, string $name, string $title = '', string $style = ''): string
     {
         $result = '<' . self::A . ' ' . self::HREF . '="' . $url . '"';
@@ -416,6 +425,29 @@ class html_base
         $result .= $name;
         $result .= '</' . self::A . '>';
         return $result;
+    }
+
+    /**
+     * create the html code to show an object
+     *
+     * @param int $msk_id the view id related to the object that should be shown e.g. views::FORMULA_ID
+     * @param int $id the object id that should be shown
+     * @param string $name the text shown to the user for the link e.g. 'global warming' to show the triple global warming
+     * @param string $par additional parameter that could be added to the target url
+     * @return string the html
+     */
+    function ref_view(int $msk_id, int $id, string $name, string $par = ''): string
+    {
+        if ($par == '') {
+            return $this->ref(api::MAIN_SCRIPT
+                . '?' . url_var::VIEW . '=' . $msk_id
+                . '&' . url_var::ID . '=' . $id, $name);
+        } else {
+            return $this->ref(api::MAIN_SCRIPT
+                . '?' . url_var::VIEW . '=' . $msk_id
+                . '&' . url_var::ID . '=' . $id
+                . '&' . $par, $name);
+        }
     }
 
     function img(string $img_path, string $alt, string $style = ''): string
@@ -531,7 +563,7 @@ class html_base
      */
     function url_api(string $obj_name): string
     {
-        return $this->host() . rest_ctrl::PATH . $obj_name . '/';
+        return THIS_URL . rest_ctrl::PATH . $obj_name . '/';
     }
 
     /**
@@ -549,14 +581,6 @@ class html_base
         return $this->ref($url . $id, $name, $description, $style);
     }
 
-    /**
-     * TODO change based on the environment
-     * @return string the host name of the api
-     */
-    private function host(): string
-    {
-        return frontend::HOST_DEV;
-    }
 
     /*
      * text formatting
@@ -972,13 +996,13 @@ class html_base
         $result .= 'Switzerland<' . self::BR . '><' . self::BR . '>';
         $result .= $this->ref('mailto:timon@zukunft.com', 'timon@zukunft.com') . '<' . self::BR . '><' . self::BR . '>';
         $result .= $mtr->txt(msg_id::ABOUT_MAIN_IDEA) . ' ';
-        $result .= $this->ref('https://dx.doi.org/10.2139/ssrn.6497759', $mtr->txt(msg_id::ABOUT_PAPER_DELPHI)) . '. ';
+        $result .= $this->ref(def::LINK_PAPER_DELPHI, $mtr->txt(msg_id::ABOUT_PAPER_DELPHI)) . '. ';
         $result .= $mtr->txt(msg_id::ABOUT_ONCE_IMPLEMENTED) . ' ';
-        $result .= $this->ref('https://doi.org/10.5281/zenodo.19443909', $mtr->txt(msg_id::ABOUT_PAPER_IMPERATIVE)) . '.<br><br>';
+        $result .= $this->ref(def::LINK_PAPER_IMPERATIVE, $mtr->txt(msg_id::ABOUT_PAPER_IMPERATIVE)) . '.<br><br>';
         $result .= $mtr->txt(msg_id::ABOUT_SUPPORTS) . ' ';
-        $result .= $this->ref("https://github.com/zukunft/tream", $mtr->txt(msg_id::OPEN_SOURCE), $mtr->txt(msg_id::ABOUT_GITHUB_LINK)) . ' ' . $mtr->txt(msg_id::ABOUT_PORTFOLIO_MGMT) . '<br><br>';
+        $result .= $this->ref(def::LINK_GITHUB_TREAM, $mtr->txt(msg_id::OPEN_SOURCE), $mtr->txt(msg_id::ABOUT_GITHUB_LINK)) . ' ' . $mtr->txt(msg_id::ABOUT_PORTFOLIO_MGMT) . '<br><br>';
         $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'height: 20%;');
-        $result .= $this->ref('https://tream.biz/p4a/applications/tream/', $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO)) . '<' . self::BR . '><' . self::BR . '>';
+        $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO)) . '<' . self::BR . '><' . self::BR . '>';
         $result .= '</' . self::DIV . '>   ';
         $result .= $this->footer(true);
 
@@ -1032,6 +1056,7 @@ class html_base
         string $script_parameter,
         string $back = ''): string
     {
+        global $mtr;
         $but = new button();
         $result = '';
 
@@ -1045,14 +1070,14 @@ class html_base
             $result .= $this->ref($url, $item);
             if ($row_nbr > 1) {
                 $url = $this->url($edit_script, $key, $back, '&move_up=' . $key);
-                $result .= $this->ref($url, 'up');
+                $result .= $this->ref($url, $mtr->txt(msg_id::UP));
             }
             if ($row_nbr > 1 and $row_nbr < $num_rows) {
                 $result .= '/';
             }
             if ($row_nbr < $num_rows) {
                 $url = $this->url($edit_script, $key, $back, '&move_down=' . $key);
-                $result .= $this->ref($url, 'down');
+                $result .= $this->ref($url, $mtr->txt(msg_id::DOWN));
             }
             $result .= ' ';
             // TODO Prio 1 review

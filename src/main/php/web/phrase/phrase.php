@@ -409,8 +409,7 @@ class phrase extends combine_named
      */
     function display(): string
     {
-        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
-            . url_var::ID . '=' . $this->id(), $this->name());
+        return (new html_base())->ref_view(views::PHRASE, $this->id(), $this->name());
     }
 
     /**

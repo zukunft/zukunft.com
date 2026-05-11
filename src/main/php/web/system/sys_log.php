@@ -40,6 +40,7 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTimeInterface;
@@ -268,7 +270,7 @@ class sys_log extends log
      */
     function display_admin(user $usr, ?string $back = '', string $style = ''): string
     {
-        global $sys;
+        global $mtr, $sys;
 
         $html = new html_base();
         $row = '';
@@ -286,7 +288,7 @@ class sys_log extends log
         if ($usr->is_admin() or $usr->is_system()) {
             $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
             $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
-            $row .= $html->td($html->ref($url, 'close'));
+            $row .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
         }
         return $html->tr($row);
     }
@@ -325,7 +327,7 @@ class sys_log extends log
 
     function get_html(?user $usr = null, string $back = ''): string
     {
-        global $sys;
+        global $mtr, $sys;
 
         $html = new html_base();
         $row_text = $html->td($this->time->format(DateTimeInterface::ATOM));
@@ -348,7 +350,7 @@ class sys_log extends log
             if ($usr->is_admin() or $usr->is_system()) {
                 $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
                 $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
-                $row_text .= $html->td($html->ref($url, 'close'));
+                $row_text .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
             }
         }
 

@@ -182,6 +182,14 @@ class url_var
 
 
     /*
+     * short and standard url actions
+     */
+
+    const string UP = 'up'; // move this item in the list one step up
+    const string DOWN = 'down'; // move this item in the list one step down
+
+
+    /*
      * short and standard url values
      */
 
