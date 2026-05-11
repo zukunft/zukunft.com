@@ -1567,7 +1567,7 @@ class html_base
      * create the HTML code for an input field
      * @param string $url_id the url id of the input field e.g. Name
      * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
-     * @param string $value the suggested value which is in most cases the value already saved in the db
+     * @param string|null $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $class_add the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @param string $placeholder
@@ -1576,7 +1576,7 @@ class html_base
     function input(
         string $url_id,
         msg_id $msg_id,
-        string $value = '',
+        string|null $value = '',
         string $type = '',
         string $class_add = '',
         string $placeholder = ''): string
@@ -1676,19 +1676,19 @@ class html_base
      * create the HTML code for an input field including the label
      * @param string $url_id the id of the input field e.g. n
      * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
-     * @param string $value the suggested value which is in most cases the value already saved in the db
+     * @param string|int $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $input_class the formatting code to change the input type
      * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @return string the HTML code for the field with the label
      */
     function form_field(
-        string $url_id,
-        msg_id $msg_id,
-        string $value = '',
-        string $type = html_base::INPUT_TEXT,
-        string $input_class = '',
-        string $style = view_styles::COL_SM_12
+        string     $url_id,
+        msg_id     $msg_id,
+        string|int $value = '',
+        string     $type = html_base::INPUT_TEXT,
+        string     $input_class = '',
+        string     $style = view_styles::COL_SM_12
     ): string
     {
         // TODO Prio 2 move mtr to label

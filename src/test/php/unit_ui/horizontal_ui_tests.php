@@ -40,7 +40,14 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
@@ -65,14 +72,16 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class horizontal_ui_tests
 {
-    function run(test_cleanup $t): void
+    function run(test_cleanup $t, frontend $ui): void
     {
 
         // init
         $lib = new library();
+        $map_obj = new MapObject();
         $t_map = new test_mappers($t);
         $usr_msg_ui = new user_message_ui();
         $usr_msg = new user_message($t->usr1);
+        $msg_ui = $map_obj->convertMsgToUi($usr_msg);
         $url_test = new test_mappers($t);
         $url_map = new url_mapper();
 
@@ -128,6 +137,24 @@ class horizontal_ui_tests
             $t->assert_true($test_name, $diff->is_ok());
         }
 
+        $t->subheader($ts . 'component types');
+        $html = new html_base();
+        $test_page = $html->text_h1('Component display test');
+        foreach ($ui->dto->typ_lst_cache->html_component_types->lst() as $typ) {
+            $test_page .= '<br><br>' . $html->dsp_text_h2($typ->name . ' (' . $typ->code_id . ')') . '<br><br><br>';
+            $obj = $t_map->component_type_to_object($typ);
+            if ($obj !== null) {
+                $ui_obj = $t_map->class_to_ui_object($obj::class);
+                $ui_obj->api_mapper($obj->api_json_array(new api_type_list([])), $msg_ui);
+                $cmp = new component_exe();
+                $cmp->set_type_id($typ->id());
+                $cmp->code_id = $typ->code_id;
+                $test_page .= $cmp->dsp_entries($ui_obj, 'component type tests', views::WORD_EDIT_ID, $ui->dto);
+            } else {
+                $test_page .= 'no object mapped for type ' .  $typ->name;
+            }
+        }
+        $t->html_page_test($test_page, 'all component types', 'all_component_types', $t);
     }
 
 }

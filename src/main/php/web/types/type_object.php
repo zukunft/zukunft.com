@@ -42,18 +42,24 @@
 namespace Zukunft\ZukunftCom\main\php\web\types;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-//include_once html_paths::HTML . 'html_base.php';
+//include_once paths::API_OBJECT . 'api_message.php';
 //include_once paths::SHARED_TYPES . 'phrase_types.php';
-//include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once paths::SHARED_CONST . 'views.php';
+//include_once paths::SHARED . 'json_fields.php';
+//include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::WORD . 'word.php';
 
+use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 
 class type_object
@@ -152,6 +158,62 @@ class type_object
 
 
     /*
+     * api
+     */
+
+    /**
+     * set the vars of this source frontend object bases on the api json array
+     * @param array $json_array an api json message
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successfully
+     */
+    function api_mapper(array $json_array, user_message $msg): bool
+    {
+        // get body from message
+        $api_msg = new api_message();
+        $json_array = $api_msg->validate($json_array);
+
+        if (array_key_exists(json_fields::ID, $json_array)) {
+            $this->set_id($json_array[json_fields::ID]);
+        } else {
+            $this->set_id(0);
+            $msg->add_error_text('Mandatory field id missing in API JSON ' . json_encode($json_array));
+        }
+        if (array_key_exists(json_fields::NAME, $json_array)) {
+            $this->name = $json_array[json_fields::NAME];
+        } else {
+            $this->name = null;
+        }
+        if (array_key_exists(json_fields::CODE_ID, $json_array)) {
+            $this->code_id = $json_array[json_fields::CODE_ID];
+        } else {
+            $this->code_id = null;
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->comment = $json_array[json_fields::DESCRIPTION];
+        } else {
+            $this->comment = null;
+        }
+
+        return $msg->is_ok();
+    }
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = array();
+        $vars[json_fields::ID] = $this->id();
+        $vars[json_fields::NAME] = $this->name;
+        $vars[json_fields::CODE_ID] = $this->code_id;
+        $vars[json_fields::DESCRIPTION] = $this->comment;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
      * fixed
      */
 
@@ -165,6 +227,18 @@ class type_object
             $phr_lst->add(new word()->math()->phrase());
         }
         return $phr_lst;
+    }
+
+    /*
+     * debug
+     */
+
+    function dsp_id(): string
+    {
+        $txt = $this::class . ' ' . $this->name . ' ';
+        $txt .= '(' . $this->id . ') ';
+        $txt .= 'code_id ' . $this->code_id;
+        return $txt;
     }
 
 }

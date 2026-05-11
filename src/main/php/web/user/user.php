@@ -385,7 +385,7 @@ class user extends db_object
     }
 
     // TODO restrict the access to the unhashed password
-    function password(): string
+    function password(): string|null
     {
         return $this->password;
     }

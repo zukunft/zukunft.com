@@ -210,9 +210,9 @@ class base_ui_tests
 
         $t->subheader($ts . 'unit html view component tests');
 
-        $cmp = new component($usr);
+        $cmp = new component($t->usr1);
         $cmp->set(components::WORD_ID, components::TEST_ADD_NAME);
-        $cmp->set_type(comp_type_shared::TEXT, $usr);
+        $cmp->set_type(comp_type_shared::TEXT, $t->usr1);
         $cmp_dsp = new component_ui($cmp->api_json());
         $t->html_page_test($cmp_dsp->html(), '', 'component_text', $t);
 
@@ -223,7 +223,7 @@ class base_ui_tests
         //      create the api object using the api_obj() function
         //      create and set the dsp object based on the api json
 
-        $lst = new verb_list($usr);
+        $lst = new verb_list($t->usr1);
         $lst->add_verb(new verb(1, verbs::IS));
         $lst->add_verb(new verb(2, verbs::PART_NAME));
         // TODO use set_from_json to set the display object
@@ -269,7 +269,7 @@ class base_ui_tests
         $t->subheader($ts . 'component');
 
         // test if a simple text component can be created
-        $cmp = new component($usr);
+        $cmp = new component($t->usr1);
         $usr_msg = new user_message();
         $cmp->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $cmp->id = 1;

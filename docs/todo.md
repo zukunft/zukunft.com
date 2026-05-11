@@ -7,7 +7,6 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
-    TODO always use the const THIS_URL instead of localhost
     TODO unit test for all component types
     TODO test user login
     TODO test for add word workflow: add the function "url_to_action_and_next_step" in the workflow class
