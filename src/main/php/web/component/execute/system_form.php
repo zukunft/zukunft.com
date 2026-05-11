@@ -55,6 +55,8 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
@@ -78,6 +80,8 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -187,7 +191,7 @@ class system_form extends component
         return $html->input(
             url_var::LANGUAGE_SYMBOL,
             msg_id::FORM_FIELD_LANGUAGE_SYMBOL,
-            $dbo->symbol,
+            'symbol field missing',
             html_base::INPUT_TEXT);
     }
 
@@ -196,7 +200,8 @@ class system_form extends component
      */
     function show_language_symbol(language|db_object $dbo): string
     {
-        return $dbo->symbol;
+        // TODO Prio 0 add system to web language
+        return $dbo->name;
     }
 
 
@@ -281,36 +286,36 @@ class system_form extends component
 
     /**
      * @param view_relation|db_object $dbo the object
-     * @return string the html code to show the object name to the user
+     * @return string|null the html code to show the object name to the user
      */
-    function show_parent_view(view_relation|db_object $dbo): string
+    function show_parent_view(view_relation|db_object $dbo): string|null
     {
         return $dbo->parent()?->name();
     }
 
     /**
      * @param view_relation|db_object $dbo the object
-     * @return string the html code to show the object name to the user
+     * @return string|null the html code to show the object name to the user
      */
-    function show_child_view(view_relation|db_object $dbo): string
+    function show_child_view(view_relation|db_object $dbo): string|null
     {
         return $dbo->child()?->name();
     }
 
     /**
      * @param view_relation|db_object $dbo the object
-     * @return string the html code to show the object name to the user
+     * @return string|null the html code to show the object name to the user
      */
-    function show_relation_type(view_relation|db_object $dbo): string
+    function show_relation_type(view_relation|db_object $dbo): string|null
     {
         return $dbo->relation_type()?->name();
     }
 
     /**
      * @param view_relation|db_object $dbo the object
-     * @return string the html code to show the object name to the user
+     * @return string|null the html code to show the object name to the user
      */
-    function show_start_pos(view_relation|db_object $dbo): string
+    function show_start_pos(view_relation|db_object $dbo): string|null
     {
         return $dbo->start_pos;
     }
@@ -620,7 +625,7 @@ class system_form extends component
         return $html->form_field(
             url_var::FORMULA_LINK_PRIO,
             msg_id::FORM_FIELD_GROUP,
-            $dbo->url()
+            'priority missing'
         );
     }
 
@@ -629,14 +634,12 @@ class system_form extends component
      */
     function form_field_view_link_priority(db_object $dbo): string
     {
+        // TODO Prio 2 add priority to view relation
         $html = new html_base();
         return $html->form_field(
             url_var::VIEW_TERM_LINK_PRIO,
             msg_id::FORM_FIELD_VIEW_TERM_LINK_PRIO,
-            $dbo->url(),
-            html_base::INPUT_TEXT,
-            '',
-            view_styles::COL_SM_12
+            'prio missing'
         );
     }
 
@@ -649,10 +652,7 @@ class system_form extends component
         return $html->form_field(
             url_var::COMPONENT_LINK,
             msg_id::FORM_FIELD_COMPONENT_LINK,
-            $dbo->url(),
-            html_base::INPUT_TEXT,
-            '',
-            view_styles::COL_SM_12
+            'order number missing'
         );
     }
 
@@ -665,7 +665,7 @@ class system_form extends component
         return $html->form_field(
             url_var::POSITION,
             msg_id::FORM_FIELD_COMPONENT_LINK,
-            $dbo->url(),
+            'position missing missing',
             html_base::INPUT_INT,
             '',
             view_styles::COL_SM_1
@@ -1025,48 +1025,48 @@ class system_form extends component
      * create the html code for the form element to select a value
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param value_list|null $val_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view
      */
-    function form_value(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_value(db_object $dbo, string $form_name, ?value_list $val_lst): string
     {
-        return $dbo->value_selector($form_name, $typ_lst);
+        return $dbo->value_selector($form_name, $val_lst);
     }
 
     /**
      * create the html code for the form element to select a value
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param value_list|null $val_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view
      */
-    function form_values(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_values(db_object $dbo, string $form_name, ?value_list $val_lst): string
     {
-        return $dbo->value_selector($form_name, $typ_lst);
+        return $dbo->value_selector($form_name, $val_lst);
     }
 
     /**
      * create the html code for the form element to select a result
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the view
+     * @param result_list|null $res_lst cached list of results for fast selection
+     * @return string the html code to select the result
      */
-    function form_result(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_result(db_object $dbo, string $form_name, ?result_list $res_lst): string
     {
-        return $dbo->result_selector($form_name, $typ_lst);
+        return $dbo->result_selector($form_name, $res_lst);
     }
 
     /**
-     * create the html code for the form element to select a result
+     * create the html code for the form element to select results
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the view
+     * @param result_list|null $res_lst cached list of results for fast selection
+     * @return string the html code to select the results
      */
-    function form_results(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_results(db_object $dbo, string $form_name, ?result_list $res_lst): string
     {
-        return $dbo->result_selector($form_name, $typ_lst);
+        return $dbo->result_selector($form_name, $res_lst);
     }
 
     /**
@@ -1450,12 +1450,13 @@ class system_form extends component
         $base_ci = $views->system_to_base($msk_ci);
         $base_id = $views->code_id_to_id($base_ci);
         $result = '';
-        $url = api::HOST_SAME . api::MAIN_SCRIPT
+        $url = api::HOST_SAME . api::MAIN_SCRIPT_EXT
             . url_var::PAR . url_var::MASK . url_var::EQ . $base_id;
         if ($id != 0) {
             $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
         }
-        $result .= $html->ref($url, 'Cancel', '', html_base::BS_BTN . ' ' . html_base::BS_BTN_CANCEL);
+        global $mtr;
+        $result .= $html->ref($url, $mtr->txt(msg_id::FORM_BUTTON_CANCEL), '', html_base::BS_BTN . ' ' . html_base::BS_BTN_CANCEL);
         return $result;
     }
 
@@ -1465,7 +1466,8 @@ class system_form extends component
     function button_save(): string
     {
         $html = new html_base();
-        return $html->button_bs('Save');
+        global $mtr;
+        return $html->button_bs($mtr->txt(msg_id::FORM_BUTTON_SAVE));
     }
 
     /**
@@ -1474,7 +1476,8 @@ class system_form extends component
     function button_del(): string
     {
         $html = new html_base();
-        return $html->button_bs('Delete', html_base::BS_BTN_DEL);
+        global $mtr;
+        return $html->button_bs($mtr->txt(msg_id::FORM_BUTTON_DEL), html_base::BS_BTN_DEL);
     }
 
     /**

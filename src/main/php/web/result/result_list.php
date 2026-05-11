@@ -342,9 +342,10 @@ class result_list extends sandbox_list_value
     function frm_links_html(?back_trace $back = null): string
     {
         $result = '';
+        $html = new html_base();
         $formula_links = '';
         foreach ($this->lst() as $res) {
-            $formula_links .= ' <a href="/http/formula_edit.php?id=' . $res->frm->id . '&back=' . $back->url_encode() . '">' . $res->number . '</a> ';
+            $formula_links .= ' ' . $html->ref('/http/formula_edit.php?id=' . $res->frm->id . '&back=' . $back->url_encode(), $res->number) . ' ';
         }
         if ($formula_links <> '') {
             $result .= ' (or ' . $formula_links . ')';

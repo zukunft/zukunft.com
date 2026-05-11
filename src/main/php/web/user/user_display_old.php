@@ -74,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
@@ -293,7 +294,7 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $wrd_lnk_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_triple.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref('/http/user_triple.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
@@ -454,14 +455,16 @@ class user_display_old extends user
                 } else {
 
                     // prepare the row formula_links
-                    $sandbox_item_name = $frm_usr->formula()->name_linked($back);
+                    $frm_dsp = new formula($frm_usr->formula()->api_json());
+                    $sandbox_item_name = $frm_dsp->name_linked($back);
                     //$sandbox_item_name = $frm_usr->name_linked($back);
 
                     // format the user formula_link
                     if ($frm_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $frm_usr->phrase()->name_linked();
+                        $phr_dsp = new phrase($frm_usr->phrase()->api_json());
+                        $sandbox_usr_txt = $phr_dsp->name_linked();
                         //$sandbox_usr_txt = $frm_usr->link_name;
                     }
 
@@ -469,7 +472,8 @@ class user_display_old extends user
                     if ($frm_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $frm_std->phrase()->name_linked();
+                        $phr_dsp = new phrase($frm_usr->phrase()->api_json());
+                        $sandbox_std_txt = $phr_dsp->name_linked();
                         //$sandbox_std_txt = $frm_std->link_name;
                     }
 
@@ -500,9 +504,10 @@ class user_display_old extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $frm_lnk_other->tob()->name_linked();
+                        $to_dsp = new phrase($frm_lnk_other->tob()->api_json());
+                        $sandbox_other .= $to_dsp->name_linked();
                     }
-                    $sandbox_other = '<a href="/http/user_formula_link.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref('/http/user_formula_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_formula_link=' . $sbx_row['id'] . '&back=' . $back;
@@ -632,7 +637,7 @@ class user_display_old extends user
                     } else {
                         $sandbox_usr_txt = $val_usr->val_formatted();
                     }
-                    $sandbox_usr_txt = '<a href="/http/value_edit.php?id=' . $val_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = $html->ref('/http/value_edit.php?id=' . $val_usr->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard value
                     if ($val_std->is_excluded()) {
@@ -671,7 +676,7 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $val_other->val_formatted();
                     }
-                    $sandbox_other = '<a href="/http/user_value.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref('/http/user_value.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_value=' . $val_row['id'] . '&back=' . $back;
@@ -797,7 +802,7 @@ class user_display_old extends user
                     } else {
                         $sandbox_usr_txt = $dsp_usr->name();
                     }
-                    $sandbox_usr_txt = '<a href="/http/view_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = $html->ref('/http/view_edit.php?id=' . $dsp_usr->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard view
                     if ($dsp_std->is_excluded()) {
@@ -838,7 +843,7 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $dsp_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_view.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref('/http/user_view.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_view=' . $sbx_row['id'] . '&back=' . $back;
@@ -962,7 +967,7 @@ class user_display_old extends user
                     } else {
                         $sandbox_usr_txt = $dsp_usr->name();
                     }
-                    $sandbox_usr_txt = '<a href="/http/component_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = $html->ref('/http/component_edit.php?id=' . $dsp_usr->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard component
                     if ($dsp_std->is_excluded()) {
@@ -1003,7 +1008,7 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $cmp_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref('/http/user.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_component=' . $sbx_row['id'] . '&back=' . $back;
@@ -1171,7 +1176,7 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $dsp_lnk_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_component_link.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref('/http/user_component_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_component_link=' . $sbx_row['id'] . '&back=' . $back;
@@ -1308,7 +1313,7 @@ class user_display_old extends user
                     } else {
                         $sandbox_usr_txt = $dsp_usr->name();
                     }
-                    $sandbox_usr_txt = '<a href="/http/source_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = $html->ref('/http/source_edit.php?id=' . $dsp_usr->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard source
                     if ($dsp_std->is_excluded()) {
@@ -1351,7 +1356,7 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $dsp_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_source.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref('/http/user_source.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_source=' . $sbx_row['id'] . '&back=' . $back;

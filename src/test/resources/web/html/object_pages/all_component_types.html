@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test all component types (zukunft.com)</title>
+    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+</head>
+<body>
+<nav class="navbar site-header fixed-top"><a href="/http/view.php" title="zukunft.com" class="navbar-brand"><img
+        src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
+    <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3"><label for="kp"
+                                                                                                         class="visually-hidden">Search</label><input
+            class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
+            style="min-width: 40vw; max-width: 800px;">
+        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
+    </form>
+    <div class="col-md-2">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <details class="view-menu">
+                    <summary><i class="fas fa-edit"></i></summary>
+                    <ul>
+                        <li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>
+                        <li><a href="?view=more">... more</a></li>
+                        <li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>
+                        <li><a href="/http/view.php?m=view_add">add view</a></li>
+                    </ul>
+                </details>
+                <details class="lang-menu">
+                    <summary><i class="fas fa-globe"></i></summary>
+                    <ul>
+                        <li><a href="/http/view.php?m=1&q=en">English</a></li>
+                        <li><a href="/http/view.php?m=1&q=en_us">US English</a></li>
+                        <li><a href="/http/view.php?m=1&q=de" title="German">Deutsch</a></li>
+                        <li><a href="/http/view.php?m=1&q=fr" title="French">Français</a></li>
+                        <li><a href="/http/view.php?m=1&q=es" title="Spanish">Español</a></li>
+                        <li><a href="/http/view.php?m=1&q=zh" title="Chinese">漢語</a></li>
+                        <li><a href="/http/view.php?m=1&q=ar" title="Arabic">العربية</a></li>
+                        <li><a href="/http/view.php?m=language_select">... more</a></li>
+                    </ul>
+                </details>
+                <details class="user-menu">
+                    <summary><i class="fas fa-user-circle"></i></summary>
+                    <ul>
+                        <li><a href="/http/login.php">log in</a></li>
+                        <li><a href="/http/signup.php">Sign in</a></li>
+                        <li><a href="/settings">Settings</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main class="main-container"><h2>Component display test</h2><br><br><h4>word selector (select_phrase)</h4><br><br><br>phrase
+    selector p for component type tests not defined in class Zukunft\ZukunftCom\main\php\web\word\word<br><br><h4>view
+        selector (select_view)</h4><br><br><br>
+    <div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
+                                                                        form="component type tests" id="d">
+        <option value="0"> ---</option>
+    </select></div>
+    <br><br><h4>text (text)</h4><br><br><br>fixed text component<br><br><h4>fixed word (phrase)</h4>
+    <br><br><br><span></span><br><br><h4>linked word (link)</h4><br><br><br>phrase selector p for component type tests
+    not defined in class Zukunft\ZukunftCom\main\php\web\word\word<br><br><h4>formula results (formula_results)</h4><br><br><br>program
+    code for component 0 of component type "formula_results" (id 6) missing<br><br><br><h4>word list up
+        (word_list_up)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_foaf<br><br><h4>word name
+        (phrase_name)</h4><br><br><br><br><br><h4>word list down (word_list_down)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_foaf<br><br>
+    <h4>all relations (values_all)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_base<br><br><h4>
+        values related to (values_related)</h4><br><br><br><br><br><h4>formulas (formula_list)</h4><br><br><br>formulas
+    component<br><br><h4>word value list (word_value_list)</h4><br><br><br>num_list component<br><br><h4>XML export
+        (xml_export)</h4><br><br><br>no object mapped for type XML export<br><br><h4>CSV export (csv_export)</h4>
+    <br><br><br>no object mapped for type CSV export<br><br><h4>JSON Export (json_export)</h4><br><br><br>no object
+    mapped for type JSON Export<br><br><h4>system form title (system_form_title)</h4><br><br><br>
+    <form action="/http/view.php" id="component type tests"><br><br><h4>system form hidden back stack
+        (system_form_back_stack)</h4><br><br><br><input class="form-control" type="hidden" name="mask" id="m" value="3"><input
+            class="form-control" type="hidden" name="id" id="id" value="0"><input class="form-control" type="hidden"
+                                                                                  name="back" id="9"><br><br><h4>system
+        form confirm status (system_form_confirm_status)</h4><br><br><br><input class="form-control" type="hidden"
+                                                                                name="confirm" id="z" value="1"><br><br>
+        <h4>show name (system_show_field_name)</h4><br><br><br><br><br><h4>form field name (system_form_field_name)</h4>
+        <br><br><br>
+        <div class="form-group "><label for="k">Name</label><input class="form-control" type="text" name="Name" id="k">
+        </div>
+        <br><br><h4>form field description (system_form_field_description)</h4><br><br><br>
+        <div class="form-group col-md-12"><label for="o">Description</label><input class="form-control" type="text"
+                                                                                   name="Description" id="o"></div>
+        <br><br><h4>form select phrase (form_select_phrase)</h4><br><br><br>phrase selector p for component type tests
+        not defined in class Zukunft\ZukunftCom\main\php\web\word\word<br><br><h4>form select verb
+            (form_select_verb)</h4><br><br><br>verb selector not defined for
+        Zukunft\ZukunftCom\main\php\web\verb\verb<br><br><h4>form field phrase type (form_select_phrase_type)</h4>
+        <br><br><br>
+        <div class="form-group col-md-4"><label for="py">Type of word or triple</label><select class="form-control"
+                                                                                               name="py"
+                                                                                               form="component type tests"
+                                                                                               id="py">
+            <option value="1" selected>standard</option>
+            <option value="0"> ---</option>
+            <option value="5">calc</option>
+            <option value="11">differentiator filler</option>
+            <option value="6">format percent</option>
+            <option value="10">formula link</option>
+            <option value="24">group and select</option>
+            <option value="8">hidden scaling</option>
+            <option value="23">hidden system</option>
+            <option value="22">hidden triple</option>
+            <option value="27">ignore</option>
+            <option value="21">information</option>
+            <option value="20">key</option>
+            <option value="19">latest</option>
+            <option value="17">math constant</option>
+            <option value="18">measure divisor</option>
+            <option value="3">measure type</option>
+            <option value="13">next</option>
+            <option value="14">prior</option>
+            <option value="26">rank</option>
+            <option value="16">scaled measure</option>
+            <option value="7">scaling</option>
+            <option value="15">scaling word percent</option>
+            <option value="25">symbol</option>
+            <option value="12">this</option>
+            <option value="2">time</option>
+            <option value="4">time jump</option>
+            <option value="28">time number</option>
+            <option value="9">view / layer</option>
+        </select></div>
+        <br><br><h4>form field share type (form_select_share)</h4><br><br><br>
+        <div class="form-group col-md-4"><label for="s">Share</label><select class="form-control" name="s"
+                                                                             form="component type tests" id="s">
+            <option value="1" selected>public</option>
+            <option value="2">personal</option>
+            <option value="3">group</option>
+            <option value="4">private</option>
+            <option value="5">personal log</option>
+            <option value="6">group log</option>
+            <option value="7">private log</option>
+        </select></div>
+        <br><br><h4>form field protection type (form_select_protection)</h4><br><br><br>
+        <div class="form-group col-md-4"><label for="sp">Protection</label><select class="form-control" name="sp"
+                                                                                   form="component type tests" id="sp">
+            <option value="1" selected>no protection</option>
+            <option value="2">user</option>
+            <option value="3">admin</option>
+            <option value="4">no change</option>
+        </select></div>
+        <br><br><h4>button cancel (system_button_cancel)</h4><br><br><br><a href="/http/view.php?m=90"
+                                                                            class="btn btn-space col-1 btn-outline-secondary">cancel</a><br><br>
+        <h4>button save (system_button_save)</h4><br><br><br>
+        <button class="btn btn-space col-1 btn-outline-success" type="submit">save</button>
+        <br><br><h4>button delete (system_button_del)</h4><br><br><br>
+        <button class="btn btn-space col-1 btn-outline-secondary" type="submit">delete</button>
+        <br><br><h4>form end (form_end)</h4><br><br><br></form>
+    <br><br><h4>row start (row_start)</h4><br><br><br>
+    <div class="row col-md-12"><br><br><h4>row right (row_right)</h4><br><br><br><br>
+        <div class="row col-md-12 justify-content-end"><br><br><h4>row end (row_end)</h4><br><br><br></div>
+        <br><br><h4>spreadsheet (calc_sheet)</h4><br><br><br>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Priority</th>
+                <th scope="col">Problem</th>
+                <th class="text-right" scope="col">Costs in <a href="/http/view.php?m=90&id=255">trillion</a> <a
+                        href="/http/view.php?m=90&id=258">USD</a></th>
+                <th scope="col">Solution</th>
+                <th class="text-right" scope="col">Gain in <a href="/http/view.php?m=90&id=158">billion</a> <a
+                        href="/http/view.php?m=90&id=254">htp</a></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td><a href="/http/view.php?m=92&id=99">global warming</a></td>
+                <td class="text-right">31.5</td>
+                <td>reduce climate gas emissions</td>
+                <td class="text-right">35.2</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td><a href="/http/view.php?m=90&id=226">populism</a></td>
+                <td class="text-right">23.8</td>
+                <td>avoid wrong decisions</td>
+                <td class="text-right">34.1</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td><a href="/http/view.php?m=90&id=242">health</a></td>
+                <td class="text-right">20.4</td>
+                <td>research</td>
+                <td class="text-right">34.1</td>
+            </tr>
+            <tr>
+                <th scope="row">4</th>
+                <td><a href="/http/view.php?m=90&id=244">poverty</a></td>
+                <td class="text-right">13.6</td>
+                <td>taxes</td>
+                <td class="text-right">8.8</td>
+            </tr>
+            <tr>
+                <th scope="row">5</th>
+                <td><a href="/http/view.php?m=90&id=246">education</a></td>
+                <td class="text-right">9.4</td>
+                <td>spending</td>
+                <td class="text-right">14.3</td>
+            </tr>
+            <tr>
+                <th scope="row"></th>
+                <td><a href="/http/view.php?m=word_add&back=-91" title="add new word"><i class="far fa-plus-square"></i></a>
+                </td>
+                <td class="text-right"></td>
+                <td><a href="/http/view.php?m=word_add&back=-91" title="add new word"><i class="far fa-plus-square"></i></a>
+                </td>
+                <td class="text-right"></td>
+            </tr>
+            </tbody>
+        </table>
+        <br><br><h4>term name (term_name)</h4><br><br><br>no object mapped for type term name<br><br><h4>verb name
+            (verb_name)</h4><br><br><br>not set<br><br><h4>main value (main_value)</h4><br><br><br>no object mapped for
+        type main value<br><br><h4>system form select source type (form_select_source_type)</h4><br><br><br>
+        <div class="form-group col-md-4"><label for="st">Source type</label><select class="form-control" name="st"
+                                                                                    form="component type tests" id="st">
+            <option value="1">XML</option>
+            <option value="2">XBRL</option>
+            <option value="3" selected>CSV</option>
+            <option value="4">PDF</option>
+            <option value="5">API</option>
+            <option value="6">JSON</option>
+        </select></div>
+        <br><br><h4>system form select view (form_select_view)</h4><br><br><br>
+        <div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
+                                                                            form="component type tests" id="d">
+            <option value="0"> ---</option>
+        </select></div>
+        <br><br><h4>system form ref list (ref_list)</h4><br><br><br><br><br><h4>system form link list (link_list)</h4>
+        <br><br><br>list of phrases related to<br><br><h4>system usage (usage)</h4><br><br><br> is ranked by time of
+        discovery<br><br><h4>system change log (change_log)</h4><br><br><br><br><br><h4>ranking parameters
+            (ranking_parameters)</h4><br><br><br>no object mapped for type ranking parameters<br><br><h4>ranking list
+            (ranking_list)</h4><br><br><br>no object mapped for type ranking list<br><br><h4>related triples
+            (list_children_of_word)</h4><br><br><br><br><br><h4>system form select reference type
+            (form_select_ref_type)</h4><br><br><br>
+        <div class="form-group col-md-4"><label for="lt">Reference type</label><select class="form-control" name="lt"
+                                                                                       form="component type tests"
+                                                                                       id="lt">
+            <option value="1">wikipedia</option>
+            <option value="2" selected>wikidata</option>
+            <option value="3">conceptnet</option>
+        </select></div>
+        <br><br><h4>system form select formula type (form_select_formula_type)</h4><br><br><br>
+        <div class="form-group col-md-4"><label for="fy">Formula type</label><select class="form-control" name="fy"
+                                                                                     form="component type tests"
+                                                                                     id="fy">
+            <option value="1" selected>calc</option>
+            <option value="0"> ---</option>
+            <option value="2">next</option>
+            <option value="3">prior</option>
+            <option value="5">reversible</option>
+            <option value="6">scaling</option>
+            <option value="4">this</option>
+        </select></div>
+        <br><br><h4>system form select view type (form_select_view_type)</h4><br><br><br>view type selector not defined
+        for Zukunft\ZukunftCom\main\php\web\view\view<br><br><h4>system form select view style
+            (form_select_view_style)</h4><br><br><br>
+        <div class="form-group col-md-4"><label for="cs">View style</label><select class="form-control" name="cs"
+                                                                                   form="component type tests" id="cs">
+            <option value="0" selected>please select ...</option>
+            <option value="1">1/3 width</option>
+            <option value="2">2/3 width</option>
+            <option value="3">half width</option>
+            <option value="4">full width</option>
+        </select></div>
+        <br><br><h4>system form select component type (form_select_component_type)</h4><br><br><br>
+        <div class="form-group col-md-4"><label for="ct">Component type</label><select class="form-control" name="ct"
+                                                                                       form="component type tests"
+                                                                                       id="ct">
+            <option value="15">CSV export</option>
+            <option value="16">JSON Export</option>
+            <option value="14">XML export</option>
+            <option value="179">admin form field language symbol</option>
+            <option value="169">admin form field user email</option>
+            <option value="168">admin form field username</option>
+            <option value="170">admin form field user password</option>
+            <option value="10">all relations</option>
+            <option value="28">button cancel</option>
+            <option value="30">button delete</option>
+            <option value="187">button request new</option>
+            <option value="29">button save</option>
+            <option value="155">context for table import</option>
+            <option value="156">drop area for data import</option>
+            <option value="134">export csv</option>
+            <option value="132">export json</option>
+            <option value="131">export ods</option>
+            <option value="133">export xml</option>
+            <option value="62">expression</option>
+            <option value="180">field language symbol</option>
+            <option value="4">fixed word</option>
+            <option value="31">form end</option>
+            <option value="22">form field description</option>
+            <option value="167">form field external key of reference</option>
+            <option value="149">form field formula name</option>
+            <option value="21">form field name</option>
+            <option value="54">form field name</option>
+            <option value="25">form field phrase type</option>
+            <option value="55">form field plural</option>
+            <option value="136">form field plural reverse</option>
+            <option value="27">form field protection type</option>
+            <option value="135">form field reverse</option>
+            <option value="26">form field share type</option>
+            <option value="123">form field value type</option>
+            <option value="150">form field weight</option>
+            <option value="121">form select multi ref</option>
+            <option value="119">form select multi source</option>
+            <option value="23">form select phrase</option>
+            <option value="120">form select ref</option>
+            <option value="118">form select source</option>
+            <option value="24">form select verb</option>
+            <option value="98">formula list</option>
+            <option value="6">formula results</option>
+            <option value="12">formulas</option>
+            <option value="148">formulas by verb</option>
+            <option value="141">group name</option>
+            <option value="140">group or phrase list</option>
+            <option value="60">language name</option>
+            <option value="5">linked word</option>
+            <option value="38">main value</option>
+            <option value="142">numeric value</option>
+            <option value="96">parents of this word</option>
+            <option value="189">phrases with details on 1/3 screen</option>
+            <option value="188">phrases with details related to</option>
+            <option value="160">popup changes</option>
+            <option value="161">popup impact</option>
+            <option value="159">popup object</option>
+            <option value="158">popup title</option>
+            <option value="46">ranking list</option>
+            <option value="45">ranking parameters</option>
+            <option value="59">reference name</option>
+            <option value="47">related triples</option>
+            <option value="97">result list</option>
+            <option value="61">results related to</option>
+            <option value="154">results that changes</option>
+            <option value="34">row end</option>
+            <option value="33">row right</option>
+            <option value="32">row start</option>
+            <option value="157">selection name</option>
+            <option value="186">selection page</option>
+            <option value="147">show description</option>
+            <option value="164">show external key</option>
+            <option value="20" selected>show name</option>
+            <option value="165">show reference source</option>
+            <option value="163">show reference type</option>
+            <option value="166">show reference url</option>
+            <option value="58">source name</option>
+            <option value="35">spreadsheet</option>
+            <option value="64">system about</option>
+            <option value="105">system activate</option>
+            <option value="185">system admin delayed jobs</option>
+            <option value="182">system admin failed logins</option>
+            <option value="184">system admin pending error fixes</option>
+            <option value="181">system admin response times</option>
+            <option value="183">system admin unassigned errors</option>
+            <option value="65">system body error log</option>
+            <option value="66">system body error update</option>
+            <option value="68">system body process list</option>
+            <option value="67">system body process progress</option>
+            <option value="95">system button export</option>
+            <option value="94">system button import</option>
+            <option value="44">system change log</option>
+            <option value="176">system field child view</option>
+            <option value="175">system field parent view</option>
+            <option value="177">system field relation type</option>
+            <option value="178">system field view modification start position</option>
+            <option value="126">system form component link position</option>
+            <option value="19">system form confirm status</option>
+            <option value="53">system form field formula text</option>
+            <option value="69">system form field group</option>
+            <option value="70">system form field group or phrase list</option>
+            <option value="73">system form field selection description</option>
+            <option value="72">system form field selection name</option>
+            <option value="74">system form field selection text</option>
+            <option value="85">system form field source group</option>
+            <option value="117">system form field source group or phrase list</option>
+            <option value="71">system form field url</option>
+            <option value="139">system form field value</option>
+            <option value="18">system form hidden back stack</option>
+            <option value="42">system form link list</option>
+            <option value="93">system form link table</option>
+            <option value="89">system form preview</option>
+            <option value="41">system form ref list</option>
+            <option value="172">system form select child view</option>
+            <option value="87">system form select component</option>
+            <option value="99">system form select component link type</option>
+            <option value="153">system form select component position type</option>
+            <option value="124">system form select component style</option>
+            <option value="52">system form select component type</option>
+            <option value="92">system form select export format</option>
+            <option value="91">system form select file</option>
+            <option value="77">system form select formula</option>
+            <option value="127">system form select formula link priority</option>
+            <option value="100">system form select formula link type</option>
+            <option value="49">system form select formula type</option>
+            <option value="88">system form select multi components</option>
+            <option value="78">system form select multi formulas</option>
+            <option value="75">system form select multi phrases</option>
+            <option value="84">system form select multi results</option>
+            <option value="80">system form select multi terms</option>
+            <option value="82">system form select multi values</option>
+            <option value="76">system form select multi verbs</option>
+            <option value="86">system form select multi views</option>
+            <option value="171">system form select parent view</option>
+            <option value="48">system form select reference type</option>
+            <option value="83">system form select result</option>
+            <option value="39">system form select source type</option>
+            <option value="79">system form select term</option>
+            <option value="81">system form select value</option>
+            <option value="40">system form select view</option>
+            <option value="90">system form select view default</option>
+            <option value="101">system form select view link type</option>
+            <option value="174">system form select view relation start position</option>
+            <option value="173">system form select view relation type</option>
+            <option value="51">system form select view style</option>
+            <option value="50">system form select view type</option>
+            <option value="17">system form title</option>
+            <option value="112">system formula test</option>
+            <option value="125">system form view link priority</option>
+            <option value="104">system login</option>
+            <option value="107">system logout</option>
+            <option value="143">system preview after change</option>
+            <option value="116">system process</option>
+            <option value="106">system reset</option>
+            <option value="111">system result explain</option>
+            <option value="113">system sandbox</option>
+            <option value="108">system search</option>
+            <option value="109">system search full</option>
+            <option value="102">system setup</option>
+            <option value="128">system show field usage</option>
+            <option value="103">system signup</option>
+            <option value="145">system sub title</option>
+            <option value="146">system sub title var</option>
+            <option value="63">system title</option>
+            <option value="114">system undo</option>
+            <option value="43">system usage</option>
+            <option value="115">system user settings</option>
+            <option value="110">system value detail</option>
+            <option value="144">system view before change</option>
+            <option value="36">term name</option>
+            <option value="3">text</option>
+            <option value="57">triple name</option>
+            <option value="129">used in as text</option>
+            <option value="130">used in as text with link</option>
+            <option value="152">values by source</option>
+            <option value="151">values by triple</option>
+            <option value="11">values related to</option>
+            <option value="37">verb name</option>
+            <option value="137">verb usage</option>
+            <option value="162">view differences</option>
+            <option value="122">views</option>
+            <option value="2">view selector</option>
+            <option value="9">word list down</option>
+            <option value="7">word list up</option>
+            <option value="8">word name</option>
+            <option value="56">word results</option>
+            <option value="1">word selector</option>
+            <option value="138">words or triples liked to formula</option>
+            <option value="13">word value list</option>
+        </select></div>
+        <br><br><h4>system form field formula text (system_form_field_formula_expression)</h4><br><br><br>
+        <div class="form-group col-md-12"><label for="fa">Expression</label><input class="form-control" type="text"
+                                                                                   name="Expression" id="fa"></div>
+        <br><br><h4>form field name (system_form_field_formula_all_vars)</h4><br><br><br>
+        <div class="form-check-inline"><label class="form-check-label"><input class="form-check-input" type="checkbox"
+                                                                              name="fa">calculate only if all values
+            used in the formula exist</label></div>
+        <br><br><h4>form field plural (system_form_field_plural)</h4><br><br><br>
+        <div class="form-group "><label for="lp">Plural</label><input class="form-control" type="text" name="Plural"
+                                                                      id="lp"></div>
+        <br><br><h4>word results (word_results)</h4><br><br><br><br><br><h4>triple name (triple_name)</h4>
+        <br><br><br><br><br><h4>source name (source_name)</h4><br><br><br>no object mapped for type source name<br><br>
+        <h4>reference name (reference_name)</h4><br><br><br>no object mapped for type reference name<br><br><h4>language
+            name (language_name)</h4><br><br><br>no object mapped for type language name<br><br><h4>results related to
+            (results_related)</h4><br><br><br>no object mapped for type results related to<br><br><h4>expression
+            (expression)</h4><br><br><br>no object mapped for type expression<br><br><h4>system title
+            (system_title)</h4><br><br><br><br><br><h4>system about (system_body_about)</h4><br><br><br>
+        <div class="container text-center"><a href="/http/view.php" title="zukunft.com" class="navbar-brand"><img
+                src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 30%;"></a><br><br>is
+            sponsored by<br><br>zukunft.com AG<br>Blumentalstrasse 15<br>8707 Uetikon am See<br>Switzerland<br><br><a
+                    href="mailto:timon@zukunft.com">timon@zukunft.com</a><br><br>One of the main ideas is to use <a
+                    href="https://dx.doi.org/10.2139/ssrn.6497759">Real-Time Delphi Based on the Giant Global Graph: A
+                Framework for Fair and Evidence-Based Decision-Making</a>. Once implemented it might be possible <a
+                    href="https://doi.org/10.5281/zenodo.19443909">Implementing the Categorical Imperative in
+                Practice</a>.<br><br>zukunft.com AG also supports the <a href="https://github.com/zukunft/tream"
+                                                                         title="github.com link">Open Source</a>
+            Portfolio Management System<br><br><a href="https://tream.biz/p4a/applications/tream/"
+                                                  title="TREAM demo"><img
+                    src="/src/main/resources/images/TREAM_logo.jpg" alt="TREAM" style="height: 20%;"></a><br><br></div>
+        <footer class="site-footer"><p> All structured data is available under the <a
+                href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a>
+            Licence unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com">program code</a> of
+            this version 0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a> Licence.</p>
+        </footer>
+</body>
+</html><br><br><h4>system body error log (system_body_error_log)</h4><br><br><br>error_log placeholder<br><br><h4>system
+    body error update (system_body_error_update)</h4><br><br><br>error_update placeholder<br><br><h4>system body process
+    progress (system_body_process_progress)</h4><br><br><br>process_progress placeholder<br><br><h4>system body process
+    list (system_body_process_list)</h4><br><br><br>process_list placeholder<br><br><h4>system form field group
+    (system_form_field_group)</h4><br><br><br>
+<div class="form-group col-md-8"><label for="gn">group</label><input class="form-control" type="text" name="group"
+                                                                     id="gn" value="Pi (math)"></div><br><br><h4>system
+    form field group or phrase list (system_form_field_group_or_phrase_list)</h4><br><br><br>
+<div class="form-group col-md-8"><label for="gn">group</label><input class="form-control" type="text" name="group"
+                                                                     id="gn" value="Pi (math)"></div><br><br><h4>system
+    form field url (system_form_field_url)</h4><br><br><br>
+<div class="form-group col-md-12"><label for="ur">URL</label><input class="form-control" type="text" name="URL" id="ur">
+</div><br><br><h4>system form field selection name (system_form_selection_name)</h4><br><br><br>
+<div class="form-group col-md-8"><label for="gn">Name</label><input class="form-control" type="text" name="Name"
+                                                                    id="gn"></div><br><br><h4>system form field
+    selection description (system_form_selection_description)</h4><br><br><br>
+<div class="form-group col-md-8"><label for="gn">group</label><input class="form-control" type="text" name="group"
+                                                                     id="gn"></div><br><br><h4>system form field
+    selection text (system_form_selection_text)</h4><br><br><br>
+<div class="form-group col-md-8"><label for="gn">group</label><input class="form-control" type="text" name="group"
+                                                                     id="gn"></div><br><br><h4>system form select multi
+    phrases (form_select_multi_phrases)</h4><br><br>
+<br>phrase selector p for component type tests not defined in class Zukunft\ZukunftCom\main\php\web\word\word<br><br>
+<h4>system form select multi verbs (form_select_multi_verbs)</h4><br><br>
+<br>verb selector not defined for Zukunft\ZukunftCom\main\php\web\verb\verb<br><br><h4>system form select formula
+    (form_select_formula)</h4><br><br>
+<br>formula selector not defined for Zukunft\ZukunftCom\main\php\web\formula\formula<br><br><h4>system form select multi
+    formulas (form_select_multi_formulas)</h4><br><br>
+<br>formula selector not defined for Zukunft\ZukunftCom\main\php\web\formula\formula<br><br><h4>system form select term
+    (form_select_term)</h4><br><br>
+<br>phrase selector c3 for component type tests not defined in class Zukunft\ZukunftCom\main\php\web\view\term_view<br>
+<br><h4>system form select multi terms (form_select_multi_terms)</h4><br><br>
+<br>phrase selector c3 for component type tests not defined in class Zukunft\ZukunftCom\main\php\web\view\term_view<br>
+<br><h4>system form select value (form_select_value)</h4><br><br>
+<br>view selector not defined for Zukunft\ZukunftCom\main\php\web\value\value<br><br><h4>system form select multi values
+    (form_select_multi_values)</h4><br><br><br>view selector not defined for Zukunft\ZukunftCom\main\php\web\value\value
+<br><br><h4>system form select result (form_select_result)</h4><br><br>
+<br>result selector not defined for Zukunft\ZukunftCom\main\php\web\result\result<br><br><h4>system form select multi
+    results (form_select_multi_results)</h4><br><br>
+<br>result selector not defined for Zukunft\ZukunftCom\main\php\web\result\result<br><br><h4>system form field source
+    group (system_form_field_source_group)</h4><br><br><br>
+<div class="form-group col-md-8"><label for="gn">group</label><input class="form-control" type="text" name="group"
+                                                                     id="gn"></div><br><br><h4>system form select multi
+    views (form_select_multi_views)</h4><br><br><br>
+<div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
+                                                                    form="component type tests" id="d">
+    <option value="0"> ---</option>
+</select></div><br><br><h4>system form select component (form_select_component)</h4><br><br>
+<br>component selector not defined for Zukunft\ZukunftCom\main\php\web\component\component<br><br><h4>system form select
+    multi components (form_select_multi_components)</h4><br><br>
+<br>component selector not defined for Zukunft\ZukunftCom\main\php\web\component\component<br><br><h4>system form
+    preview (system_form_preview)</h4><br><br><br>preview placeholder<br><br><h4>system form select view default
+    (form_select_view_default)</h4><br><br><br>
+<div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
+                                                                    form="component type tests" id="d">
+    <option value="0"> ---</option>
+</select></div><br><br><h4>system form select file (form_select_file)</h4><br><br><br>
+<div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
+                                                                    form="component type tests" id="d">
+    <option value="0"> ---</option>
+</select></div><br><br><h4>system form select export format (form_select_export_format)</h4><br><br><br>
+<div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
+                                                                    form="component type tests" id="d">
+    <option value="0"> ---</option>
+</select></div><br><br><h4>system form link table (system_form_link_table)</h4><br><br><br>
+<div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
+                                                                    form="component type tests" id="d">
+    <option value="0"> ---</option>
+</select></div><br><br><h4>system button import (system_button_import)</h4><br><br><br>
+<button class="btn btn-space col-1 btn-outline-secondary" type="submit">Import</button><br><br><h4>system button export
+    (system_button_export)</h4><br><br><br>
+<button class="btn btn-space col-1 btn-outline-secondary" type="submit">Export</button><br><br><h4>parents of this word
+    (list_parents_of_word)</h4><br><br><br><br><br><h4>result list (result_list)</h4><br><br><br>not used for formulas
+<br><br><h4>formula list (formula_list_changeable)</h4><br><br>
+<br>program code for component 0 of component type "formula_list_changeable" (id 98) missing<br><br><br><h4>system form
+    select component link type (form_select_component_link_type)</h4><br><br>
+<br>component link type selector not defined for Zukunft\ZukunftCom\main\php\web\component\component_link<br><br><h4>
+    system form select formula link type (form_select_formula_link_type)</h4><br><br>
+<br>formula link type selector not defined for Zukunft\ZukunftCom\main\php\web\formula\formula_link<br><br><h4>system
+    form select view link type (form_select_view_link_type)</h4><br><br>
+<br>view link type selector not defined for Zukunft\ZukunftCom\main\php\web\view\view_relation<br><br><h4>system setup
+    (system_body_setup)</h4><br><br><br>setup_body placeholder<br><br><h4>system signup (system_body_signup)</h4><br>
+<br><br>signup_body placeholder<br><br><h4>system login (system_body_login)</h4><br><br><br>login_body placeholder<br>
+<br><h4>system activate (system_body_login_activate)</h4><br><br><br>activate_body placeholder<br><br><h4>system reset
+    (system_body_login_reset)</h4><br><br><br>reset_body placeholder<br><br><h4>system logout (system_body_logout)</h4>
+<br><br><br>logout_body placeholder<br><br><h4>system search (system_body_search)</h4><br><br>
+<br>body_search placeholder<br><br><h4>system search full (system_body_search_full)</h4><br><br>
+<br>body_search_full placeholder<br><br><h4>system value detail (system_body_value_detail)</h4><br><br>
+<br>value_details placeholder<br><br><h4>system result explain (system_body_result_explain)</h4><br><br>
+<br>result_explain placeholder<br><br><h4>system formula test (system_body_formula_test)</h4><br><br>
+<br>formula_test placeholder<br><br><h4>system sandbox (system_body_sandbox)</h4><br><br><br>sandbox placeholder<br><br>
+<h4>system undo (system_body_undo)</h4><br><br><br>undo placeholder<br><br><h4>system user settings
+    (system_body_user_settings)</h4><br><br><br>user_setting placeholder<br><br><h4>system process
+    (system_body_process)</h4><br><br><br>process placeholder<br><br><h4>system form field source group or phrase list
+    (system_form_field_source_group_or_phrase_list)</h4><br><br><br>
+<div class="form-group col-md-8"><label for="gn">group</label><input class="form-control" type="text" name="group"
+                                                                     id="gn"></div><br><br><h4>form select source
+    (form_select_source)</h4><br><br><br>
+<div class="form-group col-md-4"><label for="so">source</label><select class="form-control" name="so"
+                                                                       form="component type tests" id="so">
+    <option value="0" selected>please select ...</option>
+</select></div><br><br><h4>form select multi source (form_select_multi_sources)</h4><br><br><br>
+<div class="form-group col-md-4"><label for="so">source</label><select class="form-control" name="so"
+                                                                       form="component type tests" id="so">
+    <option value="0" selected>please select ...</option>
+</select></div><br><br><h4>form select ref (form_select_ref)</h4><br><br>
+<br>reference selector not defined for Zukunft\ZukunftCom\main\php\web\ref\ref<br><br><h4>form select multi ref
+    (form_select_multi_refs)</h4><br><br><br>reference selector not defined for Zukunft\ZukunftCom\main\php\web\ref\ref
+<br><br><h4>views (view_list)</h4><br><br>
+<br>program code for component 0 of component type "view_list" (id 122) missing<br><br><br><h4>form field value type
+    (form_select_value_type)</h4><br><br>
+<br>reference type selector not defined for Zukunft\ZukunftCom\main\php\web\value\value<br><br><h4>system form select
+    component style (form_select_component_style)</h4><br><br>
+<br>component style selector not defined for Zukunft\ZukunftCom\main\php\web\component\component<br><br><h4>system form
+    view link priority (form_select_view_link_priority)</h4><br><br><br>
+<div class="form-group col-md-12"><label for="dp">View term link</label><input class="form-control" type="text"
+                                                                               name="View term link" id="dp"
+                                                                               value="prio missing"></div><br><br><h4>
+    system form component link position (form_select_component_link_order_number)</h4><br><br><br>
+<div class="form-group col-md-12"><label for="cl">Component link</label><input class="form-control" type="text"
+                                                                               name="Component link" id="cl"
+                                                                               value="order number missing"></div><br>
+<br><h4>system form select formula link priority (form_select_formula_link_priority)</h4><br><br><br>
+<div class="form-group col-md-12"><label for="fp">group</label><input class="form-control" type="text" name="group"
+                                                                      id="fp" value="priority missing"></div><br><br>
+<h4>system show field usage (system_show_field_usage)</h4><br><br><br><br><br><h4>used in as text (used_in_as_text)</h4>
+<br><br><br><br><br><h4>used in as text with link (used_in_as_text_with_link)</h4><br><br><br><br><br><h4>export ods
+    (export_ods)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_im_export<br><br><h4>export json
+    (export_json)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_im_export<br><br><h4>export xml
+    (export_xml)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_im_export<br><br><h4>export csv
+    (export_csv)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_im_export<br><br><h4>form field
+    reverse (system_form_field_reverse)</h4><br><br><br>
+<div class="form-group "><label for="lr">Reverse</label><input class="form-control" type="text" name="Reverse" id="lr">
+</div><br><br><h4>form field plural reverse (system_form_field_plural_reverse)</h4><br><br><br>
+<div class="form-group "><label for="lx">Plural reverse</label><input class="form-control" type="text"
+                                                                      name="Plural reverse" id="lx"></div><br><br><h4>
+    verb usage (triples_by_verb)</h4><br><br><br>not used for triples<br><br><h4>words or triples liked to formula
+    (list_phrases_of_formula)</h4><br><br><br><h5>Assigned words and triples</h5><a
+        href="/http/view.php?m=90&id=273">$</a>, <a href="/http/view.php?m=92&id=123">$ is symbol for US dollar</a>, <a
+        href="/http/view.php?m=90&id=1075">.د.ب</a>, <a href="/http/view.php?m=92&id=1132">.د.ب (Symbol or
+    abbreviation)</a>, <a href="/http/view.php?m=92&id=1133">.د.ب is symbol for Bahraini dinar</a>, <a
+        href="/http/view.php?m=90&id=235">5-year</a>, <a href="/http/view.php?m=90&id=236">15-year</a>, <a
+        href="/http/view.php?m=90&id=136">1967</a><br><br><h4>system form field value (system_form_field_value)</h4><br>
+<br><br>
+<div class="form-group "><label for="v">Value</label><input class="form-control" type="text" name="Value" id="v"
+                                                            value="3.14"></div><br><br><h4>group or phrase list
+    (group_or_phrase_list)</h4><br><br><br><br><br><h4>group name (group_name)</h4><br><br><br>Pi (math)<br><br><h4>
+    numeric value (value_numeric)</h4><br><br><br>3.14<br><br><h4>system preview after change
+    (system_show_after_change)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview<br><br><h4>
+    system view before change (system_show_before_change)</h4><br><br>
+<br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview<br><br><h4>system sub title (system_sub_title)</h4><br>
+<br><br><br><br><h4>system sub title var (system_sub_title_var)</h4><br><br><br><br><br><h4>show description
+    (system_show_field_description)</h4><br><br><br><br><br><h4>formulas by verb (formulas_by_verb)</h4><br><br>
+<br>not used for verb<br><br><h4>form field formula name (system_form_field_name_in_formulas)</h4><br><br><br>
+<div class="form-group "><label for="bn">Plural reverse</label><input class="form-control" type="text"
+                                                                      name="Plural reverse" id="bn" value="not set">
+</div><br><br><h4>form field weight (system_form_field_weight)</h4><br><br><br>
+<div class="form-group col-md-1"><label for="tw">Weight</label><input class="form-control" type="text" name="Weight"
+                                                                      id="tw"></div><br><br><h4>values by triple
+    (values_by_triple)</h4><br><br><br><br><br><h4>values by source (values_by_source)</h4><br><br><br><br><br><h4>
+    system form select component position type (form_select_component_position_type)</h4><br><br>
+<br>component link type selector not defined for Zukunft\ZukunftCom\main\php\web\component\component_link<br><br><h4>
+    results that changes (system_show_result_diff)</h4><br><br><br><br><br><h4>context for table import
+    (system_paste_table_context)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview<br><br>
+<h4>drop area for data import (system_paste_table_body)</h4><br><br>
+<br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview<br><br><h4>selection name (system_selection_text)</h4>
+<br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview<br><br><h4>popup title
+    (system_popup_title)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview<br><br><h4>popup
+    object (form_class)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview<br><br><h4>popup
+    changes (form_changes)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview<br><br><h4>popup
+    impact (form_impact)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview<br><br><h4>view
+    differences (system_show_view_diff)</h4><br><br><br>Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview<br>
+<br><h4>show reference type (system_show_field_ref_type)</h4><br><br><br>wikidata<br><br><h4>show external key
+    (system_show_field_ref_key)</h4><br><br><br>Q167<br><br><h4>show reference source
+    (system_show_field_ref_source)</h4><br><br><br><br><br><h4>show reference url (system_show_field_ref_url)</h4><br>
+<br><br>https://www.wikidata.org/wiki/Special:EntityData/Q167.json<br><br><h4>form field external key of reference
+    (system_form_field_external_key)</h4><br><br><br>
+<div class="form-group "><label for="ek">External key</label><input class="form-control" type="text" name="External key"
+                                                                    id="ek" value="Q167"></div><br><br><h4>admin form
+    field username (admin_form_field_username)</h4><br><br><br><input class="form-control" type="text" name="Username"
+                                                                      id="un"
+                                                                      value="zukunft.com system write test user"><br>
+<br><h4>admin form field user email (admin_form_field_user_email)</h4><br><br><br><input class="form-control"
+                                                                                         type="email" name="Email"
+                                                                                         id="um"
+                                                                                         value="test@zukunft.com"><br>
+<br><h4>admin form field user password (admin_form_field_user_password)</h4><br><br><br><input class="form-control"
+                                                                                               type="password"
+                                                                                               name="Password" id="uw">
+<br><br><h4>system form select parent view (form_select_parent_view)</h4><br><br><br>
+<div class="form-group col-md-4"><label for="df">Parent view</label><select class="form-control" name="df"
+                                                                            form="component type tests"
+                                                                            id="df"></select></div><br><br><h4>system
+    form select child view (form_select_child_view)</h4><br><br><br>
+<div class="form-group col-md-4"><label for="dm">Child view</label><select class="form-control" name="dm"
+                                                                           form="component type tests" id="dm"></select>
+</div><br><br><h4>system form select view relation type (form_select_view_relation_type)</h4><br><br>
+<br>view relation type selector not defined for Zukunft\ZukunftCom\main\php\web\view\view_relation<br><br><h4>system
+    form select view relation start position (system_form_field_view_relation_start_pos)</h4><br><br><br>
+<div class="form-group col-md-1"><label for="po">Component link</label><input class="form-control" type="text"
+                                                                              name="Component link" id="po"
+                                                                              value="position missing missing"></div>
+<br><br><h4>system field parent view (system_show_parent_view)</h4><br><br><br><br><br><h4>system field child view
+    (system_show_child_view)</h4><br><br><br><br><br><h4>system field relation type
+    (system_show_view_relation_type)</h4><br><br><br><br><br><h4>system field view modification start position
+    (system_show_view_start_pos)</h4><br><br><br><br><br><h4>admin form field language symbol
+    (admin_form_field_language_symbol)</h4><br><br><br><input class="form-control" type="text"
+                                                              name="form_field_language_symbol" id="qs"
+                                                              value="symbol field missing"><br><br><h4>field language
+    symbol (field_language_symbol)</h4><br><br><br>English<br><br><h4>system admin response times
+    (system_admin_url_delay)</h4><br><br><br>no object mapped for type system admin response times<br><br><h4>system
+    admin failed logins (system_admin_login_fails)</h4><br><br><br>no object mapped for type system admin failed logins
+<br><br><h4>system admin unassigned errors (system_admin_errors_unassigned)</h4><br><br>
+<br>no object mapped for type system admin unassigned errors<br><br><h4>system admin pending error fixes
+    (system_admin_errors_delayed_fix)</h4><br><br><br>no object mapped for type system admin pending error fixes<br><br>
+<h4>system admin delayed jobs (system_admin_jobs_delayed)</h4><br><br>
+<br>no object mapped for type system admin delayed jobs<br><br><h4>selection page (select_list)</h4><br><br>
+<br>no object mapped for type selection page<br><br><h4>button request new (button_request)</h4><br><br>
+<br>no object mapped for type button request new<br><br><h4>phrases with details related to (phrases_related)</h4><br>
+<br><br>no object mapped for type phrases with details related to<br><br><h4>phrases with details on 1/3 screen
+    (phrases_related_1/3)</h4><br><br><br>no object mapped for type phrases with details on 1/3 screen</main>
+<footer class="site-footer"><p><a href="/http/about.php">About</a> &middot; <a href="/http/privacy_policy.html">Privacy
+    Policy</a> &middot; All structured data is available under the <a
+        href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> Licence
+    unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com">program code</a> of this version
+    0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a> Licence.</p></footer></body></html>

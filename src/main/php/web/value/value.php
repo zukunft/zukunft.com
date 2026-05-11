@@ -610,8 +610,9 @@ class value extends sandbox_value
     function dsp_tbl_std($back): string
     {
         log_debug('value->dsp_tbl_std ');
+        $html = new html_base();
         $result = '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref('/http/value_edit.php?id=' . $this->id() . '&back=' . $back, $this->val_formatted()) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -620,9 +621,10 @@ class value extends sandbox_value
     function dsp_tbl_usr($back): string
     {
         log_debug('value->dsp_tbl_usr');
+        $html = new html_base();
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" class="' . styles::STYLE_USER . '">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref('/http/value_edit.php?id=' . $this->id() . '&back=' . $back, $this->val_formatted(), '', styles::STYLE_USER) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -742,7 +744,7 @@ class value extends sandbox_value
                 if ($word_names <> "") {
                     // display a row if the value has changed and
                     $result .= '<tr>';
-                    $result .= '<td><a href="/http/value_edit.php?id=' . $group_id . '&back=' . $back . '" class="grey">' . $row_value . '</a></td>';
+                    $result .= '<td>' . $html->ref('/http/value_edit.php?id=' . $group_id . '&back=' . $back, $row_value, '', 'grey') . '</td>';
                     $result .= '<td>' . $word_names . '</td>';
                     $result .= '</tr>';
                     $row_nbr++;
@@ -758,7 +760,7 @@ class value extends sandbox_value
         // display the last row if there has been at least one word
         if ($word_names <> "") {
             $result .= '<tr>';
-            $result .= '<td><a href="/http/value_edit.php?id=' . $group_id . '&back=' . $back . '" class="grey">' . $row_value . '</a></td>';
+            $result .= '<td>' . $html->ref('/http/value_edit.php?id=' . $group_id . '&back=' . $back, $row_value, '', 'grey') . '</td>';
             $result .= '<td>' . $word_names . '</td>';
             $result .= '</tr>';
         }
@@ -917,7 +919,7 @@ class value extends sandbox_value
                         $phrase_url = '/http/word_edit.php?id=' . $phr->id . '&back=' . $back;
                     } else {
                         $lnk_id = $phr->id * -1;
-                        $phrase_url = '/http/view.php?m=' . views::TRIPLE_EDIT . '&id=' . $lnk_id . '&back=' . $back;
+                        $phrase_url = '' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::TRIPLE_EDIT . '&id=' . $lnk_id . '&back=' . $back;
                     }
 
                     // show the phrase selector

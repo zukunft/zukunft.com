@@ -265,6 +265,115 @@ class data_object
 
 
     /**
+     * @return word_list with the words of this data object
+     */
+    function word_list(): word_list
+    {
+        return $this->wrd_lst;
+    }
+
+    /**
+     * @return triple_list with the triples of this data object
+     */
+    function triple_list(): triple_list
+    {
+        return $this->trp_lst;
+    }
+
+    /**
+     * @return phrase_list with the phrases of this data object
+     */
+    function phrase_list(): phrase_list
+    {
+        return $this->phr_lst;
+    }
+
+    /**
+     * set the source_list of this data object
+     * @param source_list $src_lst
+     */
+    function set_source_list(source_list $src_lst): void
+    {
+        $this->src_lst = $src_lst;
+    }
+
+    /**
+     * @return source_list with the sources of this data object
+     */
+    function source_list(): source_list
+    {
+        return $this->src_lst;
+    }
+
+    /**
+     * set the ref_list of this data object
+     * @param ref_list $ref_lst
+     */
+    function set_ref_list(ref_list $ref_lst): void
+    {
+        $this->ref_lst = $ref_lst;
+    }
+
+    /**
+     * @return ref_list with the refs of this data object
+     */
+    function ref_list(): ref_list
+    {
+        return $this->ref_lst;
+    }
+
+    /**
+     * set the value_list of this data object
+     * @param value_list $val_lst
+     */
+    function set_value_list(value_list $val_lst): void
+    {
+        $this->val_lst = $val_lst;
+    }
+
+    /**
+     * @return value_list with the value of this data object
+     */
+    function value_list(): value_list
+    {
+        return $this->val_lst;
+    }
+
+    /**
+     * set the formula_link_list of this data object
+     * @param formula_link_list $frm_lnk_lst
+     */
+    function set_formula_link_list(formula_link_list $frm_lnk_lst): void
+    {
+        $this->frm_lnk_lst = $frm_lnk_lst;
+    }
+
+    /**
+     * @return formula_link_list with the formula links of this data object
+     */
+    function formula_link_list(): formula_link_list
+    {
+        return $this->frm_lnk_lst;
+    }
+
+    /**
+     * set the result_list of this data object
+     * @param result_list $res_lst
+     */
+    function set_result_list(result_list $res_lst): void
+    {
+        $this->res_lst = $res_lst;
+    }
+
+    /**
+     * @return result_list with the results of this data object
+     */
+    function result_list(): result_list
+    {
+        return $this->res_lst;
+    }
+
+    /**
      * set the formula_list of this data object
      * @param formula_list $frm_lst
      */

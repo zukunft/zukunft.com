@@ -202,7 +202,12 @@ class change extends change_log
             }
 
             $fld_tbl = $sys->typ_lst->cng_fld->get($this->field_id);
-            $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
+            $tbl_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
+            if (is_int($tbl_id)) {
+                $this->table_id = $tbl_id;
+            } else {
+                log_warning('Cannot get table id from ' . $fld_tbl->name);
+            }
             // TODO check if not the complete user should be loaded
             $usr_set = false;
             if ($usr != null) {

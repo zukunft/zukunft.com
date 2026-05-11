@@ -392,10 +392,12 @@ class view extends view_exe
         // the header to add or change a view
         if ($this->id() <= 0) {
             $script = "view_add";
-            $result .= $html->dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+            $result .= $html->dsp_text_h2('Create a new view (for '
+                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         } else {
             $script = "view_edit";
-            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for '
+                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         }
         $result .= '<div class="row">';
 
@@ -491,10 +493,8 @@ class view extends view_exe
         } else {
             $dsp_list = new display_list;
             $dsp_list->lst = $this->cmp_lst->lst();
-            $dsp_list->script_name = "view_edit.php";
-            $dsp_list->class_edit = view::class;
             $dsp_list->script_parameter = $this->id() . "&back=" . $back . "&word=" . $wrd->id();
-            $result .= $dsp_list->display($back);
+            $result .= $dsp_list->display(view::class, $back);
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '<tr><td>';
             }
@@ -578,19 +578,20 @@ class view extends view_exe
     {
         global $usr;
         $result = '';
+        $html = new html_base();
 
         $dsp_lst = new view_list();
 
-        $call = '/http/view.php?words=' . $wrd_id;
+        $call = api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
         foreach ($dsp_lst as $dsp) {
             $view_id = $dsp->id();;
             $view_name = $dsp->name();
             if ($view_id == $this->id()) {
-                $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
+                $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
             } else {
-                $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
+                $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
             $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_edit('design the view', $call_edit) . ' ';
@@ -605,6 +606,25 @@ class view extends view_exe
     function log_err(string $msg): void
     {
         echo $msg;
+    }
+
+    /*
+     * display
+     */
+
+    /**
+     * return the html code to display a view name with the link
+     */
+    function name_linked($wrd, $back): string
+    {
+
+        $html = new html_base();
+        $url = api::MAIN_SCRIPT . '?' . url_var::ID .'=' . $this->id();
+        if (isset($wrd)) {
+            $url .= '&word=' . $wrd->id();
+        }
+        $url .= '&back=' . $back;
+        return $html->ref($url, $this->name);
     }
 
 }

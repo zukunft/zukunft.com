@@ -57,6 +57,7 @@ include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 
@@ -76,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 
 class component_exe extends component
 {
@@ -89,7 +91,7 @@ class component_exe extends component
      * TODO the html form field name should always be an url var name
      * TODO use the style id of the component instead of having a function parameter
      *
-     * @param db_object|null $dbo the word, triple, formula or ... object that should be shown to the user
+     * @param db_object|type_object|null $dbo the word, triple, formula or ... object that should be shown to the user
      * @param string $form_name the name of the view which is also used for the html form name
      * @param int $msk_id the database id of the calling view
      * @param data_object|null $cfg the context used to create the view
@@ -99,14 +101,14 @@ class component_exe extends component
      * @return string the html code of all view components
      */
     function dsp_entries(
-        ?db_object   $dbo,
-        string       $form_name = '',
-        int          $msk_id = 0,
-        ?data_object $cfg = null,
-        ?int         $style_id = null,
-        string       $back = '',
-        string       $pattern = '',
-        bool         $test_mode = false
+        db_object|type_object|null $dbo,
+        string                     $form_name = '',
+        int                        $msk_id = 0,
+        ?data_object               $cfg = null,
+        ?int                       $style_id = null,
+        string                     $back = '',
+        string                     $pattern = '',
+        bool                       $test_mode = false
     ): string
     {
         global $mtr;
@@ -126,7 +128,7 @@ class component_exe extends component
         $phr_lst->load_fallback();
         if ($cfg != null) {
             if ($cfg->has_phrases()) {
-                $phr_lst = $cfg->phr_lst;
+                $phr_lst = $cfg->phrase_list();
             }
         }
         $log_lst = new change_log_list();
@@ -178,18 +180,18 @@ class component_exe extends component
             component_types::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
             component_types::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
             component_types::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $cfg->typ_lst_cache),
-            component_types::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->src_lst, $pattern),
-            component_types::FORM_SELECT_SOURCES => $form->form_sources($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->source_list(), $pattern),
+            component_types::FORM_SELECT_SOURCES => $form->form_sources($dbo, $form_name, $cfg->source_list()),
             component_types::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $cfg->typ_lst_cache, $pattern),
             component_types::FORM_SELECT_REFS => $form->form_refs($dbo, $form_name, $cfg->typ_lst_cache),
-            component_types::FORM_SELECT_VALUE => $form->form_value($dbo, $form_name, $cfg->typ_lst_cache),
-            component_types::FORM_SELECT_VALUES => $form->form_values($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VALUE => $form->form_value($dbo, $form_name, $cfg->value_list()),
+            component_types::FORM_SELECT_VALUES => $form->form_values($dbo, $form_name, $cfg->value_list()),
             component_types::FORM_SELECT_FORMULA => $form->form_formula($dbo, $form_name, $cfg->formula_list()),
             component_types::FORM_SELECT_FORMULAS => $form->form_formulas($dbo, $form_name, $cfg->formula_list()),
             component_types::FORM_SELECT_TERM => $form->form_term($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
             component_types::FORM_SELECT_TERMS => $form->form_terms($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
-            component_types::FORM_SELECT_RESULT => $form->form_result($dbo, $form_name, $cfg->typ_lst_cache),
-            component_types::FORM_SELECT_RESULTS => $form->form_results($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_RESULT => $form->form_result($dbo, $form_name, $cfg->result_list()),
+            component_types::FORM_SELECT_RESULTS => $form->form_results($dbo, $form_name, $cfg->result_list()),
             component_types::FORM_SELECT_VIEW => $form->form_view($dbo, $form_name, $cfg->view_list()),
             component_types::FORM_SELECT_VIEWS => $form->form_views($dbo, $form_name, $cfg->view_list()),
             component_types::FORM_SELECT_PARENT_VIEW => $form->form_parent_view($dbo, $form_name, $cfg->view_list()),
@@ -338,8 +340,8 @@ class component_exe extends component
             // related
             component_types::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
             component_types::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage, $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
-            component_types::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $cfg->phr_lst),
-            component_types::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $cfg->phr_lst),
+            component_types::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $cfg->phrase_list()),
+            component_types::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $cfg->phrase_list()),
             component_types::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $cfg),
             component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $cfg),
             component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $cfg),
@@ -382,7 +384,7 @@ class component_exe extends component
 
             // base
             component_types::PHRASE => $this->name_tip(),
-            component_types::LINK => $link->phrase_link($dbo, $form_name, $cfg->phr_lst),
+            component_types::LINK => $link->phrase_link($dbo, $form_name, $cfg->phrase_list()),
 
             // table
             component_types::VALUES_ALL => $base->all($dbo, $back),

@@ -79,7 +79,6 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'term.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -119,7 +118,6 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_typed;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -1273,27 +1271,6 @@ class view extends sandbox_code_id
             view_db::FLD_NAMES_USR,
             view_db::FLD_NAMES_NUM_USR,
             array(user_db::FLD_ID));
-    }
-
-
-    /*
-     * display
-     * TODO to be moved to the frontend object
-     */
-
-    /**
-     * return the html code to display a view name with the link
-     */
-    function name_linked($wrd, $back): string
-    {
-
-        $result = '<a href="/http/view_edit.php?id=' . $this->id();
-        if (isset($wrd)) {
-            $result .= '&word=' . $wrd->id();
-        }
-        $result .= '&back=' . $back . '">' . $this->name . '</a>';
-
-        return $result;
     }
 
 }

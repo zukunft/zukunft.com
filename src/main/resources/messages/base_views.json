@@ -94,6 +94,21 @@
       "name": "ranking list",
       "description": "list sorted by the calculated ranking",
       "type": "ranking_list"
+    },
+    {
+      "name": "problem definition",
+      "description": "show the most relevant definitions related to a problem",
+      "type": "phrases_related"
+    },
+    {
+      "name": "problem size",
+      "description": "show the estimations of the size of a problem",
+      "type": "phrases_related"
+    },
+    {
+      "name": "problem solutions",
+      "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
+      "type": "phrases_related"
     }
   ],
   "views": [
@@ -343,9 +358,39 @@
       ]
     },
     {
+      "name": "problem with solutions",
+      "description": "Explain a problem and show the potential solutions",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word"
+        },
+        {
+          "position": "2",
+          "name": "problem definition"
+        },
+        {
+          "position": "3",
+          "name": "problem size"
+        },
+        {
+          "position": "4",
+          "name": "problem solutions"
+        }
+      ],
+      "assigned": [
+        "problem"
+      ]
+    },
+    {
       "name": "System log",
       "description": "show the most relevant system log entries (placeholder only at the moment)",
       "code_id": "system_log"
+    },
+    {
+      "name": "Phrase (default)",
+      "description": "the default view for a word or triple",
+      "code_id": "phrase_default"
     }
   ]
 }

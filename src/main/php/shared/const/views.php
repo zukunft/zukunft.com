@@ -316,11 +316,13 @@ class views
 
     // TODO Prio 3 resort the views and group it
     const string SYSTEM_LOG = 'system_log';
-    const int SYSTEM_LOG_ID = 108;
+    const int SYSTEM_LOG_ID = 109;
 
     // to sort
     const string LANGUAGE_SELECT = 'language_select';
     const int LANGUAGE_SELECT_ID = 88;
+    const string PHRASE = 'phrase_default';
+    const int PHRASE_ID = 110;
 
 
     /*
@@ -699,6 +701,7 @@ class views
         self::MATH_CONST_ID => self::MATH_CONST,
         self::SYSTEM_LOG_ID => self::SYSTEM_LOG,
         self::LANGUAGE_SELECT_ID => self::LANGUAGE_SELECT,
+        self::PHRASE_ID => self::PHRASE,
     ];
 
     const array SYSTEM_VIEWS = [
@@ -838,6 +841,93 @@ class views
             log_err('code id for view id ' . $id . ' not found');
             return 0;
         }
+    }
+
+    /**
+     * @param string $class the class name including the path
+     * @return int the database id of the view to add the object or -1 if no view is assigned yet
+     */
+    function class_to_add(string $class): int
+    {
+        $short = substr(strrchr($class, '\\'), 1) ?: $class;
+        return match ($short) {
+            'word' => self::WORD_ADD_ID,
+            'verb' => self::VERB_ADD_ID,
+            'triple' => self::TRIPLE_ADD_ID,
+            'source' => self::SOURCE_ADD_ID,
+            'ref' => self::REF_ADD_ID,
+            'value' => self::VALUE_ADD_ID,
+            'group' => self::GROUP_ADD_ID,
+            'formula' => self::FORMULA_ADD_ID,
+            'formula_link' => self::FORMULA_LINK_ADD_ID,
+            'result' => self::RESULT_ADD_ID,
+            'view' => self::VIEW_ADD_ID,
+            'component' => self::COMPONENT_ADD_ID,
+            'view_link' => self::VIEW_LINK_ADD_ID,
+            'component_link' => self::COMPONENT_LINK_ADD_ID,
+            'view_relation' => self::VIEW_RELATION_ADD_ID,
+            'user' => self::USER_ADMIN_ADD_ID,
+            'language' => self::LANGUAGE_ADD_ID,
+            default => -1
+        };
+    }
+
+    /**
+     * @param string $class the class name including the path
+     * @return int the database id of the view to edit the object or -1 if no view is assigned yet
+     */
+    function class_to_edit(string $class): int
+    {
+        $short = substr(strrchr($class, '\\'), 1) ?: $class;
+        return match ($short) {
+            'word' => self::WORD_EDIT_ID,
+            'verb' => self::VERB_EDIT_ID,
+            'triple' => self::TRIPLE_EDIT_ID,
+            'source' => self::SOURCE_EDIT_ID,
+            'ref' => self::REF_EDIT_ID,
+            'value' => self::VALUE_EDIT_ID,
+            'group' => self::GROUP_EDIT_ID,
+            'formula' => self::FORMULA_EDIT_ID,
+            'formula_link' => self::FORMULA_LINK_EDIT_ID,
+            'result' => self::RESULT_EDIT_ID,
+            'view' => self::VIEW_EDIT_ID,
+            'component' => self::COMPONENT_EDIT_ID,
+            'view_link' => self::VIEW_LINK_EDIT_ID,
+            'component_link' => self::COMPONENT_LINK_EDIT_ID,
+            'view_relation' => self::VIEW_RELATION_EDIT_ID,
+            'user' => self::USER_ADMIN_EDIT_ID,
+            'language' => self::LANGUAGE_EDIT_ID,
+            default => -1
+        };
+    }
+
+    /**
+     * @param string $class the class name including the path
+     * @return int the database id of the view to delete the object or -1 if no view is assigned yet
+     */
+    function class_to_del(string $class): int
+    {
+        $short = substr(strrchr($class, '\\'), 1) ?: $class;
+        return match ($short) {
+            'word' => self::WORD_DEL_ID,
+            'verb' => self::VERB_DEL_ID,
+            'triple' => self::TRIPLE_DEL_ID,
+            'source' => self::SOURCE_DEL_ID,
+            'ref' => self::REF_DEL_ID,
+            'value' => self::VALUE_DEL_ID,
+            'group' => self::GROUP_DEL_ID,
+            'formula' => self::FORMULA_DEL_ID,
+            'formula_link' => self::FORMULA_LINK_DEL_ID,
+            'result' => self::RESULT_DEL_ID,
+            'view' => self::VIEW_DEL_ID,
+            'component' => self::COMPONENT_DEL_ID,
+            'view_link' => self::VIEW_LINK_DEL_ID,
+            'component_link' => self::COMPONENT_LINK_DEL_ID,
+            'view_relation' => self::VIEW_RELATION_DEL_ID,
+            'user' => self::USER_ADMIN_DEL_ID,
+            'language' => self::LANGUAGE_DEL_ID,
+            default => -1
+        };
     }
 
 }

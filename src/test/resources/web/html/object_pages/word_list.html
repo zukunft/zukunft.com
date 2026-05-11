@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
 </head>
 <body>
-<nav class="navbar site-header fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
+<nav class="navbar site-header fixed-top"><a href="/http/view.php" title="zukunft.com" class="navbar-brand"><img
         src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
     <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3"><label for="kp"
                                                                                                          class="visually-hidden">Search</label><input
@@ -32,14 +32,14 @@
                 <details class="lang-menu">
                     <summary><i class="fas fa-globe"></i></summary>
                     <ul>
-                        <li><a href="/http/view.php?m=1&q=en" title="English">English</a></li>
-                        <li><a href="/http/view.php?m=1&q=en_us" title="US English">US English</a></li>
+                        <li><a href="/http/view.php?m=1&q=en">English</a></li>
+                        <li><a href="/http/view.php?m=1&q=en_us">US English</a></li>
                         <li><a href="/http/view.php?m=1&q=de" title="German">Deutsch</a></li>
                         <li><a href="/http/view.php?m=1&q=fr" title="French">Français</a></li>
                         <li><a href="/http/view.php?m=1&q=es" title="Spanish">Español</a></li>
                         <li><a href="/http/view.php?m=1&q=zh" title="Chinese">漢語</a></li>
                         <li><a href="/http/view.php?m=1&q=ar" title="Arabic">العربية</a></li>
-                        <li><a href="/http/view.php?m=language_select" title="... more">... more</a></li>
+                        <li><a href="/http/view.php?m=language_select">... more</a></li>
                     </ul>
                 </details>
                 <details class="user-menu">
@@ -71,79 +71,49 @@
                           title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">mathematics</a>,
     <a href="/http/view.php?m=90&id=2" title="fixed and well-defined number">constant</a>, <a
             href="/http/view.php?m=90&id=17" title="ratio of the circumference of a circle to its diameter">Pi</a>, <a
-            href="/http/view.php?m=90&id=15" title="circumference">circumference</a>, <a
-            href="/http/view.php?m=90&id=16" title="diameter">diameter</a>, <a href="/http/view.php?m=90&id=6"
-                                                                               title="𝑒">𝑒</a>, <a
-            href="/http/view.php?m=90&id=18" title="Euler's number">Euler's number</a>, <a
-            href="/http/view.php?m=90&id=109" title="year">year</a>, <a href="/http/view.php?m=90&id=139" title="2019">2019</a>,
-    <a href="/http/view.php?m=90&id=140" title="the year 2020">2020</a>, <a href="/http/view.php?m=90&id=159"
-                                                                            title="percent">percent</a>, <a
-            href="/http/view.php?m=90&id=157" title="mio">mio</a>, <a href="/http/view.php?m=90&id=104" title="minute">minute</a>,
-    <a href="/http/view.php?m=90&id=24" title="second">second</a>, <a href="/http/view.php?m=90&id=206"
-                                                                      title="Switzerland">Switzerland</a>, <a
-            href="/http/view.php?m=90&id=187" title="City">City</a>, <a href="/http/view.php?m=90&id=185"
-                                                                        title="Canton">Canton</a>, <a
-            href="/http/view.php?m=90&id=213" title="Zurich">Zurich</a>, <a href="/http/view.php?m=90&id=184"
-                                                                            title="Bern">Bern</a>, <a
-            href="/http/view.php?m=90&id=191" title="Geneva">Geneva</a>, <a href="/http/view.php?m=90&id=196"
-                                                                            title="inhabitants">inhabitants</a>, <a
-            href="/http/view.php?m=90&id=285" title="parts">parts</a>, <a href="/http/view.php?m=90&id=286"
-                                                                          title="total">total</a>, <a
-            href="/http/view.php?m=90&id=205" title="problem">problem</a>, <a href="/http/view.php?m=90&id=193"
-                                                                              title="global">global</a>, <a
-            href="/http/view.php?m=90&id=216" title="potential">potential</a>, <a href="/http/view.php?m=90&id=219"
-                                                                                  title="climate">climate</a>, <a
-            href="/http/view.php?m=90&id=222" title="warmer">warmer</a>, <a href="/http/view.php?m=90&id=242"
-                                                                            title="health">health</a>, <a
-            href="/http/view.php?m=90&id=226" title="populism">populism</a>, <a href="/http/view.php?m=90&id=244"
-                                                                                title="poverty">poverty</a>, <a
-            href="/http/view.php?m=90&id=246" title="education">education</a>, <a href="/http/view.php?m=90&id=249"
-                                                                                  title="happy">happy</a>, <a
-            href="/http/view.php?m=90&id=103" title="time">time</a>, <a href="/http/view.php?m=90&id=251"
-                                                                        title="points">points</a>, <a
-            href="/http/view.php?m=90&id=255" title="trillion">trillion</a>, <a href="/http/view.php?m=90&id=158"
-                                                                                title="billion">billion</a>, <a
-            href="/http/view.php?m=90&id=257" title="CHF">CHF</a>, <a href="/http/view.php?m=90&id=266" title="Euro">Euro</a>,
-    <a href="/http/view.php?m=90&id=258" title="USD">USD</a>, <a href="/http/view.php?m=90&id=254" title="htp">htp</a>,
-    <a href="/http/view.php?m=90&id=188" title="company">company</a>, <a href="/http/view.php?m=90&id=278" title="ABB">ABB</a><br><br>ex
+            href="/http/view.php?m=90&id=15">circumference</a>, <a href="/http/view.php?m=90&id=16">diameter</a>, <a
+            href="/http/view.php?m=90&id=6">𝑒</a>, <a href="/http/view.php?m=90&id=18">Euler's number</a>, <a
+            href="/http/view.php?m=90&id=109">year</a>, <a href="/http/view.php?m=90&id=139">2019</a>, <a
+            href="/http/view.php?m=90&id=140" title="the year 2020">2020</a>, <a href="/http/view.php?m=90&id=159">percent</a>,
+    <a href="/http/view.php?m=90&id=157">mio</a>, <a href="/http/view.php?m=90&id=104">minute</a>, <a
+            href="/http/view.php?m=90&id=24">second</a>, <a href="/http/view.php?m=90&id=206">Switzerland</a>, <a
+            href="/http/view.php?m=90&id=187">City</a>, <a href="/http/view.php?m=90&id=185">Canton</a>, <a
+            href="/http/view.php?m=90&id=213">Zurich</a>, <a href="/http/view.php?m=90&id=184">Bern</a>, <a
+            href="/http/view.php?m=90&id=191">Geneva</a>, <a href="/http/view.php?m=90&id=196">inhabitants</a>, <a
+            href="/http/view.php?m=90&id=285">parts</a>, <a href="/http/view.php?m=90&id=286">total</a>, <a
+            href="/http/view.php?m=90&id=205">problem</a>, <a href="/http/view.php?m=90&id=193">global</a>, <a
+            href="/http/view.php?m=90&id=216">potential</a>, <a href="/http/view.php?m=90&id=219">climate</a>, <a
+            href="/http/view.php?m=90&id=222">warmer</a>, <a href="/http/view.php?m=90&id=242">health</a>, <a
+            href="/http/view.php?m=90&id=226">populism</a>, <a href="/http/view.php?m=90&id=244">poverty</a>, <a
+            href="/http/view.php?m=90&id=246">education</a>, <a href="/http/view.php?m=90&id=249">happy</a>, <a
+            href="/http/view.php?m=90&id=103">time</a>, <a href="/http/view.php?m=90&id=251">points</a>, <a
+            href="/http/view.php?m=90&id=255">trillion</a>, <a href="/http/view.php?m=90&id=158">billion</a>, <a
+            href="/http/view.php?m=90&id=257">CHF</a>, <a href="/http/view.php?m=90&id=266">Euro</a>, <a
+            href="/http/view.php?m=90&id=258">USD</a>, <a href="/http/view.php?m=90&id=254">htp</a>, <a
+            href="/http/view.php?m=90&id=188">company</a>, <a href="/http/view.php?m=90&id=278">ABB</a><br><br>ex
     measure and time:<br><a href="/http/view.php?m=90&id=1"
                             title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">mathematics</a>,
     <a href="/http/view.php?m=90&id=2" title="fixed and well-defined number">constant</a>, <a
             href="/http/view.php?m=90&id=17" title="ratio of the circumference of a circle to its diameter">Pi</a>, <a
-            href="/http/view.php?m=90&id=15" title="circumference">circumference</a>, <a
-            href="/http/view.php?m=90&id=16" title="diameter">diameter</a>, <a href="/http/view.php?m=90&id=6"
-                                                                               title="𝑒">𝑒</a>, <a
-            href="/http/view.php?m=90&id=18" title="Euler's number">Euler's number</a>, <a
-            href="/http/view.php?m=90&id=104" title="minute">minute</a>, <a href="/http/view.php?m=90&id=24"
-                                                                            title="second">second</a>, <a
-            href="/http/view.php?m=90&id=206" title="Switzerland">Switzerland</a>, <a href="/http/view.php?m=90&id=187"
-                                                                                      title="City">City</a>, <a
-            href="/http/view.php?m=90&id=185" title="Canton">Canton</a>, <a href="/http/view.php?m=90&id=213"
-                                                                            title="Zurich">Zurich</a>, <a
-            href="/http/view.php?m=90&id=184" title="Bern">Bern</a>, <a href="/http/view.php?m=90&id=191"
-                                                                        title="Geneva">Geneva</a>, <a
-            href="/http/view.php?m=90&id=196" title="inhabitants">inhabitants</a>, <a href="/http/view.php?m=90&id=285"
-                                                                                      title="parts">parts</a>, <a
-            href="/http/view.php?m=90&id=286" title="total">total</a>, <a href="/http/view.php?m=90&id=205"
-                                                                          title="problem">problem</a>, <a
-            href="/http/view.php?m=90&id=193" title="global">global</a>, <a href="/http/view.php?m=90&id=216"
-                                                                            title="potential">potential</a>, <a
-            href="/http/view.php?m=90&id=219" title="climate">climate</a>, <a href="/http/view.php?m=90&id=222"
-                                                                              title="warmer">warmer</a>, <a
-            href="/http/view.php?m=90&id=242" title="health">health</a>, <a href="/http/view.php?m=90&id=226"
-                                                                            title="populism">populism</a>, <a
-            href="/http/view.php?m=90&id=244" title="poverty">poverty</a>, <a href="/http/view.php?m=90&id=246"
-                                                                              title="education">education</a>, <a
-            href="/http/view.php?m=90&id=249" title="happy">happy</a>, <a href="/http/view.php?m=90&id=103"
-                                                                          title="time">time</a>, <a
-            href="/http/view.php?m=90&id=251" title="points">points</a>, <a href="/http/view.php?m=90&id=255"
-                                                                            title="trillion">trillion</a>, <a
-            href="/http/view.php?m=90&id=158" title="billion">billion</a>, <a href="/http/view.php?m=90&id=257"
-                                                                              title="CHF">CHF</a>, <a
-            href="/http/view.php?m=90&id=266" title="Euro">Euro</a>, <a href="/http/view.php?m=90&id=258" title="USD">USD</a>,
-    <a href="/http/view.php?m=90&id=254" title="htp">htp</a>, <a href="/http/view.php?m=90&id=188" title="company">company</a>,
-    <a href="/http/view.php?m=90&id=278" title="ABB">ABB</a><br><br>measure and scaling:<br><a
-            href="/http/view.php?m=90&id=157" title="mio">mio</a><br><br><br><h4>Selector tests</h4>
+            href="/http/view.php?m=90&id=15">circumference</a>, <a href="/http/view.php?m=90&id=16">diameter</a>, <a
+            href="/http/view.php?m=90&id=6">𝑒</a>, <a href="/http/view.php?m=90&id=18">Euler's number</a>, <a
+            href="/http/view.php?m=90&id=104">minute</a>, <a href="/http/view.php?m=90&id=24">second</a>, <a
+            href="/http/view.php?m=90&id=206">Switzerland</a>, <a href="/http/view.php?m=90&id=187">City</a>, <a
+            href="/http/view.php?m=90&id=185">Canton</a>, <a href="/http/view.php?m=90&id=213">Zurich</a>, <a
+            href="/http/view.php?m=90&id=184">Bern</a>, <a href="/http/view.php?m=90&id=191">Geneva</a>, <a
+            href="/http/view.php?m=90&id=196">inhabitants</a>, <a href="/http/view.php?m=90&id=285">parts</a>, <a
+            href="/http/view.php?m=90&id=286">total</a>, <a href="/http/view.php?m=90&id=205">problem</a>, <a
+            href="/http/view.php?m=90&id=193">global</a>, <a href="/http/view.php?m=90&id=216">potential</a>, <a
+            href="/http/view.php?m=90&id=219">climate</a>, <a href="/http/view.php?m=90&id=222">warmer</a>, <a
+            href="/http/view.php?m=90&id=242">health</a>, <a href="/http/view.php?m=90&id=226">populism</a>, <a
+            href="/http/view.php?m=90&id=244">poverty</a>, <a href="/http/view.php?m=90&id=246">education</a>, <a
+            href="/http/view.php?m=90&id=249">happy</a>, <a href="/http/view.php?m=90&id=103">time</a>, <a
+            href="/http/view.php?m=90&id=251">points</a>, <a href="/http/view.php?m=90&id=255">trillion</a>, <a
+            href="/http/view.php?m=90&id=158">billion</a>, <a href="/http/view.php?m=90&id=257">CHF</a>, <a
+            href="/http/view.php?m=90&id=266">Euro</a>, <a href="/http/view.php?m=90&id=258">USD</a>, <a
+            href="/http/view.php?m=90&id=254">htp</a>, <a href="/http/view.php?m=90&id=188">company</a>, <a
+            href="/http/view.php?m=90&id=278">ABB</a><br><br>measure and scaling:<br><a
+            href="/http/view.php?m=90&id=157">mio</a><br><br><br><h4>Selector tests</h4>
     <form action="/http/view.php" id="word_list">
         <div class="form-group col-md-4"><label for="nothing_selected">Word</label><select class="form-control"
                                                                                            name="nothing_selected"
@@ -245,14 +215,13 @@
             <option value="278">ABB</option>
         </select></div>
         <br>
-        <button type="submit" class="btn btn-outline-success btn-space">Save</button>
+        <button type="submit" class="btn btn-outline-success btn-space">save</button>
     </form>
 </main>
-<footer class="site-footer"><p><a href="/http/about.php" title="About">About</a> &middot; <a
-        href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
-    available under the <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative
-        Commons CC0</a> Licence unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com"
-                                                                   title="program code">program code</a> of this version
-    0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> Licence.</p></footer>
+<footer class="site-footer"><p><a href="/http/about.php">About</a> &middot; <a href="/http/privacy_policy.html">Privacy
+    Policy</a> &middot; All structured data is available under the <a
+        href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> Licence
+    unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com">program code</a> of this version
+    0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a> Licence.</p></footer>
 </body>
 </html>

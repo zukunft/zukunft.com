@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -95,9 +96,8 @@ class phrase_write_tests
 
         $phr_dsp = new phrase_ui($phr->api_json());
         $result = $lib->trim_html($phr_dsp->dsp_tbl());
-        $url = '<td><a href="/http/view.php?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
-        $target = $lib->trim_html($url . $company_id . '" title="' .
-            words::COMPANY . '">' . words::COMPANY . '</a></td> ');
+        $url = '<td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
+        $target = $lib->trim_html($url . $company_id . '">' . words::COMPANY . '</a></td> ');
         $t->assert('phrase->dsp_tbl word for ' . words::COMPANY, $result, $target);
 
         // test the phrase display functions for triples
@@ -110,8 +110,7 @@ class phrase_write_tests
 
         $phr_dsp = new phrase_ui($phr->api_json());
         $result = $lib->trim_html($phr_dsp->dsp_tbl());
-        $target = $lib->trim_html(' <tr> <td><a href="/http/view.php?m=' . VIEWS::TRIPLE_ID . '&id=' . $trp->id() . '" title="' .
-            triples::COMPANY_ZURICH . '">' . triples::COMPANY_ZURICH . '</a></td></tr> ');
+        $target = $lib->trim_html(' <tr> <td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . VIEWS::TRIPLE_ID . '&id=' . $trp->id() . '">' . triples::COMPANY_ZURICH . '</a></td></tr> ');
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 
         // test getting the parent for phrase Vestas

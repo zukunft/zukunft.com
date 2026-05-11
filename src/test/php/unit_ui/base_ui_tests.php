@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -209,9 +210,9 @@ class base_ui_tests
 
         $t->subheader($ts . 'unit html view component tests');
 
-        $cmp = new component($usr);
+        $cmp = new component($t->usr1);
         $cmp->set(components::WORD_ID, components::TEST_ADD_NAME);
-        $cmp->set_type(comp_type_shared::TEXT, $usr);
+        $cmp->set_type(comp_type_shared::TEXT, $t->usr1);
         $cmp_dsp = new component_ui($cmp->api_json());
         $t->html_page_test($cmp_dsp->html(), '', 'component_text', $t);
 
@@ -222,7 +223,7 @@ class base_ui_tests
         //      create the api object using the api_obj() function
         //      create and set the dsp object based on the api json
 
-        $lst = new verb_list($usr);
+        $lst = new verb_list($t->usr1);
         $lst->add_verb(new verb(1, verbs::IS));
         $lst->add_verb(new verb(2, verbs::PART_NAME));
         // TODO use set_from_json to set the display object
@@ -268,7 +269,7 @@ class base_ui_tests
         $t->subheader($ts . 'component');
 
         // test if a simple text component can be created
-        $cmp = new component($usr);
+        $cmp = new component($t->usr1);
         $usr_msg = new user_message();
         $cmp->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $cmp->id = 1;
@@ -281,18 +282,18 @@ class base_ui_tests
 
         $t->subheader($ts . 'button tests');
         $test_name = 'a sandbox object e.g. word add button html code';
-        $target = '<a href="/http/view.php?m=word_add&back=1" title="add new word"><i class="far fa-plus-square"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=word_add&back=1" title="add new word"><i class="far fa-plus-square"></i></a>';
         $wrd = new word();
         $t->assert($test_name, $wrd->btn_add('1'), $target);
 
         $test_name = 'a sandbox object e.g. source change button html code';
-        $target = '<a href="/http/view.php?m=source_edit&id=1&back=1" title="source_edit"><i class="far fa-edit"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=source_edit&id=1&back=1" title="source_edit"><i class="far fa-edit"></i></a>';
         $src = new source();
         $src->set_from_json($t_src->source_reserved()->api_json(), $usr_msg);
         $t->assert($test_name, $src->btn_edit('1'), $target);
 
         $test_name = 'a sandbox object e.g. formula delete button html code';
-        $target = '<a href="/http/view.php?m=formula_del&id=1&back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=formula_del&id=1&back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
         $frm = new formula();
         $frm->set_from_json($t_frm->formula()->api_json(), $usr_msg);
         $t->assert($test_name, $frm->btn_del('1'), $target);
@@ -333,12 +334,12 @@ class base_ui_tests
 
         $url = $html->url(views::WORD_ADD);
         $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
-        $target = '<h6></h6><a href="/http/word_add.php&confirm=1" title="Yes">Yes</a>/<a href="/http/word_add.php&confirm=-1" title="No">No</a>';
+        $target = '<h6></h6><a href="/http/word_add.php&confirm=1">yes</a>/<a href="/http/word_add.php&confirm=-1">no</a>';
         $result = (new button($url, $back))->yes_no();
         $t->assert(", btn_yesno", $result, $target);
 
         $url = $html->url(views::WORD_ADD);
-        $target = '<a href="/http/view.php?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
         $result = (new button($url, $back))->back();
         //$t->assert(", btn_back", $result, $target);
 
@@ -349,28 +350,28 @@ class base_ui_tests
         $t->subheader($ts . 'url mapper');
         $url_map = new url_mapper();
         $test_name = 'add default value of view';
-        $url = 'http://localhost/http/view.php?id=1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?id=1';
         $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
         $view = $url_array[url_var::MASK];
         $t->assert($test_name, $view, views::START_ID);
         $test_name = 'add default value of step';
-        $url = 'http://localhost/http/view.php?m=3&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=3&id=1&debug=-1';
         $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
         $step = $url_array[url_var::STEP];
         $t->assert($test_name, $step, 0);
         $test_name = 'add default value of view for human-readable url';
-        $url = 'http://localhost/http/view.php?mask_id=&verb_id=3';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=&verb_id=3';
         $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
         $view = $url_array[url_var::MASK];
         $t->assert($test_name, $view, views::START_ID);
         $test_name = 'convert the standard url to human-readable url';
-        $url = 'http://localhost/http/view.php?m=2&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $usr_msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
         $t->assert($test_name, $view, views::WORD_ADD_ID);
         $test_name = 'convert the standard url to pod interchangeable url';
-        $url = 'http://localhost/http/view.php?m=2&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
         $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $usr_msg));
         $url_array = $lib->url_array($url_pod);
         // TODO Prio 2 activate
@@ -380,12 +381,12 @@ class base_ui_tests
         //$verb = $url_array[url_var::VERB];
         //$t->assert($test_name, $verb, 3);
         //$test_name = 'add default value of view for pod independent url';
-        //$url = 'http://localhost/http/view.php?mask=';
+        //$url = 'http://localhost' . api::MAIN_SCRIPT_REL . '?mask=';
         //$url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
         //$view = $url_array[url_var::MASK];
         //$t->assert($test_name, $view, views::START_CODE);
         $test_name = 'error message if mapping is missing';
-        $url = 'http://localhost/http/view.php?mask_id=&mapping_missing=3';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=&mapping_missing=3';
         $url_map->url_to_standard($lib->url_array($url), $usr_msg);
         $err_msg = $usr_msg->var_message_text();
         $t->assert($test_name, $err_msg, 'url mapper for "debug" is missing, url mapper for "id" is missing, url mapper for "mapping_missing" is missing');

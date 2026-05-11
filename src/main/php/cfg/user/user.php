@@ -165,10 +165,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTimeInterface;
 use DateTime;
 use Exception;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class user extends db_id_object_non_sandbox
 {
@@ -2236,12 +2236,6 @@ class user extends db_id_object_non_sandbox
         // TODO Prio 1 use a const
         $this->code_id = 'all';
         $this->name = 'standard user view for all users';
-    }
-
-    // create the HTML code to display the username with the HTML link
-    function display(): string
-    {
-        return '<a href="/http/user.php?id=' . $this->id . '">' . $this->name . '</a>';
     }
 
     // remember the last source that the user has used

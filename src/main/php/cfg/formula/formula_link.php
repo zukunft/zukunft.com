@@ -1217,22 +1217,4 @@ class formula_link extends sandbox_link
         return $result;
     }
 
-    /**
-     * @return string return the html code to display the link name
-     */
-    function name_linked(string $back = ''): string
-    {
-        $result = '';
-        $msg = new user_message();
-
-        $this->reload_objects($msg);
-        if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            $result = $this->formula()->name_linked($back) . ' to ' . $this->phrase()->display_linked();
-        } else {
-            $result .= log_err("The formula or the linked word cannot be loaded.", "formula_link->name");
-        }
-
-        return $result;
-    }
-
 }

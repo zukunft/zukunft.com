@@ -98,6 +98,7 @@ include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -1764,11 +1765,6 @@ class phrase extends combine_named
         return '"' . $this->name() . '"';
     }
 
-    function name_linked(): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
-    }
-
     /**
      * get the related phrases
      * @param foaf_direction $direction up to select the parent phrases and dow for the children
@@ -1789,33 +1785,6 @@ class phrase extends combine_named
             }
         }
         return $phr_lst;
-    }
-
-    /**
-     * return the html code to display a word
-     */
-    function display(): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '">' . $this->name() . '</a>';
-    }
-
-    /**
-     * simply to display a single word or triple link
-     */
-    function display_linked(): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
-    }
-
-    /**
-     * similar to dsp_link
-     *
-     * @param $style
-     * @return string
-     */
-    function dsp_link_style($style): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '" class="' . $style . '">' . $this->name() . '</a>';
     }
 
     // create a selector that contains the time words

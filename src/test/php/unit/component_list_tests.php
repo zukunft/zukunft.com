@@ -36,7 +36,10 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_list_tests
@@ -49,6 +52,8 @@ class component_list_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $html = new html_base();
+        $t_cmp = new test_components($t);
         $t->name = 'component_list->';
         $t->resource_path = 'db/component/';
 
@@ -65,6 +70,15 @@ class component_list_tests
 
         $cmp_lst = new component_list($usr);
         $this->assert_sql_by_view_id($t, $db_con, $cmp_lst);
+
+        // TODO Prio 2 move to ui tests
+        /*
+        $lst = new component_list_ui($t_cmp->component_list()->api_json());
+        $test_page = $html->text_h2('component list display test pre');
+        $test_page .= 'component list with tooltip: ' . $lst->dis() . '<br>';
+        $t->html_page_test($test_page, 'component_list_pre', 'component_list_pre', $t);
+        */
+
 
     }
 

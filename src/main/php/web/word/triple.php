@@ -43,6 +43,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
@@ -667,5 +668,79 @@ class triple extends sandbox_code_id
         $msk_lst = $msk_lst->ex_non_phrase();
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
+
+    /*
+     * to review
+     */
+
+    /**
+     * display one link to the user by returning the HTML code for the link to the calling function
+     * TODO include the user sandbox in the selection
+     */
+    private
+    function display(): string
+    {
+        log_debug("triple->dsp " . $this->id() . ".");
+
+        $result = ''; // reset the html code var
+        $msg = new user_message();
+
+        // get the link from the database
+        $this->reload_objects($msg);
+
+        // prepare to show the triple
+        $result .= $this->get_from()->name() . ' '; // e.g. Australia
+        $result .= $this->get_verb_name() . ' '; // e.g. is a
+        $result .= $this->get_to()->name();       // e.g. Country
+
+        return $result;
+    }
+
+    /**
+     * similar to dsp, but display the reverse expression
+     */
+    private
+    function dsp_r(): string
+    {
+        log_debug("triple->dsp_r " . $this->id() . ".");
+
+        $result = ''; // reset the html code var
+        $msg = new user_message();
+
+        // get the link from the database
+        $this->reload_objects($msg);
+
+        // prepare to show the triple
+        $result .= $this->get_to()->name() . ' ';   // e.g. Countries
+        $result .= $this->get_verb_name() . ' '; // e.g. are
+        $result .= $this->get_from()->name();     // e.g. Australia (and others)
+
+        return $result;
+    }
+
+    /**
+     * display a form to adjust the link between too words or triples
+     */
+    function dsp_del(string $back = ''): string
+    {
+        log_debug("triple->dsp_del " . $this->id() . ".");
+        $result = ''; // reset the html code var
+
+        //$btn = new button();
+        //$result .= $btn->yes_no('Is "' . $this->display() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
+        $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
+
+        return $result;
+    }
+
+    /**
+     * simply to display a single triple in a table
+     */
+    function display_linked(): string
+    {
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $this->name());
+    }
+
+
 
 }

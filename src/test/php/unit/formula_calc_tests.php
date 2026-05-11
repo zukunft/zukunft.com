@@ -121,19 +121,13 @@ class formula_calc_tests
         $result = $frm_html->dsp_text($back, $trm_lst_dsp);
         $target = '"' . words::PERCENT
             . '" = ( <a href="/http/formula_edit.php?id='
-            . $frm_this->id() . '&back=0" title="'
-            . words::THIS_NAME . '">'
+            . $frm_this->id() . '&back=0">'
             . words::THIS_NAME
             . '</a> - <a href="/http/formula_edit.php?id='
             . $frm_prior->id()
-            . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="'
-            . words::PRIOR_NAME . '">'
-            . words::PRIOR_NAME . '</a>>'
+            . '&back=0">'
             . words::PRIOR_NAME
-            . '</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id='
-            . $frm_prior->id() . '&back=0" title="'
-            . words::PRIOR_NAME . '">'
-            . words::PRIOR_NAME . '</a>>'
+            . '</a> ) / <a href="/http/formula_edit.php?id=20&back=0">'
             . words::PRIOR_NAME . '</a>';
         $t->assert($test_name, $result, $target);
 
@@ -145,8 +139,7 @@ class formula_calc_tests
             $elm_grp_dsp = new element_group_ui($elm_grp->api_json());
             $result = $elm_grp_dsp->dsp_names();
             $target = '<a href="/http/formula_edit.php?id='
-                . $frm_this->id() . '" title="'
-                . words::THIS_NAME . '">'
+                . $frm_this->id() . '">'
                 . words::THIS_NAME . '</a>';
             $t->assert('element_group->dsp_names', trim($result), trim($target));
         }

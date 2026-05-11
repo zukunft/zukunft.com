@@ -527,7 +527,7 @@ class test_api extends test_base
         $url_map = new url_mapper();
         $usr_msg = new user_message_ui();
         $class = $lib->class_to_name($class);
-        $url = api::HOST_TESTING . url_var::API_PATH . $lib->camelize_ex_1($class);
+        $url = THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {
@@ -802,7 +802,7 @@ class test_api extends test_base
             $class = url_var::REF_API;
         }
         $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
-        return api::HOST_TESTING . url_var::API_PATH . $url_class;
+        return THIS_URL . url_var::API_PATH . $url_class;
     }
 
     /**

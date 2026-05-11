@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
 include_once paths::MODEL_COMPONENT . 'component_link_type.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -46,6 +47,7 @@ include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_id_object_non_sandbox.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_RESULT . 'result.php';
@@ -72,6 +74,9 @@ include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SYSTEM . 'language.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
@@ -82,6 +87,7 @@ include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
+include_once test_paths::CREATE . 'test_languages.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'groups.php';
@@ -94,13 +100,16 @@ include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'languages.php';
 include_once paths::SHARED_HELPER . 'Message.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -110,6 +119,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -134,6 +144,8 @@ use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
+use Zukunft\ZukunftCom\main\php\web\types\type_object as type_object_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -155,10 +167,12 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
-use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -633,9 +647,9 @@ class test_mappers
     /**
      * get the frontend object related to the given backend class
      * @param string $class the given main class name
-     * @return word_ui|sandbox_ui|user_ui|ref_ui with only a few vars filled
+     * @return word_ui|sandbox_ui|user_ui|ref_ui|type_object_ui with only a few vars filled
      */
-    function class_to_ui_object(string $class): word_ui|sandbox_ui|user_ui|ref_ui
+    function class_to_ui_object(string $class): word_ui|sandbox_ui|user_ui|ref_ui|type_object_ui
     {
         $obj = null;
         switch ($class) {
@@ -687,6 +701,9 @@ class test_mappers
             case component_link::class;
                 $obj = new component_link_ui();
                 break;
+            case language::class;
+                $obj = new language_ui(languages::DEFAULT_ID, languages::DEFAULT);
+                break;
             default:
                 log_err('no frontend object defined for ' . $class);
         }
@@ -729,13 +746,245 @@ class test_mappers
     }
 
     /**
+     * get the filled test object related to the component_type
+     * @param component_type|type_object_ui $typ the given main class name
+     * @return user|triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_multi|type_object|db_id_object_non_sandbox|null with only a few vars filled
+     */
+    function component_type_to_object(
+        component_type|type_object_ui $typ
+    ): user|triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_multi|type_object|db_id_object_non_sandbox|null
+    {
+        $obj = null;
+        $t_usr = new test_users($this->env);
+        $t_lng = new test_languages($this->env);
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $t_trp = new test_triples($this->env);
+        $t_src = new test_sources($this->env);
+        $t_ref = new test_refs($this->env);
+        $t_val = new test_values($this->env);
+        $t_grp = new test_groups($this->env);
+        $t_frm = new test_formulas($this->env);
+        $t_res = new test_results($this->env);
+        $t_msk = new test_views($this->env);
+        $t_cmp = new test_components($this->env);
+        switch ($typ->code_id) {
+            case component_types::ADMIN_FORM_FIELD_USER_NAME;
+            case component_types::ADMIN_FORM_FIELD_USER_EMAIL;
+            case component_types::ADMIN_FORM_FIELD_USER_PASSWORD;
+            case component_types::SYSTEM_BODY_SIGNUP;
+            case component_types::SYSTEM_BODY_LOGIN;
+            case component_types::SYSTEM_BODY_LOGIN_ACTIVATE;
+            case component_types::SYSTEM_BODY_LOGIN_RESET;
+            case component_types::SYSTEM_BODY_LOGOUT;
+            case component_types::SYSTEM_BODY_USER_SETTINGS;
+                $obj = $t_usr->user_filled();
+                break;
+            case component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL;
+            case component_types::FIELD_LANGUAGE_SYMBOL;
+                $obj = $t_lng->language();
+                break;
+            case component_types::PHRASE_NAME;
+            case component_types::SELECT_PHRASE;
+            case component_types::PHRASE;
+            case component_types::FORM_TITLE;
+            case component_types::FORM_FIELD_NAME;
+            case component_types::FORM_FIELD_DESCRIPTION;
+            case component_types::FORM_FIELD_SELECTION_NAME;
+            case component_types::FORM_FIELD_SELECTION_DESCRIPTION;
+            case component_types::FORM_FIELD_SELECTION_TEXT;
+            case component_types::FORM_SELECT_PHRASE;
+            case component_types::FORM_SELECT_PHRASES;
+            case component_types::FORM_SELECT_PHRASE_TYPE;
+            case component_types::FORM_SHARE_TYPE;
+            case component_types::FORM_PROTECTION_TYPE;
+            case component_types::FORM_BUTTON_CANCEL;
+            case component_types::FORM_BUTTON_SAVE;
+            case component_types::FORM_BUTTON_DEL;
+            case component_types::FORM_BUTTON_IMPORT;
+            case component_types::FORM_BUTTON_EXPORT;
+            case component_types::FORM_END;
+            case component_types::FORM_HIDDEN_BACK;
+            case component_types::FORM_HIDDEN_STEP;
+            case component_types::FORM_PREVIEW;
+            case component_types::ROW_START;
+            case component_types::ROW_RIGHT;
+            case component_types::ROW_END;
+            case component_types::SHOW_NAME;
+            case component_types::SHOW_DESCRIPTION;
+            case component_types::SHOW_FIELD_USAGE;
+            case component_types::TEXT;
+            case component_types::SYSTEM_CHANGE_LOG;
+            case component_types::SYSTEM_TITLE;
+            case component_types::SYSTEM_SUB_TITLE;
+            case component_types::SYSTEM_SUB_TITLE_VAR;
+            case component_types::SYSTEM_BODY_ABOUT;
+            case component_types::SYSTEM_BODY_SETUP;
+            case component_types::SYSTEM_BODY_SEARCH;
+            case component_types::SYSTEM_BODY_SEARCH_FULL;
+            case component_types::SYSTEM_BODY_SANDBOX;
+            case component_types::SYSTEM_BODY_UNDO;
+            case component_types::SYSTEM_BODY_PROCESS;
+            case component_types::SYSTEM_BODY_PROCESS_PROGRESS;
+            case component_types::SYSTEM_BODY_PROCESS_LIST;
+            case component_types::SYSTEM_BODY_ERROR_LOG;
+            case component_types::SYSTEM_BODY_ERROR_UPDATE;
+            case component_types::LIST_PARENTS_OF_WORD;
+            case component_types::LIST_CHILDREN_OF_WORD;
+            case component_types::LINK_LIST_WORD;
+            case component_types::RANK_PHRASE;
+            case component_types::USED_IN_AS_TEXT;
+            case component_types::USED_IN_AS_TEXT_WITH_LINK;
+            case component_types::FORM_CLASS;
+            case component_types::FORM_CHANGES;
+            case component_types::FORM_IMPACT;
+            case component_types::SYSTEM_PASTE_TABLE_CONTEXT;
+            case component_types::SYSTEM_PASTE_TABLE_BODY;
+            case component_types::SYSTEM_SELECTION_TEXT;
+            case component_types::SYSTEM_POPUP_TITLE;
+            case component_types::CALC_SHEET;
+            case component_types::WORDS_UP;
+            case component_types::WORDS_DOWN;
+            case component_types::LINK;
+            case component_types::JSON_EXPORT;
+            case component_types::XML_EXPORT;
+            case component_types::CSV_EXPORT;
+            case component_types::ODS_EXPORT;
+            case component_types::FORM_SELECT_FILE;
+            case component_types::FORM_SELECT_FORMAT_EXPORT;
+                $obj = $t_wrd->word_filled();
+                break;
+            case component_types::VERB_NAME;
+            case component_types::FORM_SELECT_VERB;
+            case component_types::FORM_SELECT_VERBS;
+            case component_types::FORM_FIELD_PLURAL;
+            case component_types::FORM_FIELD_REVERSE;
+            case component_types::FORM_FIELD_PLURAL_REVERSE;
+            case component_types::FORM_FIELD_NAME_IN_FORMULAS;
+            case component_types::LIST_TRIPLES_OF_VERB;
+            case component_types::LIST_FORMULAS_OF_VERB;
+                $obj = $t_vrb->verb_filled();
+                break;
+            case component_types::TRIPLE_NAME;
+            case component_types::FORM_FIELD_WEIGHT;
+                $obj = $t_trp->triple_filled();
+                break;
+            case component_types::FORM_SELECT_SOURCE;
+            case component_types::FORM_SELECT_SOURCES;
+            case component_types::FORM_SELECT_SOURCE_TYPE;
+            case component_types::LIST_VALUES_BY_SOURCE;
+            case component_types::FORM_FIELD_URL;
+                $obj = $t_src->source_filled();
+                break;
+            case component_types::FORM_SELECT_REF;
+            case component_types::FORM_SELECT_REFS;
+            case component_types::FORM_SELECT_REF_TYPE;
+            case component_types::SYSTEM_SHOW_REF_TYPE;
+            case component_types::SYSTEM_SHOW_REF_KEY;
+            case component_types::SYSTEM_SHOW_REF_URL;
+            case component_types::FORM_FIELD_EXTERNAL_KEY;
+            case component_types::SYSTEM_SHOW_REF_SOURCE;
+            case component_types::LIST_REF;
+                $obj = $t_ref->ref_filled();
+                break;
+            case component_types::FORM_FIELD_VALUE;
+            case component_types::FORM_SELECT_VALUE;
+            case component_types::FORM_SELECT_VALUES;
+            case component_types::FORM_SELECT_VALUE_TYPE;
+            case component_types::VALUE_NAME;
+            case component_types::VALUE_NUMERIC;
+            case component_types::LIST_VALUES_BY_TRIPLE;
+            case component_types::VALUES_RELATED;
+            case component_types::NUMERIC_VALUE;
+            case component_types::VALUES_ALL;
+            case component_types::SYSTEM_BODY_VALUE_DETAIL;
+                $obj = $t_val->value_16_filled();
+                break;
+            case component_types::FORM_FIELD_GROUP;
+            case component_types::FORM_FIELD_GROUP_OR_PHRASES;
+            case component_types::GROUP_NAME;
+                $obj = $t_grp->group_filled();
+                break;
+            case component_types::FORM_FIELD_FORMULA_EXPRESSION;
+            case component_types::FORM_FIELD_FORMULA_ALL_VAR_NEEDED;
+            case component_types::FORM_LIST_FORMULAS;
+            case component_types::FORM_SELECT_FORMULA;
+            case component_types::FORM_SELECT_FORMULAS;
+            case component_types::FORM_SELECT_FORMULA_TYPE;
+            case component_types::LIST_PHRASES_OF_FORMULA;
+            case component_types::LIST_FORMULAS;
+            case component_types::SYSTEM_BODY_FORMULA_TEST;
+            case component_types::LIST_RESULTS;
+                $obj = $t_frm->formula_filled();
+                break;
+            case component_types::FORM_SELECT_FORMULA_LINK_TYPE;
+            case component_types::FORM_SELECT_FORMULA_LINK_PRIORITY;
+                $obj = $t_frm->formula_link_filled();
+                break;
+            case component_types::FORM_SELECT_TERM;
+            case component_types::FORM_SELECT_TERMS;
+                $obj = $t_msk->term_view_filled();
+                break;
+            case component_types::FORM_FIELD_SOURCE_GROUP;
+            case component_types::FORM_FIELD_SOURCE_GROUP_OR_PHRASES;
+            case component_types::FORM_SELECT_RESULT;
+            case component_types::FORM_SELECT_RESULTS;
+            case component_types::WORD_RESULTS;
+            case component_types::FORMULA_RESULTS;
+            case component_types::SYSTEM_SHOW_RESULT_DIFF;
+            case component_types::SYSTEM_BODY_RESULT_EXPLAIN;
+                $obj = $t_res->result_main_filled();
+                break;
+            case component_types::FORM_SELECT_VIEW;
+            case component_types::FORM_SELECT_VIEWS;
+            case component_types::FORM_SELECT_PARENT_VIEW;
+            case component_types::FORM_SELECT_CHILD_VIEW;
+            case component_types::FORM_SELECT_VIEW_DEFAULT;
+            case component_types::FORM_SELECT_VIEW_TYPE;
+            case component_types::FORM_SELECT_VIEW_STYLE;
+            case component_types::FORM_TABLE_LINKED_VIEWS;
+            case component_types::LIST_VIEWS;
+            case component_types::SELECT_VIEW;
+            case component_types::SYSTEM_SHOW_VIEW_DIFF;
+            case component_types::VIEW_AFTER_CHANGE;
+            case component_types::VIEW_BEFORE_CHANGE;
+                $obj = $t_msk->view_filled();
+                break;
+            case component_types::SYSTEM_FIELD_PARENT_VIEW;
+            case component_types::SYSTEM_FIELD_CHILD_VIEW;
+            case component_types::SHOW_FIELD_RELATION_TYPE;
+            case component_types::SHOW_FIELD_START_POS;
+            case component_types::FORM_SELECT_VIEW_LINK_TYPE;
+            case component_types::FORM_SELECT_VIEW_LINK_PRIORITY;
+            case component_types::FORM_SELECT_VIEW_RELATION_TYPE;
+            case component_types::FORM_FIELD_VIEW_RELATION_START_POS;
+                $obj = $t_msk->view_relation_filled();
+                break;
+            case component_types::FORM_SELECT_COMPONENT;
+            case component_types::FORM_SELECT_COMPONENTS;
+            case component_types::FORM_SELECT_COMPONENT_TYPE;
+            case component_types::FORM_SELECT_COMPONENT_STYLE;
+                $obj = $t_cmp->component_filled();
+                break;
+            case component_types::FORM_SELECT_COMPONENT_LINK_TYPE;
+            case component_types::FORM_SELECT_COMPONENT_POS_TYPE;
+            case component_types::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER;
+                $obj = $t_cmp->component_link_filled();
+                break;
+            default:
+                log_warning('no object defined for component type ' . $typ->name);
+        }
+        return $obj;
+    }
+
+    /**
      * add the test server to a url query string
      * @param string $url_part the url query string
      * @return string the complete url for the test server
      */
     function test_url(string $url_part): string
     {
-        return api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR . $url_part;
+        return THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . $url_part;
     }
 
     /**

@@ -92,6 +92,8 @@ class coding_rule_tests
         $this->php_include_tests($t, paths::WEB);
         $this->php_include_tests($t, test_paths::CREATE);
 
+        $this->php_cfg_no_web_tests($t);
+
     }
 
     function php_class_tree(): string
@@ -226,6 +228,41 @@ class coding_rule_tests
             }
         }
         return $class_lst;
+    }
+
+    /**
+     * check that no class in cfg uses a class from web
+     * because the backend model layer must not depend on the frontend web layer
+     *
+     * @param test_cleanup $t
+     * @return void
+     */
+    function php_cfg_no_web_tests(test_cleanup $t): void
+    {
+        $lib = new library();
+        $file_array = $lib->dir_to_array(paths::MODEL);
+        $code_files = $lib->array_to_path($file_array);
+        $pos = 1;
+        foreach ($code_files as $code_file) {
+            $ctrl_code = file(paths::MODEL . $code_file);
+            $use_classes = $lib->php_code_use($ctrl_code);
+            foreach ($use_classes as $use) {
+                $class = $use[0];
+                $path = $use[1];
+                if (str_contains($path, '\main\php\web\\')) {
+                    $sub_path = $lib->str_right_of(paths::MODEL, '../');
+                    $test_name = 'cfg must not use web class ' . $path . '\\' . $class
+                        . ' in ' . $sub_path . $code_file
+                        . ' (' . $pos . ' of ' . count($code_files) . ')';
+                    // TODO Prio 2 remove exception
+                    if ($code_file != '/log_text/text_log_functions.php') {
+                        $t->assert($test_name, '', $class);
+                    }
+
+                }
+            }
+            $pos++;
+        }
     }
 
     /**

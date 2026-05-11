@@ -36,10 +36,15 @@ namespace Zukunft\ZukunftCom\main\php\web\html;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED . 'library.php';
 
-use Zukunft\ZukunftCom\main\php\shared\library;
+include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'url_var.php';
+
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class display_list extends html_base
 {
@@ -48,15 +53,20 @@ class display_list extends html_base
     public ?array $lst = null; // a array of objects that must have id and name
     public ?string $id_field = null; //
     public string $script_name = ''; // name of the code that handles the list
-    public string $class_edit = ''; // the class name
     public ?string $script_parameter = null; //
 
-    // display a list that can be sorted using the fixed field "order_nbr"
-    function display(string $back = ''): string
+    /**
+     * TODO Prio 1 review
+     * create the html code for a list that can be sorted using the fixed field "order_nbr"
+     * @param string $class the class of the objects in the lis
+     */
+    function display(string $class, int $id, string $back = ''): string
     {
+        global $mtr;
         $result = '';
 
-        $lib = new library();
+        $msk_c = new views();
+        $msk_id = $msk_c->class_to_edit($class);
 
         // set the default values
         $row_nbr = 0;
@@ -68,16 +78,17 @@ class display_list extends html_base
 
             // list of all possible view components
             $row_nbr = $row_nbr + 1;
-            $edit_script = $this->edit_url($this->class_edit);
-            $result .= '<a href="/http/' . $edit_script . '?id=' . $entry->id . '&back=' . $this->script_parameter . '">' . $entry->name . '</a> ';
+            $result .= $this->ref_view($msk_id, $entry->id, $entry->name) . ' ';
+            // add a link to move this item up if not the first item
             if ($row_nbr > 1) {
-                $result .= '<a href="/http/' . $this->script_name . '?id=' . $this->script_parameter . '&move_up=' . $entry->id . '">up</a>';
+                $result = $this->ref_view($msk_id, $entry->id, $mtr->txt(msg_id::UP), url_var::UP) . ' ';
             }
             if ($row_nbr > 1 and $row_nbr < $num_rows) {
                 $result .= '/';
             }
+            // add a link to move this item down if not the last item
             if ($row_nbr < $num_rows) {
-                $result .= '<a href="/http/' . $this->script_name . '?id=' . $this->script_parameter . '&move_down=' . $entry->id . '">down</a>';
+                $result = $this->ref_view($msk_id, $entry->id, $mtr->txt(msg_id::DOWN), url_var::DOWN) . ' ';
             }
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '</td><td>';

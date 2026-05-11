@@ -337,13 +337,16 @@ class formula_write_tests
         $trm_lst = $t_trm->term_list_increase();
         $trm_lst_dsp = new term_list_ui($trm_lst->api_json());
         $result = $frm_html->dsp_text($back, $trm_lst_dsp);
-        $target = '"' . words::PERCENT . '" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0" title="' . words::THIS_NAME . '">this</a> - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a>';
+        $target = '"' . words::PERCENT
+            . '" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0">' . words::THIS_NAME . '</a>'
+            . ' - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0">' . words::PRIOR_NAME . '</a> )'
+            . ' / <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0">' . words::PRIOR_NAME . '</a>';
         $t->assert('formula->dsp_text for ' . $frm->dsp_id(), $result, $target);
 
         // ... in HTML format with link
         $frm_increase = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $result = $frm_html->edit_link($back);
-        $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0" title="' . formulas::SYSTEM_TEST_ADD . '">' . formulas::SYSTEM_TEST_ADD . '</a>';
+        $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0">' . formulas::SYSTEM_TEST_ADD . '</a>';
         $t->assert('formula->display for ' . $frm->dsp_id(), $result, $target);
 
         // ... the formula result selected by the word and in percent

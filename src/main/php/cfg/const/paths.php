@@ -112,7 +112,6 @@ class paths
 
     // resource paths
     const string RES = self::MAIN . 'resources' . DIRECTORY_SEPARATOR;
-    const string IMAGE_RES = self::RES . 'images' . DIRECTORY_SEPARATOR;
     const string DB_RES_SUB = 'db' . DIRECTORY_SEPARATOR;
     const string DB_SETUP_SUB = 'setup' . DIRECTORY_SEPARATOR;
 
@@ -122,6 +121,12 @@ class paths
     const string REL_MAIN = self::REL_SRC . 'main' . DIRECTORY_SEPARATOR;
     const string REL_RES = self::REL_MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string REL_IMAGE = self::REL_RES . 'images' . DIRECTORY_SEPARATOR;
+
+    // relativ paths
+    const string SRC_REL = DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR;
+    const string MAIN_REL = self::SRC_REL . 'main' . DIRECTORY_SEPARATOR;
+    const string RES_REL = self::MAIN_REL . 'resources' . DIRECTORY_SEPARATOR;
+    const string IMAGE_RES = self::RES_REL . 'images' . DIRECTORY_SEPARATOR;
 
     // external libraries
     const string EXT_LIB = DIRECTORY_SEPARATOR . 'external_lib' . DIRECTORY_SEPARATOR;

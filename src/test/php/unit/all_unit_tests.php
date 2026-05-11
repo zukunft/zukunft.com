@@ -184,7 +184,7 @@ class all_unit_tests extends test_cleanup
      * create a dummy database connection for internal unit testing
      * @return void
      */
-    private function db_con_for_unit_tests(): void
+    protected function db_con_for_unit_tests(): void
     {
         global $db_con;
 
@@ -197,7 +197,7 @@ class all_unit_tests extends test_cleanup
      * create the dummy users for internal unit testing
      * @return void
      */
-    private function users_for_unit_tests(): void
+    protected function users_for_unit_tests(): void
     {
         global $sys;
 

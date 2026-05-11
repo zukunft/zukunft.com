@@ -35,16 +35,20 @@
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::PHRASE . 'phrase_list.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class button
@@ -103,13 +107,17 @@ class button
      */
     private function html(string $icon): string
     {
-        return '<a href="' . $this->call . '" title="' . $this->title . '"><img src="' . $icon . '" alt="' . $this->title . '"></a>';
+        $html = new html_base();
+        $inner = '<' . html_base::IMG . ' ' . html_base::SRC . '="' . $icon . '" ' . html_base::ALT . '="' . $this->title . '">';
+        return $html->ref($this->call, $inner, $this->title);
     }
 
     // same as html but the bootstrap version
     private function html_fa(string $icon): string
     {
-        return '<a href="' . $this->call . '" title="' . $this->title . '"><i class="far ' . $icon . '"></i></a>';
+        $html = new html_base();
+        $inner = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="far ' . $icon . '"></' . html_base::I . '>';
+        return $html->ref($this->call, $inner, $this->title);
     }
 
     private function set_ui_msg(msg_id $ui_msg_id, string $explain = ''): void
@@ -176,7 +184,8 @@ class button
         }
         $this->title = 'back';
         if (is_numeric($back)) {
-            $this->call = '/http/view.php?words=' . $back;
+            $this->call = api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE
+                . '&' .url_var::ID . '=' . $back;
         } else {
             $this->call = $back;
         }
@@ -193,9 +202,12 @@ class button
     function confirm(string $title, string $description, string $call): string
     {
         $html = new html_base();
+        global $mtr;
         $result = $html->dsp_text_h3($title);
         $result .= $description . '<br><br>';
-        $result .= '<a href="' . $call . '&confirm=1" title="Yes">Yes</a> / <a href="' . $call . '&confirm=-1" title="No">No</a>';
+        $result .= $html->ref($call . '&' . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . url_var::STEP_CONFIRM, $mtr->txt(msg_id::YES))
+            . ' / '
+            . $html->ref($call . '&' . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . url_var::STEP_CANCEL, $mtr->txt(msg_id::NO));
         //$result = $title.'<a href="'.$call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$call.'&confirm=-1" title="No">No</a>';
         //$result = '<a href="'.$call.'" onclick="return confirm(\''.$title.'\')">'.$title.'</a>';
         //$result = "<a onClick=\"javascript: return confirm('".$title."');\" href='".$call."'>x</a>";
@@ -220,8 +232,11 @@ class button
             $this->title .= $explain;
         }
 
+        global $mtr;
         $result = $html->dsp_text_h3($this->title);
-        $result .= '<a href="' . $this->call . '&confirm=1" title="Yes">Yes</a>/<a href="' . $this->call . '&confirm=-1" title="No">No</a>';
+        $result .= $html->ref($this->call . '&' . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . url_var::STEP_CONFIRM, $mtr->txt(msg_id::YES))
+            . '/'
+            . $html->ref($this->call . '&' . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . url_var::STEP_CANCEL, $mtr->txt(msg_id::NO));
         //$result = $this->title.'<a href="'.$this->call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$this->call.'&confirm=-1" title="No">No</a>';
         //$result = '<a href="'.$this->call.'" onclick="return confirm(\''.$this->title.'\')">'.$this->title.'</a>';
         //$result = "<a onClick=\"javascript: return confirm('".$this->title."');\" href='".$this->call."'>x</a>";

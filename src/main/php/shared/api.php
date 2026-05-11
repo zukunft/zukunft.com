@@ -39,18 +39,7 @@ class api
      * URL
      */
 
-    // TODO review (move to .env and/or application.yaml)
-    const string HOST_TESTING = 'http://localhost/';
-    const string HOST_DEV = 'http://localhost/';
-    const string HOST_DEV_RELATIVE = '/';
-    const string HOST_UAT = 'https://test.zukunft.com/';
-    const string HOST_PROD = 'https://www.zukunft.com/';
     const string HOST_SAME = '/';
-    const string BS_PATH_DEV = 'bootstrap/';
-    const string BS_CSS_PATH_DEV = 'bootstrap/';
-    const string BS_CSS = 'css' . DIRECTORY_SEPARATOR . 'bootstrap.css';
-    const string EXT_LIB_PATH = 'external_lib' . DIRECTORY_SEPARATOR;
-    const string HOST_SYS_LOG = '';
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const string CONFIG_ALL = 'all';
@@ -58,9 +47,18 @@ class api
     const string CONFIG_USER = 'user';
 
     // the url name of the main script that is used in combination with the host url
-    const string MAIN_SCRIPT_PATH = 'http' . DIRECTORY_SEPARATOR;
-    const string MAIN_SCRIPT = self::MAIN_SCRIPT_PATH . 'view.php';
-    const string URL_DEV = api::HOST_DEV . api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ;
+    const string SCRIPT_PATH_NAME = 'http' . DIRECTORY_SEPARATOR;
+    const string SCRIPT_PATH = DIRECTORY_SEPARATOR . self::SCRIPT_PATH_NAME;
+    const string SETTINGS_REL = DIRECTORY_SEPARATOR . 'settings';
+    const string MAIN_SCRIPT_EXT = self::SCRIPT_PATH_NAME . 'view.php';
+    const string MAIN_SCRIPT = self::SCRIPT_PATH . 'view.php';
+    const string ABOUT_SCRIPT = self::SCRIPT_PATH . 'about.php';
+    const string PRIVACY_SCRIPT = self::SCRIPT_PATH . 'privacy_policy.html';
+    const string FIND_SCRIPT = self::SCRIPT_PATH . 'find.php';
+    const string LOGIN_SCRIPT = self::SCRIPT_PATH . 'login.php';
+    const string SIGNUP_SCRIPT = self::SCRIPT_PATH . 'signup.php';
+    const string ERROR_LOG_SCRIPT = self::SCRIPT_PATH . 'error_log.php';
+    const string URL_DEV = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ;
 
 
     /*
@@ -163,7 +161,7 @@ class api
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
-        return self::HOST_DEV . url_var::API_PATH . $lib->camelize_ex_1($class);
+        return THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($class);
     }
 
 }

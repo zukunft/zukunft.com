@@ -42,7 +42,20 @@ class def
 
     // configuration values used as fallback if the value is missing in the system configuration
     const int FALLBACK_DB_PAGE_ROWS = 20; // the number of database rows that should be loaded at once
-    const string ENCODING = 'UTF-8'; // the default encoding for the backend
+    const string ENCODING = 'utf-8'; // the default encoding for the backend
     const string FILE_PHP = '.php'; // the file extension for the code scripts
+
+
+    /*
+     * external links
+     */
+
+    const string LINK_CC0 = 'https://creativecommons.org/publicdomain/zero/1.0/';
+    const string LINK_GITHUB = 'https://github.com/zukunft/zukunft.com';
+    const string LINK_AGPL = 'https://www.gnu.org/licenses/agpl.html';
+    const string LINK_GITHUB_TREAM = 'https://github.com/zukunft/tream';
+    const string LINK_TREAM_DEMO = 'https://tream.biz/p4a/applications/tream/';
+    const string LINK_PAPER_DELPHI = 'https://dx.doi.org/10.2139/ssrn.6497759';
+    const string LINK_PAPER_IMPERATIVE = 'https://doi.org/10.5281/zenodo.19443909';
 
 }
