@@ -552,27 +552,42 @@ class frontend
      */
 
     /**
-     * execute database updates via api
+     * execute the user request e.g. a database update and create the url for the next page
+     * the execution should be done via api
      *
-     * @param string $action the standard action
+     * @param array $url_array the parsed url as an array
      * @param user_ui $usr the session user who has requested the view
      * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
-     * @return string the html code to show the page to the user
+     * @param bool $do_it can be set to false for unit testing without executing the exaction
+     * @return array the url array to display the result and the next step
      */
     function url_to_action(
-        string       $action,
-        string       $step,
-        db_object_ui $dbo,
         array        $url_array,
+        user_ui      $usr,
         user_message $usr_msg,
-        string       $back
-    ): string
+        data_object  $dto = new data_object(),
+        bool         $do_it = true
+    ): array
     {
-        $url = ''; // the follow-up url
+        // init the url to show the result to the user and for the next step
+        $url = $url_array;
+
+        // detect the url format and map it to standard keys
+        $url_map = new url_mapper();
+        $url_array = $url_map->url_to_standard($url_array, $usr_msg);
+
+        // get vars for the main entries just to make code more readable
+        $view = $url_array[url_var::MASK];
+        $step = $url_array[url_var::STEP];
+        $action = $url_array[url_var::ACTION] ?? null;
+        $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
+        $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
+
 
         // save form action
         // if the save bottom has been pressed
+        /*
         if ($step > 0 and $action == url_var::CRUD_CREATE) {
             $dbo->url_mapper($url_array, $usr_msg);
             $upd_result = new user_message();
@@ -594,9 +609,11 @@ class frontend
                 $msg = $upd_result->get_last_message();
             }
         }
+        */
 
         return $url;
     }
+
 
     /*
      * view

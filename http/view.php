@@ -85,6 +85,12 @@ if ($db_con->is_open()) {
         $ui = new frontend('view');
         $ui->load_cache();
         $url_array = $_GET;
+
+        // execute the user request
+        $sys->times->switch(system_time_type::URL_TO_ACTION);
+        $url_array = $ui->url_to_action($url_array, $usr_dsp, $usr_msg, $ui->dto);
+
+        // show the result to the user
         $sys->times->switch(system_time_type::URL_TO_HTML);
         $html_str .= $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
         $sys->times->switch(system_time_type::CLOSE);

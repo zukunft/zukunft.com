@@ -457,6 +457,31 @@ class user_list
     }
 
     /**
+     * return the user based on the code_id
+     *
+     * @param string $code_id the code id of the user
+     * @return user|null
+     */
+    function get(string $code_id): user|null
+    {
+        $result = null;
+        if ($code_id != '' and $code_id != null) {
+            if (array_key_exists($code_id, $this->code_id_hash)) {
+                $id = $this->code_id_hash[$code_id];
+                $key_lst = $this->id_pos_lst();
+                $pos = $key_lst[$id];
+                $result = $this->lst()[$pos];
+            } else {
+                $lib = new library();
+                log_err('User id not found for ' . $code_id . ' in ' . $lib->dsp_array($this->code_id_hash));
+            }
+        } else {
+            log_debug('Type code id not not set');
+        }
+        return $result;
+    }
+
+    /**
      * create a dummy system user list for the unit tests without database connection that matches the core system user list
      */
     function load_dummy(): void

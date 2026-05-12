@@ -883,10 +883,29 @@ enum messages: string
     case FORM_NAME_PASSWORD = 'password';
     case FORM_NAME_PASSWORD_RE = 're-type password';
     case FORM_NAME_LOGIN = 'Login';
+    case PASSWORD_TOO_SHORT = 'password must be at least '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
+    case PASSWORD_TOO_LONG = 'password must not exceed '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
     case PASSWORD_WRONG = 'Forgot password?';
     case PASSWORD_WRONG_TITLE = 'Request to reset the password';
     case SIGN_UP = 'Sign Up';
     case LOGIN_FAILED = 'Login failed';
+    case USERNAME_MISSING = 'username missing for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
+    case USERNAME_TOO_LONG = 'username must not exceed '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
+    case EMAIL_MISSING = 'email address missing for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
+    case EMAIL_INVALID = 'email address "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" is not valid';
+    case EMAIL_TOO_LONG = 'email address must not exceed '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
     case USER_NAME_NOT_FOUND = 'no user with the username '
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . ' found';

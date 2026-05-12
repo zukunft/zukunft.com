@@ -1392,6 +1392,33 @@ class library
         return $csv;
     }
 
+    /**
+     * clear all values of a named column in a CSV array (header + data lines)
+     * e.g. to strip password hashes before comparing user CSVs in tests
+     *
+     * @param array $csv array of newline-terminated strings, first element is the header
+     * @param string $col column name as it appears in the header
+     * @return array the CSV with the named column blanked in every data row
+     */
+    function csv_clear_col(array $csv, string $col): array
+    {
+        if (count($csv) < 2) {
+            return $csv;
+        }
+        $header_cols = explode(',', rtrim($csv[0], "\n"));
+        $idx = array_search($col, $header_cols);
+        if ($idx === false) {
+            return $csv;
+        }
+        $result = [$csv[0]];
+        for ($i = 1; $i < count($csv); $i++) {
+            $fields = explode(',', rtrim($csv[$i], "\n"));
+            $fields[$idx] = '';
+            $result[] = implode(',', $fields) . "\n";
+        }
+        return $result;
+    }
+
     function is_volatile_db_field(string $class, string $fld): bool
     {
         $result = false;

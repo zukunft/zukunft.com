@@ -75,8 +75,16 @@ const ENV_CACHE_MAX_AGE = 'CACHE_TIME';
 const ENV_CACHE_MAX_AGE_FALLBACK = '-1 day';
 const ENV_ADMIN_USER = 'ADMIN_USER';  // can be set for a ui free setup
 const ENV_ADMIN_PW = 'ADMIN_PW'; // can be set for a ui free setup; in test and prod should be taken from the secret store
+const ENV_ADMIN_MAIL = 'ADMIN_MAIL';
 const ENV_CO_ADMIN_USER = 'CO_ADMIN_USER'; // the suggestion is to have always a deputy admin as fallback
 const ENV_CO_ADMIN_PW = 'CO_ADMIN_PW'; // if empty requested on initial startup
+const ENV_CO_ADMIN_MAIL = 'CO_ADMIN_MAIL';
+const ENV_USER_NAME = 'USER_NAME';  // can be set for a ui free setup
+const ENV_USER_PW = 'USER_PW'; // can be set for a ui free setup; in test and prod should be taken from the secret store
+const ENV_USER_MAIL = 'USER_MAIL';
+const ENV_CO_USER_NAME = 'CO_USER_NAME'; // the suggestion is to have always a deputy admin as fallback
+const ENV_CO_USER_PW = 'CO_USER_PW'; // if empty requested on initial startup
+const ENV_CO_USER_MAIL = 'CO_USER_MAIL';
 const SYSTEM_VERSION_FALLBACK = '0.0.3';
 const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
 const THIS_URL_FALLBACK = 'http://localhost/';  // the default pod url if not defined
@@ -115,8 +123,16 @@ const ENV_VARS = [
     ENV_CACHE_MAX_AGE,
     ENV_ADMIN_USER,
     ENV_ADMIN_PW,
+    ENV_ADMIN_MAIL,
     ENV_CO_ADMIN_USER,
     ENV_CO_ADMIN_PW,
+    ENV_CO_ADMIN_MAIL,
+    ENV_USER_NAME,
+    ENV_USER_PW,
+    ENV_USER_MAIL,
+    ENV_CO_USER_NAME,
+    ENV_CO_USER_PW,
+    ENV_CO_USER_MAIL,
 ];
 
 const ENV_SECRETS = [
@@ -254,8 +270,16 @@ define('SYSTEM_TIME_TIME_LIMIT_ERR', getenv(ENV_SYSTEM_TIME_LIMIT_ERR) ?: 5);
 // only used as default values for the initial setup to enable a automatic setup without ui interactions
 define('ADMIN_USER', getenv(ENV_ADMIN_USER) ?: '');
 define('ADMIN_PW', getenv(ENV_ADMIN_PW) ?: '');
+define('ADMIN_MAIL', getenv(ENV_ADMIN_MAIL) ?: '');
 define('CO_ADMIN_USER', getenv(ENV_CO_ADMIN_USER) ?: '');
 define('CO_ADMIN_PW', getenv(ENV_CO_ADMIN_PW) ?: '');
+define('CO_ADMIN_MAIL', getenv(ENV_CO_ADMIN_MAIL) ?: '');
+define('USER_NAME', getenv(ENV_USER_NAME) ?: '');
+define('USER_PW', getenv(ENV_USER_PW) ?: '');
+define('USER_MAIL', getenv(ENV_USER_MAIL) ?: '');
+define('CO_USER_NAME', getenv(ENV_CO_USER_NAME) ?: '');
+define('CO_USER_PW', getenv(ENV_CO_USER_PW) ?: '');
+define('CO_USER_MAIL', getenv(ENV_CO_USER_MAIL) ?: '');
 
 // the location type for the system cache which can be the database or with some permission adjustments a file folder
 define('CACHE_LOCATION', getenv(ENV_CACHE) ?: ENV_CACHE_FALLBACK);

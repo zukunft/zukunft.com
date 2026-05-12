@@ -119,51 +119,54 @@ if ($db_con->is_open()) {
             # If all fields are not empty, and the passwords match,
             # create a session, and session variables,
             $usr_email = $_POST[url_var::EMAIL_HUMAN];
-            $pw_hash = password_hash($_POST[url_var::USER_PASSWORD_HUMAN], PASSWORD_BCRYPT);
             $db_con->set_class(user::class);
             $db_con->set_usr(users::SYSTEM_ID);
             // TODO use user object and prepared query
             $new_usr = new user();
             $new_usr->name = $usr_name;
             $new_usr->email = $usr_email;
-            $new_usr->password = $pw_hash;
-            $new_usr->save($msg);
-            $log_id = $new_usr->id();
-            if ($log_id <= 0) {
-                log_err('Insert of user ' . $usr_name . ' with email ' . $usr_email . ' failed.', 'signup');
-            }
-            /*
-            $sql = sprintf("INSERT INTO users (`user_name`,`email`,`password`)
-              VALUES('%s','%s','%s')",
-              mysqli_real_escape_string($usr_name),
-              mysqli_real_escape_string($_POST[url_var::EMAIL_HUMAN]),
-              $pw_hash)or die(mysqli_error());
-            $sql_result = mysqli_query($sql);
-            */
-            // get user id from the name
-            $usr_by_name = new user();
-            $usr_by_name->load_by_name($usr_name);
-            $usr_id = $usr_by_name->id();
-            if ($usr_id > 0) {
-                // auto login
-                session_start();
-                if (empty($_SESSION[url_var::SESSION_TOKEN])) {
-                    try {
-                        $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
-                    } catch (RandomException $e) {
-                        log_err('RandomException ' . $e->getMessage());
-                    }
-                }
-                $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
-                $_SESSION[url_var::USERNAME_HUMAN] = $usr_name;
-                $_SESSION[url_var::SESSION_LOGGED] = TRUE;
+            $new_usr->set_password($_POST[url_var::USER_PASSWORD_HUMAN], $msg);
+            if (!$msg->is_ok()) {
+                $error = '<p>' . $msg->all_message_text() . '</p>';
             } else {
-                log_err("Cannot find id for " . $usr_name . " after signup.", "signup.php");
-            }
+                $new_usr->save($msg);
+                $log_id = $new_usr->id();
+                if ($log_id <= 0) {
+                    log_err('Insert of user ' . $usr_name . ' with email ' . $usr_email . ' failed.', 'signup');
+                }
+                /*
+                $sql = sprintf("INSERT INTO users (`user_name`,`email`,`password`)
+                  VALUES('%s','%s','%s')",
+                  mysqli_real_escape_string($usr_name),
+                  mysqli_real_escape_string($_POST[url_var::EMAIL_HUMAN]),
+                  $pw_hash)or die(mysqli_error());
+                $sql_result = mysqli_query($sql);
+                */
+                // get user id from the name
+                $usr_by_name = new user();
+                $usr_by_name->load_by_name($usr_name);
+                $usr_id = $usr_by_name->id();
+                if ($usr_id > 0) {
+                    // auto login
+                    session_start();
+                    if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                        try {
+                            $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                        } catch (RandomException $e) {
+                            log_err('RandomException ' . $e->getMessage());
+                        }
+                    }
+                    $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
+                    $_SESSION[url_var::USERNAME_HUMAN] = $usr_name;
+                    $_SESSION[url_var::SESSION_LOGGED] = TRUE;
+                } else {
+                    log_err("Cannot find id for " . $usr_name . " after signup.", "signup.php");
+                }
 
-            # Redirect the user to a main page
-            header("Location: view.php");
-            exit;
+                # Redirect the user to a main page
+                header("Location: view.php");
+                exit;
+            }
         }
     }
 

@@ -197,6 +197,18 @@ class system_object
         return $this->sys_usr_lst;
     }
 
+    /**
+     * get a preloaded system user
+     * TODO check that it is never be called by a user action and lof all access as double check
+     *
+     * @param string $code_id to select the system user
+     * @return user|null null if no user with the code id is found
+     */
+    function system_user(string $code_id): user|null
+    {
+        return $this->system_users()->get($code_id);
+    }
+
 
     /*
      * modify

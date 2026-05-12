@@ -94,8 +94,13 @@ if ($db_con->is_open()) {
             if ($error == '') {
                 // If all fields are not empty, and the passwords match,
                 // create a session, and session variables,
-                $pw_hash = password_hash($_POST[url_var::USER_PASSWORD_HUMAN], PASSWORD_BCRYPT);
-                $usr->password = $pw_hash;
+                $usr->set_password($_POST[url_var::USER_PASSWORD_HUMAN], $usr_msg);
+                if (!$usr_msg->is_ok()) {
+                    $error .= $usr_msg->all_message_text();
+                }
+            }
+
+            if ($error == '') {
                 $usr->activation_key = '';
                 $usr->activation_timeout = new DateTime();
                 $usr->save($usr_msg);

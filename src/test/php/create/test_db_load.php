@@ -61,6 +61,7 @@ include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VIEW . 'view.php';
@@ -118,6 +119,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
@@ -1257,6 +1259,11 @@ class test_db_load
             if ($csv_file === false) {
                 log_err('csv file ' . $csv_file_path . ' for fixed base table entries not found');
             } else {
+                // strip sensitive fields before comparing
+                if ($class == user::class) {
+                    $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_PASSWORD);
+                    $csv_file = $lib->csv_clear_col($csv_file, user_db::FLD_PASSWORD);
+                }
                 $diff = $lib->diff_msg($csv_db, $csv_file);
                 if ($diff != '') {
                     $target = implode("", $csv_db);

@@ -95,7 +95,7 @@ if ($db_con->is_open()) {
             $db_usr = new user;
             $db_usr->load_by_name($usr_name);
             if ($db_usr->has_db_id()) {
-                if (!password_verify($pw, $db_usr->password)) {
+                if (!password_verify($pw, $db_usr->get_password())) {
                     $msg->add_id(msg_id::PASSWORD_WRONG);
                     $url = $html->url(rest_ctrl::LOGIN_RESET);
                     $ref = $html->ref($url, $mtr->txt(msg_id::PASSWORD_WRONG),
