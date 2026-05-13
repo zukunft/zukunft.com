@@ -605,6 +605,24 @@ class html_base
     }
 
     /**
+     * Build a URL parameter string based on the url array with a back part
+     * so the target page can redirect back to the calling page after completing its action.
+     *
+     * @param array $url_array the URL parameters of the calling page e.g. /http/view.php?m=3&id=12
+     * @return string the additional URL parameters e.g. '9m=3&9id=123'
+     */
+    function url_par_from_back_part(array $url_array): string
+    {
+        $par = [];
+        foreach ($url_array as $key => $val) {
+            if (str_starts_with($key, url_var::BACK)) {
+                $par[] = substr($key, 1, strlen($key) - 1) . '=' . rawurlencode($val);
+            }
+        }
+        return empty($par) ? '' : '?' . implode('&', $par);
+    }
+
+    /**
      * build a url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view

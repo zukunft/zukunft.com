@@ -362,6 +362,17 @@ class base_ui_tests
         $result = $html->url_with_back(api::LOGIN_SCRIPT, $url_array);
         $t->assert($test_name, $result, '/http/login.php?9m=3&9id=123');
 
+        $test_name = 'url from back part while editing word 123';
+        $url_part = parse_url('?m=2&9m=3&9id=123');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->url_par_from_back_part($url_array);
+        $t->assert($test_name, $result, '?m=3&id=123');
+
+        $test_name = 'url from back part if array is empty';
+        $url_array = [];
+        $result = $html->url_par_from_back_part($url_array);
+        $t->assert($test_name, $result, '');
+
         $test_name = 'add word url with back part from main page';
         $url_part = parse_url('?m=1');
         parse_str($url_part["query"], $url_array);
