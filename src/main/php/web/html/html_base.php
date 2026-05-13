@@ -371,7 +371,7 @@ class html_base
         return $this->list_unsorted($result);
     }
 
-    private function user_login_list(array $url_array = []):  string
+    private function user_login_list(array $url_array = []): string
     {
         global $mtr;
         $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $url_array);
@@ -605,21 +605,38 @@ class html_base
     }
 
     /**
-     * Build a URL parameter string based on the url array with a back part
-     * so the target page can redirect back to the calling page after completing its action.
+     * extract the BACK-prefixed params from a URL array, stripping the prefix from each key
      *
-     * @param array $url_array the URL parameters of the calling page e.g. /http/view.php?m=3&id=12
-     * @return string the additional URL parameters e.g. '9m=3&9id=123'
+     * @param array $url_array e.g. ['9m' => '3', '9id' => '123']
+     * @return array e.g. ['m' => '3', 'id' => '123'], empty array when no BACK params are present
      */
-    function url_par_from_back_part(array $url_array): string
+    static function url_par_from_back_part(array $url_array): array
     {
-        $par = [];
+        $result = [];
         foreach ($url_array as $key => $val) {
             if (str_starts_with($key, url_var::BACK)) {
-                $par[] = substr($key, 1, strlen($key) - 1) . '=' . rawurlencode($val);
+                $result[substr($key, strlen(url_var::BACK))] = rawurldecode((string)$val);
             }
         }
-        return empty($par) ? '' : '?' . implode('&', $par);
+        return $result;
+    }
+
+    /**
+     * get URL from back ('9') prefixed url params set by html_base::back_url_part().
+     * After a login (or any interstitial action) completes,
+     * this gives the URL the user should be sent to.
+     * Returns empty string when no back params are present.
+     *
+     * @param array $url_array the raw $_GET array, e.g. ['9m' => '3', '9id' => '123']
+     *                         '9script' (BACK . 'script'): the calling script for non-default pages e.g. /http/about.php
+     *                          other BACK-prefixed params: the original query params with prefix stripped on return
+     * @param string $script script to be called which should be api::MAIN_SCRIPT
+     * @return string the URL to redirect to after the action e.g. '/http/view.php?m=3&id=123'
+     */
+    static function url_from_back(array $url_array, string $script = api::MAIN_SCRIPT): string
+    {
+        $back_array = html_base::url_par_from_back_part($url_array);
+        return empty($back_array) ? '' : $script . '?' . http_build_query($back_array);
     }
 
     /**

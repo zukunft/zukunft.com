@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 // load the main frontend class
 include_once paths::WEB . 'frontend.php';
 
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
@@ -69,7 +70,11 @@ if ($db_con->is_open()) {
     $html_str .= $usr->get();
     // TODO Prio 1 set the user of the $msg and make the the only place where the requesting user is stored
 
+    // merge POST into GET so form submissions (e.g. login) reach url_to_action
+    $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
+
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    // at minimum the IP address is used as the user id, so id() > 0 is always true for real requests
     if ($usr->id() > 0) {
         $usr->load_usr_data();
 
@@ -84,11 +89,15 @@ if ($db_con->is_open()) {
 
         $ui = new frontend('view');
         $ui->load_cache();
-        $url_array = $_GET;
 
-        // execute the user request
+        // execute the user request and POST-Redirect-GET to prevent re-submission on reload
         $sys->times->switch(system_time_type::URL_TO_ACTION);
-        $url_array = $ui->url_to_action($url_array, $usr_dsp, $usr_msg, $ui->dto);
+        if (isset($_POST[url_var::POST_SUBMIT])) {
+            $url_array = $ui->url_to_action($url_array, $usr_dsp, $usr_msg, $ui->dto);
+            $redirect = api::MAIN_SCRIPT . '?' . http_build_query($url_array);
+            header('Location: ' . $redirect);
+            exit;
+        }
 
         // show the result to the user
         $sys->times->switch(system_time_type::URL_TO_HTML);

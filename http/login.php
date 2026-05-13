@@ -54,7 +54,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 // reset the html code var
 $html_str = '';
 $msg_txt = '';
-$back = '';
+$next_url = '';
 $msg = new Message();
 
 // open database
@@ -77,17 +77,11 @@ if ($db_con->is_open()) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
+        // in doughty the session is logged out
         $_SESSION[url_var::SESSION_LOGGED] = FALSE;
-        // the original calling page that should be shown after the login is finished
-        // first try the 'b'-prefixed params set by the navbar login link
-        $back = url_var::url_from_back_url($_GET, api::MAIN_SCRIPT);
-        if ($back === '') {
-            if (isset($_POST[url_var::BACK])) {
-                $back = filter_var($_POST[url_var::BACK] ?? '', FILTER_SANITIZE_URL);
-            } else {
-                $back = filter_var($_GET[url_var::BACK] ?? '', FILTER_SANITIZE_URL);
-            }
-        }
+
+        // get the calling url based on the given back parameters for the result page
+        $next_url = html_base::url_from_back($_GET);
 
         if (isset($_POST[url_var::POST_SUBMIT])) {
 
@@ -101,8 +95,8 @@ if ($db_con->is_open()) {
             $login_msg = new user_message();
             if ($db_usr->login($usr_name, $pw, $login_msg)) {
                 // TODO ask if cookies are allowed: if yes, the session id does not need to be forwarded
-                if ($back != '') {
-                    header("Location: " . $back);
+                if ($next_url != '') {
+                    header("Location: " . $next_url);
                 } else {
                     header("Location: ../view.php");
                 }
@@ -126,7 +120,7 @@ if ($db_con->is_open()) {
     $html = new html_base();
     if (!$_SESSION[url_var::SESSION_LOGGED]) {
         $web_usr = new user_dsp();
-        $form_str = $web_usr->form_login($back, $msg_txt, $mtr);
+        $form_str = $web_usr->form_login($next_url, $msg_txt, $mtr);
 
         // TODO Prio 3 use a changing logo to show something positive of today or a person that has done something positive and is somehow linked to today
         $html_str = $html->logo_flex();

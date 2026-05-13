@@ -584,32 +584,17 @@ class frontend
         $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
         $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
 
-
-        // save form action
-        // if the save bottom has been pressed
-        /*
-        if ($step > 0 and $action == url_var::CRUD_CREATE) {
-            $dbo->url_mapper($url_array, $usr_msg);
-            $upd_result = new user_message();
-            // $upd_result = $dbo->add_via_api();
-
-            // if update was fine ...
-            if ($upd_result->is_ok()) {
-                // TODO Prio 0 get the id from the result
-                //$id = $dbo->id();
-                $id = 0;
-                // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
-                // switched off because maybe staying on the edit page is the expected behaviour
-                if ($back == '' or $back == 0) {
-                    $view_id = views::START_ID;
-                }
-                //$result .= dsp_go_back($back, $usr);
-            } else {
-                // ... or in case of a problem prepare to show the message
-                $msg = $upd_result->get_last_message();
-            }
-        }
-        */
+        match (true) {
+            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $usr_msg, $do_it),
+            $view == views::LOGOUT_ID => $url = $this->action_logout(),
+            in_array($view, views::ADD_MASKS_IDS) => $url = $this->action_crud(
+                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
+            in_array($view, views::EDIT_MASKS_IDS) => $url = $this->action_crud(
+                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_UPDATE, $do_it),
+            in_array($view, views::DEL_MASKS_IDS) => $url = $this->action_crud(
+                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_DELETE, $do_it),
+            default => null
+        };
 
         return $url;
     }
@@ -801,6 +786,98 @@ class frontend
     /*
      * execute
      */
+
+    /**
+     * validate credentials, start the session, and return the URL to redirect to after login
+     * @param array $url_array the normalised URL params including username and password
+     * @param user_message $usr_msg collects errors if login fails
+     * @param bool $do_it false for unit tests that should not touch the session
+     * @return array URL array pointing to the back page on success, or back to the login view on failure
+     */
+    private function action_login(array $url_array, user_message $usr_msg, bool $do_it): array
+    {
+        // no 'htmlspecialchars()' to avoid converting usernames like O'Brien or a&b before writing to the database
+        // SQL injection protection is done be using only prepared queries
+        $usr_name = $url_array[url_var::USERNAME] ?? $url_array[url_var::USERNAME_HUMAN] ?? '';
+        $pw = $url_array[url_var::USER_PASSWORD] ?? $url_array[url_var::USER_PASSWORD_HUMAN] ?? '';
+        // if login fails show the login view again
+        $next_array = [url_var::MASK => views::LOGIN_ID];
+
+        if ($do_it) {
+            $db_usr = new user_backend();
+            $login_msg = new backend_user_message();
+            if ($db_usr->login($usr_name, $pw, $login_msg)) {
+                $back_array = html_base::url_par_from_back_part($url_array);
+                if (!empty($back_array)) {
+                    $next_array = $back_array;
+                }
+            } else {
+                $usr_msg->merge($login_msg);
+            }
+        }
+
+        return $next_array;
+    }
+
+    /**
+     * clear the session and return the URL for the start page
+     * @return array URL array pointing to the start view
+     */
+    private function action_logout(): array
+    {
+        if (isset($_SESSION)) {
+            $_SESSION = [];
+            session_destroy();
+        }
+        return [url_var::MASK => views::START_ID];
+    }
+
+    /**
+     * execute a create, update, or delete action on a sandbox object and return the next URL
+     * @param array $url_array the normalised URL params
+     * @param int $view the view ID that determines the object type
+     * @param user_ui $usr the session user executing the action
+     * @param user_message $usr_msg collects errors
+     * @param data_object $dto the frontend cache
+     * @param string $crud one of url_var::CRUD_CREATE / CRUD_UPDATE / CRUD_DELETE
+     * @param bool $do_it false for unit tests that should not touch the database
+     * @return array URL array for the next page
+     */
+    private function action_crud(
+        array        $url_array,
+        int          $view,
+        user_ui      $usr,
+        user_message $usr_msg,
+        data_object  $dto,
+        string       $crud,
+        bool         $do_it
+    ): array
+    {
+        $next_url = html_base::url_from_back($url_array);
+        $dbo = $this->view_id_to_dbo_ui($view);
+        $dbo->url_mapper($url_array, $usr_msg, $dto);
+
+        if ($do_it) {
+            $result_msg = match ($crud) {
+                url_var::CRUD_CREATE => $dbo->add_via_api($usr, $usr_msg),
+                url_var::CRUD_UPDATE => $dbo->update($usr, $usr_msg),
+                url_var::CRUD_DELETE => $dbo->del($usr, $usr_msg),
+                default => new user_message()
+            };
+            if (!$result_msg->is_ok()) {
+                $usr_msg->add_message($result_msg->get_last_message());
+                // stay on the current view so the user can fix errors
+                return $url_array;
+            }
+        }
+
+        // on success: go back to the calling page or to the start view
+        if ($next_url !== '') {
+            parse_str(parse_url($next_url, PHP_URL_QUERY) ?? '', $next_array);
+            return $next_array;
+        }
+        return [url_var::MASK => views::START_ID];
+    }
 
     private function exe_process_step(
         sandbox_ui|sandbox_named_ui|db_object_ui $sbx,

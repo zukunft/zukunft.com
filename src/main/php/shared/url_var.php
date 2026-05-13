@@ -627,45 +627,4 @@ class url_var
     ];
 
 
-    /*
-     * back URL helpers for the login redirect
-     */
-
-    /**
-     * Reconstruct the original page URL from BACK ('9') prefixed GET params set by html_base::back_url_part().
-     * Returns empty string when no back params are present at all.
-     * The script key '9script' (BACK . 'script') is absent for the default view;
-     * pass api::MAIN_SCRIPT as $default_script to handle that case.
-     *
-     * @param array  $get_params     the raw $_GET array from the login page request, containing:
-     *   - '9script' (BACK . 'script'): the calling script path for non-default pages e.g. /http/about.php
-     *   - BACK-prefixed params ('9id', '9m', ...): the original page's query params, BACK prefix stripped on return e.g. 9id=12 becomes id=12
-     * @param string $default_script script to use when '9script' is absent e.g. api::MAIN_SCRIPT
-     */
-    static function url_from_back_url(array $get_params, string $default_script = ''): string
-    {
-        $back_script = self::BACK . 'script';
-        $has_back = false;
-        foreach ($get_params as $key => $_) {
-            if (str_starts_with($key, self::BACK)) {
-                $has_back = true;
-                break;
-            }
-        }
-        if (!$has_back) {
-            return '';
-        }
-        $script = rawurldecode($get_params[$back_script] ?? $default_script);
-        if ($script === '') {
-            return '';
-        }
-        $params = [];
-        foreach ($get_params as $key => $val) {
-            if ($key !== $back_script && str_starts_with($key, self::BACK)) {
-                $params[] = substr($key, strlen(self::BACK)) . '=' . rawurlencode(rawurldecode((string)$val));
-            }
-        }
-        return $script . (empty($params) ? '' : '?' . implode('&', $params));
-    }
-
 }

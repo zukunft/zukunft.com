@@ -4938,7 +4938,6 @@
     \-- url_new - section for function url_new not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- back_url_part - section for function back_url_part not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_with_back - section for function url_with_back not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
-    \-- url_par_from_back_part - section for function url_par_from_back_part not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_api - section for function url_api not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_ex - section for function url_ex not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- text_h1 - section for function text_h1 not yet defined that it should be text formatting in /html/html_base.php
@@ -6893,8 +6892,6 @@
         \-- html_base - Build a URL parameter string with the calling params each prefixed with url_var::BACK ('9'),
     \-- url_with_back
         \-- html_base - Build a URL parameter string with the calling params each prefixed with url_var::BACK ('9'),
-    \-- url_par_from_back_part
-        \-- html_base - Build a URL parameter string based on the url array with a back part
     \-- url_api
         \-- html_base - build a url for link a zukunft.com element
     \-- url_ex

@@ -7,7 +7,12 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO fix to bugs in the component types so that all component type returns a nice result
+    TODO add unti test for all system pages including the login page to be able to use the view.php script also for the login page
     TODO test user login
+    TODO deprecate the old $back parameter and use instead back prefixed parameters
+    TODO deprecate all non view.php http calls
+    TODO check how to shorten the urls e.g. that www.zukunft.com/login calls www.zukunft.com/http/view.php?m=61 
     TODO test for add word workflow: add the function "url_to_action_and_next_step" in the workflow class
     TODO add horitontal write test that includes all cases of changing any unique key e.g. the name, code_id, linked object and group_id for values
     TODO finish the frontend component tests

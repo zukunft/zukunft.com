@@ -804,25 +804,25 @@ class user extends db_id_object_non_sandbox
         $this->load_by_name($usr_name);
         if (!$this->has_db_id()) {
             $msg->add(msg_id::USER_NAME_NOT_FOUND, [msg_id::VAR_USER_NAME => $usr_name]);
-            return false;
         }
         if (!password_verify($pw, $this->get_password())) {
             $msg->add_id(msg_id::PASSWORD_WRONG);
-            return false;
         }
-        session_start();
-        session_regenerate_id(true);
-        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
-            try {
-                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
-            } catch (RandomException $e) {
-                log_err('RandomException ' . $e->getMessage());
+        if ($msg->is_ok()) {
+            session_start();
+            session_regenerate_id(true);
+            if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                try {
+                    $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                } catch (RandomException $e) {
+                    log_err('RandomException ' . $e->getMessage());
+                }
             }
+            $_SESSION[url_var::SESSION_USER_ID] = $this->id();
+            $_SESSION[url_var::USERNAME_HUMAN] = $this->name();
+            $_SESSION[url_var::SESSION_LOGGED] = true;
         }
-        $_SESSION[url_var::SESSION_USER_ID] = $this->id();
-        $_SESSION[url_var::USERNAME_HUMAN] = $this->name();
-        $_SESSION[url_var::SESSION_LOGGED] = true;
-        return true;
+        return $msg->is_ok();
     }
 
     /**
