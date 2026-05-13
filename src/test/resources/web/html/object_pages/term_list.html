@@ -1,84 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test term_list (zukunft.com)</title>
-    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
-</head>
-<body>
-<nav class="navbar site-header fixed-top"><a href="/http/view.php" title="zukunft.com" class="navbar-brand"><img
-        src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-    <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3"><label for="kp"
-                                                                                                         class="visually-hidden">Search</label><input
-            class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
-            style="min-width: 40vw; max-width: 800px;">
-        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
-    </form>
-    <div class="col-md-2">
-        <ul class="nav navbar-nav">
-            <li class="active">
-                <details class="view-menu">
-                    <summary><i class="fas fa-edit"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>
-                        <li><a href="?view=more">... more</a></li>
-                        <li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>
-                        <li><a href="/http/view.php?m=view_add">add view</a></li>
-                    </ul>
-                </details>
-                <details class="lang-menu">
-                    <summary><i class="fas fa-globe"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=1&q=en">English</a></li>
-                        <li><a href="/http/view.php?m=1&q=en_us">US English</a></li>
-                        <li><a href="/http/view.php?m=1&q=de" title="German">Deutsch</a></li>
-                        <li><a href="/http/view.php?m=1&q=fr" title="French">Français</a></li>
-                        <li><a href="/http/view.php?m=1&q=es" title="Spanish">Español</a></li>
-                        <li><a href="/http/view.php?m=1&q=zh" title="Chinese">漢語</a></li>
-                        <li><a href="/http/view.php?m=1&q=ar" title="Arabic">العربية</a></li>
-                        <li><a href="/http/view.php?m=language_select">... more</a></li>
-                    </ul>
-                </details>
-                <details class="user-menu">
-                    <summary><i class="fas fa-user-circle"></i></summary>
-                    <ul>
-                        <li><a href="/http/login.php">log in</a></li>
-                        <li><a href="/http/signup.php">Sign in</a></li>
-                        <li><a href="/settings">Settings</a></li>
-                    </ul>
-                </details>
-            </li>
-        </ul>
-    </div>
-</nav>
-<main class="main-container"><h4>term list display test</h4>term list with tooltip:<span
-        title="Mathematics is an area of knowledge that includes the topics of numbers and formulas"
-        data-toggle="tooltip">mathematics</span>,<span title="ratio of the circumference of a circle to its diameter"
-                                                       data-toggle="tooltip">Pi (math)</span>,<span>increase</span>,<span>is a</span><br>term
-    list with link: <a href="/http/view.php?m=97&id=21">increase</a>, <a href="/http/view.php?m=91&id=2">is a</a>, <a
-            href="/http/view.php?m=90&id=1"
-            title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">mathematics</a>,
-    <a href="/http/view.php?m=92&id=2" title="ratio of the circumference of a circle to its diameter">Pi (math)</a><br>
-    <form action="/http/view.php" id="term_list_ui_test"><br><h4>Selector tests</h4>
-        <div class="form-group col-md-4"><label for="e">Word, verb, triple or formula</label><select
-                class="form-control" name="e" form="term_list_ui_test" id="e">
-            <option value="0" selected>please select ...</option>
-            <option value="-3">Pi (math)</option>
-            <option value="42">increase</option>
-            <option value="-4">is a</option>
-            <option value="1">mathematics</option>
-        </select></div>
-        <br>
-        <button type="submit" class="btn btn-outline-success btn-space">save</button>
-    </form>
-</main>
-<footer class="site-footer"><p><a href="/http/about.php">About</a> &middot; <a href="/http/privacy_policy.html">Privacy
-    Policy</a> &middot; All structured data is available under the <a
-        href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> Licence
-    unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com">program code</a> of this version
-    0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a> Licence.</p></footer>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            test term_list (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;">
+            </a>
+            <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=1">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/login.php">
+                                        log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/signup.php">
+                                        Sign in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                term list display test
+            </h4>
+            term list with tooltip:
+            <span title="Mathematics is an area of knowledge that includes the topics of numbers and formulas" data-toggle="tooltip">
+                mathematics
+            </span>
+            ,
+            <span title="ratio of the circumference of a circle to its diameter" data-toggle="tooltip">
+                Pi (math)
+            </span>
+            ,
+            <span>
+                increase
+            </span>
+            ,
+            <span>
+                is a
+            </span>
+            <br>
+            term list with link:
+            <a href="/http/view.php?m=97&id=21">
+                increase
+            </a>
+            ,
+            <a href="/http/view.php?m=91&id=2">
+                is a
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=1" title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+                mathematics
+            </a>
+            ,
+            <a href="/http/view.php?m=92&id=2" title="ratio of the circumference of a circle to its diameter">
+                Pi (math)
+            </a>
+            <br>
+            <form action="/http/view.php" id="term_list_ui_test">
+                <br>
+                <h4>
+                    Selector tests
+                </h4>
+                <div class="form-group col-md-4">
+                    <label for="e">
+                        Word, verb, triple or formula
+                    </label>
+                    <select class="form-control" name="e" form="term_list_ui_test" id="e" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="-3"  >
+                            Pi (math)
+                        </option>
+                        <option value="42"  >
+                            increase
+                        </option>
+                        <option value="-4"  >
+                            is a
+                        </option>
+                        <option value="1"  >
+                            mathematics
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-outline-success btn-space">
+                    save
+                </button>
+            </form>
+        </main>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
 </html>

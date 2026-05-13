@@ -1,227 +1,821 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test (zukunft.com)</title>
-    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
-</head>
-<body>
-<nav class="navbar site-header fixed-top"><a href="/http/view.php" title="zukunft.com" class="navbar-brand"><img
-        src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-    <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3"><label for="kp"
-                                                                                                         class="visually-hidden">Search</label><input
-            class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
-            style="min-width: 40vw; max-width: 800px;">
-        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
-    </form>
-    <div class="col-md-2">
-        <ul class="nav navbar-nav">
-            <li class="active">
-                <details class="view-menu">
-                    <summary><i class="fas fa-edit"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>
-                        <li><a href="?view=more">... more</a></li>
-                        <li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>
-                        <li><a href="/http/view.php?m=view_add">add view</a></li>
-                    </ul>
-                </details>
-                <details class="lang-menu">
-                    <summary><i class="fas fa-globe"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=1&q=en">English</a></li>
-                        <li><a href="/http/view.php?m=1&q=en_us">US English</a></li>
-                        <li><a href="/http/view.php?m=1&q=de" title="German">Deutsch</a></li>
-                        <li><a href="/http/view.php?m=1&q=fr" title="French">Français</a></li>
-                        <li><a href="/http/view.php?m=1&q=es" title="Spanish">Español</a></li>
-                        <li><a href="/http/view.php?m=1&q=zh" title="Chinese">漢語</a></li>
-                        <li><a href="/http/view.php?m=1&q=ar" title="Arabic">العربية</a></li>
-                        <li><a href="/http/view.php?m=language_select">... more</a></li>
-                    </ul>
-                </details>
-                <details class="user-menu">
-                    <summary><i class="fas fa-user-circle"></i></summary>
-                    <ul>
-                        <li><a href="/http/login.php">log in</a></li>
-                        <li><a href="/http/signup.php">Sign in</a></li>
-                        <li><a href="/settings">Settings</a></li>
-                    </ul>
-                </details>
-            </li>
-        </ul>
-    </div>
-</nav>
-<main class="main-container"><h2>Word list display test</h2>names with links:<br><a href="/http/view.php?m=90&id=1"
-                                                                                    title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">mathematics</a>,
-    <a href="/http/view.php?m=90&id=17" title="ratio of the circumference of a circle to its diameter">Pi</a><br><br>table
-    cells<br>
-    <table class="table table-borderless text-muted">
-        <tr>
-            <td><a href="/http/view.php?m=90&id=1"
-                   title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">mathematics</a>
-            </td>
-            <td><a href="/http/view.php?m=90&id=17"
-                   title="ratio of the circumference of a circle to its diameter">Pi</a></td>
-        </tr>
-    </table>
-    all word types:<br><a href="/http/view.php?m=90&id=1"
-                          title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">mathematics</a>,
-    <a href="/http/view.php?m=90&id=2" title="fixed and well-defined number">constant</a>, <a
-            href="/http/view.php?m=90&id=17" title="ratio of the circumference of a circle to its diameter">Pi</a>, <a
-            href="/http/view.php?m=90&id=15">circumference</a>, <a href="/http/view.php?m=90&id=16">diameter</a>, <a
-            href="/http/view.php?m=90&id=6">𝑒</a>, <a href="/http/view.php?m=90&id=18">Euler's number</a>, <a
-            href="/http/view.php?m=90&id=109">year</a>, <a href="/http/view.php?m=90&id=139">2019</a>, <a
-            href="/http/view.php?m=90&id=140" title="the year 2020">2020</a>, <a href="/http/view.php?m=90&id=159">percent</a>,
-    <a href="/http/view.php?m=90&id=157">mio</a>, <a href="/http/view.php?m=90&id=104">minute</a>, <a
-            href="/http/view.php?m=90&id=24">second</a>, <a href="/http/view.php?m=90&id=206">Switzerland</a>, <a
-            href="/http/view.php?m=90&id=187">City</a>, <a href="/http/view.php?m=90&id=185">Canton</a>, <a
-            href="/http/view.php?m=90&id=213">Zurich</a>, <a href="/http/view.php?m=90&id=184">Bern</a>, <a
-            href="/http/view.php?m=90&id=191">Geneva</a>, <a href="/http/view.php?m=90&id=196">inhabitants</a>, <a
-            href="/http/view.php?m=90&id=285">parts</a>, <a href="/http/view.php?m=90&id=286">total</a>, <a
-            href="/http/view.php?m=90&id=205">problem</a>, <a href="/http/view.php?m=90&id=193">global</a>, <a
-            href="/http/view.php?m=90&id=216">potential</a>, <a href="/http/view.php?m=90&id=219">climate</a>, <a
-            href="/http/view.php?m=90&id=222">warmer</a>, <a href="/http/view.php?m=90&id=242">health</a>, <a
-            href="/http/view.php?m=90&id=226">populism</a>, <a href="/http/view.php?m=90&id=244">poverty</a>, <a
-            href="/http/view.php?m=90&id=246">education</a>, <a href="/http/view.php?m=90&id=249">happy</a>, <a
-            href="/http/view.php?m=90&id=103">time</a>, <a href="/http/view.php?m=90&id=251">points</a>, <a
-            href="/http/view.php?m=90&id=255">trillion</a>, <a href="/http/view.php?m=90&id=158">billion</a>, <a
-            href="/http/view.php?m=90&id=257">CHF</a>, <a href="/http/view.php?m=90&id=266">Euro</a>, <a
-            href="/http/view.php?m=90&id=258">USD</a>, <a href="/http/view.php?m=90&id=254">htp</a>, <a
-            href="/http/view.php?m=90&id=188">company</a>, <a href="/http/view.php?m=90&id=278">ABB</a><br><br>ex
-    measure and time:<br><a href="/http/view.php?m=90&id=1"
-                            title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">mathematics</a>,
-    <a href="/http/view.php?m=90&id=2" title="fixed and well-defined number">constant</a>, <a
-            href="/http/view.php?m=90&id=17" title="ratio of the circumference of a circle to its diameter">Pi</a>, <a
-            href="/http/view.php?m=90&id=15">circumference</a>, <a href="/http/view.php?m=90&id=16">diameter</a>, <a
-            href="/http/view.php?m=90&id=6">𝑒</a>, <a href="/http/view.php?m=90&id=18">Euler's number</a>, <a
-            href="/http/view.php?m=90&id=104">minute</a>, <a href="/http/view.php?m=90&id=24">second</a>, <a
-            href="/http/view.php?m=90&id=206">Switzerland</a>, <a href="/http/view.php?m=90&id=187">City</a>, <a
-            href="/http/view.php?m=90&id=185">Canton</a>, <a href="/http/view.php?m=90&id=213">Zurich</a>, <a
-            href="/http/view.php?m=90&id=184">Bern</a>, <a href="/http/view.php?m=90&id=191">Geneva</a>, <a
-            href="/http/view.php?m=90&id=196">inhabitants</a>, <a href="/http/view.php?m=90&id=285">parts</a>, <a
-            href="/http/view.php?m=90&id=286">total</a>, <a href="/http/view.php?m=90&id=205">problem</a>, <a
-            href="/http/view.php?m=90&id=193">global</a>, <a href="/http/view.php?m=90&id=216">potential</a>, <a
-            href="/http/view.php?m=90&id=219">climate</a>, <a href="/http/view.php?m=90&id=222">warmer</a>, <a
-            href="/http/view.php?m=90&id=242">health</a>, <a href="/http/view.php?m=90&id=226">populism</a>, <a
-            href="/http/view.php?m=90&id=244">poverty</a>, <a href="/http/view.php?m=90&id=246">education</a>, <a
-            href="/http/view.php?m=90&id=249">happy</a>, <a href="/http/view.php?m=90&id=103">time</a>, <a
-            href="/http/view.php?m=90&id=251">points</a>, <a href="/http/view.php?m=90&id=255">trillion</a>, <a
-            href="/http/view.php?m=90&id=158">billion</a>, <a href="/http/view.php?m=90&id=257">CHF</a>, <a
-            href="/http/view.php?m=90&id=266">Euro</a>, <a href="/http/view.php?m=90&id=258">USD</a>, <a
-            href="/http/view.php?m=90&id=254">htp</a>, <a href="/http/view.php?m=90&id=188">company</a>, <a
-            href="/http/view.php?m=90&id=278">ABB</a><br><br>measure and scaling:<br><a
-            href="/http/view.php?m=90&id=157">mio</a><br><br><br><h4>Selector tests</h4>
-    <form action="/http/view.php" id="word_list">
-        <div class="form-group col-md-4"><label for="nothing_selected">Word</label><select class="form-control"
-                                                                                           name="nothing_selected"
-                                                                                           form="word_list"
-                                                                                           id="nothing_selected">
-            <option value="0" selected>please select ...</option>
-            <option value="1">mathematics</option>
-            <option value="2">constant</option>
-            <option value="17">Pi</option>
-            <option value="15">circumference</option>
-            <option value="16">diameter</option>
-            <option value="6">𝑒</option>
-            <option value="18">Euler's number</option>
-            <option value="109">year</option>
-            <option value="139">2019</option>
-            <option value="140">2020</option>
-            <option value="159">percent</option>
-            <option value="4">one</option>
-            <option value="157">mio</option>
-            <option value="104">minute</option>
-            <option value="24">second</option>
-            <option value="206">Switzerland</option>
-            <option value="187">City</option>
-            <option value="185">Canton</option>
-            <option value="213">Zurich</option>
-            <option value="184">Bern</option>
-            <option value="191">Geneva</option>
-            <option value="196">inhabitants</option>
-            <option value="285">parts</option>
-            <option value="286">total</option>
-            <option value="205">problem</option>
-            <option value="193">global</option>
-            <option value="216">potential</option>
-            <option value="219">climate</option>
-            <option value="222">warmer</option>
-            <option value="242">health</option>
-            <option value="226">populism</option>
-            <option value="244">poverty</option>
-            <option value="246">education</option>
-            <option value="249">happy</option>
-            <option value="103">time</option>
-            <option value="251">points</option>
-            <option value="255">trillion</option>
-            <option value="158">billion</option>
-            <option value="257">CHF</option>
-            <option value="266">Euro</option>
-            <option value="258">USD</option>
-            <option value="254">htp</option>
-            <option value="188">company</option>
-            <option value="278">ABB</option>
-        </select></div>
-        <br>
-        <div class="form-group col-md-4"><label for="2_selected">Word</label><select class="form-control"
-                                                                                     name="2_selected" form="word_list"
-                                                                                     id="2_selected">
-            <option value="1">mathematics</option>
-            <option value="2">constant</option>
-            <option value="17">Pi</option>
-            <option value="15">circumference</option>
-            <option value="16">diameter</option>
-            <option value="6">𝑒</option>
-            <option value="18">Euler's number</option>
-            <option value="109">year</option>
-            <option value="139">2019</option>
-            <option value="140">2020</option>
-            <option value="159">percent</option>
-            <option value="4">one</option>
-            <option value="157">mio</option>
-            <option value="104">minute</option>
-            <option value="24">second</option>
-            <option value="206">Switzerland</option>
-            <option value="187">City</option>
-            <option value="185">Canton</option>
-            <option value="213">Zurich</option>
-            <option value="184">Bern</option>
-            <option value="191">Geneva</option>
-            <option value="196">inhabitants</option>
-            <option value="285">parts</option>
-            <option value="286">total</option>
-            <option value="205">problem</option>
-            <option value="193">global</option>
-            <option value="216">potential</option>
-            <option value="219">climate</option>
-            <option value="222">warmer</option>
-            <option value="242">health</option>
-            <option value="226">populism</option>
-            <option value="244">poverty</option>
-            <option value="246">education</option>
-            <option value="249">happy</option>
-            <option value="103">time</option>
-            <option value="251">points</option>
-            <option value="255">trillion</option>
-            <option value="158">billion</option>
-            <option value="257">CHF</option>
-            <option value="266">Euro</option>
-            <option value="258">USD</option>
-            <option value="254">htp</option>
-            <option value="188">company</option>
-            <option value="278">ABB</option>
-        </select></div>
-        <br>
-        <button type="submit" class="btn btn-outline-success btn-space">save</button>
-    </form>
-</main>
-<footer class="site-footer"><p><a href="/http/about.php">About</a> &middot; <a href="/http/privacy_policy.html">Privacy
-    Policy</a> &middot; All structured data is available under the <a
-        href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> Licence
-    unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com">program code</a> of this version
-    0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a> Licence.</p></footer>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            test (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;">
+            </a>
+            <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=1">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/login.php">
+                                        log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/signup.php">
+                                        Sign in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h2>
+                Word list display test
+            </h2>
+            names with links:
+            <br>
+            <a href="/http/view.php?m=90&id=1" title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+                mathematics
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=17" title="ratio of the circumference of a circle to its diameter">
+                Pi
+            </a>
+            <br>
+            <br>
+            table cells
+            <br>
+            <table class="table table-borderless text-muted">
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=90&id=1" title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+                            mathematics
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=90&id=17" title="ratio of the circumference of a circle to its diameter">
+                            Pi
+                        </a>
+                    </td>
+                </tr>
+            </table>
+            all word types:
+            <br>
+            <a href="/http/view.php?m=90&id=1" title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+                mathematics
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=2" title="fixed and well-defined number">
+                constant
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=17" title="ratio of the circumference of a circle to its diameter">
+                Pi
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=15">
+                circumference
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=16">
+                diameter
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=6">
+                𝑒
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=18">
+                Euler's number
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=109">
+                year
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=139">
+                2019
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=140" title="the year 2020">
+                2020
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=159">
+                percent
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=157">
+                mio
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=104">
+                minute
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=24">
+                second
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=206">
+                Switzerland
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=187">
+                City
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=185">
+                Canton
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=213">
+                Zurich
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=184">
+                Bern
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=191">
+                Geneva
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=196">
+                inhabitants
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=285">
+                parts
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=286">
+                total
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=205">
+                problem
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=193">
+                global
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=216">
+                potential
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=219">
+                climate
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=222">
+                warmer
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=242">
+                health
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=226">
+                populism
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=244">
+                poverty
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=246">
+                education
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=249">
+                happy
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=103">
+                time
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=251">
+                points
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=255">
+                trillion
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=158">
+                billion
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=257">
+                CHF
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=266">
+                Euro
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=258">
+                USD
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=254">
+                htp
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=188">
+                company
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=278">
+                ABB
+            </a>
+            <br>
+            <br>
+            ex measure and time:
+            <br>
+            <a href="/http/view.php?m=90&id=1" title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+                mathematics
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=2" title="fixed and well-defined number">
+                constant
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=17" title="ratio of the circumference of a circle to its diameter">
+                Pi
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=15">
+                circumference
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=16">
+                diameter
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=6">
+                𝑒
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=18">
+                Euler's number
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=104">
+                minute
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=24">
+                second
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=206">
+                Switzerland
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=187">
+                City
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=185">
+                Canton
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=213">
+                Zurich
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=184">
+                Bern
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=191">
+                Geneva
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=196">
+                inhabitants
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=285">
+                parts
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=286">
+                total
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=205">
+                problem
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=193">
+                global
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=216">
+                potential
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=219">
+                climate
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=222">
+                warmer
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=242">
+                health
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=226">
+                populism
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=244">
+                poverty
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=246">
+                education
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=249">
+                happy
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=103">
+                time
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=251">
+                points
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=255">
+                trillion
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=158">
+                billion
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=257">
+                CHF
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=266">
+                Euro
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=258">
+                USD
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=254">
+                htp
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=188">
+                company
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=278">
+                ABB
+            </a>
+            <br>
+            <br>
+            measure and scaling:
+            <br>
+            <a href="/http/view.php?m=90&id=157">
+                mio
+            </a>
+            <br>
+            <br>
+            <br>
+            <h4>
+                Selector tests
+            </h4>
+            <form action="/http/view.php" id="word_list">
+                <div class="form-group col-md-4">
+                    <label for="nothing_selected">
+                        Word
+                    </label>
+                    <select class="form-control" name="nothing_selected" form="word_list" id="nothing_selected" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="1"  >
+                            mathematics
+                        </option>
+                        <option value="2"  >
+                            constant
+                        </option>
+                        <option value="17"  >
+                            Pi
+                        </option>
+                        <option value="15"  >
+                            circumference
+                        </option>
+                        <option value="16"  >
+                            diameter
+                        </option>
+                        <option value="6"  >
+                            𝑒
+                        </option>
+                        <option value="18"  >
+                            Euler's number
+                        </option>
+                        <option value="109"  >
+                            year
+                        </option>
+                        <option value="139"  >
+                            2019
+                        </option>
+                        <option value="140"  >
+                            2020
+                        </option>
+                        <option value="159"  >
+                            percent
+                        </option>
+                        <option value="4"  >
+                            one
+                        </option>
+                        <option value="157"  >
+                            mio
+                        </option>
+                        <option value="104"  >
+                            minute
+                        </option>
+                        <option value="24"  >
+                            second
+                        </option>
+                        <option value="206"  >
+                            Switzerland
+                        </option>
+                        <option value="187"  >
+                            City
+                        </option>
+                        <option value="185"  >
+                            Canton
+                        </option>
+                        <option value="213"  >
+                            Zurich
+                        </option>
+                        <option value="184"  >
+                            Bern
+                        </option>
+                        <option value="191"  >
+                            Geneva
+                        </option>
+                        <option value="196"  >
+                            inhabitants
+                        </option>
+                        <option value="285"  >
+                            parts
+                        </option>
+                        <option value="286"  >
+                            total
+                        </option>
+                        <option value="205"  >
+                            problem
+                        </option>
+                        <option value="193"  >
+                            global
+                        </option>
+                        <option value="216"  >
+                            potential
+                        </option>
+                        <option value="219"  >
+                            climate
+                        </option>
+                        <option value="222"  >
+                            warmer
+                        </option>
+                        <option value="242"  >
+                            health
+                        </option>
+                        <option value="226"  >
+                            populism
+                        </option>
+                        <option value="244"  >
+                            poverty
+                        </option>
+                        <option value="246"  >
+                            education
+                        </option>
+                        <option value="249"  >
+                            happy
+                        </option>
+                        <option value="103"  >
+                            time
+                        </option>
+                        <option value="251"  >
+                            points
+                        </option>
+                        <option value="255"  >
+                            trillion
+                        </option>
+                        <option value="158"  >
+                            billion
+                        </option>
+                        <option value="257"  >
+                            CHF
+                        </option>
+                        <option value="266"  >
+                            Euro
+                        </option>
+                        <option value="258"  >
+                            USD
+                        </option>
+                        <option value="254"  >
+                            htp
+                        </option>
+                        <option value="188"  >
+                            company
+                        </option>
+                        <option value="278"  >
+                            ABB
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <div class="form-group col-md-4">
+                    <label for="2_selected">
+                        Word
+                    </label>
+                    <select class="form-control" name="2_selected" form="word_list" id="2_selected" >
+                        <option value="1"  >
+                            mathematics
+                        </option>
+                        <option value="2"  >
+                            constant
+                        </option>
+                        <option value="17"  >
+                            Pi
+                        </option>
+                        <option value="15"  >
+                            circumference
+                        </option>
+                        <option value="16"  >
+                            diameter
+                        </option>
+                        <option value="6"  >
+                            𝑒
+                        </option>
+                        <option value="18"  >
+                            Euler's number
+                        </option>
+                        <option value="109"  >
+                            year
+                        </option>
+                        <option value="139"  >
+                            2019
+                        </option>
+                        <option value="140"  >
+                            2020
+                        </option>
+                        <option value="159"  >
+                            percent
+                        </option>
+                        <option value="4"  >
+                            one
+                        </option>
+                        <option value="157"  >
+                            mio
+                        </option>
+                        <option value="104"  >
+                            minute
+                        </option>
+                        <option value="24"  >
+                            second
+                        </option>
+                        <option value="206"  >
+                            Switzerland
+                        </option>
+                        <option value="187"  >
+                            City
+                        </option>
+                        <option value="185"  >
+                            Canton
+                        </option>
+                        <option value="213"  >
+                            Zurich
+                        </option>
+                        <option value="184"  >
+                            Bern
+                        </option>
+                        <option value="191"  >
+                            Geneva
+                        </option>
+                        <option value="196"  >
+                            inhabitants
+                        </option>
+                        <option value="285"  >
+                            parts
+                        </option>
+                        <option value="286"  >
+                            total
+                        </option>
+                        <option value="205"  >
+                            problem
+                        </option>
+                        <option value="193"  >
+                            global
+                        </option>
+                        <option value="216"  >
+                            potential
+                        </option>
+                        <option value="219"  >
+                            climate
+                        </option>
+                        <option value="222"  >
+                            warmer
+                        </option>
+                        <option value="242"  >
+                            health
+                        </option>
+                        <option value="226"  >
+                            populism
+                        </option>
+                        <option value="244"  >
+                            poverty
+                        </option>
+                        <option value="246"  >
+                            education
+                        </option>
+                        <option value="249"  >
+                            happy
+                        </option>
+                        <option value="103"  >
+                            time
+                        </option>
+                        <option value="251"  >
+                            points
+                        </option>
+                        <option value="255"  >
+                            trillion
+                        </option>
+                        <option value="158"  >
+                            billion
+                        </option>
+                        <option value="257"  >
+                            CHF
+                        </option>
+                        <option value="266"  >
+                            Euro
+                        </option>
+                        <option value="258"  >
+                            USD
+                        </option>
+                        <option value="254"  >
+                            htp
+                        </option>
+                        <option value="188"  >
+                            company
+                        </option>
+                        <option value="278"  >
+                            ABB
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-outline-success btn-space">
+                    save
+                </button>
+            </form>
+        </main>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
 </html>

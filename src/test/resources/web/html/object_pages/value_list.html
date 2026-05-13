@@ -1,160 +1,565 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test value_list (zukunft.com)</title>
-    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
-</head>
-<body>
-<nav class="navbar site-header fixed-top"><a href="/http/view.php" title="zukunft.com" class="navbar-brand"><img
-        src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-    <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3"><label for="kp"
-                                                                                                         class="visually-hidden">Search</label><input
-            class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
-            style="min-width: 40vw; max-width: 800px;">
-        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
-    </form>
-    <div class="col-md-2">
-        <ul class="nav navbar-nav">
-            <li class="active">
-                <details class="view-menu">
-                    <summary><i class="fas fa-edit"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>
-                        <li><a href="?view=more">... more</a></li>
-                        <li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>
-                        <li><a href="/http/view.php?m=view_add">add view</a></li>
-                    </ul>
-                </details>
-                <details class="lang-menu">
-                    <summary><i class="fas fa-globe"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=1&q=en">English</a></li>
-                        <li><a href="/http/view.php?m=1&q=en_us">US English</a></li>
-                        <li><a href="/http/view.php?m=1&q=de" title="German">Deutsch</a></li>
-                        <li><a href="/http/view.php?m=1&q=fr" title="French">Français</a></li>
-                        <li><a href="/http/view.php?m=1&q=es" title="Spanish">Español</a></li>
-                        <li><a href="/http/view.php?m=1&q=zh" title="Chinese">漢語</a></li>
-                        <li><a href="/http/view.php?m=1&q=ar" title="Arabic">العربية</a></li>
-                        <li><a href="/http/view.php?m=language_select">... more</a></li>
-                    </ul>
-                </details>
-                <details class="user-menu">
-                    <summary><i class="fas fa-user-circle"></i></summary>
-                    <ul>
-                        <li><a href="/http/login.php">log in</a></li>
-                        <li><a href="/http/signup.php">Sign in</a></li>
-                        <li><a href="/settings">Settings</a></li>
-                    </ul>
-                </details>
-            </li>
-        </ul>
-    </div>
-</nav>
-<main class="main-container"><h4>Value list display test</h4>as list:<br><a href="/http/view.php?m=90&id=5"
-                                                                            title="Symbol for the ratio of the circumference of a circle to its diameter">π</a>
-    <a href="/http/view.php?m=value_edit&id=5">3.14</a><br><a href="/http/view.php?m=92&id=5"
-                                                              title="Is the limit of (1 + 1/n)^n as n approaches infinity">𝑒
-        (unit symbol)</a> <a href="/http/view.php?m=value_edit&id=32773">2.72</a><br><br>as long list:<br><a
-            href="/http/view.php?m=92&id=2" title="ratio of the circumference of a circle to its diameter">Pi (math)</a>
-    <a href="/http/view.php?m=value_edit&id=32770">3.14</a><br><a href="/http/view.php?m=90&id=213">Zurich</a>, <a
-            href="/http/view.php?m=90&id=139">2019</a> <a href="/http/view.php?m=value_edit&id=914840879243">415'367</a><br><a
-            href="/http/view.php?m=90&id=213">Zurich</a>, <a href="/http/view.php?m=90&id=185">Canton</a>, <a
-            href="/http/view.php?m=90&id=139">2019</a>, <a href="/http/view.php?m=90&id=157">mio</a> <a
-            href="/http/view.php?m=value_edit&id=....09+....0R+....0t+....12+....1J+......+......+......+......+......+......+......+......+......+......+......+">1.55</a><br><a
-            href="/http/view.php?m=90&id=206">Switzerland</a>, <a href="/http/view.php?m=90&id=139">2019</a>, <a
-            href="/http/view.php?m=90&id=157">mio</a> <a
-            href="/http/view.php?m=value_edit&id=57984687026274443">8.44</a><br><a href="/http/view.php?m=90&id=5"
-                                                                                   title="Symbol for the ratio of the circumference of a circle to its diameter">π</a>
-    <a href="/http/view.php?m=value_edit&id=5">3.14</a><br><a href="/http/view.php?m=92&id=5"
-                                                              title="Is the limit of (1 + 1/n)^n as n approaches infinity">𝑒
-        (unit symbol)</a> <a href="/http/view.php?m=value_edit&id=32773">2.72</a><br><a
-            href="/http/view.php?m=92&id=78">hyperfine transition frequency of Cs</a>, <a
-            href="/http/view.php?m=90&id=42"
-            title="Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second">Hz</a>,
-    <a href="/http/view.php?m=92&id=84">1967 (year of definition)</a> <a
-            href="/http/view.php?m=value_edit&id=182541254740">9'192'631'770</a><br><a href="/http/view.php?m=92&id=46"
-                                                                                       title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">speed
-        of light</a>, <a href="/http/view.php?m=92&id=63"
-                         title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">m/s</a>,
-    <a href="/http/view.php?m=92&id=86">1983 (year of definition)</a> <a
-            href="/http/view.php?m=value_edit&id=140937208496214">299'792'458</a><br><br>as long list with small
-    page:<br><a href="/http/view.php?m=92&id=2" title="ratio of the circumference of a circle to its diameter">Pi
-        (math)</a> <a href="/http/view.php?m=value_edit&id=32770">3.14</a><br><a href="/http/view.php?m=90&id=213">Zurich</a>,
-    <a href="/http/view.php?m=90&id=139">2019</a> <a
-            href="/http/view.php?m=value_edit&id=914840879243">415'367</a><br><a href="/http/view.php?m=90&id=213">Zurich</a>,
-    <a href="/http/view.php?m=90&id=185">Canton</a>, <a href="/http/view.php?m=90&id=139">2019</a>, <a
-            href="/http/view.php?m=90&id=157">mio</a> <a
-            href="/http/view.php?m=value_edit&id=....09+....0R+....0t+....12+....1J+......+......+......+......+......+......+......+......+......+......+......+">1.55</a><br><a
-            href="/http/view.php?m=90&id=206">Switzerland</a>, <a href="/http/view.php?m=90&id=139">2019</a>, <a
-            href="/http/view.php?m=90&id=157">mio</a> <a
-            href="/http/view.php?m=value_edit&id=57984687026274443">8.44</a><br> ... and 4 more<br><br>with units:<br><a
-            href="/http/view.php?m=92&id=2" title="ratio of the circumference of a circle to its diameter">Pi (math)</a><span>3.14</span><br><a
-            href="/http/view.php?m=90&id=213">Zurich</a>, <a href="/http/view.php?m=90&id=196">inhabitants</a>, <a
-            href="/http/view.php?m=90&id=139">2019</a><span>415'367</span><br><a href="/http/view.php?m=90&id=213">Zurich</a>,
-    <a href="/http/view.php?m=90&id=185">Canton</a>, <a href="/http/view.php?m=90&id=196">inhabitants</a>, <a
-            href="/http/view.php?m=90&id=139">2019</a>, <a
-            href="/http/view.php?m=90&id=157">mio</a><span>1.55</span><br><a href="/http/view.php?m=90&id=206">Switzerland</a>,
-    <a href="/http/view.php?m=90&id=196">inhabitants</a>, <a href="/http/view.php?m=90&id=139">2019</a>, <a
-            href="/http/view.php?m=90&id=157">mio</a><span>8.44</span><br><a href="/http/view.php?m=90&id=5"
-                                                                             title="Symbol for the ratio of the circumference of a circle to its diameter">π</a><span>3.14</span><br><a
-            href="/http/view.php?m=92&id=5" title="Is the limit of (1 + 1/n)^n as n approaches infinity">𝑒 (unit
-        symbol)</a><span>2.72</span><br><a href="/http/view.php?m=92&id=78">hyperfine transition frequency of Cs</a> <a
-            href="/http/view.php?m=value&id=182541254740" title="1967 (year of definition)">9'192'631'770</a> <a
-            href="/http/view.php?m=90&id=42"
-            title="Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second">Hz</a><br>
-    ... and 1 more<br><br>as table without context:
-    <table class="table col-md-5 table-striped table-bordered">
-        <tr>
-            <th><a href="/http/view.php?m=90&id=139">2019</a>, <a href="/http/view.php?m=90&id=196">inhabitants</a></th>
-            <th>value</th>
-        </tr>
-        <tr>
-            <td><a href="/http/view.php?m=90&id=213">Zurich</a></td>
-            <td><a href="/http/view.php?m=value_edit&id=914840879243">415'367</a></td>
-        </tr>
-        <tr>
-            <td><a href="/http/view.php?m=90&id=213">Zurich</a>, <a href="/http/view.php?m=90&id=185">Canton</a>, <a
-                    href="/http/view.php?m=90&id=157">mio</a></td>
-            <td>
-                <a href="/http/view.php?m=value_edit&id=....09+....0R+....0t+....12+....1J+......+......+......+......+......+......+......+......+......+......+......+">1.55</a>
-            </td>
-        </tr>
-        <tr>
-            <td><a href="/http/view.php?m=90&id=206">Switzerland</a>, <a href="/http/view.php?m=90&id=157">mio</a></td>
-            <td><a href="/http/view.php?m=value_edit&id=57984687026274443">8.44</a></td>
-        </tr>
-    </table>
-    <br>as table with context:<h4><a href="/http/view.php?m=90&id=196">inhabitants</a>s</h4>
-    <table class="table col-md-5 table-striped table-bordered">
-        <tr>
-            <th><a href="/http/view.php?m=90&id=139">2019</a></th>
-            <th>value</th>
-        </tr>
-        <tr>
-            <td><a href="/http/view.php?m=90&id=213">Zurich</a></td>
-            <td><a href="/http/view.php?m=value_edit&id=914840879243">415'367</a></td>
-        </tr>
-        <tr>
-            <td><a href="/http/view.php?m=90&id=213">Zurich</a>, <a href="/http/view.php?m=90&id=185">Canton</a>, <a
-                    href="/http/view.php?m=90&id=157">mio</a></td>
-            <td>
-                <a href="/http/view.php?m=value_edit&id=....09+....0R+....0t+....12+....1J+......+......+......+......+......+......+......+......+......+......+......+">1.55</a>
-            </td>
-        </tr>
-        <tr>
-            <td><a href="/http/view.php?m=90&id=206">Switzerland</a>, <a href="/http/view.php?m=90&id=157">mio</a></td>
-            <td><a href="/http/view.php?m=value_edit&id=57984687026274443">8.44</a></td>
-        </tr>
-    </table>
-    <br></main>
-<footer class="site-footer"><p><a href="/http/about.php">About</a> &middot; <a href="/http/privacy_policy.html">Privacy
-    Policy</a> &middot; All structured data is available under the <a
-        href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> Licence
-    unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com">program code</a> of this version
-    0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a> Licence.</p></footer>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            test value_list (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;">
+            </a>
+            <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=1">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/login.php">
+                                        log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/signup.php">
+                                        Sign in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Value list display test
+            </h4>
+            as list:
+            <br>
+            <a href="/http/view.php?m=90&id=5" title="Symbol for the ratio of the circumference of a circle to its diameter">
+                π
+            </a>
+            <a href="/http/view.php?m=value_edit&id=5">
+                3.14
+            </a>
+            <br>
+            <a href="/http/view.php?m=92&id=5" title="Is the limit of (1 + 1/n)^n as n approaches infinity">
+                𝑒 (unit symbol)
+            </a>
+            <a href="/http/view.php?m=value_edit&id=32773">
+                2.72
+            </a>
+            <br>
+            <br>
+            as long list:
+            <br>
+            <a href="/http/view.php?m=92&id=2" title="ratio of the circumference of a circle to its diameter">
+                Pi (math)
+            </a>
+            <a href="/http/view.php?m=value_edit&id=32770">
+                3.14
+            </a>
+            <br>
+            <a href="/http/view.php?m=90&id=213">
+                Zurich
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=139">
+                2019
+            </a>
+            <a href="/http/view.php?m=value_edit&id=914840879243">
+                415'367
+            </a>
+            <br>
+            <a href="/http/view.php?m=90&id=213">
+                Zurich
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=185">
+                Canton
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=139">
+                2019
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=157">
+                mio
+            </a>
+            <a href="/http/view.php?m=value_edit&id=....09+....0R+....0t+....12+....1J+......+......+......+......+......+......+......+......+......+......+......+">
+                1.55
+            </a>
+            <br>
+            <a href="/http/view.php?m=90&id=206">
+                Switzerland
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=139">
+                2019
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=157">
+                mio
+            </a>
+            <a href="/http/view.php?m=value_edit&id=57984687026274443">
+                8.44
+            </a>
+            <br>
+            <a href="/http/view.php?m=90&id=5" title="Symbol for the ratio of the circumference of a circle to its diameter">
+                π
+            </a>
+            <a href="/http/view.php?m=value_edit&id=5">
+                3.14
+            </a>
+            <br>
+            <a href="/http/view.php?m=92&id=5" title="Is the limit of (1 + 1/n)^n as n approaches infinity">
+                𝑒 (unit symbol)
+            </a>
+            <a href="/http/view.php?m=value_edit&id=32773">
+                2.72
+            </a>
+            <br>
+            <a href="/http/view.php?m=92&id=78">
+                hyperfine transition frequency of Cs
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=42" title="Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second">
+                Hz
+            </a>
+            ,
+            <a href="/http/view.php?m=92&id=84">
+                1967 (year of definition)
+            </a>
+            <a href="/http/view.php?m=value_edit&id=182541254740">
+                9'192'631'770
+            </a>
+            <br>
+            <a href="/http/view.php?m=92&id=46" title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">
+                speed of light
+            </a>
+            ,
+            <a href="/http/view.php?m=92&id=63" title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">
+                m/s
+            </a>
+            ,
+            <a href="/http/view.php?m=92&id=86">
+                1983 (year of definition)
+            </a>
+            <a href="/http/view.php?m=value_edit&id=140937208496214">
+                299'792'458
+            </a>
+            <br>
+            <br>
+            as long list with small page:
+            <br>
+            <a href="/http/view.php?m=92&id=2" title="ratio of the circumference of a circle to its diameter">
+                Pi (math)
+            </a>
+            <a href="/http/view.php?m=value_edit&id=32770">
+                3.14
+            </a>
+            <br>
+            <a href="/http/view.php?m=90&id=213">
+                Zurich
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=139">
+                2019
+            </a>
+            <a href="/http/view.php?m=value_edit&id=914840879243">
+                415'367
+            </a>
+            <br>
+            <a href="/http/view.php?m=90&id=213">
+                Zurich
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=185">
+                Canton
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=139">
+                2019
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=157">
+                mio
+            </a>
+            <a href="/http/view.php?m=value_edit&id=....09+....0R+....0t+....12+....1J+......+......+......+......+......+......+......+......+......+......+......+">
+                1.55
+            </a>
+            <br>
+            <a href="/http/view.php?m=90&id=206">
+                Switzerland
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=139">
+                2019
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=157">
+                mio
+            </a>
+            <a href="/http/view.php?m=value_edit&id=57984687026274443">
+                8.44
+            </a>
+            <br>
+            ... and 4 more
+            <br>
+            <br>
+            with units:
+            <br>
+            <a href="/http/view.php?m=92&id=2" title="ratio of the circumference of a circle to its diameter">
+                Pi (math)
+            </a>
+            <span>
+                3.14
+            </span>
+            <br>
+            <a href="/http/view.php?m=90&id=213">
+                Zurich
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=196">
+                inhabitants
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=139">
+                2019
+            </a>
+            <span>
+                415'367
+            </span>
+            <br>
+            <a href="/http/view.php?m=90&id=213">
+                Zurich
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=185">
+                Canton
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=196">
+                inhabitants
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=139">
+                2019
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=157">
+                mio
+            </a>
+            <span>
+                1.55
+            </span>
+            <br>
+            <a href="/http/view.php?m=90&id=206">
+                Switzerland
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=196">
+                inhabitants
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=139">
+                2019
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=157">
+                mio
+            </a>
+            <span>
+                8.44
+            </span>
+            <br>
+            <a href="/http/view.php?m=90&id=5" title="Symbol for the ratio of the circumference of a circle to its diameter">
+                π
+            </a>
+            <span>
+                3.14
+            </span>
+            <br>
+            <a href="/http/view.php?m=92&id=5" title="Is the limit of (1 + 1/n)^n as n approaches infinity">
+                𝑒 (unit symbol)
+            </a>
+            <span>
+                2.72
+            </span>
+            <br>
+            <a href="/http/view.php?m=92&id=78">
+                hyperfine transition frequency of Cs
+            </a>
+            <a href="/http/view.php?m=value&id=182541254740" title="1967 (year of definition)">
+                9'192'631'770
+            </a>
+            <a href="/http/view.php?m=90&id=42" title="Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second">
+                Hz
+            </a>
+            <br>
+            ... and 1 more
+            <br>
+            <br>
+            as table without context:
+            <table class="table col-md-5 table-striped table-bordered">
+                <tr>
+                    <th>
+                        <a href="/http/view.php?m=90&id=139">
+                            2019
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=196">
+                            inhabitants
+                        </a>
+                    </th>
+                    <th>
+                        value
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=90&id=213">
+                            Zurich
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=value_edit&id=914840879243">
+                            415'367
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=90&id=213">
+                            Zurich
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=185">
+                            Canton
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=157">
+                            mio
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=value_edit&id=....09+....0R+....0t+....12+....1J+......+......+......+......+......+......+......+......+......+......+......+">
+                            1.55
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=90&id=206">
+                            Switzerland
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=157">
+                            mio
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=value_edit&id=57984687026274443">
+                            8.44
+                        </a>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            as table with context:
+            <h4>
+                <a href="/http/view.php?m=90&id=196">
+                    inhabitants
+                </a>
+                s
+            </h4>
+            <table class="table col-md-5 table-striped table-bordered">
+                <tr>
+                    <th>
+                        <a href="/http/view.php?m=90&id=139">
+                            2019
+                        </a>
+                    </th>
+                    <th>
+                        value
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=90&id=213">
+                            Zurich
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=value_edit&id=914840879243">
+                            415'367
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=90&id=213">
+                            Zurich
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=185">
+                            Canton
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=157">
+                            mio
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=value_edit&id=....09+....0R+....0t+....12+....1J+......+......+......+......+......+......+......+......+......+......+......+">
+                            1.55
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=90&id=206">
+                            Switzerland
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=157">
+                            mio
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=value_edit&id=57984687026274443">
+                            8.44
+                        </a>
+                    </td>
+                </tr>
+            </table>
+            <br>
+        </main>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
 </html>
