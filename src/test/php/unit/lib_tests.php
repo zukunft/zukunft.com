@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
@@ -108,6 +109,31 @@ class lib_tests
         $target = '<html lang="en"><table><tr><th>header</th></tr><tr><td>data</td></tr></table></html>';
         $result = $lib->trim_html($text);
         $t->assert("trim_html", $result, $target);
+
+        // replace volatile CSRF token with a fixed dummy value for snapshot tests
+        $token = test_const::DUMMY_SESSION_TOKEN;
+        $live_token = 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2';
+        $text = '<input type="hidden" name="token" value="' . $live_token . '">';
+        $target = '<input type="hidden" name="token" value="' . $token . '">';
+        $result = $lib->fix_volatile_in_html($text, $token);
+        $t->assert("fix_volatile_in_html: token replaced", $result, $target);
+
+        // token with name after value attribute
+        $text = '<input type="hidden" value="' . $live_token . '" name="token">';
+        $target = '<input type="hidden" value="' . $token . '" name="token">';
+        $result = $lib->fix_volatile_in_html($text, $token);
+        $t->assert("fix_volatile_in_html: token replaced (value before name)", $result, $target);
+
+        // non-token hidden field must not be changed
+        $text = '<input type="hidden" name="mask" value="61">';
+        $target = '<input type="hidden" name="mask" value="61">';
+        $result = $lib->fix_volatile_in_html($text, $token);
+        $t->assert("fix_volatile_in_html: non-token field unchanged", $result, $target);
+
+        // html without any token is returned unchanged
+        $text = '<form action="view.php"><input type="text" name="user"></form>';
+        $result = $lib->fix_volatile_in_html($text, $token);
+        $t->assert("fix_volatile_in_html: no token unchanged", $result, $text);
 
 
         $t->subheader($ts . 'string parts');

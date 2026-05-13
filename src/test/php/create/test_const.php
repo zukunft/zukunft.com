@@ -35,6 +35,9 @@ namespace Zukunft\ZukunftCom\test\php\create;
 class test_const
 {
 
+    // fixed replacement for the volatile CSRF session token in HTML snapshot tests
+    const string DUMMY_SESSION_TOKEN = '5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13';
+
     // the timestamp used for unit testing
     const string DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
     // usage used for unit testing

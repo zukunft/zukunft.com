@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UTILS . 'test_api.php';
+include_once test_paths::CREATE . 'test_const.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 
@@ -68,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -596,10 +598,13 @@ class test_cleanup extends test_api
         $created_html = $this->html_page($body, $title);
         $resource_file = test_paths::HTML . $file_path . test_files::HTML;
         $expected_html = $this->file($resource_file);
-        $result = $this->assert($file_path, $lib->trim_html($created_html), $lib->trim_html($expected_html));
+        $token = test_const::DUMMY_SESSION_TOKEN;
+        $created_stable = $lib->fix_volatile_in_html($created_html, $token);
+        $expected_stable = $lib->fix_volatile_in_html($expected_html, $token);
+        $result = $this->assert($file_path, $lib->trim_html($created_stable), $lib->trim_html($expected_stable));
         if (!$result and test_files::AUTO_UPDATE_HTML) {
             // TODO always set a breakpoint here
-            $this->update_file($resource_file, $lib->format_html($created_html));
+            $this->update_file($resource_file, $lib->format_html($created_stable));
         }
         return $result;
     }

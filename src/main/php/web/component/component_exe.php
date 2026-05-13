@@ -108,7 +108,8 @@ class component_exe extends component
         ?int                       $style_id = null,
         string                     $back = '',
         string                     $pattern = '',
-        bool                       $test_mode = false
+        bool                       $test_mode = false,
+        array                      $url_array = []
     ): string
     {
         global $mtr;
@@ -308,7 +309,7 @@ class component_exe extends component
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
             component_types::SYSTEM_BODY_SIGNUP => $page->signup_body(),
-            component_types::SYSTEM_BODY_LOGIN => $page->login_body(),
+            component_types::SYSTEM_BODY_LOGIN => $page->login_body($url_array),
             component_types::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body(),
             component_types::SYSTEM_BODY_LOGIN_RESET => $page->reset_body(),
             component_types::SYSTEM_BODY_LOGOUT => $page->logout_body(),

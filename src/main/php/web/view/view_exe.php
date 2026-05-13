@@ -108,7 +108,8 @@ class view_exe extends view_base
         ?data_object $cfg = null,
         string       $back = '',
         string       $pattern = '',
-        bool         $test_mode = false
+        bool         $test_mode = false,
+        array        $url_array = []
     ): string
     {
         $result = '';
@@ -131,7 +132,7 @@ class view_exe extends view_base
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open();
             //$result .= $this->dsp_navbar($cfg, $back);
-            $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $pattern, $test_mode);
+            $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $pattern, $test_mode, $url_array);
             $result .= $this->dsp_type_close();
         }
 
@@ -155,7 +156,8 @@ class view_exe extends view_base
         string       $form_name = '',
         string       $back = '',
         string       $pattern = '',
-        bool         $test_mode = false
+        bool         $test_mode = false,
+        array        $url_array = []
     ): string
     {
         $html = new html_base();
@@ -212,7 +214,7 @@ class view_exe extends view_base
                 if ($cmp->needs_row_components($cfg->typ_lst_cache)) {
                     $auto_row = false;
                 }
-                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode);
+                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode, $url_array);
 
                 // remember the style to apply it to the complete row or column
                 // TODO Prio 1 use a row / col explicit style parameter instead

@@ -169,3 +169,29 @@ Commit messages reference issue numbers: e.g. `fix auth flow as part of fix #232
 - **Minimal dependencies**: keep external packages to a minimum
 - **Log all user changes**: every user action is logged with undo/redo support
 - **Small classes**: split when classes get too large; most important functions at the top
+
+### Allowed global variables
+
+The project uses a small, fixed set of globals (see `docs/todo.md`). No other globals should be introduced:
+
+| Global   | Purpose |
+|----------|---------|
+| `$sys` | Execution times, type cache, system config (rarely changes, not user-specific) |
+| `$db_con` | Database connection |
+| `$cfg` | User-specific configuration numbers (changes more often than types) |
+| `$cac` | Backend cache of user-specific `data_object` |
+| `$ui_cac` | Frontend cache including the session user |
+| `$mtr` | Message translation — used as the last step in the frontend |
+| `$t` | Base test object (assert + cleanup helpers) |
+| `$t_sys` | Error counting and execution times for tests |
+| `$debug` | Activates additional logging levels |
+
+### Unit-testability rule (applies to every function and method)
+
+Every function must be fully unit-testable. This means:
+
+- **No PHP superglobals inside functions**: never read `$_GET`, `$_POST`, `$_SESSION`, `$_SERVER`, or any other superglobal inside a class method or standalone function. The long-term target is a single HTTP entry point (`http/view.php`) that reads superglobals once and passes them down as explicit parameters.
+- **Allowed globals inside functions**: the fixed globals listed above (`$sys`, `$cfg`, `$mtr`, etc.) may be used inside functions because tests initialise the same globals at start-up, making the behaviour reproducible without parameter injection.
+- **No other hidden globals**: any global not in the list above must be passed as an explicit parameter instead.
+
+The rationale: a function that reaches outside the allowed globals cannot be called in a test without replicating the full request environment. The fixed global set is small enough that every test runner can initialise it once and all functions stay independently testable.

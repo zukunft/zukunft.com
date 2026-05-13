@@ -42,13 +42,23 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::USER . 'user.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class system_page extends component
 {
@@ -159,10 +169,23 @@ class system_page extends component
         return 'signup_body placeholder';
     }
 
-    // TODO Prio 0 fill with real code
-    function login_body(): string
+    function login_body(array $url_array = []): string
     {
-        return 'login_body placeholder';
+        $_SESSION[url_var::SESSION_LOGGED] = false;
+        $html = new html_base();
+        $mtr = new Translator();
+
+        // embed BACK-prefixed params in the action URL so they survive the POST
+        $back_params = array_filter($url_array, fn($k) => str_starts_with($k, url_var::BACK), ARRAY_FILTER_USE_KEY);
+        $action = api::MAIN_SCRIPT . (empty($back_params) ? '' : '?' . http_build_query($back_params));
+
+        // include the login view mask so url_to_action routes to action_login on POST
+        $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::LOGIN_ID);
+
+        $web_usr = new user_dsp();
+        $form_str = $web_usr->form_login('', '', $mtr, $action, $extra_hidden);
+
+        return $html->logo_flex() . $html->br2() . $html->div($form_str, html_base::CLASS_INPUT_SECTION);
     }
 
     // TODO Prio 0 fill with real code

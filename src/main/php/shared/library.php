@@ -422,6 +422,29 @@ class library
         return rtrim($result);
     }
 
+    /**
+     * replace volatile attribute values in HTML with fixed placeholders so snapshot tests stay stable
+     * volatile values are attributes whose value changes on every request e.g. CSRF session tokens
+     *
+     * @param string $html the raw HTML that may contain volatile values
+     * @param string $fixed_token replacement value for input fields with name="token"
+     * @return string HTML with every token value replaced by $fixed_token
+     */
+    function fix_volatile_in_html(string $html, string $fixed_token): string
+    {
+        return preg_replace_callback(
+            '/<input\b[^>]*>/i',
+            function (array $m) use ($fixed_token): string {
+                $tag = $m[0];
+                if (preg_match('/\bname="token"/i', $tag)) {
+                    $tag = preg_replace('/(\bvalue=")[^"]*(")/i', '${1}' . $fixed_token . '${2}', $tag);
+                }
+                return $tag;
+            },
+            $html
+        );
+    }
+
     function escape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
     {
         // avoid using escaped var makers (probably not 100% correct)

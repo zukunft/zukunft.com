@@ -77,6 +77,7 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -107,6 +108,8 @@ use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class word extends sandbox_code_id
@@ -852,6 +855,24 @@ class word extends sandbox_code_id
     /**
      * create the HTML code to select a view
      * @param string $form the name of the html form
+     * @param view_list $msk_lst with the suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function phrase_selector(
+        phrase_list $phr_lst,
+        string      $name,
+        string      $form,
+        ?int        $selected = null,
+        string      $pattern = '',
+        msg_id      $label_id = msg_id::FORM_SELECT_PHRASE,
+        string      $style = view_styles::COL_SM_4
+    ): string
+    {
+        return $phr_lst->selector($form, $selected, $name, $label_id, $style, html_selector::TYPE_DATALIST);
+    }
+
+    /**
      * @param view_list $msk_lst with the suggested views
      * @param string $name the unique html field name for the selection of the view
      * @return string the html code to select a view

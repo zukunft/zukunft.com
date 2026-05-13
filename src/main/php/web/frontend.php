@@ -752,7 +752,7 @@ class frontend
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
                 $title = $msk_ui->title($dbo);
-                $dsp_text = $msk_ui->show($dbo, $dto, $back);
+                $dsp_text = $msk_ui->show($dbo, $dto, $back, '', false, $url_array);
 
                 // use a fallback if the view is empty
                 if ($dsp_text == '' or $msk_ui->name() == '') {
