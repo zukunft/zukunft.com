@@ -1,111 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change verb is a (zukunft.com)</title>
-    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
-</head>
-<body>
-<nav class="navbar site-header fixed-top"><a href="/http/view.php" title="zukunft.com" class="navbar-brand"><img
-        src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-    <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3"><label for="kp"
-                                                                                                         class="visually-hidden">Search</label><input
-            class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
-            style="min-width: 40vw; max-width: 800px;">
-        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
-    </form>
-    <div class="col-md-2">
-        <ul class="nav navbar-nav">
-            <li class="active">
-                <details class="view-menu">
-                    <summary><i class="fas fa-edit"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>
-                        <li><a href="?view=more">... more</a></li>
-                        <li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>
-                        <li><a href="/http/view.php?m=view_add">add view</a></li>
-                    </ul>
-                </details>
-                <details class="lang-menu">
-                    <summary><i class="fas fa-globe"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=7&q=en">English</a></li>
-                        <li><a href="/http/view.php?m=7&q=en_us">US English</a></li>
-                        <li><a href="/http/view.php?m=7&q=de" title="German">Deutsch</a></li>
-                        <li><a href="/http/view.php?m=7&q=fr" title="French">Français</a></li>
-                        <li><a href="/http/view.php?m=7&q=es" title="Spanish">Español</a></li>
-                        <li><a href="/http/view.php?m=7&q=zh" title="Chinese">漢語</a></li>
-                        <li><a href="/http/view.php?m=7&q=ar" title="Arabic">العربية</a></li>
-                        <li><a href="/http/view.php?m=language_select">... more</a></li>
-                    </ul>
-                </details>
-                <details class="user-menu">
-                    <summary><i class="fas fa-user-circle"></i></summary>
-                    <ul>
-                        <li><a href="/http/login.php">log in</a></li>
-                        <li><a href="/http/signup.php">Sign in</a></li>
-                        <li><a href="/settings">Settings</a></li>
-                    </ul>
-                </details>
-            </li>
-        </ul>
-    </div>
-</nav>
-<main class="main-container"><h4>Change verb</h4>
-    <form action="/http/view.php" id="verb_edit"><input class="form-control" type="hidden" name="mask" id="m" value="7"><input
-            class="form-control" type="hidden" name="id" id="id" value="2"><input class="form-control" type="hidden"
-                                                                                  name="back" id="9" value="2"><input
-            class="form-control" type="hidden" name="confirm" id="z" value="1">
-        <div class="row col-md-12">
-            <div class="form-group col-md-8"><label for="k">Name</label><input class="form-control" type="text"
-                                                                               name="Name" id="k" value="is a"></div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="o">Description</label><input class="form-control" type="text"
-                                                                                       name="Description" id="o"
-                                                                                       value="the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            Change verb is a (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;">
+            </a>
+            <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=7&9m=7&9a=r&9id=2&9k=is%20a&9o=the%20main%20child%20to%20parent%20relation%20e.g.%20Zurich%20is%20a%20Canton.%20The%20reverse%20is%20valid%20and%20usually%20plural%20is%20used%20e.g.%20Cantons%20are%20Zurich%2C%20Bern%2C%20...&9lp=are&9lr=are&9lx=are&9f=of%20all&9uu=23&9ui=123.4&9z=0">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30&9m=7&9a=r&9id=2&9k=is%20a&9o=the%20main%20child%20to%20parent%20relation%20e.g.%20Zurich%20is%20a%20Canton.%20The%20reverse%20is%20valid%20and%20usually%20plural%20is%20used%20e.g.%20Cantons%20are%20Zurich%2C%20Bern%2C%20...&9lp=are&9lr=are&9lx=are&9f=of%20all&9uu=23&9ui=123.4&9z=0">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=7&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=7&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=7&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=7&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=7&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=7&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=7&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/login.php?9m=7&9a=r&9id=2&9k=is%20a&9o=the%20main%20child%20to%20parent%20relation%20e.g.%20Zurich%20is%20a%20Canton.%20The%20reverse%20is%20valid%20and%20usually%20plural%20is%20used%20e.g.%20Cantons%20are%20Zurich%2C%20Bern%2C%20...&9lp=are&9lr=are&9lx=are&9f=of%20all&9uu=23&9ui=123.4&9z=0">
+                                        log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/signup.php?9m=7&9a=r&9id=2&9k=is%20a&9o=the%20main%20child%20to%20parent%20relation%20e.g.%20Zurich%20is%20a%20Canton.%20The%20reverse%20is%20valid%20and%20usually%20plural%20is%20used%20e.g.%20Cantons%20are%20Zurich%2C%20Bern%2C%20...&9lp=are&9lr=are&9lx=are&9f=of%20all&9uu=23&9ui=123.4&9z=0">
+                                        Sign in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings?9m=7&9a=r&9id=2&9k=is%20a&9o=the%20main%20child%20to%20parent%20relation%20e.g.%20Zurich%20is%20a%20Canton.%20The%20reverse%20is%20valid%20and%20usually%20plural%20is%20used%20e.g.%20Cantons%20are%20Zurich%2C%20Bern%2C%20...&9lp=are&9lr=are&9lx=are&9f=of%20all&9uu=23&9ui=123.4&9z=0">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
             </div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="lp">Plural</label><input class="form-control" type="text"
-                                                                                  name="Plural" id="lp" value="are">
+        </nav>
+        <main class="main-container">
+            <h4>
+                Change verb
+            </h4>
+            <form action="/http/view.php" id="verb_edit">
+                <input class="form-control" type="hidden" name="mask" id="m" value="7">
+                <input class="form-control" type="hidden" name="id" id="id" value="2">
+                <input class="form-control" type="hidden" name="back" id="9" value="2">
+                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <div class="row col-md-12">
+                    <div class="form-group col-md-8">
+                        <label for="k">
+                            Name
+                        </label>
+                        <input class="form-control" type="text" name="Name" id="k" value="is a">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="o">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="Description" id="o" value="the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="lp">
+                            Plural
+                        </label>
+                        <input class="form-control" type="text" name="Plural" id="lp" value="are">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="lr">
+                            Reverse
+                        </label>
+                        <input class="form-control" type="text" name="Reverse" id="lr" value="are">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="lx">
+                            Plural reverse
+                        </label>
+                        <input class="form-control" type="text" name="Plural reverse" id="lx" value="are">
+                    </div>
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <a href="/http/view.php?m=91&id=2" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                        save
+                    </button>
+                </div>
+            </form>
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h5>
+                        Used 23 times
+                    </h5>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        Triples
+                    </h5>
+                    <a href="/http/view.php?m=92&id=2" title="ratio of the circumference of a circle to its diameter">
+                        Pi (math)
+                    </a>
+                    ,
+                    <a href="/http/view.php?m=92&id=5" title="Is the limit of (1 + 1/n)^n as n approaches infinity">
+                        𝑒 (unit symbol)
+                    </a>
+                    ,
+                    <a href="/http/view.php?m=92&id=99">
+                        global warming
+                    </a>
+                    ,
+                    <a href="/http/view.php?m=92&id=100">
+                        global warming potential
+                    </a>
+                    ,
+                    <a href="/http/view.php?m=92&id=108">
+                        populism (global problem)
+                    </a>
+                    ,
+                    <a href="/http/view.php?m=92&id=111">
+                        poverty (global problem)
+                    </a>
+                    ,
+                    <a href="/http/view.php?m=92&id=93" title="the city of Zurich">
+                        City of Zurich
+                    </a>
+                    ,
+                    <a href="/http/view.php?m=92&id=94">
+                        Canton Zurich
+                    </a>
+                    ,
+                    <a href="/http/view.php?m=92&id=95">
+                        Bern (City)
+                    </a>
+                    ,
+                    <a href="/http/view.php?m=92&id=96">
+                        Geneva (City)
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        Formulas
+                    </h5>
+                    <a href="/http/view.php?m=97&id=26">
+                        city population
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        Changes
+                    </h5>
+                    26-12-2022 18:23 zukunft.com system added "is"
+                </div>
             </div>
-            <div class="form-group col-md-4"><label for="lr">Reverse</label><input class="form-control" type="text"
-                                                                                   name="Reverse" id="lr" value="are">
-            </div>
-            <div class="form-group col-md-4"><label for="lx">Plural reverse</label><input class="form-control"
-                                                                                          type="text"
-                                                                                          name="Plural reverse" id="lx"
-                                                                                          value="are"></div>
-        </div>
-        <br>
-        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=91&id=2"
-                                                          class="btn btn-space col-1 btn-outline-secondary">cancel</a>
-            <button class="btn btn-space col-1 btn-outline-success" type="submit">save</button>
-        </div>
-    </form>
-    <div class="row col-md-12">
-        <div class="col-md-12"><h5>Used 23 times</h5></div>
-        <div class="col-md-4"><h5>Triples</h5><a href="/http/view.php?m=92&id=2"
-                                                 title="ratio of the circumference of a circle to its diameter">Pi
-            (math)</a>, <a href="/http/view.php?m=92&id=5" title="Is the limit of (1 + 1/n)^n as n approaches infinity">𝑒
-            (unit symbol)</a>, <a href="/http/view.php?m=92&id=99">global warming</a>, <a
-                href="/http/view.php?m=92&id=100">global warming potential</a>, <a href="/http/view.php?m=92&id=108">populism
-            (global problem)</a>, <a href="/http/view.php?m=92&id=111">poverty (global problem)</a>, <a
-                href="/http/view.php?m=92&id=93" title="the city of Zurich">City of Zurich</a>, <a
-                href="/http/view.php?m=92&id=94">Canton Zurich</a>, <a href="/http/view.php?m=92&id=95">Bern (City)</a>,
-            <a href="/http/view.php?m=92&id=96">Geneva (City)</a></div>
-        <div class="col-md-4"><h5>Formulas</h5><a href="/http/view.php?m=97&id=26">city population</a></div>
-        <div class="col-md-4"><h5>Changes</h5>26-12-2022 18:23 zukunft.com system added "is"</div>
-    </div>
-</main>
-<footer class="site-footer"><p><a href="/http/about.php">About</a> &middot; <a href="/http/privacy_policy.html">Privacy
-    Policy</a> &middot; All structured data is available under the <a
-        href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> Licence
-    unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com">program code</a> of this version
-    0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a> Licence.</p></footer>
-</body>
+        </main>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
 </html>

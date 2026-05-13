@@ -343,6 +343,31 @@ class base_ui_tests
         $result = (new button($url, $back))->back();
         //$t->assert(", btn_back", $result, $target);
 
+        $t->subheader($ts . 'back url');
+
+        $test_name = 'back url part while editing word 123';
+        $url_part = parse_url('?m=3&id=123');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->back_url_part($url_array);
+        $t->assert($test_name, $result, '9m=3&9id=123');
+
+        $test_name = 'back url part is empty if there is no query string';
+        $url_array = [];
+        $result = $html->back_url_part($url_array);
+        $t->assert($test_name, $result, '');
+
+        $test_name = 'login url with back part while editing word 123';
+        $url_part = parse_url('?m=3&id=123');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->url_with_back(api::LOGIN_SCRIPT, $url_array);
+        $t->assert($test_name, $result, '/http/login.php?9m=3&9id=123');
+
+        $test_name = 'add word url with back part from main page';
+        $url_part = parse_url('?m=1');
+        parse_str($url_part["query"], $url_array);
+        $result = $html->url_with_back(api::MAIN_SCRIPT . '?m=3&id=123', $url_array);
+        $t->assert($test_name, $result, '/http/view.php?m=3&id=123&9m=1');
+
         $lib = new library();
         $usr_msg = new user_message();
         $url_test = new test_mappers($t);

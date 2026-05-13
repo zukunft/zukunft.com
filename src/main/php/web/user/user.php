@@ -39,7 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'user_log_display.php';
-include_once html_paths::REF . 'source.php';
+//include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
@@ -47,7 +47,9 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -63,7 +65,9 @@ use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -502,6 +506,29 @@ class user extends db_object
         $url = $html->url_new($msk_id, $this->id(), '', $back);
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
+
+    /**
+     * build the login form HTML
+     *
+     * @param string $back url to redirect to after a successful login
+     * @param string $msg_txt already-rendered error HTML to embed inside the form
+     * @param Translator $mtr for translating labels and button text
+     * @return string the complete login form HTML
+     */
+    function form_login(string $back, string $msg_txt, Translator $mtr): string
+    {
+        $html = new html_base();
+        $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME_OR_EMAIL) . $html->br();
+        $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
+        $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
+        $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN) . $html->br2();
+        $form_str .= $msg_txt;
+        $form_str .= $html->form_hidden(url_var::BACK, $back);
+        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $html->button_submit($mtr->txt(msg_id::FORM_NAME_LOGIN));
+        return $html->form_simple('login' . def::FILE_PHP, html_base::METHOD_POST, $form_str);
+    }
+
 
     /*
      * to review

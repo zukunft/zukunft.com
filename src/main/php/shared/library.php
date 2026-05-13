@@ -381,6 +381,47 @@ class library
         return preg_replace('/<as /', ' <a ', $result);
     }
 
+    /**
+     * @param string $html_string raw or compact HTML
+     * @return string HTML with each tag on its own line and child content indented by four spaces;
+     *                opening and closing tags of the same element share the same indentation level
+     */
+    function format_html(string $html_string): string
+    {
+        $indent = 0;
+        $tab = '    ';
+        $result = '';
+        $void_tags = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+            'link', 'meta', 'param', 'source', 'track', 'wbr'];
+
+        $tokens = preg_split('/(<[^>]+>)/', trim($html_string), -1,
+            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+        foreach ($tokens as $token) {
+            $token = trim($token);
+            if ($token === '') {
+                continue;
+            }
+            if (preg_match('/^<\/([a-zA-Z][a-zA-Z0-9]*)/', $token)) {
+                // closing tag: dedent first so it aligns with its opening tag
+                $indent = max(0, $indent - 1);
+                $result .= str_repeat($tab, $indent) . $token . "\n";
+            } elseif (preg_match('/^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)>$/', $token, $m)) {
+                $tag = strtolower($m[1]);
+                $attrs = $m[2];
+                $result .= str_repeat($tab, $indent) . $token . "\n";
+                if (!in_array($tag, $void_tags) && !str_ends_with(trim($attrs), '/')) {
+                    $indent++;
+                }
+            } else {
+                // text content or doctype/comment
+                $result .= str_repeat($tab, $indent) . $token . "\n";
+            }
+        }
+
+        return rtrim($result);
+    }
+
     function escape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
     {
         // avoid using escaped var makers (probably not 100% correct)

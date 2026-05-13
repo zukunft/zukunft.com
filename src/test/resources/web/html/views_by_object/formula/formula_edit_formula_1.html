@@ -1,145 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test (zukunft.com)</title>
-    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
-</head>
-<body>
-<nav class="navbar site-header fixed-top"><a href="/http/view.php" title="zukunft.com" class="navbar-brand"><img
-        src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-    <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3"><label for="kp"
-                                                                                                         class="visually-hidden">Search</label><input
-            class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
-            style="min-width: 40vw; max-width: 800px;">
-        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
-    </form>
-    <div class="col-md-2">
-        <ul class="nav navbar-nav">
-            <li class="active">
-                <details class="view-menu">
-                    <summary><i class="fas fa-edit"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>
-                        <li><a href="?view=more">... more</a></li>
-                        <li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>
-                        <li><a href="/http/view.php?m=view_add">add view</a></li>
-                    </ul>
-                </details>
-                <details class="lang-menu">
-                    <summary><i class="fas fa-globe"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=1&q=en">English</a></li>
-                        <li><a href="/http/view.php?m=1&q=en_us">US English</a></li>
-                        <li><a href="/http/view.php?m=1&q=de" title="German">Deutsch</a></li>
-                        <li><a href="/http/view.php?m=1&q=fr" title="French">Français</a></li>
-                        <li><a href="/http/view.php?m=1&q=es" title="Spanish">Español</a></li>
-                        <li><a href="/http/view.php?m=1&q=zh" title="Chinese">漢語</a></li>
-                        <li><a href="/http/view.php?m=1&q=ar" title="Arabic">العربية</a></li>
-                        <li><a href="/http/view.php?m=language_select">... more</a></li>
-                    </ul>
-                </details>
-                <details class="user-menu">
-                    <summary><i class="fas fa-user-circle"></i></summary>
-                    <ul>
-                        <li><a href="/http/login.php">log in</a></li>
-                        <li><a href="/http/signup.php">Sign in</a></li>
-                        <li><a href="/settings">Settings</a></li>
-                    </ul>
-                </details>
-            </li>
-        </ul>
-    </div>
-</nav>
-<main class="main-container"><h4>Change formula</h4>
-    <form action="/http/view.php" id="formula_edit"><input class="form-control" type="hidden" name="mask" id="m"
-                                                           value="25"><input class="form-control" type="hidden"
-                                                                             name="id" id="id" value="1"><input
-            class="form-control" type="hidden" name="back" id="9" value="1"><input class="form-control" type="hidden"
-                                                                                   name="confirm" id="z" value="1">
-        <div class="row col-md-12">
-            <div class="form-group col-md-8"><label for="k">Name</label><input class="form-control" type="text"
-                                                                               name="Name" id="k"
-                                                                               value="scale minute to sec"></div>
-            <div class="form-group col-md-4"><label for="fy">Formula type</label><select class="form-control" name="fy"
-                                                                                         form="formula_edit" id="fy">
-                <option value="1" selected>calc</option>
-                <option value="0"> ---</option>
-                <option value="2">next</option>
-                <option value="3">prior</option>
-                <option value="5">reversible</option>
-                <option value="6">scaling</option>
-                <option value="4">this</option>
-            </select></div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="o">Description</label><input class="form-control" type="text"
-                                                                                       name="Description" id="o"></div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="fa">Expression</label><input class="form-control" type="text"
-                                                                                       name="Expression" id="fa"
-                                                                                       value="&quot;second&quot; = &quot;minute&quot; * 60">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            test (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;">
+            </a>
+            <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=1">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/login.php">
+                                        log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/signup.php">
+                                        Sign in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
             </div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-check-inline"><label class="form-check-label"><input class="form-check-input"
-                                                                                  type="checkbox" name="fa">calculate
-                only if all values used in the formula exist</label></div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
-                                                                                form="formula_edit" id="d">
-                <option value="0"> ---</option>
-            </select></div>
-            <div class="form-group col-md-4"><label for="s">Share</label><select class="form-control" name="s"
-                                                                                 form="formula_edit" id="s">
-                <option value="1" selected>public</option>
-                <option value="2">personal</option>
-                <option value="3">group</option>
-                <option value="4">private</option>
-                <option value="5">personal log</option>
-                <option value="6">group log</option>
-                <option value="7">private log</option>
-            </select></div>
-            <div class="form-group col-md-4"><label for="sp">Protection</label><select class="form-control" name="sp"
-                                                                                       form="formula_edit" id="sp">
-                <option value="1" selected>no protection</option>
-                <option value="2">user</option>
-                <option value="3">admin</option>
-                <option value="4">no change</option>
-            </select></div>
-        </div>
-        <br>
-        <div class="row col-md-12 justify-content-end">
-            <div class="row col-md-12"><h5>Assigned words and triples</h5><a href="/http/view.php?m=90&id=273">$</a>, <a
-                    href="/http/view.php?m=92&id=123">$ is symbol for US dollar</a>, <a
-                    href="/http/view.php?m=90&id=1075">.د.ب</a>, <a href="/http/view.php?m=92&id=1132">.د.ب (Symbol or
-                abbreviation)</a>, <a href="/http/view.php?m=92&id=1133">.د.ب is symbol for Bahraini dinar</a>, <a
-                    href="/http/view.php?m=90&id=235">5-year</a>, <a href="/http/view.php?m=90&id=236">15-year</a>, <a
-                    href="/http/view.php?m=90&id=136">1967</a></div>
-            <a href="/http/view.php?m=97&id=1" class="btn btn-space col-1 btn-outline-secondary">cancel</a>
-            <button class="btn btn-space col-1 btn-outline-success" type="submit">save</button>
-        </div>
-    </form>
-    <div class="row col-md-12">
-        <div class="col-md-12"><h5>Used 0 times</h5></div>
-    </div>
-    <div class="row col-md-12">
-        <div class="col-md-4"><h5>Results</h5>not used for formulas</div>
-        <div class="col-md-4"><h5>Formulas</h5>formulas component</div>
-    </div>
-    <div class="row col-md-12">
-        <div class="col-md-12"><h5>Changes</h5>26-12-2022 18:23 zukunft.com system added "scale minute to sec"</div>
-    </div>
-</main>
-<footer class="site-footer"><p><a href="/http/about.php">About</a> &middot; <a href="/http/privacy_policy.html">Privacy
-    Policy</a> &middot; All structured data is available under the <a
-        href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> Licence
-    unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com">program code</a> of this version
-    0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a> Licence.</p></footer>
-</body>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Change formula
+            </h4>
+            <form action="/http/view.php" id="formula_edit">
+                <input class="form-control" type="hidden" name="mask" id="m" value="25">
+                <input class="form-control" type="hidden" name="id" id="id" value="1">
+                <input class="form-control" type="hidden" name="back" id="9" value="1">
+                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <div class="row col-md-12">
+                    <div class="form-group col-md-8">
+                        <label for="k">
+                            Name
+                        </label>
+                        <input class="form-control" type="text" name="Name" id="k" value="scale minute to sec">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="fy">
+                            Formula type
+                        </label>
+                        <select class="form-control" name="fy" form="formula_edit" id="fy" >
+                            <option value="1"  selected >
+                                calc
+                            </option>
+                            <option value="0"  >
+                                ---
+                            </option>
+                            <option value="2"  >
+                                next
+                            </option>
+                            <option value="3"  >
+                                prior
+                            </option>
+                            <option value="5"  >
+                                reversible
+                            </option>
+                            <option value="6"  >
+                                scaling
+                            </option>
+                            <option value="4"  >
+                                this
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="o">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="Description" id="o">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="fa">
+                            Expression
+                        </label>
+                        <input class="form-control" type="text" name="Expression" id="fa" value="&quot;second&quot; = &quot;minute&quot; * 60">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" name="fa">
+                            calculate only if all values used in the formula exist
+                        </label>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="d">
+                            View
+                        </label>
+                        <select class="form-control" name="d" form="formula_edit" id="d" >
+                            <option value="0"  >
+                                ---
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="s">
+                            Share
+                        </label>
+                        <select class="form-control" name="s" form="formula_edit" id="s" >
+                            <option value="1"  selected >
+                                public
+                            </option>
+                            <option value="2"  >
+                                personal
+                            </option>
+                            <option value="3"  >
+                                group
+                            </option>
+                            <option value="4"  >
+                                private
+                            </option>
+                            <option value="5"  >
+                                personal log
+                            </option>
+                            <option value="6"  >
+                                group log
+                            </option>
+                            <option value="7"  >
+                                private log
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="sp">
+                            Protection
+                        </label>
+                        <select class="form-control" name="sp" form="formula_edit" id="sp" >
+                            <option value="1"  selected >
+                                no protection
+                            </option>
+                            <option value="2"  >
+                                user
+                            </option>
+                            <option value="3"  >
+                                admin
+                            </option>
+                            <option value="4"  >
+                                no change
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <div class="row col-md-12">
+                        <h5>
+                            Assigned words and triples
+                        </h5>
+                        <a href="/http/view.php?m=90&id=273">
+                            $
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=92&id=123">
+                            $ is symbol for US dollar
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=1075">
+                            .د.ب
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=92&id=1132">
+                            .د.ب (Symbol or abbreviation)
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=92&id=1133">
+                            .د.ب is symbol for Bahraini dinar
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=235">
+                            5-year
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=236">
+                            15-year
+                        </a>
+                        ,
+                        <a href="/http/view.php?m=90&id=136">
+                            1967
+                        </a>
+                    </div>
+                    <a href="/http/view.php?m=97&id=1" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                        save
+                    </button>
+                </div>
+            </form>
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h5>
+                        Used 0 times
+                    </h5>
+                </div>
+            </div>
+            <div class="row col-md-12">
+                <div class="col-md-4">
+                    <h5>
+                        Results
+                    </h5>
+                    not used for formulas
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        Formulas
+                    </h5>
+                    formulas component
+                </div>
+            </div>
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h5>
+                        Changes
+                    </h5>
+                    26-12-2022 18:23 zukunft.com system added "scale minute to sec"
+                </div>
+            </div>
+        </main>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
 </html>

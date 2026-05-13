@@ -41,7 +41,6 @@ namespace Zukunft\ZukunftCom\main\php\web\html;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'language_list.php';
 //include_once paths::SHARED_CONST . 'def.php';
@@ -65,7 +64,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\language_list;
 
@@ -313,9 +311,10 @@ class html_base
      * the html code for the navigation bar
      *
      * @param int $msk_id the mask id used to build the language switch URL
+     * @param array $url_array the calling url array
      * @return string the navigation bar HTML code
      */
-    function navbar(int $msk_id = 0): string
+    function navbar(int $msk_id = 0, array $url_array = []): string
     {
         global $sys;
 
@@ -338,12 +337,8 @@ class html_base
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        $result .= '<' . self::UL . '>' . "\n";
-        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
-        $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE))) . "\n";
-        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_edit&id=1', $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
-        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_add', $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
-        $result .= '</' . self::UL . '>' . "\n";
+        // TODO switch the view mask on the suggesten related to the view
+        $result .= $this->view_change_list($msk_id, $url_array) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
@@ -351,17 +346,41 @@ class html_base
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="user-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-user-circle"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        $result .= '<' . self::UL . '>' . "\n";
-        $result .= $this->list_item($this->ref(api::LOGIN_SCRIPT, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
-        $result .= $this->list_item($this->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
-        $result .= $this->list_item($this->ref(api::SETTINGS_REL, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
-        $result .= '</' . self::UL . '>' . "\n";
+        // TODO switch the menu if the user is logged in
+        $result .= $this->user_login_list($url_array) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '</' . self::LI . '>' . "\n";
         $result .= '</' . self::UL . '>' . "\n";
         $result .= '</' . self::DIV . '>' . "\n";
 
         return $this->nav($result, self::CLASS_NAV);
+    }
+
+    private function view_change_list(int $msk_id = 0, array $url_array = []): string
+    {
+        global $mtr;
+        $result = $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE))) . "\n";
+        $url_msk_edit = $this->url_with_back(api::MAIN_SCRIPT
+            . '?' . url_var::MASK . '=' . views::VIEW_EDIT_ID
+            . '&' . url_var::ID . '=' . $msk_id, $url_array);
+        $result .= $this->list_item($this->ref($url_msk_edit, $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
+        $url_msk_add = $this->url_with_back(api::MAIN_SCRIPT
+            . '?' . url_var::MASK . '=' . views::VIEW_ADD_ID, $url_array);
+        $result .= $this->list_item($this->ref($url_msk_add, $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
+        return $this->list_unsorted($result);
+    }
+
+    private function user_login_list(array $url_array = []):  string
+    {
+        global $mtr;
+        $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $url_array);
+        $result = $this->list_item($this->ref($url_login, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
+        $url_signup = $this->url_with_back(api::SIGNUP_SCRIPT, $url_array);
+        $result .= $this->list_item($this->ref($url_signup, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
+        $url_settings = $this->url_with_back(api::SETTINGS_REL, $url_array);
+        $result .= $this->list_item($this->ref($url_settings, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
+        return $this->list_unsorted($result);
     }
 
     /**
@@ -553,6 +572,36 @@ class html_base
             $result .= '&back=' . $back;
         }
         return $result;
+    }
+
+    /**
+     * Build a URL parameter string with the calling params each prefixed with url_var::BACK ('9'),
+     * so the target page can redirect back to the calling page after completing its action.
+     *
+     * @param array $url_array the URL parameters of the calling page e.g. /http/view.php?m=3&id=12
+     * @return string the additional URL parameters e.g. '9m=3&9id=123'
+     */
+    function back_url_part(array $url_array): string
+    {
+        $par = [];
+        foreach ($url_array as $key => $val) {
+            $par[] = url_var::BACK . $key . '=' . rawurlencode($val);
+        }
+        return empty($par) ? '' : implode('&', $par);
+    }
+
+    function url_with_back(string $url, array $url_array): string
+    {
+        $par_ext = $this->back_url_part($url_array);
+        if ($par_ext == '') {
+            return $url;
+        } else {
+            if (str_contains($url, '?')) {
+                return $url . '&' . $par_ext;
+            } else {
+                return $url . '?' . $par_ext;
+            }
+        }
     }
 
     /**
@@ -1574,12 +1623,12 @@ class html_base
      * @return string the HTML code for the field
      */
     function input(
-        string $url_id,
-        msg_id $msg_id,
+        string      $url_id,
+        msg_id      $msg_id,
         string|null $value = '',
-        string $type = '',
-        string $class_add = '',
-        string $placeholder = ''): string
+        string      $type = '',
+        string      $class_add = '',
+        string      $placeholder = ''): string
     {
         global $mtr;
         $name = $mtr->txt($msg_id);

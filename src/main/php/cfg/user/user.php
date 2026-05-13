@@ -169,6 +169,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTimeInterface;
 use DateTime;
 use Exception;
+use Random\RandomException;
 
 class user extends db_id_object_non_sandbox
 {
@@ -788,6 +789,40 @@ class user extends db_id_object_non_sandbox
     function get_password(): ?string
     {
         return $this->password;
+    }
+
+    /**
+     * verify credentials, set up the session on success
+     *
+     * @param string $usr_name username or email as typed by the user
+     * @param string $pw raw password as typed by the user
+     * @param user_message $msg populated with PASSWORD_WRONG or USER_NAME_NOT_FOUND on failure
+     * @return bool true if login succeeded and session has been initialised
+     */
+    function login(string $usr_name, string $pw, user_message $msg): bool
+    {
+        $this->load_by_name($usr_name);
+        if (!$this->has_db_id()) {
+            $msg->add(msg_id::USER_NAME_NOT_FOUND, [msg_id::VAR_USER_NAME => $usr_name]);
+            return false;
+        }
+        if (!password_verify($pw, $this->get_password())) {
+            $msg->add_id(msg_id::PASSWORD_WRONG);
+            return false;
+        }
+        session_start();
+        session_regenerate_id(true);
+        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            try {
+                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+            } catch (RandomException $e) {
+                log_err('RandomException ' . $e->getMessage());
+            }
+        }
+        $_SESSION[url_var::SESSION_USER_ID] = $this->id();
+        $_SESSION[url_var::USERNAME_HUMAN] = $this->name();
+        $_SESSION[url_var::SESSION_LOGGED] = true;
+        return true;
     }
 
     /**

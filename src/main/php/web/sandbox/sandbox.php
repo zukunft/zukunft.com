@@ -41,7 +41,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'db_object.php';
-include_once html_paths::USER . 'user.php';
+//include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';

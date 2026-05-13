@@ -210,6 +210,7 @@
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /user/user.php
     \-- api_json_array_core - section for function api_json_array_core not yet defined that it should be api in /user/user.php
     \-- log_object - section for function log_object is expected to be log in /user/user.php
+    \-- login - section for function login not yet defined that it should be set and get in /user/user.php
     \-- name - section for function name is expected to be debug in /user/user.php
     \-- name_or_null - section for function name_or_null not yet defined that it should be set and get in /user/user.php
     \-- name_and_profile - section for function name_and_profile not yet defined that it should be set and get in /user/user.php
@@ -4935,6 +4936,8 @@
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- url - section for function url not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_new - section for function url_new not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
+    \-- back_url_part - section for function back_url_part not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
+    \-- url_with_back - section for function url_with_back not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_api - section for function url_api not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_ex - section for function url_ex not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- text_h1 - section for function text_h1 not yet defined that it should be text formatting in /html/html_base.php
@@ -5416,6 +5419,7 @@
     \-- password - section for function password not yet defined that it should be set and get in /user/user.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /user/user.php
     \-- name_link - section for function name_link not yet defined that it should be display in /user/user.php
+    \-- form_login - section for function form_login not yet defined that it should be display in /user/user.php
     \-- form_edit - section for function form_edit not yet defined that it should be to review in /user/user.php
     \-- dsp_changes - section for function dsp_changes not yet defined that it should be to review in /user/user.php
     \-- dsp_errors - section for function dsp_errors not yet defined that it should be to review in /user/user.php
@@ -6884,6 +6888,10 @@
         \-- html_base - build a url for link a zukunft.com element
     \-- url_new
         \-- html_base - build a zukunft.com internal url based on the html one-page setup
+    \-- back_url_part
+        \-- html_base - Build a URL parameter string with the calling params each prefixed with url_var::BACK ('9'),
+    \-- url_with_back
+        \-- html_base - Build a URL parameter string with the calling params each prefixed with url_var::BACK ('9'),
     \-- url_api
         \-- html_base - build a url for link a zukunft.com element
     \-- url_ex

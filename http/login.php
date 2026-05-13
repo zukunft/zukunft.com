@@ -38,16 +38,18 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 // load the main frontend class
 include_once paths::WEB . 'frontend.php';
 
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Random\RandomException;
 
 // reset the html code var
 $html_str = '';
@@ -77,10 +79,14 @@ if ($db_con->is_open()) {
 
         $_SESSION[url_var::SESSION_LOGGED] = FALSE;
         // the original calling page that should be shown after the login is finished
-        if (isset($_POST[url_var::BACK])) {
-            $back = filter_var($_POST[url_var::BACK] ?? '', FILTER_SANITIZE_URL);
-        } else {
-            $back = filter_var($_GET[url_var::BACK] ?? '', FILTER_SANITIZE_URL);
+        // first try the 'b'-prefixed params set by the navbar login link
+        $back = url_var::url_from_back_url($_GET, api::MAIN_SCRIPT);
+        if ($back === '') {
+            if (isset($_POST[url_var::BACK])) {
+                $back = filter_var($_POST[url_var::BACK] ?? '', FILTER_SANITIZE_URL);
+            } else {
+                $back = filter_var($_GET[url_var::BACK] ?? '', FILTER_SANITIZE_URL);
+            }
         }
 
         if (isset($_POST[url_var::POST_SUBMIT])) {
@@ -91,63 +97,36 @@ if ($db_con->is_open()) {
             $usr_name = htmlspecialchars($_POST[url_var::USERNAME_HUMAN] ?? '', ENT_QUOTES, def::ENCODING);
             $pw = htmlspecialchars($_POST[url_var::USER_PASSWORD_HUMAN] ?? '', ENT_QUOTES, def::ENCODING);
 
-            // Let's search the database for the username and password
             $db_usr = new user;
-            $db_usr->load_by_name($usr_name);
-            if ($db_usr->has_db_id()) {
-                if (!password_verify($pw, $db_usr->get_password())) {
-                    $msg->add_id(msg_id::PASSWORD_WRONG);
-                    $url = $html->url(rest_ctrl::LOGIN_RESET);
-                    $ref = $html->ref($url, $mtr->txt(msg_id::PASSWORD_WRONG),
-                        $mtr->txt(msg_id::PASSWORD_WRONG_TITLE));
-                    $msg_txt .= $html->dsp_err($mtr->txt(msg_id::LOGIN_FAILED) . ' ' . $ref);
-                }
-            } else {
-                $msg->add(msg_id::USER_NAME_NOT_FOUND, [
-                    msg_id::VAR_USER_NAME => $usr_name
-                ]);
-                $msg_txt .= $html->dsp_err($mtr->txt(msg_id::LOGIN_FAILED) . ' '
-                    . $msg->get_last_message_translated());
-            }
-
-            if ($msg->is_ok()) {
-                session_start();
-                session_regenerate_id(true);
-                if (empty($_SESSION[url_var::SESSION_TOKEN])) {
-                    try {
-                        $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
-                    } catch (RandomException $e) {
-                        log_err('RandomException ' . $e->getMessage());
-                    }
-                }
-                $_SESSION[url_var::SESSION_USER_ID] = $db_usr->id();
-                $_SESSION[url_var::USERNAME_HUMAN] = $db_usr->name();
-                $_SESSION[url_var::SESSION_LOGGED] = TRUE;
+            $login_msg = new user_message();
+            if ($db_usr->login($usr_name, $pw, $login_msg)) {
                 // TODO ask if cookies are allowed: if yes, the session id does not need to be forwarded
-                // if no, use the session id
-                if ($back <> '') {
+                if ($back != '') {
                     header("Location: " . $back);
                 } else {
                     header("Location: ../view.php");
                 }
-                //header("Location: ../view.php?sid=".SID."");
                 exit;
+            } else {
+                if ($db_usr->has_db_id()) {
+                    // user found but password wrong — offer reset link
+                    $url = $html->url(rest_ctrl::LOGIN_RESET);
+                    $ref = $html->ref($url, $mtr->txt(msg_id::PASSWORD_WRONG),
+                        $mtr->txt(msg_id::PASSWORD_WRONG_TITLE));
+                    $msg_txt .= $html->dsp_err($mtr->txt(msg_id::LOGIN_FAILED) . ' ' . $ref);
+                } else {
+                    // user not found
+                    $msg_txt .= $html->dsp_err($mtr->txt(msg_id::LOGIN_FAILED) . ' '
+                        . $login_msg->get_last_message_translated());
+                }
             }
         }
     }
 
     $html = new html_base();
     if (!$_SESSION[url_var::SESSION_LOGGED]) {
-        $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME_OR_EMAIL) . $html->br();
-        $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
-        $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
-        $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN) . $html->br2();
-        // TODO Prio 2 highlight message e.g. using color red
-        $form_str .= $msg_txt;
-        $form_str .= $html->form_hidden(url_var::BACK, $back);
-        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
-        $form_str .= $html->button_submit($mtr->txt(msg_id::FORM_NAME_LOGIN));
-        $form_str = $html->form_simple($this_script . def::FILE_PHP, html_base::METHOD_POST, $form_str);
+        $web_usr = new user_dsp();
+        $form_str = $web_usr->form_login($back, $msg_txt, $mtr);
 
         // TODO Prio 3 use a changing logo to show something positive of today or a person that has done something positive and is somehow linked to today
         $html_str = $html->logo_flex();

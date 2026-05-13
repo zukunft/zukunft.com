@@ -1,129 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add new source Federal Statistical Office (zukunft.com)</title>
-    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
-</head>
-<body>
-<nav class="navbar site-header fixed-top"><a href="/http/view.php" title="zukunft.com" class="navbar-brand"><img
-        src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-    <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3"><label for="kp"
-                                                                                                         class="visually-hidden">Search</label><input
-            class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
-            style="min-width: 40vw; max-width: 800px;">
-        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
-    </form>
-    <div class="col-md-2">
-        <ul class="nav navbar-nav">
-            <li class="active">
-                <details class="view-menu">
-                    <summary><i class="fas fa-edit"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>
-                        <li><a href="?view=more">... more</a></li>
-                        <li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>
-                        <li><a href="/http/view.php?m=view_add">add view</a></li>
-                    </ul>
-                </details>
-                <details class="lang-menu">
-                    <summary><i class="fas fa-globe"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=12&q=en">English</a></li>
-                        <li><a href="/http/view.php?m=12&q=en_us">US English</a></li>
-                        <li><a href="/http/view.php?m=12&q=de" title="German">Deutsch</a></li>
-                        <li><a href="/http/view.php?m=12&q=fr" title="French">Français</a></li>
-                        <li><a href="/http/view.php?m=12&q=es" title="Spanish">Español</a></li>
-                        <li><a href="/http/view.php?m=12&q=zh" title="Chinese">漢語</a></li>
-                        <li><a href="/http/view.php?m=12&q=ar" title="Arabic">العربية</a></li>
-                        <li><a href="/http/view.php?m=language_select">... more</a></li>
-                    </ul>
-                </details>
-                <details class="user-menu">
-                    <summary><i class="fas fa-user-circle"></i></summary>
-                    <ul>
-                        <li><a href="/http/login.php">log in</a></li>
-                        <li><a href="/http/signup.php">Sign in</a></li>
-                        <li><a href="/settings">Settings</a></li>
-                    </ul>
-                </details>
-            </li>
-        </ul>
-    </div>
-</nav>
-<main class="main-container"><h4>Add a new source</h4>
-    <form action="/http/view.php" id="source_add"><input class="form-control" type="hidden" name="mask" id="m"
-                                                         value="12"><input class="form-control" type="hidden" name="id"
-                                                                           id="id" value="0"><input class="form-control"
-                                                                                                    type="hidden"
-                                                                                                    name="back" id="9"
-                                                                                                    value="0"><input
-            class="form-control" type="hidden" name="confirm" id="z" value="1">
-        <div class="row col-md-12">
-            <div class="form-group col-md-8"><label for="k">Name</label><input class="form-control" type="text"
-                                                                               name="Name" id="k"
-                                                                               value="Federal Statistical Office"></div>
-            <div class="form-group col-md-4"><label for="st">Source type</label><select class="form-control" name="st"
-                                                                                        form="source_add" id="st">
-                <option value="1">XML</option>
-                <option value="2">XBRL</option>
-                <option value="3">CSV</option>
-                <option value="4" selected>PDF</option>
-                <option value="5">API</option>
-                <option value="6">JSON</option>
-            </select></div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="ur">URL</label><input class="form-control" type="text"
-                                                                                name="URL" id="ur"
-                                                                                value="https://www.bfs.admin.ch/bfs/en/home.html">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            Add new source Federal Statistical Office (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;">
+            </a>
+            <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=12&9m=12&9a=a&9id=7&9k=Federal%20Statistical%20Office&9o=The%20Federal%20Statistical%20Office%20is%20a%20Federal%20agency%20of%20the%20Swiss%20Confederation.%20It%20is%20the%20statistics%20office%20of%20Switzerland.&9y=4&9ur=https%3A%2F%2Fwww.bfs.admin.ch%2Fbfs%2Fen%2Fhome.html&9s=3&9sp=2&9uu=2&9z=0">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30&9m=12&9a=a&9id=7&9k=Federal%20Statistical%20Office&9o=The%20Federal%20Statistical%20Office%20is%20a%20Federal%20agency%20of%20the%20Swiss%20Confederation.%20It%20is%20the%20statistics%20office%20of%20Switzerland.&9y=4&9ur=https%3A%2F%2Fwww.bfs.admin.ch%2Fbfs%2Fen%2Fhome.html&9s=3&9sp=2&9uu=2&9z=0">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=12&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=12&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=12&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=12&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=12&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=12&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=12&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/login.php?9m=12&9a=a&9id=7&9k=Federal%20Statistical%20Office&9o=The%20Federal%20Statistical%20Office%20is%20a%20Federal%20agency%20of%20the%20Swiss%20Confederation.%20It%20is%20the%20statistics%20office%20of%20Switzerland.&9y=4&9ur=https%3A%2F%2Fwww.bfs.admin.ch%2Fbfs%2Fen%2Fhome.html&9s=3&9sp=2&9uu=2&9z=0">
+                                        log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/signup.php?9m=12&9a=a&9id=7&9k=Federal%20Statistical%20Office&9o=The%20Federal%20Statistical%20Office%20is%20a%20Federal%20agency%20of%20the%20Swiss%20Confederation.%20It%20is%20the%20statistics%20office%20of%20Switzerland.&9y=4&9ur=https%3A%2F%2Fwww.bfs.admin.ch%2Fbfs%2Fen%2Fhome.html&9s=3&9sp=2&9uu=2&9z=0">
+                                        Sign in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings?9m=12&9a=a&9id=7&9k=Federal%20Statistical%20Office&9o=The%20Federal%20Statistical%20Office%20is%20a%20Federal%20agency%20of%20the%20Swiss%20Confederation.%20It%20is%20the%20statistics%20office%20of%20Switzerland.&9y=4&9ur=https%3A%2F%2Fwww.bfs.admin.ch%2Fbfs%2Fen%2Fhome.html&9s=3&9sp=2&9uu=2&9z=0">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
             </div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="o">Description</label><input class="form-control" type="text"
-                                                                                       name="Description" id="o"
-                                                                                       value="The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.">
-            </div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
-                                                                                form="source_add" id="d">
-                <option value="93" selected>Source</option>
-                <option value="0"> ---</option>
-            </select></div>
-            <div class="form-group col-md-4"><label for="s">Share</label><select class="form-control" name="s"
-                                                                                 form="source_add" id="s">
-                <option value="1">public</option>
-                <option value="2">personal</option>
-                <option value="3" selected>group</option>
-                <option value="4">private</option>
-                <option value="5">personal log</option>
-                <option value="6">group log</option>
-                <option value="7">private log</option>
-            </select></div>
-            <div class="form-group col-md-4"><label for="sp">Protection</label><select class="form-control" name="sp"
-                                                                                       form="source_add" id="sp">
-                <option value="1">no protection</option>
-                <option value="2" selected>user</option>
-                <option value="3">admin</option>
-                <option value="4">no change</option>
-            </select></div>
-        </div>
-        <br>
-        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=93"
-                                                          class="btn btn-space col-1 btn-outline-secondary">cancel</a>
-            <button class="btn btn-space col-1 btn-outline-success" type="submit">save</button>
-        </div>
-    </form>
-</main>
-<footer class="site-footer"><p><a href="/http/about.php">About</a> &middot; <a
-        href="/http/privacy_policy.html">Privacy Policy</a> &middot; All structured data is
-    available under the <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative
-        Commons CC0</a> Licence unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com"
-                                                                   >program code</a> of this version
-    0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a> Licence.</p></footer>
-</body>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Add a new source
+            </h4>
+            <form action="/http/view.php" id="source_add">
+                <input class="form-control" type="hidden" name="mask" id="m" value="12">
+                <input class="form-control" type="hidden" name="id" id="id" value="0">
+                <input class="form-control" type="hidden" name="back" id="9" value="0">
+                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <div class="row col-md-12">
+                    <div class="form-group col-md-8">
+                        <label for="k">
+                            Name
+                        </label>
+                        <input class="form-control" type="text" name="Name" id="k" value="Federal Statistical Office">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="st">
+                            Source type
+                        </label>
+                        <select class="form-control" name="st" form="source_add" id="st" >
+                            <option value="1"  >
+                                XML
+                            </option>
+                            <option value="2"  >
+                                XBRL
+                            </option>
+                            <option value="3"  >
+                                CSV
+                            </option>
+                            <option value="4"  selected >
+                                PDF
+                            </option>
+                            <option value="5"  >
+                                API
+                            </option>
+                            <option value="6"  >
+                                JSON
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="ur">
+                            URL
+                        </label>
+                        <input class="form-control" type="text" name="URL" id="ur" value="https://www.bfs.admin.ch/bfs/en/home.html">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="o">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="Description" id="o" value="The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="d">
+                            View
+                        </label>
+                        <select class="form-control" name="d" form="source_add" id="d" >
+                            <option value="93"  selected >
+                                Source
+                            </option>
+                            <option value="0"  >
+                                ---
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="s">
+                            Share
+                        </label>
+                        <select class="form-control" name="s" form="source_add" id="s" >
+                            <option value="1"  >
+                                public
+                            </option>
+                            <option value="2"  >
+                                personal
+                            </option>
+                            <option value="3"  selected >
+                                group
+                            </option>
+                            <option value="4"  >
+                                private
+                            </option>
+                            <option value="5"  >
+                                personal log
+                            </option>
+                            <option value="6"  >
+                                group log
+                            </option>
+                            <option value="7"  >
+                                private log
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="sp">
+                            Protection
+                        </label>
+                        <select class="form-control" name="sp" form="source_add" id="sp" >
+                            <option value="1"  >
+                                no protection
+                            </option>
+                            <option value="2"  selected >
+                                user
+                            </option>
+                            <option value="3"  >
+                                admin
+                            </option>
+                            <option value="4"  >
+                                no change
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <a href="/http/view.php?m=93" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                        save
+                    </button>
+                </div>
+            </form>
+        </main>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
 </html>

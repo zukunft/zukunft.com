@@ -567,14 +567,14 @@ class test_cleanup extends test_api
         return $trm_lst;
     }
 
-    function html_page_test(string $body, string $title, string $filename): void
+    function html_page_test(string $body, string $title, string $filename): bool
     {
-        $this->html_test($body, $title, test_paths::VIEW_FUNCTIONS . $filename);
+        return $this->html_test($body, $title, test_paths::VIEW_FUNCTIONS . $filename);
     }
 
-    function html_view_test(string $body, string $filename): void
+    function html_view_test(string $body, string $filename): bool
     {
-        $this->html_test($body, 'view', test_paths::VIEWS . $filename);
+        return $this->html_test($body, 'view', test_paths::VIEWS . $filename);
     }
 
     /**
@@ -582,9 +582,9 @@ class test_cleanup extends test_api
      * @param string $body the generated html page body
      * @param string $title the page title name
      * @param string $file_path the file path starting from the resource path for the html resources
-     * @return void
+     * @return bool
      */
-    private function html_test(string $body, string $title, string $file_path): void
+    private function html_test(string $body, string $title, string $file_path): bool
     {
         $lib = new library();
 
@@ -594,8 +594,14 @@ class test_cleanup extends test_api
             $title = 'test ' . $title;
         }
         $created_html = $this->html_page($body, $title);
-        $expected_html = $this->file(test_paths::HTML . $file_path . test_files::HTML);
-        $this->assert($file_path, $lib->trim_html($created_html), $lib->trim_html($expected_html));
+        $resource_file = test_paths::HTML . $file_path . test_files::HTML;
+        $expected_html = $this->file($resource_file);
+        $result = $this->assert($file_path, $lib->trim_html($created_html), $lib->trim_html($expected_html));
+        if (!$result and test_files::AUTO_UPDATE_HTML) {
+            // TODO always set a breakpoint here
+            $this->update_file($resource_file, $lib->format_html($created_html));
+        }
+        return $result;
     }
 
     private function html_page(string $body, string $title): string

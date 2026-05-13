@@ -779,7 +779,7 @@ class frontend
                 } else {
                     $html = new html_base();
                     $result .= $html->header($title, '', $lan);
-                    $result .= $html->navbar($view_id);
+                    $result .= $html->navbar($view_id, $url_array);
                     $result .= $html->main($dsp_text);
                     $result .= $html->footer();
                 }
