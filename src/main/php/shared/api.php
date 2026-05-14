@@ -58,7 +58,7 @@ class api
     const string PRIVACY_SCRIPT = self::SCRIPT_PATH . 'privacy_policy.html';
     const string FIND_SCRIPT = self::SCRIPT_PATH . 'find.php';
     const string LOGIN_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_ID;
-    const string SIGNUP_SCRIPT = self::SCRIPT_PATH . 'signup.php';
+    const string SIGNUP_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::SIGNUP_ID;
     const string LOGOUT_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGOUT_ID;
     const string RESET_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_RESET_ID;
     const string ERROR_LOG_SCRIPT = self::SCRIPT_PATH . 'error_log.php';
