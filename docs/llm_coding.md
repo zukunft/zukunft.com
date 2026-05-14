@@ -215,6 +215,21 @@ Back navigation (where to redirect after an action completes) is encoded as **`'
 
 This ensures all messages bubble up to the single rendering point in `view.php` and are presented to the user in a consistent, translatable way.
 
+### Test assertion style
+
+Declare the test name as a named variable on its own line before the assertion, then pass it to `$t->assert*()`. This keeps the description readable and makes the assertion call itself compact.
+
+```php
+// Right
+$test_name = 'login page with failed login shows notification bar';
+$t->assert_text_contains($test_name, $login_html, '<div class="alert alert-warning notification-bar">');
+
+// Wrong — inline string makes the line too long and harder to scan
+$t->assert_text_contains('login page with failed login shows notification bar', $login_html, '<div ...>');
+```
+
+This applies to all `$t->assert*()` variants: `assert`, `assert_html`, `assert_html_page`, `assert_text_contains`, etc.
+
 ### Unit-testability rule (applies to every function and method)
 
 Every function must be fully unit-testable. This means:

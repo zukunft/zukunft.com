@@ -806,7 +806,7 @@ class user extends db_id_object_non_sandbox
             $msg->add(msg_id::USER_NAME_NOT_FOUND, [msg_id::VAR_USER_NAME => $usr_name]);
         }
         if (!password_verify($pw, $this->get_password())) {
-            $msg->add_id(msg_id::PASSWORD_WRONG);
+            $msg->add(msg_id::PASSWORD_WRONG, []);
         }
         if ($msg->is_ok()) {
             session_start();

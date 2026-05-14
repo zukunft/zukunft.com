@@ -36,11 +36,14 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -117,15 +120,46 @@ class system_view_ui_tests
         $usr_msg->usr = $usr_ui;
 
 
-        // test the system views by id
-        // similar to horizontal_ui_tests which tests the curl view for the main objects
-        $t->subheader($ts . 'by id');
+        // shared frontend instance for all page tests
         $ui = new frontend('unit test');
         $dto = $tl->ui_test_cache($t->usr1, $t);
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($t->usr1);
         $usr_dsp = $tl->cast_user($t->usr1);
+
+        // test the notification component standalone
+        $t->subheader($ts . 'notification');
+        $html_base = new html_base();
+        $test_name = 'dsp_notification renders warning div';
+        $t->assert_html(
+            $test_name,
+            $html_base->dsp_notification('Forgot password?'),
+            '<div class="alert alert-warning notification-bar">Forgot password?</div>'
+        );
+
+        // test that a failed login renders the notification in the full page
+        $_SESSION[url_var::SESSION_TOKEN] = test_const::DUMMY_SESSION_TOKEN;
+        $err_msg = new user_message();
+        $err_msg->add(msg_id::PASSWORD_WRONG, []);
+        $url_array = [url_var::MASK => views::LOGIN_ID];
+        $login_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto);
+
+        $notification_div = '<div class="alert alert-warning notification-bar">';
+        $test_name = 'login page with failed login shows notification bar';
+        $t->assert_text_contains($test_name, $login_html, $notification_div);
+
+        $expected_msg = msg_id::PASSWORD_WRONG->value;
+        $test_name = 'login page notification contains password wrong message';
+        $t->assert_text_contains($test_name, $login_html, $expected_msg);
+
+        $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'login_notification';
+        $test_name = 'login page with failed login notification matches snapshot';
+        $t->assert_html_page($test_name, $login_html, $file_path);
+
+        // test the system views by id
+        // similar to horizontal_ui_tests which tests the curl view for the main objects
+        $t->subheader($ts . 'by id');
 
         /*
         $test_name = 'test the start page upfront to have at least the header and footer fine for all pages';

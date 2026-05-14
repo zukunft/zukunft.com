@@ -4929,6 +4929,8 @@
     \-- footer_html - section for function footer_html not yet defined that it should be header & footer in /html/html_base.php
     \-- header - section for function header not yet defined that it should be header & footer in /html/html_base.php
     \-- navbar - section for function navbar not yet defined that it should be header & footer in /html/html_base.php
+    \-- dsp_notification - section for function dsp_notification not yet defined that it should be header & footer in /html/html_base.php
+    \-- dsp_notification_html - section for function dsp_notification_html not yet defined that it should be header & footer in /html/html_base.php
     \-- footer - section for function footer not yet defined that it should be header & footer in /html/html_base.php
     \-- ref - section for function ref not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- ref_view - section for function ref_view not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
@@ -5418,6 +5420,7 @@
     \-- last_term - section for function last_term not yet defined that it should be set and get in /user/user.php
     \-- password - section for function password not yet defined that it should be set and get in /user/user.php
     \-- profile_name - section for function profile_name not yet defined that it should be info in /user/user.php
+    \-- navbar_role - section for function navbar_role not yet defined that it should be info in /user/user.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /user/user.php
     \-- name_link - section for function name_link not yet defined that it should be display in /user/user.php
     \-- form_login - section for function form_login not yet defined that it should be display in /user/user.php
@@ -5449,6 +5452,10 @@
     \-- add_error_text - section for function add_error_text not yet defined that it should be add in /user/user_message.php
     \-- add_warning - section for function add_warning not yet defined that it should be add in /user/user_message.php
     \-- add_message - section for function add_message not yet defined that it should be add in /user/user_message.php
+    \-- add_info - section for function add_info not yet defined that it should be add in /user/user_message.php
+    \-- get_last_info - section for function get_last_info is expected to be set and get in /user/user_message.php
+    \-- has_msg_id - section for function has_msg_id not yet defined that it should be add in /user/user_message.php
+    \-- has_info - section for function has_info not yet defined that it should be add in /user/user_message.php
     \-- merge - section for function merge not yet defined that it should be add in /user/user_message.php
     \-- get_message - section for function get_message is expected to be set and get in /user/user_message.php
     \-- get_last_message - section for function get_last_message is expected to be set and get in /user/user_message.php
@@ -6873,6 +6880,10 @@
         \-- html_base - create the html code for the page header
     \-- navbar
         \-- html_base - @param int $msk_id the current view id used to build back params and view-change links
+    \-- dsp_notification
+        \-- html_base - a full-width notification bar shown above the footer to inform the user about a non-fatal issue
+    \-- dsp_notification_html
+        \-- html_base - like dsp_notification but the caller supplies already-safe HTML (e.g. to embed a link);
     \-- footer
         \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
 \-- wrapper for the basic html elements used

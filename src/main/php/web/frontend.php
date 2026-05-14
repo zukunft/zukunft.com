@@ -631,9 +631,6 @@ class frontend
         // detect the url format and map it to standard keys
         $url_map = new url_mapper();
         $url_array = $url_map->url_to_standard($url_array, $usr_msg);
-        if (!$usr_msg->is_ok()) {
-            $msg_txt = $usr_msg->var_message_text();
-        }
 
         // get vars for the main entries just to make code more readable
         $view = $url_array[url_var::MASK];
@@ -769,9 +766,34 @@ class frontend
                     $html = new html_base();
                     $result .= $html->header($title, '', $lan);
                     if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
-                        $result .= $html->navbar($view_id, $url_array, $usr?->name(), $usr?->profile_name());
+                        $logged_in = $usr !== null && !$usr->is_ip_only();
+                        $result .= $html->navbar($view_id, $url_array,
+                            $logged_in ? $usr->name() : null,
+                            $logged_in ? $usr->navbar_role() : null);
                     }
                     $result .= $html->main($dsp_text);
+                    if ($usr_msg->has_info()) {
+                        $msg_txt = $usr_msg->get_last_message_translated();
+                        if ($msg_txt === '') {
+                            $msg_txt = $usr_msg->get_last_message();
+                        }
+                        if ($msg_txt === '') {
+                            $msg_txt = $usr_msg->get_last_info();
+                        }
+                        if ($msg_txt !== '') {
+                            if ($usr_msg->has_msg_id(msg_id::PASSWORD_WRONG)) {
+                                $reset_link = $html->ref(
+                                    api::RESET_SCRIPT,
+                                    msg_id::PASSWORD_WRONG->value,
+                                    msg_id::PASSWORD_WRONG_TITLE->value
+                                );
+                                $notification_html = htmlspecialchars(msg_id::LOGIN_FAILED->value . '. ') . $reset_link;
+                                $result .= $html->dsp_notification_html($notification_html);
+                            } else {
+                                $result .= $html->dsp_notification($msg_txt);
+                            }
+                        }
+                    }
                     $result .= $html->footer();
                 }
             }

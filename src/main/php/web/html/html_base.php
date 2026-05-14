@@ -172,8 +172,10 @@ class html_base
     // to sort
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
+    const string CLASS_NOTIFICATION = 'alert alert-warning notification-bar';
     const string CLASS_INPUT_SECTION = 'search-section';
     const string CLASS_INPUT = 'standard-input';
+    const string CLASS_SUBMIT = 'submit-input';
     const string CLASS_BUTTON = 'btn';
     const string CLASS_NAV = 'navbar site-header fixed-top';
     const string CLASS_LOGO = 'navbar-brand';
@@ -406,6 +408,33 @@ class html_base
         $url_settings = $this->url_with_back(api::SETTINGS_REL, $url_array);
         $result .= $this->list_item($this->ref($url_settings, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
         return $this->list_unsorted($result);
+    }
+
+    /**
+    /**
+     * a full-width notification bar shown above the footer to inform the user about a non-fatal issue
+     * uses Bootstrap alert-warning styling to display in orange
+     *
+     * @param string $msg_txt the human-readable message to display; must already be translated
+     * @return string the html code for the notification bar
+     */
+    function dsp_notification(string $msg_txt): string
+    {
+        return $this->dsp_notification_html(htmlspecialchars($msg_txt));
+    }
+
+    /**
+     * like dsp_notification but the caller supplies already-safe HTML (e.g. to embed a link);
+     * the caller is responsible for escaping any user-supplied content inside $html
+     *
+     * @param string $html pre-rendered safe HTML content for the notification bar
+     * @return string the html code for the notification bar
+     */
+    function dsp_notification_html(string $html): string
+    {
+        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_NOTIFICATION . '">'
+            . $html
+            . '</' . self::DIV . '>' . "\n";
     }
 
     /**
@@ -1065,7 +1094,11 @@ class html_base
 
     function form_submit(string $submit_name): string
     {
-        return $this->form_input(html_base::INPUT_SUBMIT, url_var::POST_SUBMIT, $submit_name);
+        $txt = '<' . self::INPUT . ' ' . self::TYPE . '="' . self::INPUT_SUBMIT . '"';
+        $txt .= ' ' . self::NAME . '="' . url_var::POST_SUBMIT . '"';
+        $txt .= ' ' . self::VALUE . '="' . $submit_name . '"';
+        $txt .= ' ' . self::CLASS_HTML . '="' . self::CLASS_SUBMIT . '">';
+        return $txt;
     }
 
     // TODO Prio 0 use this function for all html input fields

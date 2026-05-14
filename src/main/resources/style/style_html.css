@@ -188,6 +188,13 @@ body {
     width: 70%; /* Sets a width to half of the flew container for the search and login inputs */
 }
 
+/* submit button: same height as standard-input, horizontal padding creates a proportional width */
+.submit-input {
+    padding: 10px 40px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
 /* buttons */
 .btn {
     background: #9ea09e; /* Sets the button background to zukunft.com specific grey */

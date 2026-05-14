@@ -49,6 +49,8 @@ class user_message extends Message
 
     // array of the messages that should be shown to the user to explain the result of a process
     private array $txt;
+    // array of informational messages shown even when is_ok() is true
+    private array $info;
     // the prime database row that has caused the user message
     private int|string $db_row_id;
 
@@ -66,6 +68,7 @@ class user_message extends Message
     {
         parent::__construct();
         $this->txt = [];
+        $this->info = [];
         if ($txt !== '') {
             $this->txt[] = $txt;
             $this->set_not_ok();
@@ -237,6 +240,50 @@ class user_message extends Message
         if (!in_array($txt, $this->txt)) {
             $this->txt[] = $txt;
         }
+    }
+
+    function add_info(string $txt): void
+    {
+        if ($txt !== '' && !in_array($txt, $this->info)) {
+            $this->info[] = $txt;
+        }
+    }
+
+    function get_last_info(): string
+    {
+        return !empty($this->info) ? end($this->info) : '';
+    }
+
+    /**
+     * @param msg_id $search the message id to look for
+     * @return bool true if the given message id is recorded in msg_var_lst or msg_id_lst
+     */
+    function has_msg_id(msg_id $search): bool
+    {
+        foreach ($this->msg_var_lst as $msg_var) {
+            if ($msg_var[0] === $search) {
+                return true;
+            }
+        }
+        foreach ($this->msg_id_lst as $msg_id_entry) {
+            if ($msg_id_entry === $search) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return bool true if there is any message worth showing to the user:
+     *              an error or warning (!is_ok()), a translatable message with variables
+     *              (msg_var_lst entry added with $ok = true), or a plain info text
+     */
+    function has_info(): bool
+    {
+        $has_error = !$this->is_ok();
+        $has_var_msg = !empty($this->msg_var_lst);
+        $has_info_txt = !empty($this->info);
+        return $has_error || $has_var_msg || $has_info_txt;
     }
 
     /**

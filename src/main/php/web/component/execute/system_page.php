@@ -182,7 +182,8 @@ class system_page extends component
         }
 
         $web_usr = new user_dsp();
-        $form_str = $web_usr->form_login('', $mtr, $extra_hidden);
+        $back_url = html_base::url_from_back($url_array);
+        $form_str = $web_usr->form_login('', $mtr, $extra_hidden, $back_url);
 
         return $html->logo_flex() . $html->br2() . $html->div($form_str, html_base::CLASS_INPUT_SECTION);
     }

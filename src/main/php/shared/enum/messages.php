@@ -1472,6 +1472,8 @@ enum messages: string
     case AND_MORE_BEFORE = 'and';
     case OR = 'or';
     case SIGNUP = 'signup';
+    case GO = 'go';
+    case BACK_LINK = 'back';
     case THREE_POINTS = '...';
 
     // text to be shown in buttons

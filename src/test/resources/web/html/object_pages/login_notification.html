@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            Login  (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <main class="main-container">
+            <div class="row col-md-12">
+                <h4>
+                </h4>
+            </div>
+            <div class="logo-section">
+                <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                    <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="brand-logo">
+                </a>
+            </div>
+            <br>
+            <br>
+            <div class="search-section">
+                <form action="/http/view.php" method="post">
+                    username or email
+                    <br>
+                    <input type="text" name="username" class="standard-input">
+                    <br>
+                    <br>
+                    password
+                    <br>
+                    <input type="password" name="password" class="standard-input">
+                    <br>
+                    <br>
+                    <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                    <input type="hidden" name="m" value="61">
+                    <input type="submit" name="submit" value="Login" class="submit-input">
+                    <br>
+                    <br>
+                </form>
+                or
+                <a href="/http/signup.php">
+                    signup
+                </a>
+            </div>
+        </main>
+        <div class="alert alert-warning notification-bar">
+            Login failed.
+            <a href="/http/view.php?m=63" title="Request to reset the password">
+                Forgot password?
+            </a>
+        </div>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

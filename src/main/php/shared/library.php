@@ -645,7 +645,8 @@ class library
             if ($mtr != null) {
                 $msg_txt = $mtr->txt($msg_var[0]);
             } else {
-                $msg_txt = $msg_var[0];
+                // use ->value for backed enums (e.g. messages::PASSWORD_WRONG) because PHP 8.1+ does not implicitly cast them to string
+                $msg_txt = $msg_var[0] instanceof \BackedEnum ? $msg_var[0]->value : (string)$msg_var[0];
             }
             foreach ($msg_var[1] as $key => $var) {
                 $msg_txt = $this->msg_var_replace($msg_txt, $key, $var);

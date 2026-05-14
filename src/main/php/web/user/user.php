@@ -400,6 +400,18 @@ class user extends db_object
      */
 
     /**
+     * @return bool true if the user is only identified by IP address and has not logged in
+     */
+    function is_ip_only(): bool
+    {
+        global $sys;
+        if ($this->profile_id <= 0) {
+            return true;
+        }
+        return $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::IP_ONLY);
+    }
+
+    /**
      * @returns bool true if the user has admin rights
      */
     function is_admin(): bool
@@ -445,6 +457,31 @@ class user extends db_object
         } else {
             return null;
         }
+    }
+
+    /**
+     * returns the role label for the navbar tooltip and dropdown header, or null for regular users
+     * regular profiles (NAME_ONLY, EMAIL, HUMAN) show no role; elevated profiles (ADMIN, DEV, SYS_LINK, TEST, LOG, SYSTEM) do
+     *
+     * @return string|null the profile name to display next to the username, or null for regular users
+     */
+    function navbar_role(): ?string
+    {
+        global $sys;
+        $elevated = [
+            user_profiles::SYS_LINK,
+            user_profiles::ADMIN,
+            user_profiles::DEV,
+            user_profiles::TEST,
+            user_profiles::LOG,
+            user_profiles::SYSTEM,
+        ];
+        foreach ($elevated as $prf) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id($prf)) {
+                return $this->profile_name();
+            }
+        }
+        return null;
     }
 
     /**
@@ -526,9 +563,10 @@ class user extends db_object
      * @param string $msg_txt already-rendered error HTML to embed inside the form
      * @param Translator $mtr for translating labels and button text
      * @param string $extra_hidden additional hidden fields to inject before the submit button e.g. the mask id and 9-prefixed back params
+     * @param string $back_url when non-empty an "or go back" link is appended after "or signup"
      * @return string the complete login form HTML followed by an "or signup" link
      */
-    function form_login(string $msg_txt, Translator $mtr, string $extra_hidden = ''): string
+    function form_login(string $msg_txt, Translator $mtr, string $extra_hidden = '', string $back_url = ''): string
     {
         $html = new html_base();
         $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME_OR_EMAIL) . $html->br();
@@ -539,9 +577,12 @@ class user extends db_object
         $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
         $form_str .= $extra_hidden;
         $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN)) . $html->br2();
-        $or_signup = $html->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::OR)
-            . ' ' . $mtr->txt(msg_id::SIGNUP));
-        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str) . $or_signup;
+        $or_signup = $mtr->txt(msg_id::OR) . ' ' . $html->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::SIGNUP));
+        $or_back = '';
+        if ($back_url !== '') {
+            $or_back = ' ' . $mtr->txt(msg_id::OR) . ' ' . $mtr->txt(msg_id::GO) . ' ' . $html->ref($back_url, $mtr->txt(msg_id::BACK_LINK));
+        }
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str) . $or_signup . $or_back;
     }
 
 
