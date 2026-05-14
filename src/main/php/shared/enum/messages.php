@@ -1840,6 +1840,7 @@ enum messages: string
     case NAVBAR_LOGIN = 'navbar_login';
     case NAVBAR_SIGNUP = 'navbar_signup';
     case NAVBAR_SETTINGS = 'navbar_settings';
+    case NAVBAR_LOGOUT = 'navbar_logout';
 
     // about page text
     case ABOUT_SPONSORED_BY = 'about_sponsored_by';

@@ -25,6 +25,7 @@ messages:
   navbar_login: "Anmelden"
   navbar_signup: "Registrieren"
   navbar_settings: "Einstellungen"
+  navbar_logout: "Abmelden"
   about_sponsored_by: "wird unterstützt von"
   about_main_idea: "Eine der Hauptideen ist die Verwendung von"
   about_once_implemented: "Wenn implementiert, könnte es möglich sein"

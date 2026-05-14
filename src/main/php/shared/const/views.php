@@ -388,6 +388,19 @@ class views
     );
 
     // array of test view names create before the test
+    const array STATIC_VIEWS = array(
+        self::LOGIN_ID,
+        self::SIGNUP_ID,
+        self::START_ID,
+    );
+
+    // list og views where a logged in user is simulated to create the test view
+    const array TEST_LOGIN_VIEW_IDS = array(
+        self::WORD_EDIT_ID,
+        self::FORMULA_DEL_ID,
+    );
+
+    // array of test view names create before the test
     const array TEST_VIEWS = array(
         self::TEST_ADD_NAME,
         self::TEST_ADD_VIA_FUNC_NAME,

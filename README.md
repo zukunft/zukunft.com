@@ -136,7 +136,7 @@ Coding team suggestions
 - **one tool** (not two or more) per purpose: git, tickets, wiki, message e.g. element.io
 
 LLM KI usage
-- for LLM KI systems the [generated overview](docs/overview_generated.md) might be helpfully
+- for LLM KI systems the [LLM coding guide](docs/llm_coding.md) might be helpfully
 
 Decisions
 - use this program for a mind map with all arguments where each has a weight and value and all changes are logged

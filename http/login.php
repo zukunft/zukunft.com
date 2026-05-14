@@ -120,7 +120,7 @@ if ($db_con->is_open()) {
     $html = new html_base();
     if (!$_SESSION[url_var::SESSION_LOGGED]) {
         $web_usr = new user_dsp();
-        $form_str = $web_usr->form_login($next_url, $msg_txt, $mtr);
+        $form_str = $web_usr->form_login($msg_txt, $mtr);
 
         // TODO Prio 3 use a changing logo to show something positive of today or a person that has done something positive and is somehow linked to today
         $html_str = $html->logo_flex();

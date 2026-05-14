@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
@@ -53,11 +54,36 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 // reset the html code var
 $html_str = '';
-$usr_msg = new user_message();
+$msg = new user_message();
+
+// prepare for static pages
+// merge POST into GET so form submissions (e.g. login) reach url_to_action
+// TODO claude: add other actions or maybe use $_REQUEST ?
+$url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
+//$debug = 12;
+log_debug('view $_POST array: ' . library::dsp_array($_POST, true));
+// e.g. view $_POST array: username=timon,password=pw,token=9b7e93ace811c182a3fef8c3f7a6fe9832e814f3b872b6534b9d318852952917,m=61,9m=2,9id=1,9z=0,submit=Login.
+/*
+$url_array = [
+    'username' => 'timon',
+    'password' => 'wind4surfen',
+    'token'    => '9b7e93ace811c182a3fef8c3f7a6fe9832e814f3b872b6534b9d318852952917',
+    'm'        => 61,
+    '9m'       => 2,
+    '9id'      => 1,
+    '9z'       => 0,
+    'submit'   => 'Login',
+];
+*/
+
+// TODO llm: norm the url_array based on static function and const e.g. convert mask_id=login to m=61 but do not convert mask_id that does not have a const
+// TODO llm: if the request is a static page (views::STATIC_VIEWS), just show it e.g. from the html file stored in the root folder /login or /start and skip the database opening and closing
+// TODO llm: create a process to refresh the static pages for via /http/update_static.php script that cal also be called by an admin user or a scheduled batch job (make sure that no other files are overwritten and that this cannot be user for code injections)
+
 
 // open database
 $app = new frontend();
-$db_con = $app->start("view");
+$db_con = $app->start("view", $msg, $_POST);
 
 global $debug;
 global $sys;
@@ -70,8 +96,6 @@ if ($db_con->is_open()) {
     $html_str .= $usr->get();
     // TODO Prio 1 set the user of the $msg and make the the only place where the requesting user is stored
 
-    // merge POST into GET so form submissions (e.g. login) reach url_to_action
-    $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     // at minimum the IP address is used as the user id, so id() > 0 is always true for real requests
@@ -81,7 +105,7 @@ if ($db_con->is_open()) {
         $usr->load_usr_data();
 
         $usr_dsp = new user_ui();
-        $usr_dsp->set_from_json($usr->api_json(), $usr_msg);
+        $usr_dsp->set_from_json($usr->api_json(), $msg);
 
         // load the user changeable configuration once via api
         // TODO Prio 1 load the config from cache if nothing has been changed
@@ -94,16 +118,13 @@ if ($db_con->is_open()) {
 
         // execute the user request and POST-Redirect-GET to prevent re-submission on reload
         $sys->times->switch(system_time_type::URL_TO_ACTION);
-        if (isset($_POST[url_var::POST_SUBMIT])) {
-            $url_array = $ui->url_to_action($url_array, $usr_dsp, $usr_msg, $ui->dto);
-            $redirect = api::MAIN_SCRIPT . '?' . http_build_query($url_array);
-            header('Location: ' . $redirect);
-            exit;
+        if (isset($url_array[url_var::POST_SUBMIT])) {
+            $url_array = $ui->url_to_action($url_array, $usr_dsp, $msg, $ui->dto);
         }
 
         // show the result to the user
         $sys->times->switch(system_time_type::URL_TO_HTML);
-        $html_str .= $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
+        $html_str .= $ui->url_to_html($url_array, $usr_dsp, $msg, $ui->dto);
         $sys->times->switch(system_time_type::CLOSE);
     }
 

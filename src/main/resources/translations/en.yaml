@@ -285,6 +285,7 @@ messages:
   navbar_login: "log in"
   navbar_signup: "Sign in"
   navbar_settings: "Settings"
+  navbar_logout: "logout"
   about_sponsored_by: "is sponsored by"
   about_main_idea: "One of the main ideas is to use"
   about_paper_delphi: "Real-Time Delphi Based on the Giant Global Graph: A Framework for Fair and Evidence-Based Decision-Making"

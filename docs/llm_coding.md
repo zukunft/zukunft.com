@@ -1,4 +1,4 @@
-# Generated Project Overview
+# LLM Coding Guide
 
 This file provides guidance to LLM AI (like claude.ai/code) when working with code in this repository.
 
@@ -169,6 +169,8 @@ Commit messages reference issue numbers: e.g. `fix auth flow as part of fix #232
 - **Minimal dependencies**: keep external packages to a minimum
 - **Log all user changes**: every user action is logged with undo/redo support
 - **Small classes**: split when classes get too large; most important functions at the top
+- **No single-character variable names**: prefer short but readable names — 3-letter abbreviations are ideal (`$val`, `$key`, `$fmt`); only $i for loops is allowed as single character var name
+- **Document parameters**: every parameter gets a `@param` line in the docblock explaining its purpose and the effect of each meaningful value (e.g. what `true`/`false` does)
 
 ### Allowed global variables
 
@@ -194,6 +196,24 @@ Every numeric or string value that has a defined constant must be referenced via
 - **Right**: `views::LOGIN_ID`, `url_var::MASK`, `url_var::PAR`, `api::MAIN_SCRIPT`
 
 When a constant from another class cannot yet be referenced (e.g. due to a missing `use` or include chain), add a `// TODO: replace literal with ConstClass::CONST_NAME` comment so the gap is tracked and fixed in a follow-up.
+
+### Back-navigation parameter convention
+
+Back navigation (where to redirect after an action completes) is encoded as **`'9'`-prefixed URL parameters**, never as a standalone `url_var::BACK` parameter.
+
+- **Right**: `?9m=2&9id=5&9z=0` — each original key is prefixed with `'9'` (`url_var::BACK`); `html_base::back_url_part()` builds this; `html_base::url_par_from_back_part()` strips the prefix on the receiving end
+- **Wrong**: `?9=http%3A%2F%2F...` — do not use `url_var::BACK` as a standalone field name carrying a full URL string; do not emit `form_hidden(url_var::BACK, $someUrl)`
+
+`url_var::BACK = '9'` is a **prefix character**, not a parameter name. Legacy code that reads `$url_array[url_var::BACK]` directly must be migrated to the prefixed-key pattern.
+
+### User-message accumulation convention
+
+`$msg` is created once in `http/view.php` as `new user_message()` and represents the single collector for every message that may be shown to the user during a request. Functions that need to report warnings, errors, or info messages must accept it as an explicit parameter (named `$msg`) and append to it — never create a fresh `user_message` internally and discard it.
+
+- **Right**: `function url_to_action(array $url_array, user $usr_dsp, user_message $msg, ...): array`
+- **Wrong**: creating `new user_message()` inside a helper and returning or echoing the message directly
+
+This ensures all messages bubble up to the single rendering point in `view.php` and are presented to the user in a consistent, translatable way.
 
 ### Unit-testability rule (applies to every function and method)
 

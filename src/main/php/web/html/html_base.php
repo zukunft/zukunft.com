@@ -314,7 +314,13 @@ class html_base
      * @param array $url_array the calling url array
      * @return string the navigation bar HTML code
      */
-    function navbar(int $msk_id = 0, array $url_array = []): string
+    /**
+     * @param int $msk_id the current view id used to build back params and view-change links
+     * @param array $url_array the current request parameters passed through for back-navigation
+     * @param string|null $usr_name the logged-in username to display; null when not logged in
+     * @param string|null $usr_role the profile/role name to display next to the username; null if not set
+     */
+    function navbar(int $msk_id = 0, array $url_array = [], ?string $usr_name = null, ?string $usr_role = null): string
     {
         global $sys;
 
@@ -345,9 +351,14 @@ class html_base
         $result .= $lan_lst . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="user-menu">' . "\n";
-        $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-user-circle"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        // TODO switch the menu if the user is logged in
-        $result .= $this->user_login_list($url_array) . "\n";
+        $usr_tooltip = $usr_name !== null
+            ? ($usr_role !== null ? $usr_role . ' ' : '') . $usr_name
+            : '';
+        $usr_icon = '<' . self::I . ' ' . self::CLASS_HTML . '="fas fa-user-circle"'
+            . ($usr_tooltip !== '' ? ' title="' . htmlspecialchars($usr_tooltip) . '"' : '')
+            . '></' . self::I . '>';
+        $result .= '<' . self::SUMMARY . '>' . $usr_icon . '</' . self::SUMMARY . '>' . "\n";
+        $result .= $this->user_login_list($url_array, $usr_name, $usr_tooltip) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '</' . self::LI . '>' . "\n";
         $result .= '</' . self::UL . '>' . "\n";
@@ -371,13 +382,27 @@ class html_base
         return $this->list_unsorted($result);
     }
 
-    private function user_login_list(array $url_array = []): string
+    /**
+     * @param array $url_array the current request parameters used to build back-navigation links
+     * @param string|null $usr_name the logged-in username; null shows login and signup, non-null shows logout
+     * @param string $usr_label role and username combined e.g. "admin timon"; shown as the first non-link menu line when non-empty
+     */
+    private function user_login_list(array $url_array = [], ?string $usr_name = null, string $usr_label = ''): string
     {
         global $mtr;
-        $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $url_array);
-        $result = $this->list_item($this->ref($url_login, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
-        $url_signup = $this->url_with_back(api::SIGNUP_SCRIPT, $url_array);
-        $result .= $this->list_item($this->ref($url_signup, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
+        $result = '';
+        if ($usr_label !== '') {
+            $result .= $this->list_item($usr_label) . "\n";
+        }
+        if ($usr_name !== null) {
+            $url_logout = $this->url_with_back(api::LOGOUT_SCRIPT, $url_array);
+            $result .= $this->list_item($this->ref($url_logout, $mtr->txt(msg_id::NAVBAR_LOGOUT))) . "\n";
+        } else {
+            $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $url_array);
+            $result .= $this->list_item($this->ref($url_login, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
+            $url_signup = $this->url_with_back(api::SIGNUP_SCRIPT, $url_array);
+            $result .= $this->list_item($this->ref($url_signup, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
+        }
         $url_settings = $this->url_with_back(api::SETTINGS_REL, $url_array);
         $result .= $this->list_item($this->ref($url_settings, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
         return $this->list_unsorted($result);

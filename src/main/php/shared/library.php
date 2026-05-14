@@ -162,6 +162,11 @@ class library
     // to separate two string for the human-readable format
     const string SEPARATOR = ',';
 
+    // display array truncation thresholds
+    const int DSP_ALL_DEBUG = 10;  // debug level above which all entries are shown
+    const int DSP_MAX = 7;         // max entries before truncation kicks in
+    const int DSP_HEAD = 3;        // entries shown at the head of a truncated array
+
     /*
      * internal const
      */
@@ -1975,30 +1980,44 @@ class library
      * @param array|null $in_array the array that should be formatted
      * @return string the value comma separated or "null" if the array is empty
      */
-    function dsp_array(?array $in_array, bool $with_keys = false): string
+    /**
+     * format an array as a human-readable comma-separated string for logging and debug output
+     *
+     * @param array|null $in_array the array to display; null is shown as the literal 'null'
+     * @param bool $with_keys when true each entry is formatted as key=value; defaults to false (values only)
+     * @return string comma-separated entries, truncated to DSP_HEAD + last when count >= DSP_MAX (or $debug) unless debug > DSP_ALL_DEBUG
+     */
+    static function dsp_array(?array $in_array, bool $with_keys = false): string
     {
-        global $debug;
-
-        $lib = new library();
-        $result = 'null';
-        if ($in_array != null) {
-            if ($debug > 10 or count($in_array) < 7) {
-                if (count($in_array) > 0) {
-                    $result = implode(',', $lib->array_flat($in_array));
-                }
-                if ($with_keys) {
-                    $result .= ' (keys ' . $this->dsp_array_keys($in_array) . ')';
-                }
-            } else {
-                $left = array_slice($in_array, 0, 3);
-                $result = implode(',', $lib->array_flat($left));
-                $result .= ',...,' . end($in_array);
-            }
+        // distinguish an absent array from an empty one
+        if ($in_array === null) {
+            return 'null';
         }
-        return $result;
+
+        // build a flat list of formatted entries, recursing into nested arrays
+        $pairs = [];
+        foreach ($in_array as $key => $val) {
+            $fmt = is_array($val) ? '[' . self::dsp_array($val, $with_keys) . ']' : (string)$val;
+            $pairs[] = $with_keys ? $key . '=' . $fmt : $fmt;
+        }
+
+        if (count($pairs) === 0) {
+            return '';
+        }
+
+        // show everything when debug is high or the array is small
+        global $debug;
+        $dsp_max = max($debug, self::DSP_MAX);
+        if ($debug > self::DSP_ALL_DEBUG or count($pairs) < $dsp_max) {
+            return implode(self::SEPARATOR, $pairs);
+        }
+
+        // truncate: first DSP_HEAD entries, ellipsis, then the last entry
+        $head = implode(self::SEPARATOR, array_slice($pairs, 0, self::DSP_HEAD));
+        return $head . ',...,' . end($pairs);
     }
 
-    function dsp_array_keys(?array $in_array): string
+    static function dsp_array_keys(?array $in_array): string
     {
         global $debug;
 

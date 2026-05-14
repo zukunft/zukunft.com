@@ -150,7 +150,11 @@ class system_view_ui_tests
                 }
                 $url_part = parse_url($url);
                 parse_str($url_part["query"], $url_array);
-                $html = $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
+                if (in_array($id, views::TEST_LOGIN_VIEW_IDS)) {
+                    $html = $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
+                } else {
+                    $html = $ui->url_to_html($url_array, null, $usr_msg, $ui->dto);
+                }
                 $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
                 // create the filename of the expected result
                 $dbo_name = $id . '_';

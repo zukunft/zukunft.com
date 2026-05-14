@@ -5417,6 +5417,7 @@
     \-- name - section for function name is expected to be debug in /user/user.php
     \-- last_term - section for function last_term not yet defined that it should be set and get in /user/user.php
     \-- password - section for function password not yet defined that it should be set and get in /user/user.php
+    \-- profile_name - section for function profile_name not yet defined that it should be info in /user/user.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /user/user.php
     \-- name_link - section for function name_link not yet defined that it should be display in /user/user.php
     \-- form_login - section for function form_login not yet defined that it should be display in /user/user.php
@@ -6871,7 +6872,7 @@
     \-- header
         \-- html_base - create the html code for the page header
     \-- navbar
-        \-- html_base - the html code for the navigation bar
+        \-- html_base - @param int $msk_id the current view id used to build back params and view-change links
     \-- footer
         \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
 \-- wrapper for the basic html elements used

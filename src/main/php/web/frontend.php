@@ -230,7 +230,7 @@ class frontend
      * @param Message $msg to collect any messages and suggested solutions for the user
      * @return sql_db
      */
-    function start(string $code_name, Message $msg = new Message()): sql_db
+    function start(string $code_name, Message $msg = new Message(), array $post_array = []): sql_db
     {
         global $sys;
         global $errors;
@@ -248,12 +248,12 @@ class frontend
             } catch (RandomException $e) {
                 log_err('RandomException ' . $e->getMessage());
             }
-        } elseif (!empty($_POST[url_var::SESSION_TOKEN])) {
+        } elseif (!empty($post_array[url_var::SESSION_TOKEN])) {
             // TODO Prio 0 add the session token to each frontend form
-            if (!hash_equals($_SESSION[url_var::SESSION_TOKEN], $_POST[url_var::SESSION_TOKEN])) {
+            if (!hash_equals($_SESSION[url_var::SESSION_TOKEN], $post_array[url_var::SESSION_TOKEN])) {
                 $msg_txt = 'Suspect request. Please close browser, delete cache and login again.';
                 log_fatal($msg_txt, 'view.php');
-                log_fatal('session token is' . $_SESSION[url_var::SESSION_TOKEN] . ' but POST token is ' . $_POST[url_var::SESSION_TOKEN], 'view.php');
+                log_fatal('session token is' . $_SESSION[url_var::SESSION_TOKEN] . ' but POST token is ' . $post_array[url_var::SESSION_TOKEN], 'view.php');
                 $session_is_fine = false;
             }
         }
@@ -610,14 +610,14 @@ class frontend
      * TODO add the db update via api
      *
      * @param array $url_array the parsed url as an array
-     * @param user_ui $usr the session user who has requested the view
+     * @param user_ui|null $usr the session user who has requested the view
      * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @return string the html code to show the page to the user
      */
     function url_to_html(
         array        $url_array,
-        user_ui      $usr,
+        user_ui|null      $usr,
         user_message $usr_msg,
         data_object  $dto = new data_object()
     ): string
@@ -676,7 +676,9 @@ class frontend
         // if the save bottom has been pressed
         if ($step > 0 and $action == url_var::CRUD_CREATE) {
             $dbo->url_mapper($url_array, $usr_msg, $dto);
-            $upd_result = $dbo->add_via_api($usr, $usr_msg);
+            if ($usr != null) {
+                $upd_result = $dbo->add_via_api($usr, $usr_msg);
+            }
 
             // if update was fine ...
             if ($upd_result->is_ok()) {
@@ -707,7 +709,9 @@ class frontend
             }
         } else {
             // get last term used by the user or a default value
-            $wrd = $usr->last_term();
+            if ($usr != null) {
+                $wrd = $usr->last_term();
+            }
         }
 
         // select the view
@@ -765,7 +769,7 @@ class frontend
                     $html = new html_base();
                     $result .= $html->header($title, '', $lan);
                     if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
-                        $result .= $html->navbar($view_id, $url_array);
+                        $result .= $html->navbar($view_id, $url_array, $usr?->name(), $usr?->profile_name());
                     }
                     $result .= $html->main($dsp_text);
                     $result .= $html->footer();
