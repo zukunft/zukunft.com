@@ -215,6 +215,13 @@ Back navigation (where to redirect after an action completes) is encoded as **`'
 
 This ensures all messages bubble up to the single rendering point in `view.php` and are presented to the user in a consistent, translatable way.
 
+### Pass mutable state as explicit parameters, never via globals or return-value side effects
+
+Any object that a function may update must be declared as an explicit parameter. The caller owns the object and can observe the change after the call. Use PHP pass-by-reference (`&`) when the function must replace the variable itself (e.g. reassigning `$usr_backend = $db_usr`); update-in-place via method calls (e.g. `$usr_ui->set_from_json(...)`) does not require `&` because objects are already passed by handle.
+
+- **Right**: `function action_login(..., user_backend &$usr_backend, user_ui &$usr_ui, ...)`  — caller's `$usr` and `$usr_dsp` are updated after a successful login
+- **Wrong**: reading or writing a global variable inside the function to propagate the change
+
 ### Test assertion style
 
 Declare the test name as a named variable on its own line before the assertion, then pass it to `$t->assert*()`. This keeps the description readable and makes the assertion call itself compact.
@@ -229,6 +236,33 @@ $t->assert_text_contains('login page with failed login shows notification bar', 
 ```
 
 This applies to all `$t->assert*()` variants: `assert`, `assert_html`, `assert_html_page`, `assert_text_contains`, etc.
+
+### Single return per function
+
+Every function must have exactly one `return` statement, placed at the end. Assign the result to a named variable (`$result`, `$next_url`, etc.) and return it at the bottom.
+
+```php
+// Right
+function action_login(...): array
+{
+    $next_url = [...];
+    if ($logged_in) {
+        $next_url = $back_array;
+    }
+    return $next_url;
+}
+
+// Wrong — multiple early returns make control flow hard to follow
+function action_login(...): array
+{
+    if ($logged_in) {
+        return $back_array;
+    }
+    return $login_url;
+}
+```
+
+Exception: guard clauses at the very top of a function (e.g. `if ($x === null) { return ''; }`) are allowed when they protect against a precondition that makes the rest of the body meaningless. Everything else must flow to a single return.
 
 ### Unit-testability rule (applies to every function and method)
 

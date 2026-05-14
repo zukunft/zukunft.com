@@ -556,7 +556,8 @@ class frontend
      * the execution should be done via api
      *
      * @param array $url_array the parsed url as an array
-     * @param user_ui $usr the session user who has requested the view
+     * @param user_backend $usr_backend the backend user object updated in-place on successful login
+     * @param user_ui $usr the frontend user object updated in-place on successful login
      * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @param bool $do_it can be set to false for unit testing without executing the exaction
@@ -564,7 +565,8 @@ class frontend
      */
     function url_to_action(
         array        $url_array,
-        user_ui      $usr,
+        user_backend &$usr_backend,
+        user_ui      &$usr,
         user_message $usr_msg,
         data_object  $dto = new data_object(),
         bool         $do_it = true
@@ -585,7 +587,7 @@ class frontend
         $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
 
         match (true) {
-            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $usr_msg, $do_it),
+            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $usr_msg, $usr_backend, $usr, $do_it),
             $view == views::LOGOUT_ID => $url = $this->action_logout(),
             in_array($view, views::ADD_MASKS_IDS) => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
@@ -817,34 +819,54 @@ class frontend
 
     /**
      * validate credentials, start the session, and return the URL to redirect to after login
+     * TODO Prio 2 review and try to avoid the backend frontend mix for user returns
+     *
      * @param array $url_array the normalised URL params including username and password
      * @param user_message $usr_msg collects errors if login fails
+     * @param user_backend $usr_backend updated in-place with the logged-in user on success
+     * @param user_ui $usr_ui updated in-place from the backend user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the session
-     * @return array URL array pointing to the back page on success, or back to the login view on failure
+     * @return array URL array pointing to the back page on success, or the original login URL (minus credentials) on failure
      */
-    private function action_login(array $url_array, user_message $usr_msg, bool $do_it): array
+    private function action_login(
+        array        $url_array,
+        user_message $usr_msg,
+        user_backend &$usr_backend,
+        user_ui      &$usr_ui,
+        bool         $do_it
+    ): array
     {
         // no 'htmlspecialchars()' to avoid converting usernames like O'Brien or a&b before writing to the database
         // SQL injection protection is done be using only prepared queries
         $usr_name = $url_array[url_var::USERNAME] ?? $url_array[url_var::USERNAME_HUMAN] ?? '';
         $pw = $url_array[url_var::USER_PASSWORD] ?? $url_array[url_var::USER_PASSWORD_HUMAN] ?? '';
-        // if login fails show the login view again
-        $next_array = [url_var::MASK => views::LOGIN_ID];
+        $logged_in = false;
 
         if ($do_it) {
             $db_usr = new user_backend();
             $login_msg = new backend_user_message();
-            if ($db_usr->login($usr_name, $pw, $login_msg)) {
-                $back_array = html_base::url_par_from_back_part($url_array);
-                if (!empty($back_array)) {
-                    $next_array = $back_array;
-                }
+            $logged_in = $db_usr->login($usr_name, $pw, $login_msg);
+            if ($logged_in) {
+                $usr_backend = $db_usr;
+                $usr_ui->set_from_json($db_usr->api_json(), $usr_msg);
             } else {
-                $usr_msg->merge($login_msg);
+                $dsp_login_msg = new user_message();
+                $dsp_login_msg->api_mapper($login_msg->api_array());
+                $usr_msg->merge($dsp_login_msg);
             }
         }
 
-        return $next_array;
+        if ($logged_in) {
+            $back_array = html_base::url_par_from_back_part($url_array);
+            $next_url = empty($back_array) ? [url_var::MASK => views::LOGIN_ID] : $back_array;
+        } else {
+            // strip credentials so they don't leak into the rendered page; preserve the mask and 9-prefixed back params
+            $next_url = $url_array;
+            unset($next_url[url_var::USERNAME], $next_url[url_var::USERNAME_HUMAN]);
+            unset($next_url[url_var::USER_PASSWORD], $next_url[url_var::USER_PASSWORD_HUMAN]);
+            unset($next_url[url_var::SESSION_TOKEN], $next_url[url_var::POST_SUBMIT]);
+        }
+        return $next_url;
     }
 
     /**

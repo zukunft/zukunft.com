@@ -157,6 +157,26 @@ class system_view_ui_tests
         $test_name = 'login page with failed login notification matches snapshot';
         $t->assert_html_page($test_name, $login_html, $file_path);
 
+        // test that url_to_action preserves back params on login failure so "or go back" can be rendered
+        $back_mask_key = url_var::BACK . url_var::MASK;
+        $back_id_key = url_var::BACK . url_var::ID;
+        $url_with_back = [
+            url_var::MASK => views::LOGIN_ID,
+            $back_mask_key => views::WORD_ID,
+            $back_id_key => '123',
+        ];
+        $fail_msg = new user_message();
+        $result_url = $ui->url_to_action($url_with_back, $t->usr1, $usr_dsp, $fail_msg, $ui->dto, false);
+
+        $test_name = 'failed login preserves back mask param in returned url';
+        $t->assert($test_name, $result_url[$back_mask_key] ?? '', views::WORD_ID);
+
+        $test_name = 'failed login preserves back id param in returned url';
+        $t->assert($test_name, $result_url[$back_id_key] ?? '', '123');
+
+        $test_name = 'failed login keeps login mask in returned url';
+        $t->assert($test_name, $result_url[url_var::MASK] ?? 0, views::LOGIN_ID);
+
         // test the system views by id
         // similar to horizontal_ui_tests which tests the curl view for the main objects
         $t->subheader($ts . 'by id');

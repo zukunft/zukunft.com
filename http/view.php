@@ -58,7 +58,7 @@ $msg = new user_message();
 
 // prepare for static pages
 // merge POST into GET so form submissions (e.g. login) reach url_to_action
-// TODO claude: add other actions or maybe use $_REQUEST ?
+// TODO llm: add other actions or maybe use $_REQUEST ?
 $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
 //$debug = 12;
 log_debug('view $_POST array: ' . library::dsp_array($_POST, true));
@@ -119,7 +119,7 @@ if ($db_con->is_open()) {
         // execute the user request and POST-Redirect-GET to prevent re-submission on reload
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         if (isset($url_array[url_var::POST_SUBMIT])) {
-            $url_array = $ui->url_to_action($url_array, $usr_dsp, $msg, $ui->dto);
+            $url_array = $ui->url_to_action($url_array, $usr, $usr_dsp, $msg, $ui->dto);
         }
 
         // show the result to the user
