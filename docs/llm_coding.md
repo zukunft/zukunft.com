@@ -183,7 +183,7 @@ The project uses a small, fixed set of globals (see `docs/todo.md`). No other gl
 | `$cfg` | User-specific configuration numbers (changes more often than types) |
 | `$cac` | Backend cache of user-specific `data_object` |
 | `$ui_cac` | Frontend cache including the session user |
-| `$mtr` | Message translation — used as the last step in the frontend |
+| `$mtr` | Message translation — created **once** in `http/view.php`; language resolved in this priority order: (1) `url_var::LANGUAGE` URL parameter, (2) session variable, (3) user config (`$cfg`), (4) default language |
 | `$t` | Base test object (assert + cleanup helpers) |
 | `$t_sys` | Error counting and execution times for tests |
 | `$debug` | Activates additional logging levels |

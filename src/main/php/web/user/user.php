@@ -560,20 +560,19 @@ class user extends db_object
     /**
      * build the login form HTML
      *
-     * @param string $msg_txt already-rendered error HTML to embed inside the form
-     * @param Translator $mtr for translating labels and button text
      * @param string $extra_hidden additional hidden fields to inject before the submit button e.g. the mask id and 9-prefixed back params
      * @param string $back_url when non-empty an "or go back" link is appended after "or signup"
      * @return string the complete login form HTML followed by an "or signup" link
      */
-    function form_login(string $msg_txt, Translator $mtr, string $extra_hidden = '', string $back_url = ''): string
+    function form_login(string $extra_hidden = '', string $back_url = ''): string
     {
+        global $mtr;
+
         $html = new html_base();
         $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME_OR_EMAIL) . $html->br();
         $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
         $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
         $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN) . $html->br2();
-        $form_str .= $msg_txt;
         $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
         $form_str .= $extra_hidden;
         $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN)) . $html->br2();
@@ -583,6 +582,37 @@ class user extends db_object
             $or_back = ' ' . $mtr->txt(msg_id::OR) . ' ' . $mtr->txt(msg_id::GO) . ' ' . $html->ref($back_url, $mtr->txt(msg_id::BACK_LINK));
         }
         return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str) . $or_signup . $or_back;
+    }
+
+    /**
+     * build the signup form HTML
+     *
+     * @param string $extra_hidden additional hidden fields to inject e.g. the mask id and 9-prefixed back params
+     * @param string $usr_name pre-filled username shown when re-displaying after a validation error
+     * @param string $email pre-filled email shown when re-displaying after a validation error
+     * @return string the complete signup form HTML
+     */
+    function form_signup(string $extra_hidden = '', string $usr_name = '', string $email = ''): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $form_usr = $mtr->txt(msg_id::FORM_NAME_USER_NAME) . $html->br();
+        $form_usr .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME, $usr_name);
+        $form_str = $html->p($form_usr);
+        $form_mail = $mtr->txt(msg_id::FORM_NAME_USER_EMAIL) . $html->br();
+        $form_mail .= $html->form_input(html_base::INPUT_TEXT, url_var::EMAIL, $email);
+        $form_str .= $html->p($form_mail);
+        $form_pw = $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
+        $form_pw .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD);
+        $form_str .= $html->p($form_pw);
+        $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
+        $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE);
+        $form_str .= $html->p($form_pwr);
+        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $extra_hidden;
+        $form_str .= $html->button_submit($mtr->txt(msg_id::SIGN_UP));
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
     }
 
 

@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -54,13 +55,20 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 // reset the html code var
 $html_str = '';
+
+// init global objects
+global $debug;
+global $sys;
+global $mtr;
+$mtr = new Translator();
 $msg = new user_message();
 
 // prepare for static pages
 // merge POST into GET so form submissions (e.g. login) reach url_to_action
 // TODO llm: add other actions or maybe use $_REQUEST ?
+// TODO llm: norm the url_array based on static function and const e.g. convert mask_id=login to m=61 but do not convert mask_id that does not have a const
+// TODO llm: if the lan is given use it for $mtr
 $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
-//$debug = 12;
 log_debug('view $_POST array: ' . library::dsp_array($_POST, true));
 // e.g. view $_POST array: username=timon,password=pw,token=9b7e93ace811c182a3fef8c3f7a6fe9832e814f3b872b6534b9d318852952917,m=61,9m=2,9id=1,9z=0,submit=Login.
 /*
@@ -76,7 +84,6 @@ $url_array = [
 ];
 */
 
-// TODO llm: norm the url_array based on static function and const e.g. convert mask_id=login to m=61 but do not convert mask_id that does not have a const
 // TODO llm: if the request is a static page (views::STATIC_VIEWS), just show it e.g. from the html file stored in the root folder /login or /start and skip the database opening and closing
 // TODO llm: create a process to refresh the static pages for via /http/update_static.php script that cal also be called by an admin user or a scheduled batch job (make sure that no other files are overwritten and that this cannot be user for code injections)
 
@@ -85,8 +92,6 @@ $url_array = [
 $app = new frontend();
 $db_con = $app->start("view", $msg, $_POST);
 
-global $debug;
-global $sys;
 
 if ($db_con->is_open()) {
 

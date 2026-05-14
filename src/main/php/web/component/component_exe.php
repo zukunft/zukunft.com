@@ -308,7 +308,7 @@ class component_exe extends component
             component_types::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
-            component_types::SYSTEM_BODY_SIGNUP => $page->signup_body(),
+            component_types::SYSTEM_BODY_SIGNUP => $page->signup_body($url_array),
             component_types::SYSTEM_BODY_LOGIN => $page->login_body($url_array),
             component_types::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body(),
             component_types::SYSTEM_BODY_LOGIN_RESET => $page->reset_body(),

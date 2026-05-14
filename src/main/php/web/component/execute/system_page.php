@@ -44,6 +44,7 @@ include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::USER . 'user.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -54,7 +55,6 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -161,29 +161,52 @@ class system_page extends component
         return 'setup_body placeholder';
     }
 
-    // TODO Prio 0 fill with real code
-    function signup_body(): string
+    /**
+     * build the signup form HTML
+     *
+     * @param array $url_array the POST parameters from the signup form submission; used to pre-fill fields after a validation error
+     * @return string the complete signup page body HTML (without notification bar; caller renders that separately)
+     */
+    function signup_body(array $url_array): string
     {
-        return 'signup_body placeholder';
+        global $mtr;
+
+        $html = new html_base();
+        $usr_name = $url_array[url_var::USERNAME] ?? '';
+        $email = $url_array[url_var::EMAIL] ?? '';
+
+        $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::SIGNUP_ID);
+        foreach (url_var::back_par($url_array) as $key => $val) {
+            $extra_hidden .= $html->form_hidden($key, $val);
+        }
+
+        $web_usr = new user_dsp();
+        $form_str = $web_usr->form_signup($extra_hidden, $usr_name, $email);
+
+        $result = $html->p($mtr->txt(msg_id::SIGNUP_ALPHA_NOTICE));
+        $result .= $html->p($html->dsp_err($mtr->txt(msg_id::SIGNUP_DATA_WARNING)));
+        $result .= $html->logo_flex();
+        $result .= $html->br2();
+        $result .= $html->div($form_str, html_base::CLASS_INPUT_SECTION);
+        return $result;
     }
 
     function login_body(array $url_array = []): string
     {
-        $_SESSION[url_var::SESSION_LOGGED] = false;
+
         $html = new html_base();
-        $mtr = new Translator();
+        $_SESSION[url_var::SESSION_LOGGED] = false;
 
         // embed the login mask and any BACK-prefixed params as hidden fields so they survive the POST
-        $back_params = array_filter($url_array, fn($k) => str_starts_with($k, url_var::BACK), ARRAY_FILTER_USE_KEY);
         // view.php dispatches on url_var::MASK in url_to_action; without LOGIN_ID the POST has no routing key and action_login is never called
         $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::LOGIN_ID);
-        foreach ($back_params as $key => $val) {
+        foreach (url_var::back_par($url_array) as $key => $val) {
             $extra_hidden .= $html->form_hidden($key, $val);
         }
 
         $web_usr = new user_dsp();
         $back_url = html_base::url_from_back($url_array);
-        $form_str = $web_usr->form_login('', $mtr, $extra_hidden, $back_url);
+        $form_str = $web_usr->form_login($extra_hidden, $back_url);
 
         return $html->logo_flex() . $html->br2() . $html->div($form_str, html_base::CLASS_INPUT_SECTION);
     }

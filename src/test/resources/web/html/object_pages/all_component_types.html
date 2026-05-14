@@ -115,7 +115,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/signup.php">
+                                    <a href="/http/view.php?m=60">
                                         Sign in
                                     </a>
                                 </li>
@@ -3061,7 +3061,58 @@ under the
         <br>
         <br>
         <br>
-        signup_body placeholder
+        <p>
+            Please signup for
+            <b>
+                alpha testing
+            </b>
+            of zukunft.com.
+        </p>
+        <p>
+            <style class="text-danger">
+                Be aware that during this phase your
+                <b>
+                    data may get lost
+                </b>
+                or is changed due to program errors or updates.
+            </style>
+        </p>
+        <div class="logo-section">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="brand-logo">
+            </a>
+        </div>
+        <br>
+        <br>
+        <div class="search-section">
+            <form action="/http/view.php" method="post">
+                <p>
+                    username
+                    <br>
+                    <input type="text" name="un" class="standard-input">
+                </p>
+                <p>
+                    email
+                    <br>
+                    <input type="text" name="um" class="standard-input">
+                </p>
+                <p>
+                    password
+                    <br>
+                    <input type="password" name="uw" class="standard-input">
+                </p>
+                <p>
+                    re-type password
+                    <br>
+                    <input type="password" name="uwr" class="standard-input">
+                </p>
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <input type="hidden" name="m" value="60">
+                <button type="submit" class="btn">
+                    Sign Up
+                </button>
+            </form>
+        </div>
         <br>
         <br>
         <h4>
@@ -3096,7 +3147,7 @@ under the
                 <br>
             </form>
             or
-            <a href="/http/signup.php">
+            <a href="/http/view.php?m=60">
                 signup
             </a>
         </div>

@@ -5424,6 +5424,7 @@
     \-- api_array - section for function api_array not yet defined that it should be interface in /user/user.php
     \-- name_link - section for function name_link not yet defined that it should be display in /user/user.php
     \-- form_login - section for function form_login not yet defined that it should be display in /user/user.php
+    \-- form_signup - section for function form_signup not yet defined that it should be display in /user/user.php
     \-- form_edit - section for function form_edit not yet defined that it should be to review in /user/user.php
     \-- dsp_changes - section for function dsp_changes not yet defined that it should be to review in /user/user.php
     \-- dsp_errors - section for function dsp_errors not yet defined that it should be to review in /user/user.php
@@ -6473,41 +6474,41 @@
     \-- setup_body
         \-- system_page - HTML for a subtitle
     \-- signup_body
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- login_body
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- activate_body
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- reset_body
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- logout_body
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- body_search
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- body_search_full
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- value_details
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- result_explain
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- formula_test
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- sandbox
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- undo
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- user_setting
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- process
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- error_log
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- error_update
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- process_progress
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- process_list
-        \-- system_page - HTML for a subtitle
+        \-- system_page - build the signup form HTML
     \-- text
         \-- ui_base - @return string a fixed text
     \-- phrase_name

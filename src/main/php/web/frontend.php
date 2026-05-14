@@ -563,7 +563,7 @@ class frontend
      * @param bool $do_it can be set to false for unit testing without executing the exaction
      * @return array the url array to display the result and the next step
      */
-    function url_to_action(
+    function  url_to_action(
         array        $url_array,
         user_backend &$usr_backend,
         user_ui      &$usr,
@@ -588,6 +588,7 @@ class frontend
 
         match (true) {
             $view == views::LOGIN_ID => $url = $this->action_login($url_array, $usr_msg, $usr_backend, $usr, $do_it),
+            $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $usr_msg, $usr_backend, $usr, $do_it),
             $view == views::LOGOUT_ID => $url = $this->action_logout(),
             in_array($view, views::ADD_MASKS_IDS) => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
@@ -864,6 +865,102 @@ class frontend
             $next_url = $url_array;
             unset($next_url[url_var::USERNAME], $next_url[url_var::USERNAME_HUMAN]);
             unset($next_url[url_var::USER_PASSWORD], $next_url[url_var::USER_PASSWORD_HUMAN]);
+            unset($next_url[url_var::SESSION_TOKEN], $next_url[url_var::POST_SUBMIT]);
+        }
+        return $next_url;
+    }
+
+    /**
+     * validate the signup form, create the user account, auto-login, and return the next URL
+     *
+     * @param array $url_array the normalised URL params including username, email, and passwords
+     * @param user_message $usr_msg collects validation errors or save failures
+     * @param user_backend $usr_backend updated in-place with the new user on success
+     * @param user_ui $usr_ui updated in-place from the new user's api_json on success
+     * @param bool $do_it false for unit tests that should not touch the database or session
+     * @return array URL array pointing to the back page on success, or the signup page (minus passwords) on failure
+     */
+    private function action_signup(
+        array        $url_array,
+        user_message $usr_msg,
+        user_backend &$usr_backend,
+        user_ui      &$usr_ui,
+        bool         $do_it
+    ): array
+    {
+        global $mtr;
+
+        // no htmlspecialchars() — SQL injection is handled by prepared queries; output escaping happens in form_input()
+        $usr_name = $url_array[url_var::USERNAME] ?? $url_array[url_var::USERNAME_HUMAN] ?? '';
+        $email = $url_array[url_var::EMAIL] ?? $url_array[url_var::EMAIL_HUMAN] ?? '';
+        $pw = $url_array[url_var::USER_PASSWORD] ?? $url_array[url_var::USER_PASSWORD_HUMAN] ?? '';
+        $pw_re = $url_array[url_var::USER_PASSWORD_RETYPE] ?? $url_array[url_var::USER_PASSWORD_RETYPE_HUMAN] ?? '';
+        $signed_up = false;
+
+        if ($do_it) {
+            $existing = new user_backend();
+            $existing->load_by_name($usr_name);
+            if ($existing->has_db_id()) {
+                $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_NAME_EXISTS));
+            }
+            if (empty($email)) {
+                $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_EMAIL_EMPTY));
+            }
+            if (empty($pw)) {
+                $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY));
+            }
+            if (empty($pw_re)) {
+                $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY));
+            }
+            if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
+                $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_MISMATCH));
+            }
+
+            if ($usr_msg->is_ok()) {
+                $signup_msg = new backend_user_message();
+                $new_usr = new user_backend();
+                $new_usr->name = $usr_name;
+                $new_usr->email = $email;
+                $new_usr->set_password($pw, $signup_msg);
+                if ($signup_msg->is_ok()) {
+                    $new_usr->save($signup_msg);
+                    $usr_by_name = new user_backend();
+                    $usr_by_name->load_by_name($usr_name);
+                    $usr_id = $usr_by_name->id();
+                    if ($usr_id > 0) {
+                        session_start();
+                        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                            try {
+                                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                            } catch (RandomException $e) {
+                                log_err('RandomException ' . $e->getMessage());
+                            }
+                        }
+                        $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
+                        $_SESSION[url_var::USERNAME_HUMAN] = $usr_name;
+                        $_SESSION[url_var::SESSION_LOGGED] = true;
+                        $usr_backend = $usr_by_name;
+                        $usr_ui->set_from_json($usr_by_name->api_json(), $usr_msg);
+                        $signed_up = true;
+                    } else {
+                        log_err('Cannot find id for ' . $usr_name . ' after signup.', 'action_signup');
+                        $signup_msg->add_message_text($mtr->txt(msg_id::SIGNUP_ERR_FAILED));
+                    }
+                }
+                $dsp_signup_msg = new user_message();
+                $dsp_signup_msg->api_mapper($signup_msg->api_array());
+                $usr_msg->merge($dsp_signup_msg);
+            }
+        }
+
+        if ($signed_up) {
+            $back_array = html_base::url_par_from_back_part($url_array);
+            $next_url = empty($back_array) ? [url_var::MASK => views::START_ID] : $back_array;
+        } else {
+            // strip passwords so they don't leak into the rendered page; preserve mask and 9-prefixed back params
+            $next_url = $url_array;
+            unset($next_url[url_var::USER_PASSWORD], $next_url[url_var::USER_PASSWORD_HUMAN]);
+            unset($next_url[url_var::USER_PASSWORD_RETYPE], $next_url[url_var::USER_PASSWORD_RETYPE_HUMAN]);
             unset($next_url[url_var::SESSION_TOKEN], $next_url[url_var::POST_SUBMIT]);
         }
         return $next_url;

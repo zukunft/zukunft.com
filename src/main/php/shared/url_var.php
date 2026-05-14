@@ -171,6 +171,7 @@ class url_var
     const string USER_TYPE = 'ut';
     const string USAGE = 'uu'; // the usage value a form field
     const string USER_PASSWORD = 'uw';
+    const string USER_PASSWORD_RETYPE = 'uwr';
     const string VALUE = 'v';
     const string VALUE_TIME_SERIES = 'vs';
     const string WORD = 'w';
@@ -452,6 +453,7 @@ class url_var
         [self::USERNAME_HUMAN, self::USERNAME],
         [self::EMAIL_HUMAN, self::EMAIL],
         [self::USER_PASSWORD_HUMAN, self::USER_PASSWORD],
+        [self::USER_PASSWORD_RETYPE_HUMAN, self::USER_PASSWORD_RETYPE],
         [self::USER_FIRST_NAME_HUMAN, self::USER_FIRST_NAME],
         [self::USER_LAST_NAME_HUMAN, self::USER_LAST_NAME],
         [self::USER_PROFILE_HUMAN, self::USER_PROFILE],
@@ -626,5 +628,21 @@ class url_var
         [self::STEP, 0]
     ];
 
+
+    /*
+     * functions
+     */
+
+    /**
+     * return only the back-navigation entries from a url array
+     * i.e. entries whose key starts with the BACK prefix character '9'
+     *
+     * @param array $url_array the full url parameter array
+     * @return array the subset of $url_array whose keys are prefixed with BACK
+     */
+    static function back_par(array $url_array): array
+    {
+        return array_filter($url_array, fn($k) => str_starts_with($k, self::BACK), ARRAY_FILTER_USE_KEY);
+    }
 
 }

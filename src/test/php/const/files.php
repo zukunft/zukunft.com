@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_HTML = false;
+    CONST bool AUTO_UPDATE_HTML = true;
 
     /*
      * types and extensions
