@@ -510,19 +510,15 @@ class user extends db_object
     /**
      * build the login form HTML
      *
-     * @param string $back url to redirect to after a successful login; stored as a hidden field for the legacy login.php flow
+     * @param string $back url to redirect to after a successful login; stored as a hidden field
      * @param string $msg_txt already-rendered error HTML to embed inside the form
      * @param Translator $mtr for translating labels and button text
-     * @param string $action form action URL; defaults to login.php; pass api::MAIN_SCRIPT when the form is rendered via view.php
-     * @param string $extra_hidden additional hidden fields to inject before the submit button e.g. the mask id when posting to view.php
-     * @return string the complete login form HTML
+     * @param string $extra_hidden additional hidden fields to inject before the submit button e.g. the mask id and back params
+     * @return string the complete login form HTML followed by an "or signup" link
      */
-    function form_login(string $back, string $msg_txt, Translator $mtr, string $action = '', string $extra_hidden = ''): string
+    function form_login(string $back, string $msg_txt, Translator $mtr, string $extra_hidden = ''): string
     {
         $html = new html_base();
-        if ($action === '') {
-            $action = 'login' . def::FILE_PHP;
-        }
         $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME_OR_EMAIL) . $html->br();
         $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
         $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
@@ -531,8 +527,10 @@ class user extends db_object
         $form_str .= $html->form_hidden(url_var::BACK, $back);
         $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
         $form_str .= $extra_hidden;
-        $form_str .= $html->button_submit($mtr->txt(msg_id::FORM_NAME_LOGIN));
-        return $html->form_simple($action, html_base::METHOD_POST, $form_str);
+        $form_str .= $html->button_submit($mtr->txt(msg_id::FORM_NAME_LOGIN)) . $html->br2();
+        $or_signup = $html->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::OR)
+            . ' ' . $mtr->txt(msg_id::SIGNUP));
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str) . $or_signup;
     }
 
 

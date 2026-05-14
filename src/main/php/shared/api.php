@@ -32,6 +32,8 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared;
 
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+
 class api
 {
 
@@ -55,7 +57,7 @@ class api
     const string ABOUT_SCRIPT = self::SCRIPT_PATH . 'about.php';
     const string PRIVACY_SCRIPT = self::SCRIPT_PATH . 'privacy_policy.html';
     const string FIND_SCRIPT = self::SCRIPT_PATH . 'find.php';
-    const string LOGIN_SCRIPT = self::SCRIPT_PATH . 'login.php';
+    const string LOGIN_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_ID;
     const string SIGNUP_SCRIPT = self::SCRIPT_PATH . 'signup.php';
     const string ERROR_LOG_SCRIPT = self::SCRIPT_PATH . 'error_log.php';
     const string URL_DEV = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ;

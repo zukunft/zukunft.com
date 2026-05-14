@@ -20,6 +20,8 @@ messages:
   navbar_alternative_view: "Alternative"
   navbar_change_view: "Ansicht ändern"
   navbar_add_view: "Ansicht hinzufügen"
+  or: "oder"
+  signup: "Registrieren"
   navbar_login: "Anmelden"
   navbar_signup: "Registrieren"
   navbar_settings: "Einstellungen"

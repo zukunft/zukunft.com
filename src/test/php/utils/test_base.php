@@ -1245,7 +1245,6 @@ class test_base
         $expected = $this->file($resource_file);
         $result = $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
         if (!$result and test_files::AUTO_UPDATE_HTML) {
-            // TODO always set a breakpoint here
             $this->update_file($resource_file, $lib->format_html($html));
         }
         return $result;
@@ -4694,6 +4693,7 @@ class test_base
     {
         return file_exists(test_paths::RESOURCE . $test_resource_path);
     }
+
     /**
      * overwrite the test resource file with the actual result to accept it as the new target
      * @param string $test_resource_path the path of the file starting from the test resource path
@@ -4701,7 +4701,21 @@ class test_base
      */
     function update_file(string $test_resource_path, string $result): void
     {
+        // TODO always set a breakpoint here
         $filepath = test_paths::RESOURCE . $test_resource_path;
+        if (file_put_contents($filepath, $result) === false) {
+            log_err('Cannot write target file ' . $filepath);
+        }
+    }
+
+    /**
+     * overwrite the test file with the actual result to accept it as the new target
+     * @param string $filepath the path of the file including the path
+     * @param string $result the actual result that should become the new expected target
+     */
+    function update_path_file(string $filepath, string $result): void
+    {
+        // TODO always set a breakpoint here
         if (file_put_contents($filepath, $result) === false) {
             log_err('Cannot write target file ' . $filepath);
         }

@@ -579,6 +579,12 @@ class views
         self::VIEW_RELATION_DEL_ID,
     ];
 
+    // system masks that should not have the standard zukunft header
+    const array NO_NAVBAR_IDS = [
+        self::SIGNUP_ID,
+        self::LOGIN_ID,
+    ];
+
     // system masks that are used to modify other system masks
     const array SUB_MASKS_IDS = [
         self::WORD_LOG_ID,

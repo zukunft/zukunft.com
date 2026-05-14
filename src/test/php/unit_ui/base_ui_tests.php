@@ -360,7 +360,7 @@ class base_ui_tests
         $url_part = parse_url('?m=3&id=123');
         parse_str($url_part["query"], $url_array);
         $result = $html->url_with_back(api::LOGIN_SCRIPT, $url_array);
-        $t->assert($test_name, $result, '/http/login.php?9m=3&9id=123');
+        $t->assert($test_name, $result, '/http/view.php?m=61&9m=3&9id=123');
 
         $test_name = 'url from back part while editing word 123';
         $url_part = parse_url('?m=2&9m=3&9id=123');

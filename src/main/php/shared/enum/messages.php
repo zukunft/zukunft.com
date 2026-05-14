@@ -1470,6 +1470,8 @@ enum messages: string
     // text to be shown in frontend
     // TODO add translation
     case AND_MORE_BEFORE = 'and';
+    case OR = 'or';
+    case SIGNUP = 'signup';
     case THREE_POINTS = '...';
 
     // text to be shown in buttons

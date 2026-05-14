@@ -603,7 +603,6 @@ class test_cleanup extends test_api
         $expected_stable = $lib->fix_volatile_in_html($expected_html, $token);
         $result = $this->assert($file_path, $lib->trim_html($created_stable), $lib->trim_html($expected_stable));
         if (!$result and test_files::AUTO_UPDATE_HTML) {
-            // TODO always set a breakpoint here
             $this->update_file($resource_file, $lib->format_html($created_stable));
         }
         return $result;

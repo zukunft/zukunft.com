@@ -764,7 +764,9 @@ class frontend
                 } else {
                     $html = new html_base();
                     $result .= $html->header($title, '', $lan);
-                    $result .= $html->navbar($view_id, $url_array);
+                    if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
+                        $result .= $html->navbar($view_id, $url_array);
+                    }
                     $result .= $html->main($dsp_text);
                     $result .= $html->footer();
                 }

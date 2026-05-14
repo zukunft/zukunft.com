@@ -186,6 +186,15 @@ The project uses a small, fixed set of globals (see `docs/todo.md`). No other gl
 | `$t_sys` | Error counting and execution times for tests |
 | `$debug` | Activates additional logging levels |
 
+### Always use named constants — no magic literals
+
+Every numeric or string value that has a defined constant must be referenced via that constant, never as a literal. This applies to IDs, URL parameters, field names, and any other value with a canonical name in the codebase.
+
+- **Wrong**: `'61'`, `'m'`, `'?'`, `'/http/view.php'`
+- **Right**: `views::LOGIN_ID`, `url_var::MASK`, `url_var::PAR`, `api::MAIN_SCRIPT`
+
+When a constant from another class cannot yet be referenced (e.g. due to a missing `use` or include chain), add a `// TODO: replace literal with ConstClass::CONST_NAME` comment so the gap is tracked and fixed in a follow-up.
+
 ### Unit-testability rule (applies to every function and method)
 
 Every function must be fully unit-testable. This means:

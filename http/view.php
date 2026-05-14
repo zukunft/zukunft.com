@@ -76,6 +76,8 @@ if ($db_con->is_open()) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     // at minimum the IP address is used as the user id, so id() > 0 is always true for real requests
     if ($usr->id() > 0) {
+
+        // TODO Prio o move loading of user data to frontend e.g. to skip it for the login page
         $usr->load_usr_data();
 
         $usr_dsp = new user_ui();
