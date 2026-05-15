@@ -177,6 +177,53 @@ class system_view_ui_tests
         $test_name = 'failed login keeps login mask in returned url';
         $t->assert($test_name, $result_url[url_var::MASK] ?? 0, views::LOGIN_ID);
 
+        // test that a failed signup renders the notification in the full page
+        $err_msg = new user_message();
+        $err_msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
+        $url_array = [url_var::MASK => views::SIGNUP_ID];
+        $signup_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto);
+
+        $test_name = 'signup page with duplicate name shows notification bar';
+        $t->assert_text_contains($test_name, $signup_html, $notification_div);
+
+        $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'signup_notification';
+        $test_name = 'signup page with name exists notification matches snapshot';
+        $t->assert_html_page($test_name, $signup_html, $file_path);
+
+        // test that url_to_action on logout resets both user objects to anonymous state
+        $logout_backend = clone $t->usr1;
+        $logout_frontend = $tl->cast_user($logout_backend);
+        $logout_msg = new user_message();
+        $logout_result_url = $ui->url_to_action(
+            [url_var::MASK => views::LOGOUT_ID],
+            $logout_backend,
+            $logout_frontend,
+            $logout_msg,
+            $ui->dto,
+            false
+        );
+
+        $test_name = 'logout action returns logout view url';
+        $t->assert($test_name, $logout_result_url[url_var::MASK] ?? 0, views::LOGOUT_ID);
+
+        $test_name = 'logout action resets backend user to anonymous';
+        $t->assert($test_name, $logout_backend->has_db_id(), false);
+
+        $test_name = 'logout action resets frontend user to ip-only';
+        $t->assert($test_name, $logout_frontend->is_ip_only(), true);
+
+        // test that the logout page shows the success message
+        global $mtr;
+        $url_array = [url_var::MASK => views::LOGOUT_ID];
+        $logout_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto);
+
+        $test_name = 'logout page shows logout notice text';
+        $t->assert_text_contains($test_name, $logout_html, $mtr->txt(msg_id::LOGOUT_NOTICE));
+
+        $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'logout_success';
+        $test_name = 'logout page matches snapshot';
+        $t->assert_html_page($test_name, $logout_html, $file_path);
+
         // test the system views by id
         // similar to horizontal_ui_tests which tests the curl view for the main objects
         $t->subheader($ts . 'by id');

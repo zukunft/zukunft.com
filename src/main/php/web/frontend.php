@@ -591,7 +591,7 @@ class frontend
             $view == views::LOGIN_ID => $url = $this->action_login($url_array, $usr_msg, $usr_backend, $usr, $do_it),
             $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $usr_msg, $usr_backend, $usr, $do_it),
             $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $usr_msg, $usr_backend, $usr, $do_it),
-            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_msg, $do_it),
+            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr, $usr_msg, $do_it),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $usr_msg, $do_it),
             in_array($view, views::ADD_MASKS_IDS) => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
@@ -1067,14 +1067,17 @@ class frontend
     }
 
     /**
-     * record the logoff time, clear the session and return the URL for the start page
-     * @param user_backend $usr_backend the currently logged-in backend user; last_logoff is updated if set
+     * record the logoff time, clear the session and reset both user objects to anonymous IP-only state
+     * mirrors the login process: on login the users are set to the DB user; on logout they are reset to empty
+     * @param user_backend $usr_backend the currently logged-in backend user; last_logoff is saved and object is reset
+     * @param user_ui $usr_ui the frontend user object; reset to an empty (IP-only) object after logout
      * @param user_message $usr_msg collects errors from saving the logoff time
      * @param bool $do_it false for unit tests that should not touch the database or session
-     * @return array URL array pointing to the start view
+     * @return array URL array pointing to the logout confirmation view
      */
     private function action_logout(
-        user_backend $usr_backend,
+        user_backend &$usr_backend,
+        user_ui      &$usr_ui,
         user_message $usr_msg,
         bool         $do_it
     ): array
@@ -1093,7 +1096,26 @@ class frontend
                 session_destroy();
             }
         }
-        return [url_var::MASK => views::START_ID];
+        $usr_backend = new user_backend();
+        $usr_ui = new user_ui();
+        return [url_var::MASK => views::LOGOUT_ID];
+    }
+
+    /**
+     * translate a message for use in outgoing emails: returns the user-language text, or
+     * "user-language / English" when the user language differs from English
+     * @param msg_id $id the message constant to translate
+     * @return string the bilingual text suitable for an email body or subject line
+     */
+    private function mail_txt(msg_id $id): string
+    {
+        global $mtr;
+        $user_txt = $mtr->txt($id);
+        $en_txt = $mtr->txt($id, language_codes::EN);
+        if ($user_txt === $en_txt) {
+            return $user_txt;
+        }
+        return $user_txt . ' / ' . $en_txt;
     }
 
     /**
@@ -1143,18 +1165,15 @@ class frontend
                     $usr_msg->merge($dsp_reset_msg);
 
                     if ($usr_msg->is_ok()) {
-                        $activate_url = 'www.zukunft.com' . api::LOGIN_ACTIVATE_SCRIPT
-                            . '&' . url_var::ID . '=' . $db_usr->id
-                            . '&' . url_var::POST_KEY . '=' . $key;
-                        $mail_subject = 'zukunft.com - password reset request';
-                        $mail_body = 'Hello,' . "\n\n"
-                            . 'Please use the following activation key to reset your password: ' . $key . "\n\n"
-                            . 'Or use this link:' . "\n" . $activate_url . "\n\n"
-                            . 'If you did not request a password reset for www.zukunft.com recently, please ignore it.';
-                        $mail_header = 'From: admin@zukunft.com' . "\r\n"
-                            . 'Reply-To: admin@zukunft.com' . "\r\n"
-                            . 'X-Mailer: PHP/' . phpversion();
-                        mail($db_usr->email, $mail_subject, $mail_body, $mail_header);
+                        $activate_url = POD_NAME . api::LOGIN_ACTIVATE_FORWARD
+                            . url_var::PAR . url_var::ID . url_var::EQ . $db_usr->id
+                            . '&' . url_var::POST_KEY . url_var::EQ . $key;
+                        $mail_subject = POD_NAME . ' - ' . $this->mail_txt(msg_id::RESET_MAIL_SUBJECT);
+                        $mail_body = $this->mail_txt(msg_id::RESET_MAIL_HELLO) . "\n\n"
+                            . $this->mail_txt(msg_id::RESET_MAIL_KEY_INTRO) . ' ' . $key . "\n\n"
+                            . $this->mail_txt(msg_id::RESET_MAIL_LINK_INTRO) . "\n" . $activate_url . "\n\n"
+                            . $this->mail_txt(msg_id::RESET_MAIL_IGNORE);
+                        mail($db_usr->email, $mail_subject, $mail_body, users::mail_header());
                         $sent = true;
                     }
                 }

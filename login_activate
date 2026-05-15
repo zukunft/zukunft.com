@@ -1,0 +1,3 @@
+<!DOCTYPE html>
+<script>window.location = '/http/view.php?m=62' + (window.location.search ? '&' + window.location.search.slice(1) : '');</script>
+</html>

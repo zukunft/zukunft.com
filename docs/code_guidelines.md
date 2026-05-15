@@ -3,13 +3,13 @@
 for coding new features the target process is before committing:
     1. create a unit test for the new feature
     2. code the feature and fix the unit tests and code smells
-    3. create and fix the database read, write and integration test for the new feature
-    4. commit
+    3. create and fix the database read, write and integration test for the new feature if needed
+    4. run the unit tests using /test/test_unit.php and if successful run the complete test using /test/test.php
+    5. if all tests are fine commit and push
 
+if the database is corrupted by a mistake /test/reset_db.php can be used to recreate the database
 
-
-
- rules for this project (target, but not yet done)
+rules for this project (target, but not yet done)
 
     - be open
     - always sort by priority
@@ -19,6 +19,8 @@ for coding new features the target process is before committing:
     - write business logic and test cases one-to-one
 
 ## naming conventions for vars:
+
+in the header description of each class should be a suggested name for the object that matches these names: 
 
 backend - main
 - wrd (WoRD)               - a word that is used as a subject or object in a resource description framework (RDF / "triple") graph
@@ -163,24 +165,22 @@ All objects needs to have the functions dsp_id and name. These two functions sho
 
 *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test
 
-## debug functions
+## global functions
 
-zu_debug   - for interactive debugging (since version 0.0.3 based on a global $debug var, because meanwhile the PhpStorm has a debugger)
-zu_msg     - write a message to the system log for later debugging
-zu_info    - info message
-zu_warning - log a warning message if log level is set to warning
-zu_err     - log an error message
-zu_fatal   - log an fatal error message and call a database cleanup
-zu_start   - open the database and display the header
-zu_end     - close the database
+for easy access the log functions are still general
 
-## display functions
+log_debug   - write to the log only if a request contains the debug parameter or if debugging is activated via config or env
+log_info    - write a message to the system log for later debugging (make sure that this is part of the round-robin clean-up process)
+log_warning - write a message to the system and user log so that the user can see the hist of the warning messages that he has created (and that he can flag some for an issue to be solved)
+log_err     - write a message to the system, admin and user log so that the issue can be solved either by an admin or even be a developer
+log_fatal   - log a fatal error message, send a message to the admin and call a database clean-up
 
-that all objects should have
+## debug display functions
+
+that all objects should have a function named
 
 name        - the most useful name of the object for the user
 dsp_id      - the name including the database id for debugging
-zu_dsp_bool -
 
 
 

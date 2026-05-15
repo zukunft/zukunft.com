@@ -152,6 +152,15 @@ class users
     ];
 
 
+    // standard email header for system-generated mails sent from the admin address
+    static function mail_header(): string
+    {
+        return 'From: ' . self::SYSTEM_ADMIN_EMAIL . "\r\n"
+            . 'Reply-To: ' . self::SYSTEM_ADMIN_EMAIL . "\r\n"
+            . 'X-Mailer: PHP/' . phpversion();
+    }
+
+
     // change right levels to prevent access level gaining
     const int RIGHT_LEVEL_USER = 10;
     const int RIGHT_LEVEL_ADMIN = 60;

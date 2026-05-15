@@ -1658,6 +1658,11 @@ enum messages: string
     case RESET_PROMPT = 'reset_prompt';
     case RESET_ERR_NOT_FOUND = 'reset_err_not_found';
     case RESET_ERR_KEY_GEN = 'reset_err_key_gen';
+    case RESET_MAIL_SUBJECT = 'reset_mail_subject';
+    case RESET_MAIL_HELLO = 'reset_mail_hello';
+    case RESET_MAIL_KEY_INTRO = 'reset_mail_key_intro';
+    case RESET_MAIL_LINK_INTRO = 'reset_mail_link_intro';
+    case RESET_MAIL_IGNORE = 'reset_mail_ignore';
     case SYSTEM_TITLE_LOGOUT = 'system_title_logout';
     case LOGOUT_NOTICE = 'logout_notice';
     case SYSTEM_TITLE_VALUE_DETAIL = 'system_title_value_detail';

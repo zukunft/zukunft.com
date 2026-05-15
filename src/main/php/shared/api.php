@@ -62,6 +62,13 @@ class api
     const string LOGIN_ACTIVATE_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_ACTIVATE_ID;
     const string LOGOUT_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGOUT_ID;
     const string RESET_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_RESET_ID;
+
+    // human-readable root-level forward scripts (nicer than /http/view.php?m=... for emails and sharing)
+    const string LOGIN_FORWARD = DIRECTORY_SEPARATOR . 'login';
+    const string SIGNUP_FORWARD = DIRECTORY_SEPARATOR . 'signup';
+    const string LOGIN_ACTIVATE_FORWARD = DIRECTORY_SEPARATOR . 'login_activate';
+    const string RESET_FORWARD = DIRECTORY_SEPARATOR . 'reset';
+    const string LOGOUT_FORWARD = DIRECTORY_SEPARATOR . 'logout';
     const string ERROR_LOG_SCRIPT = self::SCRIPT_PATH . 'error_log.php';
     const string URL_DEV = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ;
 
