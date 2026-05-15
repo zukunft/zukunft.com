@@ -312,6 +312,15 @@ class test_formulas extends test_objects
         return $lnk;
     }
 
+    function formula_link_add(): formula_link
+    {
+        $t_wrd = new test_words($this->env);
+        $lnk = new formula_link($this->env->usr1);
+        $lnk->set_formula($this->formula_add());
+        $lnk->set_phrase($t_wrd->word_add()->phrase());
+        return $lnk;
+    }
+
     function formula_link_incomplete(): formula_link
     {
         $t_wrd = new test_words($this->env);

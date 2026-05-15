@@ -364,7 +364,7 @@ class views
     // TODO Prio 1 set to 1
     const int MIN_TEST_ID = 2;
     // TODO Prio 0 set to 37
-    const int MAX_TEST_ID = 35;
+    const int MAX_TEST_ID = 40;
 
 
     const string COMPANY_RATIO_NAME = 'company ratios';

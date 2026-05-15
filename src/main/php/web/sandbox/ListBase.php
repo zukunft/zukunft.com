@@ -52,7 +52,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
-include_once html_paths::USER . 'user.php';
+//include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view_list.php';

@@ -208,12 +208,25 @@ Back navigation (where to redirect after an action completes) is encoded as **`'
 
 ### User-message accumulation convention
 
-`$msg` is created once in `http/view.php` as `new user_message()` and represents the single collector for every message that may be shown to the user during a request. Functions that need to report warnings, errors, or info messages must accept it as an explicit parameter (named `$msg`) and append to it — never create a fresh `user_message` internally and discard it.
+`$msg` is created **once** in `http/view.php` as `new user_message()` and is the single collector for every message shown to the user during a request. It is passed as an explicit parameter (named `$msg`) to every function that may need to report a warning, error, or info notice.
 
 - **Right**: `function url_to_action(array $url_array, user $usr_dsp, user_message $msg, ...): array`
 - **Wrong**: creating `new user_message()` inside a helper and returning or echoing the message directly
 
-This ensures all messages bubble up to the single rendering point in `view.php` and are presented to the user in a consistent, translatable way.
+This ensures all messages bubble up to the single rendering point in `view.php`.
+
+#### All user-facing messages must use a translatable `msg_id`
+
+Every message added to `$msg` must be added via `$msg->add(msg_id::SOME_CASE, [])`, never via `add_message(string)` or `add_message_text(string)`. The plain-string methods bypass the translation system and break serialisation — the message will not survive the `api_array()` round-trip and will not reach the frontend notification bar.
+
+- **Right**: `$msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);`
+- **Wrong**: `$msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_NAME_EXISTS));`
+- **Wrong**: `$msg->add_message_text('User name already exists');`
+
+Every new user-visible string must have:
+1. A `case` in `src/main/php/shared/enum/messages.php`
+2. An English translation entry in `src/main/resources/translations/en.yaml`
+3. A German translation entry in `src/main/resources/translations/de.yaml` (and any other active locale file)
 
 ### Pass mutable state as explicit parameters, never via globals or return-value side effects
 

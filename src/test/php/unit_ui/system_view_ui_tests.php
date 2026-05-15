@@ -236,8 +236,7 @@ class system_view_ui_tests
         $t->assert_text_contains($test_name, $activate_html, $notification_div);
 
         $test_name = 'activate page notification contains key mismatch message';
-        // TODO Prio 0 fix and activate test
-        //$t->assert_text_contains($test_name, $activate_html, msg_id::ACTIVATE_ERR_KEY_MISMATCH->value);
+        $t->assert_text_contains($test_name, $activate_html, $mtr->txt(msg_id::ACTIVATE_ERR_KEY_MISMATCH));
 
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'activate_err_key_mismatch';
         $test_name = 'activate page with key mismatch notification matches snapshot';

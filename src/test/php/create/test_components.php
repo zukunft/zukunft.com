@@ -405,6 +405,15 @@ class test_components extends test_objects
         return $lnk;
     }
 
+    function component_link_add(): component_link
+    {
+        $t_msk = new test_views($this->env);
+        $lnk = new component_link($this->env->usr1);
+        $lnk->set_view($t_msk->view_add());
+        $lnk->set_component($this->component_add());
+        return $lnk;
+    }
+
     function component_link_incomplete(): component_link
     {
         $t_msk = new test_views($this->env);

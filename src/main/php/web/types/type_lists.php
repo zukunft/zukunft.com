@@ -218,15 +218,12 @@ class type_lists
             $usr_msg->add_error_text('Mandatory component_types missing in API JSON ' . json_encode($json_array));
             $this->set_component_types([]);
         }
-        /*
-         * TODO Prio 1 activate
-        if (array_key_exists(api::JSON_LIST_VIEW_COMPONENT_LINK_TYPES, $json_array)) {
-            $this->set_component_link_types($json_array[api::JSON_LIST_VIEW_COMPONENT_LINK_TYPES]);
+        if (array_key_exists(api::JSON_LIST_COMPONENT_LINK_TYPES, $json_array)) {
+            $this->set_component_link_types($json_array[api::JSON_LIST_COMPONENT_LINK_TYPES]);
         } else {
             $usr_msg->add_error_text('Mandatory component_link_types missing in API JSON ' . json_encode($json_array));
             $this->set_component_link_types([]);
         }
-        */
         if (array_key_exists(api::JSON_LIST_COMPONENT_POSITION_TYPES, $json_array)) {
             $this->set_position_types($json_array[api::JSON_LIST_COMPONENT_POSITION_TYPES]);
         } else {
