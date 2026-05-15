@@ -3179,7 +3179,35 @@ under the
         <br>
         <br>
         <br>
-        reset_body placeholder
+        <div class="logo-section">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="brand-logo">
+            </a>
+        </div>
+        <br>
+        <br>
+        <div class="search-section">
+            Fill in one of the fields to receive a temporary password via email:
+            <br>
+            <br>
+            <form action="/http/view.php" method="post">
+                <p>
+                    username
+                    <br>
+                    <input type="text" name="username" class="standard-input">
+                </p>
+                <p>
+                    email
+                    <br>
+                    <input type="email" name="email" class="standard-input">
+                </p>
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <input type="hidden" name="m" value="63">
+                <button type="submit" class="btn">
+                    Reset password
+                </button>
+            </form>
+        </div>
         <br>
         <br>
         <h4>

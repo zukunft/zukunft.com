@@ -285,6 +285,10 @@ Before every commit, verify the following:
 - **Wrong**: `CONST bool AUTO_UPDATE_HTML = true;`
 - **Right**: `CONST bool AUTO_UPDATE_HTML = false;`
 
+### HTML snapshot files in `src/test/resources/web/` are verified by the test scripts
+
+The HTML files under `src/test/resources/web/html/` are snapshot fixtures checked automatically by test runners such as `test/test.php`. The LLM does not need to manually review their content for correctness — the tests do that. When the LLM changes PHP code that affects HTML output, it should update the corresponding snapshot to match the new output, but it does not need to audit the full file for unrelated issues.
+
 ### No secrets in the commit
 
 Never commit real credentials, API keys, or actual passwords — not in source files, test fixtures, config files, or commit messages.

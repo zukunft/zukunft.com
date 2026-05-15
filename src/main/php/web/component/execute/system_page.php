@@ -237,10 +237,30 @@ class system_page extends component
         return $result;
     }
 
-    // TODO Prio 0 fill with real code
-    function reset_body(): string
+    /**
+     * build the password reset request form HTML
+     *
+     * @param array $url_array the URL params; back params are forwarded as hidden fields
+     * @return string the complete reset page body HTML
+     */
+    function reset_body(array $url_array): string
     {
-        return 'reset_body placeholder';
+        global $mtr;
+
+        $html = new html_base();
+
+        $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::LOGIN_RESET_ID);
+        foreach (url_var::back_par($url_array) as $key => $val) {
+            $extra_hidden .= $html->form_hidden($key, $val);
+        }
+
+        $web_usr = new user_dsp();
+        $form_str = $mtr->txt(msg_id::RESET_PROMPT) . $html->br2() . $web_usr->form_reset($extra_hidden);
+
+        $result = $html->logo_flex();
+        $result .= $html->br2();
+        $result .= $html->div($form_str, html_base::CLASS_INPUT_SECTION);
+        return $result;
     }
 
     /**

@@ -652,6 +652,30 @@ class user extends db_object
     }
 
 
+    /**
+     * build the password reset request form HTML
+     *
+     * @param string $extra_hidden additional hidden fields to inject e.g. the mask id and back params
+     * @return string the complete reset form HTML
+     */
+    function form_reset(string $extra_hidden = ''): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $form_usr = $mtr->txt(msg_id::FORM_NAME_USER_NAME) . $html->br();
+        $form_usr .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN);
+        $form_str = $html->p($form_usr);
+        $form_mail = $mtr->txt(msg_id::FORM_NAME_USER_EMAIL) . $html->br();
+        $form_mail .= $html->form_input(html_base::INPUT_EMAIL, url_var::EMAIL_HUMAN);
+        $form_str .= $html->p($form_mail);
+        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $extra_hidden;
+        $form_str .= $html->button_submit($mtr->txt(msg_id::RESET_SUBMIT));
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
+    }
+
+
     /*
      * to review
      */

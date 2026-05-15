@@ -311,7 +311,7 @@ class component_exe extends component
             component_types::SYSTEM_BODY_SIGNUP => $page->signup_body($url_array),
             component_types::SYSTEM_BODY_LOGIN => $page->login_body($url_array),
             component_types::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body($url_array),
-            component_types::SYSTEM_BODY_LOGIN_RESET => $page->reset_body(),
+            component_types::SYSTEM_BODY_LOGIN_RESET => $page->reset_body($url_array),
             component_types::SYSTEM_BODY_LOGOUT => $page->logout_body(),
             component_types::SYSTEM_BODY_SEARCH => $page->body_search(),
             component_types::SYSTEM_BODY_SEARCH_FULL => $page->body_search_full(),

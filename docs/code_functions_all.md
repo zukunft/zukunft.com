@@ -5426,6 +5426,7 @@
     \-- form_login - section for function form_login not yet defined that it should be display in /user/user.php
     \-- form_signup - section for function form_signup not yet defined that it should be display in /user/user.php
     \-- form_activate - section for function form_activate not yet defined that it should be display in /user/user.php
+    \-- form_reset - section for function form_reset not yet defined that it should be display in /user/user.php
     \-- form_edit - section for function form_edit not yet defined that it should be to review in /user/user.php
     \-- dsp_changes - section for function dsp_changes not yet defined that it should be to review in /user/user.php
     \-- dsp_errors - section for function dsp_errors not yet defined that it should be to review in /user/user.php
@@ -6481,7 +6482,7 @@
     \-- activate_body
         \-- system_page - build the account activation (password change) form HTML
     \-- reset_body
-        \-- system_page - build the account activation (password change) form HTML
+        \-- system_page - build the password reset request form HTML
     \-- logout_body
         \-- system_page - HTML shown on the logout confirmation page
     \-- body_search

@@ -592,6 +592,7 @@ class frontend
             $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $usr_msg, $usr_backend, $usr, $do_it),
             $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $usr_msg, $usr_backend, $usr, $do_it),
             $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_msg, $do_it),
+            $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $usr_msg, $do_it),
             in_array($view, views::ADD_MASKS_IDS) => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
             in_array($view, views::EDIT_MASKS_IDS) => $url = $this->action_crud(
@@ -1093,6 +1094,82 @@ class frontend
             }
         }
         return [url_var::MASK => views::START_ID];
+    }
+
+    /**
+     * send a password-reset email and redirect to the activation page
+     * @param array $url_array the normalised URL params (expects USERNAME_HUMAN and/or EMAIL_HUMAN)
+     * @param user_message $usr_msg collects errors shown to the user
+     * @param bool $do_it false for unit tests that should not touch the database or send email
+     * @return array URL array for the next page
+     */
+    private function action_login_reset(
+        array        $url_array,
+        user_message $usr_msg,
+        bool         $do_it
+    ): array
+    {
+        global $mtr;
+
+        $usr_name = $url_array[url_var::USERNAME_HUMAN] ?? '';
+        $usr_mail = $url_array[url_var::EMAIL_HUMAN] ?? '';
+        $db_usr = new user_backend();
+        $key = '';
+        $sent = false;
+
+        if ($do_it) {
+            if ($db_usr->load_by_name_or_email($usr_name, $usr_mail)) {
+                $key_ok = true;
+                try {
+                    $key = bin2hex(random_bytes(10));
+                } catch (RandomException $e) {
+                    log_err('RandomException in action_login_reset: ' . $e->getMessage());
+                    $usr_msg->add_message($mtr->txt(msg_id::RESET_ERR_KEY_GEN));
+                    $key_ok = false;
+                }
+                if ($key_ok) {
+                    $timeout = new DateTime();
+                    try {
+                        $timeout->modify('+1 day');
+                    } catch (Exception $e) {
+                        log_err('DateTime modify failed in action_login_reset: ' . $e->getMessage());
+                    }
+                    $db_usr->activation_key = $key;
+                    $db_usr->activation_timeout = $timeout;
+                    $reset_msg = new backend_user_message();
+                    $db_usr->save($reset_msg);
+                    $dsp_reset_msg = new user_message();
+                    $dsp_reset_msg->api_mapper($reset_msg->api_array());
+                    $usr_msg->merge($dsp_reset_msg);
+
+                    if ($usr_msg->is_ok()) {
+                        $activate_url = 'www.zukunft.com' . api::LOGIN_ACTIVATE_SCRIPT
+                            . '&' . url_var::ID . '=' . $db_usr->id
+                            . '&' . url_var::POST_KEY . '=' . $key;
+                        $mail_subject = 'zukunft.com - password reset request';
+                        $mail_body = 'Hello,' . "\n\n"
+                            . 'Please use the following activation key to reset your password: ' . $key . "\n\n"
+                            . 'Or use this link:' . "\n" . $activate_url . "\n\n"
+                            . 'If you did not request a password reset for www.zukunft.com recently, please ignore it.';
+                        $mail_header = 'From: admin@zukunft.com' . "\r\n"
+                            . 'Reply-To: admin@zukunft.com' . "\r\n"
+                            . 'X-Mailer: PHP/' . phpversion();
+                        mail($db_usr->email, $mail_subject, $mail_body, $mail_header);
+                        $sent = true;
+                    }
+                }
+            } else {
+                $usr_msg->add_message($mtr->txt(msg_id::RESET_ERR_NOT_FOUND));
+            }
+        }
+
+        if ($sent) {
+            $next_url = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => $db_usr->id];
+        } else {
+            $next_url = $url_array;
+            unset($next_url[url_var::POST_SUBMIT]);
+        }
+        return $next_url;
     }
 
     /**
