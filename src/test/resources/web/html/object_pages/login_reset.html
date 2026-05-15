@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            test (zukunft.com)
+            Login reset  (zukunft.com)
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -44,12 +44,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=31&id=1">
+                                    <a href="/http/view.php?m=31&id=63&9m=63&9z=0">
                                         change view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=30">
+                                    <a href="/http/view.php?m=30&9m=63&9z=0">
                                         add view
                                     </a>
                                 </li>
@@ -62,37 +62,37 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=1&q=en">
+                                    <a href="/http/view.php?m=63&q=en">
                                         English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=1&q=en_us">
+                                    <a href="/http/view.php?m=63&q=en_us">
                                         US English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=1&q=de" title="German">
+                                    <a href="/http/view.php?m=63&q=de" title="German">
                                         Deutsch
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=1&q=fr" title="French">
+                                    <a href="/http/view.php?m=63&q=fr" title="French">
                                         Français
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=1&q=es" title="Spanish">
+                                    <a href="/http/view.php?m=63&q=es" title="Spanish">
                                         Español
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=1&q=zh" title="Chinese">
+                                    <a href="/http/view.php?m=63&q=zh" title="Chinese">
                                         漢語
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=1&q=ar" title="Arabic">
+                                    <a href="/http/view.php?m=63&q=ar" title="Arabic">
                                         العربية
                                     </a>
                                 </li>
@@ -110,17 +110,17 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=61">
+                                    <a href="/http/view.php?m=61&9m=63&9z=0">
                                         Log in
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=60">
+                                    <a href="/http/view.php?m=60&9m=63&9z=0">
                                         Signup
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/settings">
+                                    <a href="/settings?9m=63&9z=0">
                                         Settings
                                     </a>
                                 </li>
@@ -132,7 +132,42 @@
         </nav>
         <main class="main-container">
             <div class="row col-md-12">
-                mathematics
+                <h4>
+                    Password reset for
+                </h4>
+            </div>
+            <div class="logo-section">
+                <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                    <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="brand-logo">
+                </a>
+            </div>
+            <br>
+            <br>
+            <div class="search-section">
+                Fill in one of the fields to receive a temporary password via email:
+                <br>
+                <br>
+                <form action="/http/view.php" method="post">
+                    <p>
+                        username
+                        <br>
+                        <input type="text" name="username" class="standard-input">
+                    </p>
+                    <p>
+                        email
+                        <br>
+                        <input type="email" name="email" class="standard-input">
+                    </p>
+                    <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                    <input type="hidden" name="m" value="63">
+                    <button type="submit" class="btn">
+                        Reset password
+                    </button>
+                </form>
+                or cancel and go
+                <a href="/http/view.php">
+                    back
+                </a>
             </div>
         </main>
         <footer class="site-footer">

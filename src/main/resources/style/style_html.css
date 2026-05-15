@@ -180,6 +180,21 @@ body {
     /* Increase logo width to 90% on mobile phones */
 }
 
+/* navbar logo */
+.logo-nav {
+    height: 4em;
+}
+
+/* logo on about page */
+.logo-big {
+    height: 30%;
+}
+
+/* TREAM logo on about page */
+.logo-tream {
+    height: 20%;
+}
+
 /* search input field */
 .standard-input {
     padding: 10px; /* Adds space inside the text box for better readability */

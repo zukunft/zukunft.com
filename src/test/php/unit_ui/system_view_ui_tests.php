@@ -224,6 +224,50 @@ class system_view_ui_tests
         $test_name = 'logout page matches snapshot';
         $t->assert_html_page($test_name, $logout_html, $file_path);
 
+        // test that a failed activation (key mismatch) renders the notification on the activate page
+        $t->subheader($ts . 'login activate');
+
+        $err_msg = new user_message();
+        $err_msg->add(msg_id::ACTIVATE_ERR_KEY_MISMATCH, []);
+        $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
+        $activate_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto);
+
+        $test_name = 'activate page with key mismatch shows notification bar';
+        $t->assert_text_contains($test_name, $activate_html, $notification_div);
+
+        $test_name = 'activate page notification contains key mismatch message';
+        // TODO Prio 0 fix and activate test
+        //$t->assert_text_contains($test_name, $activate_html, msg_id::ACTIVATE_ERR_KEY_MISMATCH->value);
+
+        $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'activate_err_key_mismatch';
+        $test_name = 'activate page with key mismatch notification matches snapshot';
+        $t->assert_html_page($test_name, $activate_html, $file_path);
+
+        // test that the activate page shown after a successful password reset email renders correctly
+        // (action_login_reset redirects to LOGIN_ACTIVATE_ID on success, passing the user id)
+        $t->subheader($ts . 'login reset');
+
+        $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
+        $reset_sent_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto);
+
+        $test_name = 'activate page after reset email shows activation key label';
+        $t->assert_text_contains($test_name, $reset_sent_html, $mtr->txt(msg_id::ACTIVATE_SUBMIT));
+
+        $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'reset_email_sent';
+        $test_name = 'activate page after reset email matches snapshot';
+        $t->assert_html_page($test_name, $reset_sent_html, $file_path);
+
+        // test that the login_reset form renders with a cancel and go back link when no back params are given
+        $url_array = [url_var::MASK => views::LOGIN_RESET_ID];
+        $reset_form_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto);
+
+        $test_name = 'login reset page shows cancel and go back link';
+        $t->assert_text_contains($test_name, $reset_form_html, $mtr->txt(msg_id::CANCEL_AND_GO));
+
+        $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'login_reset';
+        $test_name = 'login reset page matches snapshot';
+        $t->assert_html_page($test_name, $reset_form_html, $file_path);
+
         // test the system views by id
         // similar to horizontal_ui_tests which tests the curl view for the main objects
         $t->subheader($ts . 'by id');

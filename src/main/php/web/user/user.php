@@ -656,9 +656,10 @@ class user extends db_object
      * build the password reset request form HTML
      *
      * @param string $extra_hidden additional hidden fields to inject e.g. the mask id and back params
-     * @return string the complete reset form HTML
+     * @param string $back_url URL to navigate to when the user cancels; falls back to the main page if empty
+     * @return string the complete reset form HTML followed by an "or cancel and go back" link
      */
-    function form_reset(string $extra_hidden = ''): string
+    function form_reset(string $extra_hidden = '', string $back_url = ''): string
     {
         global $mtr;
 
@@ -672,7 +673,9 @@ class user extends db_object
         $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
         $form_str .= $extra_hidden;
         $form_str .= $html->button_submit($mtr->txt(msg_id::RESET_SUBMIT));
-        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
+        $cancel_url = $back_url !== '' ? $back_url : api::MAIN_SCRIPT;
+        $or_cancel = ' ' . $mtr->txt(msg_id::OR) . ' ' . $mtr->txt(msg_id::CANCEL_AND_GO) . ' ' . $html->ref($cancel_url, $mtr->txt(msg_id::BACK_LINK));
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str) . $or_cancel;
     }
 
 

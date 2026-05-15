@@ -255,7 +255,8 @@ class system_page extends component
         }
 
         $web_usr = new user_dsp();
-        $form_str = $mtr->txt(msg_id::RESET_PROMPT) . $html->br2() . $web_usr->form_reset($extra_hidden);
+        $back_url = html_base::url_from_back($url_array);
+        $form_str = $mtr->txt(msg_id::RESET_PROMPT) . $html->br2() . $web_usr->form_reset($extra_hidden, $back_url);
 
         $result = $html->logo_flex();
         $result .= $html->br2();

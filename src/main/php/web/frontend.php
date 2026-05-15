@@ -891,8 +891,6 @@ class frontend
         bool         $do_it
     ): array
     {
-        global $mtr;
-
         // no htmlspecialchars() — SQL injection is handled by prepared queries; output escaping happens in form_input()
         $usr_name = $url_array[url_var::USERNAME] ?? $url_array[url_var::USERNAME_HUMAN] ?? '';
         $email = $url_array[url_var::EMAIL] ?? $url_array[url_var::EMAIL_HUMAN] ?? '';
@@ -904,19 +902,19 @@ class frontend
             $existing = new user_backend();
             $existing->load_by_name($usr_name);
             if ($existing->has_db_id()) {
-                $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_NAME_EXISTS));
+                $usr_msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
             }
             if (empty($email)) {
-                $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_EMAIL_EMPTY));
+                $usr_msg->add(msg_id::SIGNUP_ERR_EMAIL_EMPTY, []);
             }
             if (empty($pw)) {
-                $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY));
+                $usr_msg->add(msg_id::SIGNUP_ERR_PW_EMPTY, []);
             }
             if (empty($pw_re)) {
-                $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY));
+                $usr_msg->add(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY, []);
             }
             if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
-                $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_MISMATCH));
+                $usr_msg->add(msg_id::SIGNUP_ERR_PW_MISMATCH, []);
             }
 
             if ($usr_msg->is_ok()) {
@@ -947,7 +945,7 @@ class frontend
                         $signed_up = true;
                     } else {
                         log_err('Cannot find id for ' . $usr_name . ' after signup.', 'action_signup');
-                        $signup_msg->add_message_text($mtr->txt(msg_id::SIGNUP_ERR_FAILED));
+                        $signup_msg->add(msg_id::SIGNUP_ERR_FAILED, []);
                     }
                 }
                 $dsp_signup_msg = new user_message();

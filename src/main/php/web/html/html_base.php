@@ -179,9 +179,9 @@ class html_base
     const string CLASS_BUTTON = 'btn';
     const string CLASS_NAV = 'navbar site-header fixed-top';
     const string CLASS_LOGO = 'navbar-brand';
-    const string CLASS_LOGO_BS = 'height: 4em;';
-    const string CLASS_LOGO_HTML = 'height: 5em;';
-    const string CLASS_LOGO_BIG = 'height: 30%;';
+    const string CLASS_LOGO_BS = 'logo-nav';
+    const string CLASS_LOGO_HTML = 'logo-nav';
+    const string CLASS_LOGO_BIG = 'logo-big';
     const string CLASS_LOGO_FLEX = 'brand-logo';
     const string CLASS_LOGO_SECTION = 'logo-section';
 
@@ -523,12 +523,16 @@ class html_base
         }
     }
 
-    function img(string $img_path, string $alt, string $style = ''): string
+    function img(string $img_path, string $alt, string $class = ''): string
     {
-        return '<' . self::IMG
+        $result = '<' . self::IMG
             . ' ' . self::SRC . '="' . $img_path . '"'
-            . ' ' . self::ALT . '="' . $alt . '"'
-            . ' ' . self::STYLE . '="' . $style . '">';
+            . ' ' . self::ALT . '="' . $alt . '"';
+        if ($class !== '') {
+            $result .= ' ' . self::CLASS_HTML . '="' . $class . '"';
+        }
+        $result .= '>';
+        return $result;
     }
 
     /**
@@ -1143,7 +1147,7 @@ class html_base
         $result .= $this->ref(def::LINK_PAPER_IMPERATIVE, $mtr->txt(msg_id::ABOUT_PAPER_IMPERATIVE)) . '.<br><br>';
         $result .= $mtr->txt(msg_id::ABOUT_SUPPORTS) . ' ';
         $result .= $this->ref(def::LINK_GITHUB_TREAM, $mtr->txt(msg_id::OPEN_SOURCE), $mtr->txt(msg_id::ABOUT_GITHUB_LINK)) . ' ' . $mtr->txt(msg_id::ABOUT_PORTFOLIO_MGMT) . '<br><br>';
-        $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'height: 20%;');
+        $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'logo-tream');
         $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO)) . '<' . self::BR . '><' . self::BR . '>';
         $result .= '</' . self::DIV . '>   ';
         $result .= $this->footer(true);

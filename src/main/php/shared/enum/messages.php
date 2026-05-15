@@ -1473,6 +1473,7 @@ enum messages: string
     case OR = 'or';
     case SIGNUP = 'signup';
     case GO = 'go';
+    case CANCEL_AND_GO = 'cancel_and_go';
     case BACK_LINK = 'back';
     case THREE_POINTS = '...';
 
