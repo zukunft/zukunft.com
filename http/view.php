@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -72,6 +73,7 @@ $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
 log_debug('view $_POST array: ' . library::dsp_array($_POST, true));
 // e.g. view $_POST array: username=timon,password=pw,token=9b7e93ace811c182a3fef8c3f7a6fe9832e814f3b872b6534b9d318852952917,m=61,9m=2,9id=1,9z=0,submit=Login.
 /*
+ * login
 $url_array = [
     'username' => 'timon',
     'password' => 'wind4surfen',
@@ -81,6 +83,14 @@ $url_array = [
     '9id'      => 1,
     '9z'       => 0,
     'submit'   => 'Login',
+];
+logout
+http://localhost/http/view.php?m=64&9m=1&9z=0
+$url_array = [
+    'token'    => '9b7e93ace811c182a3fef8c3f7a6fe9832e814f3b872b6534b9d318852952917',
+    'm'        => 64,
+    '9m'       => 1,
+    '9z'       => 0
 ];
 */
 
@@ -123,7 +133,9 @@ if ($db_con->is_open()) {
 
         // execute the user request and POST-Redirect-GET to prevent re-submission on reload
         $sys->times->switch(system_time_type::URL_TO_ACTION);
-        if (isset($url_array[url_var::POST_SUBMIT])) {
+        $is_post_action = isset($url_array[url_var::POST_SUBMIT]);
+        $is_get_action = in_array($url_array[url_var::MASK] ?? 0, views::GET_ACTION_IDS);
+        if ($is_post_action || $is_get_action) {
             $url_array = $ui->url_to_action($url_array, $usr, $usr_dsp, $msg, $ui->dto);
         }
 

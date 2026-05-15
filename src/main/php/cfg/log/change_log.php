@@ -287,6 +287,7 @@ class change_log extends db_object_seq_id_user
     /**
      * set the table of this change log object by the class name
      * @param string $class the class name
+     * @param bool $usr_only true to use the user table prefix
      * @return bool true if the table/class is part of the log table
      */
     function set_class(string $class, bool $usr_only = false): bool
@@ -294,10 +295,11 @@ class change_log extends db_object_seq_id_user
         $lib = new library();
         $name = $lib->class_to_table($class);
         if ($usr_only) {
-            return $this->set_table(sql_db::TBL_USER_PREFIX . $name);
+            $db_changed = $this->set_table(sql_db::TBL_USER_PREFIX . $name);
         } else {
-            return $this->set_table($name);
+            $db_changed = $this->set_table($name);
         }
+        return $db_changed;
     }
 
     /**

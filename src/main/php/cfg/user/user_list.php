@@ -462,7 +462,7 @@ class user_list
      * @param string $code_id the code id of the user
      * @return user|null
      */
-    function get(string $code_id): user|null
+    function get(string $code_id, bool $log_err = true): user|null
     {
         $result = null;
         if ($code_id != '' and $code_id != null) {
@@ -472,8 +472,10 @@ class user_list
                 $pos = $key_lst[$id];
                 $result = $this->lst()[$pos];
             } else {
-                $lib = new library();
-                log_err('User id not found for ' . $code_id . ' in ' . $lib->dsp_array($this->code_id_hash));
+                if ($log_err) {
+                    $lib = new library();
+                    log_err('User id not found for ' . $code_id . ' in ' . $lib->dsp_array($this->code_id_hash));
+                }
             }
         } else {
             log_debug('Type code id not not set');
@@ -520,6 +522,32 @@ class user_list
         $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);
         $this->lst[users::SYSTEM_TEST_NORMAL_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_TEST_NORMAL_CODE_ID] = users::SYSTEM_TEST_NORMAL_ID;
+
+    }
+
+    /**
+     * create a system user list for the
+     */
+    function load_fallback(): void
+    {
+        global $sys;
+
+        $this->lst = array();
+        $this->code_id_hash = array();
+
+        $usr = new user(users::SYSTEM_NAME, users::SYSTEM_EMAIL);
+        $usr->id = users::SYSTEM_ID;
+        $usr->code_id = users::SYSTEM_CODE_ID;
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM);
+        $this->lst[users::SYSTEM_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_CODE_ID] = users::SYSTEM_ID;
+
+        $usr = new user(users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
+        $usr->id = users::SYSTEM_ADMIN_ID;
+        $usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::ADMIN);
+        $this->lst[users::SYSTEM_ADMIN_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_ADMIN_CODE_ID] = users::SYSTEM_ADMIN_ID;
 
     }
 

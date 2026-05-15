@@ -75,11 +75,11 @@ class system_object
     // name php script that has been called by the webserver
     public string $script;
     // names of the php functions
-    public string  $trace;
+    public string $trace;
     // the initial time the user done the request to measure the execution time
     public float $start_time;
     // time after that a log entry should be created to detect too long execution times and to be able to improve the code
-    public float  $time_limit;
+    public float $time_limit;
     public system_time_list $times;
     // to avoid repeating the same message
     public array $log_msg_lst;
@@ -199,14 +199,54 @@ class system_object
 
     /**
      * get a preloaded system user
-     * TODO check that it is never be called by a user action and lof all access as double check
+     * TODO Prio 1 check that it is never be called by a user action and log all access as double check
+     *
+     * @return user|null null if no user with the code id is found
+     */
+    function system_user(): user|null
+    {
+        return $this->get_system_user(users::SYSTEM_CODE_ID);
+    }
+
+    /**
+     * get a preloaded admin user
+     * TODO Prio 1 check that it is never be called by a user action and log all access as double check
+     *
+     * @return user|null null if no user with the code id is found
+     */
+    function admin_user(): user|null
+    {
+        return $this->get_system_user(users::SYSTEM_ADMIN_CODE_ID);
+    }
+
+    /**
+     * get a preloaded admin user
+     * TODO Prio 1 check that it is never be called by a user action and log all access as double check
      *
      * @param string $code_id to select the system user
      * @return user|null null if no user with the code id is found
      */
-    function system_user(string $code_id): user|null
+    private function get_system_user(string $code_id): user|null
     {
-        return $this->system_users()->get($code_id);
+        $usr = $this->system_users()->get($code_id, false);
+        if ($usr === null) {
+            $this->set_fallback_users();
+            $usr = $this->system_users()->get($code_id);
+        }
+        return $usr;
+    }
+
+    /**
+     * create a fallback user only in development to allow testing without a fully seeded DB
+     * @return void
+     */
+    private function set_fallback_users(): void
+    {
+        if (getenv(ENVIRONMENT) == ENV_DEV) {
+            $this->system_users()->load_fallback();
+        } else {
+            log_fatal('fallback system users can be called in development for recovery', 'set_fallback_users');
+        }
     }
 
 

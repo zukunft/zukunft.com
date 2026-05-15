@@ -1085,6 +1085,7 @@ class frontend
         if ($do_it) {
             if ($usr_backend->has_db_id()) {
                 $logoff_msg = new backend_user_message();
+                $logoff_msg->usr = $usr_backend;
                 $usr_backend->last_logoff = new DateTime();
                 $usr_backend->save($logoff_msg);
                 $dsp_logoff_msg = new user_message();

@@ -609,6 +609,11 @@ class views
         self::DEL_MASKS_IDS,
     ];
 
+    // system masks that trigger an action via GET (no form submission required)
+    const array GET_ACTION_IDS = [
+        self::LOGOUT_ID,
+    ];
+
     // TODO Prio 0 convert to a key value map and use id for code_id_to_id and id_to_code_id
     // list of views where the id or the code is used for system testing
     const array TEST_VIEW_IDS = [

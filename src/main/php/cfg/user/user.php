@@ -531,8 +531,11 @@ class user extends db_id_object_non_sandbox
 
         // the code id should never be changed via api
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            // only system and admin users are allowed to change the code od
-            if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+            // only system and admin users are allowed to change the code id
+            if ($msg->usr === null) {
+                log_err('user not set in user_message', 'import_mapper');
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
             }
         }
@@ -1606,15 +1609,20 @@ class user extends db_id_object_non_sandbox
     {
         $can_change = false;
 
-        // if the user who wants to change it, is the owner, he can do it
-        // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        if ($this->id == $usr_msg->usr->id) {
-            $can_change = true;
-        } elseif ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
-            $can_change = true;
-            log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr_msg->usr->dsp_id());
+        if ($usr_msg->usr === null) {
+            log_err('user not set in user_message', 'can_be_changed_by');
+            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
-            log_warning('user ' . $usr_msg->usr->dsp_id() . ' has requested to change by user ' . $this->dsp_id() . ' without permission');
+            // if the user who wants to change it, is the owner, he can do it
+            // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
+            if ($this->id == $usr_msg->usr->id) {
+                $can_change = true;
+            } elseif ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+                $can_change = true;
+                log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr_msg->usr->dsp_id());
+            } else {
+                log_warning('user ' . $usr_msg->usr->dsp_id() . ' has requested to change by user ' . $this->dsp_id() . ' without permission');
+            }
         }
 
         return $can_change;

@@ -1029,7 +1029,11 @@ class type_object extends db_object_seq_id
     protected function can_delete(user_message $msg): bool
     {
         $can_del = false;
-        if (!$this->is_used()) {
+
+        if ($msg->usr === null) {
+            log_err('user not set in user_message', 'can_delete');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif (!$this->is_used()) {
             if ($this->code_id != null or $this->code_id != '') {
                 if ($msg->usr->is_admin() or $msg->usr->is_system()) {
                     $can_del = true;
@@ -1045,6 +1049,7 @@ class type_object extends db_object_seq_id
                 $can_del = true;
             }
         }
+
         return $can_del;
     }
 
