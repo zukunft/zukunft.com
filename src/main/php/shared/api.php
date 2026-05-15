@@ -59,6 +59,7 @@ class api
     const string FIND_SCRIPT = self::SCRIPT_PATH . 'find.php';
     const string LOGIN_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_ID;
     const string SIGNUP_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::SIGNUP_ID;
+    const string LOGIN_ACTIVATE_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_ACTIVATE_ID;
     const string LOGOUT_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGOUT_ID;
     const string RESET_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_RESET_ID;
     const string ERROR_LOG_SCRIPT = self::SCRIPT_PATH . 'error_log.php';

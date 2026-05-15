@@ -37,6 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -103,14 +104,20 @@ if ($db_con->is_open()) {
                 $mail_to = $db_usr->email;
                 $mail_subject = 'zukunft.com - password reset request';
                 // to be replaced by
-                $mail_body = sprintf('Hello, ' . "\n\n" . 'Please use the following activation key to reset your password: %4$s' . "\n\n" . 'Or use this link:' . "\n" . '%1$s/%2$s?id=%3$s&key=%4$s' . "\n\n" . 'If you did not request a password reset for %1$s recently, please ignore it.', 'www.zukunft.com', 'login_activate.php', $db_usr->id, $key);
+                $activate_url = 'www.zukunft.com' . api::LOGIN_ACTIVATE_SCRIPT
+                    . '&' . url_var::ID . '=' . $db_usr->id
+                    . '&' . url_var::POST_KEY . '=' . $key;
+                $mail_body = 'Hello,' . "\n\n"
+                    . 'Please use the following activation key to reset your password: ' . $key . "\n\n"
+                    . 'Or use this link:' . "\n" . $activate_url . "\n\n"
+                    . 'If you did not request a password reset for www.zukunft.com recently, please ignore it.';
                 $mail_header = 'From: admin@zukunft.com' . "\r\n" .
                     'Reply-To: admin@zukunft.com' . "\r\n" .
                     'X-Mailer: PHP/' . phpversion();
                 mail($db_usr->email, $mail_subject, $mail_body, $mail_header);
                 // TODO ask if cookies are allowed: if yes, the session id does not need to be forwarded
                 // if no, use the session id
-                header("Location: http/login_activate.php?id=" . $db_usr->id); // Modify to go to the page you would like
+                header("Location: " . api::LOGIN_ACTIVATE_SCRIPT . "&" . url_var::ID . "=" . $db_usr->id);
                 //header("Location: view.php?sid=".SID.""); // Modify to go to the page you would like
                 exit;
             } else {

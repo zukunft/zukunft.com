@@ -1647,8 +1647,15 @@ enum messages: string
     case SIGNUP_ERR_FAILED = 'signup_err_failed';
     case SYSTEM_TITLE_LOGIN = 'system_title_login';
     case SYSTEM_TITLE_LOGIN_ACTIVATE = 'system_title_login_activate';
+    case ACTIVATE_SUBMIT = 'activate_submit';
+    case ACTIVATE_KEY_LABEL = 'activate_key_label';
+    case ACTIVATE_ERR_KEY_MISMATCH = 'activate_err_key_mismatch';
+    case ACTIVATE_ERR_KEY_EXPIRED = 'activate_err_key_expired';
+    case ACTIVATE_ERR_MISSING_ID = 'activate_err_missing_id';
+    case ACTIVATE_ERR_FAILED = 'activate_err_failed';
     case SYSTEM_TITLE_LOGIN_RESET = 'system_title_login_reset';
     case SYSTEM_TITLE_LOGOUT = 'system_title_logout';
+    case LOGOUT_NOTICE = 'logout_notice';
     case SYSTEM_TITLE_VALUE_DETAIL = 'system_title_value_detail';
     case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';

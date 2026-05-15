@@ -53,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -214,7 +215,7 @@ if ($usr->id > 0) {
     }
 
     if ($_SESSION[url_var::SESSION_LOGGED]) {
-        $result .= '<br><br><a href="/http/logout.php">logout</a>';
+        $result .= '<br><br><a href="' . api::LOGOUT_SCRIPT . '">logout</a>';
     }
 }
 

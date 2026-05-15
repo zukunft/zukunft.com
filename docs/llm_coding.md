@@ -273,3 +273,22 @@ Every function must be fully unit-testable. This means:
 - **No other hidden globals**: any global not in the list above must be passed as an explicit parameter instead.
 
 The rationale: a function that reaches outside the allowed globals cannot be called in a test without replicating the full request environment. The fixed global set is small enough that every test runner can initialise it once and all functions stay independently testable.
+
+## Pre-commit checklist
+
+Before every commit, verify the following:
+
+### `files::AUTO_UPDATE_HTML` must be `false`
+
+`src/test/php/const/files.php` contains the constant `files::AUTO_UPDATE_HTML`. When set to `true`, failing HTML snapshot tests silently overwrite the expected files instead of failing — masking regressions. It must be `false` before committing.
+
+- **Wrong**: `CONST bool AUTO_UPDATE_HTML = true;`
+- **Right**: `CONST bool AUTO_UPDATE_HTML = false;`
+
+### No secrets in the commit
+
+Never commit real credentials, API keys, or actual passwords — not in source files, test fixtures, config files, or commit messages.
+
+- Dummy/placeholder passwords are allowed but must be **explicitly labelled** as such, e.g. `'dummy_password_123'`, `'test_pw_placeholder'`, or accompanied by a comment like `// dummy password for tests only`.
+- A value that looks like a real password with no label is not acceptable even if it happens to be fake.
+- If a secret was accidentally staged, remove it before committing — do not rely on a follow-up "remove secret" commit on a public branch.

@@ -163,6 +163,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
+use DateTime;
 use Random\RandomException;
 use Exception;
 
@@ -589,7 +590,8 @@ class frontend
         match (true) {
             $view == views::LOGIN_ID => $url = $this->action_login($url_array, $usr_msg, $usr_backend, $usr, $do_it),
             $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $usr_msg, $usr_backend, $usr, $do_it),
-            $view == views::LOGOUT_ID => $url = $this->action_logout(),
+            $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $usr_msg, $usr_backend, $usr, $do_it),
+            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_msg, $do_it),
             in_array($view, views::ADD_MASKS_IDS) => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
             in_array($view, views::EDIT_MASKS_IDS) => $url = $this->action_crud(
@@ -967,14 +969,128 @@ class frontend
     }
 
     /**
-     * clear the session and return the URL for the start page
+     * validate the activation key, set the new password and auto-login the user
+     * @param array $url_array the normalised URL params; expects id, key, and the two password fields
+     * @param user_message $usr_msg collects validation and save errors shown to the user
+     * @param user_backend $usr_backend updated in-place with the activated user on success
+     * @param user_ui $usr_ui updated in-place from the activated user's api_json on success
+     * @param bool $do_it false for unit tests that should not touch the database or session
+     * @return array URL array pointing to the back page on success, or the activate page (minus passwords) on failure
+     */
+    private function action_login_activate(
+        array        $url_array,
+        user_message $usr_msg,
+        user_backend &$usr_backend,
+        user_ui      &$usr_ui,
+        bool         $do_it
+    ): array
+    {
+        global $mtr;
+
+        $usr_id = (int)($url_array[url_var::ID] ?? 0);
+        $post_key = $url_array[url_var::POST_KEY] ?? '';
+        $pw = $url_array[url_var::USER_PASSWORD] ?? $url_array[url_var::USER_PASSWORD_HUMAN] ?? '';
+        $pw_re = $url_array[url_var::USER_PASSWORD_RETYPE] ?? $url_array[url_var::USER_PASSWORD_RETYPE_HUMAN] ?? '';
+        $activated = false;
+
+        if ($do_it) {
+            if ($usr_id <= 0) {
+                $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_MISSING_ID));
+            } else {
+                $usr = new user_backend();
+                $usr->load_by_id($usr_id);
+                $db_key = $usr->activation_key ?? '';
+                $db_timeout = $usr->activation_timeout;
+                $db_now = $usr->db_now;
+
+                if ($db_key === $post_key && $db_timeout !== null && $db_timeout > $db_now) {
+                    if (empty($pw)) { $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY)); }
+                    if (empty($pw_re)) { $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY)); }
+                    if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
+                        $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_MISMATCH));
+                    }
+
+                    if ($usr_msg->is_ok()) {
+                        $activate_msg = new backend_user_message();
+                        $usr->set_password($pw, $activate_msg);
+                        if ($activate_msg->is_ok()) {
+                            $usr->activation_key = '';
+                            $usr->activation_timeout = new DateTime();
+                            $usr->save($activate_msg);
+                            $usr_by_id = new user_backend();
+                            $usr_by_id->load_by_id($usr_id);
+                            if ($usr_by_id->has_db_id()) {
+                                session_start();
+                                if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                                    try {
+                                        $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                                    } catch (RandomException $e) {
+                                        log_err('RandomException ' . $e->getMessage());
+                                    }
+                                }
+                                $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
+                                $_SESSION[url_var::USERNAME_HUMAN] = $usr_by_id->name();
+                                $_SESSION[url_var::SESSION_LOGGED] = true;
+                                $usr_backend = $usr_by_id;
+                                $usr_ui->set_from_json($usr_by_id->api_json(), $usr_msg);
+                                $activated = true;
+                            } else {
+                                log_err('Cannot find id ' . $usr_id . ' after password change.', 'action_login_activate');
+                                $activate_msg->add_message_text($mtr->txt(msg_id::ACTIVATE_ERR_FAILED));
+                            }
+                        }
+                        $dsp_activate_msg = new user_message();
+                        $dsp_activate_msg->api_mapper($activate_msg->api_array());
+                        $usr_msg->merge($dsp_activate_msg);
+                    }
+                } else {
+                    if ($db_key !== '') {
+                        $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_MISMATCH));
+                    } else {
+                        $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_EXPIRED));
+                    }
+                }
+            }
+        }
+
+        if ($activated) {
+            $back_array = html_base::url_par_from_back_part($url_array);
+            $next_url = empty($back_array) ? [url_var::MASK => views::START_ID] : $back_array;
+        } else {
+            $next_url = $url_array;
+            unset($next_url[url_var::USER_PASSWORD], $next_url[url_var::USER_PASSWORD_HUMAN]);
+            unset($next_url[url_var::USER_PASSWORD_RETYPE], $next_url[url_var::USER_PASSWORD_RETYPE_HUMAN]);
+            unset($next_url[url_var::SESSION_TOKEN], $next_url[url_var::POST_SUBMIT]);
+        }
+        return $next_url;
+    }
+
+    /**
+     * record the logoff time, clear the session and return the URL for the start page
+     * @param user_backend $usr_backend the currently logged-in backend user; last_logoff is updated if set
+     * @param user_message $usr_msg collects errors from saving the logoff time
+     * @param bool $do_it false for unit tests that should not touch the database or session
      * @return array URL array pointing to the start view
      */
-    private function action_logout(): array
+    private function action_logout(
+        user_backend $usr_backend,
+        user_message $usr_msg,
+        bool         $do_it
+    ): array
     {
-        if (isset($_SESSION)) {
-            $_SESSION = [];
-            session_destroy();
+        if ($do_it) {
+            if ($usr_backend->has_db_id()) {
+                $logoff_msg = new backend_user_message();
+                $usr_backend->last_logoff = new DateTime();
+                $usr_backend->save($logoff_msg);
+                $dsp_logoff_msg = new user_message();
+                $dsp_logoff_msg->api_mapper($logoff_msg->api_array());
+                $usr_msg->merge($dsp_logoff_msg);
+            }
+            if (isset($_SESSION)) {
+                $_SESSION = [];
+                session_destroy();
+            }
         }
         return [url_var::MASK => views::START_ID];
     }

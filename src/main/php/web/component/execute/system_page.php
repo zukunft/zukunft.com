@@ -211,10 +211,30 @@ class system_page extends component
         return $html->logo_flex() . $html->br2() . $html->div($form_str, html_base::CLASS_INPUT_SECTION);
     }
 
-    // TODO Prio 0 fill with real code
-    function activate_body(): string
+    /**
+     * build the account activation (password change) form HTML
+     *
+     * @param array $url_array the URL params; expects id and optionally key from the activation link
+     * @return string the complete activation page body HTML
+     */
+    function activate_body(array $url_array): string
     {
-        return 'activate_body placeholder';
+        $html = new html_base();
+        $usr_id = (int)($url_array[url_var::ID] ?? 0);
+        $key = $url_array[url_var::POST_KEY] ?? '';
+
+        $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::LOGIN_ACTIVATE_ID);
+        foreach (url_var::back_par($url_array) as $key_par => $val) {
+            $extra_hidden .= $html->form_hidden($key_par, $val);
+        }
+
+        $web_usr = new user_dsp();
+        $form_str = $web_usr->form_activate($extra_hidden, $usr_id, $key);
+
+        $result = $html->logo_flex();
+        $result .= $html->br2();
+        $result .= $html->div($form_str, html_base::CLASS_INPUT_SECTION);
+        return $result;
     }
 
     // TODO Prio 0 fill with real code
@@ -223,10 +243,19 @@ class system_page extends component
         return 'reset_body placeholder';
     }
 
-    // TODO Prio 0 fill with real code
+    /**
+     * HTML shown on the logout confirmation page
+     * @return string the logout page body HTML
+     */
     function logout_body(): string
     {
-        return 'logout_body placeholder';
+        global $mtr;
+
+        $html = new html_base();
+        $result = $html->logo_flex();
+        $result .= $html->br2();
+        $result .= $html->div($html->p($mtr->txt(msg_id::LOGOUT_NOTICE)), html_base::CLASS_INPUT_SECTION);
+        return $result;
     }
 
     // TODO Prio 0 fill with real code

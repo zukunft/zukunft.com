@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
@@ -116,7 +117,7 @@ if ($usr->id > 0) {
         }
 
         if ($_SESSION[url_var::SESSION_LOGGED]) {
-            $result .= '<br><br><a href="/http/logout.php">logout</a>';
+            $result .= '<br><br><a href="' . api::LOGOUT_SCRIPT . '">logout</a>';
         }
     } else {
         $result .= $html->dsp_text_h3("You are not permitted to update the error status. If you want to get the permission, please request it at admin@zukunft.com..");

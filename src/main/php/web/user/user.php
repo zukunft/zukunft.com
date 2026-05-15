@@ -615,6 +615,42 @@ class user extends db_object
         return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
     }
 
+    /**
+     * build the activate (password change) form HTML
+     *
+     * @param string $extra_hidden hidden fields for MASK and back params
+     * @param int $usr_id the user id from the activation link
+     * @param string $key the activation key from the activation link; if empty an input field is shown
+     * @return string the complete form HTML or an error message if usr_id is missing
+     */
+    function form_activate(string $extra_hidden = '', int $usr_id = 0, string $key = ''): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        if ($usr_id <= 0) {
+            return $html->dsp_err($mtr->txt(msg_id::ACTIVATE_ERR_MISSING_ID));
+        }
+        $form_str = $html->form_hidden(url_var::ID, (string)$usr_id);
+        if ($key !== '') {
+            $form_str .= $html->form_hidden(url_var::POST_KEY, $key);
+        } else {
+            $form_key = $mtr->txt(msg_id::ACTIVATE_KEY_LABEL) . $html->br();
+            $form_key .= $html->form_input(html_base::INPUT_TEXT, url_var::POST_KEY);
+            $form_str .= $html->p($form_key);
+        }
+        $form_pw = $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
+        $form_pw .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD);
+        $form_str .= $html->p($form_pw);
+        $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
+        $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE);
+        $form_str .= $html->p($form_pwr);
+        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $extra_hidden;
+        $form_str .= $html->button_submit($mtr->txt(msg_id::ACTIVATE_SUBMIT));
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
+    }
+
 
     /*
      * to review

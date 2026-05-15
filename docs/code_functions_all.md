@@ -5425,6 +5425,7 @@
     \-- name_link - section for function name_link not yet defined that it should be display in /user/user.php
     \-- form_login - section for function form_login not yet defined that it should be display in /user/user.php
     \-- form_signup - section for function form_signup not yet defined that it should be display in /user/user.php
+    \-- form_activate - section for function form_activate not yet defined that it should be display in /user/user.php
     \-- form_edit - section for function form_edit not yet defined that it should be to review in /user/user.php
     \-- dsp_changes - section for function dsp_changes not yet defined that it should be to review in /user/user.php
     \-- dsp_errors - section for function dsp_errors not yet defined that it should be to review in /user/user.php
@@ -6478,37 +6479,37 @@
     \-- login_body
         \-- system_page - build the signup form HTML
     \-- activate_body
-        \-- system_page - build the signup form HTML
+        \-- system_page - build the account activation (password change) form HTML
     \-- reset_body
-        \-- system_page - build the signup form HTML
+        \-- system_page - build the account activation (password change) form HTML
     \-- logout_body
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- body_search
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- body_search_full
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- value_details
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- result_explain
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- formula_test
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- sandbox
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- undo
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- user_setting
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- process
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- error_log
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- error_update
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- process_progress
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- process_list
-        \-- system_page - build the signup form HTML
+        \-- system_page - HTML shown on the logout confirmation page
     \-- text
         \-- ui_base - @return string a fixed text
     \-- phrase_name
