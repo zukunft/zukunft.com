@@ -365,8 +365,11 @@ class system_view_ui_tests
             $dbo = new formula_link($usr);
         } elseif (in_array($view_id, view_shared::VIEW_RELATION_MASKS_IDS)) {
             $dbo = new view_relation($usr);
+        } elseif (in_array($view_id, view_shared::USER_MASKS_IDS)) {
+            $dbo = new user();
         } else {
             $dbo = new db_object();
+            log_err('no backend object defined for view id ' . $view_id);
         }
         return $dbo;
     }

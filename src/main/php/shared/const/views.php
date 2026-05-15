@@ -364,7 +364,7 @@ class views
     // TODO Prio 1 set to 1
     const int MIN_TEST_ID = 2;
     // TODO Prio 0 set to 37
-    const int MAX_TEST_ID = 40;
+    const int MAX_TEST_ID = 50;
 
 
     const string COMPANY_RATIO_NAME = 'company ratios';
@@ -417,11 +417,27 @@ class views
     );
 
     // system masks that have a user as the main object
-    // TODO add the login views e.g. to detect the correct object for the url mapper
     const array USER_MASKS_IDS = [
         self::USER_ADMIN_ADD_ID,
         self::USER_ADMIN_EDIT_ID,
         self::USER_ADMIN_DEL_ID
+    ];
+
+    // system masks that handle user authentication or user profile
+    const array USER_LOGIN_IDS = [
+        self::SIGNUP_ID,
+        self::LOGIN_ID,
+        self::LOGIN_ACTIVATE_ID,
+        self::LOGIN_RESET_ID,
+        self::LOGOUT_ID,
+        self::USER_ID,
+    ];
+
+    // system masks that only admin user can see
+    const array ADMIN_USER_IDS = [
+        self::USER_ADMIN_ADD_ID,
+        self::USER_ADMIN_EDIT_ID,
+        self::USER_ADMIN_DEL_ID,
     ];
 
     // system masks that have a word as the main object
@@ -471,21 +487,24 @@ class views
     const array VALUE_MASKS_IDS = [
         self::VALUE_ADD_ID,
         self::VALUE_EDIT_ID,
-        self::VALUE_DEL_ID
+        self::VALUE_DEL_ID,
+        self::VALUE_DETAIL_ID,
     ];
 
     // system masks that have a formula as the main object
     const array FORMULA_MASKS_IDS = [
         self::FORMULA_ADD_ID,
         self::FORMULA_EDIT_ID,
-        self::FORMULA_DEL_ID
+        self::FORMULA_DEL_ID,
+        self::FORMULA_TEST_ID,
     ];
 
     // system masks that have a result as the main object
     const array RESULT_MASKS_IDS = [
         self::RESULT_ADD_ID,
         self::RESULT_EDIT_ID,
-        self::RESULT_DEL_ID
+        self::RESULT_DEL_ID,
+        self::RESULT_EXPLAIN_ID,
     ];
 
     // system masks that have a view as the main object
@@ -530,6 +549,13 @@ class views
         self::VIEW_RELATION_DEL_ID
     ];
 
+    // system masks that have a language as the main object
+    const array LANGUAGE_MASKS_IDS = [
+        self::LANGUAGE_ADD_ID,
+        self::LANGUAGE_EDIT_ID,
+        self::LANGUAGE_DEL_ID,
+    ];
+
     // system masks that only used to display a sandbox object
     const array SHOW_MASKS_IDS = [
         self::START_ID,
@@ -552,6 +578,9 @@ class views
         self::COMPONENT_LINK_ADD_ID,
         self::FORMULA_LINK_ADD_ID,
         self::VIEW_RELATION_ADD_ID,
+        self::USER_ADMIN_ADD_ID,
+        self::LANGUAGE_ADD_ID,
+        self::CONFIRM_ADD_ID,
     ];
 
     // system masks that change a sandbox object
@@ -571,6 +600,9 @@ class views
         self::COMPONENT_LINK_EDIT_ID,
         self::FORMULA_LINK_EDIT_ID,
         self::VIEW_RELATION_EDIT_ID,
+        self::USER_ADMIN_EDIT_ID,
+        self::LANGUAGE_EDIT_ID,
+        self::CONFIRM_EDIT_ID,
     ];
 
     // system masks that delete a sandbox object
@@ -590,6 +622,9 @@ class views
         self::COMPONENT_LINK_DEL_ID,
         self::FORMULA_LINK_DEL_ID,
         self::VIEW_RELATION_DEL_ID,
+        self::USER_ADMIN_DEL_ID,
+        self::LANGUAGE_DEL_ID,
+        self::CONFIRM_DEL_ID,
     ];
 
     // system masks that should not have the standard zukunft header

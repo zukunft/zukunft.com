@@ -1093,4 +1093,12 @@ class value extends sandbox_value
         return $result;
     }
 
+    /**
+     * @return string that best describes this object
+     */
+    function display(): string
+    {
+        return $this->name();
+    }
+
 }

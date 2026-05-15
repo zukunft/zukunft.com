@@ -53,7 +53,9 @@ include_once html_paths::HELPER . 'url_mapper.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
+include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FORMULA . 'formula_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::REF . 'ref.php';
@@ -89,6 +91,9 @@ include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::SYSTEM . 'language.php';
+include_once html_paths::VIEW . 'view_relation.php';
+include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 //include_once test_paths::CONST . 'files.php';
@@ -122,7 +127,9 @@ use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
+use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
@@ -138,6 +145,10 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
+use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
+use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
@@ -1299,11 +1310,17 @@ class frontend
      * internal
      */
 
-    private
-    function view_id_to_dbo_ui(int $view_id): sandbox_ui|sandbox_named_ui|db_object_ui
+    /**
+     * create the frontend object that is the base for the given view id
+     * @param int $view_id the id of the predefined view
+     * @return sandbox_ui|sandbox_named_ui|db_object_ui|type_object the matching main frontend object
+     */
+    private function view_id_to_dbo_ui(int $view_id): sandbox_ui|sandbox_named_ui|db_object_ui|type_object
     {
         // select the main object to display
-        if (in_array($view_id, views::WORD_MASKS_IDS)) {
+        if ($view_id == views::START_ID) {
+            $dbo_ui = new word_ui();
+        } elseif (in_array($view_id, views::WORD_MASKS_IDS)) {
             $dbo_ui = new word_ui();
         } elseif (in_array($view_id, views::VERB_MASKS_IDS)) {
             $dbo_ui = new verb_ui();
@@ -1325,7 +1342,41 @@ class frontend
             $dbo_ui = new view_ui();
         } elseif (in_array($view_id, views::COMPONENT_MASKS_IDS)) {
             $dbo_ui = new component_ui();
+        } elseif (in_array($view_id, views::VIEW_RELATION_MASKS_IDS)) {
+            $dbo_ui = new view_relation_ui();
+        } elseif (in_array($view_id, views::VIEW_LINK_MASKS_IDS)) {
+            $dbo_ui = new term_view_ui();
+        } elseif (in_array($view_id, views::COMPONENT_LINK_MASKS_IDS)) {
+            $dbo_ui = new component_link_ui();
+        } elseif (in_array($view_id, views::FORMULA_LINK_MASKS_IDS)) {
+            $dbo_ui = new formula_link_ui();
+        } elseif (in_array($view_id, views::USER_MASKS_IDS)) {
+            $dbo_ui = new user_ui();
+        } elseif (in_array($view_id, views::LANGUAGE_MASKS_IDS)) {
+            $dbo_ui = new language_ui(0, null);
+        } elseif ($view_id === views::CONFIRM_ADD_ID
+            or $view_id === views::CONFIRM_EDIT_ID
+            or $view_id === views::CONFIRM_DEL_ID
+            or $view_id === views::CONFIRM_VIEWS_ID) {
+            $dbo_ui = new db_object_ui();
+        } elseif ($view_id === views::ABOUT_ID
+            or $view_id === views::SETUP_ID) {
+            $dbo_ui = new db_object_ui();
+        } elseif (in_array($view_id, views::USER_LOGIN_IDS)) {
+            $dbo_ui = new user_ui();
+        } elseif (in_array($view_id, views::ADMIN_USER_IDS)) {
+            $dbo_ui = new user_ui();
+        } elseif ($view_id === views::ERROR_LOG_ID
+            or $view_id === views::ERROR_UPDATE_ID) {
+            $dbo_ui = new db_object_ui();
+        } elseif ($view_id === views::WORD_FIND_ID
+            or $view_id === views::SEARCH_FULL_ID) {
+            $dbo_ui = new word_ui();
+        } elseif ($view_id === views::SANDBOX_ID
+            or $view_id === views::UNDO_ID) {
+            $dbo_ui = new db_object_ui();
         } else {
+            log_err('ui object missing for view id ' . $view_id);
             $dbo_ui = new word_ui();
         }
         return $dbo_ui;

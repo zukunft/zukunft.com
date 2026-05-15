@@ -849,5 +849,4 @@ class component extends sandbox_code_id
         return $phr_lst->selector($form, $selected, $name, $label_id, $style, html_selector::TYPE_DATALIST);
     }
 
-
 }

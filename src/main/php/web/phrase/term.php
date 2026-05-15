@@ -583,4 +583,12 @@ class term extends combine_named
         return $trm_lst->selector($form, $this->id(), $name);
     }
 
+    /**
+     * @return string that best describes this object
+     */
+    function display(): string
+    {
+        return $this->name();
+    }
+
 }

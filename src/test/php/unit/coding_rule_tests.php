@@ -84,7 +84,10 @@ class coding_rule_tests
         $test_name = 'check that the docs with all function is updated';
         $md_txt = $this->php_function_tree();
         $doc_txt = file_get_contents(test_files::DOCS_FUNCTIONS);
-        $t->assert($test_name, $md_txt, $doc_txt);
+        $fnc_upd = $t->assert($test_name, $md_txt, $doc_txt);
+        if (!$fnc_upd and test_files::AUTO_UPDATE_HTML) {
+            $t->update_path_file(test_files::DOCS_FUNCTIONS, $md_txt);
+        }
 
         $this->php_include_tests($t, paths::MODEL);
         // TODO Prio 1 activate but take into account the const

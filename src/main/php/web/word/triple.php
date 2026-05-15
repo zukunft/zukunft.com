@@ -677,7 +677,6 @@ class triple extends sandbox_code_id
      * display one link to the user by returning the HTML code for the link to the calling function
      * TODO include the user sandbox in the selection
      */
-    private
     function display(): string
     {
         log_debug("triple->dsp " . $this->id() . ".");

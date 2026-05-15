@@ -320,3 +320,6 @@ messages:
   about_portfolio_mgmt: "Portfolio Management System"
   about_tream_demo: "TREAM demo"
   about_github_link: "github.com link"
+  link: "link"
+  to: "to"
+  extends: "extends"

@@ -1286,6 +1286,11 @@ class test_mappers
                 $obj_array = $this->formula_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case formula_link::class;
+                $obj = $t_frm->formula_link_filled();
+                $obj_array = $this->formula_link_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case result::class;
                 $obj = $t_res->result_main_filled();
                 $obj_array = $this->result_url($obj, $type);
@@ -1402,6 +1407,11 @@ class test_mappers
             case formula::class;
                 $obj = $t_frm->formula_filled();
                 $obj_array = $this->formula_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case formula_link::class;
+                $obj = $t_frm->formula_link_filled();
+                $obj_array = $this->formula_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case result::class;

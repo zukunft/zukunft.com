@@ -40,11 +40,13 @@ include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -85,7 +87,8 @@ class formula_link extends sandbox_link
         $result = '';
 
         if ($this->formula() != null and $this->phrase() != null) {
-            $result = $this->formula()->name_link(NULL, $back) . ' to ' . $this->phrase()->name_link(NULL, $back);
+            global $mtr;
+            $result = $this->formula()->name_link(NULL, $back) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->phrase()->name_link(NULL, $back);
         } else {
             $result .= log_err("The formula name or the phrase name cannot be loaded.", "component_link->name");
         }
@@ -197,7 +200,7 @@ class formula_link extends sandbox_link
         $this->fob = $frm;
     }
 
-    function formula(): formula
+    function formula(): formula|null
     {
         return $this->fob;
     }
@@ -210,6 +213,40 @@ class formula_link extends sandbox_link
     function phrase(): phrase
     {
         return $this->tob;
+    }
+
+    /**
+     * TODO Prio 1 check if the formula description is needed
+     * @return string the display value of the tooltip where null is an empty string
+     */
+    function get_description(): string
+    {
+        return '';
+    }
+
+    function formula_name(): ?string
+    {
+        return $this->formula()?->name();
+    }
+
+    function phrase_name(): ?string
+    {
+        return $this->phrase()?->name();
+    }
+
+
+    /*
+     * display
+     */
+
+    /**
+     * @return string that best describes this object
+     */
+    function display(): string
+    {
+        global $mtr;
+        $result = $mtr->txt(msg_id::KEY_TYPE_LINK) . ' ' . $this->formula_name() . ' ' . $mtr->txt(msg_id::LOG_TO) . ' ' . $this->phrase_name();
+        return $result;
     }
 
 }

@@ -59,3 +59,6 @@ messages:
   about_portfolio_mgmt: "Portfolio-Management-System"
   about_tream_demo: "TREAM Demo"
   about_github_link: "github.com Link"
+  link: "Verknüpfung"
+  to: "zu"
+  extends: "erweitert"

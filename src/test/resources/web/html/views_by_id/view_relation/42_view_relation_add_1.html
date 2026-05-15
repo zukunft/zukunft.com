@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            Add view relation  (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=42&9m=42&9a=a&9id=1&9k=%20to%20word_usage&9o=add%20usage%20and%20log%20of%20a%20word&9y=1&9df=3&9dm=5&9s=3&9sp=2&9z=0">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30&9m=42&9a=a&9id=1&9k=%20to%20word_usage&9o=add%20usage%20and%20log%20of%20a%20word&9y=1&9df=3&9dm=5&9s=3&9sp=2&9z=0">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=42&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=42&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=42&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=42&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=42&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=42&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=42&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=61&9m=42&9a=a&9id=1&9k=%20to%20word_usage&9o=add%20usage%20and%20log%20of%20a%20word&9y=1&9df=3&9dm=5&9s=3&9sp=2&9z=0">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=60&9m=42&9a=a&9id=1&9k=%20to%20word_usage&9o=add%20usage%20and%20log%20of%20a%20word&9y=1&9df=3&9dm=5&9s=3&9sp=2&9z=0">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings?9m=42&9a=a&9id=1&9k=%20to%20word_usage&9o=add%20usage%20and%20log%20of%20a%20word&9y=1&9df=3&9dm=5&9s=3&9sp=2&9z=0">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Add a new view relation
+            </h4>
+            <form action="/http/view.php" id="view_relation_add">
+                <input class="form-control" type="hidden" name="mask" id="m" value="42">
+                <input class="form-control" type="hidden" name="id" id="id" value="0">
+                <input class="form-control" type="hidden" name="back" id="9" value="0">
+                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="d">
+                            View
+                        </label>
+                        <select class="form-control" name="d" form="view_relation_add" id="d" >
+                            <option value="87"  >
+                                Complete
+                            </option>
+                            <option value="0"  >
+                                ---
+                            </option>
+                            <option value="102"  >
+                                Biological
+                            </option>
+                            <option value="96"  >
+                                Display Number
+                            </option>
+                            <option value="103"  >
+                                Education
+                            </option>
+                            <option value="97"  >
+                                Formula
+                            </option>
+                            <option value="105"  >
+                                Graph
+                            </option>
+                            <option value="101"  >
+                                Historic
+                            </option>
+                            <option value="95"  >
+                                Language
+                            </option>
+                            <option value="88"  >
+                                Language selection
+                            </option>
+                            <option value="107"  >
+                                Mathematical constance
+                            </option>
+                            <option value="110"  >
+                                Phrase (default)
+                            </option>
+                            <option value="99"  >
+                                Ranking
+                            </option>
+                            <option value="94"  >
+                                Reference
+                            </option>
+                            <option value="98"  >
+                                Result
+                            </option>
+                            <option value="100"  >
+                                Science
+                            </option>
+                            <option value="106"  >
+                                Simple
+                            </option>
+                            <option value="93"  >
+                                Source
+                            </option>
+                            <option value="109"  >
+                                System log
+                            </option>
+                            <option value="104"  >
+                                Touristic
+                            </option>
+                            <option value="92"  >
+                                Triple (default)
+                            </option>
+                            <option value="91"  >
+                                Verb
+                            </option>
+                            <option value="90"  >
+                                Word (default)
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="dr">
+                            Relation type
+                        </label>
+                        <select class="form-control" name="dr" form="view_relation_add" id="dr" >
+                            <option value="1"  selected >
+                                add components
+                            </option>
+                            <option value="2"  >
+                                remove components
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-1">
+                        <label for="po">
+                            Component link
+                        </label>
+                        <input class="form-control" type="text" name="Component link" id="po" value="position missing missing">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="d">
+                            View
+                        </label>
+                        <select class="form-control" name="d" form="view_relation_add" id="d" >
+                            <option value="87"  >
+                                Complete
+                            </option>
+                            <option value="0"  >
+                                ---
+                            </option>
+                            <option value="102"  >
+                                Biological
+                            </option>
+                            <option value="96"  >
+                                Display Number
+                            </option>
+                            <option value="103"  >
+                                Education
+                            </option>
+                            <option value="97"  >
+                                Formula
+                            </option>
+                            <option value="105"  >
+                                Graph
+                            </option>
+                            <option value="101"  >
+                                Historic
+                            </option>
+                            <option value="95"  >
+                                Language
+                            </option>
+                            <option value="88"  >
+                                Language selection
+                            </option>
+                            <option value="107"  >
+                                Mathematical constance
+                            </option>
+                            <option value="110"  >
+                                Phrase (default)
+                            </option>
+                            <option value="99"  >
+                                Ranking
+                            </option>
+                            <option value="94"  >
+                                Reference
+                            </option>
+                            <option value="98"  >
+                                Result
+                            </option>
+                            <option value="100"  >
+                                Science
+                            </option>
+                            <option value="106"  >
+                                Simple
+                            </option>
+                            <option value="93"  >
+                                Source
+                            </option>
+                            <option value="109"  >
+                                System log
+                            </option>
+                            <option value="104"  >
+                                Touristic
+                            </option>
+                            <option value="92"  >
+                                Triple (default)
+                            </option>
+                            <option value="91"  >
+                                Verb
+                            </option>
+                            <option value="90"  >
+                                Word (default)
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="o">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="Description" id="o" value="add usage and log of a word">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="s">
+                            Share
+                        </label>
+                        <select class="form-control" name="s" form="view_relation_add" id="s" >
+                            <option value="1"  >
+                                public
+                            </option>
+                            <option value="2"  >
+                                personal
+                            </option>
+                            <option value="3"  selected >
+                                group
+                            </option>
+                            <option value="4"  >
+                                private
+                            </option>
+                            <option value="5"  >
+                                personal log
+                            </option>
+                            <option value="6"  >
+                                group log
+                            </option>
+                            <option value="7"  >
+                                private log
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="sp">
+                            Protection
+                        </label>
+                        <select class="form-control" name="sp" form="view_relation_add" id="sp" >
+                            <option value="1"  >
+                                no protection
+                            </option>
+                            <option value="2"  selected >
+                                user
+                            </option>
+                            <option value="3"  >
+                                admin
+                            </option>
+                            <option value="4"  >
+                                no change
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <br>
+                    <div class="row col-md-12 justify-content-end">
+                        <a href="/http/view.php?m=0" class="btn btn-space col-1 btn-outline-secondary">
+                            cancel
+                        </a>
+                        <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                            save
+                        </button>
+                    </div>
+                </form>
+            </main>
+            <footer class="site-footer">
+                <p>
+                    <a href="/http/about.php">
+                        About
+                    </a>
+                    &middot;
+                    <a href="/http/privacy_policy.html">
+                        Privacy Policy
+                    </a>
+                    &middot; 
+All structured data is available under the
+                    <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                        Creative Commons CC0
+                    </a>
+                    Licence unless otherwise stated and the
+                    <a href="https://github.com/zukunft/zukunft.com">
+                        program code
+                    </a>
+                    of this version 0.0.3
+under the
+                    <a href="https://www.gnu.org/licenses/agpl.html">
+                        AGPL3
+                    </a>
+                    Licence.
+                </p>
+            </footer>
+        </body>
+    </html>

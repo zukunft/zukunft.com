@@ -1351,6 +1351,7 @@ enum messages: string
     case ALREADY_EXISTS = 'already exists';
     case KEY_TYPE_NAME = 'name';
     case KEY_TYPE_LINK = 'link';
+    case LINK_EXTENDS = 'extends';
     case KEY_TYPE_EXTERNAL_KEY = 'external key';
     case CLASS_LIST_UNEXPECTED = 'Cannot create type for the list class '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
