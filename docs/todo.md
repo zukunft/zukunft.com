@@ -172,6 +172,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO complete system view with: about, async_process, calculate
     TODO create an admin page with the numbner of connected pods, the usage an the most likely and latest SPAM posts
 
+    TODO write a function that checks the order of the import based on the description in lll_coding.md (or switch to fully automatic include)
+
     TODO object chart 
          - add legend with object types and that dotted line is inheritance   
          - move result towards value

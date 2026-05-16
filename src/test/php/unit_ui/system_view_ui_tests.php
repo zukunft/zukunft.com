@@ -32,18 +32,10 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
-use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
-use Zukunft\ZukunftCom\test\php\create\test_const;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -74,8 +66,11 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -86,14 +81,20 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -299,30 +300,121 @@ class system_view_ui_tests
                 } else {
                     $html = $ui->url_to_html($url_array, null, $usr_msg, $ui->dto);
                 }
-                $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
-                // create the filename of the expected result
-                $dbo_name = $id . '_';
-                if ($dbo::class == db_object::class) {
-                    $folder = 'start_page' . DIRECTORY_SEPARATOR;
-                    $dbo_name .= 'start_page';
-                    $test_name = 'start_page view';
-                } else {
-                    $class = $lib->class_to_name($dbo::class);
-                    $folder = $class . DIRECTORY_SEPARATOR;
-                    $dbo_name .= $class;
-                    $dbo_id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
-                    if ($action != change_actions::SHOW) {
-                        $dbo_name .= '_' . $action;
-                    }
-                    if ($dbo_id != 0) {
-                        $dbo_name .= '_' . $lib->str_to_file($dbo_id);
-                    }
-                }
+                [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);
                 $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
                 $t->assert_html_page($test_name, $html, $file_path);
             }
         }
 
+    }
+
+    /**
+     * resolve the snapshot folder, filename prefix, and test name for one view id
+     * @param int $id the view id
+     * @param string $class the backend object class name
+     * @param string $action the CRUD action
+     * @param array $url_array the parsed URL parameters
+     * @param library $lib helper for class-to-name conversion
+     * @return array [$folder, $dbo_name, $test_name]
+     */
+    private function view_id_to_file_info(
+        int     $id,
+        string  $class,
+        string  $action,
+        array   $url_array,
+        library $lib
+    ): array
+    {
+        $prefix = $id . '_';
+        if ($class == db_object::class) {
+            $result = $this->db_object_file_info($id, $action, $prefix);
+        } else {
+            $domain_class = $lib->class_to_name($class);
+            $dbo_name = $prefix . $domain_class;
+            $dbo_id = $url_array[url_var::ID] ?? 0;
+            if ($action != change_actions::SHOW) {
+                if (in_array($id, views::PROCESS_STEP_MASKS_IDS)) {
+                    $process_names = [
+                        views::SIGNUP_ID         => views::SIGNUP,
+                        views::LOGIN_ID          => views::LOGIN,
+                        views::LOGIN_ACTIVATE_ID => views::LOGIN_ACTIVATE,
+                        views::LOGIN_RESET_ID    => views::LOGIN_RESET,
+                        views::LOGOUT_ID         => views::LOGOUT,
+                    ];
+                    $dbo_name .= '_' . $process_names[$id];
+                } else {
+                    $dbo_name .= '_' . $action;
+                }
+            }
+            if ($dbo_id != 0) {
+                $dbo_name .= '_' . $lib->str_to_file($dbo_id);
+            }
+            $result = [$domain_class . DIRECTORY_SEPARATOR, $dbo_name, $action . ' ' . $domain_class . ' view'];
+        }
+        return $result;
+    }
+
+    /**
+     * resolve folder, filename prefix, and test name for a db_object view (system/process views)
+     * @param int $id the view id
+     * @param string $action the CRUD action
+     * @param string $prefix the id-based filename prefix e.g. '60_'
+     * @return array [$folder, $dbo_name, $test_name]
+     */
+    private function db_object_file_info(int $id, string $action, string $prefix): array
+    {
+        $result = ['other' . DIRECTORY_SEPARATOR, $prefix . 'other', 'other view'];
+        if ($id == views::START_ID) {
+            $result = ['start_page' . DIRECTORY_SEPARATOR, $prefix . 'start_page', 'start_page view'];
+        } elseif (in_array($id, views::CONFIRM_MASKS_IDS)) {
+            $result = $this->confirm_file_info($id, $action, $prefix);
+        } elseif (in_array($id, views::STATIC_VIEW_IDS)) {
+            // checked before PROCESS_STEP_MASKS_IDS because SETUP_ID appears in both
+            $static_names = [views::ABOUT_ID => views::ABOUT, views::SETUP_ID => views::SETUP];
+            $name = $static_names[$id] ?? 'static';
+            $result = ['static' . DIRECTORY_SEPARATOR, $prefix . $name, $name . ' view'];
+        } elseif (in_array($id, views::PROCESS_STEP_MASKS_IDS)) {
+            $process_names = [
+                views::SIGNUP_ID         => views::SIGNUP,
+                views::LOGIN_ID          => views::LOGIN,
+                views::LOGIN_ACTIVATE_ID => views::LOGIN_ACTIVATE,
+                views::LOGIN_RESET_ID    => views::LOGIN_RESET,
+                views::LOGOUT_ID         => views::LOGOUT,
+            ];
+            $name = $process_names[$id] ?? 'process_step';
+            $result = ['process' . DIRECTORY_SEPARATOR, $prefix . $name, $name . ' view'];
+        }
+        return $result;
+    }
+
+    /**
+     * resolve folder, filename prefix, and test name for a confirm view
+     * @param int $id the view id
+     * @param string $action the CRUD action
+     * @param string $prefix the id-based filename prefix e.g. '55_'
+     * @return array [$folder, $dbo_name, $test_name]
+     */
+    private function confirm_file_info(int $id, string $action, string $prefix): array
+    {
+        $folder = 'confirm' . DIRECTORY_SEPARATOR;
+        $file_name = 'unknown';
+        $test_name = 'unknown view';
+        if ($action == change_actions::ADD) {
+            $file_name = 'confirm_word_add';
+            $test_name = 'confirm word add view';
+        } elseif ($action == change_actions::UPDATE) {
+            if ($id == views::CONFIRM_VIEWS_ID) {
+                $file_name = 'confirm_word_view_change';
+                $test_name = 'confirm word mask change view';
+            } else {
+                $file_name = 'confirm_word_edit';
+                $test_name = 'confirm word edit view';
+            }
+        } elseif ($action == change_actions::DELETE) {
+            $file_name = 'confirm_word_del';
+            $test_name = 'confirm word del view';
+        }
+        return [$folder, $prefix . $file_name, $test_name];
     }
 
     private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object
@@ -367,6 +459,14 @@ class system_view_ui_tests
             $dbo = new view_relation($usr);
         } elseif (in_array($view_id, view_shared::USER_MASKS_IDS)) {
             $dbo = new user();
+        } elseif (in_array($view_id, view_shared::USER_LOGIN_IDS)) {
+            $dbo = new user();
+        } elseif (in_array($view_id, view_shared::LANGUAGE_MASKS_IDS)) {
+            $dbo = new language();
+        } elseif (in_array($view_id, view_shared::CONFIRM_MASKS_IDS)) {
+            $dbo = new db_object();
+        } elseif (in_array($view_id, view_shared::STATIC_VIEW_IDS)) {
+            $dbo = new db_object();
         } else {
             $dbo = new db_object();
             log_err('no backend object defined for view id ' . $view_id);
@@ -388,6 +488,8 @@ class system_view_ui_tests
             $action = change_actions::DELETE;
         } elseif (in_array($view_id, view_shared::SUB_MASKS_IDS)) {
             $action = change_actions::SUB;
+        } elseif (in_array($view_id, view_shared::PROCESS_STEP_MASKS_IDS)) {
+            $action = change_actions::STEP;
         } else {
             $action = 'unknown';
         }

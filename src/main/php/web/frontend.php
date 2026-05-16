@@ -1354,11 +1354,8 @@ class frontend
             $dbo_ui = new user_ui();
         } elseif (in_array($view_id, views::LANGUAGE_MASKS_IDS)) {
             $dbo_ui = new language_ui(0, null);
-        } elseif ($view_id === views::CONFIRM_ADD_ID
-            or $view_id === views::CONFIRM_EDIT_ID
-            or $view_id === views::CONFIRM_DEL_ID
-            or $view_id === views::CONFIRM_VIEWS_ID) {
-            $dbo_ui = new db_object_ui();
+        } elseif (in_array($view_id, views::CONFIRM_MASKS_IDS)) {
+            $dbo_ui = new word_ui();
         } elseif ($view_id === views::ABOUT_ID
             or $view_id === views::SETUP_ID) {
             $dbo_ui = new db_object_ui();

@@ -155,6 +155,24 @@ Object file suffixes:
 - `*_list.php` — collection class
 - Frontend (`web/`): `*_dsp` display, `*_min` minimal API
 
+### Suggested variable name in class header
+
+Every class file must declare its suggested variable name in the opening file docblock, on its own line immediately after the one-line file description, using the format:
+
+```
+$<abbr> is the suggested var name
+```
+
+Example from `web/sandbox/sandbox_link.php`:
+```
+    web/sandbox/sandbox_link.php - extends the frontend sandbox object for links
+    ----------------------------
+
+    $sbx_lnk is the suggested var name
+```
+
+The abbreviation must match the three-letter prefix convention in `docs/code_guidelines.md` (e.g. `$wrd` for word, `$frm` for formula, `$msk` for view/mask). For compound names combine the parts: `$sbx_lnk` for sandbox_link, `$frm_lnk` for formula_link, `$cmp_lnk` for component_link.
+
 ### Deployment Branch Strategy
 
 `feature/*` → `develop` → `release` → `master`
@@ -164,6 +182,7 @@ Commit messages reference issue numbers: e.g. `fix auth flow as part of fix #232
 ## Coding Principles
 
 - **DRY**: one point of change (intentional repetition allowed)
+- **Push common logic to parent**: if two or more sibling classes contain the same code in a function, move that code to the shared parent. Child implementations call `parent::functionName()` and then extend with their own fields only. See the `api_array()` pattern below.
 - **Test first**: write unit test before implementation; each facade function needs a unit test
 - **Best guess**: on incomplete data, use assumptions to complete the process and report them upward — never silently fail
 - **Minimal dependencies**: keep external packages to a minimum
@@ -187,6 +206,54 @@ The project uses a small, fixed set of globals (see `docs/todo.md`). No other gl
 | `$t` | Base test object (assert + cleanup helpers) |
 | `$t_sys` | Error counting and execution times for tests |
 | `$debug` | Activates additional logging levels |
+
+### Push common function logic to the parent class
+
+When a function appears in two or more sibling classes with partially shared logic, extract the shared part into the parent and have each child call `parent::functionName()` before (or after) adding its own fields.
+
+The `api_array()` function illustrates this across the full inheritance chain. Each level adds only the fields it owns:
+
+```php
+// sandbox — adds share/protection/excluded
+function api_array(): array
+{
+    $vars = parent::api_array();  // db_object adds the id
+    if ($this->share_id != null) { $vars[json_fields::SHARE] = $this->share_id; }
+    if ($this->protection_id != null) { $vars[json_fields::PROTECTION] = $this->protection_id; }
+    if ($this->excluded != null) { $vars[json_fields::EXCLUDED] = $this->excluded; }
+    return $vars;
+}
+
+// sandbox_named — adds name and description
+function api_array(): array
+{
+    $vars = parent::api_array();  // inherits id + share + protection + excluded
+    $vars[json_fields::NAME] = $this->name();
+    $vars[json_fields::DESCRIPTION] = $this->get_description();
+    return $vars;
+}
+
+// sandbox_typed — adds type_id
+function api_array(): array
+{
+    $vars = parent::api_array();  // inherits everything above
+    $vars[json_fields::TYPE] = $this->type_id();
+    return $vars;
+}
+
+// word — adds plural and parent word
+function api_array(): array
+{
+    $vars = parent::api_array();  // inherits id + share + protection + name + description + type
+    $vars[json_fields::PLURAL] = $this->get_plural();
+    if ($this->has_parent()) {
+        $vars[json_fields::PARENT] = $this->parent()->api_array();
+    }
+    return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+}
+```
+
+The same rule applies to all other layered functions: `url_mapper()`, `api_mapper()`, `api_json()`, `sql_insert()`, `sql_update()`, etc. — each child calls the parent version first, then extends.
 
 ### Always use named constants — no magic literals
 
@@ -249,6 +316,55 @@ $t->assert_text_contains('login page with failed login shows notification bar', 
 ```
 
 This applies to all `$t->assert*()` variants: `assert`, `assert_html`, `assert_html_page`, `assert_text_contains`, etc.
+
+### `use` and `include_once` ordering
+
+Every PHP source file that uses classes from other namespaces must follow this three-block structure:
+
+**Block 1 — path-constant `use` statements** (before any `include_once`):
+Import only the path-constant classes needed to build the `include_once` paths. Order: `cfg` paths → `web` paths → `shared` paths → test paths → any other paths.
+
+```php
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+```
+
+**Block 2 — `include_once` statements**:
+List all file includes, using the path constants from Block 1.
+
+```php
+include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::SANDBOX . 'sandbox_link.php';
+```
+
+**Block 3 — class `use` statements** (after all `include_once`):
+Import all class names used in this file. Order: `cfg`/`api` → `web` → `shared`. Within each group, sort entries alphabetically by their fully-qualified class name.
+
+```php
+// cfg / api group (alphabetic within)
+use Zukunft\ZukunftCom\main\php\api\api_message;
+// web group (alphabetic within)
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+// shared group (alphabetic within)
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+```
+
+### Test object creation
+
+All objects used in tests must be created by a factory function in `src/test/php/create/`. Each domain type has its own factory class — `test_words`, `test_formulas`, `test_views`, `test_languages`, etc. — with named methods that return pre-configured objects with well-known field values.
+
+- **Right**: `$obj = $t_frm->formula_link_filled();` — uses the shared factory; any change to the test fixture is made in one place
+- **Wrong**: `$frm_lnk = new formula_link($usr); $frm_lnk->set_id(99); ...` — ad-hoc construction scattered across test files makes fixtures hard to maintain and diverge silently
+
+When a needed factory method does not yet exist, add it to the appropriate `test_*.php` file in `src/test/php/create/` before writing the test. The `test_mappers.php` class coordinates factory calls when a test needs to resolve a class name to a test object at runtime.
 
 ### Single return per function
 

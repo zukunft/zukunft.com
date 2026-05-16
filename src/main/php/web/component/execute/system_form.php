@@ -53,6 +53,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::RESULT . 'result_list.php';
@@ -79,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
@@ -207,11 +209,11 @@ class system_form extends component
 
     /**
      * show the name of an object to the user
-     * @param db_object $dbo the object
+     * @param db_object|type_object $dbo the object
      * @param string $code_id e.g. to select the name in case of a link object
      * @return string the html code to show the object name to the user
      */
-    function show_name(db_object $dbo, string $code_id = ''): string
+    function show_name(db_object|type_object $dbo, string $code_id = ''): string
     {
         if ($code_id == '') {
             return $dbo->name();
@@ -226,10 +228,10 @@ class system_form extends component
     }
 
     /**
-     * @param db_object $dbo the object
+     * @param db_object|type_object $dbo the object
      * @return string the html code to show the object description to the user
      */
-    function show_description(db_object $dbo): string
+    function show_description(db_object|type_object $dbo): string
     {
         return $dbo->get_description();
     }
@@ -351,10 +353,10 @@ class system_form extends component
     }
 
     /**
-     * @param db_object $dbo the object
+     * @param db_object|type_object $dbo the object
      * @return string the html code to request the object name from the user
      */
-    function form_name(db_object $dbo, string $style_text): string
+    function form_name(db_object|type_object $dbo, string $style_text): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -367,9 +369,10 @@ class system_form extends component
     }
 
     /**
+     * @param db_object|type_object $dbo
      * @return string the html code to request the description from the user
      */
-    function form_description(db_object $dbo): string
+    function form_description(db_object|type_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(

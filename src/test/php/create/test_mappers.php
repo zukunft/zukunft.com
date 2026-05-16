@@ -485,7 +485,7 @@ class test_mappers
      * @return triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
      */
     function class_to_add_filled_object(
-        string $class,
+        string       $class,
         ?data_object $cac = null
     ): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
     {
@@ -737,6 +737,8 @@ class test_mappers
             $url = $this->class_to_url_del($class, $msk_id, $type, $usr_msg);
         } elseif ($action == change_actions::SUB) {
             $url = $this->class_to_url_edit($class, $msk_id, $type, $usr_msg);
+        } elseif ($action == change_actions::STEP) {
+            $url = $this->class_to_url_step($class, $msk_id, $type, $usr_msg);
         } else {
             $msg = 'unknow action ' . $action . ' for view id ' . $msk_id;
             log_err($msg);
@@ -1003,7 +1005,7 @@ class test_mappers
         user_message $usr_msg
     ): string
     {
-        $url_array[] = [url_var::MASK => $msk_id];
+        $url_array[] = [url_var::MASK, $msk_id];
         $t_usr = new test_users($this->env);
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
@@ -1112,6 +1114,7 @@ class test_mappers
         $t_res = new test_results($this->env);
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
+        $t_lan = new test_languages();
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
@@ -1193,8 +1196,14 @@ class test_mappers
                 $obj_array = $this->component_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case language::class;
+                $obj = $t_lan->language_filled();
+                $obj_array = $this->language_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case db_object::class;
-                if ($msk_id == views::START_ID) {
+                if ($msk_id == views::START_ID
+                    or in_array($msk_id, views::CONFIRM_MASKS_IDS)) {
                     // for the start page no additional vars in the url are needed
                     $obj = new db_object();
                 } else {
@@ -1240,6 +1249,7 @@ class test_mappers
         $t_res = new test_results($this->env);
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
+        $t_lan = new test_languages();
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
@@ -1321,6 +1331,11 @@ class test_mappers
                 $obj_array = $this->component_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case language::class;
+                $obj = $t_lan->language_filled();
+                $obj_array = $this->language_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case db_object::class;
                 // for the start page no additional vars in the url are needed
                 $obj = new db_object();
@@ -1364,6 +1379,7 @@ class test_mappers
         $t_res = new test_results($this->env);
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
+        $t_lan = new test_languages();
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
@@ -1444,6 +1460,11 @@ class test_mappers
                 $obj_array = $this->component_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case language::class;
+                $obj = $t_lan->language_filled();
+                $obj_array = $this->language_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case db_object::class;
                 // for the start page no additional vars in the url are needed
                 $obj = new db_object();
@@ -1454,6 +1475,39 @@ class test_mappers
         }
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_DELETE, true];
+        return $this->array_to_url_type($url_array, $type, $usr_msg);
+    }
+
+    /**
+     * get the filled url for a process step view (signup, login, login_activate, login_reset, logout, setup)
+     * @param string $class the given main class name
+     * @param int $msk_id the id of the mask
+     * @param string $type the url type that should be created
+     * @param user_message $usr_msg to enhance with messages to the user
+     * @return string with only a few vars filled
+     */
+    function class_to_url_step(
+        string       $class,
+        int          $msk_id,
+        string       $type,
+        user_message $usr_msg
+    ): string
+    {
+        $url_array = [];
+        $url_array[] = [url_var::MASK, $msk_id];
+        $t_usr = new test_users($this->env);
+        switch ($class) {
+            case user::class;
+                $obj = $t_usr->user_filled();
+                $obj_array = $this->user_step_url($obj, $msk_id);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case db_object::class;
+                // setup and similar process step views don't need additional url vars
+                break;
+            default:
+                log_err('no filled url object defined for step action ' . $class);
+        }
         return $this->array_to_url_type($url_array, $type, $usr_msg);
     }
 
@@ -1684,6 +1738,37 @@ class test_mappers
         $url_array[] = [url_var::TYPE, $cmp_lnk->predicate_id()];
         $url_array[] = [url_var::SHARE, $cmp_lnk->share_id()];
         $url_array[] = [url_var::PROTECTION, $cmp_lnk->protection_id()];
+        return $url_array;
+    }
+
+    private function language_url(language $lan, string $type): array
+    {
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $lan->name()];
+        $url_array[] = [url_var::CODE_ID, $lan->code_id];
+        $url_array[] = [url_var::DESCRIPTION, $lan->get_description()];
+        $url_array[] = [url_var::LANGUAGE_SYMBOL, $lan->wiki_code];
+        $url_array[] = [url_var::USAGE, $lan->usage];
+        return $url_array;
+    }
+
+    private function user_step_url(user $usr, int $msk_id): array
+    {
+        $url_array = [];
+        if ($msk_id == views::SIGNUP_ID) {
+            $url_array[] = [url_var::USERNAME, $usr->name];
+            $url_array[] = [url_var::EMAIL, $usr->email];
+            $url_array[] = [url_var::USER_PASSWORD, users::TEST_USER_PASSWORD];
+            $url_array[] = [url_var::USER_PASSWORD_RETYPE, users::TEST_USER_PASSWORD];
+        } elseif ($msk_id == views::LOGIN_ID) {
+            $url_array[] = [url_var::USERNAME, $usr->name];
+            $url_array[] = [url_var::USER_PASSWORD, users::TEST_USER_PASSWORD];
+        } elseif ($msk_id == views::LOGIN_ACTIVATE_ID) {
+            $url_array[] = [url_var::ID, $usr->id()];
+        } elseif ($msk_id == views::LOGIN_RESET_ID) {
+            $url_array[] = [url_var::EMAIL, $usr->email];
+        }
+        // LOGOUT_ID: no additional params needed
         return $url_array;
     }
 

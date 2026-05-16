@@ -351,7 +351,7 @@ class views
     const string TEST_FORM = 'word_add';
     const int TEST_FORM_ID = 3;
 
-    // TODO to be created
+    // TODO views to be created
     const string WORD_LIST = 'word_list'; //
 
     const string USER_ADD = 'user_add';
@@ -363,8 +363,8 @@ class views
     // the id of the last system view that should be included in the unit testing
     // TODO Prio 1 set to 1
     const int MIN_TEST_ID = 2;
-    // TODO Prio 0 set to 37
-    const int MAX_TEST_ID = 50;
+    // TODO Prio 1 set to 109
+    const int MAX_TEST_ID = 60;
 
 
     const string COMPANY_RATIO_NAME = 'company ratios';
@@ -556,9 +556,26 @@ class views
         self::LANGUAGE_DEL_ID,
     ];
 
+    // system masks that are used for all objects to confirm a change
+    const array CONFIRM_MASKS_IDS = [
+        self::CONFIRM_ADD_ID,
+        self::CONFIRM_EDIT_ID,
+        self::CONFIRM_DEL_ID,
+        self::CONFIRM_VIEWS_ID,
+    ];
+
+    // general and static system views
+    const array STATIC_VIEW_IDS = [
+        self::ABOUT_ID,
+        self::SETUP_ID,
+    ];
+
     // system masks that only used to display a sandbox object
+    // TODO review SETUP_ID seems to be not correct
     const array SHOW_MASKS_IDS = [
         self::START_ID,
+        self::ABOUT_ID,
+        self::SETUP_ID,
     ];
 
     // system masks that add a sandbox object
@@ -603,6 +620,7 @@ class views
         self::USER_ADMIN_EDIT_ID,
         self::LANGUAGE_EDIT_ID,
         self::CONFIRM_EDIT_ID,
+        self::CONFIRM_VIEWS_ID,
     ];
 
     // system masks that delete a sandbox object
@@ -642,6 +660,16 @@ class views
     const array EDIT_DEL_MASKS_IDS = [
         self::EDIT_MASKS_IDS,
         self::DEL_MASKS_IDS,
+    ];
+
+    // system masks that are used to modify other system masks
+    const array PROCESS_STEP_MASKS_IDS = [
+        self::SIGNUP_ID,
+        self::LOGIN_ID,
+        self::LOGIN_ACTIVATE_ID,
+        self::LOGIN_RESET_ID,
+        self::LOGOUT_ID,
+        self::SETUP_ID,
     ];
 
     // system masks that trigger an action via GET (no form submission required)

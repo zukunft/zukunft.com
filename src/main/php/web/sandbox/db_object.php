@@ -421,8 +421,8 @@ class db_object extends TextIdObject
     function name(): string|null
     {
         $msg = 'ERROR:  name not overwritten by ' . $this::class;
-        log_err($msg);
-        return $msg;
+        log_warning($msg);
+        return $this->id;
     }
 
     function get_description(): string

@@ -71,6 +71,11 @@ class test_languages
         return $lan;
     }
 
+    function language_filled(): language
+    {
+        return $this->language_translate();
+    }
+
     function language_long_char(): language
     {
         $lan = new language(
