@@ -7,9 +7,16 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO create a unit test for all system views
+    TODO review all system views and make sure that at least all components used in the pages return a reasonable result
+    TODO add phrase_id for the additional selection to the component link so that 
+         e.g. for the global warming problem the phrases "definition", "size" and "solutions" can be used 
+         for a sorted phrase list solution
+    TODO create a useful page e.g. for currencies
+    TODO add links for the values in the frontend page 
+    TODO fill the workflox unit tests
     TODO fix to bugs in the component types so that all component type returns a nice result
     TODO add unti test for all system pages including the login page to be able to use the view.php script also for the login page
-    TODO test user login
     TODO deprecate the old $back parameter and use instead back prefixed parameters
     TODO deprecate all non view.php http calls
     TODO check how to shorten the urls e.g. that www.zukunft.com/login calls www.zukunft.com/http/view.php?m=61 
@@ -21,6 +28,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO check that all words and triples on of the config file have a const in words and triples
     TODO fix issues in the unit tests for all component types ('Component display test' in src/test/php/unit_ui/base_ui_tests.php)
     TODO add unit test for all frontend components
+    TODO test user activate and password reset
 
     TODO Release 0.0.4
     TODO use the name "nud" (New User Default) for the default data that should be used if the user has not done an overwrite

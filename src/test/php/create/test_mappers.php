@@ -43,6 +43,9 @@ include_once paths::MODEL_COMPONENT . 'component_link_type.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_id_object_non_sandbox.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
@@ -89,6 +92,8 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CREATE . 'test_languages.php';
+include_once test_paths::CREATE . 'test_phrases.php';
+include_once test_paths::CREATE . 'test_terms.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'groups.php';
@@ -117,6 +122,9 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
@@ -743,6 +751,8 @@ class test_mappers
             $url = $this->class_to_url_edit($class, $msk_id, $type, $usr_msg);
         } elseif ($action == change_actions::STEP) {
             $url = $this->class_to_url_step($class, $msk_id, $type, $usr_msg);
+        } elseif ($action == change_actions::SEARCH) {
+            $url = $this->class_to_url_search($class, $msk_id, $type, $usr_msg);
         } else {
             $msg = 'unknow action ' . $action . ' for view id ' . $msk_id;
             log_err($msg);
@@ -1523,6 +1533,69 @@ class test_mappers
                 break;
             default:
                 log_err('no filled url object defined for step action ' . $class);
+        }
+        return $this->array_to_url_type($url_array, $type, $usr_msg);
+    }
+
+    /**
+     * get the filled search url for the given class with a phrase list as context
+     * @param string $class the given main class name
+     * @param int $msk_id the id of the search mask
+     * @param string $type the url type that should be created
+     * @param user_message $usr_msg to enhance with messages to the user
+     * @return string url with mask id, optional object name, and context phrase ids
+     */
+    function class_to_url_search(
+        string       $class,
+        int          $msk_id,
+        string       $type,
+        user_message $usr_msg
+    ): string
+    {
+        $url_array = [];
+        $url_array[] = [url_var::MASK, $msk_id];
+        $t_phr = new test_phrases($this->env);
+        $phr_lst = $t_phr->phrase_list();
+        $url_array[] = [url_var::CONTEXT, implode(',', $phr_lst->id_lst())];
+        switch ($class) {
+            case word::class;
+                $t_wrd = new test_words($this->env);
+                $obj = $t_wrd->word_filled();
+                $url_array[] = [url_var::NAME, $obj->name()];
+                break;
+            case triple::class;
+                $t_trp = new test_triples($this->env);
+                $obj = $t_trp->triple_filled();
+                $url_array[] = [url_var::NAME, $obj->name()];
+                break;
+            case phrase::class;
+                $t_phr2 = new test_phrases($this->env);
+                $obj = $t_phr2->phrase();
+                $url_array[] = [url_var::NAME, $obj->name()];
+                break;
+            case verb::class;
+                $t_vrb = new test_verbs($this->env);
+                $obj = $t_vrb->verb_is();
+                $url_array[] = [url_var::NAME, $obj->name()];
+                break;
+            case formula::class;
+                $t_frm = new test_formulas($this->env);
+                $obj = $t_frm->formula_filled();
+                $url_array[] = [url_var::NAME, $obj->name()];
+                break;
+            case term::class;
+                $t_trm = new test_terms($this->env);
+                $obj = $t_trm->term();
+                $url_array[] = [url_var::NAME, $obj->name()];
+                break;
+            case phrase_list::class;
+                // phrase list is already encoded as context above
+                break;
+            case db_object::class;
+                // search views without a specific object need no additional url vars
+                break;
+            default:
+                log_err('no filled url object defined for search action ' . $class);
         }
         return $this->array_to_url_type($url_array, $type, $usr_msg);
     }

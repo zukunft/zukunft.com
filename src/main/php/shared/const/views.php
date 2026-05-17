@@ -363,7 +363,7 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 66;
+    const int MAX_TEST_ID = 70;
 
 
     const string COMPANY_RATIO_NAME = 'company ratios';
@@ -575,6 +575,12 @@ class views
         self::ERROR_UPDATE_ID,
     ];
 
+    // system views that are using a phrase list as a context e.g. that use the phrases as preselection for search
+    const array CONTEXT_VIEW_IDS = [
+        self::WORD_FIND_ID,
+        self::SEARCH_FULL_ID,
+    ];
+
     // system masks that only used to display a sandbox object
     // TODO review SETUP_ID seems to be not correct
     const array SHOW_MASKS_IDS = [
@@ -582,6 +588,10 @@ class views
         self::ABOUT_ID,
         self::SETUP_ID,
         self::ERROR_LOG_ID,
+        self::VALUE_DETAIL_ID,
+        self::RESULT_EXPLAIN_ID,
+        self::SANDBOX_ID,
+        self::USER_ID,
     ];
 
     // system masks that add a sandbox object
@@ -677,6 +687,23 @@ class views
         self::LOGIN_RESET_ID,
         self::LOGOUT_ID,
         self::SETUP_ID,
+        self::UNDO_ID,
+        self::PASTE_TABLE_ID,
+        self::IMPORT_ID,
+        self::EXPORT_ID,
+        self::EXPORT_JSON_ID,
+        self::EXPORT_XML_ID,
+        self::EXPORT_CSV_ID,
+        self::EXPORT_ODS_ID,
+        self::JOB_ASYNC_ID,
+        self::JOB_CONTROL_ID,
+        self::JOB_CHECK_ID,
+    ];
+
+    // system forms for interactive and complex object selection
+    const array SEARCH_MASKS_IDS = [
+        self::WORD_FIND_ID,
+        self::SEARCH_FULL_ID,
     ];
 
     // system masks that trigger an action via GET (no form submission required)

@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -363,20 +364,16 @@ class system_view_ui_tests
         $prefix = $id . '_';
         if ($class == db_object::class) {
             $result = $this->db_object_file_info($id, $action, $prefix);
+        } elseif (in_array($id, views::SEARCH_MASKS_IDS)) {
+            $name = views::TEST_VIEW_IDS[$id] ?? 'search';
+            $result = ['search' . DIRECTORY_SEPARATOR, $prefix . $name, $name . ' view'];
         } else {
             $domain_class = $lib->class_to_name($class);
             $dbo_name = $prefix . $domain_class;
             $dbo_id = $url_array[url_var::ID] ?? 0;
             if ($action != change_actions::SHOW) {
                 if (in_array($id, views::PROCESS_STEP_MASKS_IDS)) {
-                    $process_names = [
-                        views::SIGNUP_ID => views::SIGNUP,
-                        views::LOGIN_ID => views::LOGIN,
-                        views::LOGIN_ACTIVATE_ID => views::LOGIN_ACTIVATE,
-                        views::LOGIN_RESET_ID => views::LOGIN_RESET,
-                        views::LOGOUT_ID => views::LOGOUT,
-                    ];
-                    $dbo_name .= '_' . $process_names[$id];
+                    $dbo_name .= '_' . (views::TEST_VIEW_IDS[$id] ?? $action);
                 } else {
                     $dbo_name .= '_' . $action;
                 }
@@ -405,18 +402,10 @@ class system_view_ui_tests
             $result = $this->confirm_file_info($id, $action, $prefix);
         } elseif (in_array($id, views::STATIC_VIEW_IDS)) {
             // checked before PROCESS_STEP_MASKS_IDS because SETUP_ID appears in both
-            $static_names = [views::ABOUT_ID => views::ABOUT, views::SETUP_ID => views::SETUP];
-            $name = $static_names[$id] ?? 'static';
+            $name = views::TEST_VIEW_IDS[$id] ?? 'static';
             $result = ['static' . DIRECTORY_SEPARATOR, $prefix . $name, $name . ' view'];
         } elseif (in_array($id, views::PROCESS_STEP_MASKS_IDS)) {
-            $process_names = [
-                views::SIGNUP_ID => views::SIGNUP,
-                views::LOGIN_ID => views::LOGIN,
-                views::LOGIN_ACTIVATE_ID => views::LOGIN_ACTIVATE,
-                views::LOGIN_RESET_ID => views::LOGIN_RESET,
-                views::LOGOUT_ID => views::LOGOUT,
-            ];
-            $name = $process_names[$id] ?? 'process_step';
+            $name = views::TEST_VIEW_IDS[$id] ?? 'process_step';
             $result = ['process' . DIRECTORY_SEPARATOR, $prefix . $name, $name . ' view'];
         }
         return $result;
@@ -452,7 +441,7 @@ class system_view_ui_tests
         return [$folder, $prefix . $file_name, $test_name];
     }
 
-    private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object
+    private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object|phrase_list
     {
         // select the backend object to display
         // TODO add any missing system views like
@@ -504,6 +493,8 @@ class system_view_ui_tests
             $dbo = new db_object();
         } elseif (in_array($view_id, view_shared::SYSTEM_LOG_VIEW_IDS)) {
             $dbo = new sys_log();
+        } elseif (in_array($view_id, view_shared::CONTEXT_VIEW_IDS)) {
+            $dbo = new phrase_list($usr);
         } else {
             $dbo = new db_object();
             if ($view_id != views::START_ID) {
@@ -529,6 +520,8 @@ class system_view_ui_tests
             $action = change_actions::SUB;
         } elseif (in_array($view_id, view_shared::PROCESS_STEP_MASKS_IDS)) {
             $action = change_actions::STEP;
+        } elseif (in_array($view_id, view_shared::SEARCH_MASKS_IDS)) {
+            $action = change_actions::SEARCH;
         } else {
             $action = 'unknown';
         }
