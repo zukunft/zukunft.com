@@ -116,10 +116,15 @@ class url_var
     const string GROUP = 'g';
     const string GROUP_NAME = 'gn'; // TODO maybe it is possible to use NAME
     const string LOG = 'h'; // h for history of the object
+    const string LOG_STATUS = 'ha'; // the stAtus of a system log entry
     const string LOG_CLASS = 'hc'; // the object / class name used to filter the change log
     const string LOG_LINK = 'hl'; // history of a link object
     const string LOG_FIELD = 'hf'; // the field of the change log entry used to filter the log
+    const string LOG_LEVEL = 'hg'; // the grade / level of the log entry used to filter the system log
+    const string LOG_FUNCTION = 'hp'; // the process / function that has cause the log even
+    const string SYS_TRACE = 'hr'; // the record / trace of a system log entry
     const string SYS_LOG = 'hs'; // history of a system event
+    const string LOG_TIME = 'ht'; // the time of the creation of the log event
     const string FIGURE = 'i';
     const string ID = 'id'; // the internal database id of the main view object
     const string ID_LST = 'il'; // a comma separated list of internal database ids
@@ -217,7 +222,7 @@ class url_var
 
 
     /*
-     * human readable url
+     * human-readable url
      */
 
     // init
@@ -379,9 +384,14 @@ class url_var
 
     // log
     const string LOG_HUMAN = 'log_id'; // the id of a change log entry
+    const string LOG_STATUS_HUMAN = 'log_status'; // the stAtus of a system log entry
     const string LOG_CLASS_HUMAN = 'class'; // the short name of the object class name e.g. word instead of cfg/word
-    const string LOG_FIELD_HUMAN = 'field'; // the name of the field to filter the changes which might be more than one database field
+    const string LOG_FIELD_HUMAN = 'log_field'; // the name of the field to filter the changes which might be more than one database field
     const string LOG_LINK_HUMAN = 'log_link_id'; // the id of a log entry of a link change
+    const string LOG_LEVEL_HUMAN = 'log_level'; // the grade / level of the log entry used to filter the system log
+    const string LOG_FUNCTION_HUMAN = 'log_function'; // the process / function that has cause the log even
+    const string SYS_TRACE_HUMAN = 'log_trace'; // the record / trace of a system log entry
+    const string LOG_TIME_HUMAN = 'log_time'; // the time of the creation of the log event
 
     // system
     const string SYS_LOG_HUMAN = 'sys_log_id'; // the id of a system log entry e.g. of internal program errors
@@ -575,12 +585,17 @@ class url_var
 
         // log
         [self::LOG_HUMAN, self::LOG],
+        [self::LOG_STATUS_HUMAN, self::LOG_STATUS],
         [self::LOG_CLASS_HUMAN, self::LOG_CLASS],
         [self::LOG_FIELD_HUMAN, self::LOG_FIELD],
         [self::LOG_LINK_HUMAN, self::LOG_LINK],
+        [self::LOG_LEVEL_HUMAN, self::LOG_LEVEL],
+        [self::LOG_FUNCTION_HUMAN, self::LOG_FUNCTION],
+        [self::LOG_TIME_HUMAN, self::LOG_TIME],
 
         // system
         [self::SYS_LOG_HUMAN, self::SYS_LOG],
+        [self::SYS_TRACE_HUMAN, self::SYS_TRACE],
         [self::IP_HUMAN, self::IP],
         [self::JOB_HUMAN, self::JOB],
         [self::JOB_TYPE_HUMAN, self::JOB_TYPE],

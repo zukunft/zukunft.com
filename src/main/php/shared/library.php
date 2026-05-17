@@ -34,6 +34,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared;
 
+use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
@@ -224,6 +225,17 @@ class library
             log_err($msg);
         }
         return $result;
+    }
+
+    /**
+     * Converts a DateTime object into a URL-safe string parameter.
+     *
+     * @param DateTimeInterface $dateTime The date time object to convert.
+     * @return string The URL-encoded date string.
+     */
+    function time_to_url(DateTimeInterface $dateTime): string
+    {
+        return urlencode($dateTime->format(DateTimeInterface::ATOM));
     }
 
     /**

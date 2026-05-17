@@ -55,6 +55,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VERB . 'verb.php';
@@ -106,6 +107,7 @@ include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -127,6 +129,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
@@ -174,6 +177,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -1017,6 +1021,7 @@ class test_mappers
         $t_res = new test_results($this->env);
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
+        $t_slg = new test_sys_log($this->env);
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
@@ -1071,6 +1076,11 @@ class test_mappers
             case component::class;
                 $obj = $t_cmp->component_filled();
                 $obj_array = $this->component_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case sys_log::class;
+                $obj = $t_slg->sys_log_filled();
+                $obj_array = $this->system_log_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case db_object::class;
@@ -1250,6 +1260,7 @@ class test_mappers
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
         $t_lan = new test_languages();
+        $t_slg = new test_sys_log($this->env);
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
@@ -1334,6 +1345,11 @@ class test_mappers
             case language::class;
                 $obj = $t_lan->language_filled();
                 $obj_array = $this->language_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case sys_log::class;
+                $obj = $t_slg->sys_log_filled();
+                $obj_array = $this->system_log_url($obj);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case db_object::class;
@@ -1769,6 +1785,20 @@ class test_mappers
             $url_array[] = [url_var::EMAIL, $usr->email];
         }
         // LOGOUT_ID: no additional params needed
+        return $url_array;
+    }
+
+    private function system_log_url(sys_log $slg): array
+    {
+        $lib = new library();
+        $url_array = [];
+        $url_array[] = [url_var::USERNAME, $slg->usr->name()];
+        $url_array[] = [url_var::LOG_TIME, $lib->time_to_url($slg->log_time)];
+        $url_array[] = [url_var::LOG_FUNCTION, $slg->function_id];
+        $url_array[] = [url_var::LOG_LEVEL, $slg->level_id];
+        $url_array[] = [url_var::SYS_TRACE, $slg->log_trace];
+        $url_array[] = [url_var::DESCRIPTION, $slg->log_text];
+        $url_array[] = [url_var::LOG_STATUS, $slg->status_id];
         return $url_array;
     }
 

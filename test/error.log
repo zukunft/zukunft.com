@@ -61,6 +61,70 @@ trace
 #9 /home/timon/PhpstormProjects/zukunft.com/test/test_unit.php(58): Zukunft\ZukunftCom\test\php\test_app->start()
 #10 {main}
 by user 
+2026-05-11T20:20:09+00:00: FATAL ERROR! Select failed due using "PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;" because: Database error ERROR:  column "local_name" does not exist
+LINE 1: ...e_name,  description,  code_id,  wikimedia_code,  local_name...
+                                                             ^ when preparing PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;
+2026-05-11T20:20:09+00:00: FATAL ERROR! Select failed due using "PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;" because: Database error ERROR:  column "local_name" does not exist
+LINE 1: ...e_name,  description,  code_id,  wikimedia_code,  local_name...
+                                                             ^ when preparing PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3349): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3436): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_list.php(535): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_list.php(617): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_lists.php(282): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/system_object.php(131): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(198): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(129): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timonz/PhpstormProjects/zukunft.com/test/test.php(59): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
+2026-05-11T20:20:18+00:00: FATAL ERROR! Select failed due using "PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;" because: Database error ERROR:  column "local_name" does not exist
+LINE 1: ...e_name,  description,  code_id,  wikimedia_code,  local_name...
+                                                             ^ when preparing PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;
+2026-05-11T20:20:18+00:00: FATAL ERROR! Select failed due using "PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;" because: Database error ERROR:  column "local_name" does not exist
+LINE 1: ...e_name,  description,  code_id,  wikimedia_code,  local_name...
+                                                             ^ when preparing PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3349): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3436): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_list.php(535): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_list.php(617): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_lists.php(282): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/system_object.php(131): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/api/ui_config.php(113): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/create/test_db_load.php(1242): Zukunft\ZukunftCom\main\php\api\ui_config->reload()
+#9 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/utils/all_tests.php(233): Zukunft\ZukunftCom\test\php\create\test_db_load->type_list_recreate()
+#10 /home/timonz/PhpstormProjects/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user 
+2026-05-11T20:20:52+00:00: FATAL ERROR! Select failed due using "PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;" because: Database error ERROR:  column "local_name" does not exist
+LINE 1: ...e_name,  description,  code_id,  wikimedia_code,  local_name...
+                                                             ^ when preparing PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;
+2026-05-11T20:20:52+00:00: FATAL ERROR! Select failed due using "PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;" because: Database error ERROR:  column "local_name" does not exist
+LINE 1: ...e_name,  description,  code_id,  wikimedia_code,  local_name...
+                                                             ^ when preparing PREPARE language_all (bigint, bigint) AS SELECT language_id,  language_name,  description,  code_id,  wikimedia_code,  local_name,  usage FROM languages ORDER BY language_id LIMIT $1 OFFSET $2;
+
+function fetch
+trace 
+#0 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3349): log_fatal()
+#1 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3401): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch()
+#2 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/db/sql_db.php(3436): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->fetch_all()
+#3 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_list.php(535): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->get()
+#4 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_list.php(617): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load_list()
+#5 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/type_lists.php(282): Zukunft\ZukunftCom\main\php\cfg\helper\type_list->load()
+#6 /home/timonz/PhpstormProjects/zukunft.com/src/main/php/cfg/helper/system_object.php(131): Zukunft\ZukunftCom\main\php\cfg\helper\type_lists->load()
+#7 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(198): Zukunft\ZukunftCom\main\php\cfg\helper\system_object->load_type_lists()
+#8 /home/timonz/PhpstormProjects/zukunft.com/src/test/php/test_app.php(129): Zukunft\ZukunftCom\test\php\test_app->open_db()
+#9 /home/timonz/PhpstormProjects/zukunft.com/test/reset_db.php(67): Zukunft\ZukunftCom\test\php\test_app->start()
+#10 {main}
+by user 
 2026-05-15T11:27:04+00:00: FATAL ERROR! Select failed due using "PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;" because: Database error FEHLER:  Relation »type_lists« existiert nicht
 LINE 1: ..._id,  type_list_name,  description,  code_id FROM type_lists...
                                                              ^ when preparing PREPARE type_list_by_code_id (text) AS SELECT type_list_id,  type_list_name,  description,  code_id FROM type_lists WHERE code_id = $1 AND code_id IS NOT NULL ORDER BY type_list_id LIMIT 1;

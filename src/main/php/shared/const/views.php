@@ -364,7 +364,7 @@ class views
     // TODO Prio 1 set to 1
     const int MIN_TEST_ID = 2;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 60;
+    const int MAX_TEST_ID = 66;
 
 
     const string COMPANY_RATIO_NAME = 'company ratios';
@@ -570,12 +570,19 @@ class views
         self::SETUP_ID,
     ];
 
+    // system log views
+    const array SYSTEM_LOG_VIEW_IDS = [
+        self::ERROR_LOG_ID,
+        self::ERROR_UPDATE_ID,
+    ];
+
     // system masks that only used to display a sandbox object
     // TODO review SETUP_ID seems to be not correct
     const array SHOW_MASKS_IDS = [
         self::START_ID,
         self::ABOUT_ID,
         self::SETUP_ID,
+        self::ERROR_LOG_ID,
     ];
 
     // system masks that add a sandbox object
@@ -621,6 +628,7 @@ class views
         self::LANGUAGE_EDIT_ID,
         self::CONFIRM_EDIT_ID,
         self::CONFIRM_VIEWS_ID,
+        self::ERROR_UPDATE_ID,
     ];
 
     // system masks that delete a sandbox object
