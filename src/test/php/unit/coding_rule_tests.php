@@ -85,7 +85,7 @@ class coding_rule_tests
         $md_txt = $this->php_function_tree();
         $doc_txt = file_get_contents(test_files::DOCS_FUNCTIONS);
         $fnc_upd = $t->assert($test_name, $md_txt, $doc_txt);
-        if (!$fnc_upd and test_files::AUTO_UPDATE_HTML) {
+        if (!$fnc_upd and test_files::AUTO_UPDATE_TEST_FILES) {
             $t->update_path_file(test_files::DOCS_FUNCTIONS, $md_txt);
         }
 

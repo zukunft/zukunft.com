@@ -602,7 +602,7 @@ class test_cleanup extends test_api
         $created_stable = $lib->fix_volatile_in_html($created_html, $token);
         $expected_stable = $lib->fix_volatile_in_html($expected_html, $token);
         $result = $this->assert($file_path, $lib->trim_html($created_stable), $lib->trim_html($expected_stable));
-        if (!$result and test_files::AUTO_UPDATE_HTML) {
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $this->update_file($resource_file, $lib->format_html($created_stable));
         }
         return $result;

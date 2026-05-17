@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::USER . 'user.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
@@ -60,6 +61,7 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once test_paths::CONST . 'files.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -86,9 +88,10 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -96,6 +99,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -285,11 +289,34 @@ class system_view_ui_tests
         */
 
         // loop over the system views
+        $this->assert_views_by_id($t, $t_map, $ui, $usr_dsp, $usr_msg, $lib);
+
+    }
+
+    /**
+     * iterate over all system view ids and assert each rendered page matches its HTML snapshot
+     * @param test_cleanup $t test runner for assertions and user fixtures
+     * @param test_mappers $t_map builds filled test URLs per class and action
+     * @param frontend $ui renders HTML from a URL array
+     * @param user_ui $usr_dsp logged-in user used for views that require a session
+     * @param user_message $usr_msg collects any messages produced during rendering
+     * @param library $lib converts class names to file-path segments
+     */
+    private function assert_views_by_id(
+        test_cleanup $t,
+        test_mappers $t_map,
+        frontend     $ui,
+        user_ui      $usr_dsp,
+        user_message $usr_msg,
+        library      $lib
+    ): void
+    {
+        $updated_files = [];
+        // TODO Prio 3 review and use random?
         for ($msk_typ = 1; $msk_typ < 2; $msk_typ++) {
             for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
                 $dbo = $this->view_id_to_dbo($id, $t->usr1);
                 $action = $this->view_id_to_url_action($id);
-                // TODO Prio 3 review and use random?
                 if ($msk_typ == 1) {
                     $url = $t_map->class_to_filled_url($dbo::class, $id, $action);
                 } else {
@@ -304,10 +331,16 @@ class system_view_ui_tests
                 }
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);
                 $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
+                $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
                 $t->assert_html_page($test_name, $html, $file_path);
             }
         }
-
+        // remove test files not used any more
+        foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::VIEWS_BY_ID) as $path) {
+            if (str_ends_with($path, test_files::HTML) && !in_array($path, $updated_files)) {
+                $t->delete_path_file($path);
+            }
+        }
     }
 
     /**
@@ -337,11 +370,11 @@ class system_view_ui_tests
             if ($action != change_actions::SHOW) {
                 if (in_array($id, views::PROCESS_STEP_MASKS_IDS)) {
                     $process_names = [
-                        views::SIGNUP_ID         => views::SIGNUP,
-                        views::LOGIN_ID          => views::LOGIN,
+                        views::SIGNUP_ID => views::SIGNUP,
+                        views::LOGIN_ID => views::LOGIN,
                         views::LOGIN_ACTIVATE_ID => views::LOGIN_ACTIVATE,
-                        views::LOGIN_RESET_ID    => views::LOGIN_RESET,
-                        views::LOGOUT_ID         => views::LOGOUT,
+                        views::LOGIN_RESET_ID => views::LOGIN_RESET,
+                        views::LOGOUT_ID => views::LOGOUT,
                     ];
                     $dbo_name .= '_' . $process_names[$id];
                 } else {
@@ -377,11 +410,11 @@ class system_view_ui_tests
             $result = ['static' . DIRECTORY_SEPARATOR, $prefix . $name, $name . ' view'];
         } elseif (in_array($id, views::PROCESS_STEP_MASKS_IDS)) {
             $process_names = [
-                views::SIGNUP_ID         => views::SIGNUP,
-                views::LOGIN_ID          => views::LOGIN,
+                views::SIGNUP_ID => views::SIGNUP,
+                views::LOGIN_ID => views::LOGIN,
                 views::LOGIN_ACTIVATE_ID => views::LOGIN_ACTIVATE,
-                views::LOGIN_RESET_ID    => views::LOGIN_RESET,
-                views::LOGOUT_ID         => views::LOGOUT,
+                views::LOGIN_RESET_ID => views::LOGIN_RESET,
+                views::LOGOUT_ID => views::LOGOUT,
             ];
             $name = $process_names[$id] ?? 'process_step';
             $result = ['process' . DIRECTORY_SEPARATOR, $prefix . $name, $name . ' view'];
@@ -473,7 +506,9 @@ class system_view_ui_tests
             $dbo = new sys_log();
         } else {
             $dbo = new db_object();
-            log_err('no backend object defined for view id ' . $view_id);
+            if ($view_id != views::START_ID) {
+                log_err('no backend object defined for view id ' . $view_id);
+            }
         }
         return $dbo;
     }

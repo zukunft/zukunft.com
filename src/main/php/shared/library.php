@@ -35,6 +35,8 @@
 namespace Zukunft\ZukunftCom\main\php\shared;
 
 use DateTimeInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
@@ -1413,6 +1415,23 @@ class library
                 $result = array_merge($result, $this->array_to_path($file, $sub_path));
             } else {
                 $result[] = $path . DIRECTORY_SEPARATOR . $file;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * return all file paths found recursively under a directory
+     * @param string $dir root directory to scan
+     * @return array flat list of absolute file paths
+     */
+    function dir_files(string $dir): array
+    {
+        $result = [];
+        $iter = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+        foreach ($iter as $file) {
+            if ($file->isFile()) {
+                $result[] = $file->getPathname();
             }
         }
         return $result;

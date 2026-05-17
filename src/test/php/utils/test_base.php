@@ -1244,7 +1244,7 @@ class test_base
         $resource_file = $file_path . test_files::HTML;
         $expected = $this->file($resource_file);
         $result = $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
-        if (!$result and test_files::AUTO_UPDATE_HTML) {
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $this->update_file($resource_file, $lib->format_html($html));
         }
         return $result;
@@ -4718,6 +4718,18 @@ class test_base
         // TODO always set a breakpoint here
         if (file_put_contents($filepath, $result) === false) {
             log_err('Cannot write target file ' . $filepath);
+        }
+    }
+
+    /**
+     * suggest deletion of an orphaned snapshot file; deletes immediately when AUTO_UPDATE_FILES is true
+     * @param string $file_path absolute path to the html snapshot file
+     */
+    function delete_path_file(string $file_path): void
+    {
+        log_warning('orphaned test snapshot – consider deleting: ' . $file_path);
+        if (test_files::AUTO_UPDATE_TEST_FILES) {
+            unlink($file_path);
         }
     }
 

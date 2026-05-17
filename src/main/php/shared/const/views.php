@@ -361,8 +361,7 @@ class views
     const string ERR_UPD = 'error_update';
 
     // the id of the last system view that should be included in the unit testing
-    // TODO Prio 1 set to 1
-    const int MIN_TEST_ID = 2;
+    const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
     const int MAX_TEST_ID = 66;
 
