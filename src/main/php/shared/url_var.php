@@ -131,6 +131,14 @@ class url_var
     const string IP = 'ip'; // for ip ranges (for admin only)
     const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
     const string JOB = 'j'; // for system batch jobs
+    const string JOB_PARAMETER = 'ja'; // pArameter passed to a job e.g. the id of the phrase set
+    const string JOB_START_TIME = 'jb'; // Begin time of the job execution
+    const string JOB_CHANGE_FIELD = 'jc'; // the Changed field id for undo jobs
+    const string JOB_END_TIME = 'je'; // End time of the job execution
+    const string JOB_PRIORITY = 'jp'; // the Priority of the batch job
+    const string JOB_REQUEST_TIME = 'jq'; // the time when the job was reQuested
+    const string JOB_ROW_ID = 'jr'; // the Row id of the related object touched by the job
+    const string JOB_STATUS = 'js'; // the Status of the batch job e.g. new, running, done
     const string JOB_TYPE = 'jt'; // the job type
     const string NAME = 'k'; // the name of a word, verb, triple, ... of a form field (Kennung)
     const string CODE_ID = 'ki'; // the code id
@@ -398,6 +406,14 @@ class url_var
     const string IP_HUMAN = 'ip_addr_id'; // the id of an ip range to set rules
     const string JOB_HUMAN = 'job_id'; // the id of a concrete job with start, status and end
     const string JOB_TYPE_HUMAN = 'job_type'; // the id of the job type to link the functionality to the concrete job
+    const string JOB_STATUS_HUMAN = 'job_status'; // the status of the batch job e.g. new, running, done
+    const string JOB_PRIORITY_HUMAN = 'job_priority'; // the priority of the batch job
+    const string JOB_PARAMETER_HUMAN = 'job_parameter'; // parameter passed to a job e.g. the id of the phrase set
+    const string JOB_CHANGE_FIELD_HUMAN = 'job_change_field'; // the changed field id for undo jobs
+    const string JOB_ROW_ID_HUMAN = 'job_row_id'; // the row id of the related object touched by the job
+    const string JOB_REQUEST_TIME_HUMAN = 'job_request_time'; // the time when the job was requested
+    const string JOB_START_TIME_HUMAN = 'job_start_time'; // begin time of the job execution
+    const string JOB_END_TIME_HUMAN = 'job_end_time'; // end time of the job execution
 
     // access
     const string SHARE_HUMAN = 'share';
@@ -599,6 +615,14 @@ class url_var
         [self::IP_HUMAN, self::IP],
         [self::JOB_HUMAN, self::JOB],
         [self::JOB_TYPE_HUMAN, self::JOB_TYPE],
+        [self::JOB_STATUS_HUMAN, self::JOB_STATUS],
+        [self::JOB_PRIORITY_HUMAN, self::JOB_PRIORITY],
+        [self::JOB_PARAMETER_HUMAN, self::JOB_PARAMETER],
+        [self::JOB_CHANGE_FIELD_HUMAN, self::JOB_CHANGE_FIELD],
+        [self::JOB_ROW_ID_HUMAN, self::JOB_ROW_ID],
+        [self::JOB_REQUEST_TIME_HUMAN, self::JOB_REQUEST_TIME],
+        [self::JOB_START_TIME_HUMAN, self::JOB_START_TIME],
+        [self::JOB_END_TIME_HUMAN, self::JOB_END_TIME],
 
         // access
         [self::SHARE_HUMAN, self::SHARE],

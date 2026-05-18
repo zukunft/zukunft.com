@@ -93,6 +93,7 @@ include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::VIEW . 'term_view.php';
@@ -152,6 +153,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list as sandbox_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_ui;
+use Zukunft\ZukunftCom\main\php\web\system\job as job_ui;
 use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
@@ -781,8 +783,7 @@ class frontend
 
                 // use a fallback if the view is empty
                 if ($dsp_text == '' or $msk_ui->name() == '') {
-                    $msk_ui = $this->dto->typ_lst_cache->get_view(views::START);
-                    $dsp_text = $msk_ui->name_tip($dbo, $back);
+                    $dsp_text = $msk_ui->name_tip();
                 }
                 if ($dsp_text == '') {
                     $result .= 'Please add a component to the view by clicking on Edit on the top right.';
@@ -1365,12 +1366,14 @@ class frontend
             $dbo_ui = new word_ui();
         } elseif (in_array($view_id, views::CONTEXT_VIEW_IDS)) {
             $dbo_ui = new phrase_list_ui();
+        } elseif (in_array($view_id, views::JOB_MASKS_IDS)) {
+            $dbo_ui = new job_ui();
         } elseif ($view_id === views::ABOUT_ID
             or $view_id === views::SETUP_ID) {
             $dbo_ui = new db_object_ui();
-        } elseif (in_array($view_id, views::USER_LOGIN_IDS)) {
+        } elseif (in_array($view_id, views::USER_LOGIN_MASK_IDS)) {
             $dbo_ui = new user_ui();
-        } elseif (in_array($view_id, views::ADMIN_USER_IDS)) {
+        } elseif (in_array($view_id, views::ADMIN_MASK_IDS)) {
             $dbo_ui = new user_ui();
         } elseif ($view_id === views::ERROR_LOG_ID
             or $view_id === views::ERROR_UPDATE_ID) {

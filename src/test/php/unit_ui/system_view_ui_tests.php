@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -492,7 +493,9 @@ class system_view_ui_tests
             $dbo = new view_relation($usr);
         } elseif (in_array($view_id, view_shared::USER_MASKS_IDS)) {
             $dbo = new user();
-        } elseif (in_array($view_id, view_shared::USER_LOGIN_IDS)) {
+        } elseif (in_array($view_id, view_shared::USER_LOGIN_MASK_IDS)) {
+            $dbo = new user();
+        } elseif (in_array($view_id, view_shared::ADMIN_MASK_IDS)) {
             $dbo = new user();
         } elseif (in_array($view_id, view_shared::LANGUAGE_MASKS_IDS)) {
             $dbo = new language();
@@ -504,6 +507,8 @@ class system_view_ui_tests
             $dbo = new sys_log();
         } elseif (in_array($view_id, view_shared::CONTEXT_VIEW_IDS)) {
             $dbo = new phrase_list($usr);
+        } elseif (in_array($view_id, view_shared::JOB_MASKS_IDS)) {
+            $dbo = new job($usr);
         } else {
             $dbo = new db_object();
             if ($view_id != views::START_ID) {

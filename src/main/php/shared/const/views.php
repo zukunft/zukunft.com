@@ -363,7 +363,7 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 80;
+    const int MAX_TEST_ID = 90;
 
 
     const string COMPANY_RATIO_NAME = 'company ratios';
@@ -393,7 +393,7 @@ class views
         self::START_ID,
     );
 
-    // list og views where a logged in user is simulated to create the test view
+    // list of views where a logged in user is simulated to create the test view
     const array TEST_LOGIN_VIEW_IDS = array(
         self::WORD_EDIT_ID,
         self::FORMULA_DEL_ID,
@@ -419,11 +419,12 @@ class views
     const array USER_MASKS_IDS = [
         self::USER_ADMIN_ADD_ID,
         self::USER_ADMIN_EDIT_ID,
-        self::USER_ADMIN_DEL_ID
+        self::USER_ADMIN_DEL_ID,
+        self::BASE_UNITS_ID,
     ];
 
     // system masks that handle user authentication or user profile
-    const array USER_LOGIN_IDS = [
+    const array USER_LOGIN_MASK_IDS = [
         self::SIGNUP_ID,
         self::LOGIN_ID,
         self::LOGIN_ACTIVATE_ID,
@@ -433,10 +434,12 @@ class views
     ];
 
     // system masks that only admin user can see
-    const array ADMIN_USER_IDS = [
+    const array ADMIN_MASK_IDS = [
         self::USER_ADMIN_ADD_ID,
         self::USER_ADMIN_EDIT_ID,
         self::USER_ADMIN_DEL_ID,
+        self::ADMIN_MAIN_ID,
+        self::COMPLETE_ID,
     ];
 
     // system masks that have a word as the main object
@@ -444,6 +447,7 @@ class views
         self::WORD_ADD_ID,
         self::WORD_EDIT_ID,
         self::WORD_DEL_ID,
+        self::WORD_ID,
         self::WORD_LOG_ID,
     ];
 
@@ -451,35 +455,36 @@ class views
     const array VERB_MASKS_IDS = [
         self::VERB_ADD_ID,
         self::VERB_EDIT_ID,
-        self::VERB_DEL_ID
+        self::VERB_DEL_ID,
+        self::VERBS_ID,
     ];
 
     // system masks that have a triple as the main object
     const array TRIPLE_MASKS_IDS = [
         self::TRIPLE_ADD_ID,
         self::TRIPLE_EDIT_ID,
-        self::TRIPLE_DEL_ID
+        self::TRIPLE_DEL_ID,
     ];
 
     // system masks that have a source as the main object
     const array SOURCE_MASKS_IDS = [
         self::SOURCE_ADD_ID,
         self::SOURCE_EDIT_ID,
-        self::SOURCE_DEL_ID
+        self::SOURCE_DEL_ID,
     ];
 
     // system masks that have a reference as the main object
     const array REF_MASKS_IDS = [
         self::REF_ADD_ID,
         self::REF_EDIT_ID,
-        self::REF_DEL_ID
+        self::REF_DEL_ID,
     ];
 
     // system masks that have a group as the main object
     const array GROUP_MASKS_IDS = [
         self::GROUP_ADD_ID,
         self::GROUP_EDIT_ID,
-        self::GROUP_DEL_ID
+        self::GROUP_DEL_ID,
     ];
 
     // system masks that have a value as the main object
@@ -553,6 +558,14 @@ class views
         self::LANGUAGE_ADD_ID,
         self::LANGUAGE_EDIT_ID,
         self::LANGUAGE_DEL_ID,
+        self::LANGUAGE_SELECT_ID,
+    ];
+
+    // system masks that have a system batch job as the main object
+    const array JOB_MASKS_IDS = [
+        self::JOB_ASYNC_ID,
+        self::JOB_CONTROL_ID,
+        self::JOB_CHECK_ID,
     ];
 
     // system masks that are used for all objects to confirm a change
@@ -595,6 +608,7 @@ class views
     const array SEARCH_MASKS_IDS = [
         self::WORD_FIND_ID,
         self::SEARCH_FULL_ID,
+        self::LANGUAGE_SELECT_ID,
     ];
 
     // system forms to im- and export a data selection
@@ -619,6 +633,29 @@ class views
         self::RESULT_EXPLAIN_ID,
         self::SANDBOX_ID,
         self::USER_ID,
+        self::ADMIN_MAIN_ID,
+        self::VERBS_ID,
+        self::COMPLETE_ID,
+        self::BASE_UNITS_ID,
+        self::WORD_ID,
+        self::VERB_ID,
+        self::TRIPLE_ID,
+        self::SOURCE_ID,
+        self::REF_ID,
+        self::LANGUAGE_ID,
+        self::VALUE_ID,
+        self::FORMULA_ID,
+        self::RESULT_ID,
+        self::RANKING_ID,
+        self::SCIENCE_ID,
+        self::HISTORIC_ID,
+        self::BIOLOGICAL_ID,
+        self::EDUCATION_ID,
+        self::TOURISTIC_ID,
+        self::GRAPH_ID,
+        self::SIMPLE_ID,
+        self::MATH_CONST_ID,
+        self::SYSTEM_LOG_ID,
     ];
 
     // system masks that add a sandbox object

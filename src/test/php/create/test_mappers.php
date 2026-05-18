@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -58,6 +59,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
@@ -1139,6 +1141,7 @@ class test_mappers
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
         $t_lan = new test_languages();
+        $t_job = new test_jobs($this->env);
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
@@ -1225,6 +1228,11 @@ class test_mappers
                 $obj_array = $this->language_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case job::class;
+                $obj = $t_job->job_filled();
+                $obj_array = $this->job_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case db_object::class;
                 if ($msk_id == views::START_ID
                     or in_array($msk_id, views::CONFIRM_MASKS_IDS)) {
@@ -1274,6 +1282,7 @@ class test_mappers
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
         $t_lan = new test_languages();
+        $t_job = new test_jobs($this->env);
         $t_slg = new test_sys_log($this->env);
         switch ($class) {
             case user::class;
@@ -1361,6 +1370,11 @@ class test_mappers
                 $obj_array = $this->language_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case job::class;
+                $obj = $t_job->job_filled();
+                $obj_array = $this->job_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case sys_log::class;
                 $obj = $t_slg->sys_log_filled();
                 $obj_array = $this->system_log_url($obj);
@@ -1410,6 +1424,7 @@ class test_mappers
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
         $t_lan = new test_languages();
+        $t_job = new test_jobs($this->env);
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
@@ -1495,6 +1510,11 @@ class test_mappers
                 $obj_array = $this->language_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case job::class;
+                $obj = $t_job->job_filled();
+                $obj_array = $this->job_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case db_object::class;
                 // for the start page no additional vars in the url are needed
                 $obj = new db_object();
@@ -1528,6 +1548,7 @@ class test_mappers
         $t_usr = new test_users($this->env);
         $t_phr = new test_phrases($this->env);
         $t_frm = new test_formulas($this->env);
+        $t_job = new test_jobs($this->env);
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
@@ -1537,6 +1558,11 @@ class test_mappers
             case formula::class;
                 $obj = $t_frm->formula_filled();
                 $obj_array = $this->formula_url($obj, $msk_id);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case job::class;
+                $obj = $t_job->job_filled();
+                $obj_array = $this->job_url($obj, $msk_id);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case phrase_list::class;
@@ -1603,6 +1629,11 @@ class test_mappers
             case term::class;
                 $t_trm = new test_terms($this->env);
                 $obj = $t_trm->term();
+                $url_array[] = [url_var::NAME, $obj->name()];
+                break;
+            case language::class;
+                $t_lan = new test_languages($this->env);
+                $obj = $t_lan->language_filled();
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
             case phrase_list::class;
@@ -1896,6 +1927,29 @@ class test_mappers
         $url_array[] = [url_var::SYS_TRACE, $slg->log_trace];
         $url_array[] = [url_var::DESCRIPTION, $slg->log_text];
         $url_array[] = [url_var::LOG_STATUS, $slg->status_id];
+        return $url_array;
+    }
+
+    private function job_url(job $job, int $msk_id): array
+    {
+        $lib = new library();
+        $url_array = [];
+        $url_array[] = [url_var::JOB, $job->id()];
+        $url_array[] = [url_var::JOB_TYPE, $job->type_id()];
+        $url_array[] = [url_var::JOB_STATUS, $job->status_id()];
+        $url_array[] = [url_var::JOB_PRIORITY, $job->priority];
+        $url_array[] = [url_var::JOB_PARAMETER, $job->parameter];
+        $url_array[] = [url_var::JOB_CHANGE_FIELD, $job->change_field];
+        $url_array[] = [url_var::JOB_ROW_ID, $job->row_id];
+        if ($job->request_time !== null) {
+            $url_array[] = [url_var::JOB_REQUEST_TIME, $lib->time_to_url($job->request_time)];
+        }
+        if ($job->start_time !== null) {
+            $url_array[] = [url_var::JOB_START_TIME, $lib->time_to_url($job->start_time)];
+        }
+        if ($job->end_time !== null) {
+            $url_array[] = [url_var::JOB_END_TIME, $lib->time_to_url($job->end_time)];
+        }
         return $url_array;
     }
 

@@ -70,6 +70,7 @@ class ui_im_export extends ui_base
             }
         }
         // select to most likely name
+        $name = null;
         if (count($lst) > 0) {
             $name = $lst[0];
         }
