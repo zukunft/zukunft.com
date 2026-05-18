@@ -289,11 +289,12 @@ class view_base extends sandbox_code_id
 
     /**
      * create the HTML code to select a view type
+     * overrides db_object::view_type_selector so that form_view_type returns a real selector for view objects
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the phrase type
+     * @return string the html code to select the view type
      */
-    function type_selector(string $form, ?type_lists $typ_lst): string
+    public function view_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {

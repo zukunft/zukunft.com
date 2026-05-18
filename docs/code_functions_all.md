@@ -5545,7 +5545,6 @@
     \-- type_code_id - section for function type_code_id is expected to be preloaded in /view/view_base.php
     \-- name_link - section for function name_link not yet defined that it should be base in /view/view_base.php
     \-- title - section for function title not yet defined that it should be base in /view/view_base.php
-    \-- type_selector - section for function type_selector not yet defined that it should be select in /view/view_base.php
     \-- log_err - section for function log_err is expected to be log in /view/view_base.php
     \-- log_debug - section for function log_debug is expected to be log in /view/view_base.php
     \-- dsp_navbar - section for function dsp_navbar not yet defined that it should be overwrite in /view/view_base.php
