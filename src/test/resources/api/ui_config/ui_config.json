@@ -20532,6 +20532,51 @@
         ]
       },
       {
+        "id": 108,
+        "name": "problem with solutions",
+        "description": "Explain a problem and show the potential solutions",
+        "type_id": null,
+        "code_id": "global_problem",
+        "components": [
+          {
+            "link_id": 1008,
+            "id": 1,
+            "name": "Word",
+            "description": "simply show the word or triple name",
+            "type_id": 8,
+            "position": 1,
+            "position_type": 1
+          },
+          {
+            "link_id": 1009,
+            "id": 285,
+            "name": "problem definition",
+            "description": "show the most relevant definitions related to a problem",
+            "type_id": 188,
+            "position": 2,
+            "position_type": 1
+          },
+          {
+            "link_id": 1010,
+            "id": 286,
+            "name": "problem size",
+            "description": "show the estimations of the size of a problem",
+            "type_id": 188,
+            "position": 3,
+            "position_type": 1
+          },
+          {
+            "link_id": 1011,
+            "id": 287,
+            "name": "problem solutions",
+            "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
+            "type_id": 188,
+            "position": 4,
+            "position_type": 1
+          }
+        ]
+      },
+      {
         "id": 109,
         "name": "System log",
         "description": "show the most relevant system log entries (placeholder only at the moment)",

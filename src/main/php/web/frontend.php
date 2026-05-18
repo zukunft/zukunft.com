@@ -97,6 +97,7 @@ include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'language.php';
+include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
@@ -159,6 +160,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list as sandbox_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_ui;
 use Zukunft\ZukunftCom\main\php\web\system\job as job_ui;
 use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -1376,6 +1378,8 @@ class frontend
             $dbo_ui = new phrase_list_ui();
         } elseif (in_array($view_id, views::JOB_MASKS_IDS)) {
             $dbo_ui = new job_ui();
+        } elseif (in_array($view_id, views::SYSTEM_LOG_VIEW_IDS)) {
+            $dbo_ui = new sys_log_ui();
         } elseif ($view_id === views::ABOUT_ID
             or $view_id === views::SETUP_ID) {
             $dbo_ui = new db_object_ui();

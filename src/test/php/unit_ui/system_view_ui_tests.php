@@ -396,6 +396,9 @@ class system_view_ui_tests
                 }
             }
             if ($dbo_id != 0) {
+                if ($class == phrase::class or $class == term::class) {
+                    $dbo_name .= '_' . views::TEST_VIEW_IDS[$id] ?? 'not_found';
+                }
                 $dbo_name .= '_' . $lib->str_to_file($dbo_id);
             }
             $result = [$domain_class . DIRECTORY_SEPARATOR, $dbo_name, $action . ' ' . $domain_class . ' view'];

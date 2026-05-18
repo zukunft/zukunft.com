@@ -638,6 +638,7 @@ class library
     {
         $text = str_replace('.', '', $text);
         $text = str_replace('/', '', $text);
+        $text = str_replace(',', '_', $text);
         return substr($text, 0, 32);
     }
 

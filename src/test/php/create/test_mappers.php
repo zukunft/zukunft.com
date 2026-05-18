@@ -1113,6 +1113,11 @@ class test_mappers
                 $obj_array = $this->system_log_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case phrase_list::class;
+                $obj = $t_phr->phrase_list();
+                $obj_array = $this->phrase_list_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case db_object::class;
                 // for the start page no additional vars in the url are needed
                 $obj = new db_object();

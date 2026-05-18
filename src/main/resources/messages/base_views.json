@@ -360,6 +360,7 @@
     {
       "name": "problem with solutions",
       "description": "Explain a problem and show the potential solutions",
+      "code_id": "global_problem",
       "components": [
         {
           "position": "1",

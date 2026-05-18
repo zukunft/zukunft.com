@@ -106,7 +106,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 105,1,Graph,show the related topics as a visual graph,,,,graph,,,
 106,1,Simple,show only the most relevant facts,,,,simple,,,
 107,1,Mathematical constance,Show a mathematical constance and the related words and formulas,,,,math_const,,,
-108,1,problem with solutions,Explain a problem and show the potential solutions,,,,,,,
+108,1,problem with solutions,Explain a problem and show the potential solutions,,,,global_problem,,,
 109,1,System log,show the most relevant system log entries (placeholder only at the moment),,,,system_log,,,
 110,1,Phrase (default),the default view for a word or triple,,,,phrase_default,,,
 111,1,company sheet,,6,,,,,,

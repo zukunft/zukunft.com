@@ -50,7 +50,7 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 100;
+    const int MAX_TEST_ID = 110;
 
     // curl views for main objects
     const string WORD_ADD = 'word_add';
@@ -318,6 +318,8 @@ class views
     const int MATH_CONST_ID = 107;
     const string MATH_CONST_NAME = 'math const';
     const string MATH_CONST_COM = 'Show a mathematical constance and the related words and formulas';
+    const string GLOBAL_PROBLEM = 'global_problem';
+    const int GLOBAL_PROBLEM_ID = 108;
 
     // TODO Prio 3 resort the views and group it
     const string SYSTEM_LOG = 'system_log';
@@ -629,6 +631,7 @@ class views
         self::EDUCATION_ID,
         self::TOURISTIC_ID,
         self::MATH_CONST_ID,
+        self::GLOBAL_PROBLEM_ID,
     ];
 
     // system forms for interactive and complex object selection
@@ -683,6 +686,8 @@ class views
         self::SIMPLE_ID,
         self::MATH_CONST_ID,
         self::SYSTEM_LOG_ID,
+        self::GLOBAL_PROBLEM_ID,
+        self::PHRASE_ID,
     ];
 
     // system masks that add a sandbox object
@@ -906,6 +911,7 @@ class views
         self::GRAPH_ID => self::GRAPH,
         self::SIMPLE_ID => self::SIMPLE,
         self::MATH_CONST_ID => self::MATH_CONST,
+        self::GLOBAL_PROBLEM_ID => self::GLOBAL_PROBLEM,
         self::SYSTEM_LOG_ID => self::SYSTEM_LOG,
         self::LANGUAGE_SELECT_ID => self::LANGUAGE_SELECT,
         self::PHRASE_ID => self::PHRASE,
@@ -997,6 +1003,7 @@ class views
         self::JOB_CONTROL,
         self::JOB_CHECK,
         self::ADMIN_MAIN,
+        self::GLOBAL_PROBLEM,
     ];
 
     /**
