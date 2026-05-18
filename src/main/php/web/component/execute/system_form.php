@@ -684,9 +684,9 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            url_var::GROUP_NAME,
+            url_var::NAME,
             msg_id::FORM_FIELD_NAME,
-            $dbo->name(),
+            $this->selection_value($dbo),
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_8
@@ -702,7 +702,7 @@ class system_form extends component
         return $html->form_field(
             url_var::GROUP_NAME,
             msg_id::FORM_FIELD_GROUP,
-            $dbo->name(),
+            $this->selection_value($dbo),
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_8
@@ -716,13 +716,31 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            url_var::GROUP_NAME,
+            url_var::DESCRIPTION,
             msg_id::FORM_FIELD_GROUP,
-            $dbo->name(),
+            $this->selection_value($dbo),
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_8
         );
+    }
+
+    /**
+     * pick a safe pre-fill value for a selection form field
+     * - sandbox_list::name() wraps the result in quotes (e.g. '""' for an empty list),
+     *   which breaks the surrounding HTML value="..." attribute
+     * - name_pur() returns an empty string for empty lists and avoids the outer quotes
+     * @param db_object|sandbox_list $dbo the backend object whose name should pre-fill the field
+     * @return string the value to put into the input
+     */
+    private function selection_value(db_object|sandbox_list $dbo): string
+    {
+        if ($dbo instanceof sandbox_list) {
+            $result = $dbo->name_pur();
+        } else {
+            $result = $dbo->name();
+        }
+        return $result;
     }
 
     /**

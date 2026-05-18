@@ -110,11 +110,14 @@ class html_selector
         }
         */
         $label = $mtr->txt($this->label_id);
+        // unique, human-readable dom id: name + label enum case
+        // keeps multiple selectors of the same form field name on one page from colliding on id / list attributes
+        $dom_id = $this->name . '_' . strtolower($this->label_id->name);
 
         if (html_base::UI_USE_BOOTSTRAP) {
             $result .= '<div class="form-group ' . $this->style . '">';
             if ($label != "") {
-                $result .= $html->label($label, $this->name);
+                $result .= $html->label($label, $dom_id);
             }
             $bs_class = 'form-control';
             /*
@@ -123,17 +126,17 @@ class html_selector
             }
             */
             if ($this->type == self::TYPE_DATALIST) {
-                $result .= '<' . html_names::INPUT . ' type="' . html_base::INPUT_TEXT . '" list="' . $this->name . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute;
+                $result .= '<' . html_names::INPUT . ' type="' . html_base::INPUT_TEXT . '" list="' . $dom_id . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $dom_id . '" ' . $this->attribute;
                 if (array_key_exists($this->selected, $this->lst)) {
                     $result .= ' ' . html_names::VALUE . '="' . $this->lst[$this->selected] . '"';
                 }
                 $result .= '>';
-                $result .= '<datalist id="' . $this->name . '_list">';
+                $result .= '<datalist id="' . $dom_id . '_list">';
             } else {
                 if ($this->form != "") {
-                    $result .= '<select class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
+                    $result .= '<select class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $dom_id . '" ' . $this->attribute . '>';
                 } else {
-                    $result .= '<select class="' . $bs_class . '" name="' . $this->name . '" id="' . $this->name . '" ' . $this->attribute . '>';
+                    $result .= '<select class="' . $bs_class . '" name="' . $this->name . '" id="' . $dom_id . '" ' . $this->attribute . '>';
                 }
             }
         } else {

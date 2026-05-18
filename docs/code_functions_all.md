@@ -6518,11 +6518,11 @@
     \-- system_sub_tile_var
         \-- system_page - HTML for a subtitle
     \-- preview
-        \-- system_page - HTML for a subtitle
+        \-- system_page - show a view zoomed to 1/3 of its original size as a preview so that the user can see a
     \-- about_body
-        \-- system_page - HTML for a subtitle
+        \-- system_page - show a view zoomed to 1/3 of its original size as a preview so that the user can see a
     \-- setup_body
-        \-- system_page - HTML for a subtitle
+        \-- system_page - request from the user the values relevant for the initial setup
     \-- signup_body
         \-- system_page - build the signup form HTML
     \-- login_body

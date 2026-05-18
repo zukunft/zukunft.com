@@ -143,6 +143,10 @@ class system_page extends component
     }
 
     // TODO Prio 0 fill with real code
+    /**
+     * show a view zoomed to 1/3 of its original size as a preview so that the user can see a
+     * preview of the original page based on a different view mask
+     */
     function preview(): string
     {
         return 'preview placeholder';
@@ -156,6 +160,14 @@ class system_page extends component
     }
 
     // TODO Prio 0 fill with real code
+    /**
+     * request from the user the values relevant for the initial setup
+     * so the main question ist that the user confirms the admin username and password from the .env for
+     * or fill the admin user of the .env file entry is empty
+     *
+     * additional all values from the .env.example file should be show and be changeable
+     *
+     */
     function setup_body(): string
     {
         return 'setup_body placeholder';
