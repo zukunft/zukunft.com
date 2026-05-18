@@ -56,6 +56,7 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -77,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 
 class component_exe extends component
@@ -91,7 +93,7 @@ class component_exe extends component
      * TODO the html form field name should always be an url var name
      * TODO use the style id of the component instead of having a function parameter
      *
-     * @param db_object|type_object|null $dbo the word, triple, formula or ... object that should be shown to the user
+     * @param db_object|type_object|sandbox_list|null $dbo the word, triple, formula or ... object that should be shown to the user
      * @param string $form_name the name of the view which is also used for the html form name
      * @param int $msk_id the database id of the calling view
      * @param data_object|null $cfg the context used to create the view
@@ -101,15 +103,15 @@ class component_exe extends component
      * @return string the html code of all view components
      */
     function dsp_entries(
-        db_object|type_object|null $dbo,
-        string                     $form_name = '',
-        int                        $msk_id = 0,
-        ?data_object               $cfg = null,
-        ?int                       $style_id = null,
-        string                     $back = '',
-        string                     $pattern = '',
-        bool                       $test_mode = false,
-        array                      $url_array = []
+        db_object|type_object|sandbox_list|null $dbo,
+        string                                  $form_name = '',
+        int                                     $msk_id = 0,
+        ?data_object                            $cfg = null,
+        ?int                                    $style_id = null,
+        string                                  $back = '',
+        string                                  $pattern = '',
+        bool                                    $test_mode = false,
+        array                                   $url_array = []
     ): string
     {
         global $mtr;

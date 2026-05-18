@@ -50,6 +50,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
@@ -508,7 +510,7 @@ class system_form extends component
             msg_id::FORM_FIELD_WEIGHT,
             $weight,
             html_base::INPUT_PERCENT,
-            '',view_styles::COL_SM_1
+            '', view_styles::COL_SM_1
         );
     }
 
@@ -678,7 +680,7 @@ class system_form extends component
     /**
      * @return string the html code to request the selection name from the user
      */
-    function form_field_selection_name(db_object $dbo): string
+    function form_field_selection_name(db_object|sandbox_list $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -694,7 +696,7 @@ class system_form extends component
     /**
      * @return string the html code to request the selection description from the user
      */
-    function form_field_selection_description(db_object $dbo): string
+    function form_field_selection_description(db_object|sandbox_list $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -790,23 +792,25 @@ class system_form extends component
             log_warning('id missing in ' . $dbo->dsp_id());
         }
 
-        return $dbo->phrase_selector($phr_lst, $name, $form_name, $id, $pattern, $label_id);
+        // use an empty list if none is provided so the selector renders without crashing
+        $phr_lst ??= new phrase_list();
+        return $phr_lst->phrase_selector($name, $form_name, $id, $pattern, $label_id);
     }
 
     /**
      * create the HTML code to select one or more words or triples
      * TODO review
      *
-     * @param db_object|triple $dbo the frontend phrase object with the id used until now
+     * @param db_object|triple|sandbox_list $dbo the frontend phrase object with the id used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to request the description from the user
      */
     function form_phrases(
-        db_object|triple $dbo,
-        string           $form_name,
-        string           $code_id = '',
-        ?phrase_list     $phr_lst = null,
-        bool             $test_mode = false
+        db_object|triple|sandbox_list $dbo,
+        string                        $form_name,
+        string                        $code_id = '',
+        ?phrase_list                  $phr_lst = null,
+        bool                          $test_mode = false
     ): string
     {
         $lib = new library();
@@ -854,7 +858,9 @@ class system_form extends component
             log_warning('id missing in ' . $dbo->dsp_id());
         }
 
-        return $dbo->phrase_selector($phr_lst, $name, $form_name, $id, $pattern, $label_id);
+        // use an empty list if none is provided so the selector renders without crashing
+        $phr_lst ??= new phrase_list();
+        return $phr_lst->phrase_selector($name, $form_name, $id, $pattern, $label_id);
     }
 
     /**
@@ -900,7 +906,9 @@ class system_form extends component
             log_warning('id missing in ' . $dbo->dsp_id());
         }
 
-        return $dbo->phrase_selector($phr_lst, $name, $form_name, $id, $pattern, $label_id);
+        // use an empty list if none is provided so the selector renders without crashing
+        $phr_lst ??= new phrase_list();
+        return $phr_lst->phrase_selector($name, $form_name, $id, $pattern, $label_id);
     }
 
     /**
@@ -946,7 +954,9 @@ class system_form extends component
             log_warning('id missing in ' . $dbo->dsp_id());
         }
 
-        return $dbo->phrase_selector($phr_lst, $name, $form_name, $id, $pattern, $label_id);
+        // use an empty list if none is provided so the selector renders without crashing
+        $phr_lst ??= new phrase_list();
+        return $phr_lst->phrase_selector($name, $form_name, $id, $pattern, $label_id);
     }
 
     /**
@@ -1118,7 +1128,7 @@ class system_form extends component
     function form_parent_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
     {
         return $dbo->view_selector($form_name, $msk_lst,
-            url_var::VIEW_PARENT,msg_id::FORM_SELECT_PARENT_VIEW);
+            url_var::VIEW_PARENT, msg_id::FORM_SELECT_PARENT_VIEW);
     }
 
     /**
@@ -1131,7 +1141,7 @@ class system_form extends component
     function form_child_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
     {
         return $dbo->view_selector($form_name, $msk_lst,
-            url_var::VIEW_CHILD,msg_id::FORM_SELECT_CHILD_VIEW);
+            url_var::VIEW_CHILD, msg_id::FORM_SELECT_CHILD_VIEW);
     }
 
     /**

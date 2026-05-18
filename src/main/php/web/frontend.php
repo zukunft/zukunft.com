@@ -57,11 +57,13 @@ include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'type_list.php';
@@ -122,10 +124,17 @@ include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call;
-use Zukunft\ZukunftCom\main\php\web\view\view_list;
-use Zukunft\ZukunftCom\test\php\const\files as test_files;
+// cfg group (alphabetic by FQN)
+use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
+// web group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
@@ -133,50 +142,48 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list as sandbox_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_ui;
+use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
-use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
-use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
-use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\files;
+// shared group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
-use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-
-use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
-use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
-use Zukunft\ZukunftCom\main\php\cfg\import\import;
-use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
+// test group (alphabetic by FQN)
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use DateTime;
-use Random\RandomException;
 use Exception;
+use Random\RandomException;
 
 class frontend
 {
@@ -1313,9 +1320,9 @@ class frontend
     /**
      * create the frontend object that is the base for the given view id
      * @param int $view_id the id of the predefined view
-     * @return sandbox_ui|sandbox_named_ui|db_object_ui|type_object the matching main frontend object
+     * @return sandbox_ui|sandbox_named_ui|db_object_ui|type_object|sandbox_list_ui the matching main frontend object
      */
-    private function view_id_to_dbo_ui(int $view_id): sandbox_ui|sandbox_named_ui|db_object_ui|type_object
+    private function view_id_to_dbo_ui(int $view_id): sandbox_ui|sandbox_named_ui|db_object_ui|type_object|sandbox_list_ui
     {
         // select the main object to display
         if ($view_id == views::START_ID) {
@@ -1356,6 +1363,8 @@ class frontend
             $dbo_ui = new language_ui(0, null);
         } elseif (in_array($view_id, views::CONFIRM_MASKS_IDS)) {
             $dbo_ui = new word_ui();
+        } elseif (in_array($view_id, views::CONTEXT_VIEW_IDS)) {
+            $dbo_ui = new phrase_list_ui();
         } elseif ($view_id === views::ABOUT_ID
             or $view_id === views::SETUP_ID) {
             $dbo_ui = new db_object_ui();

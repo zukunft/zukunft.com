@@ -40,7 +40,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::GROUP . 'group.php';
 //include_once html_paths::HELPER . 'config.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once html_paths::FORMULA . 'formula.php';
@@ -50,6 +52,7 @@ include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VERB . 'verb_list.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once html_paths::WORD . 'word.php';
@@ -57,6 +60,8 @@ include_once html_paths::WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
@@ -64,12 +69,15 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -77,7 +85,9 @@ use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class phrase_list extends sandbox_list_named
@@ -272,6 +282,67 @@ class phrase_list extends sandbox_list_named
             }
         }
         return $result;
+    }
+
+    /**
+     * to select a phrase from this list
+     * @param string $name the unique name within the html form for this selector
+     * @param string $form the name of the html form
+     * @param int|null $selected the row id of the suggested phrase or the already selected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @param msg_id $label_id the translation id for the text shown to the user
+     * @param string $style the style code e.g. to define the target width
+     * @return string the html code to select the phrase
+     */
+    public function phrase_selector(
+        string $name,
+        string $form,
+        ?int   $selected = null,
+        string $pattern = '',
+        msg_id $label_id = msg_id::FORM_SELECT_PHRASE,
+        string $style = view_styles::COL_SM_4
+    ): string
+    {
+        return $this->selector($form, $selected, $name, $label_id, $style, html_selector::TYPE_DATALIST);
+    }
+
+    /**
+     * create the HTML code to select a view
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with the suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+    ): string
+    {
+        // TODO Prio 0 add message text to $msg object
+        $msg = 'view selector not defined for ' . $this::class . '.';
+        log_warning($msg);
+        return $msg;
+    }
+
+    /**
+     * the html code to select a filename e.g. to upload the file
+     * @param string $form the name of the view which is also used for the html form name
+     * @param data_object|null $cfg the context used to create the view
+     * @return string with the html code to select a file
+     */
+    public function select_file(string $form, ?data_object $cfg = null): string
+    {
+        $name = '';
+        $lst = [];
+        if ($cfg !== null && $cfg->has_file_list()) {
+            $lst = $cfg->file_list();
+            if ($lst !== []) {
+                $name = $lst[0];
+            }
+        }
+        return $this->file_selector($form, $name, $lst);
     }
 
     /**

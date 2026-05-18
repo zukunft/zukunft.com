@@ -367,6 +367,9 @@ class system_view_ui_tests
         } elseif (in_array($id, views::SEARCH_MASKS_IDS)) {
             $name = views::TEST_VIEW_IDS[$id] ?? 'search';
             $result = ['search' . DIRECTORY_SEPARATOR, $prefix . $name, $name . ' view'];
+        } elseif (in_array($id, views::IM_EXPORT_MASKS_IDS)) {
+            $name = views::TEST_VIEW_IDS[$id] ?? 'im_export';
+            $result = ['im_export' . DIRECTORY_SEPARATOR, $prefix . $name, $name . ' view'];
         } else {
             $domain_class = $lib->class_to_name($class);
             $dbo_name = $prefix . $domain_class;
@@ -437,6 +440,12 @@ class system_view_ui_tests
         } elseif ($action == change_actions::DELETE) {
             $file_name = 'confirm_word_del';
             $test_name = 'confirm word del view';
+        } elseif ($id == views::SANDBOX_ID) {
+            $file_name = 'sandbox';
+            $test_name = 'confirm user sandbox view';
+        } elseif ($id == views::UNDO_ID) {
+            $file_name = 'undo';
+            $test_name = 'undo change view';
         }
         return [$folder, $prefix . $file_name, $test_name];
     }

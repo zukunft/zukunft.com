@@ -115,28 +115,29 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 
+// cfg group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
-use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -146,6 +147,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+// web group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
@@ -155,18 +157,20 @@ use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
 use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_object as type_object_ui;
-use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\view\term_view as view_link_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
-use Zukunft\ZukunftCom\main\php\web\view\term_view as view_link_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+// shared group (alphabetic by FQN)
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
@@ -181,12 +185,12 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
-use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+// test group (alphabetic by FQN)
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_mappers
@@ -1522,10 +1526,22 @@ class test_mappers
         $url_array = [];
         $url_array[] = [url_var::MASK, $msk_id];
         $t_usr = new test_users($this->env);
+        $t_phr = new test_phrases($this->env);
+        $t_frm = new test_formulas($this->env);
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
                 $obj_array = $this->user_step_url($obj, $msk_id);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case formula::class;
+                $obj = $t_frm->formula_filled();
+                $obj_array = $this->formula_url($obj, $msk_id);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case phrase_list::class;
+                $obj = $t_phr->phrase_list();
+                $obj_array = $this->phrase_list_url($obj, $msk_id);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case db_object::class;
@@ -1556,7 +1572,8 @@ class test_mappers
         $url_array[] = [url_var::MASK, $msk_id];
         $t_phr = new test_phrases($this->env);
         $phr_lst = $t_phr->phrase_list();
-        $url_array[] = [url_var::CONTEXT, implode(',', $phr_lst->id_lst())];
+        $obj_array = $this->phrase_list_url($phr_lst, $type);
+        $url_array = array_merge($url_array, $obj_array);
         switch ($class) {
             case word::class;
                 $t_wrd = new test_words($this->env);
@@ -1724,6 +1741,13 @@ class test_mappers
         $url_array[] = [url_var::SOURCE, $grp->source_id()];
         $url_array[] = [url_var::SHARE, $grp->share_id()];
         $url_array[] = [url_var::PROTECTION, $grp->protection_id()];
+        return $url_array;
+    }
+
+    private function phrase_list_url(phrase_list $phr_lst, string $type): array
+    {
+        $url_array = [];
+        $url_array[] = [url_var::CONTEXT, implode(',', $phr_lst->id_lst())];
         return $url_array;
     }
 

@@ -108,7 +108,7 @@ class element_group extends ListBase
     }
 
     // TODO handle multi entry cases if needed
-    function id(string $code_id): int
+    function id(string $code_id = ''): int
     {
         if (count($this->lst()) == 1) {
             return $this->lst()[0]->obj->id();

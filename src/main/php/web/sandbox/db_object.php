@@ -82,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -969,6 +970,34 @@ class db_object extends TextIdObject
         $msg = 'view selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
+    }
+
+    /**
+     * create the HTML code to select a file for im- or export
+     * @param string $form the name of the html form
+     * @param string|null $name the suggested name of the file
+     * @param array $lst with the suggested file names
+     * @return string the html code to select a view
+     */
+    public function file_selector(
+        string      $form,
+        string|null $name = '',
+        array       $lst = [],
+        msg_id      $msg_id = msg_id::FORM_SELECT_FILE
+    ): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $action = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $form;
+        $frm_str = $html->form_field('fileToUpload', $msg_id, $name, html_base::INPUT_FILE);
+        $frm_str .= $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_IMPORT));
+        $result = '<' . html_base::FORM
+            . ' ' . html_base::ACTION . '="' . $action . '"'
+            . ' ' . html_base::METHOD . '="' . html_base::METHOD_POST . '"'
+            . ' ' . html_base::ENCTYPE . '="multipart/form-data">'
+            . $frm_str
+            . '</' . html_base::FORM . '>';
+        return $result;
     }
 
     /**

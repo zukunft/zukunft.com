@@ -363,7 +363,7 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 70;
+    const int MAX_TEST_ID = 80;
 
 
     const string COMPANY_RATIO_NAME = 'company ratios';
@@ -556,11 +556,14 @@ class views
     ];
 
     // system masks that are used for all objects to confirm a change
+    // sandbox is included because the user sandbox can be confirmed
     const array CONFIRM_MASKS_IDS = [
         self::CONFIRM_ADD_ID,
         self::CONFIRM_EDIT_ID,
         self::CONFIRM_DEL_ID,
         self::CONFIRM_VIEWS_ID,
+        self::SANDBOX_ID,
+        self::UNDO_ID,
     ];
 
     // general and static system views
@@ -579,6 +582,30 @@ class views
     const array CONTEXT_VIEW_IDS = [
         self::WORD_FIND_ID,
         self::SEARCH_FULL_ID,
+        self::PASTE_TABLE_ID,
+        self::IMPORT_ID,
+        self::EXPORT_ID,
+        self::EXPORT_JSON_ID,
+        self::EXPORT_XML_ID,
+        self::EXPORT_CSV_ID,
+        self::EXPORT_ODS_ID,
+    ];
+
+    // system forms for interactive and complex object selection
+    const array SEARCH_MASKS_IDS = [
+        self::WORD_FIND_ID,
+        self::SEARCH_FULL_ID,
+    ];
+
+    // system forms to im- and export a data selection
+    const array IM_EXPORT_MASKS_IDS = [
+        self::PASTE_TABLE_ID,
+        self::IMPORT_ID,
+        self::EXPORT_ID,
+        self::EXPORT_JSON_ID,
+        self::EXPORT_XML_ID,
+        self::EXPORT_CSV_ID,
+        self::EXPORT_ODS_ID,
     ];
 
     // system masks that only used to display a sandbox object
@@ -698,12 +725,7 @@ class views
         self::JOB_ASYNC_ID,
         self::JOB_CONTROL_ID,
         self::JOB_CHECK_ID,
-    ];
-
-    // system forms for interactive and complex object selection
-    const array SEARCH_MASKS_IDS = [
-        self::WORD_FIND_ID,
-        self::SEARCH_FULL_ID,
+        self::FORMULA_TEST_ID,
     ];
 
     // system masks that trigger an action via GET (no form submission required)

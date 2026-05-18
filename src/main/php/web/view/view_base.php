@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -64,6 +65,7 @@ include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
@@ -273,7 +275,7 @@ class view_base extends sandbox_code_id
         return parent::name_link($back, $style, $msk_id);
     }
 
-    function title(db_object|type_object $dbo): string
+    function title(db_object|type_object|sandbox_list $dbo): string
     {
         return $this->name() . ' ' . $dbo->name();
     }

@@ -37,10 +37,12 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class ui_im_export extends ui_base
@@ -49,35 +51,44 @@ class ui_im_export extends ui_base
     /**
      * the html code to select a filename e.g. to upload the file
      * TODO Prio 1 review
-     * @param db_object $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object|sandbox_list $dbo the word, triple or formula object that should be shown to the user
      * @param string $form the name of the view which is also used for the html form name
      * @param data_object|null $cfg the context used to create the view
      * @return string with the html code to select a view
      */
-    function select_file(db_object $dbo, string $form, ?data_object $cfg = null): string
+    function select_file(
+        db_object|sandbox_list $dbo,
+        string                 $form,
+        data_object|null       $cfg = null
+    ): string
     {
-        $msk_lst = null;
-        // over
+        $lst = [];
+        // create a name of suggested file names
         if ($cfg != null) {
-            if ($cfg->has_view_list()) {
-                $msk_lst = $cfg->view_list();
+            if ($cfg->has_file_list()) {
+                $lst = $cfg->file_list();
             }
         }
-        if ($msk_lst == null) {
-            $msk_lst = $dbo->view_list();
+        // select to most likely name
+        if (count($lst) > 0) {
+            $name = $lst[0];
         }
-        return $dbo->view_selector($form, $msk_lst);
+        return $dbo->file_selector($form, $name, $lst);
     }
 
     /**
      * the html code to select a filename e.g. to upload the file
      * TODO Prio 1 review
-     * @param db_object $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object|sandbox_list $dbo the word, triple or formula object that should be shown to the user
      * @param string $form the name of the view which is also used for the html form name
      * @param data_object|null $cfg the context used to create the view
      * @return string with the html code to select a view
      */
-    function select_export_format(db_object $dbo, string $form, ?data_object $cfg = null): string
+    function select_export_format(
+        db_object|sandbox_list $dbo,
+        string                 $form,
+        ?data_object           $cfg = null
+    ): string
     {
         $msk_lst = null;
         // over
