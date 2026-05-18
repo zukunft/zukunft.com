@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once paths::SHARED_CONST . 'views.php';
 //include_once paths::SHARED . 'json_fields.php';
 //include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::PHRASE . 'phrase.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::WORD . 'word.php';
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -263,6 +265,19 @@ class type_object
             $phr_lst->add(new word()->math()->phrase());
         }
         return $phr_lst;
+    }
+
+
+    /*
+     * cast
+     */
+
+    function phrase(): phrase
+    {
+        $phr = new phrase();
+        $phr->set_name('unassigned phrase for type ' . $this->name);
+        // TODO Prio 2 link a phrase to each type object to be able to use also graph values and function for types
+        return $phr;
     }
 
     /*

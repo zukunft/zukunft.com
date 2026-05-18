@@ -57,10 +57,12 @@ include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
@@ -145,10 +147,12 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list as sandbox_list_ui;
@@ -1321,9 +1325,9 @@ class frontend
     /**
      * create the frontend object that is the base for the given view id
      * @param int $view_id the id of the predefined view
-     * @return sandbox_ui|sandbox_named_ui|db_object_ui|type_object|sandbox_list_ui the matching main frontend object
+     * @return sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui the matching main frontend object
      */
-    private function view_id_to_dbo_ui(int $view_id): sandbox_ui|sandbox_named_ui|db_object_ui|type_object|sandbox_list_ui
+    private function view_id_to_dbo_ui(int $view_id): sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui
     {
         // select the main object to display
         if ($view_id == views::START_ID) {
@@ -1364,6 +1368,10 @@ class frontend
             $dbo_ui = new language_ui(0, null);
         } elseif (in_array($view_id, views::CONFIRM_MASKS_IDS)) {
             $dbo_ui = new word_ui();
+        } elseif (in_array($view_id, views::PHRASE_MASKS_IDS)) {
+            $dbo_ui = new phrase_ui();
+        } elseif (in_array($view_id, views::CHANGEABLE_PHRASE_VIEW_IDS)) {
+            $dbo_ui = new phrase_ui();
         } elseif (in_array($view_id, views::CONTEXT_VIEW_IDS)) {
             $dbo_ui = new phrase_list_ui();
         } elseif (in_array($view_id, views::JOB_MASKS_IDS)) {

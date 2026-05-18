@@ -47,6 +47,11 @@ class views
     const string START_COM = 'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.';
     const int START_ID = 1;
 
+    // the id of the last system view that should be included in the unit testing
+    const int MIN_TEST_ID = 1;
+    // TODO Prio 1 set to 109
+    const int MAX_TEST_ID = 100;
+
     // curl views for main objects
     const string WORD_ADD = 'word_add';
     const int WORD_ADD_ID = 2;
@@ -360,11 +365,6 @@ class views
     const string ERR_LOG = 'error_log';
     const string ERR_UPD = 'error_update';
 
-    // the id of the last system view that should be included in the unit testing
-    const int MIN_TEST_ID = 1;
-    // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 90;
-
 
     const string COMPANY_RATIO_NAME = 'company ratios';
     const string NESN_2016_FS_NAME = 'Nestlé Financial Statement 2016';
@@ -457,6 +457,7 @@ class views
         self::VERB_EDIT_ID,
         self::VERB_DEL_ID,
         self::VERBS_ID,
+        self::VERB_ID,
     ];
 
     // system masks that have a triple as the main object
@@ -464,6 +465,12 @@ class views
         self::TRIPLE_ADD_ID,
         self::TRIPLE_EDIT_ID,
         self::TRIPLE_DEL_ID,
+        self::TRIPLE_ID,
+    ];
+
+    // default view for a phrase
+    const array PHRASE_MASKS_IDS = [
+        self::PHRASE_ID,
     ];
 
     // system masks that have a source as the main object
@@ -471,6 +478,7 @@ class views
         self::SOURCE_ADD_ID,
         self::SOURCE_EDIT_ID,
         self::SOURCE_DEL_ID,
+        self::SOURCE_ID,
     ];
 
     // system masks that have a reference as the main object
@@ -478,6 +486,7 @@ class views
         self::REF_ADD_ID,
         self::REF_EDIT_ID,
         self::REF_DEL_ID,
+        self::REF_ID,
     ];
 
     // system masks that have a group as the main object
@@ -493,6 +502,7 @@ class views
         self::VALUE_EDIT_ID,
         self::VALUE_DEL_ID,
         self::VALUE_DETAIL_ID,
+        self::VALUE_ID,
     ];
 
     // system masks that have a formula as the main object
@@ -501,6 +511,7 @@ class views
         self::FORMULA_EDIT_ID,
         self::FORMULA_DEL_ID,
         self::FORMULA_TEST_ID,
+        self::FORMULA_ID,
     ];
 
     // system masks that have a result as the main object
@@ -509,6 +520,7 @@ class views
         self::RESULT_EDIT_ID,
         self::RESULT_DEL_ID,
         self::RESULT_EXPLAIN_ID,
+        self::RESULT_ID,
     ];
 
     // system masks that have a view as the main object
@@ -558,6 +570,7 @@ class views
         self::LANGUAGE_ADD_ID,
         self::LANGUAGE_EDIT_ID,
         self::LANGUAGE_DEL_ID,
+        self::LANGUAGE_ID,
         self::LANGUAGE_SELECT_ID,
     ];
 
@@ -589,6 +602,7 @@ class views
     const array SYSTEM_LOG_VIEW_IDS = [
         self::ERROR_LOG_ID,
         self::ERROR_UPDATE_ID,
+        self::SYSTEM_LOG_ID,
     ];
 
     // system views that are using a phrase list as a context e.g. that use the phrases as preselection for search
@@ -602,6 +616,19 @@ class views
         self::EXPORT_XML_ID,
         self::EXPORT_CSV_ID,
         self::EXPORT_ODS_ID,
+        self::GRAPH_ID,
+        self::SIMPLE_ID,
+    ];
+
+    // views that the user can change and are not used for a system process that use a single phrase as stating point
+    const array CHANGEABLE_PHRASE_VIEW_IDS = [
+        self::RANKING_ID,
+        self::SCIENCE_ID,
+        self::HISTORIC_ID,
+        self::BIOLOGICAL_ID,
+        self::EDUCATION_ID,
+        self::TOURISTIC_ID,
+        self::MATH_CONST_ID,
     ];
 
     // system forms for interactive and complex object selection

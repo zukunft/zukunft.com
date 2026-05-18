@@ -152,6 +152,7 @@ class url_var
     const string NUMERIC_VALUE = 'n';
     const string DESCRIPTION = 'o'; // the description of a word, verb, triple, ... of a form field
     const string PHRASE = 'p'; // the id or name of one phrase
+    const string PHRASE_CLASS = 'pc'; // word or triple class indicator of the phrase
     const string DIRECTION = 'pd'; // 'up' to get the parents and 'down' for the children
     const string PHRASE_FROM = 'pf';
     const string PHRASE_LIST = 'pl'; // a list of phrase ids
@@ -313,6 +314,7 @@ class url_var
 
     // phrase
     const string PHRASE_HUMAN = 'phrase_id';
+    const string PHRASE_CLASS_HUMAN = 'phrase_class'; // word or triple class indicator of the phrase
     const string PHRASE_TYPE_HUMAN = 'phrase_type';
     const string PHRASE_LIST_HUMAN = 'phrase_ids';
     const string PHRASE_POS_HUMAN = 'phrase_id_pos_'; // used for a list of phrases where the list position is added to the name
@@ -524,6 +526,7 @@ class url_var
 
         // phrase
         [self::PHRASE_HUMAN, self::PHRASE],
+        [self::PHRASE_CLASS_HUMAN, self::PHRASE_CLASS],
         [self::PHRASE_LIST_HUMAN, self::PHRASE_LIST],
         [self::PHRASE_POS_HUMAN, self::PHRASE_POS],
 

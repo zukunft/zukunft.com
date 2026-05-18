@@ -114,6 +114,7 @@ include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 
@@ -187,6 +188,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
@@ -1030,6 +1032,7 @@ class test_mappers
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $t_trp = new test_triples($this->env);
+        $t_phr = new test_phrases($this->env);
         $t_src = new test_sources($this->env);
         $t_ref = new test_refs($this->env);
         $t_val = new test_values($this->env);
@@ -1037,6 +1040,7 @@ class test_mappers
         $t_res = new test_results($this->env);
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
+        $t_lan = new test_languages();
         $t_slg = new test_sys_log($this->env);
         switch ($class) {
             case user::class;
@@ -1057,6 +1061,11 @@ class test_mappers
             case triple::class;
                 $obj = $t_trp->triple_filled();
                 $obj_array = $this->triple_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case phrase::class;
+                $obj = $t_phr->phrase_filled();
+                $obj_array = $this->phrase_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case source::class;
@@ -1092,6 +1101,11 @@ class test_mappers
             case component::class;
                 $obj = $t_cmp->component_filled();
                 $obj_array = $this->component_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case language::class;
+                $obj = $t_lan->language_filled();
+                $obj_array = $this->language_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case sys_log::class;
@@ -1716,8 +1730,27 @@ class test_mappers
         $url_array[] = [url_var::SHARE, $trp->share_id()];
         $url_array[] = [url_var::PROTECTION, $trp->protection_id()];
         $url_array[] = [url_var::VIEW, $trp->get_view_id()];
-        $url_array[] = [url_var::USAGE, $trp->usage];
-        $url_array[] = [url_var::IMPACT, $trp->impact];
+            $url_array[] = [url_var::USAGE, $trp->usage];
+            $url_array[] = [url_var::IMPACT, $trp->impact];
+        return $url_array;
+    }
+
+    private function phrase_url(phrase $trp, string $type): array
+    {
+        $phr_class = $trp->is_word() ? json_fields::CLASS_WORD : json_fields::CLASS_TRIPLE;
+        $url_array = [];
+        $url_array[] = [url_var::PHRASE_CLASS, $phr_class];
+        $url_array[] = [url_var::NAME, $trp->name()];
+        $url_array[] = [url_var::PHRASE_FROM, $trp->from_id()];
+        $url_array[] = [url_var::VERB, $trp->get_verb_id()];
+        $url_array[] = [url_var::PHRASE_TO, $trp->to_id()];
+        $url_array[] = [url_var::NAME, $trp->name_given()];
+        $url_array[] = [url_var::DESCRIPTION, $trp->get_description()];
+        $url_array[] = [url_var::SHARE, $trp->share_id()];
+        $url_array[] = [url_var::PROTECTION, $trp->protection_id()];
+        $url_array[] = [url_var::VIEW, $trp->get_view_id()];
+        $url_array[] = [url_var::USAGE, $trp->usage()];
+        $url_array[] = [url_var::IMPACT, $trp->impact()];
         return $url_array;
     }
 

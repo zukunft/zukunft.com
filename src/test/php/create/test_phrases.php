@@ -73,6 +73,12 @@ class test_phrases
         return $t_wrd->word()->phrase();
     }
 
+    function phrase_filled(): phrase
+    {
+        $t_trp = new test_triples($this->env);
+        return $t_trp->triple_filled()->phrase();
+    }
+
     function phrase_pi(): phrase
     {
         $t_trp = new test_triples($this->env);

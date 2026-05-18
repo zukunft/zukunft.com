@@ -521,6 +521,57 @@ class phrase extends combine_named
         return $this->obj()->protection_id();
     }
 
+    function from_id(): int
+    {
+        if ($this->is_word()) {
+            return 0;
+        } else {
+            return $this->obj()->from_id();
+        }
+    }
+
+    function get_verb_id(): int
+    {
+        if ($this->is_word()) {
+            return 0;
+        } else {
+            return $this->obj()->get_verb_id();
+        }
+    }
+
+    function name_given(): string
+    {
+        if ($this->is_word()) {
+            return '';
+        } else {
+            return $this->obj()->name_given();
+        }
+    }
+
+    function to_id(): int
+    {
+        if ($this->is_word()) {
+            return 0;
+        } else {
+            return $this->obj()->to_id();
+        }
+    }
+
+    function get_view_id(): int
+    {
+        return $this->obj()->get_view_id();
+    }
+
+    function usage(): int
+    {
+        return $this->obj()->usage;
+    }
+
+    function impact(): float
+    {
+        return $this->obj()->impact;
+    }
+
     function is_similar(phrase|term|type_object|sandbox|null $obj_to_check): bool
     {
         if ($obj_to_check::class == phrase::class or $obj_to_check::class == term::class) {
@@ -826,12 +877,12 @@ class phrase extends combine_named
         $this->reset(true);
 
         if (array_key_exists(json_fields::OBJECT_CLASS, $in_ex_json)) {
-            $class =  $in_ex_json[json_fields::OBJECT_CLASS];
-            if ($class == json_fields::CLASS_WORD)  {
+            $class = $in_ex_json[json_fields::OBJECT_CLASS];
+            if ($class == json_fields::CLASS_WORD) {
                 $wrd = new word($this->get_user());
                 $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($wrd);
-            } elseif ($class == json_fields::CLASS_TRIPLE)  {
+            } elseif ($class == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->get_user());
                 $trp->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($trp);

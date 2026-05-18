@@ -35,9 +35,11 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 
 class ui_base
@@ -54,7 +56,7 @@ class ui_base
     /**
      * @return string the name of a phrase and give the user the possibility to change the phrase name
      */
-    function phrase_name(db_object $phr): string
+    function phrase_name(db_object|combine_named $phr): string
     {
         return $phr->name();
     }

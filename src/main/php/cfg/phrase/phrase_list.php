@@ -88,6 +88,7 @@ include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'trm_ids.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';

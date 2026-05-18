@@ -33,8 +33,6 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -45,9 +43,13 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::MODEL_HELPER . 'combine_object.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_RESULT . 'result.php';
@@ -74,8 +76,13 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -375,6 +382,12 @@ class system_view_ui_tests
             $domain_class = $lib->class_to_name($class);
             $dbo_name = $prefix . $domain_class;
             $dbo_id = $url_array[url_var::ID] ?? 0;
+            // TODO Prio 2 use $lib function to convert the phrase (or term) id to the object id
+            if ($class == phrase::class or $class == term::class) {
+                if ($dbo_id < 0) {
+                    $dbo_id = $dbo_id * -1;
+                }
+            }
             if ($action != change_actions::SHOW) {
                 if (in_array($id, views::PROCESS_STEP_MASKS_IDS)) {
                     $dbo_name .= '_' . (views::TEST_VIEW_IDS[$id] ?? $action);
@@ -451,7 +464,7 @@ class system_view_ui_tests
         return [$folder, $prefix . $file_name, $test_name];
     }
 
-    private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object|phrase_list
+    private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object|combine_object|phrase_list
     {
         // select the backend object to display
         // TODO add any missing system views like
@@ -505,6 +518,10 @@ class system_view_ui_tests
             $dbo = new db_object();
         } elseif (in_array($view_id, view_shared::SYSTEM_LOG_VIEW_IDS)) {
             $dbo = new sys_log();
+        } elseif (in_array($view_id, view_shared::PHRASE_MASKS_IDS)) {
+            $dbo = new phrase($usr);
+        } elseif (in_array($view_id, view_shared::CHANGEABLE_PHRASE_VIEW_IDS)) {
+            $dbo = new phrase($usr);
         } elseif (in_array($view_id, view_shared::CONTEXT_VIEW_IDS)) {
             $dbo = new phrase_list($usr);
         } elseif (in_array($view_id, view_shared::JOB_MASKS_IDS)) {
