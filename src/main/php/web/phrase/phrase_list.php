@@ -58,6 +58,7 @@ include_once html_paths::WORD . 'triple_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -83,6 +84,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -339,6 +341,8 @@ class phrase_list extends sandbox_list_named
 
     /**
      * create the HTML code to select a view
+     * overrides db_object::view_selector for phrase_list objects
+     * since a phrase_list is not a sandbox object, the default view falls back to the bare phrase view
      * @param string $form the name of the html form
      * @param view_list $msk_lst with the suggested views
      * @param string $name the unique html field name for the selection of the view
@@ -351,10 +355,8 @@ class phrase_list extends sandbox_list_named
         msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
-        // TODO Prio 0 add message text to $msg object
-        $msg = 'view selector not defined for ' . $this::class . '.';
-        log_warning($msg);
-        return $msg;
+        $msk_lst = $msk_lst->ex_system();
+        return $msk_lst->selector($form, views::PHRASE_ID, $name, $msg_id);
     }
 
     /**

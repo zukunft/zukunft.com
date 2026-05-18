@@ -1258,7 +1258,7 @@ class system_form extends component
      */
     function form_value_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->ref_type_selector($form_name, $typ_lst);
+        return $dbo->value_type_selector($form_name, $typ_lst);
     }
 
     /**

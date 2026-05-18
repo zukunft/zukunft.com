@@ -36,15 +36,19 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -232,6 +236,48 @@ class formula_link extends sandbox_link
     function phrase_name(): ?string
     {
         return $this->phrase()?->name();
+    }
+
+
+    /*
+     * select
+     */
+
+    /**
+     * create the html code to select the linked formula
+     * overrides db_object::formula_selector for formula_link objects
+     * @param string $form the name of the html form
+     * @param formula_list $frm_lst with the suggested formulas
+     * @param string $name the unique html form field name
+     * @return string the html code to select a formula
+     */
+    public function formula_selector(
+        string       $form,
+        formula_list $frm_lst,
+        string       $name = url_var::FORMULA
+    ): string
+    {
+        $frm_id = $this->formula()?->id();
+        if ($frm_id == null) {
+            $frm_id = $frm_lst->default_id($this);
+        }
+        return $frm_lst->selector($form, $frm_id, $name, msg_id::FORM_SELECT_FORMULA);
+    }
+
+    /**
+     * create the html code to select the formula link type
+     * overrides db_object::formula_link_type_selector; uses the predicate_id as current value
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the preloaded formula link types
+     * @return string the html code to select the formula link type
+     */
+    public function formula_link_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $used_id = $this->predicate_id;
+        if ($used_id == null) {
+            $used_id = $typ_lst->html_formula_link_types->default_id();
+        }
+        return $typ_lst->html_formula_link_types->selector($form, $used_id);
     }
 
 
