@@ -800,6 +800,7 @@ class views
     // system masks that trigger an action via GET (no form submission required)
     const array GET_ACTION_IDS = [
         self::LOGOUT_ID,
+        self::ERROR_UPDATE_ID,
     ];
 
     // TODO Prio 0 convert to a key value map and use id for code_id_to_id and id_to_code_id

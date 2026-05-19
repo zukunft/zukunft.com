@@ -5390,6 +5390,7 @@
     \-- api_json - section for function api_json not yet defined that it should be api in /system/sys_log_list.php
     \-- api_array - section for function api_array not yet defined that it should be api in /system/sys_log_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/sys_log_list.php
+    \-- is_empty - section for function is_empty is expected to be info in /system/sys_log_list.php
     \-- display - section for function display not yet defined that it should be display in /system/sys_log_list.php
     \-- display_admin - section for function display_admin not yet defined that it should be display in /system/sys_log_list.php
     \-- get_html - section for function get_html is expected to be set and get in /system/sys_log_list.php
@@ -6573,11 +6574,11 @@
     \-- error_log
         \-- system_page - @return string with the HTML code to show all relations of a value
     \-- error_update
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
     \-- process_progress
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
     \-- process_list
-        \-- system_page - @return string with the HTML code to show all relations of a value
+        \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
     \-- admin_url_delay
         \-- system_page - @return string with the HTML code that contains the most relevant user response delay within a time period defined in the system configuration
     \-- admin_login_fails
@@ -6587,7 +6588,7 @@
     \-- admin_errors_delayed_fix
         \-- system_page - @return string with the HTML code that all internal system errors that have not been updated since a some time (as defined in the system config)
     \-- admin_jobs_delayed
-        \-- system_page - @return string with the HTML code that shows all not yet closed system jobs in order of the delay
+        \-- system_page - render an HTML table of all not-yet-closed system jobs ordered by the longest delay first;
     \-- text
         \-- ui_base - @return string a fixed text
     \-- phrase_name
@@ -6828,6 +6829,8 @@
         \-- phrase_list - @return string one string with all names of the list and reduced in size mainly for debugging
     \-- common
         \-- phrase_list - @return array all phrases that are part of given list and this list
+    \-- is_empty
+        \-- sys_log_list - @return bool true when the list contains no entries; mirrors the ListBase API so callers
     \-- filter
         \-- value_list - get a list with the values related directly to the given word, triple or source
 \-- object vars

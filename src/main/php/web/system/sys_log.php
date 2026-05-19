@@ -39,6 +39,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\web\log\log;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -287,7 +289,7 @@ class sys_log extends log
         $row .= $html->td($this->status());
         if ($usr->is_admin() or $usr->is_system()) {
             $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
-            $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
+            $url = $html->url_new(views::ERROR_UPDATE_ID, $this->id, '', $back, '', $par_status);
             $row .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
         }
         return $html->tr($row);
@@ -349,7 +351,7 @@ class sys_log extends log
         if ($usr != null) {
             if ($usr->is_admin() or $usr->is_system()) {
                 $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
-                $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
+                $url = $html->url_new(views::ERROR_UPDATE_ID, $this->id, '', $back, '', $par_status);
                 $row_text .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
             }
         }

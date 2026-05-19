@@ -42,6 +42,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::SYSTEM . 'job.php';
+include_once html_paths::SYSTEM . 'job_list.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::USER . 'user.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
@@ -52,6 +55,9 @@ include_once paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\job;
+use Zukunft\ZukunftCom\main\php\web\system\job_list;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -367,10 +373,41 @@ class system_page extends component
         return 'error_log placeholder';
     }
 
-    // TODO Prio 0 fill with real code
-    function error_update(): string
+    /**
+     * render the admin error-update page body: a table of unresolved program issues an admin can
+     * review and re-status; mirrors the display path of /http/error_update.php — the actual sys_log
+     * status change is dispatched by the URL action handler so this body only renders the data
+     *
+     * @param sys_log_list|null $errors pre-loaded list of unresolved program issues; when null or
+     *                                  empty the "no open errors" notice is shown
+     * @param user_dsp|null $usr the session user; when null or not an admin a permission notice is
+     *                           rendered instead of the issue list — default-deny matches the
+     *                           legacy /http/error_update.php behaviour where anyone but an admin
+     *                           saw the permission notice; the same user is forwarded to the
+     *                           per-row renderer so each status-change link carries the right context
+     * @param string $back back-link forwarded to each row's status-change link so navigation is preserved
+     * @return string the HTML body for the error_update page
+     */
+    function error_update(
+        ?sys_log_list $errors = null,
+        ?user_dsp     $usr = null,
+        string        $back = ''
+    ): string
     {
-        return 'error_update placeholder';
+        global $mtr;
+
+        $html = new html_base();
+
+        // default-deny: only an explicit admin sees the issue list; everyone else gets the permission notice
+        if ($usr === null or !$usr->is_admin()) {
+            $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_PERMISSION_DENIED));
+        } elseif ($errors !== null and !$errors->is_empty()) {
+            $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_PROGRAM_ISSUES))
+                . $errors->get_html($usr, $back);
+        } else {
+            $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_NO_OPEN));
+        }
+        return $result;
     }
 
     // TODO Prio 0 fill with real code
@@ -425,13 +462,45 @@ class system_page extends component
         return 'admin_errors_delayed_fix placeholder';
     }
 
-    // TODO Prio 0 fill with real code
     /**
-     * @return string with the HTML code that shows all not yet closed system jobs in order of the delay
+     * render an HTML table of all not-yet-closed system jobs ordered by the longest delay first;
+     * "delay" is the time elapsed between request_time and now, and a job is "not yet closed" when end_time is null;
+     * sorting by request_time ascending puts the longest-waiting job at the top of the table
+     *
+     * @param job_list|null $jobs the open-jobs list to render; when null or empty an empty-state row is shown
+     *                            so the column headers stay visible to the admin
+     * @return string the HTML code of the delayed-jobs table
      */
-    function admin_jobs_delayed(): string
+    function admin_jobs_delayed(?job_list $jobs = null): string
     {
-        return 'admin_jobs_delayed placeholder';
+        global $mtr;
+
+        $html = new html_base();
+
+        // keep only jobs that have not yet ended and sort by request_time ascending so the longest-waiting job is first
+        $open = [];
+        if ($jobs !== null and !$jobs->is_empty()) {
+            foreach ($jobs->lst() as $job_obj) {
+                if ($job_obj->end_time() === null) {
+                    $open[] = $job_obj;
+                }
+            }
+            usort($open, fn(job $a, job $b) => $a->request_time() <=> $b->request_time());
+        }
+
+        // build the body: one row per open job, or a single empty-state cell when no open jobs are available
+        $body = '';
+        foreach ($open as $job_obj) {
+            $body .= $html->tr($job_obj->display());
+        }
+        if ($body === '') {
+            $body = $html->tr($html->td($mtr->txt(msg_id::ADMIN_NO_OPEN_JOBS)));
+        }
+
+        // TODO Prio 1 wire the data source: load via web/system/job_list with the cut_off_time from the system config
+        // job::header() already returns a full <tr><th>…</th></tr> row, so a fresh job instance is used to render the header
+        $result = $html->tbl(new job()->header() . $body);
+        return $result;
     }
 
 }

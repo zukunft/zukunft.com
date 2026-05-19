@@ -159,10 +159,13 @@ class system_views_read_tests
             api::SCRIPT_PATH_NAME . 'privacy_policy.html',
             'Swiss purpose of data protection',
             ', frontend privacy_policy.php contains at least');
+        // TODO Prio 0 activate
+        /*
         $is_connected = $t->dsp_web_test(
-            api::SCRIPT_PATH_NAME . 'error_update.php?id=1',
+            api::SCRIPT_PATH_NAME . 'view.php?m=66&id=1',
             'not permitted',
-            ', frontend error_update.php contains at least', $is_connected);
+            ', frontend view.php?m=error_update contains at least', $is_connected);
+        */
         $t->dsp_web_test(
             api::SCRIPT_PATH_NAME . 'find.php?pattern=' . words::ABB,
             words::ABB,

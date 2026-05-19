@@ -125,6 +125,7 @@ include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
@@ -136,6 +137,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log as sys_log_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 // web group (alphabetic by FQN)
@@ -619,6 +621,7 @@ class frontend
             $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $usr_msg, $usr_backend, $usr, $do_it),
             $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr, $usr_msg, $do_it),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $usr_msg, $do_it),
+            $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $usr_backend, $usr_msg, $do_it),
             in_array($view, views::ADD_MASKS_IDS) => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
             in_array($view, views::EDIT_MASKS_IDS) => $url = $this->action_crud(
@@ -1212,6 +1215,50 @@ class frontend
             $next_url = $url_array;
             unset($next_url[url_var::POST_SUBMIT]);
         }
+        return $next_url;
+    }
+
+    /**
+     * apply a sys_log status update on behalf of an admin; mirrors the action portion of
+     * the legacy /http/error_update.php script: when an admin clicks "close" on a sys_log row
+     * the id + status arrive as URL parameters and the matching entry is saved with the new
+     * status; non-admins and incomplete parameters are ignored — the page is just re-rendered
+     *
+     * @param array $url_array the normalised URL params; expects ID (log id) and
+     *                         rest_ctrl::PAR_LOG_STATUS (new status id)
+     * @param user_backend $usr_backend the session user; only admins may perform this action
+     * @param user_message $usr_msg collects backend errors so they surface in the notification bar
+     * @param bool $do_it set to false in unit tests so the DB is not touched
+     * @return array the URL array for the next page — stays on the error_update view with the
+     *               action parameters stripped so a page reload does not re-submit the change
+     */
+    private function action_error_update(
+        array        $url_array,
+        user_backend $usr_backend,
+        user_message $usr_msg,
+        bool         $do_it
+    ): array
+    {
+        if ($do_it and $usr_backend->is_admin()) {
+            $log_id = (int)($url_array[url_var::ID] ?? 0);
+            $status_id = (int)($url_array[rest_ctrl::PAR_LOG_STATUS] ?? 0);
+            if ($log_id > 0 and $status_id > 0) {
+                $err_entry = new sys_log_backend();
+                $err_entry->set_user($usr_backend);
+                $err_entry->id = $log_id;
+                $err_entry->status_id = $status_id;
+                $save_msg = new backend_user_message();
+                $err_entry->save($save_msg);
+                $dsp_msg = new user_message();
+                $dsp_msg->api_mapper($save_msg->api_array());
+                $usr_msg->merge($dsp_msg);
+            }
+        }
+        $next_url = $url_array;
+        unset($next_url[url_var::ID]);
+        unset($next_url[rest_ctrl::PAR_LOG_STATUS]);
+        unset($next_url[url_var::POST_SUBMIT]);
+        $next_url[url_var::MASK] = views::ERROR_UPDATE_ID;
         return $next_url;
     }
 

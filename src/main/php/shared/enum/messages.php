@@ -1672,6 +1672,10 @@ enum messages: string
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
+    case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
+    case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';
+    case ERROR_UPDATE_NO_OPEN = 'error_update_no_open';
+    case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
 
 
     /*

@@ -366,6 +366,15 @@ All objects used in tests must be created by a factory function in `src/test/php
 
 When a needed factory method does not yet exist, add it to the appropriate `test_*.php` file in `src/test/php/create/` before writing the test. The `test_mappers.php` class coordinates factory calls when a test needs to resolve a class name to a test object at runtime.
 
+### Page-based UI tests for component-type renderers
+
+Every UI rendering function dispatched from `web/component/component_exe.php` — every arm of its `match ($tc_id)` block, e.g. `admin_jobs_delayed()` in `web/component/execute/system_page.php` — must have a page-based test that captures its HTML output. Tests live in `src/test/php/unit_ui/<topic>_ui_tests.php` and are invoked from a `run(test_cleanup $t): void` method that snapshots the rendered fragment via `$t->html_page_test(...)`.
+
+- **Right**: `admin_jobs_delayed()` is exercised by `job_ui_tests::run()`, which builds a small page (heading + the rendered HTML) and snapshots it. Any change to the function's output then either confirms the new snapshot or surfaces as a test failure.
+- **Wrong**: adding a new component-type renderer to the `component_exe.php` match arm without a corresponding entry in any `*_ui_tests::run()` — the HTML output goes untested and regressions are silent.
+
+Pick the topic file by the domain the renderer belongs to (jobs → `job_ui_tests`, sources → `source_ui_tests`, references → `reference_ui_tests`, etc.). When a renderer fits no existing topic, add a new `*_ui_tests.php` file in `src/test/php/unit_ui/` rather than overloading an unrelated one.
+
 ### Single return per function
 
 Every function must have exactly one `return` statement, placed at the end. Assign the result to a named variable (`$result`, `$next_url`, etc.) and return it at the bottom.
