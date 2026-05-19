@@ -285,6 +285,13 @@ class component_exe extends component
             component_types::ADMIN_FORM_FIELD_USER_PASSWORD => $form->admin_form_user_password($dbo),
             component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL => $form->admin_form_language_symbol($dbo),
             component_types::FIELD_LANGUAGE_SYMBOL => $form->show_language_symbol($dbo),
+            component_types::SYSTEM_ADMIN_URL_DELAY => $page->admin_url_delay(),
+            component_types::SYSTEM_ADMIN_LOGIN_FAILS => $page->admin_login_fails(),
+            component_types::SYSTEM_ADMIN_ERRORS_UNASSIGNED => $page->admin_errors_unassigned(),
+            component_types::SYSTEM_ADMIN_ERRORS_DELAYED_FIX => $page->admin_errors_delayed_fix(),
+            component_types::SYSTEM_ADMIN_JOBS_DELAYED => $page->admin_jobs_delayed(),
+            component_types::SELECT_LIST => $select->list_select($dbo, $cfg->typ_lst_cache->html_languages, $form_name),
+            component_types::EXPRESSION => $base->expression($dbo),
 
             // buttons
             component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo->id()),
@@ -366,6 +373,7 @@ class component_exe extends component
             component_types::VALUE_NAME => $base->value_name($dbo),
             component_types::GROUP_NAME => $base->group_name($dbo),
             component_types::VALUE_NUMERIC => $base->num_value($dbo),
+            component_types::MAIN_VALUE => $base->main_value($dbo),
 
             // other
             component_types::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
@@ -379,6 +387,16 @@ class component_exe extends component
             component_types::USED_IN_AS_TEXT => $form->used_as_text($dbo),
             component_types::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
             component_types::RANK_PHRASE => $rank->system_phrases($dbo),
+            component_types::RANKING_PARAMETERS => $rank->ranking_parameters($dbo),
+            component_types::RANKING_LIST => $rank->ranking_list($dbo),
+
+            // name display components for admin-editable system objects
+            component_types::SOURCE_NAME => $base->source_name($dbo),
+            component_types::REFERENCE_NAME => $base->reference_name($dbo),
+            component_types::LANGUAGE_NAME => $base->language_name($dbo),
+            component_types::RESULTS_RELATED => $list->results_related($dbo, $cfg),
+            component_types::PHRASES_RELATED => $list->phrases_related($dbo, $cfg),
+            component_types::BUTTON_REQUEST => $form->button_request(),
             component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst),
 
             // view relation only -

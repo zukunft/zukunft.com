@@ -54,6 +54,7 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -75,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -454,6 +456,28 @@ class ui_list extends ui_base
     function results(): string
     {
         return 'results component';
+    }
+
+    /**
+     * TODO Prio 0 fill with real code
+     * @param db_object|combine_named|null $dbo the term whose related results should be listed
+     * @param data_object|null $cfg the context used to create the view
+     * @return string the html code listing all results related to $dbo
+     */
+    function results_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
+    {
+        return 'results_related placeholder';
+    }
+
+    /**
+     * TODO Prio 0 fill with real code
+     * @param db_object|combine_named|null $dbo the term whose related phrases should be listed
+     * @param data_object|null $cfg the context used to create the view
+     * @return string the html code listing the related phrases with details
+     */
+    function phrases_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
+    {
+        return 'phrases_related placeholder';
     }
 
     /**

@@ -292,18 +292,34 @@ class system_page extends component
     }
 
     // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code to search for words, verbs, triple, formulas
+     * based on the context (foaf terms) and "fixed" selections like the type or the share or protection
+     * limit the number of search and selection fields so that it matches a small screen
+     */
     function body_search(): string
     {
         return 'body_search placeholder';
     }
 
     // TODO Prio 0 fill with real code
+
+    /**
+     * like body_search but with all possible fields
+     * @return string
+     */
     function body_search_full(): string
     {
         return 'body_search_full placeholder';
     }
 
     // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code to show all relations of a value
+     * e.g. where it is used and are it causes an impact
+     */
     function value_details(): string
     {
         return 'value_details placeholder';
@@ -367,6 +383,55 @@ class system_page extends component
     function process_list(): string
     {
         return 'process_list placeholder';
+    }
+
+    // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code that contains the most relevant user response delay within a time period defined in the system configuration
+     */
+    function admin_url_delay(): string
+    {
+        return 'admin_url_delay placeholder';
+    }
+
+    // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code that contains the last failed user logins
+     */
+    function admin_login_fails(): string
+    {
+        return 'admin_login_fails placeholder';
+    }
+
+    // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code that all internal system errors that are not yet assigned to a developer
+     */
+    function admin_errors_unassigned(): string
+    {
+        return 'admin_errors_unassigned placeholder';
+    }
+
+    // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code that all internal system errors that have not been updated since a some time (as defined in the system config)
+     */
+    function admin_errors_delayed_fix(): string
+    {
+        return 'admin_errors_delayed_fix placeholder';
+    }
+
+    // TODO Prio 0 fill with real code
+    /**
+     * @return string with the HTML code that shows all not yet closed system jobs in order of the delay
+     */
+    function admin_jobs_delayed(): string
+    {
+        return 'admin_jobs_delayed placeholder';
     }
 
 }

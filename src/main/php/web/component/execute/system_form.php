@@ -1530,6 +1530,16 @@ class system_form extends component
     }
 
     /**
+     * TODO Prio 0 wire up the request action
+     * @return string the html code for a button that requests a new e.g. type item
+     */
+    function button_request(): string
+    {
+        $html = new html_base();
+        return $html->button_bs('Request');
+    }
+
+    /**
      * @return string that simply closes the form
      */
     function form_end(): string

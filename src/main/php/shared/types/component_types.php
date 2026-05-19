@@ -220,6 +220,8 @@ class component_types
     // formulas only fields
     const string FORM_FIELD_FORMULA_EXPRESSION = "system_form_field_formula_expression";
     const int FORM_FIELD_FORMULA_EXPRESSION_ID = 53;
+    const string EXPRESSION = "expression";
+    const int EXPRESSION_ID = 62;
     const string FORM_FIELD_FORMULA_ALL_VAR_NEEDED = "system_form_field_formula_all_vars";
     const int FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID = 54;
     const string FORM_LIST_FORMULAS = "formula_list_changeable";
@@ -258,6 +260,22 @@ class component_types
     const int ADMIN_FORM_FIELD_LANGUAGE_SYMBOL_ID = 179;
     const string FIELD_LANGUAGE_SYMBOL = "field_language_symbol";
     const int FIELD_LANGUAGE_SYMBOL_ID = 180;
+
+    // admin-only system status panels
+    const string SYSTEM_ADMIN_URL_DELAY = "system_admin_url_delay";
+    const int SYSTEM_ADMIN_URL_DELAY_ID = 181;
+    const string SYSTEM_ADMIN_LOGIN_FAILS = "system_admin_login_fails";
+    const int SYSTEM_ADMIN_LOGIN_FAILS_ID = 182;
+    const string SYSTEM_ADMIN_ERRORS_UNASSIGNED = "system_admin_errors_unassigned";
+    const int SYSTEM_ADMIN_ERRORS_UNASSIGNED_ID = 183;
+    const string SYSTEM_ADMIN_ERRORS_DELAYED_FIX = "system_admin_errors_delayed_fix";
+    const int SYSTEM_ADMIN_ERRORS_DELAYED_FIX_ID = 184;
+    const string SYSTEM_ADMIN_JOBS_DELAYED = "system_admin_jobs_delayed";
+    const int SYSTEM_ADMIN_JOBS_DELAYED_ID = 185;
+
+    // generic list selector (e.g. languages)
+    const string SELECT_LIST = "select_list";
+    const int SELECT_LIST_ID = 186;
 
     // buttons
     const string FORM_BUTTON_CANCEL = "system_button_cancel";
@@ -398,6 +416,10 @@ class component_types
     const int LINK_LIST_WORD_ID = 43;
     const string RANK_PHRASE = "usage";
     const int USAGE_WORD_ID = 44;
+    const string RANKING_PARAMETERS = "ranking_parameters";
+    const int RANKING_PARAMETERS_ID = 45;
+    const string RANKING_LIST = "ranking_list";
+    const int RANKING_LIST_ID = 46;
 
     // user components for value
     const string VALUE_NAME = "group_or_phrase_list";
@@ -406,12 +428,26 @@ class component_types
     const int GROUP_NAME_ID = 141;
     const string VALUE_NUMERIC = "value_numeric";
     const int VALUE_NUMERIC_ID = 142;
+    const string MAIN_VALUE = "main_value";
+    const int MAIN_VALUE_ID = 38;
 
     // show the user-specific name of a word or triple with the description on mouseover without allowing to change it
     const string PHRASE = "phrase";
     const int PHRASE_ID = 4;
     const string VERB_NAME = "verb_name";
     const int VERB_NAME_ID = 37;
+    const string SOURCE_NAME = "source_name";
+    const int SOURCE_NAME_ID = 58;
+    const string REFERENCE_NAME = "reference_name";
+    const int REFERENCE_NAME_ID = 59;
+    const string LANGUAGE_NAME = "language_name";
+    const int LANGUAGE_NAME_ID = 60;
+    const string RESULTS_RELATED = "results_related";
+    const int RESULTS_RELATED_ID = 61;
+    const string BUTTON_REQUEST = "button_request";
+    const int BUTTON_REQUEST_ID = 187;
+    const string PHRASES_RELATED = "phrases_related";
+    const int PHRASES_RELATED_ID = 188;
 
     /*
      * related
@@ -498,6 +534,7 @@ class component_types
         self::FORM_FIELD_URL,
         self::FORM_FIELD_PLURAL,
         self::FORM_FIELD_FORMULA_EXPRESSION,
+        self::EXPRESSION,
         self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED,
         self::FORM_FIELD_WEIGHT,
         self::FORM_FIELD_GROUP,
@@ -571,6 +608,12 @@ class component_types
         self::ADMIN_FORM_FIELD_USER_PASSWORD,
         self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL,
         self::FIELD_LANGUAGE_SYMBOL,
+        self::SYSTEM_ADMIN_URL_DELAY,
+        self::SYSTEM_ADMIN_LOGIN_FAILS,
+        self::SYSTEM_ADMIN_ERRORS_UNASSIGNED,
+        self::SYSTEM_ADMIN_ERRORS_DELAYED_FIX,
+        self::SYSTEM_ADMIN_JOBS_DELAYED,
+        self::SELECT_LIST,
         self::SHOW_NAME,
         self::SHOW_DESCRIPTION,
         self::SHOW_FIELD_USAGE,
@@ -601,7 +644,8 @@ class component_types
         self::FORM_BUTTON_SAVE,
         self::FORM_BUTTON_DEL,
         self::FORM_BUTTON_IMPORT,
-        self::FORM_BUTTON_EXPORT
+        self::FORM_BUTTON_EXPORT,
+        self::BUTTON_REQUEST
     );
 
     // list of component types that are hidden
@@ -659,6 +703,7 @@ class component_types
         [self::FORM_FIELD_EXTERNAL_KEY, self::FORM_FIELD_EXTERNAL_KEY_ID],
         [self::FORM_FIELD_WEIGHT, self::FORM_FIELD_WEIGHT_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
+        [self::EXPRESSION, self::EXPRESSION_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
         [self::FORM_LIST_FORMULAS, self::FORM_LIST_FORMULAS_ID],
         [self::FORM_FIELD_GROUP, self::FORM_FIELD_GROUP_ID],
@@ -728,6 +773,12 @@ class component_types
         [self::ADMIN_FORM_FIELD_USER_PASSWORD, self::ADMIN_FORM_FIELD_USER_PASSWORD_ID],
         [self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL, self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL_ID],
         [self::FIELD_LANGUAGE_SYMBOL, self::FIELD_LANGUAGE_SYMBOL_ID],
+        [self::SYSTEM_ADMIN_URL_DELAY, self::SYSTEM_ADMIN_URL_DELAY_ID],
+        [self::SYSTEM_ADMIN_LOGIN_FAILS, self::SYSTEM_ADMIN_LOGIN_FAILS_ID],
+        [self::SYSTEM_ADMIN_ERRORS_UNASSIGNED, self::SYSTEM_ADMIN_ERRORS_UNASSIGNED_ID],
+        [self::SYSTEM_ADMIN_ERRORS_DELAYED_FIX, self::SYSTEM_ADMIN_ERRORS_DELAYED_FIX_ID],
+        [self::SYSTEM_ADMIN_JOBS_DELAYED, self::SYSTEM_ADMIN_JOBS_DELAYED_ID],
+        [self::SELECT_LIST, self::SELECT_LIST_ID],
         [self::FORM_END, self::FORM_END_ID],
         [self::ROW_START, self::ROW_START_ID],
         [self::ROW_RIGHT, self::ROW_RIGHT_ID],
@@ -770,10 +821,19 @@ class component_types
         [self::LIST_VIEWS, self::LIST_VIEWS_ID],
         [self::LINK_LIST_WORD, self::LINK_LIST_WORD_ID],
         [self::RANK_PHRASE, self::USAGE_WORD_ID],
+        [self::RANKING_PARAMETERS, self::RANKING_PARAMETERS_ID],
+        [self::RANKING_LIST, self::RANKING_LIST_ID],
+        [self::SOURCE_NAME, self::SOURCE_NAME_ID],
+        [self::REFERENCE_NAME, self::REFERENCE_NAME_ID],
+        [self::LANGUAGE_NAME, self::LANGUAGE_NAME_ID],
+        [self::RESULTS_RELATED, self::RESULTS_RELATED_ID],
+        [self::BUTTON_REQUEST, self::BUTTON_REQUEST_ID],
+        [self::PHRASES_RELATED, self::PHRASES_RELATED_ID],
         [self::TRIPLE_NAME, self::TRIPLE_NAME_ID],
         [self::VALUE_NAME, self::VALUE_NAME_ID],
         [self::GROUP_NAME, self::GROUP_NAME_ID],
         [self::VALUE_NUMERIC, self::VALUE_NUMERIC_ID],
+        [self::MAIN_VALUE, self::MAIN_VALUE_ID],
         [self::PHRASE, self::PHRASE_ID],
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
