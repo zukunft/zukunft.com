@@ -16,7 +16,7 @@ The following table shows each nation's score over the years. The regions are as
 |-class="is-sticky"
 !Region
 !2023 rank
-!Country
+!country
 !Regime type
 !2023
 !2022

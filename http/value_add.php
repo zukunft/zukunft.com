@@ -80,7 +80,7 @@ if ($usr->id() > 0) {
     // before the value conversion, all phrases should be loaded to use the updated words for the conversion e.g. percent
     // get the linked phrases from url
     $phr_ids = array(); // suggested word for the new value that the user can change
-    $type_ids = array(); // word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
+    $type_ids = array(); // word to preselect the suggested words e.g. "country" to list all their countries first for the suggested word
     // if the type id is -1 the word is not supposed to be adjusted e.g. when editing a table cell
     if (isset($_GET['phrase1'])) {
         $phr_pos = 1;

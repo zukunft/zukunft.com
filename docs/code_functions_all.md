@@ -3274,7 +3274,7 @@
     \-- diff_by_ids
         \-- phrase_list - similar to diff, but using an id array to exclude instead of a phrase list object
     \-- keep_only_specific
-        \-- phrase_list - look at a phrase list and remove the general phrase, if there is a more specific phrase also part of the list e.g. remove "Country", but keep "Switzerland"
+        \-- phrase_list - look at a phrase list and remove the general phrase, if there is a more specific phrase also part of the list e.g. remove "country", but keep "Switzerland"
     \-- has_time
         \-- phrase_list - @return bool true if a phrase lst contains a time phrase
     \-- has_measure

@@ -6887,7 +6887,7 @@
       {
         "name": "has a",
         "code_id": "has",
-        "description": "to assign potential properties e.g. a Country has a Human Development Index",
+        "description": "to assign potential properties e.g. a country has a Human Development Index",
         "plural": "has",
         "reverse": "is used for",
         "rev_plural": "is used for",
@@ -20591,6 +20591,50 @@
         "type_id": null,
         "code_id": "phrase_default",
         "components": []
+      },
+      {
+        "id": 111,
+        "name": "Currency",
+        "description": "Show a currency with the most relevant exchange rates and related formulas",
+        "type_id": null,
+        "code_id": "currency",
+        "components": [
+          {
+            "link_id": 1012,
+            "id": 1,
+            "name": "Word",
+            "description": "simply show the word or triple name",
+            "type_id": 8,
+            "position": 1,
+            "position_type": 1
+          },
+          {
+            "link_id": 1013,
+            "id": 288,
+            "name": "exchange rates",
+            "description": "show the most relevant exchange rates",
+            "type_id": 188,
+            "position": 2,
+            "position_type": 1
+          },
+          {
+            "link_id": 1014,
+            "id": 280,
+            "name": "related values",
+            "description": "show the most relevant and related values",
+            "type_id": 11,
+            "position": 3,
+            "position_type": 1
+          },
+          {
+            "link_id": 1015,
+            "id": 289,
+            "name": "currency formulas",
+            "type_id": 188,
+            "position": 4,
+            "position_type": 1
+          }
+        ]
       }
     ]
   }

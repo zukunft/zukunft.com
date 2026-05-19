@@ -42,6 +42,7 @@ class files
      */
 
     const string JSON = '.json';
+    const string YAML = '.yaml';
     const string CSS = '.css';
     const string SVG = '.svg';
 
@@ -61,6 +62,9 @@ class files
     /*
      * system config
      */
+
+    // the system configuration values that an admin can change without a code update
+    const string CONFIG_YAML = self::RESOURCE_PATH . 'config' . self::YAML;
 
     // the system views as a zukunft.com user import json
     const string SYSTEM_VIEWS_FILE = 'system_views' . self::JSON;

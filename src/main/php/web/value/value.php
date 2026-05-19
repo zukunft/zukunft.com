@@ -525,7 +525,7 @@ class value extends sandbox_value
      * possible future parameters:
      * $fixed_words - words that the user is not suggested to change this time
      * $select_word - suggested words which the user can change
-     * $type_word   - word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
+     * $type_word   - word to preselect the suggested words e.g. "country" to list all their countries first for the suggested word
      *
      * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
      * @returns string the HTML code for a button to add a value related to this value

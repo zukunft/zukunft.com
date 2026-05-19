@@ -358,6 +358,11 @@ class views
     const string TEST_FORM = 'word_add';
     const int TEST_FORM_ID = 3;
 
+    // code if of views that should be checked before deployment if they are still fine with the base setup
+    const string CURRENCY = 'currency'; // the default view for all currencies
+    const int CURRENCY_ID = 111; // a kind of dummy id that may often change
+
+
     // TODO views to be created
     const string WORD_LIST = 'word_list'; //
 
@@ -916,6 +921,7 @@ class views
         self::SYSTEM_LOG_ID => self::SYSTEM_LOG,
         self::LANGUAGE_SELECT_ID => self::LANGUAGE_SELECT,
         self::PHRASE_ID => self::PHRASE,
+        self::CURRENCY_ID => self::CURRENCY,
     ];
 
     const array SYSTEM_VIEWS = [
@@ -1006,6 +1012,14 @@ class views
         self::ADMIN_MAIN,
         self::GLOBAL_PROBLEM,
     ];
+
+    // list of predefined user views that are fixed assigned to a word or triple
+    // it should be checked during the build process that the word, triples and views exists
+    // and that the result with the base setup still looks fine
+    const array PHRASE_VIEWS = [
+        words::CURRENCY => self::CONFIRM_MASKS_IDS
+    ];
+
 
     /**
      * returns the code id of the base view that is used to show the changeable object

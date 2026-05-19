@@ -333,8 +333,8 @@ class word extends sandbox_code_id
      * get the parent phrases of the given phrase
      * if a phrase list is given get only the parent phrases within the list
      * if no phrase list is given get the phrases from the api
-     * e.g. for Zurich the list is City and Canton based on a phrase list with City, Canton and Country
-     * but  for Zurich the list is City, Canton and company based on a phrase list with company, City, Canton and Country
+     * e.g. for Zurich the list is City and Canton based on a phrase list with City, Canton and country
+     * but  for Zurich the list is City, Canton and company based on a phrase list with company, City, Canton and country
      * @param phrase_list|null $phr_lst
      * @param int $levels the number of parent levels
      * @return phrase_list

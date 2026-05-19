@@ -690,7 +690,7 @@ class triple extends sandbox_code_id
         // prepare to show the triple
         $result .= $this->get_from()->name() . ' '; // e.g. Australia
         $result .= $this->get_verb_name() . ' '; // e.g. is a
-        $result .= $this->get_to()->name();       // e.g. Country
+        $result .= $this->get_to()->name();       // e.g. country
 
         return $result;
     }

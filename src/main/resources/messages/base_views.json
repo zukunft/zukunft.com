@@ -109,6 +109,21 @@
       "name": "problem solutions",
       "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
       "type": "phrases_related"
+    },
+    {
+      "name": "exchange rates",
+      "description": "show the most relevant exchange rates",
+      "type": "phrases_related"
+    },
+    {
+      "name": "related values",
+      "description": "",
+      "type": "phrases_related"
+    },
+    {
+      "name": "currency formulas",
+      "description": "",
+      "type": "phrases_related"
     }
   ],
   "views": [
@@ -392,6 +407,32 @@
       "name": "Phrase (default)",
       "description": "the default view for a word or triple",
       "code_id": "phrase_default"
+    },
+    {
+      "name": "Currency",
+      "description": "Show a currency with the most relevant exchange rates and related formulas",
+      "code_id": "currency",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word"
+        },
+        {
+          "position": "2",
+          "name": "exchange rates"
+        },
+        {
+          "position": "3",
+          "name": "related values"
+        },
+        {
+          "position": "4",
+          "name": "currency formulas"
+        }
+      ],
+      "assigned": [
+        "Currency"
+      ]
     }
   ]
 }

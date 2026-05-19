@@ -849,7 +849,7 @@ class db_object extends TextIdObject
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
-     * @param phrase_ui|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
+     * @param phrase_ui|null $phr phrase to preselect the phrases e.g. use country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
     public function phrase_selector_old(

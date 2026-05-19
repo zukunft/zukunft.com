@@ -142,8 +142,8 @@ class verb extends type_object
     // TODO move to language forms
     public ?string $plural = null;
     // name used if displayed the other way round
-    // e.g. for "Country" "has a" "Human Development Index"
-    // the reverse would be "Human Development Index" "is used for" "Country"
+    // e.g. for "country" "has a" "Human Development Index"
+    // the reverse would be "Human Development Index" "is used for" "country"
     public ?string $reverse = null;
     // the reverse name for many words
     public ?string $rev_plural = null;

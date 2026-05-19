@@ -56,7 +56,7 @@
     {
       "name": "has a",
       "code_id": "has",
-      "description": "to assign potential properties e.g. a Country has a Human Development Index",
+      "description": "to assign potential properties e.g. a country has a Human Development Index",
       "name_plural_reverse": "is used for",
       "name_plural": "has",
       "name_reverse": "is used for"
