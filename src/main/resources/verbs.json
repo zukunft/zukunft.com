@@ -272,6 +272,14 @@
       "name_plural_reverse": "are sort phrases for",
       "name_plural": "are ranked by",
       "name_reverse": "is sort phrases for"
+    },
+    {
+      "name": "between",
+      "code_id": "between",
+      "description": "to define a range e.g. a value between a lower and an upper bound",
+      "name_plural_reverse": "",
+      "name_plural": "between",
+      "name_reverse": ""
     }
   ]
 }

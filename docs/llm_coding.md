@@ -91,6 +91,29 @@ api/            ← external API endpoints
 test/           ← test runner entry points
 ```
 
+### Domain object terminology
+
+These nouns have precise, non-interchangeable meanings — use them exactly:
+
+- **word** — a single word, used for better assignments
+- **verb** — a predicate to connect two words
+- **triple** — combine two words or triples with a verb
+- **source** — import-only data source
+- **ref** — im- and export to external systems
+- **value** — a number for calculation
+- **group** — a list of words or triples
+- **formula** — an expression for calculation
+- **result** — the numeric result of a formula
+- **view** — a named display mask
+- **component** — parts of a display mask
+
+Two collective nouns build on the above and must not be confused:
+
+- **phrase** = a **word** or a **triple** (the things that can be combined into a group and used to address a value).
+- **term** = a **word**, **verb**, **triple**, or **formula** (everything that can appear in a formula expression).
+
+So every phrase is a term, but a verb and a formula are terms that are **not** phrases. When describing why two objects of different classes must not share a name or id, pick the noun that actually covers both classes — e.g. a triple and a formula are both *terms* (not *phrases*, because a formula is not a phrase).
+
 ### Key Architectural Patterns
 
 **User Sandbox**: Every main object (`word`, `triple`, `value`, `formula`, `view`, `component`) extends the `sandbox` hierarchy. Changes by one user never overwrite shared data; user-specific overrides are stored in `*_user` tables.
@@ -280,7 +303,21 @@ Back navigation (where to redirect after an action completes) is encoded as **`'
 - **Right**: `function url_to_action(array $url_array, user $usr_dsp, user_message $msg, ...): array`
 - **Wrong**: creating `new user_message()` inside a helper and returning or echoing the message directly
 
-This ensures all messages bubble up to the single rendering point in `view.php`.
+This ensures all messages bubble up to the single rendering point in `view.php`. The same object is named `$msg` in the backend; it is the one created in `http/view.php` and threaded down — never a second instance.
+
+#### Never overwrite or reset the accumulated messages
+
+A function that receives `$msg` (or old `$usr_msg`) as a parameter may only **add** to it. It must never replace, clear, reset, or re-create the object, because doing so silently discards warnings and errors that earlier code already recorded for the user.
+
+- **Right**: `$msg->add(msg_id::SOME_CASE, []);` — append only; earlier messages are preserved
+- **Right**: `$msg->merge($sub_msg);` — fold a locally collected sub-message back into the shared object
+- **Right**: `$sub_msg = new user_message();` inside a function if later merged with the received `$msg`
+- **Wrong**: `$msg = new user_message();` inside a function that received `$msg` — drops everything accumulated so far
+- **Wrong**: `$msg->reset();` / clearing the message list on a parameter object
+
+**Why:** every function shares the single instance created in `http/view.php`, and `is_ok()` is read by callers to decide control flow (e.g. the import loop only adds a triple to the cache when `import_mapper()` returns `$usr_msg->is_ok()`). If a downstream function overwrites or resets the object, earlier errors vanish from the notification bar and the `is_ok()` signal becomes wrong — which previously caused a whole import to silently drop every object after the first failed one.
+
+**How to apply:** when a function needs a throw-away message buffer (e.g. to test whether a sub-step succeeded without polluting the shared object), create a **separate local** `user_message` and `merge()` the relevant part back into the shared one — do not reassign or reset the passed-in parameter.
 
 #### All user-facing messages must use a translatable `msg_id`
 

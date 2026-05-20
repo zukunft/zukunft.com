@@ -7219,6 +7219,18 @@
         "usage": null,
         "impact": null,
         "id": 34
+      },
+      {
+        "name": "between",
+        "code_id": "between",
+        "description": "to define a range e.g. a value between a lower and an upper bound",
+        "plural": "between",
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 35
       }
     ],
     "phrase_types": [

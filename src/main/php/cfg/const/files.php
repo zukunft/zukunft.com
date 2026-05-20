@@ -142,7 +142,6 @@ class files
     CONST string IMPORT_COUNTRIES = self::DATA_PATH . 'countries' . self::JSON;
     CONST string IMPORT_COUNTRY_ISO = self::DATA_PATH . 'country-ISO-3166' . self::JSON;
     CONST string IMPORT_DEMOCRACY_INDEX = self::DATA_PATH . 'democracy_index_table' . self::JSON;
-    CONST string IMPORT_CURRENCY = self::DATA_PATH . 'currency' . self::JSON;
     CONST string IMPORT_CURRENCIES = self::DATA_PATH . 'currencies' . self::JSON;
     CONST string IMPORT_WIND_INVESTMENT = self::DATA_PATH . 'wind_investment' . self::JSON;
     CONST string IMPORT_COMPANIES = self::DATA_PATH . 'companies' . self::JSON;
@@ -171,10 +170,8 @@ class files
         self::IMPORT_COUNTRIES,
         self::IMPORT_COUNTRY_ISO,
         self::IMPORT_DEMOCRACY_INDEX,
-        self::IMPORT_CURRENCY,
+        self::IMPORT_CURRENCIES,
         self::IMPORT_COMPANIES,
-        // TODO Prio 1 activate
-        //self::IMPORT_CURRENCIES,
         self::IMPORT_WIND_INVESTMENT
     ];
 

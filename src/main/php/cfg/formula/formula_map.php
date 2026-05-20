@@ -398,22 +398,27 @@ class formula_map extends sandbox_code_id
             $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $dto);
         }
 
-        // assign the phrases to the formula
+        // assigned_word assigns exactly one phrase to the formula;
+        // to assign several phrases use the 'assigned' json array instead
         if (key_exists(json_fields::ASSIGNED_WORD, $in_ex_json)) {
-            $phr_names = explode(",", $in_ex_json[json_fields::ASSIGNED_WORD]);
-            if ($dto != null) {
-                $phr_lst = $dto->phrase_list();
-                foreach ($phr_names as $name) {
-                    $phr = $phr_lst->get_by_name($name);
-                    if ($phr == null) {
-                        $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
-                            msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
-                            msg_id::VAR_NAME => $name,
-                            msg_id::VAR_FORMULA => $this->name(),
-                        ]);
-                    } else {
-                        $this->link_phrase($phr, $msg);
-                    }
+            $assigned = $in_ex_json[json_fields::ASSIGNED_WORD];
+            $phr_names = is_array($assigned) ? $assigned : explode(",", $assigned);
+            if (count($phr_names) > 1) {
+                $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_USE_ASSIGNED, [
+                    msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
+                    msg_id::VAR_FORMULA => $this->name(),
+                ]);
+            } elseif ($dto != null) {
+                $name = $phr_names[0] ?? '';
+                $phr = $dto->phrase_list()->get_by_name($name);
+                if ($phr == null) {
+                    $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
+                        msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
+                        msg_id::VAR_NAME => $name,
+                        msg_id::VAR_FORMULA => $this->name(),
+                    ]);
+                } else {
+                    $this->link_phrase($phr, $msg);
                 }
             }
         }
@@ -1116,14 +1121,17 @@ class formula_map extends sandbox_code_id
             $vars[json_fields::EXPRESSION] = $this->usr_text;
         }
 
+        // export the assigned phrases by name, consistent with the import:
+        // a single phrase via 'assigned_word', several phrases via the 'assigned' json array
         if ($do_load) {
-            $exp_lst = [];
             $phr_lst = $this->assign_phr_lst_direct();
             if ($phr_lst != null) {
-                foreach ($phr_lst->lst() as $phr) {
-                    $exp_lst[] = $phr->export_json([]);
+                $names = $phr_lst->names();
+                if (count($names) == 1) {
+                    $vars[json_fields::ASSIGNED_WORD] = $names[0];
+                } elseif (count($names) > 1) {
+                    $vars[json_fields::ASSIGNED] = $names;
                 }
-                $vars[json_fields::ASSIGNED_WORD] = $exp_lst;
             }
         }
         // the impact is only included in the export as an indication to validate the consistency

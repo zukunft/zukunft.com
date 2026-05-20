@@ -138,6 +138,10 @@ class verbs
     const string SELECTOR = "selector"; // the from_phrase of a selector can be used more than once so the description of the to_phrase should be shown to the user
     const string SELECTOR_NAME = "is selector for";
     const int SELECTOR_ID = 28;
+    const string BETWEEN = "between"; // to define a range e.g. "12:00 to 13:00" can also be expressed as "12:00 between 13:00"
+    const string BETWEEN_NAME = "between";
+    const int BETWEEN_ID = 35;
+    const string BETWEEN_COM = "to define a range e.g. a value between a lower and an upper bound";
 
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const string FOLLOWED_BY = "is followed by";

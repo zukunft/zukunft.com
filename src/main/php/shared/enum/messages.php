@@ -607,6 +607,11 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case FORMULA_TERM_NAME_MISSING = 'no word, triple, formula or verb found for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case FORMULA_NAME_EQUALS_TERM = 'the formula name "'
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . '" is also used as a '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' name, which is not allowed because both are terms and the shared name leads to an ambiguous id assignment during the import';
     case FORMULA_CREATED = 'formula with name "'
         . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
         . '" created';
@@ -999,6 +1004,11 @@ enum messages: string
         . '" should be assigned to formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" but it is not defined.';
+    case IMPORT_FORMULA_ASSIGN_USE_ASSIGNED = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" tries to assign more than one phrase via "assigned_word"; use the "assigned" json array to assign several phrases';
 
     case IMPORT_FORMULA_FAILED = 'import of formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
