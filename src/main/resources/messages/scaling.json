@@ -8,31 +8,31 @@
   "words": [
     {
       "name": "one",
-      "comment": "Used to force the scaling to one unit",
+      "description": "Used to force the scaling to one unit",
       "type": "scaling_hidden",
       "protection": "admin_protection"
     },
     {
       "name": "thousand",
-      "comment": "to specify numbers in thousand",
+      "description": "to specify numbers in thousand",
       "type": "scaling",
       "protection": "admin_protection"
     },
     {
       "name": "million",
-      "comment": "to specify numbers in millions",
+      "description": "to specify numbers in millions",
       "type": "scaling",
       "protection": "admin_protection"
     },
     {
       "name": "billion",
-      "comment": "to specify numbers in billions",
+      "description": "to specify numbers in billions",
       "type": "scaling",
       "protection": "admin_protection"
     },
     {
       "name": "percent",
-      "comment": "to specify numbers in percent",
+      "description": "to specify numbers in percent",
       "type": "percent",
       "protection": "admin_protection"
     },

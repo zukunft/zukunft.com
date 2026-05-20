@@ -30,6 +30,10 @@
         {
           "name": "Constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1127670",
+          "type": "wikidata"
         }
       ]
     },
@@ -54,6 +58,10 @@
         {
           "name": "1",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q199",
+          "type": "wikidata"
         }
       ]
     },
@@ -77,6 +85,10 @@
         {
           "name": "physics",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q413",
+          "type": "wikidata"
         }
       ]
     },
@@ -88,6 +100,10 @@
         {
           "name": "science",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q336",
+          "type": "wikidata"
         }
       ]
     },
@@ -99,6 +115,10 @@
         {
           "name": "Natural",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q7860",
+          "type": "wikidata"
         }
       ]
     },
@@ -185,6 +205,10 @@
         {
           "name": "Circumference",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q843905",
+          "type": "wikidata"
         }
       ]
     },
@@ -196,6 +220,10 @@
         {
           "name": "Diameter",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q37221",
+          "type": "wikidata"
         }
       ]
     },
@@ -262,6 +290,10 @@
         {
           "name": "Base (topology)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q810214",
+          "type": "wikidata"
         }
       ]
     },
@@ -273,6 +305,10 @@
         {
           "name": "Identity element",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q185813",
+          "type": "wikidata"
         }
       ]
     },
@@ -284,6 +320,10 @@
         {
           "name": "System",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q58778",
+          "type": "wikidata"
         }
       ]
     },
@@ -295,6 +335,10 @@
         {
           "name": "Internationalism (politics)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q695838",
+          "type": "wikidata"
         }
       ]
     },
@@ -308,6 +352,10 @@
         {
           "name": "Second",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11574",
+          "type": "wikidata"
         }
       ]
     },
@@ -327,6 +375,10 @@
         {
           "name": "Millisecond",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q723733",
+          "type": "wikidata"
         }
       ]
     },
@@ -339,6 +391,10 @@
         {
           "name": "Metre",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11573",
+          "type": "wikidata"
         }
       ]
     },
@@ -357,6 +413,10 @@
         {
           "name": "Kilogram",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11570",
+          "type": "wikidata"
         }
       ]
     },
@@ -375,6 +435,10 @@
         {
           "name": "Ampere",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25272",
+          "type": "wikidata"
         }
       ]
     },
@@ -393,6 +457,10 @@
         {
           "name": "Kelvin",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11579",
+          "type": "wikidata"
         }
       ]
     },
@@ -411,6 +479,10 @@
         {
           "name": "Mole (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q41509",
+          "type": "wikidata"
         }
       ]
     },
@@ -429,6 +501,10 @@
         {
           "name": "Candela",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q83216",
+          "type": "wikidata"
         }
       ]
     },
@@ -446,6 +522,10 @@
         {
           "name": "Apomorphy and synapomorphy",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q962872",
+          "type": "wikidata"
         }
       ]
     },
@@ -457,6 +537,10 @@
         {
           "name": "Name",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q82799",
+          "type": "wikidata"
         }
       ]
     },
@@ -469,6 +553,10 @@
         {
           "name": "Hertz",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q39369",
+          "type": "wikidata"
         }
       ]
     },
@@ -487,6 +575,10 @@
         {
           "name": "Radian",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q33680",
+          "type": "wikidata"
         }
       ]
     },
@@ -505,6 +597,10 @@
         {
           "name": "Steradian",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q177612",
+          "type": "wikidata"
         }
       ]
     },
@@ -523,6 +619,10 @@
         {
           "name": "Newton (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q12438",
+          "type": "wikidata"
         }
       ]
     },
@@ -541,6 +641,10 @@
         {
           "name": "Pascal (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q44395",
+          "type": "wikidata"
         }
       ]
     },
@@ -559,6 +663,10 @@
         {
           "name": "Joule",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25269",
+          "type": "wikidata"
         }
       ]
     },
@@ -577,6 +685,10 @@
         {
           "name": "Watt",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25236",
+          "type": "wikidata"
         }
       ]
     },
@@ -595,6 +707,10 @@
         {
           "name": "Coulomb",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25406",
+          "type": "wikidata"
         }
       ]
     },
@@ -613,6 +729,10 @@
         {
           "name": "Volt",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25250",
+          "type": "wikidata"
         }
       ]
     },
@@ -631,6 +751,10 @@
         {
           "name": "Weber (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q170804",
+          "type": "wikidata"
         }
       ]
     },
@@ -649,6 +773,10 @@
         {
           "name": "Tesla (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q163343",
+          "type": "wikidata"
         }
       ]
     },
@@ -667,6 +795,10 @@
         {
           "name": "Farad",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q131255",
+          "type": "wikidata"
         }
       ]
     },
@@ -685,6 +817,10 @@
         {
           "name": "Ohm",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q47083",
+          "type": "wikidata"
         }
       ]
     },
@@ -703,6 +839,10 @@
         {
           "name": "Siemens (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q169893",
+          "type": "wikidata"
         }
       ]
     },
@@ -721,6 +861,10 @@
         {
           "name": "Henry (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q163354",
+          "type": "wikidata"
         }
       ]
     },
@@ -739,6 +883,10 @@
         {
           "name": "Celsius",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25267",
+          "type": "wikidata"
         }
       ]
     },
@@ -757,6 +905,10 @@
         {
           "name": "Lumen (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q484092",
+          "type": "wikidata"
         }
       ]
     },
@@ -775,6 +927,10 @@
         {
           "name": "Lux",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q179836",
+          "type": "wikidata"
         }
       ]
     },
@@ -793,6 +949,10 @@
         {
           "name": "Becquerel",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q102573",
+          "type": "wikidata"
         }
       ]
     },
@@ -811,6 +971,10 @@
         {
           "name": "Gray (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q190095",
+          "type": "wikidata"
         }
       ]
     },
@@ -829,6 +993,10 @@
         {
           "name": "Sievert",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q103246",
+          "type": "wikidata"
         }
       ]
     },
@@ -847,6 +1015,10 @@
         {
           "name": "Katal",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q208634",
+          "type": "wikidata"
         }
       ]
     },
@@ -865,6 +1037,10 @@
         {
           "name": "Kinematics",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11476",
+          "type": "wikidata"
         }
       ]
     },
@@ -877,6 +1053,10 @@
         {
           "name": "Light",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q9128",
+          "type": "wikidata"
         }
       ]
     },
@@ -889,6 +1069,10 @@
         {
           "name": "Speed",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q3711325",
+          "type": "wikidata"
         }
       ]
     },
@@ -901,6 +1085,10 @@
         {
           "name": "Acceleration",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11376",
+          "type": "wikidata"
         }
       ]
     },
@@ -912,6 +1100,10 @@
         {
           "name": "Square_(algebra)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q111124",
+          "type": "wikidata"
         }
       ]
     },
@@ -923,6 +1115,10 @@
         {
           "name": "Cube",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q812880",
+          "type": "wikidata"
         }
       ]
     },
@@ -934,6 +1130,10 @@
         {
           "name": "Elementary particle",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q43116",
+          "type": "wikidata"
         }
       ]
     },
@@ -945,6 +1145,10 @@
         {
           "name": "Electric charge",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1111",
+          "type": "wikidata"
         }
       ]
     },
@@ -956,6 +1160,10 @@
         {
           "name": "Luminosity",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q105902",
+          "type": "wikidata"
         }
       ]
     },
@@ -967,6 +1175,10 @@
         {
           "name": "Efficacy",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q2585693",
+          "type": "wikidata"
         }
       ]
     },
@@ -979,6 +1191,10 @@
         {
           "name": "Jerk (physics)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q497332",
+          "type": "wikidata"
         }
       ]
     },
@@ -991,6 +1207,10 @@
         {
           "name": "Angle",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11352",
+          "type": "wikidata"
         }
       ]
     },
@@ -1003,6 +1223,10 @@
         {
           "name": "Velocity",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11465",
+          "type": "wikidata"
         }
       ]
     },
@@ -1015,6 +1239,10 @@
         {
           "name": "Frequency",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11652",
+          "type": "wikidata"
         }
       ]
     },
@@ -1027,6 +1255,10 @@
         {
           "name": "Frequency drift",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q5502869",
+          "type": "wikidata"
         }
       ]
     },
@@ -1038,6 +1270,10 @@
         {
           "name": "Volume",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q39297",
+          "type": "wikidata"
         }
       ]
     },
@@ -1049,6 +1285,10 @@
         {
           "name": "Fluid dynamics",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q216320",
+          "type": "wikidata"
         }
       ]
     },
@@ -1060,6 +1300,10 @@
         {
           "name": "Rate (mathematics)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1144560",
+          "type": "wikidata"
         }
       ]
     },
@@ -1072,6 +1316,10 @@
         {
           "name": "Time",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11471",
+          "type": "wikidata"
         }
       ]
     },
@@ -1083,6 +1331,10 @@
         {
           "name": "Minute",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q7727",
+          "type": "wikidata"
         }
       ]
     },
@@ -1094,6 +1346,10 @@
         {
           "name": "Hour",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25235",
+          "type": "wikidata"
         }
       ]
     },
@@ -1105,6 +1361,10 @@
         {
           "name": "Day",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q573",
+          "type": "wikidata"
         }
       ]
     },
@@ -1116,6 +1376,10 @@
         {
           "name": "Week",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q23387",
+          "type": "wikidata"
         }
       ]
     },
@@ -1127,6 +1391,10 @@
         {
           "name": "Month",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q5151",
+          "type": "wikidata"
         }
       ]
     },
@@ -1138,6 +1406,10 @@
         {
           "name": "year",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q577",
+          "type": "wikidata"
         }
       ]
     },
@@ -1148,6 +1420,10 @@
         {
           "name": "Max Planck",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q9021",
+          "type": "wikidata"
         }
       ]
     },
@@ -1158,6 +1434,10 @@
         {
           "name": "Ludwig Boltzmann",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q84296",
+          "type": "wikidata"
         }
       ]
     },
@@ -1168,6 +1448,10 @@
         {
           "name": "Amedeo Avogadro",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q43476",
+          "type": "wikidata"
         }
       ]
     },
@@ -1179,6 +1463,10 @@
         {
           "name": "Mechanics",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q41217",
+          "type": "wikidata"
         }
       ]
     },
@@ -1190,6 +1478,10 @@
         {
           "name": "Distance",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q126017",
+          "type": "wikidata"
         }
       ]
     },
@@ -1211,6 +1503,10 @@
         {
           "name": "Area",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11500",
+          "type": "wikidata"
         }
       ]
     },
@@ -1222,6 +1518,10 @@
         {
           "name": "Hectare#Are",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q35852",
+          "type": "wikidata"
         }
       ]
     },
@@ -1238,6 +1538,10 @@
         {
           "name": "Hectare",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q35852",
+          "type": "wikidata"
         }
       ]
     },
@@ -1254,6 +1558,10 @@
         {
           "name": "Volume",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q39297",
+          "type": "wikidata"
         }
       ]
     },
@@ -1270,6 +1578,10 @@
         {
           "name": "Litre",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11582",
+          "type": "wikidata"
         }
       ]
     },
@@ -1286,6 +1598,10 @@
         {
           "name": "Kilowatt-hour",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q182098",
+          "type": "wikidata"
         }
       ]
     },
@@ -1316,6 +1632,10 @@
         {
           "name": "Hyperfine structure",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1413102",
+          "type": "wikidata"
         }
       ]
     },
@@ -1327,6 +1647,10 @@
         {
           "name": "Atomic electron transition",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q3537671",
+          "type": "wikidata"
         }
       ]
     },
@@ -1337,6 +1661,10 @@
         {
           "name": "Frequency standard",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q362396",
+          "type": "wikidata"
         }
       ]
     },
@@ -1347,6 +1675,10 @@
         {
           "name": "Caesium",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1108",
+          "type": "wikidata"
         }
       ]
     },
@@ -1357,6 +1689,10 @@
         {
           "name": "Isotopes_of_caesium#Caesium-133",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q24638",
+          "type": "wikidata"
         }
       ]
     },
@@ -1367,6 +1703,10 @@
         {
           "name": "Definition",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q101072",
+          "type": "wikidata"
         }
       ]
     },
@@ -1409,6 +1749,10 @@
         {
           "name": "Mathematical_constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q186509",
+          "type": "wikidata"
         }
       ]
     },
@@ -1453,6 +1797,10 @@
         {
           "name": "Natural_science",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q7991",
+          "type": "wikidata"
         }
       ]
     },
@@ -1473,6 +1821,10 @@
         {
           "name": "Physical_constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q173227",
+          "type": "wikidata"
         }
       ]
     },
@@ -1529,6 +1881,10 @@
         {
           "name": "International System of Units",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q12457",
+          "type": "wikidata"
         }
       ]
     },
@@ -1543,6 +1899,10 @@
         {
           "name": "SI_base_unit",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q223662",
+          "type": "wikidata"
         }
       ]
     },
@@ -1647,6 +2007,10 @@
         {
           "name": "SI_derived_unit#Derived units with special names",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q208469",
+          "type": "wikidata"
         }
       ]
     },
@@ -1677,6 +2041,10 @@
         {
           "name": "Metre per second",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q182429",
+          "type": "wikidata"
         }
       ]
     },
@@ -1699,14 +2067,34 @@
       "from": "metre",
       "verb": "can be",
       "to": "square",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Square metre",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25343",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "cubic metre",
       "from": "metre",
       "verb": "can be",
       "to": "cube",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Cubic metre",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25517",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "cubic metre per second",
@@ -1718,6 +2106,10 @@
         {
           "name": "Cubic metre per second",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q794261",
+          "type": "wikidata"
         }
       ]
     },
@@ -1737,6 +2129,10 @@
         {
           "name": "Elementary charge",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q2101",
+          "type": "wikidata"
         }
       ]
     },
@@ -1751,6 +2147,10 @@
         {
           "name": "Planck constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q122894",
+          "type": "wikidata"
         }
       ]
     },
@@ -1765,6 +2165,10 @@
         {
           "name": "Boltzmann_constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q5962",
+          "type": "wikidata"
         }
       ]
     },
@@ -1779,6 +2183,10 @@
         {
           "name": "Avogadro_constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q6203",
+          "type": "wikidata"
         }
       ]
     },
@@ -1823,8 +2231,12 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Avogadro_constant",
+          "name": "Luminous efficacy",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1504173",
+          "type": "wikidata"
         }
       ]
     },
@@ -1847,6 +2259,10 @@
         {
           "name": "Metre per second squared",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1051665",
+          "type": "wikidata"
         }
       ]
     },
@@ -1890,6 +2306,10 @@
         {
           "name": "Radian per second",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1063756",
+          "type": "wikidata"
         }
       ]
     },
@@ -1911,6 +2331,10 @@
         {
           "name": "Angular velocity",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q161635",
+          "type": "wikidata"
         }
       ]
     },
@@ -1925,6 +2349,10 @@
         {
           "name": "Angular acceleration",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q186300",
+          "type": "wikidata"
         }
       ]
     },
@@ -2000,6 +2428,10 @@
         {
           "name": "Volumetric flow rate",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1134348",
+          "type": "wikidata"
         }
       ]
     },
@@ -2007,32 +2439,6 @@
       "from": "distance",
       "verb": "is a",
       "to": "mechanics SI derived unit"
-    },
-    {
-      "name": "square metre",
-      "from": "metre",
-      "verb": "can be",
-      "to": "square",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Square metre",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "cubic metre",
-      "from": "metre",
-      "verb": "can be",
-      "to": "cube",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Cubic metre",
-          "type": "wikipedia"
-        }
-      ]
     },
     {
       "name": "per day",
@@ -2100,6 +2506,10 @@
         {
           "name": "Caesium standard",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q5017052",
+          "type": "wikidata"
         }
       ]
     },
@@ -2220,7 +2630,7 @@
     },
     {
       "name": "scale km to metre",
-      "expression": "\"metre\" = \"km\" / 100",
+      "expression": "\"metre\" = \"km\" * 1000",
       "assigned_word": "kilometre"
     },
     {
@@ -2230,7 +2640,7 @@
     },
     {
       "name": "definition of joule",
-      "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / \"second\" * \"second\"",
+      "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / ( \"second\" * \"second\" )",
       "assigned_word": "joule"
     }
   ],

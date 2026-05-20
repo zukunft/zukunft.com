@@ -35,4 +35,4 @@ SELECT ref_delete_log
         'Q167'::text,
         17::bigint,
         2::smallint,
-        22::bigint);
+        29::bigint);

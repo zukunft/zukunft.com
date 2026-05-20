@@ -114,6 +114,14 @@ Two collective nouns build on the above and must not be confused:
 
 So every phrase is a term, but a verb and a formula are terms that are **not** phrases. When describing why two objects of different classes must not share a name or id, pick the noun that actually covers both classes — e.g. a triple and a formula are both *terms* (not *phrases*, because a formula is not a phrase).
 
+### The `percent` measure auto-scales
+
+The `percent` measure word is auto-scaled by the formula engine: a formula whose result is assigned to `percent` and that computes a ratio (e.g. `( "this" - "prior" ) / "prior"`) is shown to the user as a percentage **without** an explicit `* 100` in the expression. So do not "fix" such formulas by adding `* 100` — the missing factor is intentional, and the scaling happens via the `percent` measure, not the expression.
+
+### Some symbols and abbreviations are intentionally ambiguous
+
+A short symbol can be the alias of more than one phrase on purpose. For example `m` is the symbol for the SI unit `metre` (in `units.json`) and at the same time the abbreviation for `million` (in `scaling.json`). This is **by design**: the context — the other phrases in the value's group — disambiguates which meaning applies. Do not "fix" such overlaps by forcing the symbol to be unique or by renaming one side; only flag a genuine, unintended collision (e.g. a formula name equal to a triple name).
+
 ### Key Architectural Patterns
 
 **User Sandbox**: Every main object (`word`, `triple`, `value`, `formula`, `view`, `component`) extends the `sandbox` hierarchy. Changes by one user never overwrite shared data; user-specific overrides are stored in `*_user` tables.
