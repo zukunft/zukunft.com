@@ -230,7 +230,7 @@ class all_tests extends all_unit_write_tests
 
             // recreate the type list api message based on the updated db
             // because this json is used for the unit tests
-            $t_db->type_list_recreate($this, $this->usr1);
+            $t_db->type_list_check($this, $this->usr1);
         }
 
         // display the test results

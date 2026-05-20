@@ -34,7 +34,18 @@
       "name": "US$"
     },
     {
-      "name": "Euro"
+      "name": "Euro",
+      "description": "The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.",
+      "refs": [
+        {
+          "name": "Euro",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4916",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "EUR"

@@ -55,6 +55,7 @@ include_once paths::MODEL_COMPONENT . 'component_link.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_REF . 'ref.php';
@@ -100,6 +101,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -1226,14 +1228,17 @@ class test_db_load
     }
 
     /**
-     * update the list of types a json file
-     * called upfront also from the reset db run because this is used for the unit tests
+     * reload the types from the database
+     * and checks if it matches the expected user interface type list received from the api
+     * file api/ui_config/ui_config.json
+     * and check the backend type list test
+     * file src/test/resources/api/type_lists/type_lists.json
      *
      * @param all_tests $t the test object to collect the errors and calculate the execution times
      * @param user $usr the user for whom the api message should be created which can differ from the session user
      * @return void
      */
-    function type_list_recreate(test_cleanup $t, user $usr): void
+    function type_list_check(test_cleanup $t, user $usr): void
     {
         // start the test section (ts)
         $ts = 'db read types and system views ';
@@ -1243,6 +1248,10 @@ class test_db_load
         $ui_cfg = new ui_config();
         $ui_cfg->reload($usr);
         $t->assert_api($ui_cfg, '', [api_types::HEADER, api_types::INCL_COMPONENTS]);
+
+        // update the list of types a json file
+        // called upfront also from the reset db run because this is used for the unit tests
+        $t->assert_api_get_list(type_lists::class);
 
     }
 
