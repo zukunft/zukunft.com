@@ -276,8 +276,9 @@ class words
     const int LIGHT_ID = 86;
     const string SPEED = 'speed';
     const int SPEED_ID = 87;
-    const string METER = 'meter';
-    const int METER_ID = 1216;
+    // TODO Prio 2 allow to import translated words such as the US meter
+    const string METRE = 'metre';
+    const int METRE_ID = 27;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 131;
     const string TRANSITION = 'transition';
@@ -880,7 +881,7 @@ class words
         self::YEAR_2020_ID => self::YEAR_2020,
         self::LIGHT_ID => self::LIGHT,
         self::SPEED_ID => self::SPEED,
-        self::METER_ID => self::METER,
+        self::METRE_ID => self::METRE,
         self::HYPERFINE_ID => self::HYPERFINE,
         self::TRANSITION_ID => self::TRANSITION,
         self::FREQUENCY_ID => self::FREQUENCY,

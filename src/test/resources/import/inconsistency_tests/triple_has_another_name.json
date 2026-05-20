@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "time": "2020-07-23 18:07:26",
+  "user": "timon",
+  "selection": [
+    "the base measure definitions"
+  ],
+  "triples": [
+    {
+      "name": "m/s",
+      "from": "metre",
+      "verb": "per",
+      "to": "second",
+      "description": "causes an error at the moment but should either be rejected or should change the prime name only for the import user from 'metre per second' to 'm/s'"
+    }
+  ]
+}

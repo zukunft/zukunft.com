@@ -371,7 +371,7 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set(triples::M_PER_S_ID, triples::M_PER_S);
         $trp->description = triples::M_PER_S_COM;
-        $trp->set_from($t_wrd->meter()->phrase());
+        $trp->set_from($t_wrd->metre()->phrase());
         $trp->set_verb($t_vrb->verb_per());
         $trp->set_to($t_wrd->second()->phrase());
         $trp->set_type(phrase_types::MEASURE, $this->env->usr1);

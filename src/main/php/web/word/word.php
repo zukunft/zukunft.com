@@ -553,7 +553,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @return bool true if the word has the type "measure" (e.g. "meter" or "CHF")
+     * @return bool true if the word has the type "measure" (e.g. "metre" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */

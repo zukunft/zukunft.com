@@ -174,7 +174,7 @@
       ]
     },
     {
-      "name": "meter"
+      "name": "metre"
     },
     {
       "name": "surface"
@@ -326,10 +326,15 @@
       "to": "North Sea Coast"
     },
     {
-      "name": "m/s",
-      "from": "meter",
+      "name": "metre per second",
+      "from": "metre",
       "verb": "per",
       "to": "second"
+    },
+    {
+      "from": "m/s",
+      "verb": "is symbol for",
+      "to": "metre per second"
     },
     {
       "name": "W/m²",
@@ -525,7 +530,7 @@
         "Wind Turbine",
         "Top Seller",
         "Diameter",
-        "meter",
+        "metre",
         "2022"
       ],
       "number": "115",
