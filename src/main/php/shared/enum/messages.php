@@ -1353,7 +1353,7 @@ enum messages: string
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' that links "'
         . self::VAR_START . self::VAR_NAME_FROM . self::VAR_END
-        . ' to "'
+        . '" to "'
         . self::VAR_START . self::VAR_NAME_TO . self::VAR_END
         . '" ' . self::ALREADY_EXISTS->value . '. Please select another '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END

@@ -122,6 +122,14 @@ The `percent` measure word is auto-scaled by the formula engine: a formula whose
 
 A short symbol can be the alias of more than one phrase on purpose. For example `m` is the symbol for the SI unit `metre` (in `units.json`) and at the same time the abbreviation for `million` (in `scaling.json`). This is **by design**: the context — the other phrases in the value's group — disambiguates which meaning applies. Do not "fix" such overlaps by forcing the symbol to be unique or by renaming one side; only flag a genuine, unintended collision (e.g. a formula name equal to a triple name).
 
+### A triple's `from`/`verb`/`to` combination must be unique within an import
+
+Within the same import JSON a triple is identified by its `from` + `verb` + `to` combination, so that same combination must not be reused for two triples with **different names or meanings** — the duplicate key leads to an ambiguous id assignment during import (the same triple cannot resolve to two names).
+
+When two distinct concepts would otherwise share the same `from`/`verb`/`to`, introduce an intermediate **building-block triple** and point one concept at it so each key stays unique. For example `Newton` `name of` `law` was used for both *Newton's second law* and *Newton's law of gravitation*; the fix is to first create the triple `second law` (= `second` `kind of` `law`) and then build *Newton's second law* as `Newton` `name of` `second law`, so its key (`Newton`, `name of`, `second law`) differs from the gravitation triple's (`Newton`, `name of`, `law`). When such a building block already exists implicitly (e.g. `first`/`second` `kind of` `law` was also used directly by the thermodynamics laws), rebuild those users on top of the new block too (e.g. `first law of thermodynamics` = `first law` `of` `thermodynamics`) so no key is duplicated.
+
+This is distinct from the intentional symbol ambiguity above: the same **name** may alias several phrases on purpose, but the same **triple key** must never map to two different triple names.
+
 ### Key Architectural Patterns
 
 **User Sandbox**: Every main object (`word`, `triple`, `value`, `formula`, `view`, `component`) extends the `sandbox` hierarchy. Changes by one user never overwrite shared data; user-specific overrides are stored in `*_user` tables.

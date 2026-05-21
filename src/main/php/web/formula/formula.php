@@ -162,6 +162,11 @@ class formula extends sandbox_code_id
                     $this->set_usr_text($url_array[url_var::USER_EXPRESSION]);
                 }
             }
+            if (array_key_exists(url_var::LATEX, $url_array)) {
+                if ($url_array[url_var::LATEX] != null) {
+                    $this->set_latex($url_array[url_var::LATEX]);
+                }
+            }
             if (array_key_exists(url_var::NEED_ALL, $url_array)) {
                 if ($url_array[url_var::NEED_ALL] != null) {
                     $this->need_all_val = $url_array[url_var::NEED_ALL];

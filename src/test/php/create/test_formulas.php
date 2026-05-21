@@ -113,6 +113,7 @@ class test_formulas extends test_objects
         $frm = new formula($this->env->usr1);
         $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
         $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
+        $frm->set_latex(formulas::SCALE_TO_SEC_LATEX);
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }

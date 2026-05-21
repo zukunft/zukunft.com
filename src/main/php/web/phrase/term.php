@@ -367,6 +367,7 @@ class term extends combine_named
             $vars[json_fields::TYPE] = $this->type_id();
             if ($this->is_formula()) {
                 $vars[json_fields::USER_TEXT] = $this->obj()->get_usr_text();
+                $vars[json_fields::LATEX] = $this->obj()->get_latex();
             }
             // TODO add exclude field and move to a parent object?
             if ($this->obj()?->share_id() != null) {

@@ -34,3 +34,6 @@ verb_id,verb_name,code_id,description,condition_type,formula_name,name_plural_re
 33,to,to,to define a time period e.g. "12:00 to 13:00" or "1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover,,,,to,,,
 34,is ranked by,rank,to define which values should be used to sort related objects e.g. the first math const are the once that have been discovered first because they are probably the most relevant and useful,,,are sort phrases for,are ranked by,is sort phrases for,,
 35,between,between,to define a range e.g. a value between a lower and an upper bound,,,,between,,,
+36,kind of,kind_of,to assign a sub kind to a parent category e.g. the quadratic formula is a kind of formula,,,have the kinds,are kinds of,has the kind,,
+37,name of,name_of,to assign a proper name to a category e.g. the Pythagorean theorem is named after Pythagoras,,,are named,are names of,is named,,
+38,by parts,by_parts,to describe a method that operates on the parts of an expression e.g. integration by parts,,,,by parts,,,

@@ -20,6 +20,7 @@
     "name": "scale minute to sec",
     "type_id": 1,
     "user_text": "\"second\" = \"minute\" * 60",
+    "latex": "\\text{s} = 60 \\cdot \\text{min}",
     "class": "formula"
   },
   {

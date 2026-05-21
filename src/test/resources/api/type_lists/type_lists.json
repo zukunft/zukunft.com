@@ -7243,6 +7243,42 @@
         "usage": null,
         "impact": null,
         "id": 35
+      },
+      {
+        "name": "kind of",
+        "code_id": "kind_of",
+        "description": "to assign a sub kind to a parent category e.g. the quadratic formula is a kind of formula",
+        "plural": "are kinds of",
+        "reverse": "has the kind",
+        "rev_plural": "have the kinds",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 36
+      },
+      {
+        "name": "name of",
+        "code_id": "name_of",
+        "description": "to assign a proper name to a category e.g. the Pythagorean theorem is named after Pythagoras",
+        "plural": "are names of",
+        "reverse": "is named",
+        "rev_plural": "are named",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 37
+      },
+      {
+        "name": "by parts",
+        "code_id": "by_parts",
+        "description": "to describe a method that operates on the parts of an expression e.g. integration by parts",
+        "plural": "by parts",
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 38
       }
     ],
     "phrase_types": [

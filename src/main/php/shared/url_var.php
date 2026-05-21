@@ -112,6 +112,7 @@ class url_var
     const string FORMULA_LINK_PRIO = 'fp';
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
+    const string LATEX = 'fx'; // the formula in latex format
     const string FORMULA_TYPE = 'fy';
     const string GROUP = 'g';
     const string GROUP_NAME = 'gn'; // TODO maybe it is possible to use NAME
@@ -349,6 +350,7 @@ class url_var
     const string FORMULA_TYPE_HUMAN = 'formula_type';
     const string NEED_ALL_HUMAN = 'need_all_val';
     const string USER_EXPRESSION_HUMAN = 'formula_text';
+    const string LATEX_HUMAN = 'latex'; // the formula in latex format
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -557,6 +559,7 @@ class url_var
         [self::FORMULA_HUMAN, self::FORMULA],
         [self::FORMULA_TYPE_HUMAN, self::FORMULA_TYPE],
         [self::USER_EXPRESSION_HUMAN, self::USER_EXPRESSION],
+        [self::LATEX_HUMAN, self::LATEX],
         [self::NEED_ALL_HUMAN, self::NEED_ALL],
         [self::FORMULA_LINK_HUMAN, self::FORMULA_LINK],
         [self::FORMULA_LINK_PRIO_HUMAN, self::FORMULA_LINK_PRIO],

@@ -73,7 +73,7 @@
     },
     {
       "name": "\uD835\uDC52",
-      "description": "Symbol for the Euler's number, which is defined as the limiting difference between the harmonic series and the natural logarithm",
+      "description": "Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
       "type": "constant",
       "protection": "admin_protection"
     },
@@ -368,7 +368,7 @@
     {
       "name": "millisecond",
       "plural": "milliseconds",
-      "description": "The 1'000 part of a second.",
+      "description": "The 1/1000th part of a second.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -400,7 +400,7 @@
     },
     {
       "name": "m",
-      "description": "Is a symbol for the metre is the base unit of length in the International System of Units (SI).",
+      "description": "Is a symbol for the metre, the base unit of length in the International System of Units (SI).",
       "type": "measure",
       "protection": "admin_protection"
     },
@@ -422,7 +422,7 @@
     },
     {
       "name": "kg",
-      "description": "The symbol for the kilogram which was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
+      "description": "The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
       "type": "measure",
       "protection": "admin_protection"
     },
@@ -942,7 +942,7 @@
     },
     {
       "name": "becquerel",
-      "description": "The becquerel is the unit of radioactivity in the International System of Units (SI). One becquerel is defined as an activity of one per second, on average, for aperiodic activity events referred to a radionuclide.",
+      "description": "The becquerel is the unit of radioactivity in the International System of Units (SI). One becquerel is defined as an activity of one decay per second, on average, for aperiodic decay events of a radionuclide.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1415,6 +1415,7 @@
     },
     {
       "name": "Planck",
+      "description": "Max Planck was a German theoretical physicist whose discovery of energy quanta won him the Nobel Prize in Physics in 1918.",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1429,6 +1430,7 @@
     },
     {
       "name": "Boltzmann",
+      "description": "Ludwig Boltzmann was an Austrian physicist and philosopher; his greatest achievements were the development of statistical mechanics.",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2576,71 +2578,85 @@
     {
       "name": "scale minute to sec",
       "expression": "\"second\" = \"minute\" * 60",
+      "latex": "\\text{s} = 60 \\cdot \\text{min}",
       "assigned_word": "minute"
     },
     {
       "name": "scale hour to sec",
       "expression": "\"second\" = \"hour\" * 3600",
+      "latex": "\\text{s} = 3600 \\cdot \\text{h}",
       "assigned_word": "hour"
     },
     {
       "name": "scale day to hour",
       "expression": "\"hour\" = \"day\" * 24",
+      "latex": "\\text{h} = 24 \\cdot \\text{d}",
       "assigned_word": "day"
     },
     {
       "name": "scale day to sec",
       "expression": "\"second\" = \"day\" * 86400",
+      "latex": "\\text{s} = 86400 \\cdot \\text{d}",
       "assigned_word": "day"
     },
     {
       "name": "scale week to day",
       "expression": "\"day\" = \"week\" * 7",
+      "latex": "\\text{d} = 7 \\cdot \\text{wk}",
       "assigned_word": "week"
     },
     {
       "name": "scale year to month",
       "expression": "\"month\" = \"year\" * 12",
+      "latex": "\\text{mo} = 12 \\cdot \\text{a}",
       "assigned_word": "year"
     },
     {
       "name": "scale year to second",
       "expression": "\"second\" = \"year\" * 31557600",
+      "latex": "\\text{s} = 31557600 \\cdot \\text{a}",
       "assigned_word": "year"
     },
     {
       "name": "scale litre to m3",
       "expression": "\"m3\" = \"litre\" / 1000",
+      "latex": "\\text{m}^3 = \\text{L} / 1000",
       "assigned_word": "litre"
     },
     {
       "name": "scale gram to kg",
       "expression": "\"kg\" = \"gram\" / 1000",
+      "latex": "\\text{kg} = \\text{g} / 1000",
       "assigned_word": "gram"
     },
     {
       "name": "scale tonne to kg",
       "expression": "\"kg\" = \"tonne\" * 1000",
+      "latex": "\\text{kg} = 1000 \\cdot \\text{t}",
       "assigned_word": "tonne"
     },
     {
       "name": "scale kWh to joule",
       "expression": "\"joule\" = \"kWh\" * 3600000",
+      "latex": "\\text{J} = 3600000 \\cdot \\text{kWh}",
       "assigned_word": "kWh"
     },
     {
       "name": "scale km to metre",
       "expression": "\"metre\" = \"km\" * 1000",
+      "latex": "\\text{m} = 1000 \\cdot \\text{km}",
       "assigned_word": "kilometre"
     },
     {
       "name": "scale km to 100 km",
       "expression": "\"per 100 km\" = \"km\" * 100",
+      "latex": "\\text{per 100 km} = 100 \\cdot \\text{km}",
       "assigned_word": "kilometre"
     },
     {
       "name": "definition of joule",
       "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / ( \"second\" * \"second\" )",
+      "latex": "\\text{J} = \\dfrac{\\text{kg} \\cdot \\text{m}^2}{\\text{s}^2}",
       "assigned_word": "joule"
     }
   ],
