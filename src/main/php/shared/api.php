@@ -56,7 +56,7 @@ class api
     const string MAIN_SCRIPT = self::SCRIPT_PATH . 'view.php';
     const string ABOUT_SCRIPT = self::SCRIPT_PATH . 'about.php';
     const string PRIVACY_SCRIPT = self::SCRIPT_PATH . 'privacy_policy.html';
-    const string FIND_SCRIPT = self::SCRIPT_PATH . 'find.php';
+    const string FIND_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID;
     const string LOGIN_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_ID;
     const string SIGNUP_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::SIGNUP_ID;
     const string LOGIN_ACTIVATE_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_ACTIVATE_ID;

@@ -6559,7 +6559,7 @@
     \-- logout_body
         \-- system_page - HTML shown on the logout confirmation page
     \-- body_search
-        \-- system_page - @return string with the HTML code to search for words, verbs, triple, formulas
+        \-- system_page - the HTML code to search for words, verbs, triple, formulas
     \-- body_search_full
         \-- system_page - like body_search but with all possible fields
     \-- value_details

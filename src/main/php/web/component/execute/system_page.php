@@ -46,6 +46,7 @@ include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::WORD . 'word_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -297,16 +299,34 @@ class system_page extends component
         return $result;
     }
 
-    // TODO Prio 0 fill with real code
-
     /**
-     * @return string with the HTML code to search for words, verbs, triple, formulas
+     * the HTML code to search for words, verbs, triple, formulas
      * based on the context (foaf terms) and "fixed" selections like the type or the share or protection
      * limit the number of search and selection fields so that it matches a small screen
+     *
+     * @param word_list|null $wrd_lst the words matching the search pattern offered to the user for selection
+     *                                or null if no word has been found yet
+     * @param string $pattern the search pattern entered by the user; the input field itself is part of
+     *                        the navbar search form, so it is not repeated in the body
+     * @return string with the HTML code of the search body
      */
-    function body_search(): string
+    function body_search(?word_list $wrd_lst = null, string $pattern = ''): string
     {
-        return 'body_search placeholder';
+        $result = '';
+
+        // show a search field
+        // the search input field is part of the navbar search form, so it is not repeated here
+
+        // show the matching words to select
+        // TODO replace by term or phrase list
+        if ($wrd_lst != null) {
+            $result .= $wrd_lst->name_link();
+        }
+
+        // show the matching terms to select
+        // TODO create a term list object
+
+        return $result;
     }
 
     // TODO Prio 0 fill with real code
