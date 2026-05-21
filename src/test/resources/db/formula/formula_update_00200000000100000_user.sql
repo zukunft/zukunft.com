@@ -1,4 +1,4 @@
-PREPARE formula_update_0020000000100000_user (text,bigint,bigint) AS
+PREPARE formula_update_00200000000100000_user (text,bigint,bigint) AS
     UPDATE user_formulas
        SET formula_name = $1,
            last_update = Now()

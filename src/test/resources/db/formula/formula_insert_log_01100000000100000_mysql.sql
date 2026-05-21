@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS formula_insert_log_0110000000100000;
-CREATE PROCEDURE formula_insert_log_0110000000100000
+DROP PROCEDURE IF EXISTS formula_insert_log_01100000000100000;
+CREATE PROCEDURE formula_insert_log_01100000000100000
     (_formula_name            text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -25,10 +25,10 @@ BEGIN
 
 END;
 
-PREPARE formula_insert_log_0110000000100000_call FROM
-    'SELECT formula_insert_log_0110000000100000 (?,?,?,?,?)';
+PREPARE formula_insert_log_01100000000100000_call FROM
+    'SELECT formula_insert_log_01100000000100000 (?,?,?,?,?)';
 
-SELECT formula_insert_log_0110000000100000 (
+SELECT formula_insert_log_01100000000100000 (
                '"one" = "millions" * 1000000',
                3,
                1,

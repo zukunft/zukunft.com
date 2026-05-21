@@ -6369,6 +6369,18 @@
         "code_id": "39usage",
         "description": "",
         "id": 885
+      },
+      {
+        "name": "10latex",
+        "code_id": "10latex",
+        "description": "",
+        "id": 886
+      },
+      {
+        "name": "11latex",
+        "code_id": "11latex",
+        "description": "",
+        "id": 887
       }
     ],
     "db_cache_types": [

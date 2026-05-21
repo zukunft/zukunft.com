@@ -57,6 +57,7 @@ enum change_fields: string
     const string FLD_FORMULA_NAME = 'formula_name';
     const string FLD_FORMULA_USR_TEXT = 'resolved_text';
     const string FLD_FORMULA_REF_TEXT = 'formula_text';
+    const string FLD_FORMULA_LATEX = 'latex';
     const string FLD_FORMULA_TYPE = 'formula_type_id';
     const string FLD_ALL_NEEDED = 'all_values_needed';
     const string FLD_FORMULA_ALL = 'all_values_needed';

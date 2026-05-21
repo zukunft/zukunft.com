@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS formula_update_log_0020002220100000;
-CREATE PROCEDURE formula_update_log_0020002220100000
+DROP PROCEDURE IF EXISTS formula_update_log_00200022200100000;
+CREATE PROCEDURE formula_update_log_00200022200100000
     (_user_id                  bigint,
      _change_action_id         smallint,
      _field_id_formula_name    smallint,
@@ -37,10 +37,10 @@ BEGIN
 
 END;
 
-PREPARE formula_update_log_0020002220100000_call FROM
-    'SELECT formula_update_log_0020002220100000 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE formula_update_log_00200022200100000_call FROM
+    'SELECT formula_update_log_00200022200100000 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT formula_update_log_0020002220100000
+SELECT formula_update_log_00200022200100000
     (3,
      2,
      30,

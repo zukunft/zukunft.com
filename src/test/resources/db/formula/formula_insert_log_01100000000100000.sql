@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION formula_insert_log_0110000000100000
+CREATE OR REPLACE FUNCTION formula_insert_log_01100000000100000
     (_formula_name            text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -27,12 +27,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE formula_insert_log_0110000000100000_call
+PREPARE formula_insert_log_01100000000100000_call
         (text,bigint,smallint,smallint,smallint) AS
-    SELECT formula_insert_log_0110000000100000
+    SELECT formula_insert_log_01100000000100000
         ($1,$2,$3,$4,$5);
 
-SELECT formula_insert_log_0110000000100000 (
+SELECT formula_insert_log_01100000000100000 (
                '"one" = "millions" * 1000000'::text,
                3::bigint,
                1::smallint,

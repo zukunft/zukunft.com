@@ -5,6 +5,7 @@ PREPARE formula_list_by_names (bigint, text[]) AS
            CASE WHEN (u.formula_name  <> '' IS NOT TRUE) THEN s.formula_name      ELSE u.formula_name      END AS formula_name,
            CASE WHEN (u.formula_text  <> '' IS NOT TRUE) THEN s.formula_text      ELSE u.formula_text      END AS formula_text,
            CASE WHEN (u.resolved_text <> '' IS NOT TRUE) THEN s.resolved_text     ELSE u.resolved_text     END AS resolved_text,
+           CASE WHEN (u.latex         <> '' IS NOT TRUE) THEN s.latex             ELSE u.latex             END AS latex,
            CASE WHEN (u.description   <> '' IS NOT TRUE) THEN s.description       ELSE u.description       END AS description,
            CASE WHEN (u.formula_type_id     IS     NULL) THEN s.formula_type_id   ELSE u.formula_type_id   END AS formula_type_id,
            CASE WHEN (u.all_values_needed   IS     NULL) THEN s.all_values_needed ELSE u.all_values_needed END AS all_values_needed,

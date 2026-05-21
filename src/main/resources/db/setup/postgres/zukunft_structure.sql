@@ -2873,6 +2873,7 @@ CREATE TABLE IF NOT EXISTS formulas
     formula_name      varchar(255)         NOT NULL,
     formula_text      text             DEFAULT NULL,
     resolved_text     text             DEFAULT NULL,
+    latex             text             DEFAULT NULL,
     description       text             DEFAULT NULL,
     formula_type_id   smallint         DEFAULT NULL,
     all_values_needed smallint         DEFAULT NULL,
@@ -2891,6 +2892,7 @@ COMMENT ON COLUMN formulas.user_id IS 'the owner / creator of the formula';
 COMMENT ON COLUMN formulas.formula_name IS 'the text used to search for formulas that must also be unique for all terms (words,triples,verbs and formulas)';
 COMMENT ON COLUMN formulas.formula_text IS 'the internal formula expression with the database references e.g. {f1} for formula with id 1';
 COMMENT ON COLUMN formulas.resolved_text IS 'the formula expression in user readable format as shown to the user which can include formatting for better readability';
+COMMENT ON COLUMN formulas.latex IS 'the formula in latex format';
 COMMENT ON COLUMN formulas.description IS 'text to be shown to the user for mouse over; to be replaced by a language form entry';
 COMMENT ON COLUMN formulas.formula_type_id IS 'the id of the formula type';
 COMMENT ON COLUMN formulas.all_values_needed IS 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"';
@@ -2913,6 +2915,7 @@ CREATE TABLE IF NOT EXISTS user_formulas
     formula_name      varchar(255)     DEFAULT NULL,
     formula_text      text             DEFAULT NULL,
     resolved_text     text             DEFAULT NULL,
+    latex             text             DEFAULT NULL,
     description       text             DEFAULT NULL,
     formula_type_id   smallint         DEFAULT NULL,
     all_values_needed smallint         DEFAULT NULL,
@@ -2931,6 +2934,7 @@ COMMENT ON COLUMN user_formulas.user_id IS 'the changer of the formula';
 COMMENT ON COLUMN user_formulas.formula_name IS 'the text used to search for formulas that must also be unique for all terms (words,triples,verbs and formulas)';
 COMMENT ON COLUMN user_formulas.formula_text IS 'the internal formula expression with the database references e.g. {f1} for formula with id 1';
 COMMENT ON COLUMN user_formulas.resolved_text IS 'the formula expression in user readable format as shown to the user which can include formatting for better readability';
+COMMENT ON COLUMN user_formulas.latex IS 'the formula in latex format';
 COMMENT ON COLUMN user_formulas.description IS 'text to be shown to the user for mouse over; to be replaced by a language form entry';
 COMMENT ON COLUMN user_formulas.formula_type_id IS 'the id of the formula type';
 COMMENT ON COLUMN user_formulas.all_values_needed IS 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"';

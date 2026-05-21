@@ -152,7 +152,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 151,1,scale tonne to kg,,,10,,,,,,,,
 152,1,scale kWh to joule,,,10,,,,,,,,
 153,1,scale km to metre,,,10,,,,,,,,
-154,1,scale per km to per 100 km,,,10,,,,,,,,
+154,1,scale km to 100 km,,,10,,,,,,,,
 155,1,definition of joule,,,10,,,,,,,,
 156,1,thousand,,to specify numbers in thousand,1,,,,,,,,3
 157,1,million,,The natural number equal to 1,000,000 (one thousand thousand). Financial figures, particularly turnover statistics, are often expressed in millions of a given currency to keep numbers manageable.,1,,,,,,,,3

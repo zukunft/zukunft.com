@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION formula_update_log_0020002220100000
+CREATE OR REPLACE FUNCTION formula_update_log_00200022200100000
     (_user_id                  bigint,
      _change_action_id         smallint,
      _field_id_formula_name    smallint,
@@ -36,12 +36,12 @@ $$ BEGIN
 
 END $$ LANGUAGE plpgsql;
 
-PREPARE formula_update_log_0020002220100000_call
+PREPARE formula_update_log_00200022200100000_call
     (bigint, smallint, smallint, text, text, bigint, smallint, smallint, smallint, smallint, text, text, smallint, text, text) AS
-SELECT formula_update_log_0020002220100000
+SELECT formula_update_log_00200022200100000
     ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);
 
-SELECT formula_update_log_0020002220100000
+SELECT formula_update_log_00200022200100000
     (3::bigint,
      2::smallint,
      30::smallint,

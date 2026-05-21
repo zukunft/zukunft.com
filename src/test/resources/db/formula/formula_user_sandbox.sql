@@ -4,6 +4,7 @@ PREPARE formula_user_sandbox (bigint) AS
            user_id,
            formula_text,
            resolved_text,
+           latex,
            description,
            formula_type_id,
            all_values_needed,

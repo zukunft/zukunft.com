@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION formula_insert_log_0111101111151111
+CREATE OR REPLACE FUNCTION formula_insert_log_01111011101151111
     (_formula_name               text,
      _user_id                    bigint,
      _change_action_id           smallint,
@@ -83,12 +83,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE formula_insert_log_0111101111151111_call
+PREPARE formula_insert_log_01111011101151111_call
         (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint, smallint, smallint, smallint, text, smallint, text, smallint, smallint, smallint, text, bigint, smallint, numeric, smallint, smallint, smallint, smallint, smallint, smallint) AS
-    SELECT formula_insert_log_0111101111151111
+    SELECT formula_insert_log_01111011101151111
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26, $27, $28);
 
-SELECT formula_insert_log_0111101111151111 (
+SELECT formula_insert_log_01111011101151111 (
                'scale minute to sec'::text,
                3::bigint,
                1::smallint,

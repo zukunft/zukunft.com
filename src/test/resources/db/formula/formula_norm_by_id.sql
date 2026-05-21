@@ -3,6 +3,7 @@ PREPARE formula_norm_by_id (bigint) AS
            formula_name,
            formula_text,
            resolved_text,
+           latex,
            description,
            formula_type_id,
            all_values_needed,

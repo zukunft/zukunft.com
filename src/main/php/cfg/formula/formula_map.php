@@ -186,6 +186,7 @@ class formula_map extends sandbox_code_id
     protected bool $ref_text_dirty;          // true if the human-readable text has been updated and not yet converted
     public ?string $usr_text = null;       // the formula expression in the user format
     private bool $usr_text_dirty;          // true if the reference text has been updated and not yet converted
+    public ?string $latex = null;          // the formula in latex format
     public ?string $description = null;    // describes to the user what this formula is doing
     public ?bool $need_all_val = null;     // calculate and save the result only if all used values are not null
     public ?DateTime $last_update = null;  // the time of the last update of fields that may influence the calculated results
@@ -250,6 +251,7 @@ class formula_map extends sandbox_code_id
         $this->ref_text_dirty = false;
         $this->usr_text = null;
         $this->usr_text_dirty = false;
+        $this->latex = null;
         $this->type_id = null;
         $this->need_all_val = null;
         $this->last_update = null;
@@ -293,6 +295,9 @@ class formula_map extends sandbox_code_id
             }
             if (array_key_exists(formula_db::FLD_FORMULA_USER_TEXT, $db_row)) {
                 $this->usr_text = $db_row[formula_db::FLD_FORMULA_USER_TEXT];
+            }
+            if (array_key_exists(formula_db::FLD_LATEX, $db_row)) {
+                $this->latex = $db_row[formula_db::FLD_LATEX];
             }
             if (array_key_exists(formula_db::FLD_ALL_NEEDED, $db_row)) {
                 $this->need_all_val = $lib->get_bool($db_row[formula_db::FLD_ALL_NEEDED]);
@@ -349,6 +354,10 @@ class formula_map extends sandbox_code_id
             }
         }
 
+        if (array_key_exists(json_fields::LATEX, $api_json)) {
+            $this->latex = $api_json[json_fields::LATEX];
+        }
+
         return $usr_msg->is_ok();
     }
 
@@ -388,6 +397,12 @@ class formula_map extends sandbox_code_id
         if (key_exists(json_fields::EXPRESSION, $in_ex_json)) {
             if ($in_ex_json[json_fields::EXPRESSION] <> '') {
                 $this->usr_text = $in_ex_json[json_fields::EXPRESSION];
+            }
+        }
+
+        if (key_exists(json_fields::LATEX, $in_ex_json)) {
+            if ($in_ex_json[json_fields::LATEX] <> '') {
+                $this->latex = $in_ex_json[json_fields::LATEX];
             }
         }
 
@@ -451,6 +466,7 @@ class formula_map extends sandbox_code_id
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::USR_TEXT] = $this->usr_text;
             $vars[json_fields::REF_TEXT] = $this->ref_text;
+            $vars[json_fields::LATEX] = $this->latex;
             $vars[json_fields::IMPACT] = $this->impact;
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -546,6 +562,22 @@ class formula_map extends sandbox_code_id
             $this->generate_ref_text($trm_lst, $usr_msg);
         }
         return $this->ref_text;
+    }
+
+    /**
+     * @param string|null $latex the formula in latex format
+     */
+    function set_latex(?string $latex): void
+    {
+        $this->latex = $latex;
+    }
+
+    /**
+     * @return string|null the formula in latex format
+     */
+    function get_latex(): ?string
+    {
+        return $this->latex;
     }
 
 
@@ -856,6 +888,9 @@ class formula_map extends sandbox_code_id
         if ($std_obj->usr_text !== $this->usr_text) {
             $result->usr_text = $this->usr_text;
         }
+        if ($std_obj->latex !== $this->latex) {
+            $result->latex = $this->latex;
+        }
         if ($std_obj->need_all_val !== $this->need_all_val) {
             $result->need_all_val = $this->need_all_val;
         }
@@ -900,6 +935,9 @@ class formula_map extends sandbox_code_id
             }
             if ($this->usr_text === null and $used_obj->usr_text != null) {
                 $this->usr_text = $used_obj->usr_text;
+            }
+            if ($this->latex === null and $used_obj->latex != null) {
+                $this->latex = $used_obj->latex;
             }
             if ($this->need_all_val === null and $used_obj->need_all_val != null) {
                 $this->need_all_val = $used_obj->need_all_val;
@@ -1007,6 +1045,11 @@ class formula_map extends sandbox_code_id
         }
         if ($this->get_usr_text() != null) {
             if ($this->get_usr_text() != $db_obj->get_usr_text()) {
+                $result = true;
+            }
+        }
+        if ($this->latex != null) {
+            if ($this->latex != $db_obj->latex) {
                 $result = true;
             }
         }
@@ -1119,6 +1162,9 @@ class formula_map extends sandbox_code_id
         }
         if ($this->usr_text <> '') {
             $vars[json_fields::EXPRESSION] = $this->usr_text;
+        }
+        if ($this->latex <> '') {
+            $vars[json_fields::LATEX] = $this->latex;
         }
 
         // export the assigned phrases by name, consistent with the import:
@@ -1839,6 +1885,7 @@ class formula_map extends sandbox_code_id
                 formula_db::FLD_TYPE,
                 formula_db::FLD_FORMULA_TEXT,
                 formula_db::FLD_FORMULA_USER_TEXT,
+                formula_db::FLD_LATEX,
                 formula_db::FLD_ALL_NEEDED,
                 formula_db::FLD_LAST_UPDATE,
                 formula_db::FLD_VIEW,
@@ -1919,6 +1966,21 @@ class formula_map extends sandbox_code_id
                 $this->usr_text,
                 formula_db::FLD_FORMULA_USER_TEXT_SQL_TYP,
                 $obj->usr_text
+            );
+        }
+        if ($obj->latex !== $this->latex) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_LATEX,
+                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_LATEX),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                formula_db::FLD_LATEX,
+                $this->latex,
+                formula_db::FLD_LATEX_SQL_TYP,
+                $obj->latex
             );
         }
         if ($obj->need_all_val !== $this->need_all_val) {

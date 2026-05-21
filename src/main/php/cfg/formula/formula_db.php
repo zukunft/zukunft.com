@@ -78,6 +78,9 @@ class formula_db
     const string FLD_FORMULA_USER_TEXT_COM = 'the formula expression in user readable format as shown to the user which can include formatting for better readability';
     const string FLD_FORMULA_USER_TEXT = 'resolved_text';
     const sql_field_type FLD_FORMULA_USER_TEXT_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_LATEX_COM = 'the formula in latex format';
+    const string FLD_LATEX = 'latex';
+    const sql_field_type FLD_LATEX_SQL_TYP = sql_field_type::TEXT;
     //const string FLD_REF_TEXT = "ref_text";             // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
     const string FLD_DESCRIPTION_COM = 'text to be shown to the user for mouse over; to be replaced by a language form entry';
     const string FLD_ALL_NEEDED_COM = 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"';
@@ -106,6 +109,7 @@ class formula_db
     );
     // list of fields that CAN be changed by the user
     const array FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_LATEX, self::FLD_LATEX_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_LATEX_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, self::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, formula_type::class, self::FLD_TYPE_COM],
         [self::FLD_ALL_NEEDED, self::FLD_ALL_NEEDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_ALL_NEEDED_COM],
@@ -123,6 +127,7 @@ class formula_db
     const array FLD_NAMES_USR = array(
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
+        self::FLD_LATEX,
         sql_db::FLD_DESCRIPTION
     );
     // list of the user-specific numeric database field names
@@ -139,6 +144,7 @@ class formula_db
         self::FLD_NAME,
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
+        self::FLD_LATEX,
         sql_db::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_ALL_NEEDED,
