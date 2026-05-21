@@ -88,7 +88,7 @@ class element_write_tests
 
                 $result = $elm->dsp_id();
                 if ($pos == 0) {
-                    $target = 'word "Country" (' . $wrd_country->id . ') for user 3 (zukunft.com system test)';
+                    $target = 'word "country" (' . $wrd_country->id . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 1) {
                     $target = 'verb "can be used as a differentiator for" (' . $vrb_id . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 2) {
@@ -100,7 +100,7 @@ class element_write_tests
 
                 $result = $elm->name();
                 if ($pos == 0) {
-                    $target = 'Country';
+                    $target = 'country';
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
@@ -114,7 +114,7 @@ class element_write_tests
                 $result = $elm_dsp->link($back);
                 $url = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
                 if ($pos == 0) {
-                    $target = $url . $wrd_country->id . '&back=0" title="Country">Country</a>';
+                    $target = $url . $wrd_country->id . '&back=0" title="country">country</a>';
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
@@ -163,7 +163,7 @@ class element_write_tests
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
-            $target = '"Country","can be used as a differentiator for","Canton","System Test Word Total"';
+            $target = '"country","can be used as a differentiator for","Canton","System Test Word Total"';
             $t->dsp_contains(', element_list->dsp_id', $target, $result);
         } else {
             $result = 'formula element list not set';

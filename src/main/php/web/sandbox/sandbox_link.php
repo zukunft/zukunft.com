@@ -52,6 +52,7 @@ include_once html_paths::SANDBOX . 'sandbox.php';
 //include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -129,6 +131,23 @@ class sandbox_link extends sandbox
         $vars = parent::api_array();
         $vars[json_fields::PREDICATE_ID] = $this->predicate_id;
         return $vars;
+    }
+
+
+    /*
+     * display
+     */
+
+    /**
+     * @return string that best describes this object
+     */
+    function display(): string
+    {
+        global $mtr;
+        $from_name = $this->fob?->name() ?? '';
+        $to_name = is_string($this->tob) ? $this->tob : ($this->tob?->name() ?? '');
+        $result = $to_name . ' ' . $mtr->txt(msg_id::LINK_EXTENDS) . ' ' . $from_name;
+        return $result;
     }
 
 }

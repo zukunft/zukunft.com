@@ -188,7 +188,10 @@ class formula_link_type extends type_object
     {
         parent::import_mapper($in_ex_json, $msg, $dto);
 
-        if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+        if ($msg->usr === null) {
+            log_err('user not set in user_message', 'import_mapper');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
             if (key_exists(json_fields::FORMULA_NAME, $in_ex_json)) {
                 // TODO Prio 0 convert the name to the id based on the data cache
                 // TODO Prio 2 check that for import always the name or code id is converted to the id

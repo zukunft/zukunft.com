@@ -113,6 +113,7 @@ class test_formulas extends test_objects
         $frm = new formula($this->env->usr1);
         $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
         $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
+        $frm->set_latex(formulas::SCALE_TO_SEC_LATEX);
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }
@@ -309,6 +310,15 @@ class test_formulas extends test_objects
         $lnk->set(1, $this->formula(), $t_wrd->word_minute()->phrase());
         $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::TIME_PERIOD));
         $lnk->order_nbr = 2;
+        return $lnk;
+    }
+
+    function formula_link_add(): formula_link
+    {
+        $t_wrd = new test_words($this->env);
+        $lnk = new formula_link($this->env->usr1);
+        $lnk->set_formula($this->formula_add());
+        $lnk->set_phrase($t_wrd->word_add()->phrase());
         return $lnk;
     }
 

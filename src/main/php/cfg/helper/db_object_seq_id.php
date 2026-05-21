@@ -796,7 +796,7 @@ class db_object_seq_id extends db_object
             $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_NAME => $msg->usr?->name(),
                 msg_id::VAR_USER_PROFILE => $msg->usr?->profile_name()
             ]);
         }
@@ -1539,11 +1539,16 @@ class db_object_seq_id extends db_object
         $lib = new library();
         $class = $lib->class_to_name($this::class);
 
-        // if the user has a unique id e.g. if at least the email is known
-        // the user if potentially allowed to change the object
-        if ($usr_msg->usr->is_unique()) {
-            $can_change = true;
-            log_info($class . ' ' . $this->dsp_id() . ' is change by user ' . $usr_msg->usr->dsp_id());
+        if ($usr_msg->usr === null) {
+            log_err('user not set in user_message', 'can_be_changed_by');
+            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } else {
+            // if the user has a unique id e.g. if at least the email is known
+            // the user if potentially allowed to change the object
+            if ($usr_msg->usr->is_unique()) {
+                $can_change = true;
+                log_info($class . ' ' . $this->dsp_id() . ' is change by user ' . $usr_msg->usr->dsp_id());
+            }
         }
 
         return $can_change;

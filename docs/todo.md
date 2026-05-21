@@ -7,15 +7,28 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
-    TODO unit test for all component types
-    TODO test user login
+    TODO create a unit test for all system views
+    TODO review all system views and make sure that at least all components used in the pages return a reasonable result
+    TODO add phrase_id for the additional selection to the component link so that 
+         e.g. for the global warming problem the phrases "definition", "size" and "solutions" can be used 
+         for a sorted phrase list solution
+    TODO create a useful page e.g. for currencies
+    TODO add links for the values in the frontend page 
+    TODO fill the workflox unit tests
+    TODO fix to bugs in the component types so that all component type returns a nice result
+    TODO add unti test for all system pages including the login page to be able to use the view.php script also for the login page
+    TODO deprecate the old $back parameter and use instead back prefixed parameters
+    TODO deprecate all non view.php http calls
+    TODO check how to shorten the urls e.g. that www.zukunft.com/login calls www.zukunft.com/http/view.php?m=61 
     TODO test for add word workflow: add the function "url_to_action_and_next_step" in the workflow class
     TODO add horitontal write test that includes all cases of changing any unique key e.g. the name, code_id, linked object and group_id for values
     TODO finish the frontend component tests
     TODO create the frontend page reaction flow tests
     TODO add test to check that all components show the expected html result
     TODO check that all words and triples on of the config file have a const in words and triples
+    TODO fix issues in the unit tests for all component types ('Component display test' in src/test/php/unit_ui/base_ui_tests.php)
     TODO add unit test for all frontend components
+    TODO test user activate and password reset
 
     TODO Release 0.0.4
     TODO use the name "nud" (New User Default) for the default data that should be used if the user has not done an overwrite
@@ -166,6 +179,8 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO complete system view with: about, async_process, calculate
     TODO create an admin page with the numbner of connected pods, the usage an the most likely and latest SPAM posts
+
+    TODO write a function that checks the order of the import based on the description in lll_coding.md (or switch to fully automatic include)
 
     TODO object chart 
          - add legend with object types and that dotted line is inheritance   

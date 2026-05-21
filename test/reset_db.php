@@ -42,6 +42,7 @@ include_once 'test_const.php';
 // load the main test class to get the test environment
 include_once TEST_PHP_PATH . 'test_app.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\test\php\test_app;
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -95,15 +96,6 @@ if ($db_con->is_open()) {
                 $t_db = new test_db_load($t);
                 $t_db->create_unit_test_db_entries($t);
 
-                // recreate the type list api message based on the updated db
-                // because this json is used for the unit tests
-                // if the type_list created by this reset_db script differs
-                // from the type_list created by the test.php differs
-                // most likely new fields have not yet been added to the
-                // src/main/resources/db_code_links/change_fields.csv of the predefined fields
-                $t_db = new test_db_load($t);
-                $t_db->type_list_recreate($t, $t->usr1);
-
                 // check and update the fixed csv files
                 // e.g. to have an indication which words might be missing due to the code changes
                 // after a database reset and refill with the initial setup data
@@ -112,6 +104,14 @@ if ($db_con->is_open()) {
                 // these fixed csv files help to detect the impact of code changes
                 // e.g. if some words are missing due to different error handling
                 $t_db->csv_recreate();
+
+                // as the last step verify the type list api message against the fully reset database
+                // because src/test/resources/api/type_lists/type_lists.json is used by the unit tests
+                // if the type_list created by this reset_db script differs
+                // from the type_list created by test.php
+                // most likely new fields have not yet been added to the
+                // src/main/resources/db_code_links/change_fields.csv of the predefined fields
+                $t_db->type_list_check($t, $t->usr1);
 
                 // display the test results
                 if ($t->format == text_log_format::HTML) {

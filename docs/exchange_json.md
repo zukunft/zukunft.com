@@ -103,6 +103,34 @@ formula fields
 Like words formula have the name, description, type and view field and additional:
 
 - expression - the formula expression that is converted into internal references so that the words used in the formula are automatically renamed if the used word is renamed
+- assigned_word - the single word or triple (one name) the formula is assigned to
+- assigned - a json array with the names of the words or triples the formula is assigned to
+
+A formula can be assigned to one or more phrases (a phrase is a word or a triple). Use `assigned_word` to assign exactly one phrase and `assigned` to assign several. The names always refer to phrases that are also part of the same json (in the words or triples sections); the phrases themselves are not repeated inside the assignment.
+
+Trying to put more than one phrase into `assigned_word` (a comma-separated string or a json array with several entries) is rejected on import with the hint to use `assigned` instead. The export follows the same rule: it writes `assigned_word` when the formula is assigned to exactly one phrase and `assigned` when it is assigned to several, so an exported formula round-trips on re-import.
+
+Also note that a formula name must never be the same as a word, verb or triple name, because all of these are terms and a shared name would lead to an ambiguous reference.
+
+Sample with a single assigned phrase:
+
+```json
+{
+  "name": "scale thousand to one",
+  "expression": "\"one\" = \"thousand\" * 1000",
+  "assigned_word": "thousand"
+}
+```
+
+Sample with several assigned phrases:
+
+```json
+{
+  "name": "currency conversion calculation",
+  "expression": "\"target amount\" = \"source amount\" * \"exchange rate\"",
+  "assigned": ["conversion", "exchange rate"]
+}
+```
 
 results fields
 --------------

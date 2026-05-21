@@ -167,6 +167,15 @@ class sys_log_list
         return true;
     }
 
+    /**
+     * @return bool true when the list contains no entries; mirrors the ListBase API so callers
+     *              that pre-load the list can decide between rendering the table and an empty-state notice
+     */
+    function is_empty(): bool
+    {
+        return count($this->lst) === 0;
+    }
+
 
     /*
      * display

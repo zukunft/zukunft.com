@@ -242,7 +242,7 @@ function log_fatal(string $msg_text,
                    string $trace = '',
                    ?user  $calling_usr = null): string
 {
-    $time = (new DateTime())->format('c');
+    $time = new DateTime()->format('c');
     echo $time . ': FATAL ERROR! ' . $msg_text . "\n";
     $STDERR = fopen('error.log', 'a');
     fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n");
@@ -366,7 +366,11 @@ function log_msg(string  $msg_text,
                     $sys_log_fnc->name = $function_name;
                     $sys_log_fnc->code_id = $function_name;
                     $msg->usr = $sys->user_log();
-                    $sys_log_fnc->save($msg);
+                    // for saving a new function name a system user is needed
+                    $sys_msg = clone $msg;
+                    $sys_msg->usr = $sys->system_user();
+                    $sys_log_fnc->save($sys_msg);
+                    $msg->merge($sys_msg);
                     $sys->typ_lst->sys_log_fnc->add($sys_log_fnc, false);
                 }
 

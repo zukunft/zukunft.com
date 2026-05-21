@@ -39,6 +39,7 @@ include_once paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -49,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -187,6 +189,42 @@ class term_view extends sandbox_link
     function set_type_id(?int $type_id = null): void
     {
         $this->predicate_id = $type_id;
+    }
+
+
+    /*
+     * select
+     */
+
+    /**
+     * create the html code to select the view link type
+     * overrides db_object::view_link_type_selector for term_view objects
+     * the current predicate_id is preselected if set
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the preloaded view link types
+     * @return string the html code to select the view link type
+     */
+    public function view_link_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $used_id = $this->predicate_id;
+        if ($used_id == null) {
+            $used_id = $typ_lst->html_view_link_types->default_id();
+        }
+        return $typ_lst->html_view_link_types->selector($form, $used_id);
+    }
+
+    /**
+     * create the html code to select the view style
+     * overrides db_object::style_selector; reuses the shared html_view_styles cache
+     * term_view itself has no style_id, so the default style is preselected
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the preloaded view styles
+     * @return string the html code to select the view style
+     */
+    public function style_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $used_id = $typ_lst->html_view_styles->default_id();
+        return $typ_lst->html_view_styles->selector($form, $used_id);
     }
 
 

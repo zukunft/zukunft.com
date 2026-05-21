@@ -156,8 +156,12 @@ class change_value extends change_log
 
             $fld_tbl = $sys->typ_lst->cng_fld->get($this->field_id);
             $tbl_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
-            if (is_int($tbl_id)) {
-                $this->table_id = $tbl_id;
+            if (is_numeric($tbl_id)) {
+                if (preg_match('/^\d+$/', $tbl_id) !== 1) {
+                    log_warning('table id "' . $tbl_id . '" extracted from "' . $fld_tbl->name . '" is numeric but not an integer');
+                } else {
+                    $this->table_id = $tbl_id;
+                }
             } else {
                 log_warning('Cannot get table id from ' . $fld_tbl->name);
             }

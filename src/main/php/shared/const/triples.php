@@ -189,6 +189,44 @@ class triples
     const string YEAR_2013_FOLLOW = "2014 is follower of 2013";
     const string TAXES_OF_CF = "income taxes is part of cash flow statement";
 
+    // triples used in the system and user config.yaml
+    const string API_USER = 'api user';
+    const string BY_IP_ADDRESS = 'by ip-address';
+    const string BY_LOCATION = 'by location';
+    const string CHECK_PERIOD = 'check period';
+    const string DECREASE_DAYS = 'decrease days';
+    const string EMAIL_SERVER = 'email server';
+    const string FACTOR_WRONG = 'factor wrong';
+    const string FILE_SIZE = 'file size';
+    const string FUTURE_PERCENT = 'future percent';
+    const string INCREASE_LIST = 'increase list';
+    const string IP_USER = 'ip user';
+    const string MAX_CHANGE = 'max change';
+    const string MAX_CHANGES = 'max changes';
+    const string MAX_COLUMNS = 'max columns';
+    const string MAX_LIFETIME = 'max lifetime';
+    const string MAX_LOGIN = 'max login';
+    const string MAX_PHRASE = 'max phrase';
+    const string MAX_TABLES = 'max tables';
+    const string MIN_COLUMNS = 'min columns';
+    const string MIN_NAMES = 'min names';
+    const string MIN_NUMBERS = 'min numbers';
+    const string MIN_VALUES = 'min values';
+    const string NAME_LIST = 'name list';
+    const string NOT_TRUSTED = 'not trusted';
+    const string PER_DAY = 'per day';
+    const string PER_MONTH = 'per month';
+    const string PER_WEEK = 'per week';
+    const string PER_YEAR = 'per year';
+    const string PHRASE_DISTRIBUTION = 'phrase distribution';
+    const string SOURCE_TABLE = 'source table';
+    const string STORAGE_SIZE = 'storage size';
+    const string TABLE_NAME = 'table name';
+    const string TOP_LEVEL = 'top level';
+    const string VALUE_TABLE = 'value table';
+    const string WEB_MOBILE = 'web mobile';
+    const string WORD_CHANGES = 'word changes';
+
     // list of often used triples used as a default selection e.g. for the phrase selection
     // TODO Prio 2 to be filled up
     const array BASE_TRIPLES = [

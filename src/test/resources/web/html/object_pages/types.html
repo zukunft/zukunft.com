@@ -1,508 +1,1456 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test types (zukunft.com)</title>
-    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
-</head>
-<body>
-<nav class="navbar site-header fixed-top"><a href="/http/view.php" title="zukunft.com" class="navbar-brand"><img
-        src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-    <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3"><label for="kp"
-                                                                                                         class="visually-hidden">Search</label><input
-            class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
-            style="min-width: 40vw; max-width: 800px;">
-        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
-    </form>
-    <div class="col-md-2">
-        <ul class="nav navbar-nav">
-            <li class="active">
-                <details class="view-menu">
-                    <summary><i class="fas fa-edit"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=view_change&id=2">alternative</a></li>
-                        <li><a href="?view=more">... more</a></li>
-                        <li><a href="/http/view.php?m=view_edit&id=1">change view</a></li>
-                        <li><a href="/http/view.php?m=view_add">add view</a></li>
-                    </ul>
-                </details>
-                <details class="lang-menu">
-                    <summary><i class="fas fa-globe"></i></summary>
-                    <ul>
-                        <li><a href="/http/view.php?m=1&q=en">English</a></li>
-                        <li><a href="/http/view.php?m=1&q=en_us">US English</a></li>
-                        <li><a href="/http/view.php?m=1&q=de" title="German">Deutsch</a></li>
-                        <li><a href="/http/view.php?m=1&q=fr" title="French">Français</a></li>
-                        <li><a href="/http/view.php?m=1&q=es" title="Spanish">Español</a></li>
-                        <li><a href="/http/view.php?m=1&q=zh" title="Chinese">漢語</a></li>
-                        <li><a href="/http/view.php?m=1&q=ar" title="Arabic">العربية</a></li>
-                        <li><a href="/http/view.php?m=language_select">... more</a></li>
-                    </ul>
-                </details>
-                <details class="user-menu">
-                    <summary><i class="fas fa-user-circle"></i></summary>
-                    <ul>
-                        <li><a href="/http/login.php">log in</a></li>
-                        <li><a href="/http/signup.php">Sign in</a></li>
-                        <li><a href="/settings">Settings</a></li>
-                    </ul>
-                </details>
-            </li>
-        </ul>
-    </div>
-</nav>
-<main class="main-container">
-    <div class="row col-md-12">All type selectors</div>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Priority</th>
-            <th scope="col">Problem</th>
-            <th class="text-right" scope="col">Costs in <a href="/http/view.php?m=90&id=255">trillion</a> <a
-                    href="/http/view.php?m=90&id=258">USD</a></th>
-            <th scope="col">Solution</th>
-            <th class="text-right" scope="col">Gain in <a href="/http/view.php?m=90&id=158">billion</a> <a
-                    href="/http/view.php?m=90&id=254">htp</a></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td><a href="/http/view.php?m=92&id=99">global warming</a></td>
-            <td class="text-right">31.5</td>
-            <td>reduce climate gas emissions</td>
-            <td class="text-right">35.2</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td><a href="/http/view.php?m=90&id=226">populism</a></td>
-            <td class="text-right">23.8</td>
-            <td>avoid wrong decisions</td>
-            <td class="text-right">34.1</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td><a href="/http/view.php?m=90&id=242">health</a></td>
-            <td class="text-right">20.4</td>
-            <td>research</td>
-            <td class="text-right">34.1</td>
-        </tr>
-        <tr>
-            <th scope="row">4</th>
-            <td><a href="/http/view.php?m=90&id=244">poverty</a></td>
-            <td class="text-right">13.6</td>
-            <td>taxes</td>
-            <td class="text-right">8.8</td>
-        </tr>
-        <tr>
-            <th scope="row">5</th>
-            <td><a href="/http/view.php?m=90&id=246">education</a></td>
-            <td class="text-right">9.4</td>
-            <td>spending</td>
-            <td class="text-right">14.3</td>
-        </tr>
-        <tr>
-            <th scope="row"></th>
-            <td><a href="/http/view.php?m=word_add&back=-91" title="add new word"><i class="far fa-plus-square"></i></a>
-            </td>
-            <td class="text-right"></td>
-            <td><a href="/http/view.php?m=word_add&back=-91" title="add new word"><i class="far fa-plus-square"></i></a>
-            </td>
-            <td class="text-right"></td>
-        </tr>
-        </tbody>
-    </table>
-    <br><br>
-    <form action="/http/view.php" id="view"><label for="up">up</label>
-        <div class="form-group col-md-4"><label for="up">user profile</label><select class="form-control" name="up"
-                                                                                     form="view" id="up">
-            <option value="0" selected>please select ...</option>
-            <option value="1">ip only</option>
-            <option value="2">username selected</option>
-            <option value="3">email verified</option>
-            <option value="4">user creator</option>
-            <option value="5">system link</option>
-            <option value="6">bot</option>
-            <option value="7">human identity</option>
-            <option value="8">publisher</option>
-            <option value="9">voter</option>
-            <option value="10">link admin</option>
-            <option value="11">bureaucrat</option>
-            <option value="12">admin</option>
-            <option value="13">juror</option>
-            <option value="14">developer</option>
-            <option value="15">judge</option>
-            <option value="16">system log</option>
-            <option value="17">system test</option>
-            <option value="18">benevolent dictator</option>
-            <option value="19">system</option>
-        </select></div>
-        <br><label for="b">b</label>
-        <div class="form-group col-md-4"><label for="b">Verb</label><select class="form-control" name="b" form="view"
-                                                                            id="b">
-            <option value="30">and</option>
-            <option value="19">can</option>
-            <option value="20">can be</option>
-            <option value="4">can be part of</option>
-            <option value="16">can be used as a differentiator for</option>
-            <option value="22">can cause</option>
-            <option value="21">can get</option>
-            <option value="23">can have</option>
-            <option value="24">can use</option>
-            <option value="7">has a</option>
-            <option value="32">in</option>
-            <option value="17">influence</option>
-            <option value="2">is a</option>
-            <option value="18">is alias of</option>
-            <option value="15">is an acronym for</option>
-            <option value="11">is follower of</option>
-            <option value="14">is measure type for</option>
-            <option value="3">is part of</option>
-            <option value="34">is ranked by</option>
-            <option value="28">is selector for</option>
-            <option value="13">issue</option>
-            <option value="29">is symbol for</option>
-            <option value="9">is term jump for</option>
-            <option value="8">is time jump for</option>
-            <option value="1" selected>not set</option>
-            <option value="5">of</option>
-            <option value="31">on</option>
-            <option value="26">per</option>
-            <option value="25">scaled by</option>
-            <option value="10">term type needed</option>
-            <option value="27">times</option>
-            <option value="33">to</option>
-            <option value="12">uses</option>
-            <option value="6">with</option>
-        </select></div>
-        <br><label for="py">py</label>
-        <div class="form-group col-md-4"><label for="py">Type of word or triple</label><select class="form-control"
-                                                                                               name="py" form="view"
-                                                                                               id="py">
-            <option value="1" selected>standard</option>
-            <option value="0"> ---</option>
-            <option value="5">calc</option>
-            <option value="11">differentiator filler</option>
-            <option value="6">format percent</option>
-            <option value="10">formula link</option>
-            <option value="24">group and select</option>
-            <option value="8">hidden scaling</option>
-            <option value="23">hidden system</option>
-            <option value="22">hidden triple</option>
-            <option value="27">ignore</option>
-            <option value="21">information</option>
-            <option value="20">key</option>
-            <option value="19">latest</option>
-            <option value="17">math constant</option>
-            <option value="18">measure divisor</option>
-            <option value="3">measure type</option>
-            <option value="13">next</option>
-            <option value="14">prior</option>
-            <option value="26">rank</option>
-            <option value="16">scaled measure</option>
-            <option value="7">scaling</option>
-            <option value="15">scaling word percent</option>
-            <option value="25">symbol</option>
-            <option value="12">this</option>
-            <option value="2">time</option>
-            <option value="4">time jump</option>
-            <option value="28">time number</option>
-            <option value="9">view / layer</option>
-        </select></div>
-        <br><label for="fy">fy</label>
-        <div class="form-group col-md-4"><label for="fy">Formula type</label><select class="form-control" name="fy"
-                                                                                     form="view" id="fy">
-            <option value="0" selected>please select ...</option>
-            <option value="1">calc</option>
-            <option value="0"> ---</option>
-            <option value="2">next</option>
-            <option value="3">prior</option>
-            <option value="5">reversible</option>
-            <option value="6">scaling</option>
-            <option value="4">this</option>
-        </select></div>
-        <br><label for="ft">ft</label>
-        <div class="form-group col-md-4"><label for="ft">Link type</label><select class="form-control" name="ft"
-                                                                                  form="view" id="ft">
-            <option value="0" selected>please select ...</option>
-            <option value="1">default</option>
-            <option value="0"> ---</option>
-            <option value="2">time period based</option>
-        </select></div>
-        <br><label for="dt">dt</label>
-        <div class="form-group col-md-4"><label for="dt">View type</label><select class="form-control" name="dt"
-                                                                                  form="view" id="dt">
-            <option value="0" selected>please select ...</option>
-            <option value="1">standard</option>
-            <option value="0"> ---</option>
-            <option value="9">child</option>
-            <option value="6">details</option>
-            <option value="3">edit</option>
-            <option value="2">entry view</option>
-            <option value="10">export</option>
-            <option value="18">for formulas only</option>
-            <option value="16">for languages only</option>
-            <option value="15">for references only</option>
-            <option value="19">for results only</option>
-            <option value="14">for sources only</option>
-            <option value="13">for triples only</option>
-            <option value="17">for values only</option>
-            <option value="12">for verbs only</option>
-            <option value="11">for words only</option>
-            <option value="4">presentation</option>
-            <option value="8">sub</option>
-            <option value="7">system</option>
-            <option value="5">word default</option>
-        </select></div>
-        <br><label for="cs">cs</label>
-        <div class="form-group col-md-4"><label for="cs">View style</label><select class="form-control" name="cs"
-                                                                                   form="view" id="cs">
-            <option value="0" selected>please select ...</option>
-            <option value="1">col-md-4</option>
-            <option value="2">col-md-8</option>
-        </select></div>
-        <br><label for="ct">ct</label>
-        <div class="form-group col-md-4"><label for="ct">Component type</label><select class="form-control" name="ct"
-                                                                                       form="view" id="ct">
-            <option value="0" selected>please select ...</option>
-            <option value="15">CSV export</option>
-            <option value="16">JSON Export</option>
-            <option value="14">XML export</option>
-            <option value="179">admin form field language symbol</option>
-            <option value="169">admin form field user email</option>
-            <option value="168">admin form field username</option>
-            <option value="170">admin form field user password</option>
-            <option value="10">all relations</option>
-            <option value="28">button cancel</option>
-            <option value="30">button delete</option>
-            <option value="187">button request new</option>
-            <option value="29">button save</option>
-            <option value="155">context for table import</option>
-            <option value="156">drop area for data import</option>
-            <option value="134">export csv</option>
-            <option value="132">export json</option>
-            <option value="131">export ods</option>
-            <option value="133">export xml</option>
-            <option value="62">expression</option>
-            <option value="180">field language symbol</option>
-            <option value="4">fixed word</option>
-            <option value="31">form end</option>
-            <option value="22">form field description</option>
-            <option value="167">form field external key of reference</option>
-            <option value="149">form field formula name</option>
-            <option value="21">form field name</option>
-            <option value="54">form field name</option>
-            <option value="25">form field phrase type</option>
-            <option value="55">form field plural</option>
-            <option value="136">form field plural reverse</option>
-            <option value="27">form field protection type</option>
-            <option value="135">form field reverse</option>
-            <option value="26">form field share type</option>
-            <option value="123">form field value type</option>
-            <option value="150">form field weight</option>
-            <option value="121">form select multi ref</option>
-            <option value="119">form select multi source</option>
-            <option value="23">form select phrase</option>
-            <option value="120">form select ref</option>
-            <option value="118">form select source</option>
-            <option value="24">form select verb</option>
-            <option value="98">formula list</option>
-            <option value="6">formula results</option>
-            <option value="12">formulas</option>
-            <option value="148">formulas by verb</option>
-            <option value="141">group name</option>
-            <option value="140">group or phrase list</option>
-            <option value="60">language name</option>
-            <option value="5">linked word</option>
-            <option value="38">main value</option>
-            <option value="142">numeric value</option>
-            <option value="96">parents of this word</option>
-            <option value="189">phrases with details on 1/3 screen</option>
-            <option value="188">phrases with details related to</option>
-            <option value="160">popup changes</option>
-            <option value="161">popup impact</option>
-            <option value="159">popup object</option>
-            <option value="158">popup title</option>
-            <option value="46">ranking list</option>
-            <option value="45">ranking parameters</option>
-            <option value="59">reference name</option>
-            <option value="47">related triples</option>
-            <option value="97">result list</option>
-            <option value="61">results related to</option>
-            <option value="154">results that changes</option>
-            <option value="34">row end</option>
-            <option value="33">row right</option>
-            <option value="32">row start</option>
-            <option value="157">selection name</option>
-            <option value="186">selection page</option>
-            <option value="147">show description</option>
-            <option value="164">show external key</option>
-            <option value="20">show name</option>
-            <option value="165">show reference source</option>
-            <option value="163">show reference type</option>
-            <option value="166">show reference url</option>
-            <option value="58">source name</option>
-            <option value="35">spreadsheet</option>
-            <option value="64">system about</option>
-            <option value="105">system activate</option>
-            <option value="185">system admin delayed jobs</option>
-            <option value="182">system admin failed logins</option>
-            <option value="184">system admin pending error fixes</option>
-            <option value="181">system admin response times</option>
-            <option value="183">system admin unassigned errors</option>
-            <option value="65">system body error log</option>
-            <option value="66">system body error update</option>
-            <option value="68">system body process list</option>
-            <option value="67">system body process progress</option>
-            <option value="95">system button export</option>
-            <option value="94">system button import</option>
-            <option value="44">system change log</option>
-            <option value="176">system field child view</option>
-            <option value="175">system field parent view</option>
-            <option value="177">system field relation type</option>
-            <option value="178">system field view modification start position</option>
-            <option value="126">system form component link position</option>
-            <option value="19">system form confirm status</option>
-            <option value="53">system form field formula text</option>
-            <option value="69">system form field group</option>
-            <option value="70">system form field group or phrase list</option>
-            <option value="73">system form field selection description</option>
-            <option value="72">system form field selection name</option>
-            <option value="74">system form field selection text</option>
-            <option value="85">system form field source group</option>
-            <option value="117">system form field source group or phrase list</option>
-            <option value="71">system form field url</option>
-            <option value="139">system form field value</option>
-            <option value="18">system form hidden back stack</option>
-            <option value="42">system form link list</option>
-            <option value="93">system form link table</option>
-            <option value="89">system form preview</option>
-            <option value="41">system form ref list</option>
-            <option value="172">system form select child view</option>
-            <option value="87">system form select component</option>
-            <option value="99">system form select component link type</option>
-            <option value="153">system form select component position type</option>
-            <option value="124">system form select component style</option>
-            <option value="52">system form select component type</option>
-            <option value="92">system form select export format</option>
-            <option value="91">system form select file</option>
-            <option value="77">system form select formula</option>
-            <option value="127">system form select formula link priority</option>
-            <option value="100">system form select formula link type</option>
-            <option value="49">system form select formula type</option>
-            <option value="88">system form select multi components</option>
-            <option value="78">system form select multi formulas</option>
-            <option value="75">system form select multi phrases</option>
-            <option value="84">system form select multi results</option>
-            <option value="80">system form select multi terms</option>
-            <option value="82">system form select multi values</option>
-            <option value="76">system form select multi verbs</option>
-            <option value="86">system form select multi views</option>
-            <option value="171">system form select parent view</option>
-            <option value="48">system form select reference type</option>
-            <option value="83">system form select result</option>
-            <option value="39">system form select source type</option>
-            <option value="79">system form select term</option>
-            <option value="81">system form select value</option>
-            <option value="40">system form select view</option>
-            <option value="90">system form select view default</option>
-            <option value="101">system form select view link type</option>
-            <option value="174">system form select view relation start position</option>
-            <option value="173">system form select view relation type</option>
-            <option value="51">system form select view style</option>
-            <option value="50">system form select view type</option>
-            <option value="17">system form title</option>
-            <option value="112">system formula test</option>
-            <option value="125">system form view link priority</option>
-            <option value="104">system login</option>
-            <option value="107">system logout</option>
-            <option value="143">system preview after change</option>
-            <option value="116">system process</option>
-            <option value="106">system reset</option>
-            <option value="111">system result explain</option>
-            <option value="113">system sandbox</option>
-            <option value="108">system search</option>
-            <option value="109">system search full</option>
-            <option value="102">system setup</option>
-            <option value="128">system show field usage</option>
-            <option value="103">system signup</option>
-            <option value="145">system sub title</option>
-            <option value="146">system sub title var</option>
-            <option value="63">system title</option>
-            <option value="114">system undo</option>
-            <option value="43">system usage</option>
-            <option value="115">system user settings</option>
-            <option value="110">system value detail</option>
-            <option value="144">system view before change</option>
-            <option value="36">term name</option>
-            <option value="3">text</option>
-            <option value="57">triple name</option>
-            <option value="129">used in as text</option>
-            <option value="130">used in as text with link</option>
-            <option value="152">values by source</option>
-            <option value="151">values by triple</option>
-            <option value="11">values related to</option>
-            <option value="37">verb name</option>
-            <option value="137">verb usage</option>
-            <option value="162">view differences</option>
-            <option value="122">views</option>
-            <option value="2">view selector</option>
-            <option value="9">word list down</option>
-            <option value="7">word list up</option>
-            <option value="8">word name</option>
-            <option value="56">word results</option>
-            <option value="1">word selector</option>
-            <option value="138">words or triples liked to formula</option>
-            <option value="13">word value list</option>
-        </select></div>
-        <br><label for="lt">lt</label>
-        <div class="form-group col-md-4"><label for="lt">Reference type</label><select class="form-control" name="lt"
-                                                                                       form="view" id="lt">
-            <option value="0" selected>please select ...</option>
-            <option value="1">wikipedia</option>
-            <option value="2">wikidata</option>
-            <option value="3">conceptnet</option>
-        </select></div>
-        <br><label for="st">st</label>
-        <div class="form-group col-md-4"><label for="st">Source type</label><select class="form-control" name="st"
-                                                                                    form="view" id="st">
-            <option value="0" selected>please select ...</option>
-            <option value="2">xbrl</option>
-            <option value="3">csv</option>
-            <option value="4">pdf</option>
-        </select></div>
-        <br><label for="sp">sp</label>
-        <div class="form-group col-md-4"><label for="sp">Protection</label><select class="form-control" name="sp"
-                                                                                   form="view" id="sp">
-            <option value="0" selected>please select ...</option>
-            <option value="1">no protection</option>
-            <option value="2">user</option>
-            <option value="3">admin</option>
-            <option value="4">no change</option>
-        </select></div>
-        <br><label for="s">s</label>
-        <div class="form-group col-md-4"><label for="s">Share</label><select class="form-control" name="s" form="view"
-                                                                             id="s">
-            <option value="0" selected>please select ...</option>
-            <option value="1">public</option>
-            <option value="2">personal</option>
-            <option value="3">group</option>
-            <option value="4">private</option>
-            <option value="5">personal log</option>
-            <option value="6">group log</option>
-            <option value="7">private log</option>
-        </select></div>
-        <br>
-        <button type="submit" class="btn btn-outline-success btn-space">view</button>
-    </form>
-</main>
-<footer class="site-footer"><p><a href="/http/about.php">About</a> &middot; <a href="/http/privacy_policy.html">Privacy
-    Policy</a> &middot; All structured data is available under the <a
-        href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a> Licence
-    unless otherwise stated and the <a href="https://github.com/zukunft/zukunft.com">program code</a> of this version
-    0.0.3 under the <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a> Licence.</p></footer>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            test types (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=1">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=61">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=60">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <div class="row col-md-12">
+                All type selectors
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            Priority
+                        </th>
+                        <th scope="col">
+                            Problem
+                        </th>
+                        <th class="text-right" scope="col">
+                            Costs in
+                            <a href="/http/view.php?m=90&id=255">
+                                trillion
+                            </a>
+                            <a href="/http/view.php?m=90&id=258" title="ISO 4217 alphabetic code for the United States dollar.">
+                                USD
+                            </a>
+                        </th>
+                        <th scope="col">
+                            Solution
+                        </th>
+                        <th class="text-right" scope="col">
+                            Gain in
+                            <a href="/http/view.php?m=90&id=158" title="to specify numbers in billions">
+                                billion
+                            </a>
+                            <a href="/http/view.php?m=90&id=254">
+                                htp
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">
+                            1
+                        </th>
+                        <td>
+                            <a href="/http/view.php?m=92&id=99">
+                                global warming
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            31.5
+                        </td>
+                        <td>
+                            reduce climate gas emissions
+                        </td>
+                        <td class="text-right">
+                            35.2
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            2
+                        </th>
+                        <td>
+                            <a href="/http/view.php?m=90&id=226">
+                                populism
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            23.8
+                        </td>
+                        <td>
+                            avoid wrong decisions
+                        </td>
+                        <td class="text-right">
+                            34.1
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            3
+                        </th>
+                        <td>
+                            <a href="/http/view.php?m=90&id=242">
+                                health
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            20.4
+                        </td>
+                        <td>
+                            research
+                        </td>
+                        <td class="text-right">
+                            34.1
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            4
+                        </th>
+                        <td>
+                            <a href="/http/view.php?m=90&id=244">
+                                poverty
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            13.6
+                        </td>
+                        <td>
+                            taxes
+                        </td>
+                        <td class="text-right">
+                            8.8
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            5
+                        </th>
+                        <td>
+                            <a href="/http/view.php?m=90&id=246">
+                                education
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            9.4
+                        </td>
+                        <td>
+                            spending
+                        </td>
+                        <td class="text-right">
+                            14.3
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                        </th>
+                        <td>
+                            <a href="/http/view.php?m=word_add&back=-91" title="add new word">
+                                <i class="far fa-plus-square">
+                                </i>
+                            </a>
+                        </td>
+                        <td class="text-right">
+                        </td>
+                        <td>
+                            <a href="/http/view.php?m=word_add&back=-91" title="add new word">
+                                <i class="far fa-plus-square">
+                                </i>
+                            </a>
+                        </td>
+                        <td class="text-right">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <br>
+            <form action="/http/view.php" id="view">
+                <label for="up">
+                    up
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="up_form_select_user_profile">
+                        user profile
+                    </label>
+                    <select class="form-control" name="up" form="view" id="up_form_select_user_profile" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="1"  >
+                            ip only
+                        </option>
+                        <option value="2"  >
+                            username selected
+                        </option>
+                        <option value="3"  >
+                            email verified
+                        </option>
+                        <option value="4"  >
+                            user creator
+                        </option>
+                        <option value="5"  >
+                            system link
+                        </option>
+                        <option value="6"  >
+                            bot
+                        </option>
+                        <option value="7"  >
+                            human identity
+                        </option>
+                        <option value="8"  >
+                            publisher
+                        </option>
+                        <option value="9"  >
+                            voter
+                        </option>
+                        <option value="10"  >
+                            link admin
+                        </option>
+                        <option value="11"  >
+                            bureaucrat
+                        </option>
+                        <option value="12"  >
+                            admin
+                        </option>
+                        <option value="13"  >
+                            juror
+                        </option>
+                        <option value="14"  >
+                            developer
+                        </option>
+                        <option value="15"  >
+                            judge
+                        </option>
+                        <option value="16"  >
+                            system log
+                        </option>
+                        <option value="17"  >
+                            system test
+                        </option>
+                        <option value="18"  >
+                            benevolent dictator
+                        </option>
+                        <option value="19"  >
+                            system
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="b">
+                    b
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="b_form_select_verb">
+                        Verb
+                    </label>
+                    <select class="form-control" name="b" form="view" id="b_form_select_verb" >
+                        <option value="30"  >
+                            and
+                        </option>
+                        <option value="35"  >
+                            between
+                        </option>
+                        <option value="38"  >
+                            by parts
+                        </option>
+                        <option value="19"  >
+                            can
+                        </option>
+                        <option value="20"  >
+                            can be
+                        </option>
+                        <option value="4"  >
+                            can be part of
+                        </option>
+                        <option value="16"  >
+                            can be used as a differentiator for
+                        </option>
+                        <option value="22"  >
+                            can cause
+                        </option>
+                        <option value="21"  >
+                            can get
+                        </option>
+                        <option value="23"  >
+                            can have
+                        </option>
+                        <option value="24"  >
+                            can use
+                        </option>
+                        <option value="7"  >
+                            has a
+                        </option>
+                        <option value="32"  >
+                            in
+                        </option>
+                        <option value="17"  >
+                            influence
+                        </option>
+                        <option value="2"  >
+                            is a
+                        </option>
+                        <option value="18"  >
+                            is alias of
+                        </option>
+                        <option value="15"  >
+                            is an acronym for
+                        </option>
+                        <option value="11"  >
+                            is follower of
+                        </option>
+                        <option value="14"  >
+                            is measure type for
+                        </option>
+                        <option value="3"  >
+                            is part of
+                        </option>
+                        <option value="34"  >
+                            is ranked by
+                        </option>
+                        <option value="28"  >
+                            is selector for
+                        </option>
+                        <option value="13"  >
+                            issue
+                        </option>
+                        <option value="29"  >
+                            is symbol for
+                        </option>
+                        <option value="9"  >
+                            is term jump for
+                        </option>
+                        <option value="8"  >
+                            is time jump for
+                        </option>
+                        <option value="36"  >
+                            kind of
+                        </option>
+                        <option value="37"  >
+                            name of
+                        </option>
+                        <option value="1"  selected >
+                            not set
+                        </option>
+                        <option value="5"  >
+                            of
+                        </option>
+                        <option value="31"  >
+                            on
+                        </option>
+                        <option value="26"  >
+                            per
+                        </option>
+                        <option value="25"  >
+                            scaled by
+                        </option>
+                        <option value="10"  >
+                            term type needed
+                        </option>
+                        <option value="27"  >
+                            times
+                        </option>
+                        <option value="33"  >
+                            to
+                        </option>
+                        <option value="12"  >
+                            uses
+                        </option>
+                        <option value="6"  >
+                            with
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="py">
+                    py
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="py_form_select_phrase_type">
+                        Type of word or triple
+                    </label>
+                    <select class="form-control" name="py" form="view" id="py_form_select_phrase_type" >
+                        <option value="1"  selected >
+                            standard
+                        </option>
+                        <option value="0"  >
+                            ---
+                        </option>
+                        <option value="5"  >
+                            calc
+                        </option>
+                        <option value="11"  >
+                            differentiator filler
+                        </option>
+                        <option value="6"  >
+                            format percent
+                        </option>
+                        <option value="10"  >
+                            formula link
+                        </option>
+                        <option value="24"  >
+                            group and select
+                        </option>
+                        <option value="8"  >
+                            hidden scaling
+                        </option>
+                        <option value="23"  >
+                            hidden system
+                        </option>
+                        <option value="22"  >
+                            hidden triple
+                        </option>
+                        <option value="27"  >
+                            ignore
+                        </option>
+                        <option value="21"  >
+                            information
+                        </option>
+                        <option value="20"  >
+                            key
+                        </option>
+                        <option value="19"  >
+                            latest
+                        </option>
+                        <option value="17"  >
+                            math constant
+                        </option>
+                        <option value="18"  >
+                            measure divisor
+                        </option>
+                        <option value="3"  >
+                            measure type
+                        </option>
+                        <option value="13"  >
+                            next
+                        </option>
+                        <option value="14"  >
+                            prior
+                        </option>
+                        <option value="26"  >
+                            rank
+                        </option>
+                        <option value="16"  >
+                            scaled measure
+                        </option>
+                        <option value="7"  >
+                            scaling
+                        </option>
+                        <option value="15"  >
+                            scaling word percent
+                        </option>
+                        <option value="25"  >
+                            symbol
+                        </option>
+                        <option value="12"  >
+                            this
+                        </option>
+                        <option value="2"  >
+                            time
+                        </option>
+                        <option value="4"  >
+                            time jump
+                        </option>
+                        <option value="28"  >
+                            time number
+                        </option>
+                        <option value="9"  >
+                            view / layer
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="fy">
+                    fy
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="fy_form_select_formula_type">
+                        Formula type
+                    </label>
+                    <select class="form-control" name="fy" form="view" id="fy_form_select_formula_type" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="1"  >
+                            calc
+                        </option>
+                        <option value="0"  >
+                            ---
+                        </option>
+                        <option value="2"  >
+                            next
+                        </option>
+                        <option value="3"  >
+                            prior
+                        </option>
+                        <option value="5"  >
+                            reversible
+                        </option>
+                        <option value="6"  >
+                            scaling
+                        </option>
+                        <option value="4"  >
+                            this
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="ft">
+                    ft
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="ft_form_select_formula_link_type">
+                        Link type
+                    </label>
+                    <select class="form-control" name="ft" form="view" id="ft_form_select_formula_link_type" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="1"  >
+                            default
+                        </option>
+                        <option value="0"  >
+                            ---
+                        </option>
+                        <option value="2"  >
+                            time period based
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="dt">
+                    dt
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="dt_form_select_view_type">
+                        View type
+                    </label>
+                    <select class="form-control" name="dt" form="view" id="dt_form_select_view_type" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="1"  >
+                            standard
+                        </option>
+                        <option value="0"  >
+                            ---
+                        </option>
+                        <option value="9"  >
+                            child
+                        </option>
+                        <option value="6"  >
+                            details
+                        </option>
+                        <option value="3"  >
+                            edit
+                        </option>
+                        <option value="2"  >
+                            entry view
+                        </option>
+                        <option value="10"  >
+                            export
+                        </option>
+                        <option value="18"  >
+                            for formulas only
+                        </option>
+                        <option value="16"  >
+                            for languages only
+                        </option>
+                        <option value="15"  >
+                            for references only
+                        </option>
+                        <option value="19"  >
+                            for results only
+                        </option>
+                        <option value="14"  >
+                            for sources only
+                        </option>
+                        <option value="13"  >
+                            for triples only
+                        </option>
+                        <option value="17"  >
+                            for values only
+                        </option>
+                        <option value="12"  >
+                            for verbs only
+                        </option>
+                        <option value="11"  >
+                            for words only
+                        </option>
+                        <option value="4"  >
+                            presentation
+                        </option>
+                        <option value="8"  >
+                            sub
+                        </option>
+                        <option value="7"  >
+                            system
+                        </option>
+                        <option value="5"  >
+                            word default
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="cs">
+                    cs
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="cs_form_select_view_style">
+                        View style
+                    </label>
+                    <select class="form-control" name="cs" form="view" id="cs_form_select_view_style" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="1"  >
+                            col-md-4
+                        </option>
+                        <option value="2"  >
+                            col-md-8
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="ct">
+                    ct
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="ct_form_select_component_type">
+                        Component type
+                    </label>
+                    <select class="form-control" name="ct" form="view" id="ct_form_select_component_type" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="15"  >
+                            CSV export
+                        </option>
+                        <option value="16"  >
+                            JSON Export
+                        </option>
+                        <option value="14"  >
+                            XML export
+                        </option>
+                        <option value="179"  >
+                            admin form field language symbol
+                        </option>
+                        <option value="169"  >
+                            admin form field user email
+                        </option>
+                        <option value="168"  >
+                            admin form field username
+                        </option>
+                        <option value="170"  >
+                            admin form field user password
+                        </option>
+                        <option value="10"  >
+                            all relations
+                        </option>
+                        <option value="28"  >
+                            button cancel
+                        </option>
+                        <option value="30"  >
+                            button delete
+                        </option>
+                        <option value="187"  >
+                            button request new
+                        </option>
+                        <option value="29"  >
+                            button save
+                        </option>
+                        <option value="155"  >
+                            context for table import
+                        </option>
+                        <option value="156"  >
+                            drop area for data import
+                        </option>
+                        <option value="134"  >
+                            export csv
+                        </option>
+                        <option value="132"  >
+                            export json
+                        </option>
+                        <option value="131"  >
+                            export ods
+                        </option>
+                        <option value="133"  >
+                            export xml
+                        </option>
+                        <option value="62"  >
+                            expression
+                        </option>
+                        <option value="180"  >
+                            field language symbol
+                        </option>
+                        <option value="4"  >
+                            fixed word
+                        </option>
+                        <option value="31"  >
+                            form end
+                        </option>
+                        <option value="22"  >
+                            form field description
+                        </option>
+                        <option value="167"  >
+                            form field external key of reference
+                        </option>
+                        <option value="149"  >
+                            form field formula name
+                        </option>
+                        <option value="21"  >
+                            form field name
+                        </option>
+                        <option value="54"  >
+                            form field name
+                        </option>
+                        <option value="25"  >
+                            form field phrase type
+                        </option>
+                        <option value="55"  >
+                            form field plural
+                        </option>
+                        <option value="136"  >
+                            form field plural reverse
+                        </option>
+                        <option value="27"  >
+                            form field protection type
+                        </option>
+                        <option value="135"  >
+                            form field reverse
+                        </option>
+                        <option value="26"  >
+                            form field share type
+                        </option>
+                        <option value="123"  >
+                            form field value type
+                        </option>
+                        <option value="150"  >
+                            form field weight
+                        </option>
+                        <option value="121"  >
+                            form select multi ref
+                        </option>
+                        <option value="119"  >
+                            form select multi source
+                        </option>
+                        <option value="23"  >
+                            form select phrase
+                        </option>
+                        <option value="120"  >
+                            form select ref
+                        </option>
+                        <option value="118"  >
+                            form select source
+                        </option>
+                        <option value="24"  >
+                            form select verb
+                        </option>
+                        <option value="98"  >
+                            formula list
+                        </option>
+                        <option value="6"  >
+                            formula results
+                        </option>
+                        <option value="12"  >
+                            formulas
+                        </option>
+                        <option value="148"  >
+                            formulas by verb
+                        </option>
+                        <option value="141"  >
+                            group name
+                        </option>
+                        <option value="140"  >
+                            group or phrase list
+                        </option>
+                        <option value="60"  >
+                            language name
+                        </option>
+                        <option value="5"  >
+                            linked word
+                        </option>
+                        <option value="38"  >
+                            main value
+                        </option>
+                        <option value="142"  >
+                            numeric value
+                        </option>
+                        <option value="96"  >
+                            parents of this word
+                        </option>
+                        <option value="189"  >
+                            phrases with details on 1/3 screen
+                        </option>
+                        <option value="188"  >
+                            phrases with details related to
+                        </option>
+                        <option value="160"  >
+                            popup changes
+                        </option>
+                        <option value="161"  >
+                            popup impact
+                        </option>
+                        <option value="159"  >
+                            popup object
+                        </option>
+                        <option value="158"  >
+                            popup title
+                        </option>
+                        <option value="46"  >
+                            ranking list
+                        </option>
+                        <option value="45"  >
+                            ranking parameters
+                        </option>
+                        <option value="59"  >
+                            reference name
+                        </option>
+                        <option value="47"  >
+                            related triples
+                        </option>
+                        <option value="97"  >
+                            result list
+                        </option>
+                        <option value="61"  >
+                            results related to
+                        </option>
+                        <option value="154"  >
+                            results that changes
+                        </option>
+                        <option value="34"  >
+                            row end
+                        </option>
+                        <option value="33"  >
+                            row right
+                        </option>
+                        <option value="32"  >
+                            row start
+                        </option>
+                        <option value="157"  >
+                            selection name
+                        </option>
+                        <option value="186"  >
+                            selection page
+                        </option>
+                        <option value="147"  >
+                            show description
+                        </option>
+                        <option value="164"  >
+                            show external key
+                        </option>
+                        <option value="20"  >
+                            show name
+                        </option>
+                        <option value="165"  >
+                            show reference source
+                        </option>
+                        <option value="163"  >
+                            show reference type
+                        </option>
+                        <option value="166"  >
+                            show reference url
+                        </option>
+                        <option value="58"  >
+                            source name
+                        </option>
+                        <option value="35"  >
+                            spreadsheet
+                        </option>
+                        <option value="64"  >
+                            system about
+                        </option>
+                        <option value="105"  >
+                            system activate
+                        </option>
+                        <option value="185"  >
+                            system admin delayed jobs
+                        </option>
+                        <option value="182"  >
+                            system admin failed logins
+                        </option>
+                        <option value="184"  >
+                            system admin pending error fixes
+                        </option>
+                        <option value="181"  >
+                            system admin response times
+                        </option>
+                        <option value="183"  >
+                            system admin unassigned errors
+                        </option>
+                        <option value="65"  >
+                            system body error log
+                        </option>
+                        <option value="66"  >
+                            system body error update
+                        </option>
+                        <option value="68"  >
+                            system body process list
+                        </option>
+                        <option value="67"  >
+                            system body process progress
+                        </option>
+                        <option value="95"  >
+                            system button export
+                        </option>
+                        <option value="94"  >
+                            system button import
+                        </option>
+                        <option value="44"  >
+                            system change log
+                        </option>
+                        <option value="176"  >
+                            system field child view
+                        </option>
+                        <option value="175"  >
+                            system field parent view
+                        </option>
+                        <option value="177"  >
+                            system field relation type
+                        </option>
+                        <option value="178"  >
+                            system field view modification start position
+                        </option>
+                        <option value="126"  >
+                            system form component link position
+                        </option>
+                        <option value="19"  >
+                            system form confirm status
+                        </option>
+                        <option value="53"  >
+                            system form field formula text
+                        </option>
+                        <option value="69"  >
+                            system form field group
+                        </option>
+                        <option value="70"  >
+                            system form field group or phrase list
+                        </option>
+                        <option value="73"  >
+                            system form field selection description
+                        </option>
+                        <option value="72"  >
+                            system form field selection name
+                        </option>
+                        <option value="74"  >
+                            system form field selection text
+                        </option>
+                        <option value="85"  >
+                            system form field source group
+                        </option>
+                        <option value="117"  >
+                            system form field source group or phrase list
+                        </option>
+                        <option value="71"  >
+                            system form field url
+                        </option>
+                        <option value="139"  >
+                            system form field value
+                        </option>
+                        <option value="18"  >
+                            system form hidden back stack
+                        </option>
+                        <option value="42"  >
+                            system form link list
+                        </option>
+                        <option value="93"  >
+                            system form link table
+                        </option>
+                        <option value="89"  >
+                            system form preview
+                        </option>
+                        <option value="41"  >
+                            system form ref list
+                        </option>
+                        <option value="172"  >
+                            system form select child view
+                        </option>
+                        <option value="87"  >
+                            system form select component
+                        </option>
+                        <option value="99"  >
+                            system form select component link type
+                        </option>
+                        <option value="153"  >
+                            system form select component position type
+                        </option>
+                        <option value="124"  >
+                            system form select component style
+                        </option>
+                        <option value="52"  >
+                            system form select component type
+                        </option>
+                        <option value="92"  >
+                            system form select export format
+                        </option>
+                        <option value="91"  >
+                            system form select file
+                        </option>
+                        <option value="77"  >
+                            system form select formula
+                        </option>
+                        <option value="127"  >
+                            system form select formula link priority
+                        </option>
+                        <option value="100"  >
+                            system form select formula link type
+                        </option>
+                        <option value="49"  >
+                            system form select formula type
+                        </option>
+                        <option value="88"  >
+                            system form select multi components
+                        </option>
+                        <option value="78"  >
+                            system form select multi formulas
+                        </option>
+                        <option value="75"  >
+                            system form select multi phrases
+                        </option>
+                        <option value="84"  >
+                            system form select multi results
+                        </option>
+                        <option value="80"  >
+                            system form select multi terms
+                        </option>
+                        <option value="82"  >
+                            system form select multi values
+                        </option>
+                        <option value="76"  >
+                            system form select multi verbs
+                        </option>
+                        <option value="86"  >
+                            system form select multi views
+                        </option>
+                        <option value="171"  >
+                            system form select parent view
+                        </option>
+                        <option value="48"  >
+                            system form select reference type
+                        </option>
+                        <option value="83"  >
+                            system form select result
+                        </option>
+                        <option value="39"  >
+                            system form select source type
+                        </option>
+                        <option value="79"  >
+                            system form select term
+                        </option>
+                        <option value="81"  >
+                            system form select value
+                        </option>
+                        <option value="40"  >
+                            system form select view
+                        </option>
+                        <option value="90"  >
+                            system form select view default
+                        </option>
+                        <option value="101"  >
+                            system form select view link type
+                        </option>
+                        <option value="174"  >
+                            system form select view relation start position
+                        </option>
+                        <option value="173"  >
+                            system form select view relation type
+                        </option>
+                        <option value="51"  >
+                            system form select view style
+                        </option>
+                        <option value="50"  >
+                            system form select view type
+                        </option>
+                        <option value="17"  >
+                            system form title
+                        </option>
+                        <option value="112"  >
+                            system formula test
+                        </option>
+                        <option value="125"  >
+                            system form view link priority
+                        </option>
+                        <option value="104"  >
+                            system login
+                        </option>
+                        <option value="107"  >
+                            system logout
+                        </option>
+                        <option value="143"  >
+                            system preview after change
+                        </option>
+                        <option value="116"  >
+                            system process
+                        </option>
+                        <option value="106"  >
+                            system reset
+                        </option>
+                        <option value="111"  >
+                            system result explain
+                        </option>
+                        <option value="113"  >
+                            system sandbox
+                        </option>
+                        <option value="108"  >
+                            system search
+                        </option>
+                        <option value="109"  >
+                            system search full
+                        </option>
+                        <option value="102"  >
+                            system setup
+                        </option>
+                        <option value="128"  >
+                            system show field usage
+                        </option>
+                        <option value="103"  >
+                            system signup
+                        </option>
+                        <option value="145"  >
+                            system sub title
+                        </option>
+                        <option value="146"  >
+                            system sub title var
+                        </option>
+                        <option value="63"  >
+                            system title
+                        </option>
+                        <option value="114"  >
+                            system undo
+                        </option>
+                        <option value="43"  >
+                            system usage
+                        </option>
+                        <option value="115"  >
+                            system user settings
+                        </option>
+                        <option value="110"  >
+                            system value detail
+                        </option>
+                        <option value="144"  >
+                            system view before change
+                        </option>
+                        <option value="36"  >
+                            term name
+                        </option>
+                        <option value="3"  >
+                            text
+                        </option>
+                        <option value="57"  >
+                            triple name
+                        </option>
+                        <option value="129"  >
+                            used in as text
+                        </option>
+                        <option value="130"  >
+                            used in as text with link
+                        </option>
+                        <option value="152"  >
+                            values by source
+                        </option>
+                        <option value="151"  >
+                            values by triple
+                        </option>
+                        <option value="11"  >
+                            values related to
+                        </option>
+                        <option value="37"  >
+                            verb name
+                        </option>
+                        <option value="137"  >
+                            verb usage
+                        </option>
+                        <option value="162"  >
+                            view differences
+                        </option>
+                        <option value="122"  >
+                            views
+                        </option>
+                        <option value="2"  >
+                            view selector
+                        </option>
+                        <option value="9"  >
+                            word list down
+                        </option>
+                        <option value="7"  >
+                            word list up
+                        </option>
+                        <option value="8"  >
+                            word name
+                        </option>
+                        <option value="56"  >
+                            word results
+                        </option>
+                        <option value="1"  >
+                            word selector
+                        </option>
+                        <option value="138"  >
+                            words or triples liked to formula
+                        </option>
+                        <option value="13"  >
+                            word value list
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="lt">
+                    lt
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="lt_form_select_ref_type">
+                        Reference type
+                    </label>
+                    <select class="form-control" name="lt" form="view" id="lt_form_select_ref_type" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="1"  >
+                            wikipedia
+                        </option>
+                        <option value="2"  >
+                            wikidata
+                        </option>
+                        <option value="3"  >
+                            conceptnet
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="st">
+                    st
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="st_form_select_source_type">
+                        Source type
+                    </label>
+                    <select class="form-control" name="st" form="view" id="st_form_select_source_type" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="2"  >
+                            xbrl
+                        </option>
+                        <option value="3"  >
+                            csv
+                        </option>
+                        <option value="4"  >
+                            pdf
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="sp">
+                    sp
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="sp_form_select_protection_type">
+                        Protection
+                    </label>
+                    <select class="form-control" name="sp" form="view" id="sp_form_select_protection_type" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="1"  >
+                            no protection
+                        </option>
+                        <option value="2"  >
+                            user
+                        </option>
+                        <option value="3"  >
+                            admin
+                        </option>
+                        <option value="4"  >
+                            no change
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <label for="s">
+                    s
+                </label>
+                <div class="form-group col-md-4">
+                    <label for="s_form_select_share_type">
+                        Share
+                    </label>
+                    <select class="form-control" name="s" form="view" id="s_form_select_share_type" >
+                        <option value="0" selected>
+                            please select ...
+                        </option>
+                        <option value="1"  >
+                            public
+                        </option>
+                        <option value="2"  >
+                            personal
+                        </option>
+                        <option value="3"  >
+                            group
+                        </option>
+                        <option value="4"  >
+                            private
+                        </option>
+                        <option value="5"  >
+                            personal log
+                        </option>
+                        <option value="6"  >
+                            group log
+                        </option>
+                        <option value="7"  >
+                            private log
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-outline-success btn-space">
+                    view
+                </button>
+            </form>
+        </main>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
 </html>

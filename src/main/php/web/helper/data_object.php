@@ -429,6 +429,24 @@ class data_object
     }
 
     /**
+     * @return array with a list of suggested im- and export file names
+     */
+    function file_list(): array
+    {
+        // TODO Prio 3 create this function
+        return [];
+    }
+
+    /**
+     * @return bool true if this context object contains a list of suggested im- and export file names
+     */
+    function has_file_list(): bool
+    {
+        // TODO Prio 3 create this function
+        return false;
+    }
+
+    /**
      * set the component_list of this data object
      * @param component_list $cmp_lst
      */

@@ -40,7 +40,7 @@ namespace Zukunft\ZukunftCom\main\php\web\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SANDBOX . 'sandbox_typed.php';
+//include_once html_paths::SANDBOX . 'sandbox_typed.php';
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -52,7 +52,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
-include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+//include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
@@ -848,6 +848,5 @@ class component extends sandbox_code_id
         }
         return $phr_lst->selector($form, $selected, $name, $label_id, $style, html_selector::TYPE_DATALIST);
     }
-
 
 }

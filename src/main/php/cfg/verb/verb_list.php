@@ -410,6 +410,26 @@ class verb_list extends type_list
         $vrb->set_name(verbs::RANK_NAME);
         $vrb->set_code_id_db(verbs::RANK);
         $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::BETWEEN_ID;
+        $vrb->set_name(verbs::BETWEEN_NAME);
+        $vrb->set_code_id_db(verbs::BETWEEN);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::KIND_OF_ID;
+        $vrb->set_name(verbs::KIND_OF_NAME);
+        $vrb->set_code_id_db(verbs::KIND_OF);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::NAME_OF_ID;
+        $vrb->set_name(verbs::NAME_OF_NAME);
+        $vrb->set_code_id_db(verbs::NAME_OF);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::BY_PARTS_ID;
+        $vrb->set_name(verbs::BY_PARTS_NAME);
+        $vrb->set_code_id_db(verbs::BY_PARTS);
+        $this->add_verb($vrb);
     }
 
 

@@ -126,7 +126,7 @@ class import_tests
         $conv_wiki = new convert_wikipedia_table;
         $conv_str = $conv_wiki->convert($in_table, $usr, test_base::TEST_TIMESTAMP,
             ['Democracy Index'],
-            'Country', 1,
+            'country', 1,
             'year', 'time', 3);
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);
@@ -139,8 +139,8 @@ class import_tests
         $conv_wiki = new convert_wikipedia_table;
         // TODO review the parameter context
         $conv_str = $conv_wiki->convert_wiki_json($in_table, $usr, test_base::TEST_TIMESTAMP, $context_str,
-            ['Country', 'ISO 3166'], [], 1,
-            'English short name  (using title case)','Country',
+            ['country', 'ISO 3166'], [], 1,
+            'English short name  (using title case)','country',
             'Alpha-3 code',      '');
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);

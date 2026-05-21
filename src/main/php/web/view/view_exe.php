@@ -46,8 +46,11 @@ include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::VIEW . 'view_base.php';
 include_once html_paths::VIEW . 'view_list.php';
@@ -71,8 +74,11 @@ use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\display_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -95,7 +101,7 @@ class view_exe extends view_base
 
     /**
      * create the html code to view a sandbox object
-     * @param db_object $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the word, triple or formula object that should be shown to the user
      * @param data_object|null $cfg the context used to create the view
      * @param string $back the history of the user actions to allow rollbacks
      * @param string $pattern the selection pattern to filter a selection
@@ -104,11 +110,12 @@ class view_exe extends view_base
      * TODO use backtrace or use a global backtrace var
      */
     function show(
-        db_object    $dbo,
-        ?data_object $cfg = null,
-        string       $back = '',
-        string       $pattern = '',
-        bool         $test_mode = false
+        db_object|type_object|combine_named|sandbox_list $dbo,
+        ?data_object                                     $cfg = null,
+        string                                           $back = '',
+        string                                           $pattern = '',
+        bool                                             $test_mode = false,
+        array                                            $url_array = []
     ): string
     {
         $result = '';
@@ -131,7 +138,7 @@ class view_exe extends view_base
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open();
             //$result .= $this->dsp_navbar($cfg, $back);
-            $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $pattern, $test_mode);
+            $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $pattern, $test_mode, $url_array);
             $result .= $this->dsp_type_close();
         }
 
@@ -141,7 +148,7 @@ class view_exe extends view_base
     /**
      * create the html code for all components of this view
      *
-     * @param db_object $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the word, triple or formula object that should be shown to the user
      * @param data_object|null $cfg the context used to create the view
      * @param string $form_name the name of the view which is also used for the html form name
      * @param string $back the backtrace for undo actions
@@ -150,12 +157,13 @@ class view_exe extends view_base
      * @return string the html code of all view components
      */
     private function dsp_entries(
-        db_object    $dbo,
-        ?data_object $cfg = null,
-        string       $form_name = '',
-        string       $back = '',
-        string       $pattern = '',
-        bool         $test_mode = false
+        db_object|type_object|combine_named|sandbox_list $dbo,
+        ?data_object                                     $cfg = null,
+        string                                           $form_name = '',
+        string                                           $back = '',
+        string                                           $pattern = '',
+        bool                                             $test_mode = false,
+        array                                            $url_array = []
     ): string
     {
         $html = new html_base();
@@ -212,7 +220,7 @@ class view_exe extends view_base
                 if ($cmp->needs_row_components($cfg->typ_lst_cache)) {
                     $auto_row = false;
                 }
-                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode);
+                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode, $url_array);
 
                 // remember the style to apply it to the complete row or column
                 // TODO Prio 1 use a row / col explicit style parameter instead
@@ -515,7 +523,7 @@ class view_exe extends view_base
 
         $dsp_lst = new view_list();
 
-        $call = api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
+        $call = api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&' . url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
         foreach ($dsp_lst as $dsp) {

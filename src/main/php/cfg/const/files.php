@@ -136,13 +136,13 @@ class files
     const string COMPANY_FILE = 'company' . self::JSON;
 
     // temp setup files that are loaded at the end not to change the id of objects used by the system tests
-    const string MATH_EXTRA_FILE = 'math_extra' . self::JSON;
+    const string MATH_FILE = 'math' . self::JSON;
+    const string PHYSICS_FILE = 'physics' . self::JSON;
 
     // initial data import
     CONST string IMPORT_COUNTRIES = self::DATA_PATH . 'countries' . self::JSON;
     CONST string IMPORT_COUNTRY_ISO = self::DATA_PATH . 'country-ISO-3166' . self::JSON;
     CONST string IMPORT_DEMOCRACY_INDEX = self::DATA_PATH . 'democracy_index_table' . self::JSON;
-    CONST string IMPORT_CURRENCY = self::DATA_PATH . 'currency' . self::JSON;
     CONST string IMPORT_CURRENCIES = self::DATA_PATH . 'currencies' . self::JSON;
     CONST string IMPORT_WIND_INVESTMENT = self::DATA_PATH . 'wind_investment' . self::JSON;
     CONST string IMPORT_COMPANIES = self::DATA_PATH . 'companies' . self::JSON;
@@ -164,17 +164,16 @@ class files
         self::START_PAGE_DATA_FILE,
         self::COMPANY_FILE,
         self::COUNTRY_FILE,
-        self::MATH_EXTRA_FILE,
+        self::MATH_FILE,
+        self::PHYSICS_FILE,
     ];
 
     const array BASE_IMPORT_FILE_LIST = [
         self::IMPORT_COUNTRIES,
         self::IMPORT_COUNTRY_ISO,
         self::IMPORT_DEMOCRACY_INDEX,
-        self::IMPORT_CURRENCY,
+        self::IMPORT_CURRENCIES,
         self::IMPORT_COMPANIES,
-        // TODO Prio 1 activate
-        //self::IMPORT_CURRENCIES,
         self::IMPORT_WIND_INVESTMENT
     ];
 

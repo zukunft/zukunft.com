@@ -293,7 +293,7 @@ class data_object
      */
     function get_first_word(): ?word
     {
-            return $this->wrd_lst->get_first_object();
+        return $this->wrd_lst->get_first_object();
     }
 
     /**
@@ -904,6 +904,13 @@ class data_object
         global $cfg;
         global $sys;
 
+        // reject the import upfront if a formula shares its name with another term (word, verb or
+        // triple), because the shared name leads to an ambiguous id assignment (the formula could
+        // inherit the other term's id and the later element insert would violate elements_formula_fk)
+        if (!$this->check_formula_name_collision($usr_msg)) {
+            return false;
+        }
+
         // get the relevant config values
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $val_per_sec = $cfg->get_by([words::VALUES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
@@ -1005,16 +1012,73 @@ class data_object
         $trm_lst->merge($sys->typ_lst->vrb->term_list($vrb_usr));
 
         // import the formulas
-        $this->save_formulas($usr_msg, $imp, $trm_lst);
+        if ($usr_msg->is_ok()) {
+            $this->save_formulas($usr_msg, $imp, $trm_lst);
+        } else {
+            log_debug('formulas not imported because ' . $usr_msg->all_message_text());
+        }
 
         // import the components before the view because the views use the components
-        $this->save_components($usr_msg, $imp);
+        if ($usr_msg->is_ok()) {
+            $this->save_components($usr_msg, $imp);
+        } else {
+            log_debug('components not imported because ' . $usr_msg->all_message_text());
+        }
 
         // import the views
         // TODO Prio 1 review and use predefined functions for save view list
-        $this->save_views($usr_msg, $imp);
+        if ($usr_msg->is_ok()) {
+            $this->save_views($usr_msg, $imp);
+        } else {
+            log_debug('views not imported because ' . $usr_msg->all_message_text());
+        }
 
         return $usr_msg->is_ok();
+    }
+
+    /**
+     * check that no formula in the import shares its name with another term (a word, verb or
+     * triple), because a shared name causes an ambiguous id assignment during the import (the
+     * formula could inherit the other term's id, which then violates the elements_formula_fk
+     * on the element insert)
+     *
+     * @param user_message $usr_msg the shared import message; one error is added per colliding name
+     * @return bool true if there is no formula/term name collision
+     */
+    private function check_formula_name_collision(user_message $usr_msg): bool
+    {
+        $result = $this->check_formula_names_against($this->word_list()->names(), word::class, $usr_msg);
+        if (!$this->check_formula_names_against($this->verb_list()->names(), verb::class, $usr_msg)) {
+            $result = false;
+        }
+        if (!$this->check_formula_names_against($this->triple_list()->names(), triple::class, $usr_msg)) {
+            $result = false;
+        }
+        return $result;
+    }
+
+    /**
+     * report each formula whose name also appears in the given list of other-term names
+     *
+     * @param array $other_names the names of the words, verbs or triples to check against
+     * @param string $class the class of the other term, used to name the colliding type in the message
+     * @param user_message $usr_msg the shared import message; one error is added per colliding name
+     * @return bool true if no formula name collides with a name in $other_names
+     */
+    private function check_formula_names_against(array $other_names, string $class, user_message $usr_msg): bool
+    {
+        $lib = new library();
+        $result = true;
+        foreach ($this->formula_list()->lst() as $frm) {
+            if (in_array($frm->name(), $other_names)) {
+                $usr_msg->add(msg_id::FORMULA_NAME_EQUALS_TERM, [
+                    msg_id::VAR_FORMULA_NAME => $frm->name(),
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($class)
+                ]);
+                $result = false;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1148,8 +1212,11 @@ class data_object
                     if ($frm->ref_text != null) {
                         $msg_elm = $usr_msg->clone_reset();
                         if (!$frm->element_refresh($msg_elm, $cache)) {
-                            log_info('formula import failed on first try. relevant?');
-                            //$usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
+                            // TODO Prio 3 the import intentionally tolerates first-try element refresh
+                            //   failures, so $msg_elm is dropped instead of merged into $usr_msg;
+                            //   log the dropped messages as a warning so they are not lost for review
+                            log_warning('formula element refresh failed for ' . $frm->dsp_id()
+                                . ' and the messages are dropped because ' . $msg_elm->all_message_text());
                         }
                     }
                 }

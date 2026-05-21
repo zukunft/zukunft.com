@@ -59,7 +59,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 //include_once html_paths::VIEW . 'view_list.php';
-include_once html_paths::WORD . 'word.php';
+//include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -677,7 +677,6 @@ class triple extends sandbox_code_id
      * display one link to the user by returning the HTML code for the link to the calling function
      * TODO include the user sandbox in the selection
      */
-    private
     function display(): string
     {
         log_debug("triple->dsp " . $this->id() . ".");
@@ -691,7 +690,7 @@ class triple extends sandbox_code_id
         // prepare to show the triple
         $result .= $this->get_from()->name() . ' '; // e.g. Australia
         $result .= $this->get_verb_name() . ' '; // e.g. is a
-        $result .= $this->get_to()->name();       // e.g. Country
+        $result .= $this->get_to()->name();       // e.g. country
 
         return $result;
     }

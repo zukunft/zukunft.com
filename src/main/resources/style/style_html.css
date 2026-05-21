@@ -180,12 +180,34 @@ body {
     /* Increase logo width to 90% on mobile phones */
 }
 
+/* navbar logo */
+.logo-nav {
+    height: 4em;
+}
+
+/* logo on about page */
+.logo-big {
+    height: 30%;
+}
+
+/* TREAM logo on about page */
+.logo-tream {
+    height: 20%;
+}
+
 /* search input field */
 .standard-input {
     padding: 10px; /* Adds space inside the text box for better readability */
     border: 1px solid #ccc; /* Adds a light grey border around the input */
     border-radius: 4px; /* Rounds the corners of the input field slightly */
     width: 70%; /* Sets a width to half of the flew container for the search and login inputs */
+}
+
+/* submit button: same height as standard-input, horizontal padding creates a proportional width */
+.submit-input {
+    padding: 10px 40px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 /* buttons */

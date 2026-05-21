@@ -59,7 +59,7 @@ class view_ui_tests
         $test_page .= 'edit button: ' . $msk->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $msk->btn_del() . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $msk->type_selector(views::VIEW_EDIT, $ui->dto->typ_lst_cache) . '<br>';
+        $from_rows = $msk->view_type_selector(views::VIEW_EDIT, $ui->dto->typ_lst_cache) . '<br>';
         //$from_rows .= $msk->component_selector(views::VIEW_EDIT, '', 1) . '<br>';
         $test_page .= $html->form(views::VIEW_EDIT, $from_rows);
         $t->html_page_test($test_page, 'view', 'view', $t);

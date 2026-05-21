@@ -38,11 +38,17 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::TYPES . 'type_object.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class ui_select
@@ -82,6 +88,29 @@ class ui_select
             $msk_lst = $dbo->view_list();
         }
         return $dbo->view_selector($form, $msk_lst);
+    }
+
+    /**
+     * show a selection list (e.g. of languages) and let the user pick one entry by name
+     * each list entry has a database id, a display name, a description and an alternative
+     * unique code id; only the name is shown, the database id is submitted as the form value
+     * @param db_object|type_object|null $dbo the currently selected backend object; its id() pre-selects the matching list entry
+     * @param type_list $lst the list whose entries the user can choose from
+     * @param string $form_name the name of the surrounding html form
+     * @param string $field_name the form field name carrying the chosen database id on submit
+     * @param msg_id $label_id the message id of the label shown above the selector
+     * @return string the html code to render the selection list
+     */
+    function list_select(
+        db_object|type_object|null $dbo,
+        type_list                  $lst,
+        string                     $form_name = '',
+        string                     $field_name = url_var::ID,
+        msg_id                     $label_id = msg_id::FORM_SELECT
+    ): string
+    {
+        $selected = $dbo?->id();
+        return $lst->type_selector($form_name, $selected, $field_name, $label_id);
     }
 
 }

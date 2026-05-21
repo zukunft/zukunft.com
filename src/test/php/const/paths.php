@@ -83,6 +83,7 @@ class paths
     const string IMPORT_WIKIPEDIA = self::IMPORT . 'wikipedia' . DIRECTORY_SEPARATOR;
     const string UNIT_RES = self::RESOURCE . 'unit' . DIRECTORY_SEPARATOR;
     const string SYSTEM = self::UNIT_RES . 'system' . DIRECTORY_SEPARATOR;
+    const string SANDBOX = self::UNIT_RES . 'sandbox' . DIRECTORY_SEPARATOR;
 
     // path for resources to test the frontend
     const string WEB_RES = self::RESOURCE . 'web' . DIRECTORY_SEPARATOR;

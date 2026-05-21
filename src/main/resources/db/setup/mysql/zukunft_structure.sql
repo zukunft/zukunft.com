@@ -2578,6 +2578,7 @@ CREATE TABLE IF NOT EXISTS formulas
     formula_name      varchar(255)  NOT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
     formula_text      text      DEFAULT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
     resolved_text     text      DEFAULT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
+    latex             text      DEFAULT NULL COMMENT 'the formula in latex format',
     description       text      DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
     formula_type_id   smallint  DEFAULT NULL COMMENT 'the id of the formula type',
     all_values_needed smallint  DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
@@ -2611,6 +2612,7 @@ CREATE TABLE IF NOT EXISTS user_formulas
     formula_name      varchar(255) DEFAULT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
     formula_text      text         DEFAULT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
     resolved_text     text         DEFAULT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
+    latex             text         DEFAULT NULL COMMENT 'the formula in latex format',
     description       text         DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
     formula_type_id   smallint     DEFAULT NULL COMMENT 'the id of the formula type',
     all_values_needed smallint     DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
@@ -4305,7 +4307,8 @@ CREATE OR REPLACE VIEW prime_terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
@@ -4325,7 +4328,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM triples AS t
      WHERE t.triple_id < 32767
 UNION
@@ -4340,7 +4344,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM formulas AS f
      WHERE f.formula_id < 32767
 UNION
@@ -4355,7 +4360,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v
      WHERE v.verb_id < 32767;
 
@@ -4375,7 +4381,8 @@ CREATE OR REPLACE VIEW terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
 UNION
@@ -4394,7 +4401,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM triples AS t
 UNION
     SELECT f.formula_id * 2  AS term_id,
@@ -4408,7 +4416,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM formulas AS f
 UNION
     SELECT v.verb_id * -2 AS term_id,
@@ -4422,7 +4431,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v;
 
 --
@@ -4441,7 +4451,8 @@ CREATE OR REPLACE VIEW user_prime_terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM user_words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
@@ -4461,7 +4472,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM user_triples AS t
      WHERE t.triple_id < 32767
 UNION
@@ -4476,7 +4488,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM user_formulas AS f
      WHERE f.formula_id < 32767
 UNION
@@ -4491,7 +4504,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v
      WHERE v.verb_id < 32767;
 
@@ -4511,7 +4525,8 @@ CREATE OR REPLACE VIEW user_terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM user_words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
 UNION
@@ -4530,7 +4545,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM user_triples AS t
 UNION
     SELECT f.formula_id * 2  AS term_id,
@@ -4544,7 +4560,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM user_formulas AS f
 UNION
     SELECT v.verb_id * -2 AS term_id,
@@ -4558,7 +4575,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v;
 
 

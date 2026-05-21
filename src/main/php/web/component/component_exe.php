@@ -55,7 +55,9 @@ include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -75,8 +77,10 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 
 class component_exe extends component
@@ -91,7 +95,7 @@ class component_exe extends component
      * TODO the html form field name should always be an url var name
      * TODO use the style id of the component instead of having a function parameter
      *
-     * @param db_object|type_object|null $dbo the word, triple, formula or ... object that should be shown to the user
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the word, triple, formula or ... object that should be shown to the user
      * @param string $form_name the name of the view which is also used for the html form name
      * @param int $msk_id the database id of the calling view
      * @param data_object|null $cfg the context used to create the view
@@ -101,14 +105,15 @@ class component_exe extends component
      * @return string the html code of all view components
      */
     function dsp_entries(
-        db_object|type_object|null $dbo,
-        string                     $form_name = '',
-        int                        $msk_id = 0,
-        ?data_object               $cfg = null,
-        ?int                       $style_id = null,
-        string                     $back = '',
-        string                     $pattern = '',
-        bool                       $test_mode = false
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        string                                                $form_name = '',
+        int                                                   $msk_id = 0,
+        ?data_object                                          $cfg = null,
+        ?int                                                  $style_id = null,
+        string                                                $back = '',
+        string                                                $pattern = '',
+        bool                                                  $test_mode = false,
+        array                                                 $url_array = []
     ): string
     {
         global $mtr;
@@ -280,6 +285,13 @@ class component_exe extends component
             component_types::ADMIN_FORM_FIELD_USER_PASSWORD => $form->admin_form_user_password($dbo),
             component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL => $form->admin_form_language_symbol($dbo),
             component_types::FIELD_LANGUAGE_SYMBOL => $form->show_language_symbol($dbo),
+            component_types::SYSTEM_ADMIN_URL_DELAY => $page->admin_url_delay(),
+            component_types::SYSTEM_ADMIN_LOGIN_FAILS => $page->admin_login_fails(),
+            component_types::SYSTEM_ADMIN_ERRORS_UNASSIGNED => $page->admin_errors_unassigned(),
+            component_types::SYSTEM_ADMIN_ERRORS_DELAYED_FIX => $page->admin_errors_delayed_fix(),
+            component_types::SYSTEM_ADMIN_JOBS_DELAYED => $page->admin_jobs_delayed(),
+            component_types::SELECT_LIST => $select->list_select($dbo, $cfg->typ_lst_cache->html_languages, $form_name),
+            component_types::EXPRESSION => $base->expression($dbo),
 
             // buttons
             component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo->id()),
@@ -307,10 +319,10 @@ class component_exe extends component
             component_types::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
-            component_types::SYSTEM_BODY_SIGNUP => $page->signup_body(),
-            component_types::SYSTEM_BODY_LOGIN => $page->login_body(),
-            component_types::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body(),
-            component_types::SYSTEM_BODY_LOGIN_RESET => $page->reset_body(),
+            component_types::SYSTEM_BODY_SIGNUP => $page->signup_body($url_array),
+            component_types::SYSTEM_BODY_LOGIN => $page->login_body($url_array),
+            component_types::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body($url_array),
+            component_types::SYSTEM_BODY_LOGIN_RESET => $page->reset_body($url_array),
             component_types::SYSTEM_BODY_LOGOUT => $page->logout_body(),
             component_types::SYSTEM_BODY_SEARCH => $page->body_search(),
             component_types::SYSTEM_BODY_SEARCH_FULL => $page->body_search_full(),
@@ -361,6 +373,7 @@ class component_exe extends component
             component_types::VALUE_NAME => $base->value_name($dbo),
             component_types::GROUP_NAME => $base->group_name($dbo),
             component_types::VALUE_NUMERIC => $base->num_value($dbo),
+            component_types::MAIN_VALUE => $base->main_value($dbo),
 
             // other
             component_types::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
@@ -374,6 +387,16 @@ class component_exe extends component
             component_types::USED_IN_AS_TEXT => $form->used_as_text($dbo),
             component_types::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
             component_types::RANK_PHRASE => $rank->system_phrases($dbo),
+            component_types::RANKING_PARAMETERS => $rank->ranking_parameters($dbo),
+            component_types::RANKING_LIST => $rank->ranking_list($dbo),
+
+            // name display components for admin-editable system objects
+            component_types::SOURCE_NAME => $base->source_name($dbo),
+            component_types::REFERENCE_NAME => $base->reference_name($dbo),
+            component_types::LANGUAGE_NAME => $base->language_name($dbo),
+            component_types::RESULTS_RELATED => $list->results_related($dbo, $cfg),
+            component_types::PHRASES_RELATED => $list->phrases_related($dbo, $cfg),
+            component_types::BUTTON_REQUEST => $form->button_request(),
             component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst),
 
             // view relation only -

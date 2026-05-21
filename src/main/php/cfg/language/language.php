@@ -51,6 +51,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -68,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class language extends type_object
@@ -196,7 +198,10 @@ class language extends type_object
     {
         parent::import_mapper($in_ex_json, $msg, $dto);
 
-        if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+        if ($msg->usr === null) {
+            log_err('user not set in user_message', 'import_mapper');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
             if (key_exists(json_fields::WIKI_CODE, $in_ex_json)) {
                 $this->wiki_code = $in_ex_json[json_fields::WIKI_CODE];
             }

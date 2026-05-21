@@ -1,0 +1,2613 @@
+{
+  "version": "0.0.3",
+  "time": "2026-05-21 09:028:00",
+  "user": "timon",
+  "selection": [
+    "physics extra"
+  ],
+  "description": "Main physical definitions that are not part of the main units.",
+  "words": [
+    {
+      "name": "kg"
+    },
+    {
+      "name": "metre"
+    },
+    {
+      "name": "second"
+    },
+    {
+      "name": "ampere"
+    },
+    {
+      "name": "kilogram"
+    },
+    {
+      "name": "joule"
+    },
+    {
+      "name": "watt"
+    },
+    {
+      "name": "newton"
+    },
+    {
+      "name": "pascal"
+    },
+    {
+      "name": "coulomb"
+    },
+    {
+      "name": "volt"
+    },
+    {
+      "name": "force",
+      "description": "In physics, a force is an influence that can change the motion of an object; it has both magnitude and direction and is measured in newton.",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Force",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11402",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mass",
+      "description": "Mass is the quantity of matter in a body and a measure of its resistance to acceleration (inertia) when a force is applied; the SI unit is the kilogram.",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Mass",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11423",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "energy",
+      "description": "Energy is the quantitative property that is transferred to a body or system to perform work or to heat it; the SI unit is the joule.",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Energy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11379",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "power",
+      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt.",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Power (physics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25342",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "pressure",
+      "description": "Pressure is the force applied perpendicular to the surface of an object per unit area; the SI unit is the pascal.",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Pressure",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39552",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "charge"
+    },
+    {
+      "name": "voltage",
+      "description": "Voltage, also called electric potential difference, is the difference in electric potential between two points; the SI unit is the volt.",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Voltage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25428",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "velocity",
+      "description": "Velocity is the directional speed of a motion of an object as a function of time; it is the rate of change of an object's position with respect to a frame of reference.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Velocity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11465",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "acceleration",
+      "description": "In mechanics, acceleration is the rate of change of the velocity of an object with respect to time.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Acceleration",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11376",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "displacement",
+      "description": "In geometry and mechanics, a displacement is a vector whose length is the shortest distance from the initial to the final position of a point.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Displacement (geometry)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190291",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "momentum",
+      "description": "In Newtonian mechanics, momentum is the product of the mass and velocity of an object; it is a vector quantity.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Momentum",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41273",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "impulse",
+      "description": "In classical mechanics, impulse is the change in momentum of an object; it equals the integral of force over the time interval for which it acts.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Impulse (physics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q837940",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "work",
+      "description": "In physics, work is the energy transferred to or from an object via the application of force along a displacement.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Work (physics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q42213",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "torque",
+      "description": "In physics and mechanics, torque is the rotational equivalent of linear force; it is also referred to as the moment of force.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Torque",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q48103",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "inertia",
+      "description": "Inertia is the tendency of an object to maintain its state of motion unless acted upon by a force.",
+      "refs": [
+        {
+          "name": "Inertia",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q122508",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "friction",
+      "description": "Friction is the force resisting the relative motion of solid surfaces, fluid layers, and material elements sliding against each other.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Friction",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q156584",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gravity",
+      "description": "In physics, gravity is a fundamental interaction which causes mutual attraction between all things that have mass.",
+      "refs": [
+        {
+          "name": "Gravity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11412",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "density",
+      "description": "The density of a substance is its mass per unit volume; the SI unit is the kilogram per cubic metre.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Density",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q29539",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "temperature",
+      "description": "Temperature is a physical quantity that expresses quantitatively the perceptions of hotness and coldness.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Temperature",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11466",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "heat",
+      "description": "In thermodynamics, heat is the thermal energy transferred between systems due to a temperature difference.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Heat",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q44432",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "entropy",
+      "description": "Entropy is a scientific concept that is most commonly associated with a state of disorder, randomness, or uncertainty in a thermodynamic system.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Entropy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q45003",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "enthalpy",
+      "description": "Enthalpy is the sum of a thermodynamic system's internal energy and the product of its pressure and volume.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Enthalpy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q161064",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "current",
+      "description": "An electric current is a flow of charged particles, such as electrons or ions, moving through an electrical conductor or space.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Electric current",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11651",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "resistance",
+      "description": "The electrical resistance of an object is a measure of its opposition to the flow of electric current.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Electrical resistance and conductance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25358",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "capacitance",
+      "description": "Capacitance is the capability of a material object or device to store electric charge.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Capacitance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q164399",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "inductance",
+      "description": "Inductance is the tendency of an electrical conductor to oppose a change in the electric current flowing through it.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Inductance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q177897",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "permittivity",
+      "description": "In electromagnetism, the permittivity is a measure of the electric polarizability of a dielectric.",
+      "refs": [
+        {
+          "name": "Permittivity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q211569",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "permeability",
+      "description": "In electromagnetism, permeability is the measure of magnetization that a material obtains in response to an applied magnetic field.",
+      "refs": [
+        {
+          "name": "Permeability (electromagnetism)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3027075",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "wavelength",
+      "description": "In physics and mathematics, wavelength is the spatial period of a periodic wave, the distance over which the wave's shape repeats.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Wavelength",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41364",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "wave",
+      "description": "In physics, a wave is a propagating dynamic disturbance of one or more quantities.",
+      "refs": [
+        {
+          "name": "Wave",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37172",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "photon",
+      "description": "A photon is an elementary particle that is a quantum of the electromagnetic field, including electromagnetic radiation such as light and radio waves.",
+      "refs": [
+        {
+          "name": "Photon",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3198",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "electron",
+      "description": "The electron is a subatomic particle with a negative one elementary electric charge.",
+      "refs": [
+        {
+          "name": "Electron",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2225",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "proton",
+      "description": "A proton is a stable subatomic particle, symbol p, with a positive electric charge of +1 e elementary charge.",
+      "refs": [
+        {
+          "name": "Proton",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2294",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "neutron",
+      "description": "The neutron is a subatomic particle, symbol n, which has a neutral charge, and a mass slightly greater than that of a proton.",
+      "refs": [
+        {
+          "name": "Neutron",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2348",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "atom",
+      "description": "Atoms are the basic particles of the chemical elements and the fundamental building blocks of ordinary matter.",
+      "refs": [
+        {
+          "name": "Atom",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9121",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "nucleus",
+      "description": "The atomic nucleus is the small, dense region consisting of protons and neutrons at the center of an atom.",
+      "refs": [
+        {
+          "name": "Atomic nucleus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37147",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "spring",
+      "description": "A spring is an elastic object that stores mechanical energy and is typically used as a mechanical component.",
+      "refs": [
+        {
+          "name": "Spring (device)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q160646",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "pendulum",
+      "description": "A pendulum is a weight suspended from a pivot so that it can swing freely.",
+      "refs": [
+        {
+          "name": "Pendulum",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189401",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "lens",
+      "description": "A lens is a transmissive optical device that focuses or disperses a light beam by means of refraction.",
+      "refs": [
+        {
+          "name": "Lens",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q768575",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "refraction",
+      "description": "In physics, refraction is the redirection of a wave as it passes from one medium to another.",
+      "refs": [
+        {
+          "name": "Refraction",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41364",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reflection",
+      "description": "Reflection is the change in direction of a wavefront at an interface between two different media so that the wavefront returns into the medium from which it originated.",
+      "refs": [
+        {
+          "name": "Reflection (physics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q174276",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "field"
+    },
+    {
+      "name": "flux"
+    },
+    {
+      "name": "electric"
+    },
+    {
+      "name": "magnetic"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "kinetic"
+    },
+    {
+      "name": "gravitational"
+    },
+    {
+      "name": "rotational"
+    },
+    {
+      "name": "angular"
+    },
+    {
+      "name": "linear"
+    },
+    {
+      "name": "specific"
+    },
+    {
+      "name": "ideal"
+    },
+    {
+      "name": "gas"
+    },
+    {
+      "name": "moment"
+    },
+    {
+      "name": "centripetal"
+    },
+    {
+      "name": "elastic"
+    },
+    {
+      "name": "thermal"
+    },
+    {
+      "name": "internal"
+    },
+    {
+      "name": "molar"
+    },
+    {
+      "name": "amount"
+    },
+    {
+      "name": "substance"
+    },
+    {
+      "name": "object"
+    },
+    {
+      "name": "frequency"
+    },
+    {
+      "name": "period"
+    },
+    {
+      "name": "amplitude"
+    },
+    {
+      "name": "phase"
+    },
+    {
+      "name": "height"
+    },
+    {
+      "name": "depth"
+    },
+    {
+      "name": "radius"
+    },
+    {
+      "name": "length"
+    },
+    {
+      "name": "area"
+    },
+    {
+      "name": "volume"
+    },
+    {
+      "name": "distance"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "constant",
+      "description": "fixed and well-defined number"
+    },
+    {
+      "name": "Coulomb",
+      "description": "Charles-Augustin de Coulomb was a French officer, engineer, and physicist; the SI unit of electric charge and Coulomb's law are named after him.",
+      "refs": [
+        {
+          "name": "Charles-Augustin de Coulomb",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q187336",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Ohm",
+      "description": "Georg Simon Ohm was a German physicist and mathematician known for Ohm's law.",
+      "refs": [
+        {
+          "name": "Georg Ohm",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q57089",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Newton",
+      "description": "Sir Isaac Newton was an English mathematician, physicist, astronomer and author widely recognised as one of the greatest mathematicians and most influential scientists of all time.",
+      "refs": [
+        {
+          "name": "Isaac Newton",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q935",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Einstein",
+      "description": "Albert Einstein was a German-born theoretical physicist who is widely held to be one of the greatest and most influential scientists of all time.",
+      "refs": [
+        {
+          "name": "Albert Einstein",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q937",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Hooke",
+      "description": "Robert Hooke was an English polymath who was active as a scientist, natural philosopher and architect, and Hooke's law is named after him.",
+      "refs": [
+        {
+          "name": "Robert Hooke",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170509",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Bernoulli",
+      "description": "Daniel Bernoulli was a Swiss mathematician and physicist who made important contributions to fluid mechanics.",
+      "refs": [
+        {
+          "name": "Daniel Bernoulli",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q133682",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Snell",
+      "description": "Willebrord Snellius was a Dutch astronomer and mathematician; the law of refraction is named after him.",
+      "refs": [
+        {
+          "name": "Willebrord Snellius",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q310145",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Planck",
+      "description": "Max Planck was a German theoretical physicist whose discovery of energy quanta won him the Nobel Prize in Physics in 1918."
+    },
+    {
+      "name": "de Broglie",
+      "description": "Louis de Broglie was a French physicist and aristocrat known for his contributions to quantum theory.",
+      "refs": [
+        {
+          "name": "Louis de Broglie",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9013",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Stefan",
+      "description": "Josef Stefan was a Slovene physicist, mathematician, and poet of the Austrian Empire; the Stefan-Boltzmann law is partly named after him.",
+      "refs": [
+        {
+          "name": "Josef Stefan",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q57068",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Wien",
+      "description": "Wilhelm Wien was a German physicist who studied radiation and electromagnetism, winning the 1911 Nobel Prize in Physics.",
+      "refs": [
+        {
+          "name": "Wilhelm Wien",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q57303",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Schrödinger",
+      "description": "Erwin Schrödinger was an Austrian-Irish physicist who developed fundamental results in quantum theory.",
+      "refs": [
+        {
+          "name": "Erwin Schrödinger",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9021",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Heisenberg",
+      "description": "Werner Heisenberg was a German theoretical physicist and one of the main pioneers of the theory of quantum mechanics.",
+      "refs": [
+        {
+          "name": "Werner Heisenberg",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q40026",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Faraday",
+      "description": "Michael Faraday was an English scientist who contributed to the study of electromagnetism and electrochemistry.",
+      "refs": [
+        {
+          "name": "Michael Faraday",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8750",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Lorentz",
+      "description": "Hendrik Lorentz was a Dutch physicist who shared the 1902 Nobel Prize in Physics with Pieter Zeeman.",
+      "refs": [
+        {
+          "name": "Hendrik Lorentz",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41688",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Ampère",
+      "description": "André-Marie Ampère was a French physicist and mathematician who was one of the founders of the science of classical electromagnetism.",
+      "refs": [
+        {
+          "name": "André-Marie Ampère",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189746",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Gauss",
+      "description": "Carl Friedrich Gauss was a German mathematician and physicist who made significant contributions to many fields.",
+      "refs": [
+        {
+          "name": "Carl Friedrich Gauss",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q6722",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "law"
+    },
+    {
+      "name": "principle"
+    },
+    {
+      "name": "equation"
+    },
+    {
+      "name": "formula"
+    },
+    {
+      "name": "G",
+      "description": "G is the gravitational constant, an empirical physical constant involved in the calculation of gravitational effects.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Gravitational constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17285",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "g",
+      "description": "g is the standard acceleration due to gravity at Earth's surface, approximately 9.80665 m/s².",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Standard gravity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q30006",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "c",
+      "description": "c is the speed of light in vacuum, a universal physical constant exactly equal to 299792458 m/s.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Speed of light",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2111",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "h",
+      "description": "h is the Planck constant, a fundamental physical constant that relates the energy carried by a photon to its frequency.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Planck constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q122894",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ℏ",
+      "description": "ℏ is the reduced Planck constant, equal to the Planck constant divided by 2π.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Planck constant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kB",
+      "description": "kB is the Boltzmann constant, the proportionality factor that relates the average kinetic energy of particles in a gas with the thermodynamic temperature of the gas.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Boltzmann constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q172579",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "R",
+      "description": "R is the molar gas constant, equivalent to the Boltzmann constant multiplied by the Avogadro constant.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Gas constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11722",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "NA",
+      "description": "NA is the Avogadro constant, the proportionality factor that relates the number of constituent particles in a sample with the amount of substance in that sample.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Avogadro constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170804",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "σ",
+      "description": "σ is the Stefan-Boltzmann constant, the constant of proportionality in the Stefan-Boltzmann law.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Stefan-Boltzmann constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1199549",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ε0",
+      "description": "ε0 is the vacuum permittivity, the absolute permittivity of free space.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Vacuum permittivity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q322457",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "μ0",
+      "description": "μ0 is the vacuum permeability, the magnetic permeability of classical vacuum.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Vacuum permeability",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1515261",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ke",
+      "description": "ke is the Coulomb constant, the proportionality constant in Coulomb's law.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Coulomb constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1108569",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "v"
+    },
+    {
+      "name": "v0"
+    },
+    {
+      "name": "a"
+    },
+    {
+      "name": "t"
+    },
+    {
+      "name": "x"
+    },
+    {
+      "name": "x0"
+    },
+    {
+      "name": "y"
+    },
+    {
+      "name": "r"
+    },
+    {
+      "name": "F"
+    },
+    {
+      "name": "m"
+    },
+    {
+      "name": "p"
+    },
+    {
+      "name": "E"
+    },
+    {
+      "name": "P"
+    },
+    {
+      "name": "W"
+    },
+    {
+      "name": "Q"
+    },
+    {
+      "name": "q"
+    },
+    {
+      "name": "I"
+    },
+    {
+      "name": "V"
+    },
+    {
+      "name": "T"
+    },
+    {
+      "name": "L"
+    },
+    {
+      "name": "n"
+    },
+    {
+      "name": "N"
+    },
+    {
+      "name": "f"
+    },
+    {
+      "name": "λ"
+    },
+    {
+      "name": "ω"
+    },
+    {
+      "name": "θ"
+    },
+    {
+      "name": "φ"
+    },
+    {
+      "name": "ρ"
+    },
+    {
+      "name": "η"
+    },
+    {
+      "name": "k"
+    },
+    {
+      "name": "B"
+    },
+    {
+      "name": "Φ"
+    },
+    {
+      "name": "α"
+    },
+    {
+      "name": "ΔT"
+    },
+    {
+      "name": "Δx"
+    },
+    {
+      "name": "Δv"
+    },
+    {
+      "name": "Δp"
+    },
+    {
+      "name": "Δt"
+    },
+    {
+      "name": "ΔU"
+    },
+    {
+      "name": "ΔS"
+    },
+    {
+      "name": "ΔE"
+    },
+    {
+      "name": "first",
+      "description": "the ordinal describing the position one in a sequence, e.g. a first law"
+    },
+    {
+      "name": "thermodynamics",
+      "description": "the branch of physics that deals with heat, work, temperature and the statistical behaviour of systems."
+    }
+  ],
+  "triples": [
+    {
+      "name": "first law",
+      "description": "a law that is the first in a numbered set of laws",
+      "from": "first",
+      "verb": "kind of",
+      "to": "law"
+    },
+    {
+      "name": "second law",
+      "description": "a law that is the second in a numbered set of laws",
+      "from": "second",
+      "verb": "kind of",
+      "to": "law"
+    },
+    {
+      "from": "newton",
+      "verb": "is measure type for",
+      "to": "force",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "kilogram",
+      "verb": "is measure type for",
+      "to": "mass",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "joule",
+      "verb": "is measure type for",
+      "to": "energy",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "watt",
+      "verb": "is measure type for",
+      "to": "power",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "pascal",
+      "verb": "is measure type for",
+      "to": "pressure",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "coulomb",
+      "verb": "is measure type for",
+      "to": "charge",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "volt",
+      "verb": "is measure type for",
+      "to": "voltage",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kinetic energy",
+      "description": "In physics, the kinetic energy of an object is the form of energy that it possesses due to its motion.",
+      "from": "kinetic",
+      "verb": "kind of",
+      "to": "energy",
+      "refs": [
+        {
+          "name": "Kinetic energy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q46276",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "potential energy",
+      "description": "In physics, potential energy is the energy held by an object because of its position relative to other objects, stresses within itself, or other factors.",
+      "from": "potential",
+      "verb": "kind of",
+      "to": "energy",
+      "refs": [
+        {
+          "name": "Potential energy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q155640",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gravitational potential energy",
+      "from": "gravitational",
+      "verb": "kind of",
+      "to": "potential energy"
+    },
+    {
+      "name": "elastic potential energy",
+      "from": "elastic",
+      "verb": "kind of",
+      "to": "potential energy"
+    },
+    {
+      "name": "internal energy",
+      "description": "The internal energy of a thermodynamic system is the energy contained within it; it is the energy necessary to create or prepare the system in any given internal state.",
+      "from": "internal",
+      "verb": "kind of",
+      "to": "energy",
+      "refs": [
+        {
+          "name": "Internal energy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179199",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "thermal energy",
+      "from": "thermal",
+      "verb": "kind of",
+      "to": "energy"
+    },
+    {
+      "name": "rotational kinetic energy",
+      "from": "rotational",
+      "verb": "kind of",
+      "to": "kinetic energy"
+    },
+    {
+      "name": "angular velocity",
+      "description": "In physics, angular velocity is a pseudovector representation of how the angular position or orientation of an object changes with time.",
+      "from": "angular",
+      "verb": "kind of",
+      "to": "velocity",
+      "refs": [
+        {
+          "name": "Angular velocity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q161635",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "angular momentum",
+      "description": "In physics, angular momentum is the rotational analog of linear momentum.",
+      "from": "angular",
+      "verb": "kind of",
+      "to": "momentum",
+      "refs": [
+        {
+          "name": "Angular momentum",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q161254",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "linear momentum",
+      "from": "linear",
+      "verb": "kind of",
+      "to": "momentum"
+    },
+    {
+      "name": "centripetal acceleration",
+      "description": "Centripetal acceleration is the acceleration of an object moving in a circular path, directed toward the centre of the circle.",
+      "from": "centripetal",
+      "verb": "kind of",
+      "to": "acceleration",
+      "refs": [
+        {
+          "name": "Circular motion",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "centripetal force",
+      "from": "centripetal",
+      "verb": "kind of",
+      "to": "force"
+    },
+    {
+      "name": "moment of inertia",
+      "description": "The moment of inertia is a quantity expressing a body's tendency to resist angular acceleration; it is the sum of the products of the mass of each particle in the body with the square of its distance from the axis of rotation.",
+      "from": "moment",
+      "verb": "of",
+      "to": "inertia",
+      "refs": [
+        {
+          "name": "Moment of inertia",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q165794",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Newton's second law",
+      "description": "Newton's second law of motion states that the net force on an object is equal to the rate of change of its linear momentum with respect to time.",
+      "from": "Newton",
+      "verb": "name of",
+      "to": "second law",
+      "refs": [
+        {
+          "name": "Newton's laws of motion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41581",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Newton's law of gravitation",
+      "description": "Newton's law of universal gravitation states that every particle attracts every other particle in the universe with a force which is proportional to the product of their masses and inversely proportional to the square of the distance between their centres.",
+      "from": "Newton",
+      "verb": "name of",
+      "to": "law",
+      "refs": [
+        {
+          "name": "Newton's law of universal gravitation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11412",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Hooke's law",
+      "description": "In physics, Hooke's law is an empirical law which states that the force needed to extend or compress a spring by some distance scales linearly with respect to that distance.",
+      "from": "Hooke",
+      "verb": "name of",
+      "to": "law",
+      "refs": [
+        {
+          "name": "Hooke's law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170282",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Coulomb's law",
+      "description": "Coulomb's law is an experimental law of physics that calculates the amount of force between two electrically charged particles at rest.",
+      "from": "Coulomb",
+      "verb": "name of",
+      "to": "law",
+      "refs": [
+        {
+          "name": "Coulomb's law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83067",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Ohm's law",
+      "description": "Ohm's law states that the current through a conductor between two points is directly proportional to the voltage across the two points.",
+      "from": "Ohm",
+      "verb": "name of",
+      "to": "law",
+      "refs": [
+        {
+          "name": "Ohm's law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170971",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Snell's law",
+      "description": "Snell's law is a formula used to describe the relationship between the angles of incidence and refraction, when referring to light or other waves passing through a boundary between two different isotropic media.",
+      "from": "Snell",
+      "verb": "name of",
+      "to": "law",
+      "refs": [
+        {
+          "name": "Snell's law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170301",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Bernoulli's equation",
+      "description": "Bernoulli's principle states that an increase in the speed of a fluid occurs simultaneously with a decrease in static pressure or a decrease in the fluid's potential energy.",
+      "from": "Bernoulli",
+      "verb": "name of",
+      "to": "equation",
+      "refs": [
+        {
+          "name": "Bernoulli's principle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q188737",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Stefan-Boltzmann law",
+      "description": "The Stefan-Boltzmann law describes the power radiated from a black body in terms of its temperature.",
+      "from": "Stefan",
+      "verb": "name of",
+      "to": "law",
+      "refs": [
+        {
+          "name": "Stefan-Boltzmann law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5982",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Wien's displacement law",
+      "description": "Wien's displacement law states that the black-body radiation curve for different temperatures will peak at different wavelengths that are inversely proportional to the temperature.",
+      "from": "Wien",
+      "verb": "name of",
+      "to": "law",
+      "refs": [
+        {
+          "name": "Wien's displacement law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1051221",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Faraday's law",
+      "description": "Faraday's law of induction is a basic law of electromagnetism predicting how a magnetic field will interact with an electric circuit to produce an electromotive force.",
+      "from": "Faraday",
+      "verb": "name of",
+      "to": "law",
+      "refs": [
+        {
+          "name": "Faraday's law of induction",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q177012",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Lorentz force",
+      "description": "In electromagnetism, the Lorentz force is the force exerted on a charged particle moving with velocity through an electric and magnetic field.",
+      "from": "Lorentz",
+      "verb": "name of",
+      "to": "force",
+      "refs": [
+        {
+          "name": "Lorentz force",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q849919",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Ampère's law",
+      "description": "Ampère's circuital law relates the integrated magnetic field around a closed loop to the electric current passing through the loop.",
+      "from": "Ampère",
+      "verb": "name of",
+      "to": "law",
+      "refs": [
+        {
+          "name": "Ampère's circuital law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q193462",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Gauss's law",
+      "description": "In physics, Gauss's law relates the distribution of electric charge to the resulting electric field.",
+      "from": "Gauss",
+      "verb": "name of",
+      "to": "law",
+      "refs": [
+        {
+          "name": "Gauss's law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83233",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "de Broglie relation",
+      "description": "The de Broglie hypothesis proposes that all matter exhibits wave-like behaviour, and the de Broglie wavelength of a particle is inversely proportional to its momentum.",
+      "from": "de Broglie",
+      "verb": "name of",
+      "to": "equation",
+      "refs": [
+        {
+          "name": "Matter wave",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11378",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Planck-Einstein relation",
+      "description": "The Planck-Einstein relation states that the energy of a photon is proportional to its frequency.",
+      "from": "Planck",
+      "verb": "name of",
+      "to": "equation",
+      "refs": [
+        {
+          "name": "Planck relation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1751386",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Heisenberg uncertainty principle",
+      "description": "In quantum mechanics, the uncertainty principle is any of a variety of mathematical inequalities asserting a fundamental limit to the accuracy with which the values for certain pairs of physical quantities of a particle can be predicted from initial conditions.",
+      "from": "Heisenberg",
+      "verb": "name of",
+      "to": "principle",
+      "refs": [
+        {
+          "name": "Uncertainty principle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q131286",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Schrödinger equation",
+      "description": "The Schrödinger equation is a linear partial differential equation that governs the wave function of a quantum-mechanical system.",
+      "from": "Schrödinger",
+      "verb": "name of",
+      "to": "equation",
+      "refs": [
+        {
+          "name": "Schrödinger equation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q165498",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Einstein mass-energy equivalence",
+      "description": "In physics, mass-energy equivalence is the relationship between mass and energy in a system's rest frame, where the two quantities differ only by a multiplicative constant and the units of measurement.",
+      "from": "Einstein",
+      "verb": "name of",
+      "to": "equation",
+      "refs": [
+        {
+          "name": "Mass-energy equivalence",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q35875",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ideal gas law",
+      "description": "The ideal gas law is the equation of state of a hypothetical ideal gas, relating its pressure, volume, temperature, and amount of substance.",
+      "from": "ideal",
+      "verb": "kind of",
+      "to": "gas",
+      "refs": [
+        {
+          "name": "Ideal gas law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q175854",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "first law of thermodynamics",
+      "description": "The first law of thermodynamics is a formulation of the law of conservation of energy in the context of thermodynamic processes.",
+      "from": "first law",
+      "verb": "of",
+      "to": "thermodynamics",
+      "refs": [
+        {
+          "name": "First law of thermodynamics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q165980",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "second law of thermodynamics",
+      "description": "The second law of thermodynamics is a physical law based on universal empirical observation concerning heat and energy interconversions.",
+      "from": "second law",
+      "verb": "of",
+      "to": "thermodynamics",
+      "refs": [
+        {
+          "name": "Second law of thermodynamics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170164",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "specific heat",
+      "description": "In thermodynamics, the specific heat capacity of a substance is the heat capacity of a sample of the substance divided by the mass of the sample.",
+      "from": "specific",
+      "verb": "kind of",
+      "to": "heat",
+      "refs": [
+        {
+          "name": "Specific heat capacity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q487005",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "electric field",
+      "description": "An electric field is the physical field that surrounds electrically charged particles.",
+      "from": "electric",
+      "verb": "kind of",
+      "to": "field",
+      "refs": [
+        {
+          "name": "Electric field",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11408",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "magnetic field",
+      "description": "A magnetic field is a vector field that describes the magnetic influence on moving electric charges, electric currents, and magnetic materials.",
+      "from": "magnetic",
+      "verb": "kind of",
+      "to": "field",
+      "refs": [
+        {
+          "name": "Magnetic field",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11408",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "electric flux",
+      "from": "electric",
+      "verb": "kind of",
+      "to": "flux"
+    },
+    {
+      "name": "magnetic flux",
+      "description": "In physics, specifically electromagnetism, the magnetic flux through a surface is the surface integral of the magnetic field component perpendicular to the surface.",
+      "from": "magnetic",
+      "verb": "kind of",
+      "to": "flux",
+      "refs": [
+        {
+          "name": "Magnetic flux",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q177831",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "electric potential",
+      "description": "The electric potential at a point in a static electric field is the work needed per unit of charge to move a positive test charge from a reference point to that specific point.",
+      "from": "electric",
+      "verb": "kind of",
+      "to": "potential",
+      "refs": [
+        {
+          "name": "Electric potential",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q55435",
+          "type": "wikidata"
+        }
+      ]
+    }
+  ],
+  "formulas": [
+    {
+      "name": "definition of newton",
+      "expression": "\"newton\" = ( \"kg\" * \"metre\" ) / ( \"second\" * \"second\" )",
+      "assigned_word": "force"
+    },
+    {
+      "name": "definition of pascal",
+      "expression": "\"pascal\" = \"kg\" / ( \"metre\" * \"second\" * \"second\" )",
+      "assigned_word": "pressure"
+    },
+    {
+      "name": "definition of watt",
+      "expression": "\"watt\" = \"joule\" / \"second\"",
+      "assigned_word": "power"
+    },
+    {
+      "name": "definition of coulomb",
+      "expression": "\"coulomb\" = \"ampere\" * \"second\"",
+      "assigned_word": "charge"
+    },
+    {
+      "name": "definition of volt",
+      "expression": "\"volt\" = \"watt\" / \"ampere\"",
+      "assigned_word": "voltage"
+    },
+    {
+      "name": "definition of velocity",
+      "expression": "\"v\" = \"distance\" / \"time\"",
+      "latex": "v = d/t",
+      "assigned_word": "velocity"
+    },
+    {
+      "name": "average velocity",
+      "expression": "\"v\" = \"Δx\" / \"Δt\"",
+      "latex": "\\bar v = \\Delta x / \\Delta t",
+      "assigned_word": "velocity"
+    },
+    {
+      "name": "definition of acceleration",
+      "expression": "\"a\" = \"Δv\" / \"Δt\"",
+      "latex": "a = \\Delta v / \\Delta t",
+      "assigned_word": "acceleration"
+    },
+    {
+      "name": "kinematics final velocity",
+      "expression": "\"v\" = \"v0\" + \"a\" * \"t\"",
+      "latex": "v = v_0 + at",
+      "assigned_word": "velocity"
+    },
+    {
+      "name": "kinematics displacement",
+      "expression": "\"x\" = \"x0\" + \"v0\" * \"t\" + ( 1 / 2 ) * \"a\" * \"t\" * \"t\"",
+      "latex": "x = x_0 + v_0 t + \\tfrac{1}{2} a t^2",
+      "assigned_word": "displacement"
+    },
+    {
+      "name": "kinematics velocity squared",
+      "expression": "\"v\" * \"v\" = \"v0\" * \"v0\" + 2 * \"a\" * ( \"x\" - \"x0\" )",
+      "latex": "v^2 = v_0^2 + 2a(x - x_0)",
+      "assigned_word": "velocity"
+    },
+    {
+      "name": "average velocity from endpoints",
+      "expression": "\"v\" = ( \"v0\" + \"v\" ) / 2",
+      "latex": "\\bar v = (v_0 + v)/2",
+      "assigned_word": "velocity"
+    },
+    {
+      "name": "definition of Newton's second law",
+      "expression": "\"F\" = \"m\" * \"a\"",
+      "latex": "F = ma",
+      "assigned_word": "Newton's second law"
+    },
+    {
+      "name": "Newton's second law momentum form",
+      "expression": "\"F\" = \"Δp\" / \"Δt\"",
+      "latex": "F = \\Delta p / \\Delta t",
+      "assigned_word": "Newton's second law"
+    },
+    {
+      "name": "weight",
+      "expression": "\"F\" = \"m\" * \"g\"",
+      "latex": "W = mg",
+      "assigned_word": "force"
+    },
+    {
+      "name": "definition of Newton's law of gravitation",
+      "expression": "\"F\" = \"G\" * ( \"m\" * \"m\" ) / ( \"r\" * \"r\" )",
+      "latex": "F = G \\frac{m_1 m_2}{r^2}",
+      "assigned_word": "Newton's law of gravitation"
+    },
+    {
+      "name": "gravitational potential energy near surface",
+      "expression": "\"E\" = \"m\" * \"g\" * \"height\"",
+      "latex": "U = mgh",
+      "assigned_word": "gravitational potential energy"
+    },
+    {
+      "name": "gravitational potential energy general",
+      "expression": "\"E\" = - \"G\" * ( \"m\" * \"m\" ) / \"r\"",
+      "latex": "U = -G m_1 m_2 / r",
+      "assigned_word": "gravitational potential energy"
+    },
+    {
+      "name": "friction force",
+      "expression": "\"F\" = \"η\" * \"newton\"",
+      "latex": "F_f = \\mu N",
+      "assigned_word": "friction"
+    },
+    {
+      "name": "definition of linear momentum",
+      "expression": "\"p\" = \"m\" * \"v\"",
+      "latex": "p = mv",
+      "assigned_word": "linear momentum"
+    },
+    {
+      "name": "impulse momentum theorem",
+      "expression": "\"F\" * \"Δt\" = \"Δp\"",
+      "latex": "F \\Delta t = \\Delta p",
+      "assigned_word": "impulse"
+    },
+    {
+      "name": "definition of kinetic energy",
+      "expression": "\"E\" = ( 1 / 2 ) * \"m\" * \"v\" * \"v\"",
+      "latex": "E_k = \\tfrac{1}{2} m v^2",
+      "assigned_word": "kinetic energy"
+    },
+    {
+      "name": "work done by force",
+      "expression": "\"W\" = \"F\" * \"distance\"",
+      "latex": "W = F d",
+      "assigned_word": "work"
+    },
+    {
+      "name": "work energy theorem",
+      "expression": "\"W\" = \"ΔE\"",
+      "latex": "W_{net} = \\Delta E_k",
+      "assigned_word": "work"
+    },
+    {
+      "name": "power from work",
+      "expression": "\"P\" = \"W\" / \"t\"",
+      "latex": "P = W/t",
+      "assigned_word": "power"
+    },
+    {
+      "name": "power from force and velocity",
+      "expression": "\"P\" = \"F\" * \"v\"",
+      "latex": "P = F v",
+      "assigned_word": "power"
+    },
+    {
+      "name": "definition of Hooke's law",
+      "expression": "\"F\" = - \"k\" * \"x\"",
+      "latex": "F = -k x",
+      "assigned_word": "Hooke's law"
+    },
+    {
+      "name": "definition of elastic potential energy",
+      "expression": "\"E\" = ( 1 / 2 ) * \"k\" * \"x\" * \"x\"",
+      "latex": "U = \\tfrac{1}{2} k x^2",
+      "assigned_word": "elastic potential energy"
+    },
+    {
+      "name": "spring period",
+      "expression": "\"T\" = 2 * \"Pi\" * sqrt( \"m\" / \"k\" )",
+      "latex": "T = 2\\pi \\sqrt{m/k}",
+      "assigned_word": "spring"
+    },
+    {
+      "name": "simple pendulum period",
+      "expression": "\"T\" = 2 * \"Pi\" * sqrt( \"length\" / \"g\" )",
+      "latex": "T = 2\\pi \\sqrt{L/g}",
+      "assigned_word": "pendulum"
+    },
+    {
+      "name": "definition of angular velocity",
+      "expression": "\"ω\" = \"θ\" / \"t\"",
+      "latex": "\\omega = \\theta / t",
+      "assigned_word": "angular velocity"
+    },
+    {
+      "name": "angular velocity from frequency",
+      "expression": "\"ω\" = 2 * \"Pi\" * \"f\"",
+      "latex": "\\omega = 2\\pi f",
+      "assigned_word": "angular velocity"
+    },
+    {
+      "name": "tangential velocity",
+      "expression": "\"v\" = \"ω\" * \"r\"",
+      "latex": "v = \\omega r",
+      "assigned_word": "velocity"
+    },
+    {
+      "name": "definition of centripetal acceleration",
+      "expression": "\"a\" = ( \"v\" * \"v\" ) / \"r\"",
+      "latex": "a_c = v^2 / r",
+      "assigned_word": "centripetal acceleration"
+    },
+    {
+      "name": "definition of centripetal force",
+      "expression": "\"F\" = ( \"m\" * \"v\" * \"v\" ) / \"r\"",
+      "latex": "F_c = m v^2 / r",
+      "assigned_word": "centripetal force"
+    },
+    {
+      "name": "definition of angular momentum",
+      "expression": "\"L\" = \"I\" * \"ω\"",
+      "latex": "L = I \\omega",
+      "assigned_word": "angular momentum"
+    },
+    {
+      "name": "definition of torque",
+      "expression": "\"torque\" = \"F\" * \"r\" * sin( \"θ\" )",
+      "latex": "\\tau = F r \\sin\\theta",
+      "assigned_word": "torque"
+    },
+    {
+      "name": "torque from angular acceleration",
+      "expression": "\"torque\" = \"I\" * \"α\"",
+      "latex": "\\tau = I \\alpha",
+      "assigned_word": "torque"
+    },
+    {
+      "name": "definition of rotational kinetic energy",
+      "expression": "\"E\" = ( 1 / 2 ) * \"I\" * \"ω\" * \"ω\"",
+      "latex": "E_k = \\tfrac{1}{2} I \\omega^2",
+      "assigned_word": "rotational kinetic energy"
+    },
+    {
+      "name": "definition of density",
+      "expression": "\"ρ\" = \"m\" / \"volume\"",
+      "latex": "\\rho = m/V",
+      "assigned_word": "density"
+    },
+    {
+      "name": "pressure from force and area",
+      "expression": "\"pressure\" = \"F\" / \"area\"",
+      "latex": "P = F/A",
+      "assigned_word": "pressure"
+    },
+    {
+      "name": "hydrostatic pressure",
+      "expression": "\"pressure\" = \"ρ\" * \"g\" * \"depth\"",
+      "latex": "P = \\rho g h",
+      "assigned_word": "pressure"
+    },
+    {
+      "name": "buoyant force",
+      "expression": "\"F\" = \"ρ\" * \"g\" * \"volume\"",
+      "latex": "F_b = \\rho g V",
+      "assigned_word": "force"
+    },
+    {
+      "name": "definition of Bernoulli's equation",
+      "expression": "\"pressure\" + ( 1 / 2 ) * \"ρ\" * \"v\" * \"v\" + \"ρ\" * \"g\" * \"height\" = \"constant\"",
+      "latex": "P + \\tfrac{1}{2}\\rho v^2 + \\rho g h = \\text{const}",
+      "assigned_word": "Bernoulli's equation"
+    },
+    {
+      "name": "continuity equation",
+      "expression": "\"area\" * \"v\" = \"constant\"",
+      "latex": "A v = \\text{const}",
+      "assigned_word": "Bernoulli's equation"
+    },
+    {
+      "name": "Celsius to Kelvin",
+      "expression": "\"T\" = \"celsius\" + 273.15",
+      "latex": "T = T_C + 273.15",
+      "assigned_word": "temperature"
+    },
+    {
+      "name": "definition of ideal gas law",
+      "expression": "\"pressure\" * \"volume\" = \"n\" * \"R\" * \"T\"",
+      "latex": "PV = nRT",
+      "assigned_word": "ideal gas law"
+    },
+    {
+      "name": "ideal gas Boltzmann form",
+      "expression": "\"pressure\" * \"volume\" = \"N\" * \"kB\" * \"T\"",
+      "latex": "PV = N k_B T",
+      "assigned_word": "ideal gas law"
+    },
+    {
+      "name": "definition of specific heat",
+      "expression": "\"Q\" = \"m\" * \"c\" * \"ΔT\"",
+      "latex": "Q = m c \\Delta T",
+      "assigned_word": "specific heat"
+    },
+    {
+      "name": "definition of first law of thermodynamics",
+      "expression": "\"ΔU\" = \"Q\" - \"W\"",
+      "latex": "\\Delta U = Q - W",
+      "assigned_word": "first law of thermodynamics"
+    },
+    {
+      "name": "entropy change",
+      "expression": "\"ΔS\" = \"Q\" / \"T\"",
+      "latex": "\\Delta S = Q/T",
+      "assigned_word": "entropy"
+    },
+    {
+      "name": "Carnot efficiency",
+      "expression": "\"η\" = 1 - ( \"T\" / \"T\" )",
+      "latex": "\\eta = 1 - T_c/T_h",
+      "assigned_word": "second law of thermodynamics"
+    },
+    {
+      "name": "thermal linear expansion",
+      "expression": "\"Δx\" = \"α\" * \"L\" * \"ΔT\"",
+      "latex": "\\Delta L = \\alpha L \\Delta T",
+      "assigned_word": "thermal energy"
+    },
+    {
+      "name": "average kinetic energy of gas particle",
+      "expression": "\"E\" = ( 3 / 2 ) * \"kB\" * \"T\"",
+      "latex": "\\bar E_k = \\tfrac{3}{2} k_B T",
+      "assigned_word": "kinetic energy"
+    },
+    {
+      "name": "RMS molecular speed",
+      "expression": "\"v\" = sqrt( ( 3 * \"kB\" * \"T\" ) / \"m\" )",
+      "latex": "v_{rms} = \\sqrt{3 k_B T / m}",
+      "assigned_word": "ideal gas law"
+    },
+    {
+      "name": "definition of Stefan-Boltzmann law",
+      "expression": "\"P\" = \"σ\" * \"area\" * \"T\" * \"T\" * \"T\" * \"T\"",
+      "latex": "P = \\sigma A T^4",
+      "assigned_word": "Stefan-Boltzmann law"
+    },
+    {
+      "name": "definition of Wien's displacement law",
+      "expression": "\"λ\" * \"T\" = 2.898E-3",
+      "latex": "\\lambda_{max} T = b",
+      "assigned_word": "Wien's displacement law"
+    },
+    {
+      "name": "definition of Coulomb's law",
+      "expression": "\"F\" = \"ke\" * ( \"q\" * \"q\" ) / ( \"r\" * \"r\" )",
+      "latex": "F = k_e q_1 q_2 / r^2",
+      "assigned_word": "Coulomb's law"
+    },
+    {
+      "name": "electric field of point charge",
+      "expression": "\"E\" = \"ke\" * \"q\" / ( \"r\" * \"r\" )",
+      "latex": "E = k_e q / r^2",
+      "assigned_word": "electric field"
+    },
+    {
+      "name": "electric force on charge",
+      "expression": "\"F\" = \"q\" * \"E\"",
+      "latex": "F = q E",
+      "assigned_word": "electric field"
+    },
+    {
+      "name": "electric potential of point charge",
+      "expression": "\"V\" = \"ke\" * \"q\" / \"r\"",
+      "latex": "V = k_e q / r",
+      "assigned_word": "electric potential"
+    },
+    {
+      "name": "electric potential energy",
+      "expression": "\"E\" = \"ke\" * ( \"q\" * \"q\" ) / \"r\"",
+      "latex": "U = k_e q_1 q_2 / r",
+      "assigned_word": "potential energy"
+    },
+    {
+      "name": "voltage from electric potential",
+      "expression": "\"V\" = \"E\" / \"q\"",
+      "latex": "V = U/q",
+      "assigned_word": "voltage"
+    },
+    {
+      "name": "definition of Ohm's law",
+      "expression": "\"V\" = \"I\" * \"resistance\"",
+      "latex": "V = IR",
+      "assigned_word": "Ohm's law"
+    },
+    {
+      "name": "electric power",
+      "expression": "\"P\" = \"V\" * \"I\"",
+      "latex": "P = VI",
+      "assigned_word": "power"
+    },
+    {
+      "name": "power dissipated by resistor",
+      "expression": "\"P\" = \"I\" * \"I\" * \"resistance\"",
+      "latex": "P = I^2 R",
+      "assigned_word": "power"
+    },
+    {
+      "name": "resistance from resistivity",
+      "expression": "\"resistance\" = \"ρ\" * \"length\" / \"area\"",
+      "latex": "R = \\rho L / A",
+      "assigned_word": "resistance"
+    },
+    {
+      "name": "resistors in series",
+      "expression": "\"resistance\" = \"resistance\" + \"resistance\"",
+      "latex": "R = R_1 + R_2 + \\ldots",
+      "assigned_word": "resistance"
+    },
+    {
+      "name": "resistors in parallel",
+      "expression": "1 / \"resistance\" = 1 / \"resistance\" + 1 / \"resistance\"",
+      "latex": "1/R = 1/R_1 + 1/R_2 + \\ldots",
+      "assigned_word": "resistance"
+    },
+    {
+      "name": "current as charge rate",
+      "expression": "\"I\" = \"Q\" / \"t\"",
+      "latex": "I = Q/t",
+      "assigned_word": "current"
+    },
+    {
+      "name": "definition of capacitance",
+      "expression": "\"capacitance\" = \"Q\" / \"V\"",
+      "latex": "C = Q/V",
+      "assigned_word": "capacitance"
+    },
+    {
+      "name": "energy stored in capacitor",
+      "expression": "\"E\" = ( 1 / 2 ) * \"capacitance\" * \"V\" * \"V\"",
+      "latex": "U = \\tfrac{1}{2} C V^2",
+      "assigned_word": "capacitance"
+    },
+    {
+      "name": "parallel plate capacitance",
+      "expression": "\"capacitance\" = \"ε0\" * \"area\" / \"distance\"",
+      "latex": "C = \\varepsilon_0 A / d",
+      "assigned_word": "capacitance"
+    },
+    {
+      "name": "capacitors in parallel",
+      "expression": "\"capacitance\" = \"capacitance\" + \"capacitance\"",
+      "latex": "C = C_1 + C_2 + \\ldots",
+      "assigned_word": "capacitance"
+    },
+    {
+      "name": "capacitors in series",
+      "expression": "1 / \"capacitance\" = 1 / \"capacitance\" + 1 / \"capacitance\"",
+      "latex": "1/C = 1/C_1 + 1/C_2 + \\ldots",
+      "assigned_word": "capacitance"
+    },
+    {
+      "name": "definition of Lorentz force",
+      "expression": "\"F\" = \"q\" * ( \"E\" + \"v\" * \"B\" )",
+      "latex": "F = q(E + v \\times B)",
+      "assigned_word": "Lorentz force"
+    },
+    {
+      "name": "magnetic force on charge",
+      "expression": "\"F\" = \"q\" * \"v\" * \"B\" * sin( \"θ\" )",
+      "latex": "F = q v B \\sin\\theta",
+      "assigned_word": "magnetic field"
+    },
+    {
+      "name": "magnetic force on current",
+      "expression": "\"F\" = \"I\" * \"length\" * \"B\" * sin( \"θ\" )",
+      "latex": "F = I L B \\sin\\theta",
+      "assigned_word": "magnetic field"
+    },
+    {
+      "name": "magnetic field around wire",
+      "expression": "\"B\" = ( \"μ0\" * \"I\" ) / ( 2 * \"Pi\" * \"r\" )",
+      "latex": "B = \\mu_0 I / (2\\pi r)",
+      "assigned_word": "magnetic field"
+    },
+    {
+      "name": "magnetic field in solenoid",
+      "expression": "\"B\" = \"μ0\" * \"n\" * \"I\"",
+      "latex": "B = \\mu_0 n I",
+      "assigned_word": "magnetic field"
+    },
+    {
+      "name": "definition of magnetic flux",
+      "expression": "\"Φ\" = \"B\" * \"area\" * cos( \"θ\" )",
+      "latex": "\\Phi = B A \\cos\\theta",
+      "assigned_word": "magnetic flux"
+    },
+    {
+      "name": "definition of Faraday's law",
+      "expression": "\"V\" = - \"Δp\" / \"Δt\"",
+      "latex": "\\varepsilon = -d\\Phi/dt",
+      "assigned_word": "Faraday's law"
+    },
+    {
+      "name": "inductance EMF",
+      "expression": "\"V\" = - \"L\" * \"Δv\" / \"Δt\"",
+      "latex": "\\varepsilon = -L\\, dI/dt",
+      "assigned_word": "inductance"
+    },
+    {
+      "name": "energy stored in inductor",
+      "expression": "\"E\" = ( 1 / 2 ) * \"L\" * \"I\" * \"I\"",
+      "latex": "U = \\tfrac{1}{2} L I^2",
+      "assigned_word": "inductance"
+    },
+    {
+      "name": "speed of light from permittivity and permeability",
+      "expression": "\"c\" = 1 / sqrt( \"ε0\" * \"μ0\" )",
+      "latex": "c = 1/\\sqrt{\\varepsilon_0 \\mu_0}",
+      "assigned_word": "c"
+    },
+    {
+      "name": "wave speed",
+      "expression": "\"v\" = \"f\" * \"λ\"",
+      "latex": "v = f \\lambda",
+      "assigned_word": "wave"
+    },
+    {
+      "name": "period from frequency",
+      "expression": "\"T\" = 1 / \"f\"",
+      "latex": "T = 1/f",
+      "assigned_word": "period"
+    },
+    {
+      "name": "definition of Snell's law",
+      "expression": "\"n\" * sin( \"θ\" ) = \"n\" * sin( \"θ\" )",
+      "latex": "n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2",
+      "assigned_word": "Snell's law"
+    },
+    {
+      "name": "index of refraction",
+      "expression": "\"n\" = \"c\" / \"v\"",
+      "latex": "n = c/v",
+      "assigned_word": "refraction"
+    },
+    {
+      "name": "thin lens equation",
+      "expression": "1 / \"f\" = 1 / \"x\" + 1 / \"y\"",
+      "latex": "1/f = 1/d_o + 1/d_i",
+      "assigned_word": "lens"
+    },
+    {
+      "name": "magnification",
+      "expression": "\"η\" = - \"y\" / \"x\"",
+      "latex": "M = -d_i/d_o",
+      "assigned_word": "lens"
+    },
+    {
+      "name": "Doppler effect sound",
+      "expression": "\"f\" = \"f\" * ( \"v\" + \"v\" ) / ( \"v\" - \"v\" )",
+      "latex": "f' = f (v + v_o)/(v - v_s)",
+      "assigned_word": "frequency"
+    },
+    {
+      "name": "photon energy",
+      "expression": "\"E\" = \"h\" * \"f\"",
+      "latex": "E = h f",
+      "assigned_word": "Planck-Einstein relation"
+    },
+    {
+      "name": "photon energy from wavelength",
+      "expression": "\"E\" = \"h\" * \"c\" / \"λ\"",
+      "latex": "E = h c / \\lambda",
+      "assigned_word": "Planck-Einstein relation"
+    },
+    {
+      "name": "photon momentum",
+      "expression": "\"p\" = \"h\" / \"λ\"",
+      "latex": "p = h/\\lambda",
+      "assigned_word": "photon"
+    },
+    {
+      "name": "de Broglie wavelength",
+      "expression": "\"λ\" = \"h\" / \"p\"",
+      "latex": "\\lambda = h/p",
+      "assigned_word": "de Broglie relation"
+    },
+    {
+      "name": "Heisenberg uncertainty position momentum",
+      "expression": "\"Δx\" * \"Δp\" >= \"ℏ\" / 2",
+      "latex": "\\Delta x \\Delta p \\ge \\hbar / 2",
+      "assigned_word": "Heisenberg uncertainty principle"
+    },
+    {
+      "name": "Heisenberg uncertainty energy time",
+      "expression": "\"E\" * \"Δt\" >= \"ℏ\" / 2",
+      "latex": "\\Delta E \\Delta t \\ge \\hbar / 2",
+      "assigned_word": "Heisenberg uncertainty principle"
+    },
+    {
+      "name": "reduced Planck constant",
+      "expression": "\"ℏ\" = \"h\" / ( 2 * \"Pi\" )",
+      "latex": "\\hbar = h/(2\\pi)",
+      "assigned_word": "ℏ"
+    },
+    {
+      "name": "photoelectric effect",
+      "expression": "\"E\" = \"h\" * \"f\" - \"W\"",
+      "latex": "K_{max} = h f - \\phi",
+      "assigned_word": "photon"
+    },
+    {
+      "name": "mass-energy equivalence",
+      "expression": "\"E\" = \"m\" * \"c\" * \"c\"",
+      "latex": "E = m c^2",
+      "assigned_word": "Einstein mass-energy equivalence"
+    },
+    {
+      "name": "Lorentz factor",
+      "expression": "\"η\" = 1 / sqrt( 1 - ( \"v\" * \"v\" ) / ( \"c\" * \"c\" ) )",
+      "latex": "\\gamma = 1/\\sqrt{1 - v^2/c^2}",
+      "assigned_word": "Einstein mass-energy equivalence"
+    },
+    {
+      "name": "time dilation",
+      "expression": "\"Δt\" = \"η\" * \"Δt\"",
+      "latex": "\\Delta t = \\gamma \\Delta t_0",
+      "assigned_word": "Einstein mass-energy equivalence"
+    },
+    {
+      "name": "length contraction",
+      "expression": "\"length\" = \"length\" / \"η\"",
+      "latex": "L = L_0 / \\gamma",
+      "assigned_word": "Einstein mass-energy equivalence"
+    },
+    {
+      "name": "relativistic energy",
+      "expression": "\"E\" = \"η\" * \"m\" * \"c\" * \"c\"",
+      "latex": "E = \\gamma m c^2",
+      "assigned_word": "Einstein mass-energy equivalence"
+    },
+    {
+      "name": "relativistic momentum",
+      "expression": "\"p\" = \"η\" * \"m\" * \"v\"",
+      "latex": "p = \\gamma m v",
+      "assigned_word": "Einstein mass-energy equivalence"
+    },
+    {
+      "name": "energy momentum relation",
+      "expression": "\"E\" * \"E\" = ( \"p\" * \"c\" ) * ( \"p\" * \"c\" ) + ( \"m\" * \"c\" * \"c\" ) * ( \"m\" * \"c\" * \"c\" )",
+      "latex": "E^2 = (pc)^2 + (mc^2)^2",
+      "assigned_word": "Einstein mass-energy equivalence"
+    },
+    {
+      "name": "radioactive decay",
+      "expression": "\"N\" = \"N\" * exp( - \"η\" * \"t\" )",
+      "latex": "N = N_0 e^{-\\lambda t}",
+      "assigned_word": "nucleus"
+    },
+    {
+      "name": "half-life",
+      "expression": "\"t\" = ln( 2 ) / \"η\"",
+      "latex": "t_{1/2} = \\ln 2 / \\lambda",
+      "assigned_word": "nucleus"
+    },
+    {
+      "name": "amount of substance from particles",
+      "expression": "\"n\" = \"N\" / \"NA\"",
+      "latex": "n = N/N_A",
+      "assigned_word": "amount"
+    },
+    {
+      "name": "Bohr radius energy levels",
+      "expression": "\"E\" = - 13.6 / ( \"n\" * \"n\" )",
+      "latex": "E_n = -13.6/n^2 \\,\\text{eV}",
+      "assigned_word": "atom"
+    }
+  ]
+}

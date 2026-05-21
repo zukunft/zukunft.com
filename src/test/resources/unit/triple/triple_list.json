@@ -16,7 +16,7 @@
     "description": "sample of a personal measure triple that user without personal login cannot change",
     "type": "measure type",
     "view": "measure view",
-    "from": "meter",
+    "from": "metre",
     "verb": "is a",
     "to": "length measure",
     "refs": []

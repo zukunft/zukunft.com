@@ -138,6 +138,31 @@ class verbs
     const string SELECTOR = "selector"; // the from_phrase of a selector can be used more than once so the description of the to_phrase should be shown to the user
     const string SELECTOR_NAME = "is selector for";
     const int SELECTOR_ID = 28;
+    const string BETWEEN = "between"; // to define a range e.g. "12:00 to 13:00" can also be expressed as "12:00 between 13:00"
+    const string BETWEEN_NAME = "between";
+    const int BETWEEN_ID = 35;
+    const string BETWEEN_COM = "to define a range e.g. a value between a lower and an upper bound";
+    const string KIND_OF = "kind_of"; // to assign a sub kind to a parent category e.g. the quadratic formula is a kind of formula
+    const string KIND_OF_NAME = "kind of";
+    const int KIND_OF_ID = 36;
+    const string KIND_OF_COM = "to assign a sub kind to a parent category e.g. the quadratic formula is a kind of formula";
+    const string KIND_OF_PLURAL = "are kinds of";
+    const string KIND_OF_REVERSE = "has the kind";
+    const string KIND_OF_REV_PLURAL = "have the kinds";
+    const string NAME_OF = "name_of"; // to assign a proper name to a category e.g. the Pythagorean theorem is named after Pythagoras
+    const string NAME_OF_NAME = "name of";
+    const int NAME_OF_ID = 37;
+    const string NAME_OF_COM = "to assign a proper name to a category e.g. the Pythagorean theorem is named after Pythagoras";
+    const string NAME_OF_PLURAL = "are names of";
+    const string NAME_OF_REVERSE = "is named";
+    const string NAME_OF_REV_PLURAL = "are named";
+    const string BY_PARTS = "by_parts"; // to describe a method that operates on the parts of an expression e.g. integration by parts
+    const string BY_PARTS_NAME = "by parts";
+    const int BY_PARTS_ID = 38;
+    const string BY_PARTS_COM = "to describe a method that operates on the parts of an expression e.g. integration by parts";
+    const string BY_PARTS_PLURAL = "by parts";
+    const string BY_PARTS_REVERSE = "";
+    const string BY_PARTS_REV_PLURAL = "";
 
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const string FOLLOWED_BY = "is followed by";

@@ -56,7 +56,7 @@
     {
       "name": "has a",
       "code_id": "has",
-      "description": "to assign potential properties e.g. a Country has a Human Development Index",
+      "description": "to assign potential properties e.g. a country has a Human Development Index",
       "name_plural_reverse": "is used for",
       "name_plural": "has",
       "name_reverse": "is used for"
@@ -272,6 +272,38 @@
       "name_plural_reverse": "are sort phrases for",
       "name_plural": "are ranked by",
       "name_reverse": "is sort phrases for"
+    },
+    {
+      "name": "between",
+      "code_id": "between",
+      "description": "to define a range e.g. a value between a lower and an upper bound",
+      "name_plural_reverse": "",
+      "name_plural": "between",
+      "name_reverse": ""
+    },
+    {
+      "name": "kind of",
+      "code_id": "kind_of",
+      "description": "to assign a sub kind to a parent category e.g. the quadratic formula is a kind of formula",
+      "name_plural_reverse": "have the kinds",
+      "name_plural": "are kinds of",
+      "name_reverse": "has the kind"
+    },
+    {
+      "name": "name of",
+      "code_id": "name_of",
+      "description": "to assign a proper name to a category e.g. the Pythagorean theorem is named after Pythagoras",
+      "name_plural_reverse": "are named",
+      "name_plural": "are names of",
+      "name_reverse": "is named"
+    },
+    {
+      "name": "by parts",
+      "code_id": "by_parts",
+      "description": "to describe a method that operates on the parts of an expression e.g. integration by parts",
+      "name_plural_reverse": "",
+      "name_plural": "by parts",
+      "name_reverse": ""
     }
   ]
 }

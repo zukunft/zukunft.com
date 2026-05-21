@@ -1293,7 +1293,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return bool true if the word has the type "measure" (e.g. "meter" or "CHF")
+     * @return bool true if the word has the type "measure" (e.g. "metre" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -3028,11 +3028,11 @@ class triple extends sandbox_link_named
         if ($from?->name <> '' and $vrb_name <> '' and $to?->name <> '') {
             $result .= '"' . $from?->name . '" "'; // e.g. Australia
             $result .= $vrb_name . '" "'; // e.g. is a
-            $result .= $to?->name . '"';       // e.g. Country
+            $result .= $to?->name . '"';       // e.g. country
         } elseif ($from?->name <> '' and $to?->name <> '') {
             $result .= '"' . $from?->name . '" "'; // e.g. Australia
             $result .= 'id ' . $this->predicate_id . '" "'; // e.g. is a
-            $result .= $to?->name . '"';       // e.g. Country
+            $result .= $to?->name . '"';       // e.g. country
         } elseif ($this->name_given() != '') {
             $result .= $this->name_given(); // e.g. Canton Zurich
         } elseif ($this->name() != '') {
@@ -3048,7 +3048,7 @@ class triple extends sandbox_link_named
 
     /**
      * either the user edited description
-     * or the generic name e.g. Australia is a Country
+     * or the generic name e.g. Australia is a country
      * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
      */
     function name(bool $ignore_excluded = false): string|null
@@ -3074,7 +3074,7 @@ class triple extends sandbox_link_named
 
     /**
      * either the user edited description
-     * or the generic name e.g. Australia is a Country
+     * or the generic name e.g. Australia is a country
      * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
      */
     function name_ex_generated(bool $ignore_excluded = false): string

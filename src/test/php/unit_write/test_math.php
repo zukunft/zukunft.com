@@ -100,7 +100,7 @@ function run_math_test(all_tests $t): void
     $word_array[] = $word_revenues;
     $word_array[] = $word_nesn;
     $word_array[] = $word_ch;
-    $target = $word_array; // because 83 (Country) should be excluded
+    $target = $word_array; // because 83 (country) should be excluded
     $word_array[] = $word_country;
     $result = zut_keep_only_specific($word_array);
     $t->assert(", zut_keep_only_specific: the result for word array \"".implode(",",$word_array)."\"", $result, $target);

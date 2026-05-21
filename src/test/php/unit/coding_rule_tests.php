@@ -37,13 +37,20 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use ReflectionClass;
 
 class coding_rule_tests
 {
@@ -84,7 +91,10 @@ class coding_rule_tests
         $test_name = 'check that the docs with all function is updated';
         $md_txt = $this->php_function_tree();
         $doc_txt = file_get_contents(test_files::DOCS_FUNCTIONS);
-        $t->assert($test_name, $md_txt, $doc_txt);
+        $fnc_upd = $t->assert($test_name, $md_txt, $doc_txt);
+        if (!$fnc_upd and test_files::AUTO_UPDATE_TEST_FILES) {
+            $t->update_path_file(test_files::DOCS_FUNCTIONS, $md_txt);
+        }
 
         $this->php_include_tests($t, paths::MODEL);
         // TODO Prio 1 activate but take into account the const
@@ -94,6 +104,77 @@ class coding_rule_tests
 
         $this->php_cfg_no_web_tests($t);
 
+        $t->subheader($ts . 'config.yaml consistency');
+        $this->config_yaml_word_triple_tests($t);
+
+    }
+
+    /**
+     * verify that every word / triple key used in src/main/resources/config.yaml has a matching
+     * string constant in either src/main/php/shared/const/words.php or
+     * src/main/php/shared/const/triples.php; structural meta keys that are read directly by
+     * the config loader (tooltip-comment, sys-conf-value, source-name, source-description,
+     * pod-user-config) are skipped because they are not domain words
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function config_yaml_word_triple_tests(test_cleanup $t): void
+    {
+        // meta keys consumed directly by the config loader; they are structural, not domain words
+        $meta_keys = [
+            words::TOOLTIP_COMMENT,
+            words::SYS_CONF_VALUE,
+            words::SYS_CONF_SOURCE,
+            words::SYS_CONF_SOURCE_COM,
+            words::SYS_CONF_USER,
+        ];
+
+        // collect every yaml key referenced in config.yaml (deduplicated, sorted for stable output)
+        $yaml_tree = yaml_parse_file(files::CONFIG_YAML);
+        $yaml_keys = [];
+        if (is_array($yaml_tree)) {
+            $this->collect_yaml_keys($yaml_tree, $yaml_keys, $meta_keys);
+        }
+
+        // collect every string constant value defined by words and triples for an O(1) lookup
+        $word_vals = array_values(array_filter(
+            new ReflectionClass(words::class)->getConstants(), 'is_string'));
+        $triple_vals = array_values(array_filter(
+            new ReflectionClass(triples::class)->getConstants(), 'is_string'));
+        $known_names = array_flip(array_merge($word_vals, $triple_vals));
+
+        $missing = [];
+        foreach (array_keys($yaml_keys) as $key) {
+            if (!array_key_exists($key, $known_names)) {
+                $missing[] = $key;
+            }
+        }
+        sort($missing);
+
+        $test_name = 'every config.yaml key has a const in words.php or triples.php';
+        $t->assert($test_name, implode(', ', $missing), '');
+    }
+
+    /**
+     * recursively walk a parsed yaml subtree and collect every string key into $keys (keyed by
+     * the key value so the caller gets unique keys for free); meta keys are skipped
+     *
+     * @param array $data the parsed yaml subtree
+     * @param array $keys (in/out) accumulator keyed by yaml key for uniqueness
+     * @param array $meta_keys keys to skip because they are structural, not domain words
+     * @return void
+     */
+    private function collect_yaml_keys(array $data, array &$keys, array $meta_keys): void
+    {
+        foreach ($data as $key => $value) {
+            if (is_string($key) and !in_array($key, $meta_keys, true)) {
+                $keys[$key] = true;
+            }
+            if (is_array($value)) {
+                $this->collect_yaml_keys($value, $keys, $meta_keys);
+            }
+        }
     }
 
     function php_class_tree(): string

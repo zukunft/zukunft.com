@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
@@ -108,6 +109,31 @@ class lib_tests
         $target = '<html lang="en"><table><tr><th>header</th></tr><tr><td>data</td></tr></table></html>';
         $result = $lib->trim_html($text);
         $t->assert("trim_html", $result, $target);
+
+        // replace volatile CSRF token with a fixed dummy value for snapshot tests
+        $token = test_const::DUMMY_SESSION_TOKEN;
+        $live_token = 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2';
+        $text = '<input type="hidden" name="token" value="' . $live_token . '">';
+        $target = '<input type="hidden" name="token" value="' . $token . '">';
+        $result = $lib->fix_volatile_in_html($text, $token);
+        $t->assert("fix_volatile_in_html: token replaced", $result, $target);
+
+        // token with name after value attribute
+        $text = '<input type="hidden" value="' . $live_token . '" name="token">';
+        $target = '<input type="hidden" value="' . $token . '" name="token">';
+        $result = $lib->fix_volatile_in_html($text, $token);
+        $t->assert("fix_volatile_in_html: token replaced (value before name)", $result, $target);
+
+        // non-token hidden field must not be changed
+        $text = '<input type="hidden" name="mask" value="61">';
+        $target = '<input type="hidden" name="mask" value="61">';
+        $result = $lib->fix_volatile_in_html($text, $token);
+        $t->assert("fix_volatile_in_html: non-token field unchanged", $result, $target);
+
+        // html without any token is returned unchanged
+        $text = '<form action="view.php"><input type="text" name="user"></form>';
+        $result = $lib->fix_volatile_in_html($text, $token);
+        $t->assert("fix_volatile_in_html: no token unchanged", $result, $text);
 
 
         $t->subheader($ts . 'string parts');
@@ -370,11 +396,12 @@ class lib_tests
         $t->assert("dsp_array string", $result, $target);
 
         $test_array = [];
-        $target = 'null';
+        $target = '';
         $result = $lib->dsp_array($test_array);
         $t->assert("dsp_array empty", $result, $target);
 
         $test_array = null;
+        $target = 'null';
         $result = $lib->dsp_array($test_array);
         $t->assert("dsp_array null", $result, $target);
 
@@ -388,7 +415,7 @@ class lib_tests
         $debug = 11;
         $target = '1,2,3,4,5,6,7,8,9,10';
         $result = $lib->dsp_array($test_array);
-        $t->assert("dsp_array many number details", $result, $target);
+        $t->assert("dsp_array many number details (debug>10 shows all)", $result, $target);
 
         $debug = 1;
         $target = '0,1,2,...,9';
@@ -399,6 +426,31 @@ class lib_tests
         $target = '0,1,2,3,4,5,6,7,8,9';
         $result = $lib->dsp_array_keys($test_array);
         $t->assert("dsp_array_keys many number details", $result, $target);
+
+        // test dsp_array with keys (with_keys=true)
+        $test_array = ['key1' => 'val1', 'key2' => 'val2'];
+        $target = 'key1=val1,key2=val2';
+        $result = $lib->dsp_array($test_array, true);
+        $t->assert("dsp_array with keys", $result, $target);
+
+        // recursive: nested array is shown as [key=val,...] inline
+        $test_array = ['key1' => ['m' => '3', 'id' => '123'], 'key2' => 'val2'];
+        $target = 'key1=[m=3,id=123],key2=val2';
+        $result = $lib->dsp_array($test_array, true);
+        $t->assert("dsp_array recursive", $result, $target);
+
+        // many entries with keys: truncated without debug, full with debug > 10
+        $debug = 1;
+        $test_array = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7, 'h' => 8];
+        $target = 'a=1,b=2,c=3,...,h=8';
+        $result = $lib->dsp_array($test_array, true);
+        $t->assert("dsp_array with keys truncated", $result, $target);
+
+        $debug = 11;
+        $target = 'a=1,b=2,c=3,d=4,e=5,f=6,g=7,h=8';
+        $result = $lib->dsp_array($test_array, true);
+        $t->assert("dsp_array with keys debug>10 shows all", $result, $target);
+
         $debug = $mem_debug;
 
 

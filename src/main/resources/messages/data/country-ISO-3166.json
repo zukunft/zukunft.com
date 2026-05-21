@@ -4,7 +4,7 @@
   "time": "2024-04-05T08:35:30+00:00",
   "words": [
     {
-      "name": "Country"
+      "name": "country"
     },
     {
       "name": "ISO 3166"
@@ -1518,7 +1518,7 @@
     {
       "from": "Afghanistan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "AFG",
@@ -1533,7 +1533,7 @@
     {
       "from": "\u00c5land Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ALA",
@@ -1548,7 +1548,7 @@
     {
       "from": "Albania",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ALB",
@@ -1563,7 +1563,7 @@
     {
       "from": "Algeria",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "DZA",
@@ -1578,7 +1578,7 @@
     {
       "from": "American Samoa",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ASM",
@@ -1593,7 +1593,7 @@
     {
       "from": "Andorra",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "AND",
@@ -1608,7 +1608,7 @@
     {
       "from": "Angola",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "AGO",
@@ -1623,7 +1623,7 @@
     {
       "from": "Anguilla",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "AIA",
@@ -1638,7 +1638,7 @@
     {
       "from": "Antarctica",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ATA",
@@ -1653,7 +1653,7 @@
     {
       "from": "Antigua and Barbuda",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ATG",
@@ -1668,7 +1668,7 @@
     {
       "from": "Argentina",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ARG",
@@ -1683,7 +1683,7 @@
     {
       "from": "Armenia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ARM",
@@ -1698,7 +1698,7 @@
     {
       "from": "Aruba",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ABW",
@@ -1713,7 +1713,7 @@
     {
       "from": "Australia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "AUS",
@@ -1728,7 +1728,7 @@
     {
       "from": "Austria",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "AUT",
@@ -1743,7 +1743,7 @@
     {
       "from": "Azerbaijan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "AZE",
@@ -1758,7 +1758,7 @@
     {
       "from": "Bahamas",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BHS",
@@ -1773,7 +1773,7 @@
     {
       "from": "Bahrain",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BHR",
@@ -1788,7 +1788,7 @@
     {
       "from": "Bangladesh",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BGD",
@@ -1803,7 +1803,7 @@
     {
       "from": "Barbados",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BRB",
@@ -1818,7 +1818,7 @@
     {
       "from": "Belarus",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BLR",
@@ -1833,7 +1833,7 @@
     {
       "from": "Belgium",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BEL",
@@ -1848,7 +1848,7 @@
     {
       "from": "Belize",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BLZ",
@@ -1863,7 +1863,7 @@
     {
       "from": "Benin",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BEN",
@@ -1878,7 +1878,7 @@
     {
       "from": "Bermuda",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BMU",
@@ -1893,7 +1893,7 @@
     {
       "from": "Bhutan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BTN",
@@ -1908,7 +1908,7 @@
     {
       "from": "Bolivia, Plurinational State of",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BOL",
@@ -1923,7 +1923,7 @@
     {
       "from": "Bonaire, Sint Eustatius and Saba",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BES",
@@ -1938,7 +1938,7 @@
     {
       "from": "Bosnia and Herzegovina",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BIH",
@@ -1953,7 +1953,7 @@
     {
       "from": "Botswana",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BWA",
@@ -1968,7 +1968,7 @@
     {
       "from": "Bouvet Island",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BVT",
@@ -1983,7 +1983,7 @@
     {
       "from": "Brazil",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BRA",
@@ -1998,7 +1998,7 @@
     {
       "from": "British Indian Ocean Territory",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "IOT",
@@ -2013,7 +2013,7 @@
     {
       "from": "Brunei Darussalam",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BRN",
@@ -2028,7 +2028,7 @@
     {
       "from": "Bulgaria",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BGR",
@@ -2043,7 +2043,7 @@
     {
       "from": "Burkina Faso",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BFA",
@@ -2058,7 +2058,7 @@
     {
       "from": "Burundi",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BDI",
@@ -2073,7 +2073,7 @@
     {
       "from": "Cabo Verde",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CPV",
@@ -2088,7 +2088,7 @@
     {
       "from": "Cambodia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "KHM",
@@ -2103,7 +2103,7 @@
     {
       "from": "Cameroon",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CMR",
@@ -2118,7 +2118,7 @@
     {
       "from": "Canada",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CAN",
@@ -2133,7 +2133,7 @@
     {
       "from": "Cayman Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CYM",
@@ -2148,7 +2148,7 @@
     {
       "from": "Central African Republic",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CAF",
@@ -2163,7 +2163,7 @@
     {
       "from": "Chad",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TCD",
@@ -2178,7 +2178,7 @@
     {
       "from": "Chile",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CHL",
@@ -2193,7 +2193,7 @@
     {
       "from": "China",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CHN",
@@ -2208,7 +2208,7 @@
     {
       "from": "Christmas Island",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CXR",
@@ -2223,7 +2223,7 @@
     {
       "from": "Cocos (Keeling) Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CCK",
@@ -2238,7 +2238,7 @@
     {
       "from": "Colombia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "COL",
@@ -2253,7 +2253,7 @@
     {
       "from": "Comoros",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "COM",
@@ -2268,7 +2268,7 @@
     {
       "from": "Congo",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "COG",
@@ -2283,7 +2283,7 @@
     {
       "from": "Congo, Democratic Republic of the",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "COD",
@@ -2298,7 +2298,7 @@
     {
       "from": "Cook Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "COK",
@@ -2313,7 +2313,7 @@
     {
       "from": "Costa Rica",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CRI",
@@ -2328,7 +2328,7 @@
     {
       "from": "C\u00f4te d'Ivoire",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CIV",
@@ -2343,7 +2343,7 @@
     {
       "from": "Croatia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "HRV",
@@ -2358,7 +2358,7 @@
     {
       "from": "Cuba",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CUB",
@@ -2373,7 +2373,7 @@
     {
       "from": "Cura\u00e7ao",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CUW",
@@ -2388,7 +2388,7 @@
     {
       "from": "Cyprus",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CYP",
@@ -2403,7 +2403,7 @@
     {
       "from": "Czechia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CZE",
@@ -2418,7 +2418,7 @@
     {
       "from": "Denmark",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "DNK",
@@ -2433,7 +2433,7 @@
     {
       "from": "Djibouti",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "DJI",
@@ -2448,7 +2448,7 @@
     {
       "from": "Dominica",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "DMA",
@@ -2463,7 +2463,7 @@
     {
       "from": "Dominican Republic",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "DOM",
@@ -2478,7 +2478,7 @@
     {
       "from": "Ecuador",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ECU",
@@ -2493,7 +2493,7 @@
     {
       "from": "Egypt",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "EGY",
@@ -2508,7 +2508,7 @@
     {
       "from": "El Salvador",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SLV",
@@ -2523,7 +2523,7 @@
     {
       "from": "Equatorial Guinea",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GNQ",
@@ -2538,7 +2538,7 @@
     {
       "from": "Eritrea",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ERI",
@@ -2553,7 +2553,7 @@
     {
       "from": "Estonia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "EST",
@@ -2568,7 +2568,7 @@
     {
       "from": "Eswatini",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SWZ",
@@ -2583,7 +2583,7 @@
     {
       "from": "Ethiopia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ETH",
@@ -2598,7 +2598,7 @@
     {
       "from": "Falkland Islands (Malvinas)",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "FLK",
@@ -2613,7 +2613,7 @@
     {
       "from": "Faroe Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "FRO",
@@ -2628,7 +2628,7 @@
     {
       "from": "Fiji",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "FJI",
@@ -2643,7 +2643,7 @@
     {
       "from": "Finland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "FIN",
@@ -2658,7 +2658,7 @@
     {
       "from": "France",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "FRA",
@@ -2673,7 +2673,7 @@
     {
       "from": "French Guiana",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GUF",
@@ -2688,7 +2688,7 @@
     {
       "from": "French Polynesia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PYF",
@@ -2703,7 +2703,7 @@
     {
       "from": "French Southern Territories",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ATF",
@@ -2718,7 +2718,7 @@
     {
       "from": "Gabon",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GAB",
@@ -2733,7 +2733,7 @@
     {
       "from": "Gambia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GMB",
@@ -2748,7 +2748,7 @@
     {
       "from": "Georgia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GEO",
@@ -2763,7 +2763,7 @@
     {
       "from": "Germany",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "DEU",
@@ -2778,7 +2778,7 @@
     {
       "from": "Ghana",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GHA",
@@ -2793,7 +2793,7 @@
     {
       "from": "Gibraltar",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GIB",
@@ -2808,7 +2808,7 @@
     {
       "from": "Greece",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GRC",
@@ -2823,7 +2823,7 @@
     {
       "from": "Greenland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GRL",
@@ -2838,7 +2838,7 @@
     {
       "from": "Grenada",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GRD",
@@ -2853,7 +2853,7 @@
     {
       "from": "Guadeloupe",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GLP",
@@ -2868,7 +2868,7 @@
     {
       "from": "Guam",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GUM",
@@ -2883,7 +2883,7 @@
     {
       "from": "Guatemala",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GTM",
@@ -2898,7 +2898,7 @@
     {
       "from": "Guernsey",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GGY",
@@ -2913,7 +2913,7 @@
     {
       "from": "Guinea",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GIN",
@@ -2928,7 +2928,7 @@
     {
       "from": "Guinea-Bissau",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GNB",
@@ -2943,7 +2943,7 @@
     {
       "from": "Guyana",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GUY",
@@ -2958,7 +2958,7 @@
     {
       "from": "Haiti",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "HTI",
@@ -2973,7 +2973,7 @@
     {
       "from": "Heard Island and McDonald Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "HMD",
@@ -2988,7 +2988,7 @@
     {
       "from": "Holy See",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "VAT",
@@ -3003,7 +3003,7 @@
     {
       "from": "Honduras",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "HND",
@@ -3018,7 +3018,7 @@
     {
       "from": "Hong Kong",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "HKG",
@@ -3033,7 +3033,7 @@
     {
       "from": "Hungary",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "HUN",
@@ -3048,7 +3048,7 @@
     {
       "from": "Iceland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ISL",
@@ -3063,7 +3063,7 @@
     {
       "from": "India",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "IND",
@@ -3078,7 +3078,7 @@
     {
       "from": "Indonesia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "IDN",
@@ -3093,7 +3093,7 @@
     {
       "from": "Iran, Islamic Republic of",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "IRN",
@@ -3108,7 +3108,7 @@
     {
       "from": "Iraq",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "IRQ",
@@ -3123,7 +3123,7 @@
     {
       "from": "Ireland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "IRL",
@@ -3138,7 +3138,7 @@
     {
       "from": "Isle of Man",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "IMN",
@@ -3153,7 +3153,7 @@
     {
       "from": "Israel",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ISR",
@@ -3168,7 +3168,7 @@
     {
       "from": "Italy",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ITA",
@@ -3183,7 +3183,7 @@
     {
       "from": "Jamaica",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "JAM",
@@ -3198,7 +3198,7 @@
     {
       "from": "Japan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "JPN",
@@ -3213,7 +3213,7 @@
     {
       "from": "Jersey",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "JEY",
@@ -3228,7 +3228,7 @@
     {
       "from": "Jordan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "JOR",
@@ -3243,7 +3243,7 @@
     {
       "from": "Kazakhstan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "KAZ",
@@ -3258,7 +3258,7 @@
     {
       "from": "Kenya",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "KEN",
@@ -3273,7 +3273,7 @@
     {
       "from": "Kiribati",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "KIR",
@@ -3288,7 +3288,7 @@
     {
       "from": "Korea, Democratic People's Republic of",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PRK",
@@ -3303,7 +3303,7 @@
     {
       "from": "Korea, Republic of",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "KOR",
@@ -3318,7 +3318,7 @@
     {
       "from": "Kuwait",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "KWT",
@@ -3333,7 +3333,7 @@
     {
       "from": "Kyrgyzstan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "KGZ",
@@ -3348,7 +3348,7 @@
     {
       "from": "Lao People's Democratic Republic",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LAO",
@@ -3363,7 +3363,7 @@
     {
       "from": "Latvia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LVA",
@@ -3378,7 +3378,7 @@
     {
       "from": "Lebanon",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LBN",
@@ -3393,7 +3393,7 @@
     {
       "from": "Lesotho",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LSO",
@@ -3408,7 +3408,7 @@
     {
       "from": "Liberia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LBR",
@@ -3423,7 +3423,7 @@
     {
       "from": "Libya",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LBY",
@@ -3438,7 +3438,7 @@
     {
       "from": "Liechtenstein",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LIE",
@@ -3453,7 +3453,7 @@
     {
       "from": "Lithuania",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LTU",
@@ -3468,7 +3468,7 @@
     {
       "from": "Luxembourg",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LUX",
@@ -3483,7 +3483,7 @@
     {
       "from": "Macao",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MAC",
@@ -3498,7 +3498,7 @@
     {
       "from": "Madagascar",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MDG",
@@ -3513,7 +3513,7 @@
     {
       "from": "Malawi",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MWI",
@@ -3528,7 +3528,7 @@
     {
       "from": "Malaysia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MYS",
@@ -3543,7 +3543,7 @@
     {
       "from": "Maldives",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MDV",
@@ -3558,7 +3558,7 @@
     {
       "from": "Mali",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MLI",
@@ -3573,7 +3573,7 @@
     {
       "from": "Malta",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MLT",
@@ -3588,7 +3588,7 @@
     {
       "from": "Marshall Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MHL",
@@ -3603,7 +3603,7 @@
     {
       "from": "Martinique",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MTQ",
@@ -3618,7 +3618,7 @@
     {
       "from": "Mauritania",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MRT",
@@ -3633,7 +3633,7 @@
     {
       "from": "Mauritius",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MUS",
@@ -3648,7 +3648,7 @@
     {
       "from": "Mayotte",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MYT",
@@ -3663,7 +3663,7 @@
     {
       "from": "Mexico",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MEX",
@@ -3678,7 +3678,7 @@
     {
       "from": "Micronesia, Federated States of",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "FSM",
@@ -3693,7 +3693,7 @@
     {
       "from": "Moldova, Republic of",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MDA",
@@ -3708,7 +3708,7 @@
     {
       "from": "Monaco",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MCO",
@@ -3723,7 +3723,7 @@
     {
       "from": "Mongolia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MNG",
@@ -3738,7 +3738,7 @@
     {
       "from": "Montenegro",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MNE",
@@ -3753,7 +3753,7 @@
     {
       "from": "Montserrat",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MSR",
@@ -3768,7 +3768,7 @@
     {
       "from": "Morocco",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MAR",
@@ -3783,7 +3783,7 @@
     {
       "from": "Mozambique",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MOZ",
@@ -3798,7 +3798,7 @@
     {
       "from": "Myanmar",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MMR",
@@ -3813,7 +3813,7 @@
     {
       "from": "Namibia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NAM",
@@ -3828,7 +3828,7 @@
     {
       "from": "Nauru",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NRU",
@@ -3843,7 +3843,7 @@
     {
       "from": "Nepal",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NPL",
@@ -3858,7 +3858,7 @@
     {
       "from": "Netherlands, Kingdom of the",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NLD",
@@ -3873,7 +3873,7 @@
     {
       "from": "New Caledonia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NCL",
@@ -3888,7 +3888,7 @@
     {
       "from": "New Zealand",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NZL",
@@ -3903,7 +3903,7 @@
     {
       "from": "Nicaragua",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NIC",
@@ -3918,7 +3918,7 @@
     {
       "from": "Niger",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NER",
@@ -3933,7 +3933,7 @@
     {
       "from": "Nigeria",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NGA",
@@ -3948,7 +3948,7 @@
     {
       "from": "Niue",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NIU",
@@ -3963,7 +3963,7 @@
     {
       "from": "Norfolk Island",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NFK",
@@ -3978,7 +3978,7 @@
     {
       "from": "North Macedonia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MKD",
@@ -3993,7 +3993,7 @@
     {
       "from": "Northern Mariana Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MNP",
@@ -4008,7 +4008,7 @@
     {
       "from": "Norway",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "NOR",
@@ -4023,7 +4023,7 @@
     {
       "from": "Oman",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "OMN",
@@ -4038,7 +4038,7 @@
     {
       "from": "Pakistan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PAK",
@@ -4053,7 +4053,7 @@
     {
       "from": "Palau",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PLW",
@@ -4068,7 +4068,7 @@
     {
       "from": "Palestine, State of",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PSE",
@@ -4083,7 +4083,7 @@
     {
       "from": "Panama",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PAN",
@@ -4098,7 +4098,7 @@
     {
       "from": "Papua New Guinea",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PNG",
@@ -4113,7 +4113,7 @@
     {
       "from": "Paraguay",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PRY",
@@ -4128,7 +4128,7 @@
     {
       "from": "Peru",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PER",
@@ -4143,7 +4143,7 @@
     {
       "from": "Philippines",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PHL",
@@ -4158,7 +4158,7 @@
     {
       "from": "Pitcairn",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PCN",
@@ -4173,7 +4173,7 @@
     {
       "from": "Poland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "POL",
@@ -4188,7 +4188,7 @@
     {
       "from": "Portugal",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PRT",
@@ -4203,7 +4203,7 @@
     {
       "from": "Puerto Rico",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "PRI",
@@ -4218,7 +4218,7 @@
     {
       "from": "Qatar",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "QAT",
@@ -4233,7 +4233,7 @@
     {
       "from": "R\u00e9union",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "REU",
@@ -4248,7 +4248,7 @@
     {
       "from": "Romania",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ROU",
@@ -4263,7 +4263,7 @@
     {
       "from": "Russian Federation",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "RUS",
@@ -4278,7 +4278,7 @@
     {
       "from": "Rwanda",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "RWA",
@@ -4293,7 +4293,7 @@
     {
       "from": "Saint Barth\u00e9lemy",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "BLM",
@@ -4308,7 +4308,7 @@
     {
       "from": "Saint Helena, Ascension and Tristan da Cunha[lower-alpha 4]",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SHN",
@@ -4323,7 +4323,7 @@
     {
       "from": "Saint Kitts and Nevis",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "KNA",
@@ -4338,7 +4338,7 @@
     {
       "from": "Saint Lucia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LCA",
@@ -4353,7 +4353,7 @@
     {
       "from": "Saint Martin (French part)",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "MAF",
@@ -4368,7 +4368,7 @@
     {
       "from": "Saint Pierre and Miquelon",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SPM",
@@ -4383,7 +4383,7 @@
     {
       "from": "Saint Vincent and the Grenadines",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "VCT",
@@ -4398,7 +4398,7 @@
     {
       "from": "Samoa",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "WSM",
@@ -4413,7 +4413,7 @@
     {
       "from": "San Marino",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SMR",
@@ -4428,7 +4428,7 @@
     {
       "from": "Sao Tome and Principe",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "STP",
@@ -4443,7 +4443,7 @@
     {
       "from": "Saudi Arabia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SAU",
@@ -4458,7 +4458,7 @@
     {
       "from": "Senegal",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SEN",
@@ -4473,7 +4473,7 @@
     {
       "from": "Serbia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SRB",
@@ -4488,7 +4488,7 @@
     {
       "from": "Seychelles",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SYC",
@@ -4503,7 +4503,7 @@
     {
       "from": "Sierra Leone",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SLE",
@@ -4518,7 +4518,7 @@
     {
       "from": "Singapore",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SGP",
@@ -4533,7 +4533,7 @@
     {
       "from": "Sint Maarten (Dutch part)",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SXM",
@@ -4548,7 +4548,7 @@
     {
       "from": "Slovakia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SVK",
@@ -4563,7 +4563,7 @@
     {
       "from": "Slovenia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SVN",
@@ -4578,7 +4578,7 @@
     {
       "from": "Solomon Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SLB",
@@ -4593,7 +4593,7 @@
     {
       "from": "Somalia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SOM",
@@ -4608,7 +4608,7 @@
     {
       "from": "South Africa",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ZAF",
@@ -4623,7 +4623,7 @@
     {
       "from": "South Georgia and the South Sandwich Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SGS",
@@ -4638,7 +4638,7 @@
     {
       "from": "South Sudan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SSD",
@@ -4653,7 +4653,7 @@
     {
       "from": "Spain",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ESP",
@@ -4668,7 +4668,7 @@
     {
       "from": "Sri Lanka",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "LKA",
@@ -4683,7 +4683,7 @@
     {
       "from": "Sudan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SDN",
@@ -4698,7 +4698,7 @@
     {
       "from": "Suriname",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SUR",
@@ -4713,7 +4713,7 @@
     {
       "from": "Svalbard and Jan Mayen",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SJM",
@@ -4728,7 +4728,7 @@
     {
       "from": "Sweden",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SWE",
@@ -4743,7 +4743,7 @@
     {
       "from": "Switzerland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "CHE",
@@ -4758,7 +4758,7 @@
     {
       "from": "Syrian Arab Republic",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "SYR",
@@ -4773,7 +4773,7 @@
     {
       "from": "Taiwan, Province of China",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TWN",
@@ -4788,7 +4788,7 @@
     {
       "from": "Tajikistan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TJK",
@@ -4803,7 +4803,7 @@
     {
       "from": "Tanzania, United Republic of",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TZA",
@@ -4818,7 +4818,7 @@
     {
       "from": "Thailand",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "THA",
@@ -4833,7 +4833,7 @@
     {
       "from": "Timor-Leste",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TLS",
@@ -4848,7 +4848,7 @@
     {
       "from": "Togo",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TGO",
@@ -4863,7 +4863,7 @@
     {
       "from": "Tokelau",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TKL",
@@ -4878,7 +4878,7 @@
     {
       "from": "Tonga",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TON",
@@ -4893,7 +4893,7 @@
     {
       "from": "Trinidad and Tobago",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TTO",
@@ -4908,7 +4908,7 @@
     {
       "from": "Tunisia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TUN",
@@ -4923,7 +4923,7 @@
     {
       "from": "T\u00fcrkiye",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TUR",
@@ -4938,7 +4938,7 @@
     {
       "from": "Turkmenistan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TKM",
@@ -4953,7 +4953,7 @@
     {
       "from": "Turks and Caicos Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TCA",
@@ -4968,7 +4968,7 @@
     {
       "from": "Tuvalu",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "TUV",
@@ -4983,7 +4983,7 @@
     {
       "from": "Uganda",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "UGA",
@@ -4998,7 +4998,7 @@
     {
       "from": "Ukraine",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "UKR",
@@ -5013,7 +5013,7 @@
     {
       "from": "United Arab Emirates",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ARE",
@@ -5028,7 +5028,7 @@
     {
       "from": "United Kingdom of Great Britain and Northern Ireland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "GBR",
@@ -5043,7 +5043,7 @@
     {
       "from": "United States of America",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "USA",
@@ -5058,7 +5058,7 @@
     {
       "from": "United States Minor Outlying Islands[lower-alpha 6]",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "UMI",
@@ -5073,7 +5073,7 @@
     {
       "from": "Uruguay",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "URY",
@@ -5088,7 +5088,7 @@
     {
       "from": "Uzbekistan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "UZB",
@@ -5103,7 +5103,7 @@
     {
       "from": "Vanuatu",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "VUT",
@@ -5118,7 +5118,7 @@
     {
       "from": "Venezuela, Bolivarian Republic of",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "VEN",
@@ -5133,7 +5133,7 @@
     {
       "from": "Viet Nam",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "VNM",
@@ -5148,7 +5148,7 @@
     {
       "from": "Virgin Islands (British)",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "VGB",
@@ -5163,7 +5163,7 @@
     {
       "from": "Virgin Islands (U.S.)",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "VIR",
@@ -5178,7 +5178,7 @@
     {
       "from": "Wallis and Futuna",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "WLF",
@@ -5193,7 +5193,7 @@
     {
       "from": "Western Sahara",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ESH",
@@ -5208,7 +5208,7 @@
     {
       "from": "Yemen",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "YEM",
@@ -5223,7 +5223,7 @@
     {
       "from": "Zambia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ZMB",
@@ -5238,7 +5238,7 @@
     {
       "from": "Zimbabwe",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "from": "ZWE",

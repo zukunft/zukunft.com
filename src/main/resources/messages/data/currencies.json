@@ -1,7 +1,7 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.3",
   "pod": "zukunft.com",
-  "time": "2020-03-08 19:05:57",
+  "time": "2026-05-20 10:30:00",
   "user": "timon",
   "selection": [
     "most relevant currency selection demo"
@@ -9,137 +9,1256 @@
   "words": [
     {
       "name": "Currency",
-      "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state.",
-      "protection": "admin_protection"
+      "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Currency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8142",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "turnover"
+      "name": "turnover",
+      "description": "In financial markets, turnover refers to the total value of transactions traded over a given period. For currencies it typically describes the gross volume of foreign exchange transactions, often reported on a daily, monthly, or yearly basis.",
+      "refs": [
+        {
+          "name": "Turnover (finance)",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "OTC"
+      "name": "OTC",
+      "description": "Over-the-counter (OTC) refers to trading conducted directly between two parties without the supervision of an exchange. Most foreign exchange trading takes place on OTC markets rather than on centralised exchanges.",
+      "refs": [
+        {
+          "name": "Over-the-counter (finance)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1786646",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "foreign"
+      "name": "foreign",
+      "description": "Originating from or characteristic of a country other than the one being referenced. In finance the term typically qualifies currencies, transactions, or instruments tied to a country other than the domestic one."
     },
     {
-      "name": "exchange"
+      "name": "exchange",
+      "description": "The act of giving one thing in return for another, or a marketplace where such transactions are organised. In finance, an exchange may refer either to a transaction itself (such as currency exchange) or to an organised venue for trading securities and commodities.",
+      "refs": [
+        {
+          "name": "Exchange (organized market)",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "instruments"
+      "name": "instruments",
+      "description": "Financial instruments are monetary contracts between parties. In foreign exchange markets, the main instruments include spot transactions, outright forwards, foreign exchange swaps, currency swaps, and options.",
+      "refs": [
+        {
+          "name": "Financial instrument",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "average"
+      "name": "average",
+      "description": "A single number that represents a set of values, typically calculated as the arithmetic mean (sum divided by count). In statistics, other measures of central tendency such as median or mode may also be called averages.",
+      "refs": [
+        {
+          "name": "Average",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "million"
+      "name": "million",
+      "description": "The natural number equal to 1,000,000 (one thousand thousand). Financial figures, particularly turnover statistics, are often expressed in millions of a given currency to keep numbers manageable.",
+      "refs": [
+        {
+          "name": "1,000,000",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "US dollar"
+      "name": "US dollar",
+      "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
+      "refs": [
+        {
+          "name": "United States dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4917",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "Euro"
+      "name": "Euro",
+      "description": "The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.",
+      "refs": [
+        {
+          "name": "Euro",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4916",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "Yen"
-    },
-    {
-      "name": "Pound (sterling)"
-    },
-    {
-      "name": "Renminbi"
-    },
-    {
-      "name": "Australian dollar"
-    },
-    {
-      "name": "Canadian dollar"
-    },
-    {
-      "name": "Swiss franc"
-    },
-    {
-      "name": "Japanese yen",
+      "name": "Yen",
+      "description": "The yen (symbol: ¥; currency code: JPY) is the official currency of Japan. It is the third most-traded currency in the foreign exchange market after the United States dollar and the euro, and is widely used as a reserve currency. The yen is divided into 100 sen, though sen are no longer used in everyday transactions.",
       "refs": [
         {
           "name": "Japanese yen",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q8146",
+          "type": "wikidata"
         }
       ]
     },
     {
-      "name": "other"
+      "name": "Pound (sterling)",
+      "description": "Pound sterling (symbol: £; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.",
+      "refs": [
+        {
+          "name": "Pound sterling",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25224",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "total"
+      "name": "Renminbi",
+      "description": "The renminbi (symbol: ¥; currency code: CNY; abbreviation: RMB) is the official currency of the People's Republic of China. Its primary unit is the yuan. Issued by the People's Bank of China, the renminbi is one of the world's most-traded currencies and is included in the IMF's Special Drawing Rights basket.",
+      "refs": [
+        {
+          "name": "Renminbi",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39099",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "net"
+      "name": "Australian dollar",
+      "description": "The Australian dollar (symbol: $ or A$; currency code: AUD) is the official currency of the Commonwealth of Australia, including its external territories, as well as the independent Pacific states of Kiribati, Nauru, and Tuvalu. It is divided into 100 cents and was introduced in 1966, replacing the Australian pound.",
+      "refs": [
+        {
+          "name": "Australian dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q259502",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "base"
+      "name": "Canadian dollar",
+      "description": "The Canadian dollar (symbol: $ or C$; currency code: CAD) is the official currency of Canada. It is issued by the Bank of Canada and is one of the world's most-traded currencies. The Canadian dollar is divided into 100 cents and is often regarded as a commodity currency due to Canada's substantial natural-resource exports.",
+      "refs": [
+        {
+          "name": "Canadian dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1104069",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "spot"
+      "name": "Swiss franc",
+      "description": "The Swiss franc (symbol: Fr. or CHF; currency code: CHF) is the official currency and legal tender of Switzerland and Liechtenstein, and is also used in the Italian exclave of Campione d'Italia. Issued by the Swiss National Bank, it is widely regarded as a safe-haven currency due to Switzerland's political stability and low inflation.",
+      "refs": [
+        {
+          "name": "Swiss franc",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25344",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "transaction"
+      "name": "Japanese yen",
+      "description": "The Japanese yen (symbol: ¥; currency code: JPY) is the official currency of Japan, issued by the Bank of Japan. It is the third most-traded currency in the world after the US dollar and the euro, and serves as a major global reserve currency.",
+      "refs": [
+        {
+          "name": "Japanese yen",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8146",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "outright"
+      "name": "other",
+      "description": "A residual category used to group together items that are not individually itemised. In currency turnover statistics, 'other currencies' aggregates the trading volume of all currencies outside the top-ranked ones."
     },
     {
-      "name": "forwards"
+      "name": "total",
+      "description": "The complete sum or aggregate of a set of values, with no items excluded."
     },
     {
-      "name": "swap"
+      "name": "net",
+      "description": "A value that remains after specified deductions or adjustments. In foreign exchange turnover statistics, 'net' refers to adjustments removing double-counting between reporting dealers."
     },
     {
-      "name": "option"
+      "name": "base",
+      "description": "E.g. in a currency pair, the base currency is the first currency quoted and represents the unit being priced. For example, in the EUR/USD pair, EUR is the base currency.",
+      "refs": [
+        {
+          "name": "Currency pair",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "April"
+      "name": "spot",
+      "description": "A spot transaction is a foreign exchange deal in which two parties agree to exchange currencies at the current market rate, with settlement typically occurring within two business days.",
+      "refs": [
+        {
+          "name": "Spot contract",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "year"
+      "name": "transaction",
+      "description": "A completed agreement between a buyer and a seller to exchange goods, services, or financial instruments. In foreign exchange, a transaction typically involves the exchange of one currency for another at an agreed rate.",
+      "refs": [
+        {
+          "name": "Financial transaction",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "2022"
+      "name": "outright",
+      "description": "An outright forward is a foreign exchange contract obliging two parties to exchange currencies at a specified rate on a future date beyond the spot settlement window. It differs from a swap in that it consists of a single leg rather than two."
     },
     {
-      "name": "daily"
+      "name": "forwards",
+      "description": "Forward contracts are agreements to buy or sell an asset at a predetermined price on a specified future date. Currency forwards are widely used to hedge foreign exchange risk arising from future cash flows in foreign currencies.",
+      "refs": [
+        {
+          "name": "Forward contract",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "weekly"
+      "name": "swap",
+      "description": "A currency swap (or FX swap) is a foreign exchange transaction that combines a spot purchase or sale of a currency with a simultaneous forward sale or purchase of the same currency. It is widely used to manage liquidity and hedge foreign exchange exposure.",
+      "refs": [
+        {
+          "name": "Foreign exchange swap",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "monthly"
+      "name": "option",
+      "description": "A foreign exchange option gives the holder the right, but not the obligation, to exchange one currency for another at a specified rate on or before a specified date. Options are typically used to hedge or to speculate on currency movements.",
+      "refs": [
+        {
+          "name": "Foreign exchange option",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "yearly"
+      "name": "April",
+      "description": "The fourth month of the Gregorian calendar, consisting of 30 days. The BIS Triennial Survey of foreign exchange turnover traditionally uses April as its reference month."
     },
     {
-      "name": "trading"
+      "name": "year",
+      "description": "The orbital period of the Earth around the Sun, used as a unit of time in calendars and as a standard reporting period in finance and statistics."
     },
     {
-      "name": "most"
+      "name": "2022",
+      "description": "The Gregorian calendar year 2022 (MMXXII), in which the BIS conducted its most recent Triennial Survey of foreign exchange turnover at the time this dataset was compiled."
     },
     {
-      "name": "relevant"
+      "name": "daily",
+      "description": "Occurring or measured every day. In foreign exchange statistics, daily averages are a standard reporting metric showing typical turnover over a 24-hour trading day."
     },
     {
-      "name": "ranking"
+      "name": "weekly",
+      "description": "Occurring or measured every week. In financial reporting, weekly averages aggregate daily figures across a calendar week."
     },
     {
-      "name": "criteria"
+      "name": "monthly",
+      "description": "Occurring or measured every month. Monthly turnover figures are widely used in financial reporting and serve as a building block for higher-frequency aggregations such as yearly averages."
+    },
+    {
+      "name": "yearly",
+      "description": "Occurring or measured every year. Yearly turnover figures provide a long-term view of trading activity and are often used as the primary ranking criterion for currencies."
+    },
+    {
+      "name": "trading",
+      "description": "The buying and selling of financial instruments, currencies, or other assets in a marketplace. Foreign exchange trading is the world's largest financial market by volume.",
+      "refs": [
+        {
+          "name": "Trade",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "most",
+      "description": "Denoting the greatest in quantity, extent, or degree among a group of compared items. Used in superlative constructions such as 'most relevant' or 'most traded'."
+    },
+    {
+      "name": "relevant",
+      "description": "Closely connected or appropriate to the matter at hand. In this dataset, relevance is determined by trading turnover, with currencies ranked by yearly turnover being considered the most relevant."
+    },
+    {
+      "name": "ranking",
+      "description": "The arrangement of items in order according to some measurable criterion. In currency analysis, ranking is typically based on trading turnover, market capitalisation, or reserve holdings."
+    },
+    {
+      "name": "criteria",
+      "description": "Standards or principles used as a basis for judgement, decision, or classification. Ranking criteria define how items are ordered relative to one another."
     },
     {
       "name": "¥",
+      "description": "The yen and yuan sign (¥) is a currency symbol used both for the Japanese yen and the Chinese yuan (the primary unit of the renminbi). It consists of the Latin letter Y crossed by one or two horizontal strokes.",
       "refs": [
         {
           "name": "Yen and yuan sign",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q201356",
+          "type": "wikidata"
         }
       ]
+    },
+    {
+      "name": "amount",
+      "description": "A quantity of something, especially the total of a thing or things in number, size, value, or extent. In a currency context, an amount is a quantity of money expressed in a specific currency."
+    },
+    {
+      "name": "rate",
+      "description": "A measure, quantity, or frequency, typically one measured against some other quantity or measure. In finance, a rate often expresses a ratio between two values, such as one currency's value in terms of another."
+    },
+    {
+      "name": "source",
+      "description": "The origin or starting point of something. In a currency conversion, the source side refers to the currency being converted from."
+    },
+    {
+      "name": "target",
+      "description": "The intended destination or endpoint of a process. In a currency conversion, the target side refers to the currency being converted into."
+    },
+    {
+      "name": "conversion",
+      "description": "The process of changing something from one form to another. Currency conversion refers to exchanging an amount of money in one currency for the equivalent value in another currency, typically using an exchange rate.",
+      "refs": [
+        {
+          "name": "Currency converter",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cross",
+      "description": "Going from one side to another or involving two parties. A cross rate is an exchange rate between two currencies derived from each currency's rate against a common third currency, typically the US dollar."
+    },
+    {
+      "name": "bid",
+      "description": "The price at which a buyer is willing to purchase a currency or other asset. In a quoted currency pair, the bid is the lower of the two prices and represents what a dealer will pay to buy the base currency.",
+      "refs": [
+        {
+          "name": "Bid price",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ask",
+      "description": "The price at which a seller is willing to sell a currency or other asset. In a quoted currency pair, the ask is the higher of the two prices and represents what a dealer will accept to sell the base currency.",
+      "refs": [
+        {
+          "name": "Ask price",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "spread",
+      "description": "The difference between two prices, rates, or yields. In foreign exchange, the bid-ask spread is the difference between the ask price (at which a dealer sells) and the bid price (at which a dealer buys), and represents a transaction cost.",
+      "refs": [
+        {
+          "name": "Bid–ask spread",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "price",
+      "description": "The amount of money expected, required, or given in exchange for something. In currency markets, prices are quoted as exchange rates between two currencies.",
+      "refs": [
+        {
+          "name": "Price",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "percent",
+      "description": "A ratio expressed as a fraction of 100, denoted by the symbol %. Percentages are widely used in finance to express rates of return, changes in value, and proportional spreads.",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "change",
+      "description": "The difference between an old and a new value. In finance, change is often expressed in absolute terms or as a percentage of the original value."
+    },
+    {
+      "name": "old",
+      "description": "Existing or in use at an earlier point in time. In a percent-change calculation, the old value is the baseline against which the new value is compared."
+    },
+    {
+      "name": "new",
+      "description": "Existing or in use at the current or most recent point in time. In a percent-change calculation, the new value is compared against the earlier (old) value."
+    },
+    {
+      "name": "forward",
+      "description": "Relating to a future date. A forward exchange rate is the rate agreed today for a currency transaction to be settled on a specified future date, derived from the spot rate and the interest rate differential between the two currencies.",
+      "refs": [
+        {
+          "name": "Forward exchange rate",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "interest",
+      "description": "A charge for the use of borrowed money, typically expressed as an annual percentage of the principal. Interest rates set by central banks are a key determinant of forward exchange rates.",
+      "refs": [
+        {
+          "name": "Interest",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "quote",
+      "description": "In a currency pair, the quote currency (also called the counter currency) is the second currency listed and indicates how much of it is required to buy one unit of the base currency. For example, in EUR/USD, USD is the quote currency.",
+      "refs": [
+        {
+          "name": "Currency pair",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ISO 4217 code",
+      "description": "ISO 4217 is the international standard published by the International Organization for Standardization that defines three-letter alphabetic and three-digit numeric codes for the representation of currencies. For example, USD identifies the United States dollar and EUR identifies the euro.",
+      "refs": [
+        {
+          "name": "ISO 4217",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37431",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Symbol or abbreviation",
+      "description": "A symbol or abbreviation used to represent a currency in writing, such as $ for the US dollar, € for the euro, or £ for pound sterling. Currency symbols are typographic shorthand and are not standardised internationally (unlike ISO 4217 codes).",
+      "refs": [
+        {
+          "name": "Currency symbol",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Total [lower-alpha 2]",
+      "description": "The total turnover proportion across all currencies in the BIS Triennial Survey. Because each foreign-exchange transaction involves two currencies (one bought, one sold), this total equals 200% rather than 100%. The footnote marker '[lower-alpha 2]' is a Wikipedia reference artifact preserved from the source table."
+    },
+    {
+      "name": "Proportion of daily volume April 2019",
+      "description": "The share of total foreign exchange daily turnover attributable to a given currency in April 2019, as reported in the BIS Triennial Central Bank Survey. Because each transaction involves two currencies, the proportions across all currencies sum to 200 percent."
+    },
+    {
+      "name": "Proportion of daily volume April 2022",
+      "description": "The share of total foreign exchange daily turnover attributable to a given currency in April 2022, as reported in the BIS Triennial Central Bank Survey. Because each transaction involves two currencies, the proportions across all currencies sum to 200 percent."
+    },
+    {
+      "name": "yearly growth rate",
+      "description": "The percentage growth from one year to the next"
+    },
+    {
+      "name": "U.S. dollar",
+      "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
+      "refs": [
+        {
+          "name": "United States dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4917",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "USD",
+      "description": "ISO 4217 alphabetic code for the United States dollar."
+    },
+    {
+      "name": "US$",
+      "description": "Symbol or abbreviation for the United States dollar, used to disambiguate from other dollar-denominated currencies."
+    },
+    {
+      "name": "$",
+      "description": "The dollar sign, most commonly used as the symbol for the United States dollar, although it is also used for many other dollar-denominated currencies."
+    },
+    {
+      "name": "US-Dollar",
+      "description": "Alternative (German) spelling of the United States dollar; an alias of 'US dollar'."
+    },
+    {
+      "name": "EUR",
+      "description": "ISO 4217 alphabetic code for the euro."
+    },
+    {
+      "name": "€",
+      "description": "The euro sign (€), the currency symbol for the euro."
+    },
+    {
+      "name": "JPY",
+      "description": "ISO 4217 alphabetic code for the Japanese yen."
+    },
+    {
+      "name": "¥ / 円",
+      "description": "The yen sign (¥) and the Japanese kanji 円, both used as symbols for the Japanese yen."
+    },
+    {
+      "name": "Sterling",
+      "description": "Pound sterling (symbol: £; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.",
+      "refs": [
+        {
+          "name": "Pound sterling",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25224",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "GBP",
+      "description": "ISO 4217 alphabetic code for pound sterling (Great Britain Pound)."
+    },
+    {
+      "name": "£",
+      "description": "The pound sign (£), the currency symbol for pound sterling."
+    },
+    {
+      "name": "CNY",
+      "description": "ISO 4217 alphabetic code for the renminbi (Chinese Yuan)."
+    },
+    {
+      "name": "¥ / 元",
+      "description": "The yuan sign (¥) and the Chinese character 元, both used as symbols for the renminbi."
+    },
+    {
+      "name": "AUD",
+      "description": "ISO 4217 alphabetic code for the Australian dollar."
+    },
+    {
+      "name": "A$",
+      "description": "Symbol or abbreviation for the Australian dollar, used to disambiguate from other dollar-denominated currencies."
+    },
+    {
+      "name": "CAD",
+      "description": "ISO 4217 alphabetic code for the Canadian dollar."
+    },
+    {
+      "name": "C$",
+      "description": "Symbol or abbreviation for the Canadian dollar, used to disambiguate from other dollar-denominated currencies."
+    },
+    {
+      "name": "CHF",
+      "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol."
+    },
+    {
+      "name": "Hong Kong dollar",
+      "description": "The Hong Kong dollar (symbol: HK$; currency code: HKD) is the official currency of Hong Kong. It is divided into 100 cents and has been pegged to the United States dollar since 1983 at a rate of approximately 7.80 HKD per USD. It is issued by three commercial note-issuing banks under the authority of the Hong Kong Monetary Authority.",
+      "refs": [
+        {
+          "name": "Hong Kong dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q31015",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "HKD",
+      "description": "ISO 4217 alphabetic code for the Hong Kong dollar."
+    },
+    {
+      "name": "HK$",
+      "description": "Symbol or abbreviation for the Hong Kong dollar."
+    },
+    {
+      "name": "Singapore dollar",
+      "description": "The Singapore dollar (symbol: S$; currency code: SGD) is the official currency of Singapore. It is divided into 100 cents and is issued by the Monetary Authority of Singapore. It is interchangeable with the Brunei dollar at par under a Currency Interchangeability Agreement.",
+      "refs": [
+        {
+          "name": "Singapore dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190951",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "SGD",
+      "description": "ISO 4217 alphabetic code for the Singapore dollar."
+    },
+    {
+      "name": "S$",
+      "description": "Symbol or abbreviation for the Singapore dollar."
+    },
+    {
+      "name": "Swedish krona",
+      "description": "The Swedish krona (symbol: kr; currency code: SEK) is the official currency of Sweden. It is divided into 100 öre and is issued by the Sveriges Riksbank, the central bank of Sweden. The plural form in Swedish is kronor.",
+      "refs": [
+        {
+          "name": "Swedish krona",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q122922",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "SEK",
+      "description": "ISO 4217 alphabetic code for the Swedish krona."
+    },
+    {
+      "name": "kr",
+      "description": "Abbreviation shared by several Scandinavian krona/krone currencies, including the Swedish krona, Norwegian krone, and Danish krone."
+    },
+    {
+      "name": "South Korean won",
+      "description": "The South Korean won (symbol: ₩; currency code: KRW) is the official currency of South Korea. It is issued by the Bank of Korea. Although a subunit called the jeon exists in theory (1/100 of a won), it is not used in everyday transactions due to its negligible value.",
+      "refs": [
+        {
+          "name": "South Korean won",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q202040",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "KRW",
+      "description": "ISO 4217 alphabetic code for the South Korean won."
+    },
+    {
+      "name": "₩ / 원",
+      "description": "The won sign (₩) and the Korean hangul 원, both used as symbols for the South Korean won."
+    },
+    {
+      "name": "Norwegian krone",
+      "description": "The Norwegian krone (symbol: kr; currency code: NOK) is the official currency of Norway and its dependent territories. It is divided into 100 øre and is issued by Norges Bank, the central bank of Norway. The plural form in Norwegian is kroner.",
+      "refs": [
+        {
+          "name": "Norwegian krone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q132643",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "NOK",
+      "description": "ISO 4217 alphabetic code for the Norwegian krone."
+    },
+    {
+      "name": "New Zealand dollar",
+      "description": "The New Zealand dollar (symbol: NZ$; currency code: NZD) is the official currency of New Zealand and several Pacific island states (Cook Islands, Niue, Tokelau, Pitcairn Islands). It is divided into 100 cents and is informally known as the 'Kiwi dollar'. It is issued by the Reserve Bank of New Zealand.",
+      "refs": [
+        {
+          "name": "New Zealand dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1472704",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "NZD",
+      "description": "ISO 4217 alphabetic code for the New Zealand dollar."
+    },
+    {
+      "name": "NZ$",
+      "description": "Symbol or abbreviation for the New Zealand dollar."
+    },
+    {
+      "name": "Indian rupee",
+      "description": "The Indian rupee (symbol: ₹; currency code: INR) is the official currency of India. It is divided into 100 paise (singular: paisa) and is issued by the Reserve Bank of India. The rupee symbol ₹ was officially adopted in 2010.",
+      "refs": [
+        {
+          "name": "Indian rupee",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q80524",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "INR",
+      "description": "ISO 4217 alphabetic code for the Indian rupee."
+    },
+    {
+      "name": "₹",
+      "description": "The Indian rupee sign (₹), officially adopted in 2010 as the currency symbol for the Indian rupee."
+    },
+    {
+      "name": "Mexican peso",
+      "description": "The Mexican peso (symbol: $ or MX$; currency code: MXN) is the official currency of Mexico. It is divided into 100 centavos and is issued by the Banco de México. The peso is one of the most-traded currencies in Latin America and serves as a common proxy for emerging-market sentiment.",
+      "refs": [
+        {
+          "name": "Mexican peso",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "MXN",
+      "description": "ISO 4217 alphabetic code for the Mexican peso."
+    },
+    {
+      "name": "MX$",
+      "description": "Symbol or abbreviation for the Mexican peso."
+    },
+    {
+      "name": "New Taiwan dollar",
+      "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
+      "refs": [
+        {
+          "name": "New Taiwan dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q208526",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "TWD",
+      "description": "ISO 4217 alphabetic code for the New Taiwan dollar."
+    },
+    {
+      "name": "NT$",
+      "description": "Symbol or abbreviation for the New Taiwan dollar."
+    },
+    {
+      "name": "South African rand",
+      "description": "The South African rand (symbol: R; currency code: ZAR) is the official currency of South Africa and is also legal tender in the Common Monetary Area together with the currencies of Lesotho, Namibia, and Eswatini. It is divided into 100 cents and is issued by the South African Reserve Bank.",
+      "refs": [
+        {
+          "name": "South African rand",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ZAR",
+      "description": "ISO 4217 alphabetic code for the South African rand."
+    },
+    {
+      "name": "R",
+      "description": "Symbol or abbreviation for the South African rand."
+    },
+    {
+      "name": "Brazilian real",
+      "description": "The Brazilian real (symbol: R$; currency code: BRL) is the official currency of Brazil. It is divided into 100 centavos and is issued by the Banco Central do Brasil. The current real was introduced in 1994 as part of the Plano Real economic stabilisation program.",
+      "refs": [
+        {
+          "name": "Brazilian real",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q173117",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "BRL",
+      "description": "ISO 4217 alphabetic code for the Brazilian real."
+    },
+    {
+      "name": "R$",
+      "description": "Symbol or abbreviation for the Brazilian real."
+    },
+    {
+      "name": "Danish krone",
+      "description": "The Danish krone (symbol: kr; currency code: DKK) is the official currency of Denmark, Greenland, and the Faroe Islands. It is divided into 100 øre and is issued by Danmarks Nationalbank. The krone is pegged to the euro through the European Exchange Rate Mechanism II.",
+      "refs": [
+        {
+          "name": "Danish krone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25417",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "DKK",
+      "description": "ISO 4217 alphabetic code for the Danish krone."
+    },
+    {
+      "name": "Polish złoty",
+      "description": "The Polish złoty (symbol: zł; currency code: PLN) is the official currency of Poland. It is divided into 100 groszy (singular: grosz) and is issued by the Narodowy Bank Polski. The word 'złoty' is the masculine form of the Polish adjective meaning 'golden'.",
+      "refs": [
+        {
+          "name": "Polish złoty",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q123213",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "PLN",
+      "description": "ISO 4217 alphabetic code for the Polish złoty."
+    },
+    {
+      "name": "zł",
+      "description": "The 'zł' abbreviation, the currency symbol for the Polish złoty."
+    },
+    {
+      "name": "Thai baht",
+      "description": "The Thai baht (symbol: ฿; currency code: THB) is the official currency of Thailand. It is divided into 100 satang and is issued by the Bank of Thailand. The baht traces its origins to a traditional unit of weight used for measuring silver.",
+      "refs": [
+        {
+          "name": "Thai baht",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "THB",
+      "description": "ISO 4217 alphabetic code for the Thai baht."
+    },
+    {
+      "name": "฿",
+      "description": "The baht sign (฿), the currency symbol for the Thai baht."
+    },
+    {
+      "name": "Israeli new shekel",
+      "description": "The Israeli new shekel (symbol: ₪; currency code: ILS) is the official currency of Israel and is also used in the Palestinian territories. It is divided into 100 agorot (singular: agora) and is issued by the Bank of Israel. It replaced the old shekel in 1985.",
+      "refs": [
+        {
+          "name": "Israeli new shekel",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q131309",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ILS",
+      "description": "ISO 4217 alphabetic code for the Israeli new shekel."
+    },
+    {
+      "name": "₪",
+      "description": "The new shekel sign (₪), the currency symbol for the Israeli new shekel."
+    },
+    {
+      "name": "Indonesian rupiah",
+      "description": "The Indonesian rupiah (symbol: Rp; currency code: IDR) is the official currency of Indonesia. It is issued by Bank Indonesia, the central bank. The rupiah is one of the most heavily denominated currencies in the world, with banknotes commonly ranging up to 100,000 rupiah.",
+      "refs": [
+        {
+          "name": "Indonesian rupiah",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41588",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "IDR",
+      "description": "ISO 4217 alphabetic code for the Indonesian rupiah."
+    },
+    {
+      "name": "Rp",
+      "description": "Symbol or abbreviation for the Indonesian rupiah."
+    },
+    {
+      "name": "Czech koruna",
+      "description": "The Czech koruna (symbol: Kč; currency code: CZK) is the official currency of the Czech Republic. It is divided into 100 haléř (singular: haléř), although hellers are no longer in circulation. It is issued by the Czech National Bank. The word 'koruna' means 'crown'.",
+      "refs": [
+        {
+          "name": "Czech koruna",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q131016",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "CZK",
+      "description": "ISO 4217 alphabetic code for the Czech koruna."
+    },
+    {
+      "name": "Kč",
+      "description": "The 'Kč' abbreviation, the currency symbol for the Czech koruna."
+    },
+    {
+      "name": "UAE dirham",
+      "description": "The United Arab Emirates dirham (symbol: د.إ; currency code: AED) is the official currency of the United Arab Emirates. It is divided into 100 fils and is issued by the Central Bank of the United Arab Emirates. It has been pegged to the US dollar since 1997.",
+      "refs": [
+        {
+          "name": "United Arab Emirates dirham",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q200294",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "AED",
+      "description": "ISO 4217 alphabetic code for the United Arab Emirates dirham."
+    },
+    {
+      "name": "د.إ",
+      "description": "The Arabic abbreviation د.إ, the currency symbol for the UAE dirham."
+    },
+    {
+      "name": "Turkish lira",
+      "description": "The Turkish lira (symbol: ₺; currency code: TRY) is the official currency of Turkey and Northern Cyprus. It is divided into 100 kuruş and is issued by the Central Bank of the Republic of Turkey. The current lira replaced the old lira in 2005 at a ratio of 1,000,000 old lira to 1 new lira.",
+      "refs": [
+        {
+          "name": "Turkish lira",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "TRY",
+      "description": "ISO 4217 alphabetic code for the Turkish lira."
+    },
+    {
+      "name": "₺",
+      "description": "The Turkish lira sign (₺), introduced in 2012 as the currency symbol for the Turkish lira."
+    },
+    {
+      "name": "Hungarian forint",
+      "description": "The Hungarian forint (symbol: Ft; currency code: HUF) is the official currency of Hungary. It was historically divided into 100 fillér, although fillér coins are no longer in use. It is issued by the Hungarian National Bank (Magyar Nemzeti Bank).",
+      "refs": [
+        {
+          "name": "Hungarian forint",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q47190",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "HUF",
+      "description": "ISO 4217 alphabetic code for the Hungarian forint."
+    },
+    {
+      "name": "Ft",
+      "description": "Symbol or abbreviation for the Hungarian forint."
+    },
+    {
+      "name": "Chilean peso",
+      "description": "The Chilean peso (symbol: $ or CLP$; currency code: CLP) is the official currency of Chile. It is issued by the Central Bank of Chile. The peso is divided in theory into 100 centavos, but centavos are no longer used due to their negligible value.",
+      "refs": [
+        {
+          "name": "Chilean peso",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "CLP",
+      "description": "ISO 4217 alphabetic code for the Chilean peso."
+    },
+    {
+      "name": "CLP$",
+      "description": "Symbol or abbreviation for the Chilean peso."
+    },
+    {
+      "name": "Saudi riyal",
+      "description": "The Saudi riyal (symbol: ﷼; currency code: SAR) is the official currency of Saudi Arabia. It is divided into 100 halalas and is issued by the Saudi Central Bank. The riyal has been pegged to the US dollar since 1986 at a rate of 3.75 SAR per USD.",
+      "refs": [
+        {
+          "name": "Saudi riyal",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q199857",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "SAR",
+      "description": "ISO 4217 alphabetic code for the Saudi riyal."
+    },
+    {
+      "name": "﷼",
+      "description": "The Arabic ligature ﷼, used as the currency symbol for several riyal currencies including the Saudi riyal."
+    },
+    {
+      "name": "Philippine peso",
+      "description": "The Philippine peso (symbol: ₱; currency code: PHP) is the official currency of the Philippines. It is divided into 100 sentimos (also called centavos) and is issued by the Bangko Sentral ng Pilipinas. The peso symbol ₱ was officially adopted in 1967.",
+      "refs": [
+        {
+          "name": "Philippine peso",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17193",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "PHP",
+      "description": "ISO 4217 alphabetic code for the Philippine peso."
+    },
+    {
+      "name": "₱",
+      "description": "The peso sign (₱), the currency symbol for the Philippine peso."
+    },
+    {
+      "name": "Malaysian ringgit",
+      "description": "The Malaysian ringgit (symbol: RM; currency code: MYR) is the official currency of Malaysia. It is divided into 100 sen and is issued by Bank Negara Malaysia, the country's central bank. The word 'ringgit' originally meant 'jagged' in Malay, referring to the milled edges of Spanish silver dollars used in colonial-era trade.",
+      "refs": [
+        {
+          "name": "Malaysian ringgit",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q163712",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "MYR",
+      "description": "ISO 4217 alphabetic code for the Malaysian ringgit."
+    },
+    {
+      "name": "RM",
+      "description": "Symbol or abbreviation for the Malaysian ringgit, derived from 'Ringgit Malaysia'."
+    },
+    {
+      "name": "Colombian peso",
+      "description": "The Colombian peso (symbol: $ or COL$; currency code: COP) is the official currency of Colombia. It is divided into 100 centavos and is issued by the Banco de la República. Centavos are no longer used in practice due to their negligible value.",
+      "refs": [
+        {
+          "name": "Colombian peso",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "COP",
+      "description": "ISO 4217 alphabetic code for the Colombian peso."
+    },
+    {
+      "name": "COL$",
+      "description": "Symbol or abbreviation for the Colombian peso."
+    },
+    {
+      "name": "Russian ruble",
+      "description": "The Russian ruble (symbol: ₽; currency code: RUB) is the official currency of the Russian Federation. It is divided into 100 kopecks and is issued by the Central Bank of Russia. The ruble is one of the world's oldest national currencies, with origins traced to the 13th century.",
+      "refs": [
+        {
+          "name": "Russian ruble",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41044",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "RUB",
+      "description": "ISO 4217 alphabetic code for the Russian ruble."
+    },
+    {
+      "name": "₽",
+      "description": "The Russian ruble sign (₽), officially adopted in 2013 as the currency symbol for the Russian ruble."
+    },
+    {
+      "name": "Romanian leu",
+      "description": "The Romanian leu (symbol: L; currency code: RON) is the official currency of Romania. It is divided into 100 bani (singular: ban) and is issued by the National Bank of Romania. The word 'leu' is Romanian for 'lion'. The current leu was introduced in 2005 to replace the old leu at a ratio of 10,000 to 1.",
+      "refs": [
+        {
+          "name": "Romanian leu",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q131645",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "RON",
+      "description": "ISO 4217 alphabetic code for the Romanian leu."
+    },
+    {
+      "name": "L",
+      "description": "Symbol or abbreviation for the Romanian leu (and also several other currencies, such as the Albanian lek)."
+    },
+    {
+      "name": "Peruvian sol",
+      "description": "The Peruvian sol (symbol: S/; currency code: PEN) is the official currency of Peru. It is divided into 100 céntimos and is issued by the Central Reserve Bank of Peru. The current sol replaced the nuevo sol in 2015, though it has the same value.",
+      "refs": [
+        {
+          "name": "Peruvian sol",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "PEN",
+      "description": "ISO 4217 alphabetic code for the Peruvian sol."
+    },
+    {
+      "name": "S/",
+      "description": "Symbol or abbreviation for the Peruvian sol."
+    },
+    {
+      "name": "Bahraini dinar",
+      "description": "The Bahraini dinar (symbol: .د.ب; currency code: BHD) is the official currency of Bahrain. It is divided into 1,000 fils and is issued by the Central Bank of Bahrain. The dinar has been pegged to the US dollar since 2001 at a rate of approximately 0.376 BHD per USD.",
+      "refs": [
+        {
+          "name": "Bahraini dinar",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "BHD",
+      "description": "ISO 4217 alphabetic code for the Bahraini dinar."
+    },
+    {
+      "name": ".د.ب",
+      "description": "The Arabic abbreviation .د.ب, the currency symbol for the Bahraini dinar."
+    },
+    {
+      "name": "Bulgarian lev",
+      "description": "The Bulgarian lev (currency code: BGN) is the official currency of Bulgaria. It is divided into 100 stotinki and is issued by the Bulgarian National Bank. The lev has been pegged to the euro since 1999 as part of a currency board arrangement.",
+      "refs": [
+        {
+          "name": "Bulgarian lev",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q172540",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "BGN",
+      "description": "ISO 4217 alphabetic code for the Bulgarian lev, also widely used as the currency's typographic symbol."
+    },
+    {
+      "name": "Argentine peso",
+      "description": "The Argentine peso (symbol: $ or ARG$; currency code: ARS) is the official currency of Argentina. It is divided into 100 centavos and is issued by the Central Bank of Argentina (Banco Central de la República Argentina). It is one of the most volatile major currencies, having been subject to repeated devaluations.",
+      "refs": [
+        {
+          "name": "Argentine peso",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ARS",
+      "description": "ISO 4217 alphabetic code for the Argentine peso."
+    },
+    {
+      "name": "ARG$",
+      "description": "Symbol or abbreviation for the Argentine peso."
+    },
+    {
+      "name": "Other",
+      "description": "Residual category aggregating all currencies not individually itemised in this dataset."
+    },
+    {
+      "name": "Total",
+      "description": "The complete sum across all categories, with no items excluded."
     }
   ],
   "triples": [
@@ -147,129 +1266,151 @@
       "name": "ranking criteria",
       "from": "ranking",
       "verb": "has a",
-      "to": "criteria"
+      "to": "criteria",
+      "description": "A ranking is always defined relative to one or more criteria that determine the order. For currencies, common criteria include trading turnover, reserve holdings, and market capitalisation."
     },
     {
       "name": "most relevant",
       "from": "relevant",
       "verb": "can be",
-      "to": "most"
+      "to": "most",
+      "description": "The superlative form of relevance, used to identify the items deemed most important within a given set according to chosen criteria."
     },
     {
       "name": "trading turnover",
       "from": "trading",
       "verb": "can have",
-      "to": "turnover"
+      "to": "turnover",
+      "description": "Trading turnover is the total volume of trades executed in a market over a specified period. For foreign exchange, it is typically measured in USD-equivalent value."
     },
     {
       "name": "daily turnover",
       "from": "trading turnover",
       "verb": "can be",
-      "to": "daily"
+      "to": "daily",
+      "description": "Daily turnover aggregates all trades executed within a single trading day."
     },
     {
       "name": "weekly turnover",
       "from": "trading turnover",
       "verb": "can be",
-      "to": "weekly"
+      "to": "weekly",
+      "description": "Weekly turnover aggregates daily turnover figures across a calendar week."
     },
     {
       "name": "yearly turnover",
       "from": "trading turnover",
       "verb": "can be",
-      "to": "yearly"
+      "to": "yearly",
+      "description": "Yearly turnover aggregates trading activity across a calendar or fiscal year, providing a long-term view of market activity."
     },
     {
       "name": "daily turnover ranking",
       "from": "daily turnover",
       "verb": "can be",
-      "to": "ranking criteria"
+      "to": "ranking criteria",
+      "description": "A ranking that uses daily turnover as the ordering criterion to compare currencies, exchanges, or instruments."
     },
     {
       "name": "weekly turnover ranking",
       "from": "weekly turnover",
       "verb": "can be",
-      "to": "ranking criteria"
+      "to": "ranking criteria",
+      "description": "A ranking that uses weekly turnover as the ordering criterion."
     },
     {
       "name": "yearly turnover ranking",
       "from": "yearly turnover",
       "verb": "can be",
-      "to": "ranking criteria"
+      "to": "ranking criteria",
+      "description": "A ranking that uses yearly turnover as the ordering criterion. This is typically considered the most stable and relevant criterion for ranking currencies."
     },
     {
       "name": "primary ranked by yearly turnover",
       "from": "yearly turnover ranking",
       "verb": "is a",
-      "to": "most relevant"
+      "to": "most relevant",
+      "description": "Yearly turnover ranking is treated here as the canonical 'most relevant' ranking for currencies, as it smooths out short-term volatility."
     },
     {
       "name": "ranked by weekly turnover",
       "from": "weekly turnover ranking",
       "verb": "can be",
-      "to": "relevant"
+      "to": "relevant",
+      "description": "Weekly turnover ranking provides a mid-term view of currency relevance, balancing immediacy with stability."
     },
     {
       "name": "ranked by daily turnover",
       "from": "daily turnover ranking",
       "verb": "can be",
-      "to": "relevant"
+      "to": "relevant",
+      "description": "Daily turnover ranking gives the most immediate view of currency relevance but is more volatile than longer-term rankings."
     },
     {
       "from": "Currency",
       "verb": "has a",
-      "to": "primary ranked by yearly turnover"
+      "to": "primary ranked by yearly turnover",
+      "description": "Every currency in this dataset is primarily ordered by its yearly turnover, the default ranking criterion."
     },
     {
       "from": "Currency",
       "verb": "can have",
-      "to": "ranked by weekly turnover"
+      "to": "ranked by weekly turnover",
+      "description": "Currencies may also be ranked by weekly turnover where a shorter-term view is needed."
     },
     {
       "from": "Currency",
       "verb": "can have",
-      "to": "ranked by daily turnover"
+      "to": "ranked by daily turnover",
+      "description": "Currencies may also be ranked by daily turnover, the most volatile of the supported ranking criteria."
     },
     {
       "name": "average turnover",
       "from": "turnover",
       "verb": "can use",
-      "to": "average"
+      "to": "average",
+      "description": "Turnover figures are often reported as averages (typically arithmetic means) over a defined period to give a representative value rather than a one-off snapshot."
     },
     {
       "name": "daily average turnover",
       "from": "average turnover",
       "verb": "can be",
-      "to": "daily"
+      "to": "daily",
+      "description": "Daily average turnover expresses turnover as a per-day mean, calculated by dividing total turnover in a period by the number of trading days."
     },
     {
       "name": "monthly average turnover",
       "from": "average turnover",
       "verb": "can be",
-      "to": "monthly"
+      "to": "monthly",
+      "description": "Monthly average turnover expresses turnover as a per-month mean over a longer reporting horizon."
     },
     {
       "name": "yearly average turnover",
       "from": "average turnover",
       "verb": "can be",
-      "to": "yearly"
+      "to": "yearly",
+      "description": "Yearly average turnover expresses turnover as a per-year mean, typically derived from monthly averages."
     },
     {
       "name": "in USD",
       "verb": "in",
-      "to": "US dollar"
+      "to": "US dollar",
+      "description": "Indicates that a monetary value is expressed in United States dollars, the standard reporting unit for international foreign exchange statistics."
     },
     {
       "name": "net-net basis",
       "from": "net",
       "verb": "to",
-      "to": "net"
+      "to": "net",
+      "description": "A reporting convention used in BIS foreign exchange surveys in which transactions are adjusted to remove double-counting both between local reporting dealers and between cross-border reporting dealers, yielding a true measure of global activity."
     },
     {
       "name": "net-net basis",
       "from": "net",
       "verb": "to",
-      "to": "net"
+      "to": "net",
+      "description": "Duplicate triple preserved from the source file; see the first 'net-net basis' triple for its definition."
     },
     {
       "name": "April 2022",
@@ -280,25 +1421,1277 @@
     {
       "from": "¥",
       "verb": "is symbol for",
-      "to": "Japanese yen"
+      "to": "Japanese yen",
+      "description": "The ¥ symbol is used to denote the Japanese yen, although the same glyph is also used for the Chinese yuan."
     },
     {
       "from": "$",
       "verb": "is alias of",
+      "to": "US-Dollar",
+      "description": "The dollar sign $ is most commonly used as the symbol for the United States dollar, although it is also used for many other dollar-denominated currencies."
+    },
+    {
+      "from": "U.S. dollar",
+      "verb": "is alias of",
       "to": "US-Dollar"
+    },
+    {
+      "name": "exchange rate",
+      "from": "exchange",
+      "verb": "has a",
+      "to": "rate",
+      "description": "An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.",
+      "refs": [
+        {
+          "name": "Exchange rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q66100",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "source amount",
+      "from": "amount",
+      "verb": "can be",
+      "to": "source",
+      "description": "The amount of money being converted from the source currency, expressed in units of that source currency."
+    },
+    {
+      "name": "target amount",
+      "from": "amount",
+      "verb": "can be",
+      "to": "target",
+      "description": "The amount of money produced by the conversion, expressed in units of the target currency."
+    },
+    {
+      "name": "source currency",
+      "from": "Currency",
+      "verb": "can be",
+      "to": "source",
+      "description": "The currency from which an amount is converted in a currency-conversion operation."
+    },
+    {
+      "name": "target currency",
+      "from": "Currency",
+      "verb": "can be",
+      "to": "target",
+      "description": "The currency into which an amount is converted in a currency-conversion operation."
+    },
+    {
+      "name": "currency conversion",
+      "from": "Currency",
+      "verb": "can have",
+      "to": "conversion",
+      "description": "The process of changing an amount of money from one currency into the equivalent amount in another currency at the prevailing exchange rate.",
+      "refs": [
+        {
+          "name": "Currency converter",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cross rate",
+      "from": "exchange rate",
+      "verb": "can be",
+      "to": "cross",
+      "description": "A cross rate is an exchange rate between two currencies, neither of which is the official currency of the country in which the quote is given. More generally, it is a rate derived from each currency's rate against a common third currency such as the US dollar."
+    },
+    {
+      "name": "bid price",
+      "from": "price",
+      "verb": "can be",
+      "to": "bid",
+      "description": "The bid price is the highest price a buyer (typically a market maker) is willing to pay for a currency at a given moment."
+    },
+    {
+      "name": "ask price",
+      "from": "price",
+      "verb": "can be",
+      "to": "ask",
+      "description": "The ask price (also called the offer price) is the lowest price a seller (typically a market maker) is willing to accept for a currency at a given moment."
+    },
+    {
+      "name": "bid-ask spread",
+      "from": "spread",
+      "verb": "between",
+      "to": "bid",
+      "description": "The bid-ask spread is the difference between the ask price and the bid price for a given currency or other asset. It represents the implicit transaction cost of trading and is a key indicator of market liquidity.",
+      "refs": [
+        {
+          "name": "Bid–ask spread",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "spread percent",
+      "from": "spread",
+      "verb": "in",
+      "to": "percent",
+      "description": "The bid-ask spread expressed as a percentage of the ask price, allowing direct comparison of spreads across different currencies and price levels."
+    },
+    {
+      "name": "rate change",
+      "from": "exchange rate",
+      "verb": "can have",
+      "to": "change",
+      "description": "The movement in an exchange rate between two points in time, expressed either in absolute terms or as a percentage."
+    },
+    {
+      "name": "old rate",
+      "from": "exchange rate",
+      "verb": "can be",
+      "to": "old",
+      "description": "The earlier of two exchange rate observations, used as the baseline in computing a rate change."
+    },
+    {
+      "name": "new rate",
+      "from": "exchange rate",
+      "verb": "can be",
+      "to": "new",
+      "description": "The more recent of two exchange rate observations, compared against the old rate to compute a rate change."
+    },
+    {
+      "name": "percent change",
+      "from": "change",
+      "verb": "in",
+      "to": "percent",
+      "description": "A change expressed as a fraction of the original value times 100. Standard formula: (new − old) / old × 100."
+    },
+    {
+      "name": "forward rate",
+      "from": "exchange rate",
+      "verb": "can be",
+      "to": "forward",
+      "description": "A forward exchange rate is the rate at which a bank agrees today to exchange one currency for another at a specified future date. Forward rates are derived from spot rates and interest rate differentials via the covered interest parity relationship.",
+      "refs": [
+        {
+          "name": "Forward exchange rate",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "spot rate",
+      "from": "exchange rate",
+      "verb": "can be",
+      "to": "spot",
+      "description": "The spot rate is the current exchange rate at which a currency pair can be bought or sold for immediate delivery (typically T+2 settlement)."
+    },
+    {
+      "name": "interest rate",
+      "from": "interest",
+      "verb": "has a",
+      "to": "rate",
+      "description": "The interest rate is the proportion of a loan or deposit that is charged or paid as interest, typically expressed as an annual percentage. Central bank policy rates are key drivers of currency valuations and forward rates.",
+      "refs": [
+        {
+          "name": "Interest rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179179",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "base currency interest rate",
+      "from": "interest rate",
+      "verb": "of",
+      "to": "base",
+      "description": "The interest rate applicable to the base currency of a currency pair. Higher base-currency interest rates relative to the quote currency typically lead to forward rates below spot."
+    },
+    {
+      "name": "quote currency interest rate",
+      "from": "interest rate",
+      "verb": "of",
+      "to": "quote",
+      "description": "The interest rate applicable to the quote currency of a currency pair. Higher quote-currency interest rates relative to the base currency typically lead to forward rates above spot."
+    },
+    {
+      "from": "US-Dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "USD",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "USD",
+      "verb": "is symbol for",
+      "to": "US-Dollar"
+    },
+    {
+      "from": "US$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "US$",
+      "verb": "is symbol for",
+      "to": "US-Dollar"
+    },
+    {
+      "from": "Euro",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "EUR",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "EUR",
+      "verb": "is symbol for",
+      "to": "Euro"
+    },
+    {
+      "from": "€",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "€",
+      "verb": "is symbol for",
+      "to": "Euro"
+    },
+    {
+      "from": "Japanese yen",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "JPY",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "JPY",
+      "verb": "is symbol for",
+      "to": "Japanese yen"
+    },
+    {
+      "from": "¥ / 円",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "¥ / 円",
+      "verb": "is symbol for",
+      "to": "Japanese yen"
+    },
+    {
+      "from": "Sterling",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "GBP",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "GBP",
+      "verb": "is symbol for",
+      "to": "Sterling"
+    },
+    {
+      "from": "£",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "£",
+      "verb": "is symbol for",
+      "to": "Sterling"
+    },
+    {
+      "from": "Renminbi",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "CNY",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "CNY",
+      "verb": "is symbol for",
+      "to": "Renminbi"
+    },
+    {
+      "from": "¥ / 元",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "¥ / 元",
+      "verb": "is symbol for",
+      "to": "Renminbi"
+    },
+    {
+      "from": "Australian dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "AUD",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "AUD",
+      "verb": "is symbol for",
+      "to": "Australian dollar"
+    },
+    {
+      "from": "A$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "A$",
+      "verb": "is symbol for",
+      "to": "Australian dollar"
+    },
+    {
+      "from": "Canadian dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "CAD",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "CAD",
+      "verb": "is symbol for",
+      "to": "Canadian dollar"
+    },
+    {
+      "from": "C$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "C$",
+      "verb": "is symbol for",
+      "to": "Canadian dollar"
+    },
+    {
+      "from": "Swiss franc",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "CHF",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "CHF",
+      "verb": "is symbol for",
+      "to": "Swiss franc"
+    },
+    {
+      "from": "CHF",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "Hong Kong dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "HKD",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "HKD",
+      "verb": "is symbol for",
+      "to": "Hong Kong dollar"
+    },
+    {
+      "from": "HK$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "HK$",
+      "verb": "is symbol for",
+      "to": "Hong Kong dollar"
+    },
+    {
+      "from": "Singapore dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "SGD",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "SGD",
+      "verb": "is symbol for",
+      "to": "Singapore dollar"
+    },
+    {
+      "from": "S$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "S$",
+      "verb": "is symbol for",
+      "to": "Singapore dollar"
+    },
+    {
+      "from": "Swedish krona",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "SEK",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "SEK",
+      "verb": "is symbol for",
+      "to": "Swedish krona"
+    },
+    {
+      "from": "kr",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "kr",
+      "verb": "is symbol for",
+      "to": "Swedish krona"
+    },
+    {
+      "from": "South Korean won",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "KRW",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "KRW",
+      "verb": "is symbol for",
+      "to": "South Korean won"
+    },
+    {
+      "from": "₩ / 원",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "₩ / 원",
+      "verb": "is symbol for",
+      "to": "South Korean won"
+    },
+    {
+      "from": "Norwegian krone",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "NOK",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "NOK",
+      "verb": "is symbol for",
+      "to": "Norwegian krone"
+    },
+    {
+      "from": "kr",
+      "verb": "is symbol for",
+      "to": "Norwegian krone"
+    },
+    {
+      "from": "New Zealand dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "NZD",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "NZD",
+      "verb": "is symbol for",
+      "to": "New Zealand dollar"
+    },
+    {
+      "from": "NZ$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "NZ$",
+      "verb": "is symbol for",
+      "to": "New Zealand dollar"
+    },
+    {
+      "from": "Indian rupee",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "INR",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "INR",
+      "verb": "is symbol for",
+      "to": "Indian rupee"
+    },
+    {
+      "from": "₹",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "₹",
+      "verb": "is symbol for",
+      "to": "Indian rupee"
+    },
+    {
+      "from": "Mexican peso",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "MXN",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "MXN",
+      "verb": "is symbol for",
+      "to": "Mexican peso"
+    },
+    {
+      "from": "MX$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "MX$",
+      "verb": "is symbol for",
+      "to": "Mexican peso"
+    },
+    {
+      "from": "New Taiwan dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "TWD",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "TWD",
+      "verb": "is symbol for",
+      "to": "New Taiwan dollar"
+    },
+    {
+      "from": "NT$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "NT$",
+      "verb": "is symbol for",
+      "to": "New Taiwan dollar"
+    },
+    {
+      "from": "South African rand",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "ZAR",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "ZAR",
+      "verb": "is symbol for",
+      "to": "South African rand"
+    },
+    {
+      "from": "R",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "R",
+      "verb": "is symbol for",
+      "to": "South African rand"
+    },
+    {
+      "from": "Brazilian real",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "BRL",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "BRL",
+      "verb": "is symbol for",
+      "to": "Brazilian real"
+    },
+    {
+      "from": "R$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "R$",
+      "verb": "is symbol for",
+      "to": "Brazilian real"
+    },
+    {
+      "from": "Danish krone",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "DKK",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "DKK",
+      "verb": "is symbol for",
+      "to": "Danish krone"
+    },
+    {
+      "from": "kr",
+      "verb": "is symbol for",
+      "to": "Danish krone"
+    },
+    {
+      "from": "Polish złoty",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "PLN",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "PLN",
+      "verb": "is symbol for",
+      "to": "Polish złoty"
+    },
+    {
+      "from": "zł",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "zł",
+      "verb": "is symbol for",
+      "to": "Polish złoty"
+    },
+    {
+      "from": "Thai baht",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "THB",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "THB",
+      "verb": "is symbol for",
+      "to": "Thai baht"
+    },
+    {
+      "from": "฿",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "฿",
+      "verb": "is symbol for",
+      "to": "Thai baht"
+    },
+    {
+      "from": "Israeli new shekel",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "ILS",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "ILS",
+      "verb": "is symbol for",
+      "to": "Israeli new shekel"
+    },
+    {
+      "from": "₪",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "₪",
+      "verb": "is symbol for",
+      "to": "Israeli new shekel"
+    },
+    {
+      "from": "Indonesian rupiah",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "IDR",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "IDR",
+      "verb": "is symbol for",
+      "to": "Indonesian rupiah"
+    },
+    {
+      "from": "Rp",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "Rp",
+      "verb": "is symbol for",
+      "to": "Indonesian rupiah"
+    },
+    {
+      "from": "Czech koruna",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "CZK",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "CZK",
+      "verb": "is symbol for",
+      "to": "Czech koruna"
+    },
+    {
+      "from": "Kč",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "Kč",
+      "verb": "is symbol for",
+      "to": "Czech koruna"
+    },
+    {
+      "from": "UAE dirham",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "AED",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "AED",
+      "verb": "is symbol for",
+      "to": "UAE dirham"
+    },
+    {
+      "from": "د.إ",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "د.إ",
+      "verb": "is symbol for",
+      "to": "UAE dirham"
+    },
+    {
+      "from": "Turkish lira",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "TRY",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "TRY",
+      "verb": "is symbol for",
+      "to": "Turkish lira"
+    },
+    {
+      "from": "₺",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "₺",
+      "verb": "is symbol for",
+      "to": "Turkish lira"
+    },
+    {
+      "from": "Hungarian forint",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "HUF",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "HUF",
+      "verb": "is symbol for",
+      "to": "Hungarian forint"
+    },
+    {
+      "from": "Ft",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "Ft",
+      "verb": "is symbol for",
+      "to": "Hungarian forint"
+    },
+    {
+      "from": "Chilean peso",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "CLP",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "CLP",
+      "verb": "is symbol for",
+      "to": "Chilean peso"
+    },
+    {
+      "from": "CLP$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "CLP$",
+      "verb": "is symbol for",
+      "to": "Chilean peso"
+    },
+    {
+      "from": "Saudi riyal",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "SAR",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "SAR",
+      "verb": "is symbol for",
+      "to": "Saudi riyal"
+    },
+    {
+      "from": "﷼",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "﷼",
+      "verb": "is symbol for",
+      "to": "Saudi riyal"
+    },
+    {
+      "from": "Philippine peso",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "PHP",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "PHP",
+      "verb": "is symbol for",
+      "to": "Philippine peso"
+    },
+    {
+      "from": "₱",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "₱",
+      "verb": "is symbol for",
+      "to": "Philippine peso"
+    },
+    {
+      "from": "Malaysian ringgit",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "MYR",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "MYR",
+      "verb": "is symbol for",
+      "to": "Malaysian ringgit"
+    },
+    {
+      "from": "RM",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "RM",
+      "verb": "is symbol for",
+      "to": "Malaysian ringgit"
+    },
+    {
+      "from": "Colombian peso",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "COP",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "COP",
+      "verb": "is symbol for",
+      "to": "Colombian peso"
+    },
+    {
+      "from": "COL$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "COL$",
+      "verb": "is symbol for",
+      "to": "Colombian peso"
+    },
+    {
+      "from": "Russian ruble",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "RUB",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "RUB",
+      "verb": "is symbol for",
+      "to": "Russian ruble"
+    },
+    {
+      "from": "₽",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "₽",
+      "verb": "is symbol for",
+      "to": "Russian ruble"
+    },
+    {
+      "from": "Romanian leu",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "RON",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "RON",
+      "verb": "is symbol for",
+      "to": "Romanian leu"
+    },
+    {
+      "from": "L",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "L",
+      "verb": "is symbol for",
+      "to": "Romanian leu"
+    },
+    {
+      "from": "Peruvian sol",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "PEN",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "PEN",
+      "verb": "is symbol for",
+      "to": "Peruvian sol"
+    },
+    {
+      "from": "S/",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "S/",
+      "verb": "is symbol for",
+      "to": "Peruvian sol"
+    },
+    {
+      "from": "Bahraini dinar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "BHD",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "BHD",
+      "verb": "is symbol for",
+      "to": "Bahraini dinar"
+    },
+    {
+      "from": ".د.ب",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": ".د.ب",
+      "verb": "is symbol for",
+      "to": "Bahraini dinar"
+    },
+    {
+      "from": "Bulgarian lev",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "BGN",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "BGN",
+      "verb": "is symbol for",
+      "to": "Bulgarian lev"
+    },
+    {
+      "from": "BGN",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "Argentine peso",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "ARS",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "ARS",
+      "verb": "is symbol for",
+      "to": "Argentine peso"
+    },
+    {
+      "from": "ARG$",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "ARG$",
+      "verb": "is symbol for",
+      "to": "Argentine peso"
+    },
+    {
+      "from": "Other",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "Total [lower-alpha 2]",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "Total [lower-alpha 2]",
+      "verb": "is a",
+      "to": "ISO 4217 code"
+    },
+    {
+      "from": "Total [lower-alpha 2]",
+      "verb": "is symbol for",
+      "to": "Total [lower-alpha 2]"
+    },
+    {
+      "from": "Total [lower-alpha 2]",
+      "verb": "is a",
+      "to": "Symbol or abbreviation"
+    },
+    {
+      "from": "US-Dollar",
+      "verb": "is alias of",
+      "to": "US dollar",
+      "description": "The new file uses 'US-Dollar' while the original enriched dataset uses 'US dollar'. Both names refer to the same currency (USD)."
+    },
+    {
+      "from": "Sterling",
+      "verb": "is alias of",
+      "to": "Pound (sterling)",
+      "description": "The new file uses 'Sterling' while the original enriched dataset uses 'Pound (sterling)'. Both names refer to the same currency (GBP)."
+    },
+    {
+      "from": "Yen",
+      "verb": "is alias of",
+      "to": "Japanese yen",
+      "description": "'Yen' (used in the original dataset) and 'Japanese yen' (used in the new file) refer to the same currency (JPY)."
     }
   ],
   "formulas": [
     {
-      "name": "yearly average turnover",
-      "expression": "\"yearly\" = sum ( \"monthly average turnover\" ) / count ( \"monthly average turnover\" )",
+      "name": "yearly average turnover by month sum",
+      "expression": "\"yearly average turnover\" = &sum; ( \"monthly average turnover\" ) / 12",
       "assigned_word": "turnover"
+    },
+    {
+      "name": "currency conversion calculation",
+      "expression": "\"target amount\" = \"source amount\" * \"exchange rate\"",
+      "assigned": [
+        "currency",
+        "conversion"
+      ],
+      "description": "The process of changing an amount of money from one currency into the equivalent amount in another currency at the prevailing exchange rate.",
+      "refs": [
+        {
+          "name": "Currency converter",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "reverse currency conversion",
+      "expression": "\"source amount\" = \"target amount\" / \"exchange rate\"",
+      "assigned_word": "conversion"
+    },
+    {
+      "name": "USD cross rate",
+      "expression": "\"cross rate\" = \"exchange rate\" ( \"source currency\" , \"US dollar\" ) / \"exchange rate\" ( \"target currency\" , \"US dollar\" )",
+      "description": "A cross rate is an exchange rate between two currencies, neither of which is the official currency of the country in which the quote is given. More generally, it is a rate derived from each currency's rate against a common third currency such as the US dollar.",
+      "assigned": [
+        "currency",
+        "cross",
+        "rate"
+      ]
+    },
+    {
+      "name": "bid-ask spread absolut",
+      "expression": "\"bid-ask spread\" = \"ask price\" - \"bid price\"",
+      "assigned_word": "spread",
+      "description": "The bid-ask spread is the difference between the ask price and the bid price for a given currency or other asset. It represents the implicit transaction cost of trading and is a key indicator of market liquidity.",
+      "refs": [
+        {
+          "name": "Bid–ask spread",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "bid-ask spread percent",
+      "expression": "\"spread percent\" = ( \"ask price\" - \"bid price\" ) / \"ask price\" * 100",
+      "assigned_word": "spread",
+      "description": "The bid-ask spread expressed as a percentage of the ask price, allowing direct comparison of spreads across different currencies and price levels."
+    },
+    {
+      "name": "rate percent change",
+      "expression": "\"percent change\" = ( \"new rate\" - \"old rate\" ) / \"old rate\" * 100",
+      "assigned_word": "change"
+    },
+    {
+      "name": "forward rate from spot",
+      "expression": "\"forward rate\" = \"spot rate\" * ( 1 + \"quote currency interest rate\" ) / ( 1 + \"base currency interest rate\" )",
+      "assigned_word": "forward",
+      "description": "A forward exchange rate is the rate at which a bank agrees today to exchange one currency for another at a specified future date. Forward rates are derived from spot rates and interest rate differentials via the covered interest parity relationship.",
+      "refs": [
+        {
+          "name": "Forward exchange rate",
+          "type": "wikipedia"
+        }
+      ]
     }
   ],
   "sources": [
     {
       "name": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022",
       "url": "https://data.bis.org/topics/DER/tables-and-dashboards/BIS,DER_D11_1,1.0"
+    },
+    {
+      "name": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover",
+      "url": "https://www.bis.org/statistics/rpfx22_fx.htm"
     }
   ],
   "values": [
@@ -408,7 +2801,7 @@
     },
     {
       "words": [
-        "Other currencies",
+        "Other",
         "daily average turnover",
         "total",
         "million",
@@ -418,6 +2811,860 @@
       ],
       "number": "1999092.60199",
       "source": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022"
+    },
+    {
+      "words": [
+        "US-Dollar",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 88.3
+    },
+    {
+      "words": [
+        "US-Dollar",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 88.5
+    },
+    {
+      "words": [
+        "US-Dollar",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "Euro",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 32.3
+    },
+    {
+      "words": [
+        "Euro",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 30.5
+    },
+    {
+      "words": [
+        "Euro",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 5.5
+    },
+    {
+      "words": [
+        "Japanese yen",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 16.8
+    },
+    {
+      "words": [
+        "Japanese yen",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 16.7
+    },
+    {
+      "words": [
+        "Japanese yen",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "Sterling",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 12.8
+    },
+    {
+      "words": [
+        "Sterling",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 12.9
+    },
+    {
+      "words": [
+        "Sterling",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "Renminbi",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 4.3
+    },
+    {
+      "words": [
+        "Renminbi",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 7
+    },
+    {
+      "words": [
+        "Renminbi",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 62.7
+    },
+    {
+      "words": [
+        "Australian dollar",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 6.8
+    },
+    {
+      "words": [
+        "Australian dollar",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 6.4
+    },
+    {
+      "words": [
+        "Australian dollar",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 5.8
+    },
+    {
+      "words": [
+        "Canadian dollar",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 5
+    },
+    {
+      "words": [
+        "Canadian dollar",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 6.2
+    },
+    {
+      "words": [
+        "Canadian dollar",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 24
+    },
+    {
+      "words": [
+        "Swiss franc",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 4.9
+    },
+    {
+      "words": [
+        "Swiss franc",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 5.2
+    },
+    {
+      "words": [
+        "Swiss franc",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 6.1
+    },
+    {
+      "words": [
+        "Hong Kong dollar",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 3.5
+    },
+    {
+      "words": [
+        "Hong Kong dollar",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 2.6
+    },
+    {
+      "words": [
+        "Hong Kong dollar",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 25.7
+    },
+    {
+      "words": [
+        "Singapore dollar",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 1.8
+    },
+    {
+      "words": [
+        "Singapore dollar",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 2.4
+    },
+    {
+      "words": [
+        "Singapore dollar",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 33.3
+    },
+    {
+      "words": [
+        "Swedish krona",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 2
+    },
+    {
+      "words": [
+        "Swedish krona",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 2.2
+    },
+    {
+      "words": [
+        "Swedish krona",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "South Korean won",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 2
+    },
+    {
+      "words": [
+        "South Korean won",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 1.9
+    },
+    {
+      "words": [
+        "South Korean won",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 5
+    },
+    {
+      "words": [
+        "Norwegian krone",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 1.8
+    },
+    {
+      "words": [
+        "Norwegian krone",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 1.7
+    },
+    {
+      "words": [
+        "Norwegian krone",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 5.5
+    },
+    {
+      "words": [
+        "New Zealand dollar",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 2.1
+    },
+    {
+      "words": [
+        "New Zealand dollar",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 1.7
+    },
+    {
+      "words": [
+        "New Zealand dollar",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 19
+    },
+    {
+      "words": [
+        "Indian rupee",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 1.7
+    },
+    {
+      "words": [
+        "Indian rupee",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 1.6
+    },
+    {
+      "words": [
+        "Indian rupee",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 5.8
+    },
+    {
+      "words": [
+        "Mexican peso",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 1.7
+    },
+    {
+      "words": [
+        "Mexican peso",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        "Mexican peso",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 11.7
+    },
+    {
+      "words": [
+        "New Taiwan dollar",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        "New Taiwan dollar",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 1.1
+    },
+    {
+      "words": [
+        "New Taiwan dollar",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 22.2
+    },
+    {
+      "words": [
+        "South African rand",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 1.1
+    },
+    {
+      "words": [
+        "South African rand",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 1
+    },
+    {
+      "words": [
+        "South African rand",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 9
+    },
+    {
+      "words": [
+        "Brazilian real",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 1.1
+    },
+    {
+      "words": [
+        "Brazilian real",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        "Brazilian real",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 18.1
+    },
+    {
+      "words": [
+        "Danish krone",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "Danish krone",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "Danish krone",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 16.6
+    },
+    {
+      "words": [
+        "Polish złoty",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        "Polish złoty",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        "Polish złoty",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 16.6
+    },
+    {
+      "words": [
+        "Thai baht",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        "Thai baht",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "Thai baht",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 20
+    },
+    {
+      "words": [
+        "Israeli new shekel",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "Israeli new shekel",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "Israeli new shekel",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 33.3
+    },
+    {
+      "words": [
+        "Indonesian rupiah",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "Indonesian rupiah",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "Indonesian rupiah",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Czech koruna",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "Czech koruna",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "Czech koruna",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "UAE dirham",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "UAE dirham",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "UAE dirham",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "Turkish lira",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 1.1
+    },
+    {
+      "words": [
+        "Turkish lira",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "Turkish lira",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 63.6
+    },
+    {
+      "words": [
+        "Hungarian forint",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        "Hungarian forint",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "Hungarian forint",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 25
+    },
+    {
+      "words": [
+        "Chilean peso",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "Chilean peso",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "Chilean peso",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Saudi riyal",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "Saudi riyal",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "Saudi riyal",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Philippine peso",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        "Philippine peso",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "Philippine peso",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 33.3
+    },
+    {
+      "words": [
+        "Malaysian ringgit",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "Malaysian ringgit",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "Malaysian ringgit",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Colombian peso",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "Colombian peso",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "Colombian peso",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Russian ruble",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 1.1
+    },
+    {
+      "words": [
+        "Russian ruble",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        "Russian ruble",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 81.8
+    },
+    {
+      "words": [
+        "Romanian leu",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "Romanian leu",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "Romanian leu",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Peruvian sol",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "Peruvian sol",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "Peruvian sol",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Bahraini dinar",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Bahraini dinar",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Bahraini dinar",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Bulgarian lev",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Bulgarian lev",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Bulgarian lev",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Argentine peso",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        "Argentine peso",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        "Argentine peso",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        "Other",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 1.8
+    },
+    {
+      "words": [
+        "Other",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 2.3
+    },
+    {
+      "words": [
+        "Other",
+        "Growth rate (2019–2022)"
+      ],
+      "number": 27.7
+    },
+    {
+      "words": [
+        "Total [lower-alpha 2]",
+        "Proportion of daily volume April 2019"
+      ],
+      "number": 200
+    },
+    {
+      "words": [
+        "Total [lower-alpha 2]",
+        "Proportion of daily volume April 2022"
+      ],
+      "number": 200
     }
   ]
 }

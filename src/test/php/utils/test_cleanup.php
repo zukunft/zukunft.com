@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UTILS . 'test_api.php';
+include_once test_paths::CREATE . 'test_const.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 
@@ -68,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -567,14 +569,14 @@ class test_cleanup extends test_api
         return $trm_lst;
     }
 
-    function html_page_test(string $body, string $title, string $filename): void
+    function html_page_test(string $body, string $title, string $filename): bool
     {
-        $this->html_test($body, $title, test_paths::VIEW_FUNCTIONS . $filename);
+        return $this->html_test($body, $title, test_paths::VIEW_FUNCTIONS . $filename);
     }
 
-    function html_view_test(string $body, string $filename): void
+    function html_view_test(string $body, string $filename): bool
     {
-        $this->html_test($body, 'view', test_paths::VIEWS . $filename);
+        return $this->html_test($body, 'view', test_paths::VIEWS . $filename);
     }
 
     /**
@@ -582,9 +584,9 @@ class test_cleanup extends test_api
      * @param string $body the generated html page body
      * @param string $title the page title name
      * @param string $file_path the file path starting from the resource path for the html resources
-     * @return void
+     * @return bool
      */
-    private function html_test(string $body, string $title, string $file_path): void
+    private function html_test(string $body, string $title, string $file_path): bool
     {
         $lib = new library();
 
@@ -594,8 +596,16 @@ class test_cleanup extends test_api
             $title = 'test ' . $title;
         }
         $created_html = $this->html_page($body, $title);
-        $expected_html = $this->file(test_paths::HTML . $file_path . test_files::HTML);
-        $this->assert($file_path, $lib->trim_html($created_html), $lib->trim_html($expected_html));
+        $resource_file = test_paths::HTML . $file_path . test_files::HTML;
+        $expected_html = $this->file($resource_file);
+        $token = test_const::DUMMY_SESSION_TOKEN;
+        $created_stable = $lib->fix_volatile_in_html($created_html, $token);
+        $expected_stable = $lib->fix_volatile_in_html($expected_html, $token);
+        $result = $this->assert($file_path, $lib->trim_html($created_stable), $lib->trim_html($expected_stable));
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $this->update_file($resource_file, $lib->format_html($created_stable));
+        }
+        return $result;
     }
 
     private function html_page(string $body, string $title): string

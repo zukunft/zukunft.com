@@ -508,4 +508,12 @@ class ref extends sandbox
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 
+    /**
+     * @return string that best describes this object
+     */
+    function display(): string
+    {
+        return $this->name();
+    }
+
 }

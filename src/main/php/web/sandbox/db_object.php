@@ -82,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -421,8 +422,8 @@ class db_object extends TextIdObject
     function name(): string|null
     {
         $msg = 'ERROR:  name not overwritten by ' . $this::class;
-        log_err($msg);
-        return $msg;
+        log_warning($msg);
+        return $this->id;
     }
 
     function get_description(): string
@@ -636,7 +637,7 @@ class db_object extends TextIdObject
     public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'phrase type selector not defined for ' . $this::class;
+        $msg = 'phrase type selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -650,7 +651,7 @@ class db_object extends TextIdObject
     public function source_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'source type selector not defined for ' . $this::class;
+        $msg = 'source type selector not defined for ' . $this::class . '.';;
         log_warning($msg);
         return $msg;
     }
@@ -663,7 +664,7 @@ class db_object extends TextIdObject
      */
     public function ref_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'reference type selector not defined for ' . $this::class;
+        $msg = 'reference type selector not defined for ' . $this::class . '.';
         // TODO Prio 1 active
         //log_warning($msg);
         log_warning($msg);
@@ -679,7 +680,7 @@ class db_object extends TextIdObject
     public function value_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'value type selector not defined for ' . $this::class;
+        $msg = 'value type selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -693,7 +694,7 @@ class db_object extends TextIdObject
     public function formula_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'formula type selector not defined for ' . $this::class;
+        $msg = 'formula type selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -706,7 +707,7 @@ class db_object extends TextIdObject
      */
     public function view_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'view type selector not defined for ' . $this::class;
+        $msg = 'view type selector not defined for ' . $this::class . '.';
         // TODO Prio 1 active
         //log_warning($msg);
         log_warning($msg);
@@ -724,7 +725,7 @@ class db_object extends TextIdObject
     public function style_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'view style selector not defined for ' . $this::class;
+        $msg = 'view style selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -738,7 +739,7 @@ class db_object extends TextIdObject
     public function component_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'component type selector not defined for ' . $this::class;
+        $msg = 'component type selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -752,7 +753,7 @@ class db_object extends TextIdObject
     public function component_style_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'component style selector not defined for ' . $this::class;
+        $msg = 'component style selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -766,7 +767,7 @@ class db_object extends TextIdObject
     public function view_relation_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'view relation type selector not defined for ' . $this::class;
+        $msg = 'view relation type selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -780,7 +781,7 @@ class db_object extends TextIdObject
     public function formula_link_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'formula link type selector not defined for ' . $this::class;
+        $msg = 'formula link type selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -794,7 +795,7 @@ class db_object extends TextIdObject
     public function view_link_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'view link type selector not defined for ' . $this::class;
+        $msg = 'view link type selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -808,7 +809,7 @@ class db_object extends TextIdObject
     public function component_link_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'component link type selector not defined for ' . $this::class;
+        $msg = 'component link type selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -822,7 +823,7 @@ class db_object extends TextIdObject
     public function share_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'share type selector not defined for ' . $this::class;
+        $msg = 'share type selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -836,7 +837,7 @@ class db_object extends TextIdObject
     public function protection_type_selector(string $form, ?type_lists $typ_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'protection type selector not defined for ' . $this::class;
+        $msg = 'protection type selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -848,7 +849,7 @@ class db_object extends TextIdObject
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
-     * @param phrase_ui|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
+     * @param phrase_ui|null $phr phrase to preselect the phrases e.g. use country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
     public function phrase_selector_old(
@@ -862,7 +863,7 @@ class db_object extends TextIdObject
     ): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'phrase selector not defined for ' . $this::class;
+        $msg = 'phrase selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -890,7 +891,7 @@ class db_object extends TextIdObject
     ): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'phrase selector ' . $name . ' for ' . $form . ' not defined in class ' . $this::class;
+        $msg = 'phrase selector ' . $name . ' for ' . $form . ' not defined in class ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -908,7 +909,7 @@ class db_object extends TextIdObject
     ): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'view selector not defined for ' . $this::class;
+        $msg = 'view selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -927,7 +928,7 @@ class db_object extends TextIdObject
     ): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'formula selector not defined for ' . $this::class;
+        $msg = 'formula selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -946,7 +947,7 @@ class db_object extends TextIdObject
     ): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'result selector not defined for ' . $this::class;
+        $msg = 'result selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -966,9 +967,37 @@ class db_object extends TextIdObject
     ): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'view selector not defined for ' . $this::class;
+        $msg = 'view selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
+    }
+
+    /**
+     * create the HTML code to select a file for im- or export
+     * @param string $form the name of the html form
+     * @param string|null $name the suggested name of the file
+     * @param array $lst with the suggested file names
+     * @return string the html code to select a view
+     */
+    public function file_selector(
+        string      $form,
+        string|null $name = '',
+        array       $lst = [],
+        msg_id      $msg_id = msg_id::FORM_SELECT_FILE
+    ): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $action = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $form;
+        $frm_str = $html->form_field('fileToUpload', $msg_id, $name, html_base::INPUT_FILE);
+        $frm_str .= $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_IMPORT));
+        $result = '<' . html_base::FORM
+            . ' ' . html_base::ACTION . '="' . $action . '"'
+            . ' ' . html_base::METHOD . '="' . html_base::METHOD_POST . '"'
+            . ' ' . html_base::ENCTYPE . '="multipart/form-data">'
+            . $frm_str
+            . '</' . html_base::FORM . '>';
+        return $result;
     }
 
     /**
@@ -987,7 +1016,7 @@ class db_object extends TextIdObject
     ): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'component selector not defined for ' . $this::class;
+        $msg = 'component selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -1001,7 +1030,7 @@ class db_object extends TextIdObject
     public function verb_selector(string $form, ?type_lists $typ_lst, string $style = view_styles::COL_SM_3): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'verb selector not defined for ' . $this::class;
+        $msg = 'verb selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -1016,7 +1045,7 @@ class db_object extends TextIdObject
     public function source_selector(string $form, string $pattern, ?source_list $src_lst): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'source selector not defined for ' . $this::class;
+        $msg = 'source selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }
@@ -1030,7 +1059,7 @@ class db_object extends TextIdObject
     public function ref_selector(string $form, string $pattern): string
     {
         // TODO Prio 0 add message text to $msg object
-        $msg = 'reference selector not defined for ' . $this::class;
+        $msg = 'reference selector not defined for ' . $this::class . '.';
         log_warning($msg);
         return $msg;
     }

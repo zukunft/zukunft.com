@@ -401,7 +401,7 @@ class word_list_write_tests
             "April",
             "May",
             "June",
-            "Juli",
+            "July",
             "August",
             "September",
             "October",
@@ -412,7 +412,7 @@ class word_list_write_tests
         $del_wrd_lst->load_by_names(array(
             "May",
             "June",
-            "Juli",
+            "July",
             "August"
         ));
         $wrd_lst->remove($del_wrd_lst);

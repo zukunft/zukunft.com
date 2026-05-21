@@ -918,32 +918,38 @@ class sandbox_named extends sandbox
      */
     protected function check_preserved(user_message $msg): bool
     {
-        global $mtr;
+        if ($msg->usr === null) {
+            log_err('user not set in user_message', 'check_preserved');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } else {
+            global $mtr;
 
-        // init
-        $msg_res = $mtr->txt(msg_id::IS_RESERVED);
-        $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
+            // init
+            $msg_res = $mtr->txt(msg_id::IS_RESERVED);
+            $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
+            $lib = new library();
+            $class_name = $lib->class_to_name($this::class);
 
-        // system users are always allowed to add objects e.g. for the system views
-        if (!$msg->usr->is_system()) {
-            if (in_array($this->name(), $this->reserved_names())) {
-                // if the name is a reserved name
-                // to add the read test objects during initial load
-                if (in_array($this->name(), $this->fixed_names())) {
-                    // an admin user is needed
-                    // so if the user is not an admin add a message
-                    // which will return false
-                    if (!$msg->usr->is_admin()) {
-                        $msg->add(msg_id::GROUP_IS_RESERVED, [
-                            msg_id::VAR_NAME => $this->name(),
-                            msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
-                        ]);
+            // system users are always allowed to add objects e.g. for the system views
+            if (!$msg->usr->is_system()) {
+                if (in_array($this->name(), $this->reserved_names())) {
+                    // if the name is a reserved name
+                    // to add the read test objects during initial load
+                    if (in_array($this->name(), $this->fixed_names())) {
+                        // an admin user is needed
+                        // so if the user is not an admin add a message
+                        // which will return false
+                        if (!$msg->usr->is_admin()) {
+                            $msg->add(msg_id::GROUP_IS_RESERVED, [
+                                msg_id::VAR_NAME => $this->name(),
+                                msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
+                            ]);
+                        }
                     }
                 }
             }
         }
+
         return $msg->is_ok();
     }
 

@@ -53,8 +53,10 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -368,21 +370,31 @@ class db_object extends IdObject
      */
     protected function can_delete(user_message $msg): bool
     {
+        $can_del = false;
+
         if (in_array($this::class, def::NO_DELETE_CLASSES)) {
-            if ($msg->usr->is_system()) {
-                return true;
+            if ($msg->usr === null) {
+                log_err('user not set in user_message', 'can_delete');
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
-                return false;
+                if ($msg->usr->is_system()) {
+                    $can_del = true;
+                }
             }
         } elseif (in_array($this::class, def::ONLY_ADMIN_CAN_DELETE_CLASSES)) {
-            if ($msg->usr->is_admin()) {
-                return true;
+            if ($msg->usr === null) {
+                log_err('user not set in user_message', 'can_delete');
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
-                return false;
+                if ($msg->usr->is_admin()) {
+                    $can_del = true;
+                }
             }
         } else {
-            return true;
+            $can_del = true;
         }
+
+        return $can_del;
     }
 
     /**
@@ -398,21 +410,32 @@ class db_object extends IdObject
      */
     protected function can_update(user_message $msg): bool
     {
+        $can_upd = false;
+
+
         if (in_array($this::class, def::NO_UPDATE_CLASSES)) {
-            if ($msg->usr->is_system()) {
-                return true;
+            if ($msg->usr === null) {
+                log_err('user not set in user_message', 'can_update');
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
-                return false;
+                if ($msg->usr->is_system()) {
+                    $can_upd = true;
+                }
             }
         } elseif (in_array($this::class, def::ONLY_ADMIN_CAN_UPDATE_CLASSES)) {
-            if ($msg->usr->is_admin()) {
-                return true;
+            if ($msg->usr === null) {
+                log_err('user not set in user_message', 'can_update');
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
-                return false;
+                if ($msg->usr->is_admin()) {
+                    $can_upd = true;
+                }
             }
         } else {
-            return true;
+            $can_upd = true;
         }
+
+        return $can_upd;
     }
 
 

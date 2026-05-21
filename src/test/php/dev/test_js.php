@@ -128,7 +128,7 @@ $db_con = $app->start("start test.php");
 <!--Make sure the form has the autocomplete function switched off:-->
 <form autocomplete="off" action="/action_page.php">
     <div class="autocomplete" style="width:300px;">
-        <input id="word_chars" type="text" name="myCountry" placeholder="word">
+        <input id="word_chars" type="text" name="mycountry" placeholder="word">
     </div>
     <input type="submit">
 </form>

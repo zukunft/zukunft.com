@@ -21,7 +21,7 @@
       "name": "Rating"
     },
     {
-      "name": "Country"
+      "name": "country"
     },
     {
       "name": "Scoring Reference Level",
@@ -1909,1159 +1909,1159 @@
       "name": "",
       "from": "Afghanistan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Albania",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Algeria",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Angola",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Antigua and Barbuda",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Argentina",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Armenia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Aruba",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Australia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Austria",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Azerbaijan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Bahamas",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Bahrain",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Bangladesh",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Barbados",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Belarus",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Belgium",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Belize",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Benin",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Bhutan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Bolivia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Bosnia and Herzegovina",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Botswana",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Brazil",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Brunei",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Bulgaria",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Burkina Faso",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Burundi",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Cambodia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Cameroon",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Canada",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Cape Verde",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Central African Republic",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Chad",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Chile",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "China",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Colombia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Comoros",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Congo",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Costa Rica",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Côte d'Ivoire",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Croatia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Cuba",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Cyprus",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Czech Republic",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Denmark",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Djibouti",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Dominica",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Dominican Republic",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "East Timor",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Ecuador",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Egypt",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "El Salvador",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Equatorial Guinea",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Eritrea",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Estonia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Eswatini",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Ethiopia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Fiji",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Finland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "France",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Gabon",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Gambia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Georgia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Germany",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Ghana",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Greece",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Grenada",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Guatemala",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Guinea",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Guinea-Bissau",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Guyana",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Haiti",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Honduras",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Hong Kong",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Hungary",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Iceland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "India",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Indonesia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Iran",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Iraq",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Ireland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Israel",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Italy",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Jamaica",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Japan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Jordan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Kazakhstan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Kenya",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Kiribati",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Kosovo",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Kuwait",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Kyrgyzstan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Laos",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Latvia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Lebanon",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Lesotho",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Liberia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Libya",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Lithuania",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Luxembourg",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Macau",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Madagascar",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Malawi",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Malaysia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Maldives",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Mali",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Malta",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Marshall Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Mauritania",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Mauritius",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Mexico",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Micronesia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Moldova",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Mongolia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Montenegro",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Morocco",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Mozambique",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Myanmar",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Namibia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Nauru",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Nepal",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Netherlands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "New Zealand",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Nicaragua",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Niger",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Nigeria",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "North Macedonia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Norway",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Oman",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Pakistan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Palau",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Panama",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Papua New Guinea",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Paraguay",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Peru",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Philippines",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Poland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Portugal",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Puerto Rico",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Qatar",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Republic of the Congo",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Romania",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Russia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Rwanda",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Saint Kitts and Nevis",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Saint Lucia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Saint Vincent and the Grenadines",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Samoa",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "San Marino",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "São Tomé and Príncipe",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Saudi Arabia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Senegal",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Serbia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Seychelles",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Sierra Leone",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Singapore",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Slovakia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Slovenia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Solomon Islands",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "South Africa",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "South Korea",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "South Sudan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Spain",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Sri Lanka",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Sudan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Suriname",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Sweden",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Switzerland",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Taiwan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Tajikistan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Tanzania",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Thailand",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Togo",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Tonga",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Trinidad and Tobago",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Tunisia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Turkey",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Turkmenistan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Tuvalu",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Uganda",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Ukraine",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "United Arab Emirates",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "United Kingdom",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "United States",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Uruguay",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Uzbekistan",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Vanuatu",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Venezuela",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Vietnam",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Yemen",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Zambia",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
       "from": "Zimbabwe",
       "verb": "is a",
-      "to": "Country"
+      "to": "country"
     },
     {
       "name": "",
@@ -4075,12 +4075,12 @@
     {
       "name": "remaining travel interest",
       "expression": "= if ( \"number of visits\" = 0 ; 10 - \"cultural equality\" ; ( 10 - \"cultural equality\" ) / ( \"number of visits\" + 1 ) )",
-      "assigned_word": "Country"
+      "assigned_word": "country"
     },
     {
       "name": "Travel Score",
       "expression": "= if ( \"number of visits\" = 0 ; 10 - \"cultural equality\" ; 10 - \"cultural equality\" / \"cultural difference\" - \"number of visits\" )",
-      "assigned_word": "Country"
+      "assigned_word": "country"
     }
   ],
   "sources": [

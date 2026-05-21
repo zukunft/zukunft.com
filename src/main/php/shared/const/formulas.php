@@ -59,6 +59,7 @@ class formulas
     const string SCALE_TO_SEC = 'scale minute to sec';
     const string SCALE_TO_SEC_EXP = '"second" = "minute" * 60';
     const string SCALE_TO_SEC_EXP_REF = '{w24}={w104}*60';
+    const string SCALE_TO_SEC_LATEX = '\text{s} = 60 \cdot \text{min}';
     const string SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL = '{w24}={w}*60';
     const string SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER = '{w24}={wO}*60';
     const string SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID = '{w24}={d1}*60';
@@ -107,7 +108,7 @@ class formulas
     const string SYSTEM_TEST_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
     const string SYSTEM_TEST_RATIO_EXP = '"System Test Word PE Ratio" = "System Test Word Share Price" / "System Test Word Earnings"';
     const string SYSTEM_TEST_SECTOR = 'System Test Formula sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
-    const string SYSTEM_TEST_SECTOR_EXP = '= "Country" "differentiator" "Canton" / "System Test Word Total"';
+    const string SYSTEM_TEST_SECTOR_EXP = '= "country" "differentiator" "Canton" / "System Test Word Total"';
     const string SYSTEM_TEST_SCALE_K = 'System Test Formula scale thousand to one';
     const string SYSTEM_TEST_SCALE_K_EXP = '"one" = "System Test Scaling Word e.g. thousands" * 1000';
     const string SYSTEM_TEST_SCALE_TO_K = 'System Test Formula scale one to thousand';

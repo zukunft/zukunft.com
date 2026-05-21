@@ -361,10 +361,10 @@ class test_words extends test_objects
         return $wrd;
     }
 
-    function meter(): word
+    function metre(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::METER_ID, words::METER);
+        $wrd->set(words::METRE_ID, words::METRE);
         return $wrd;
     }
 

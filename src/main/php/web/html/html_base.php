@@ -41,7 +41,6 @@ namespace Zukunft\ZukunftCom\main\php\web\html;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'language_list.php';
 //include_once paths::SHARED_CONST . 'def.php';
@@ -65,7 +64,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\language_list;
 
@@ -174,14 +172,16 @@ class html_base
     // to sort
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
+    const string CLASS_NOTIFICATION = 'alert alert-warning notification-bar';
     const string CLASS_INPUT_SECTION = 'search-section';
     const string CLASS_INPUT = 'standard-input';
+    const string CLASS_SUBMIT = 'submit-input';
     const string CLASS_BUTTON = 'btn';
     const string CLASS_NAV = 'navbar site-header fixed-top';
     const string CLASS_LOGO = 'navbar-brand';
-    const string CLASS_LOGO_BS = 'height: 4em;';
-    const string CLASS_LOGO_HTML = 'height: 5em;';
-    const string CLASS_LOGO_BIG = 'height: 30%;';
+    const string CLASS_LOGO_BS = 'logo-nav';
+    const string CLASS_LOGO_HTML = 'logo-nav';
+    const string CLASS_LOGO_BIG = 'logo-big';
     const string CLASS_LOGO_FLEX = 'brand-logo';
     const string CLASS_LOGO_SECTION = 'logo-section';
 
@@ -313,9 +313,16 @@ class html_base
      * the html code for the navigation bar
      *
      * @param int $msk_id the mask id used to build the language switch URL
+     * @param array $url_array the calling url array
      * @return string the navigation bar HTML code
      */
-    function navbar(int $msk_id = 0): string
+    /**
+     * @param int $msk_id the current view id used to build back params and view-change links
+     * @param array $url_array the current request parameters passed through for back-navigation
+     * @param string|null $usr_name the logged-in username to display; null when not logged in
+     * @param string|null $usr_role the profile/role name to display next to the username; null if not set
+     */
+    function navbar(int $msk_id = 0, array $url_array = [], ?string $usr_name = null, ?string $usr_role = null): string
     {
         global $sys;
 
@@ -338,30 +345,96 @@ class html_base
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        $result .= '<' . self::UL . '>' . "\n";
-        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
-        $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE))) . "\n";
-        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_edit&id=1', $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
-        $result .= $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_add', $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
-        $result .= '</' . self::UL . '>' . "\n";
+        // TODO switch the view mask on the suggesten related to the view
+        $result .= $this->view_change_list($msk_id, $url_array) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         $result .= $lan_lst . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="user-menu">' . "\n";
-        $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-user-circle"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        $result .= '<' . self::UL . '>' . "\n";
-        $result .= $this->list_item($this->ref(api::LOGIN_SCRIPT, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
-        $result .= $this->list_item($this->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
-        $result .= $this->list_item($this->ref(api::SETTINGS_REL, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
-        $result .= '</' . self::UL . '>' . "\n";
+        $usr_tooltip = $usr_name !== null
+            ? ($usr_role !== null ? $usr_role . ' ' : '') . $usr_name
+            : '';
+        $usr_icon = '<' . self::I . ' ' . self::CLASS_HTML . '="fas fa-user-circle"'
+            . ($usr_tooltip !== '' ? ' title="' . htmlspecialchars($usr_tooltip) . '"' : '')
+            . '></' . self::I . '>';
+        $result .= '<' . self::SUMMARY . '>' . $usr_icon . '</' . self::SUMMARY . '>' . "\n";
+        $result .= $this->user_login_list($url_array, $usr_name, $usr_tooltip) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '</' . self::LI . '>' . "\n";
         $result .= '</' . self::UL . '>' . "\n";
         $result .= '</' . self::DIV . '>' . "\n";
 
         return $this->nav($result, self::CLASS_NAV);
+    }
+
+    private function view_change_list(int $msk_id = 0, array $url_array = []): string
+    {
+        global $mtr;
+        $result = $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE))) . "\n";
+        $url_msk_edit = $this->url_with_back(api::MAIN_SCRIPT
+            . '?' . url_var::MASK . '=' . views::VIEW_EDIT_ID
+            . '&' . url_var::ID . '=' . $msk_id, $url_array);
+        $result .= $this->list_item($this->ref($url_msk_edit, $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
+        $url_msk_add = $this->url_with_back(api::MAIN_SCRIPT
+            . '?' . url_var::MASK . '=' . views::VIEW_ADD_ID, $url_array);
+        $result .= $this->list_item($this->ref($url_msk_add, $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
+        return $this->list_unsorted($result);
+    }
+
+    /**
+     * @param array $url_array the current request parameters used to build back-navigation links
+     * @param string|null $usr_name the logged-in username; null shows login and signup, non-null shows logout
+     * @param string $usr_label role and username combined e.g. "admin timon"; shown as the first non-link menu line when non-empty
+     */
+    private function user_login_list(array $url_array = [], ?string $usr_name = null, string $usr_label = ''): string
+    {
+        global $mtr;
+        $result = '';
+        if ($usr_label !== '') {
+            $result .= $this->list_item($usr_label) . "\n";
+        }
+        if ($usr_name !== null) {
+            $url_logout = $this->url_with_back(api::LOGOUT_SCRIPT, $url_array);
+            $result .= $this->list_item($this->ref($url_logout, $mtr->txt(msg_id::NAVBAR_LOGOUT))) . "\n";
+        } else {
+            $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $url_array);
+            $result .= $this->list_item($this->ref($url_login, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
+            $url_signup = $this->url_with_back(api::SIGNUP_SCRIPT, $url_array);
+            $result .= $this->list_item($this->ref($url_signup, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
+        }
+        $url_settings = $this->url_with_back(api::SETTINGS_REL, $url_array);
+        $result .= $this->list_item($this->ref($url_settings, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
+        return $this->list_unsorted($result);
+    }
+
+    /**
+     * /**
+     * a full-width notification bar shown above the footer to inform the user about a non-fatal issue
+     * uses Bootstrap alert-warning styling to display in orange
+     *
+     * @param string $msg_txt the human-readable message to display; must already be translated
+     * @return string the html code for the notification bar
+     */
+    function dsp_notification(string $msg_txt): string
+    {
+        return $this->dsp_notification_html(htmlspecialchars($msg_txt));
+    }
+
+    /**
+     * like dsp_notification but the caller supplies already-safe HTML (e.g. to embed a link);
+     * the caller is responsible for escaping any user-supplied content inside $html
+     *
+     * @param string $html pre-rendered safe HTML content for the notification bar
+     * @return string the html code for the notification bar
+     */
+    function dsp_notification_html(string $html): string
+    {
+        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_NOTIFICATION . '">'
+            . $html
+            . '</' . self::DIV . '>' . "\n";
     }
 
     /**
@@ -450,12 +523,16 @@ class html_base
         }
     }
 
-    function img(string $img_path, string $alt, string $style = ''): string
+    function img(string $img_path, string $alt, string $class = ''): string
     {
-        return '<' . self::IMG
+        $result = '<' . self::IMG
             . ' ' . self::SRC . '="' . $img_path . '"'
-            . ' ' . self::ALT . '="' . $alt . '"'
-            . ' ' . self::STYLE . '="' . $style . '">';
+            . ' ' . self::ALT . '="' . $alt . '"';
+        if ($class !== '') {
+            $result .= ' ' . self::CLASS_HTML . '="' . $class . '"';
+        }
+        $result .= '>';
+        return $result;
     }
 
     /**
@@ -553,6 +630,71 @@ class html_base
             $result .= '&back=' . $back;
         }
         return $result;
+    }
+
+    /**
+     * Build a URL parameter string with the calling params each prefixed with url_var::BACK ('9'),
+     * so the target page can redirect back to the calling page after completing its action.
+     *
+     * @param array $url_array the URL parameters of the calling page e.g. /http/view.php?m=3&id=12
+     * @return string the additional URL parameters e.g. '9m=3&9id=123'
+     */
+    function back_url_part(array $url_array): string
+    {
+        $par = [];
+        foreach ($url_array as $key => $val) {
+            $par[] = url_var::BACK . $key . '=' . rawurlencode($val);
+        }
+        return empty($par) ? '' : implode('&', $par);
+    }
+
+    function url_with_back(string $url, array $url_array): string
+    {
+        $par_ext = $this->back_url_part($url_array);
+        if ($par_ext == '') {
+            return $url;
+        } else {
+            if (str_contains($url, '?')) {
+                return $url . '&' . $par_ext;
+            } else {
+                return $url . '?' . $par_ext;
+            }
+        }
+    }
+
+    /**
+     * extract the BACK-prefixed params from a URL array, stripping the prefix from each key
+     *
+     * @param array $url_array e.g. ['9m' => '3', '9id' => '123']
+     * @return array e.g. ['m' => '3', 'id' => '123'], empty array when no BACK params are present
+     */
+    static function url_par_from_back_part(array $url_array): array
+    {
+        $result = [];
+        foreach ($url_array as $key => $val) {
+            if (str_starts_with($key, url_var::BACK)) {
+                $result[substr($key, strlen(url_var::BACK))] = rawurldecode((string)$val);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get URL from back ('9') prefixed url params set by html_base::back_url_part().
+     * After a login (or any interstitial action) completes,
+     * this gives the URL the user should be sent to.
+     * Returns empty string when no back params are present.
+     *
+     * @param array $url_array the raw $_GET array, e.g. ['9m' => '3', '9id' => '123']
+     *                         '9script' (BACK . 'script'): the calling script for non-default pages e.g. /http/about.php
+     *                          other BACK-prefixed params: the original query params with prefix stripped on return
+     * @param string $script script to be called which should be api::MAIN_SCRIPT
+     * @return string the URL to redirect to after the action e.g. '/http/view.php?m=3&id=123'
+     */
+    static function url_from_back(array $url_array, string $script = api::MAIN_SCRIPT): string
+    {
+        $back_array = html_base::url_par_from_back_part($url_array);
+        return empty($back_array) ? '' : $script . '?' . http_build_query($back_array);
     }
 
     /**
@@ -956,7 +1098,11 @@ class html_base
 
     function form_submit(string $submit_name): string
     {
-        return $this->form_input(html_base::INPUT_SUBMIT, url_var::POST_SUBMIT, $submit_name);
+        $txt = '<' . self::INPUT . ' ' . self::TYPE . '="' . self::INPUT_SUBMIT . '"';
+        $txt .= ' ' . self::NAME . '="' . url_var::POST_SUBMIT . '"';
+        $txt .= ' ' . self::VALUE . '="' . $submit_name . '"';
+        $txt .= ' ' . self::CLASS_HTML . '="' . self::CLASS_SUBMIT . '">';
+        return $txt;
     }
 
     // TODO Prio 0 use this function for all html input fields
@@ -964,7 +1110,7 @@ class html_base
     {
         $txt = '<' . self::INPUT . ' ' . self::TYPE . '="' . $type . '" ' . self::NAME . '="' . $name . '"';
         if ($value != '') {
-            $txt .= ' ' . self::VALUE . '="' . $value . '"';
+            $txt .= ' ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '"';
         }
         $txt .= ' ' . self::CLASS_HTML . '="' . self::CLASS_INPUT . '">';
         return $txt;
@@ -1001,7 +1147,7 @@ class html_base
         $result .= $this->ref(def::LINK_PAPER_IMPERATIVE, $mtr->txt(msg_id::ABOUT_PAPER_IMPERATIVE)) . '.<br><br>';
         $result .= $mtr->txt(msg_id::ABOUT_SUPPORTS) . ' ';
         $result .= $this->ref(def::LINK_GITHUB_TREAM, $mtr->txt(msg_id::OPEN_SOURCE), $mtr->txt(msg_id::ABOUT_GITHUB_LINK)) . ' ' . $mtr->txt(msg_id::ABOUT_PORTFOLIO_MGMT) . '<br><br>';
-        $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'height: 20%;');
+        $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'logo-tream');
         $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO)) . '<' . self::BR . '><' . self::BR . '>';
         $result .= '</' . self::DIV . '>   ';
         $result .= $this->footer(true);
@@ -1574,12 +1720,12 @@ class html_base
      * @return string the HTML code for the field
      */
     function input(
-        string $url_id,
-        msg_id $msg_id,
+        string      $url_id,
+        msg_id      $msg_id,
         string|null $value = '',
-        string $type = '',
-        string $class_add = '',
-        string $placeholder = ''): string
+        string      $type = '',
+        string      $class_add = '',
+        string      $placeholder = ''): string
     {
         global $mtr;
         $name = $mtr->txt($msg_id);
@@ -1676,19 +1822,19 @@ class html_base
      * create the HTML code for an input field including the label
      * @param string $url_id the id of the input field e.g. n
      * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
-     * @param string|int $value the suggested value which is in most cases the value already saved in the db
+     * @param string|int|null $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $input_class the formatting code to change the input type
      * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @return string the HTML code for the field with the label
      */
     function form_field(
-        string     $url_id,
-        msg_id     $msg_id,
-        string|int $value = '',
-        string     $type = html_base::INPUT_TEXT,
-        string     $input_class = '',
-        string     $style = view_styles::COL_SM_12
+        string          $url_id,
+        msg_id          $msg_id,
+        string|int|null $value = '',
+        string          $type = html_base::INPUT_TEXT,
+        string          $input_class = '',
+        string          $style = view_styles::COL_SM_12
     ): string
     {
         // TODO Prio 2 move mtr to label

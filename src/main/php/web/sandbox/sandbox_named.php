@@ -231,6 +231,19 @@ class sandbox_named extends sandbox
 
 
     /*
+     * display
+     */
+
+    /**
+     * @return string that best describes this object
+     */
+    function display(): string
+    {
+        return $this->name();
+    }
+
+
+    /*
      * base
      */
 

@@ -15,7 +15,7 @@
 
     - target is to executes all class methods and all functions at least once
     - in case of errors in the methods automatically a ticket is opened the the table sys_log
-    - with zukunft.com/error_update.php the tickets can be view and closed
+    - with zukunft.com/view.php?m=66 (views::ERROR_UPDATE_ID) the tickets can be viewed and closed
     - and compares the result with the expected result
     - in case of an unexpected result also a ticket is created
     - check the correct setup of the base words, numbers and formulas
@@ -230,7 +230,7 @@ class all_tests extends all_unit_write_tests
 
             // recreate the type list api message based on the updated db
             // because this json is used for the unit tests
-            $t_db->type_list_recreate($this, $this->usr1);
+            $t_db->type_list_check($this, $this->usr1);
         }
 
         // display the test results

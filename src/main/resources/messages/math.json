@@ -1,0 +1,2231 @@
+{
+  "version": "0.0.3",
+  "time": "2026-05-21 09:08:00",
+  "user": "timon",
+  "selection": [
+    "math extra"
+  ],
+  "description": "Main mathematical definitions that are not part of the base units.",
+  "words": [
+    {
+      "name": "mathematics"
+    },
+    {
+      "name": "constant"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "discovery"
+    },
+    {
+      "name": "Pi"
+    },
+    {
+      "name": "circumference"
+    },
+    {
+      "name": "diameter"
+    },
+    {
+      "name": "tau",
+      "description": "Tau (τ) is the circle constant equal to 2π, i.e. the ratio of a circle's circumference to its radius.",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Tau (mathematics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2333151",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "τ",
+      "description": "Symbol for the circle constant tau (2π).",
+      "type": "constant",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "circle",
+      "description": "A circle is the set of all points in a plane at a given distance (the radius) from a given point (the centre); its circumference equals π times its diameter.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Circle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17278",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "radius",
+      "description": "The radius of a circle is the distance from its centre to any point on it.",
+      "refs": [
+        {
+          "name": "Radius",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q173817",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "area",
+      "description": "Area is the quantity that expresses the extent of a two-dimensional region in the plane.",
+      "refs": [
+        {
+          "name": "Area",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11500",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "perimeter",
+      "description": "A perimeter is a closed path that encompasses, surrounds, or outlines a two-dimensional shape.",
+      "refs": [
+        {
+          "name": "Perimeter",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q173817",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "volume",
+      "description": "Volume is a measure of three-dimensional space.",
+      "refs": [
+        {
+          "name": "Volume",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39297",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "surface",
+      "description": "A surface is a mathematical model of the common concept of a surface, generalising a plane.",
+      "refs": [
+        {
+          "name": "Surface (mathematics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "height"
+    },
+    {
+      "name": "width"
+    },
+    {
+      "name": "length"
+    },
+    {
+      "name": "base"
+    },
+    {
+      "name": "side"
+    },
+    {
+      "name": "slant"
+    },
+    {
+      "name": "apothem",
+      "description": "The apothem of a regular polygon is a line segment from the centre to the midpoint of one of its sides.",
+      "refs": [
+        {
+          "name": "Apothem",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q690505",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "triangle",
+      "description": "A triangle is a polygon with three corners and three sides.",
+      "refs": [
+        {
+          "name": "Triangle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3406",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "rectangle",
+      "description": "A rectangle is a quadrilateral with four right angles.",
+      "refs": [
+        {
+          "name": "Rectangle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q209",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "square",
+      "description": "A square is a regular quadrilateral with four equal sides and four right angles.",
+      "refs": [
+        {
+          "name": "Square",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q164",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "parallelogram",
+      "description": "A parallelogram is a quadrilateral with two pairs of parallel sides.",
+      "refs": [
+        {
+          "name": "Parallelogram",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q42289",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "trapezoid",
+      "description": "A trapezoid is a quadrilateral that has at least one pair of parallel sides.",
+      "refs": [
+        {
+          "name": "Trapezoid",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q213364",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ellipse",
+      "description": "An ellipse is a plane curve surrounding two focal points, such that for all points on the curve, the sum of the two distances to the focal points is a constant.",
+      "refs": [
+        {
+          "name": "Ellipse",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q40112",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "polygon",
+      "description": "A polygon is a plane figure made up of line segments connected to form a closed polygonal chain.",
+      "refs": [
+        {
+          "name": "Polygon",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37111",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cube",
+      "description": "A cube is a three-dimensional solid object bounded by six square faces.",
+      "refs": [
+        {
+          "name": "Cube",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q10861",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cylinder",
+      "description": "A cylinder is one of the most basic curvilinear geometric shapes, the surface formed by the points at a fixed distance from a given straight line, the axis of the cylinder.",
+      "refs": [
+        {
+          "name": "Cylinder",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41509",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sphere",
+      "description": "A sphere is a geometrical object that is a three-dimensional analogue to a two-dimensional circle.",
+      "refs": [
+        {
+          "name": "Sphere",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12507",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cone",
+      "description": "A cone is a three-dimensional geometric shape that tapers smoothly from a flat base to a point called the apex or vertex.",
+      "refs": [
+        {
+          "name": "Cone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41710",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "pyramid",
+      "description": "A pyramid is a polyhedron formed by connecting a polygonal base and a point, called the apex.",
+      "refs": [
+        {
+          "name": "Pyramid (geometry)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12791",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "prism",
+      "description": "A prism is a polyhedron comprising an n-sided polygon base, a second base which is a translated copy of the first, and n other faces joining corresponding sides of the two bases.",
+      "refs": [
+        {
+          "name": "Prism (geometry)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q132427",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hypotenuse",
+      "description": "In geometry, the hypotenuse is the longest side of a right triangle, opposite the right angle.",
+      "refs": [
+        {
+          "name": "Hypotenuse",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q188619",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "opposite"
+    },
+    {
+      "name": "adjacent"
+    },
+    {
+      "name": "angle",
+      "description": "In Euclidean geometry, an angle is the figure formed by two rays sharing a common endpoint, called the vertex of the angle.",
+      "refs": [
+        {
+          "name": "Angle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11518",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sine",
+      "description": "The sine is a trigonometric function defined, for an acute angle in a right-angled triangle, as the ratio of the length of the opposite side to that of the hypotenuse.",
+      "refs": [
+        {
+          "name": "Sine and cosine",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q44432",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cosine",
+      "description": "The cosine is a trigonometric function defined, for an acute angle in a right-angled triangle, as the ratio of the length of the adjacent side to that of the hypotenuse.",
+      "refs": [
+        {
+          "name": "Sine and cosine",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q160282",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "tangent",
+      "description": "The tangent is a trigonometric function equal to the ratio of sine over cosine.",
+      "refs": [
+        {
+          "name": "Trigonometric functions",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "secant"
+    },
+    {
+      "name": "cosecant"
+    },
+    {
+      "name": "cotangent"
+    },
+    {
+      "name": "theta"
+    },
+    {
+      "name": "degree"
+    },
+    {
+      "name": "radian",
+      "description": "The radian is a unit of plane angle defined such that one full turn equals 2π radians.",
+      "refs": [
+        {
+          "name": "Radian",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q33680",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "slope",
+      "description": "In mathematics, the slope of a line is a number that describes both the direction and the steepness of the line.",
+      "refs": [
+        {
+          "name": "Slope",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q192276",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "intercept"
+    },
+    {
+      "name": "distance",
+      "description": "Distance is a numerical or occasionally qualitative measurement of how far apart objects, points, people, or ideas are.",
+      "refs": [
+        {
+          "name": "Distance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q126017",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "line",
+      "description": "In geometry, a straight line is an infinite length, breadthless, idealised geometric object.",
+      "refs": [
+        {
+          "name": "Line (geometry)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37105",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "exponent",
+      "description": "Exponentiation is a mathematical operation involving two numbers: the base and the exponent or power.",
+      "refs": [
+        {
+          "name": "Exponentiation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q33456",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "logarithm",
+      "description": "In mathematics, the logarithm is the inverse function to exponentiation.",
+      "refs": [
+        {
+          "name": "Logarithm",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11197",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "e",
+      "description": "The number e, also known as Euler's number, is a mathematical constant approximately equal to 2.71828.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "E (mathematical constant)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q82435",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "i",
+      "description": "The imaginary unit i is defined by its property that i² = −1.",
+      "type": "constant",
+      "refs": [
+        {
+          "name": "Imaginary unit",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q193796",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "x"
+    },
+    {
+      "name": "y"
+    },
+    {
+      "name": "z"
+    },
+    {
+      "name": "a"
+    },
+    {
+      "name": "b"
+    },
+    {
+      "name": "c"
+    },
+    {
+      "name": "d"
+    },
+    {
+      "name": "n"
+    },
+    {
+      "name": "m"
+    },
+    {
+      "name": "k"
+    },
+    {
+      "name": "r"
+    },
+    {
+      "name": "h"
+    },
+    {
+      "name": "s"
+    },
+    {
+      "name": "t"
+    },
+    {
+      "name": "p"
+    },
+    {
+      "name": "u"
+    },
+    {
+      "name": "v"
+    },
+    {
+      "name": "f"
+    },
+    {
+      "name": "g"
+    },
+    {
+      "name": "quadratic",
+      "description": "In algebra, a quadratic equation is any equation that can be rearranged in standard form as ax² + bx + c = 0.",
+      "refs": [
+        {
+          "name": "Quadratic equation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q207476",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "formula"
+    },
+    {
+      "name": "equation"
+    },
+    {
+      "name": "theorem"
+    },
+    {
+      "name": "Pythagoras",
+      "description": "Pythagoras of Samos was an ancient Ionian Greek philosopher, polymath and the eponymous founder of Pythagoreanism.",
+      "refs": [
+        {
+          "name": "Pythagoras",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q10261",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Euclid",
+      "description": "Euclid was an ancient Greek mathematician active as a geometer and logician.",
+      "refs": [
+        {
+          "name": "Euclid",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8747",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Euler",
+      "description": "Leonhard Euler was a Swiss mathematician, physicist, astronomer, geographer, logician and engineer.",
+      "refs": [
+        {
+          "name": "Leonhard Euler",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7197",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Heron",
+      "description": "Hero of Alexandria was a Greek mathematician and engineer who was active in his native city of Alexandria, Roman Egypt.",
+      "refs": [
+        {
+          "name": "Hero of Alexandria",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170534",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "binomial",
+      "description": "In elementary algebra, a binomial is a polynomial that is the sum of two terms.",
+      "refs": [
+        {
+          "name": "Binomial (polynomial)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "sequence",
+      "description": "In mathematics, a sequence is an enumerated collection of objects in which repetitions are allowed and order matters.",
+      "refs": [
+        {
+          "name": "Sequence",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q133250",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "series",
+      "description": "In mathematics, a series is, roughly speaking, an addition of infinitely many terms, one after the other.",
+      "refs": [
+        {
+          "name": "Series (mathematics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170406",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "arithmetic"
+    },
+    {
+      "name": "geometric"
+    },
+    {
+      "name": "sum"
+    },
+    {
+      "name": "term"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "difference"
+    },
+    {
+      "name": "derivative",
+      "description": "The derivative of a function of a real variable measures the sensitivity to change of the function value with respect to a change in its argument.",
+      "refs": [
+        {
+          "name": "Derivative",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q30207",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "integral",
+      "description": "In mathematics, an integral assigns numbers to functions in a way that describes displacement, area, volume, and other concepts that arise by combining infinitesimal data.",
+      "refs": [
+        {
+          "name": "Integral",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q80091",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "limit",
+      "description": "In mathematics, a limit is the value that a function approaches as the input approaches some value.",
+      "refs": [
+        {
+          "name": "Limit (mathematics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q246639",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "function",
+      "description": "In mathematics, a function from a set X to a set Y assigns to each element of X exactly one element of Y.",
+      "refs": [
+        {
+          "name": "Function (mathematics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11348",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "rule"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "chain"
+    },
+    {
+      "name": "product"
+    },
+    {
+      "name": "quotient"
+    },
+    {
+      "name": "probability",
+      "description": "Probability is the branch of mathematics concerning numerical descriptions of how likely an event is to occur.",
+      "refs": [
+        {
+          "name": "Probability",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9492",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "statistics",
+      "description": "Statistics is the discipline that concerns the collection, organization, analysis, interpretation, and presentation of data.",
+      "refs": [
+        {
+          "name": "Statistics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1949963",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mean",
+      "description": "There are several kinds of mean in mathematics, especially in statistics; each attempts to summarize or typify a given group of data.",
+      "refs": [
+        {
+          "name": "Mean",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170749",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "variance",
+      "description": "In probability theory and statistics, variance is the expectation of the squared deviation of a random variable from its mean.",
+      "refs": [
+        {
+          "name": "Variance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q175199",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "deviation",
+      "description": "In mathematics and statistics, deviation is a measure of difference between the observed value of a variable and some other value, often that variable's mean.",
+      "refs": [
+        {
+          "name": "Deviation (statistics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "permutation",
+      "description": "In mathematics, a permutation of a set is, loosely speaking, an arrangement of its members into a sequence or linear order.",
+      "refs": [
+        {
+          "name": "Permutation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q161519",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "combination",
+      "description": "In mathematics, a combination is a selection of items from a set that has distinct members, such that the order of selection does not matter.",
+      "refs": [
+        {
+          "name": "Combination",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q209981",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "event"
+    },
+    {
+      "name": "mu"
+    },
+    {
+      "name": "sigma"
+    },
+    {
+      "name": "interest",
+      "description": "In finance and economics, interest is payment from a borrower or deposit-taking financial institution to a lender or depositor of an amount above repayment of the principal sum.",
+      "refs": [
+        {
+          "name": "Interest",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179179",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "principal"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "simple"
+    },
+    {
+      "name": "compound"
+    },
+    {
+      "name": "continuous"
+    },
+    {
+      "name": "percent",
+      "description": "In mathematics, a percentage is a number or ratio expressed as a fraction of 100.",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11229",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "perfect",
+      "description": "describes something complete or exact, e.g. a perfect square"
+    },
+    {
+      "name": "arc",
+      "description": "a connected portion of the circumference of a circle or other curve"
+    },
+    {
+      "name": "sector",
+      "description": "the portion of a disk enclosed by two radii and the arc between them"
+    },
+    {
+      "name": "regular",
+      "description": "describes a polygon with all sides and all angles equal"
+    },
+    {
+      "name": "identity",
+      "description": "an equality that holds for all values of the variables involved"
+    },
+    {
+      "name": "double",
+      "description": "twice a given quantity, e.g. a double angle"
+    },
+    {
+      "name": "law",
+      "description": "a statement that describes a general relationship that always holds"
+    },
+    {
+      "name": "common",
+      "description": "shared by all members of a sequence, e.g. a common difference or common ratio"
+    },
+    {
+      "name": "fundamental",
+      "description": "describes a basic, central result, e.g. the fundamental theorem of calculus"
+    },
+    {
+      "name": "standard",
+      "description": "describes the conventional reference form, e.g. standard deviation"
+    },
+    {
+      "name": "score",
+      "description": "a standardized value derived from data, e.g. a z score"
+    },
+    {
+      "name": "conditional",
+      "description": "describes something dependent on a given condition, e.g. conditional probability"
+    },
+    {
+      "name": "complement",
+      "description": "in set theory and probability, the set of outcomes not in a given event"
+    },
+    {
+      "name": "union",
+      "description": "in set theory and probability, the set of outcomes in either of two events"
+    },
+    {
+      "name": "B"
+    },
+    {
+      "name": "P"
+    },
+    {
+      "name": "I"
+    },
+    {
+      "name": "favorable",
+      "description": "the number of outcomes that satisfy a given condition, used in the classical definition of probability"
+    },
+    {
+      "name": "total",
+      "description": "the whole amount or count, e.g. the total number of possible outcomes"
+    },
+    {
+      "name": "new",
+      "description": "the current or later value in a comparison, e.g. in percent change"
+    },
+    {
+      "name": "old",
+      "description": "the previous or earlier value in a comparison, e.g. in percent change"
+    }
+  ],
+  "triples": [
+    {
+      "name": "mathematical constant",
+      "description": "A mathematical constant that never changes e.g. Pi",
+      "from": "constant",
+      "verb": "is part of",
+      "to": "mathematics",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Mathematical_constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q186509",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "time of discovery",
+      "from": "time",
+      "verb": "of",
+      "to": "discovery"
+    },
+    {
+      "name": "math const ranked by discovery",
+      "from": "mathematical constant",
+      "verb": "is ranked by",
+      "to": "time of discovery"
+    },
+    {
+      "name": "tau (math)",
+      "description": "Tau is the circle constant equal to 2π.",
+      "from": "tau",
+      "verb": "is a",
+      "to": "mathematical constant",
+      "type": "hidden_triple"
+    },
+    {
+      "name": "τ (unit symbol)",
+      "from": "τ",
+      "verb": "is alias of",
+      "to": "tau",
+      "type": "hidden_triple"
+    },
+    {
+      "name": "quadratic formula",
+      "description": "In elementary algebra, the quadratic formula is a closed-form expression describing the solutions of a quadratic equation.",
+      "from": "quadratic",
+      "verb": "kind of",
+      "to": "formula",
+      "refs": [
+        {
+          "name": "Quadratic formula",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1140004",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Pythagorean theorem",
+      "description": "In mathematics, the Pythagorean theorem is a fundamental relation in Euclidean geometry between the three sides of a right triangle.",
+      "from": "Pythagoras",
+      "verb": "name of",
+      "to": "theorem",
+      "refs": [
+        {
+          "name": "Pythagorean theorem",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11518",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Heron's formula",
+      "description": "In geometry, Heron's formula gives the area of a triangle in terms of the three side lengths.",
+      "from": "Heron",
+      "verb": "name of",
+      "to": "formula",
+      "refs": [
+        {
+          "name": "Heron's formula",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q182714",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Euler's formula",
+      "description": "Euler's formula establishes the fundamental relationship between the trigonometric functions and the complex exponential function.",
+      "from": "Euler",
+      "verb": "name of",
+      "to": "formula",
+      "refs": [
+        {
+          "name": "Euler's formula",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q213052",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "binomial theorem",
+      "description": "In elementary algebra, the binomial theorem describes the algebraic expansion of powers of a binomial.",
+      "from": "binomial",
+      "verb": "kind of",
+      "to": "theorem",
+      "refs": [
+        {
+          "name": "Binomial theorem",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q26708",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "difference of squares",
+      "description": "In mathematics, the difference of two squares is a squared number subtracted from another squared number.",
+      "from": "difference",
+      "verb": "of",
+      "to": "square",
+      "refs": [
+        {
+          "name": "Difference of two squares",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1148453",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "perfect square",
+      "from": "perfect",
+      "verb": "kind of",
+      "to": "square"
+    },
+    {
+      "name": "sum of cubes",
+      "from": "sum",
+      "verb": "of",
+      "to": "cube"
+    },
+    {
+      "name": "difference of cubes",
+      "from": "difference",
+      "verb": "of",
+      "to": "cube"
+    },
+    {
+      "name": "slope intercept form",
+      "from": "slope",
+      "verb": "with",
+      "to": "intercept"
+    },
+    {
+      "name": "point slope form",
+      "from": "point",
+      "verb": "with",
+      "to": "slope"
+    },
+    {
+      "name": "distance formula",
+      "from": "distance",
+      "verb": "kind of",
+      "to": "formula"
+    },
+    {
+      "name": "arc length",
+      "description": "Arc length is the distance between two points along a section of a curve.",
+      "from": "arc",
+      "verb": "kind of",
+      "to": "length",
+      "refs": [
+        {
+          "name": "Arc length",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q670036",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sector area",
+      "from": "sector",
+      "verb": "kind of",
+      "to": "area"
+    },
+    {
+      "name": "surface area",
+      "from": "surface",
+      "verb": "kind of",
+      "to": "area"
+    },
+    {
+      "name": "slant height",
+      "from": "slant",
+      "verb": "kind of",
+      "to": "height"
+    },
+    {
+      "name": "regular polygon",
+      "from": "regular",
+      "verb": "kind of",
+      "to": "polygon"
+    },
+    {
+      "name": "Pythagorean identity",
+      "description": "In mathematics, the Pythagorean trigonometric identity expresses the Pythagorean theorem in terms of trigonometric functions.",
+      "from": "Pythagoras",
+      "verb": "name of",
+      "to": "identity",
+      "refs": [
+        {
+          "name": "Pythagorean trigonometric identity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q775737",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "double angle",
+      "from": "double",
+      "verb": "kind of",
+      "to": "angle"
+    },
+    {
+      "name": "sum angle",
+      "from": "sum",
+      "verb": "of",
+      "to": "angle"
+    },
+    {
+      "name": "law of sines",
+      "description": "In trigonometry, the law of sines relates the lengths of the sides of any triangle to the sines of its angles.",
+      "from": "law",
+      "verb": "of",
+      "to": "sine",
+      "refs": [
+        {
+          "name": "Law of sines",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q174122",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "law of cosines",
+      "description": "In trigonometry, the law of cosines relates the lengths of the sides of a triangle to the cosine of one of its angles.",
+      "from": "law",
+      "verb": "of",
+      "to": "cosine",
+      "refs": [
+        {
+          "name": "Law of cosines",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11036",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "arithmetic sequence",
+      "description": "An arithmetic progression is a sequence of numbers such that the difference between the consecutive terms is constant.",
+      "from": "arithmetic",
+      "verb": "kind of",
+      "to": "sequence",
+      "refs": [
+        {
+          "name": "Arithmetic progression",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q199542",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "geometric sequence",
+      "description": "A geometric progression is a sequence of non-zero numbers where each term after the first is found by multiplying the previous one by a fixed, non-zero number called the common ratio.",
+      "from": "geometric",
+      "verb": "kind of",
+      "to": "sequence",
+      "refs": [
+        {
+          "name": "Geometric progression",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12482",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "arithmetic sum",
+      "from": "arithmetic",
+      "verb": "kind of",
+      "to": "sum"
+    },
+    {
+      "name": "geometric sum",
+      "from": "geometric",
+      "verb": "kind of",
+      "to": "sum"
+    },
+    {
+      "name": "nth term",
+      "from": "n",
+      "verb": "of",
+      "to": "term"
+    },
+    {
+      "name": "common difference",
+      "from": "common",
+      "verb": "kind of",
+      "to": "difference"
+    },
+    {
+      "name": "common ratio",
+      "from": "common",
+      "verb": "kind of",
+      "to": "ratio"
+    },
+    {
+      "name": "power rule",
+      "description": "In calculus, the power rule is used to differentiate functions of the form f(x) = xⁿ.",
+      "from": "power",
+      "verb": "kind of",
+      "to": "rule",
+      "refs": [
+        {
+          "name": "Power rule",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1138505",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "product rule",
+      "description": "In calculus, the product rule is a formula used to find the derivatives of products of two or more functions.",
+      "from": "product",
+      "verb": "kind of",
+      "to": "rule",
+      "refs": [
+        {
+          "name": "Product rule",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q853742",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "quotient rule",
+      "description": "In calculus, the quotient rule is a method of finding the derivative of a function that is the ratio of two differentiable functions.",
+      "from": "quotient",
+      "verb": "kind of",
+      "to": "rule",
+      "refs": [
+        {
+          "name": "Quotient rule",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1404036",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chain rule",
+      "description": "In calculus, the chain rule is a formula that expresses the derivative of the composition of two differentiable functions f and g.",
+      "from": "chain",
+      "verb": "kind of",
+      "to": "rule",
+      "refs": [
+        {
+          "name": "Chain rule",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q622865",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fundamental theorem of calculus",
+      "description": "The fundamental theorem of calculus is a theorem that links the concept of differentiating a function with the concept of integrating a function.",
+      "from": "fundamental",
+      "verb": "kind of",
+      "to": "theorem",
+      "refs": [
+        {
+          "name": "Fundamental theorem of calculus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q207017",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "integration by parts",
+      "description": "In calculus, integration by parts is a process that finds the integral of a product of functions in terms of the integral of the product of their derivative and antiderivative.",
+      "from": "integral",
+      "verb": "by parts",
+      "to": "product",
+      "refs": [
+        {
+          "name": "Integration by parts",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q186475",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "standard deviation",
+      "description": "In statistics, the standard deviation is a measure of the amount of variation or dispersion of a set of values.",
+      "from": "standard",
+      "verb": "kind of",
+      "to": "deviation",
+      "refs": [
+        {
+          "name": "Standard deviation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q159375",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "z score",
+      "description": "In statistics, the standard score is the number of standard deviations by which the value of a raw score is above or below the mean value of what is being observed.",
+      "from": "z",
+      "verb": "kind of",
+      "to": "score",
+      "refs": [
+        {
+          "name": "Standard score",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1503443",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "conditional probability",
+      "description": "In probability theory, conditional probability is a measure of the probability of an event occurring, given that another event has already occurred.",
+      "from": "conditional",
+      "verb": "kind of",
+      "to": "probability",
+      "refs": [
+        {
+          "name": "Conditional probability",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q327069",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "complement event",
+      "from": "complement",
+      "verb": "of",
+      "to": "event"
+    },
+    {
+      "name": "union of events",
+      "from": "union",
+      "verb": "of",
+      "to": "event"
+    },
+    {
+      "name": "simple interest",
+      "description": "Simple interest is interest calculated only on the original principal, regardless of how many times the interest is paid.",
+      "from": "simple",
+      "verb": "kind of",
+      "to": "interest",
+      "refs": [
+        {
+          "name": "Interest",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "compound interest",
+      "description": "Compound interest is the interest on a loan or deposit calculated based on both the initial principal and the accumulated interest from previous periods.",
+      "from": "compound",
+      "verb": "kind of",
+      "to": "interest",
+      "refs": [
+        {
+          "name": "Compound interest",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q319400",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "continuous compounding",
+      "from": "continuous",
+      "verb": "kind of",
+      "to": "compound"
+    },
+    {
+      "name": "percent change",
+      "description": "Percentage change is a way of expressing a change in a variable; it represents the relative change between the old value and the new one.",
+      "from": "percent",
+      "verb": "of",
+      "to": "change",
+      "refs": [
+        {
+          "name": "Relative change",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "formulas": [
+    {
+      "name": "definition of tau",
+      "expression": "\"tau\" = \"Pi\" * 2",
+      "latex": "\\tau = 2\\pi",
+      "assigned_word": "circle"
+    },
+    {
+      "name": "definition of circumference",
+      "expression": "\"circumference\" = \"Pi\" * \"diameter\"",
+      "latex": "C = \\pi d",
+      "assigned_word": "circle"
+    },
+    {
+      "name": "definition of quadratic formula",
+      "expression": "\"x\" = (-\"b\" + sqrt(\"b\"^2 - 4*\"a\"*\"c\")) / (2*\"a\")",
+      "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+      "assigned_word": "quadratic"
+    },
+    {
+      "name": "definition of difference of squares",
+      "expression": "\"a\"^2 - \"b\"^2 = (\"a\" - \"b\") * (\"a\" + \"b\")",
+      "latex": "a^2 - b^2 = (a-b)(a+b)",
+      "assigned_word": "difference of squares"
+    },
+    {
+      "name": "definition of perfect square",
+      "expression": "(\"a\" + \"b\")^2 = \"a\"^2 + 2*\"a\"*\"b\" + \"b\"^2",
+      "latex": "(a+b)^2 = a^2 + 2ab + b^2",
+      "assigned_word": "perfect square"
+    },
+    {
+      "name": "cube of sum",
+      "expression": "(\"a\" + \"b\")^3 = \"a\"^3 + 3*\"a\"^2*\"b\" + 3*\"a\"*\"b\"^2 + \"b\"^3",
+      "latex": "(a+b)^3 = a^3 + 3a^2 b + 3ab^2 + b^3",
+      "assigned_word": "perfect square"
+    },
+    {
+      "name": "definition of sum of cubes",
+      "expression": "\"a\"^3 + \"b\"^3 = (\"a\" + \"b\") * (\"a\"^2 - \"a\"*\"b\" + \"b\"^2)",
+      "latex": "a^3 + b^3 = (a+b)(a^2 - ab + b^2)",
+      "assigned_word": "sum of cubes"
+    },
+    {
+      "name": "definition of difference of cubes",
+      "expression": "\"a\"^3 - \"b\"^3 = (\"a\" - \"b\") * (\"a\"^2 + \"a\"*\"b\" + \"b\"^2)",
+      "latex": "a^3 - b^3 = (a-b)(a^2 + ab + b^2)",
+      "assigned_word": "difference of cubes"
+    },
+    {
+      "name": "definition of binomial theorem",
+      "expression": "(\"a\" + \"b\")^\"n\" = sum(C(\"n\",\"k\") * \"a\"^(\"n\"-\"k\") * \"b\"^\"k\", \"k\"=0..\"n\")",
+      "latex": "(a+b)^n = \\sum_{k=0}^{n} \\binom{n}{k} a^{n-k} b^k",
+      "assigned_word": "binomial theorem"
+    },
+    {
+      "name": "exponent product",
+      "expression": "\"a\"^\"m\" * \"a\"^\"n\" = \"a\"^(\"m\" + \"n\")",
+      "latex": "a^m \\cdot a^n = a^{m+n}",
+      "assigned_word": "exponent"
+    },
+    {
+      "name": "exponent quotient",
+      "expression": "\"a\"^\"m\" / \"a\"^\"n\" = \"a\"^(\"m\" - \"n\")",
+      "latex": "a^m / a^n = a^{m-n}",
+      "assigned_word": "exponent"
+    },
+    {
+      "name": "power of a power",
+      "expression": "(\"a\"^\"m\")^\"n\" = \"a\"^(\"m\" * \"n\")",
+      "latex": "(a^m)^n = a^{mn}",
+      "assigned_word": "exponent"
+    },
+    {
+      "name": "negative exponent",
+      "expression": "\"a\"^(-\"n\") = 1 / \"a\"^\"n\"",
+      "latex": "a^{-n} = 1/a^n",
+      "assigned_word": "exponent"
+    },
+    {
+      "name": "logarithm product",
+      "expression": "log(\"x\" * \"y\") = log(\"x\") + log(\"y\")",
+      "latex": "\\log(xy) = \\log x + \\log y",
+      "assigned_word": "logarithm"
+    },
+    {
+      "name": "logarithm quotient",
+      "expression": "log(\"x\" / \"y\") = log(\"x\") - log(\"y\")",
+      "latex": "\\log(x/y) = \\log x - \\log y",
+      "assigned_word": "logarithm"
+    },
+    {
+      "name": "logarithm power",
+      "expression": "log(\"x\"^\"n\") = \"n\" * log(\"x\")",
+      "latex": "\\log(x^n) = n \\log x",
+      "assigned_word": "logarithm"
+    },
+    {
+      "name": "change of base",
+      "expression": "log_b(\"x\") = log_a(\"x\") / log_a(\"b\")",
+      "latex": "\\log_b x = \\frac{\\log_a x}{\\log_a b}",
+      "assigned_word": "logarithm"
+    },
+    {
+      "name": "definition of slope",
+      "expression": "\"m\" = (\"y\"2 - \"y\"1) / (\"x\"2 - \"x\"1)",
+      "latex": "m = \\frac{y_2 - y_1}{x_2 - x_1}",
+      "assigned_word": "slope"
+    },
+    {
+      "name": "definition of slope intercept form",
+      "expression": "\"y\" = \"m\" * \"x\" + \"b\"",
+      "latex": "y = mx + b",
+      "assigned_word": "slope intercept form"
+    },
+    {
+      "name": "definition of point slope form",
+      "expression": "\"y\" - \"y\"1 = \"m\" * (\"x\" - \"x\"1)",
+      "latex": "y - y_1 = m(x - x_1)",
+      "assigned_word": "point slope form"
+    },
+    {
+      "name": "standard form of a line",
+      "expression": "\"A\"*\"x\" + \"B\"*\"y\" = \"C\"",
+      "latex": "Ax + By = C",
+      "assigned_word": "line"
+    },
+    {
+      "name": "distance between points",
+      "expression": "\"d\" = sqrt((\"x\"2 - \"x\"1)^2 + (\"y\"2 - \"y\"1)^2)",
+      "latex": "d = \\sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}",
+      "assigned_word": "distance formula"
+    },
+    {
+      "name": "square perimeter",
+      "expression": "\"perimeter\" = 4 * \"side\"",
+      "latex": "P = 4s",
+      "assigned_word": "square"
+    },
+    {
+      "name": "square area",
+      "expression": "\"area\" = \"side\"^2",
+      "latex": "A = s^2",
+      "assigned_word": "square"
+    },
+    {
+      "name": "rectangle perimeter",
+      "expression": "\"perimeter\" = 2 * (\"length\" + \"width\")",
+      "latex": "P = 2(l+w)",
+      "assigned_word": "rectangle"
+    },
+    {
+      "name": "rectangle area",
+      "expression": "\"area\" = \"length\" * \"width\"",
+      "latex": "A = lw",
+      "assigned_word": "rectangle"
+    },
+    {
+      "name": "triangle area",
+      "expression": "\"area\" = (1/2) * \"base\" * \"height\"",
+      "latex": "A = \\tfrac{1}{2} b h",
+      "assigned_word": "triangle"
+    },
+    {
+      "name": "definition of Heron's formula",
+      "expression": "\"area\" = sqrt(\"s\" * (\"s\" - \"a\") * (\"s\" - \"b\") * (\"s\" - \"c\"))",
+      "latex": "A = \\sqrt{s(s-a)(s-b)(s-c)}",
+      "assigned_word": "Heron's formula"
+    },
+    {
+      "name": "parallelogram area",
+      "expression": "\"area\" = \"base\" * \"height\"",
+      "latex": "A = bh",
+      "assigned_word": "parallelogram"
+    },
+    {
+      "name": "trapezoid area",
+      "expression": "\"area\" = (1/2) * (\"b\"1 + \"b\"2) * \"height\"",
+      "latex": "A = \\tfrac{1}{2}(b_1+b_2)h",
+      "assigned_word": "trapezoid"
+    },
+    {
+      "name": "circle circumference",
+      "expression": "\"circumference\" = 2 * \"Pi\" * \"radius\"",
+      "latex": "C = 2\\pi r",
+      "assigned_word": "circle"
+    },
+    {
+      "name": "circle area",
+      "expression": "\"area\" = \"Pi\" * \"radius\"^2",
+      "latex": "A = \\pi r^2",
+      "assigned_word": "circle"
+    },
+    {
+      "name": "definition of arc length",
+      "expression": "\"arc length\" = \"radius\" * \"theta\"",
+      "latex": "s = r \\theta",
+      "assigned_word": "arc length"
+    },
+    {
+      "name": "definition of sector area",
+      "expression": "\"sector area\" = (1/2) * \"radius\"^2 * \"theta\"",
+      "latex": "A = \\tfrac{1}{2} r^2 \\theta",
+      "assigned_word": "sector area"
+    },
+    {
+      "name": "ellipse area",
+      "expression": "\"area\" = \"Pi\" * \"a\" * \"b\"",
+      "latex": "A = \\pi a b",
+      "assigned_word": "ellipse"
+    },
+    {
+      "name": "regular polygon area",
+      "expression": "\"area\" = (1/2) * \"perimeter\" * \"apothem\"",
+      "latex": "A = \\tfrac{1}{2} P a",
+      "assigned_word": "regular polygon"
+    },
+    {
+      "name": "definition of Pythagorean theorem",
+      "expression": "\"a\"^2 + \"b\"^2 = \"c\"^2",
+      "latex": "a^2 + b^2 = c^2",
+      "assigned_word": "Pythagorean theorem"
+    },
+    {
+      "name": "cube volume",
+      "expression": "\"volume\" = \"side\"^3",
+      "latex": "V = s^3",
+      "assigned_word": "cube"
+    },
+    {
+      "name": "rectangular prism volume",
+      "expression": "\"volume\" = \"length\" * \"width\" * \"height\"",
+      "latex": "V = lwh",
+      "assigned_word": "prism"
+    },
+    {
+      "name": "cylinder volume",
+      "expression": "\"volume\" = \"Pi\" * \"radius\"^2 * \"height\"",
+      "latex": "V = \\pi r^2 h",
+      "assigned_word": "cylinder"
+    },
+    {
+      "name": "cylinder surface area",
+      "expression": "\"surface area\" = 2 * \"Pi\" * \"radius\"^2 + 2 * \"Pi\" * \"radius\" * \"height\"",
+      "latex": "S = 2\\pi r^2 + 2\\pi r h",
+      "assigned_word": "cylinder"
+    },
+    {
+      "name": "sphere volume",
+      "expression": "\"volume\" = (4/3) * \"Pi\" * \"radius\"^3",
+      "latex": "V = \\tfrac{4}{3} \\pi r^3",
+      "assigned_word": "sphere"
+    },
+    {
+      "name": "sphere surface area",
+      "expression": "\"surface area\" = 4 * \"Pi\" * \"radius\"^2",
+      "latex": "S = 4 \\pi r^2",
+      "assigned_word": "sphere"
+    },
+    {
+      "name": "cone volume",
+      "expression": "\"volume\" = (1/3) * \"Pi\" * \"radius\"^2 * \"height\"",
+      "latex": "V = \\tfrac{1}{3} \\pi r^2 h",
+      "assigned_word": "cone"
+    },
+    {
+      "name": "cone surface area",
+      "expression": "\"surface area\" = \"Pi\" * \"radius\"^2 + \"Pi\" * \"radius\" * \"slant height\"",
+      "latex": "S = \\pi r^2 + \\pi r \\ell",
+      "assigned_word": "cone"
+    },
+    {
+      "name": "pyramid volume",
+      "expression": "\"volume\" = (1/3) * \"area\" * \"height\"",
+      "latex": "V = \\tfrac{1}{3} A h",
+      "assigned_word": "pyramid"
+    },
+    {
+      "name": "prism volume",
+      "expression": "\"volume\" = \"area\" * \"height\"",
+      "latex": "V = A h",
+      "assigned_word": "prism"
+    },
+    {
+      "name": "sine ratio",
+      "expression": "\"sine\"(\"theta\") = \"opposite\" / \"hypotenuse\"",
+      "latex": "\\sin\\theta = \\text{opp}/\\text{hyp}",
+      "assigned_word": "sine"
+    },
+    {
+      "name": "cosine ratio",
+      "expression": "\"cosine\"(\"theta\") = \"adjacent\" / \"hypotenuse\"",
+      "latex": "\\cos\\theta = \\text{adj}/\\text{hyp}",
+      "assigned_word": "cosine"
+    },
+    {
+      "name": "tangent ratio",
+      "expression": "\"tangent\"(\"theta\") = \"sine\"(\"theta\") / \"cosine\"(\"theta\")",
+      "latex": "\\tan\\theta = \\sin\\theta / \\cos\\theta",
+      "assigned_word": "tangent"
+    },
+    {
+      "name": "definition of Pythagorean identity",
+      "expression": "\"sine\"(\"theta\")^2 + \"cosine\"(\"theta\")^2 = 1",
+      "latex": "\\sin^2\\theta + \\cos^2\\theta = 1",
+      "assigned_word": "Pythagorean identity"
+    },
+    {
+      "name": "identity tan sec",
+      "expression": "1 + \"tangent\"(\"theta\")^2 = \"secant\"(\"theta\")^2",
+      "latex": "1 + \\tan^2\\theta = \\sec^2\\theta",
+      "assigned_word": "Pythagorean identity"
+    },
+    {
+      "name": "identity cot csc",
+      "expression": "1 + \"cotangent\"(\"theta\")^2 = \"cosecant\"(\"theta\")^2",
+      "latex": "1 + \\cot^2\\theta = \\csc^2\\theta",
+      "assigned_word": "Pythagorean identity"
+    },
+    {
+      "name": "sine double angle",
+      "expression": "\"sine\"(2*\"theta\") = 2 * \"sine\"(\"theta\") * \"cosine\"(\"theta\")",
+      "latex": "\\sin(2\\theta) = 2\\sin\\theta\\cos\\theta",
+      "assigned_word": "double angle"
+    },
+    {
+      "name": "cosine double angle",
+      "expression": "\"cosine\"(2*\"theta\") = \"cosine\"(\"theta\")^2 - \"sine\"(\"theta\")^2",
+      "latex": "\\cos(2\\theta) = \\cos^2\\theta - \\sin^2\\theta",
+      "assigned_word": "double angle"
+    },
+    {
+      "name": "sine of sum",
+      "expression": "\"sine\"(\"a\" + \"b\") = \"sine\"(\"a\") * \"cosine\"(\"b\") + \"cosine\"(\"a\") * \"sine\"(\"b\")",
+      "latex": "\\sin(a+b) = \\sin a \\cos b + \\cos a \\sin b",
+      "assigned_word": "sum angle"
+    },
+    {
+      "name": "cosine of sum",
+      "expression": "\"cosine\"(\"a\" + \"b\") = \"cosine\"(\"a\") * \"cosine\"(\"b\") - \"sine\"(\"a\") * \"sine\"(\"b\")",
+      "latex": "\\cos(a+b) = \\cos a \\cos b - \\sin a \\sin b",
+      "assigned_word": "sum angle"
+    },
+    {
+      "name": "tangent of sum",
+      "expression": "\"tangent\"(\"a\" + \"b\") = (\"tangent\"(\"a\") + \"tangent\"(\"b\")) / (1 - \"tangent\"(\"a\") * \"tangent\"(\"b\"))",
+      "latex": "\\tan(a+b) = \\frac{\\tan a + \\tan b}{1 - \\tan a \\tan b}",
+      "assigned_word": "sum angle"
+    },
+    {
+      "name": "definition of law of sines",
+      "expression": "\"a\" / \"sine\"(\"A\") = \"b\" / \"sine\"(\"B\") = \"c\" / \"sine\"(\"C\")",
+      "latex": "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C}",
+      "assigned_word": "law of sines"
+    },
+    {
+      "name": "definition of law of cosines",
+      "expression": "\"c\"^2 = \"a\"^2 + \"b\"^2 - 2 * \"a\" * \"b\" * \"cosine\"(\"C\")",
+      "latex": "c^2 = a^2 + b^2 - 2ab \\cos C",
+      "assigned_word": "law of cosines"
+    },
+    {
+      "name": "degrees to radians",
+      "expression": "\"radian\" = \"degree\" * \"Pi\" / 180",
+      "latex": "\\text{rad} = \\text{deg} \\cdot \\pi/180",
+      "assigned_word": "radian"
+    },
+    {
+      "name": "definition of Euler's formula",
+      "expression": "\"e\"^(\"i\" * \"theta\") = \"cosine\"(\"theta\") + \"i\" * \"sine\"(\"theta\")",
+      "latex": "e^{i\\theta} = \\cos\\theta + i\\sin\\theta",
+      "assigned_word": "Euler's formula"
+    },
+    {
+      "name": "arithmetic nth term",
+      "expression": "\"a\"_\"n\" = \"a\"_1 + (\"n\" - 1) * \"d\"",
+      "latex": "a_n = a_1 + (n-1)d",
+      "assigned_word": "arithmetic sequence"
+    },
+    {
+      "name": "definition of arithmetic sum",
+      "expression": "\"S\"_\"n\" = (\"n\"/2) * (\"a\"_1 + \"a\"_\"n\")",
+      "latex": "S_n = \\tfrac{n}{2}(a_1 + a_n)",
+      "assigned_word": "arithmetic sum"
+    },
+    {
+      "name": "geometric nth term",
+      "expression": "\"a\"_\"n\" = \"a\"_1 * \"r\"^(\"n\" - 1)",
+      "latex": "a_n = a_1 r^{n-1}",
+      "assigned_word": "geometric sequence"
+    },
+    {
+      "name": "definition of geometric sum",
+      "expression": "\"S\"_\"n\" = \"a\"_1 * (1 - \"r\"^\"n\") / (1 - \"r\")",
+      "latex": "S_n = a_1 \\frac{1-r^n}{1-r}",
+      "assigned_word": "geometric sum"
+    },
+    {
+      "name": "infinite geometric sum",
+      "expression": "\"S\" = \"a\"_1 / (1 - \"r\")",
+      "latex": "S = \\frac{a_1}{1-r}",
+      "assigned_word": "geometric sum"
+    },
+    {
+      "name": "sum of first n integers",
+      "expression": "sum(\"k\", \"k\"=1..\"n\") = \"n\" * (\"n\" + 1) / 2",
+      "latex": "\\sum_{k=1}^{n} k = \\frac{n(n+1)}{2}",
+      "assigned_word": "arithmetic sum"
+    },
+    {
+      "name": "definition of derivative",
+      "expression": "\"f\"'(\"x\") = lim((\"f\"(\"x\" + \"h\") - \"f\"(\"x\")) / \"h\", \"h\"->0)",
+      "latex": "f'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}",
+      "assigned_word": "derivative"
+    },
+    {
+      "name": "power rule derivative",
+      "expression": "d/d\"x\" (\"x\"^\"n\") = \"n\" * \"x\"^(\"n\" - 1)",
+      "latex": "\\frac{d}{dx} x^n = n x^{n-1}",
+      "assigned_word": "power rule"
+    },
+    {
+      "name": "constant rule derivative",
+      "expression": "d/d\"x\" (\"c\") = 0",
+      "latex": "\\frac{d}{dx} c = 0",
+      "assigned_word": "derivative"
+    },
+    {
+      "name": "sum rule derivative",
+      "expression": "(\"f\" + \"g\")' = \"f\"' + \"g\"'",
+      "latex": "(f+g)' = f' + g'",
+      "assigned_word": "derivative"
+    },
+    {
+      "name": "product rule derivative",
+      "expression": "(\"f\" * \"g\")' = \"f\"' * \"g\" + \"f\" * \"g\"'",
+      "latex": "(fg)' = f'g + fg'",
+      "assigned_word": "product rule"
+    },
+    {
+      "name": "quotient rule derivative",
+      "expression": "(\"f\" / \"g\")' = (\"f\"' * \"g\" - \"f\" * \"g\"') / \"g\"^2",
+      "latex": "(f/g)' = \\frac{f'g - fg'}{g^2}",
+      "assigned_word": "quotient rule"
+    },
+    {
+      "name": "definition of chain rule",
+      "expression": "d/d\"x\" (\"f\"(\"g\"(\"x\"))) = \"f\"'(\"g\"(\"x\")) * \"g\"'(\"x\")",
+      "latex": "\\frac{d}{dx} f(g(x)) = f'(g(x)) \\cdot g'(x)",
+      "assigned_word": "chain rule"
+    },
+    {
+      "name": "derivative of e^x",
+      "expression": "d/d\"x\" (\"e\"^\"x\") = \"e\"^\"x\"",
+      "latex": "\\frac{d}{dx} e^x = e^x",
+      "assigned_word": "derivative"
+    },
+    {
+      "name": "derivative of ln",
+      "expression": "d/d\"x\" (ln(\"x\")) = 1 / \"x\"",
+      "latex": "\\frac{d}{dx} \\ln x = 1/x",
+      "assigned_word": "derivative"
+    },
+    {
+      "name": "derivative of sin",
+      "expression": "d/d\"x\" (\"sine\"(\"x\")) = \"cosine\"(\"x\")",
+      "latex": "\\frac{d}{dx} \\sin x = \\cos x",
+      "assigned_word": "derivative"
+    },
+    {
+      "name": "derivative of cos",
+      "expression": "d/d\"x\" (\"cosine\"(\"x\")) = -\"sine\"(\"x\")",
+      "latex": "\\frac{d}{dx} \\cos x = -\\sin x",
+      "assigned_word": "derivative"
+    },
+    {
+      "name": "derivative of tan",
+      "expression": "d/d\"x\" (\"tangent\"(\"x\")) = \"secant\"(\"x\")^2",
+      "latex": "\\frac{d}{dx} \\tan x = \\sec^2 x",
+      "assigned_word": "derivative"
+    },
+    {
+      "name": "power rule integral",
+      "expression": "integral(\"x\"^\"n\", \"x\") = \"x\"^(\"n\" + 1) / (\"n\" + 1) + \"C\"",
+      "latex": "\\int x^n\\, dx = \\frac{x^{n+1}}{n+1} + C",
+      "assigned_word": "integral"
+    },
+    {
+      "name": "reciprocal integral",
+      "expression": "integral(1/\"x\", \"x\") = ln(|\"x\"|) + \"C\"",
+      "latex": "\\int \\frac{1}{x}\\, dx = \\ln|x| + C",
+      "assigned_word": "integral"
+    },
+    {
+      "name": "exponential integral",
+      "expression": "integral(\"e\"^\"x\", \"x\") = \"e\"^\"x\" + \"C\"",
+      "latex": "\\int e^x\\, dx = e^x + C",
+      "assigned_word": "integral"
+    },
+    {
+      "name": "sine integral",
+      "expression": "integral(\"sine\"(\"x\"), \"x\") = -\"cosine\"(\"x\") + \"C\"",
+      "latex": "\\int \\sin x\\, dx = -\\cos x + C",
+      "assigned_word": "integral"
+    },
+    {
+      "name": "cosine integral",
+      "expression": "integral(\"cosine\"(\"x\"), \"x\") = \"sine\"(\"x\") + \"C\"",
+      "latex": "\\int \\cos x\\, dx = \\sin x + C",
+      "assigned_word": "integral"
+    },
+    {
+      "name": "definition of fundamental theorem of calculus",
+      "expression": "integral(\"f\"'(\"x\"), \"x\"=\"a\"..\"b\") = \"f\"(\"b\") - \"f\"(\"a\")",
+      "latex": "\\int_a^b f'(x)\\, dx = f(b) - f(a)",
+      "assigned_word": "fundamental theorem of calculus"
+    },
+    {
+      "name": "definition of integration by parts",
+      "expression": "integral(\"u\" * d\"v\") = \"u\" * \"v\" - integral(\"v\" * d\"u\")",
+      "latex": "\\int u\\, dv = uv - \\int v\\, du",
+      "assigned_word": "integration by parts"
+    },
+    {
+      "name": "area between curves",
+      "expression": "\"area\" = integral(\"f\"(\"x\") - \"g\"(\"x\"), \"x\"=\"a\"..\"b\")",
+      "latex": "A = \\int_a^b [f(x) - g(x)]\\, dx",
+      "assigned_word": "integral"
+    },
+    {
+      "name": "definition of mean",
+      "expression": "\"mean\" = (1/\"n\") * sum(\"x\"_\"i\", \"i\"=1..\"n\")",
+      "latex": "\\bar{x} = \\frac{1}{n}\\sum x_i",
+      "assigned_word": "mean"
+    },
+    {
+      "name": "definition of variance",
+      "expression": "\"sigma\"^2 = (1/\"n\") * sum((\"x\"_\"i\" - \"mean\")^2, \"i\"=1..\"n\")",
+      "latex": "\\sigma^2 = \\frac{1}{n}\\sum (x_i - \\bar{x})^2",
+      "assigned_word": "variance"
+    },
+    {
+      "name": "definition of standard deviation",
+      "expression": "\"sigma\" = sqrt(\"sigma\"^2)",
+      "latex": "\\sigma = \\sqrt{\\sigma^2}",
+      "assigned_word": "standard deviation"
+    },
+    {
+      "name": "definition of z score",
+      "expression": "\"z\" = (\"x\" - \"mu\") / \"sigma\"",
+      "latex": "z = \\frac{x - \\mu}{\\sigma}",
+      "assigned_word": "z score"
+    },
+    {
+      "name": "definition of probability",
+      "expression": "\"P\"(\"A\") = \"favorable\" / \"total\"",
+      "latex": "P(A) = \\frac{\\text{favorable}}{\\text{total}}",
+      "assigned_word": "probability"
+    },
+    {
+      "name": "definition of complement",
+      "expression": "\"P\"(\"A\"^c) = 1 - \"P\"(\"A\")",
+      "latex": "P(A^c) = 1 - P(A)",
+      "assigned_word": "complement event"
+    },
+    {
+      "name": "definition of union",
+      "expression": "\"P\"(\"A\" or \"B\") = \"P\"(\"A\") + \"P\"(\"B\") - \"P\"(\"A\" and \"B\")",
+      "latex": "P(A \\cup B) = P(A) + P(B) - P(A \\cap B)",
+      "assigned_word": "union of events"
+    },
+    {
+      "name": "definition of conditional probability",
+      "expression": "\"P\"(\"A\"|\"B\") = \"P\"(\"A\" and \"B\") / \"P\"(\"B\")",
+      "latex": "P(A|B) = \\frac{P(A \\cap B)}{P(B)}",
+      "assigned_word": "conditional probability"
+    },
+    {
+      "name": "permutations",
+      "expression": "\"P\"(\"n\",\"r\") = \"n\"! / (\"n\" - \"r\")!",
+      "latex": "P(n,r) = \\frac{n!}{(n-r)!}",
+      "assigned_word": "permutation"
+    },
+    {
+      "name": "combinations",
+      "expression": "\"C\"(\"n\",\"r\") = \"n\"! / (\"r\"! * (\"n\" - \"r\")!)",
+      "latex": "C(n,r) = \\binom{n}{r} = \\frac{n!}{r!(n-r)!}",
+      "assigned_word": "combination"
+    },
+    {
+      "name": "definition of percent change",
+      "expression": "\"percent change\" = (\"new\" - \"old\") / \"old\" * 100",
+      "latex": "\\frac{\\text{new} - \\text{old}}{\\text{old}} \\times 100\\%",
+      "assigned_word": "percent change"
+    },
+    {
+      "name": "definition of simple interest",
+      "expression": "\"I\" = \"principal\" * \"rate\" * \"time\"",
+      "latex": "I = Prt",
+      "assigned_word": "simple interest"
+    },
+    {
+      "name": "definition of compound interest",
+      "expression": "\"A\" = \"principal\" * (1 + \"rate\" / \"n\")^(\"n\" * \"time\")",
+      "latex": "A = P(1 + r/n)^{nt}",
+      "assigned_word": "compound interest"
+    },
+    {
+      "name": "definition of continuous compounding",
+      "expression": "\"A\" = \"principal\" * \"e\"^(\"rate\" * \"time\")",
+      "latex": "A = P e^{rt}",
+      "assigned_word": "continuous compounding"
+    }
+  ]
+}

@@ -49,15 +49,21 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once paths::SHARED_CONST . 'views.php';
 //include_once paths::SHARED . 'json_fields.php';
 //include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::PHRASE . 'phrase.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::WORD . 'word.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -143,6 +149,11 @@ class type_object
         return $this->comment;
     }
 
+    function get_description(): ?string
+    {
+        return $this->comment;
+    }
+
     /**
      * display a word with a link to the main page for the word
      * @param string|null $back the back trace url for the undo functionality
@@ -160,6 +171,33 @@ class type_object
     /*
      * api
      */
+
+    /**
+     * set the vars of this type frontend object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    {
+        if (array_key_exists(url_var::ID, $url_array)) {
+            $this->set_id($url_array[url_var::ID]);
+        }
+        if (array_key_exists(url_var::NAME, $url_array)) {
+            $this->set_name($url_array[url_var::NAME]);
+        } else {
+            $this->set_name('');
+            log_warning('Mandatory field name missing in form url array ' . json_encode($url_array));
+        }
+        if (array_key_exists(url_var::CODE_ID, $url_array)) {
+            $this->set_code_id($url_array[url_var::CODE_ID]);
+        }
+        if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
+            $this->set_comment($url_array[url_var::DESCRIPTION]);
+        }
+        return $usr_msg;
+    }
 
     /**
      * set the vars of this source frontend object bases on the api json array
@@ -227,6 +265,19 @@ class type_object
             $phr_lst->add(new word()->math()->phrase());
         }
         return $phr_lst;
+    }
+
+
+    /*
+     * cast
+     */
+
+    function phrase(): phrase
+    {
+        $phr = new phrase();
+        $phr->set_name('unassigned phrase for type ' . $this->name);
+        // TODO Prio 2 link a phrase to each type object to be able to use also graph values and function for types
+        return $phr;
     }
 
     /*

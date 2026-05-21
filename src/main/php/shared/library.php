@@ -34,6 +34,9 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared;
 
+use DateTimeInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
@@ -162,6 +165,11 @@ class library
     // to separate two string for the human-readable format
     const string SEPARATOR = ',';
 
+    // display array truncation thresholds
+    const int DSP_ALL_DEBUG = 10;  // debug level above which all entries are shown
+    const int DSP_MAX = 7;         // max entries before truncation kicks in
+    const int DSP_HEAD = 3;        // entries shown at the head of a truncated array
+
     /*
      * internal const
      */
@@ -219,6 +227,17 @@ class library
             log_err($msg);
         }
         return $result;
+    }
+
+    /**
+     * Converts a DateTime object into a URL-safe string parameter.
+     *
+     * @param DateTimeInterface $dateTime The date time object to convert.
+     * @return string The URL-encoded date string.
+     */
+    function time_to_url(DateTimeInterface $dateTime): string
+    {
+        return urlencode($dateTime->format(DateTimeInterface::ATOM));
     }
 
     /**
@@ -379,6 +398,70 @@ class library
 
         // restore the spaces that are needed
         return preg_replace('/<as /', ' <a ', $result);
+    }
+
+    /**
+     * @param string $html_string raw or compact HTML
+     * @return string HTML with each tag on its own line and child content indented by four spaces;
+     *                opening and closing tags of the same element share the same indentation level
+     */
+    function format_html(string $html_string): string
+    {
+        $indent = 0;
+        $tab = '    ';
+        $result = '';
+        $void_tags = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+            'link', 'meta', 'param', 'source', 'track', 'wbr'];
+
+        $tokens = preg_split('/(<[^>]+>)/', trim($html_string), -1,
+            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+        foreach ($tokens as $token) {
+            $token = trim($token);
+            if ($token === '') {
+                continue;
+            }
+            if (preg_match('/^<\/([a-zA-Z][a-zA-Z0-9]*)/', $token)) {
+                // closing tag: dedent first so it aligns with its opening tag
+                $indent = max(0, $indent - 1);
+                $result .= str_repeat($tab, $indent) . $token . "\n";
+            } elseif (preg_match('/^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)>$/', $token, $m)) {
+                $tag = strtolower($m[1]);
+                $attrs = $m[2];
+                $result .= str_repeat($tab, $indent) . $token . "\n";
+                if (!in_array($tag, $void_tags) && !str_ends_with(trim($attrs), '/')) {
+                    $indent++;
+                }
+            } else {
+                // text content or doctype/comment
+                $result .= str_repeat($tab, $indent) . $token . "\n";
+            }
+        }
+
+        return rtrim($result);
+    }
+
+    /**
+     * replace volatile attribute values in HTML with fixed placeholders so snapshot tests stay stable
+     * volatile values are attributes whose value changes on every request e.g. CSRF session tokens
+     *
+     * @param string $html the raw HTML that may contain volatile values
+     * @param string $fixed_token replacement value for input fields with name="token"
+     * @return string HTML with every token value replaced by $fixed_token
+     */
+    function fix_volatile_in_html(string $html, string $fixed_token): string
+    {
+        return preg_replace_callback(
+            '/<input\b[^>]*>/i',
+            function (array $m) use ($fixed_token): string {
+                $tag = $m[0];
+                if (preg_match('/\bname="token"/i', $tag)) {
+                    $tag = preg_replace('/(\bvalue=")[^"]*(")/i', '${1}' . $fixed_token . '${2}', $tag);
+                }
+                return $tag;
+            },
+            $html
+        );
     }
 
     function escape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
@@ -555,6 +638,7 @@ class library
     {
         $text = str_replace('.', '', $text);
         $text = str_replace('/', '', $text);
+        $text = str_replace(',', '_', $text);
         return substr($text, 0, 32);
     }
 
@@ -576,7 +660,8 @@ class library
             if ($mtr != null) {
                 $msg_txt = $mtr->txt($msg_var[0]);
             } else {
-                $msg_txt = $msg_var[0];
+                // use ->value for backed enums (e.g. messages::PASSWORD_WRONG) because PHP 8.1+ does not implicitly cast them to string
+                $msg_txt = $msg_var[0] instanceof \BackedEnum ? $msg_var[0]->value : (string)$msg_var[0];
             }
             foreach ($msg_var[1] as $key => $var) {
                 $msg_txt = $this->msg_var_replace($msg_txt, $key, $var);
@@ -1336,6 +1421,23 @@ class library
         return $result;
     }
 
+    /**
+     * return all file paths found recursively under a directory
+     * @param string $dir root directory to scan
+     * @return array flat list of absolute file paths
+     */
+    function dir_files(string $dir): array
+    {
+        $result = [];
+        $iter = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+        foreach ($iter as $file) {
+            if ($file->isFile()) {
+                $result[] = $file->getPathname();
+            }
+        }
+        return $result;
+    }
+
     function php_code_use(array $lines): array
     {
         $result = [];
@@ -1390,6 +1492,33 @@ class library
             $csv[] = $line . "\n";
         }
         return $csv;
+    }
+
+    /**
+     * clear all values of a named column in a CSV array (header + data lines)
+     * e.g. to strip password hashes before comparing user CSVs in tests
+     *
+     * @param array $csv array of newline-terminated strings, first element is the header
+     * @param string $col column name as it appears in the header
+     * @return array the CSV with the named column blanked in every data row
+     */
+    function csv_clear_col(array $csv, string $col): array
+    {
+        if (count($csv) < 2) {
+            return $csv;
+        }
+        $header_cols = explode(',', rtrim($csv[0], "\n"));
+        $idx = array_search($col, $header_cols);
+        if ($idx === false) {
+            return $csv;
+        }
+        $result = [$csv[0]];
+        for ($i = 1; $i < count($csv); $i++) {
+            $fields = explode(',', rtrim($csv[$i], "\n"));
+            $fields[$idx] = '';
+            $result[] = implode(',', $fields) . "\n";
+        }
+        return $result;
     }
 
     function is_volatile_db_field(string $class, string $fld): bool
@@ -1884,30 +2013,44 @@ class library
      * @param array|null $in_array the array that should be formatted
      * @return string the value comma separated or "null" if the array is empty
      */
-    function dsp_array(?array $in_array, bool $with_keys = false): string
+    /**
+     * format an array as a human-readable comma-separated string for logging and debug output
+     *
+     * @param array|null $in_array the array to display; null is shown as the literal 'null'
+     * @param bool $with_keys when true each entry is formatted as key=value; defaults to false (values only)
+     * @return string comma-separated entries, truncated to DSP_HEAD + last when count >= DSP_MAX (or $debug) unless debug > DSP_ALL_DEBUG
+     */
+    static function dsp_array(?array $in_array, bool $with_keys = false): string
     {
-        global $debug;
-
-        $lib = new library();
-        $result = 'null';
-        if ($in_array != null) {
-            if ($debug > 10 or count($in_array) < 7) {
-                if (count($in_array) > 0) {
-                    $result = implode(',', $lib->array_flat($in_array));
-                }
-                if ($with_keys) {
-                    $result .= ' (keys ' . $this->dsp_array_keys($in_array) . ')';
-                }
-            } else {
-                $left = array_slice($in_array, 0, 3);
-                $result = implode(',', $lib->array_flat($left));
-                $result .= ',...,' . end($in_array);
-            }
+        // distinguish an absent array from an empty one
+        if ($in_array === null) {
+            return 'null';
         }
-        return $result;
+
+        // build a flat list of formatted entries, recursing into nested arrays
+        $pairs = [];
+        foreach ($in_array as $key => $val) {
+            $fmt = is_array($val) ? '[' . self::dsp_array($val, $with_keys) . ']' : (string)$val;
+            $pairs[] = $with_keys ? $key . '=' . $fmt : $fmt;
+        }
+
+        if (count($pairs) === 0) {
+            return '';
+        }
+
+        // show everything when debug is high or the array is small
+        global $debug;
+        $dsp_max = max($debug, self::DSP_MAX);
+        if ($debug > self::DSP_ALL_DEBUG or count($pairs) < $dsp_max) {
+            return implode(self::SEPARATOR, $pairs);
+        }
+
+        // truncate: first DSP_HEAD entries, ellipsis, then the last entry
+        $head = implode(self::SEPARATOR, array_slice($pairs, 0, self::DSP_HEAD));
+        return $head . ',...,' . end($pairs);
     }
 
-    function dsp_array_keys(?array $in_array): string
+    static function dsp_array_keys(?array $in_array): string
     {
         global $debug;
 

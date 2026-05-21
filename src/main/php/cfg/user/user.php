@@ -169,6 +169,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTimeInterface;
 use DateTime;
 use Exception;
+use Random\RandomException;
 
 class user extends db_id_object_non_sandbox
 {
@@ -191,6 +192,14 @@ class user extends db_id_object_non_sandbox
     const string KEY_NAME = user_db::FLD_NAME;
     const string KEY_EMAIL = user_db::FLD_EMAIL;
 
+    // field length limits matching the db column type sql_field_type::NAME (VARCHAR 255)
+    const int NAME_MAX_LEN = 255;
+    const int EMAIL_MAX_LEN = 255;
+
+    // password policy limits; bcrypt silently truncates at 72 bytes
+    const int PW_MIN_LEN = 8;
+    const int PW_MAX_LEN = 72;
+
 
     /*
      * object vars
@@ -204,7 +213,7 @@ class user extends db_id_object_non_sandbox
 
     // log in and sighup
     // TODO Prio 0 check that all user vars are save and are included in the api message
-    public ?string $password = null;       // only used for the login and password change process
+    private ?string $password = null;      // only used for the login and password change process
     public ?string $activation_key = null; // var used for the registration and logon process
     public ?DateTime $activation_timeout = null;
     public ?DateTime $db_now = null;       // timestamp of the database server to have a reference with time zone e.g. for the activation timeout
@@ -522,8 +531,11 @@ class user extends db_id_object_non_sandbox
 
         // the code id should never be changed via api
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            // only system and admin users are allowed to change the code od
-            if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+            // only system and admin users are allowed to change the code id
+            if ($msg->usr === null) {
+                log_err('user not set in user_message', 'import_mapper');
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
             }
         }
@@ -743,6 +755,77 @@ class user extends db_id_object_non_sandbox
         $this->id = $id;
         $this->name = $name;
         $this->email = $email;
+    }
+
+    /**
+     * check the password and if it is fine prepare the hash for db save
+     * @param string $pw_txt the raw password text as written by the user
+     * @param user_message $msg enriched with the error message if there is an issue with the password
+     * @return void
+     */
+    function set_password(string $pw_txt, user_message $msg): void
+    {
+        $len = strlen($pw_txt);
+        if ($len < self::PW_MIN_LEN) {
+            $msg->add(msg_id::PASSWORD_TOO_SHORT, [msg_id::VAR_VALUE => self::PW_MIN_LEN]);
+            return;
+        }
+        if ($len > self::PW_MAX_LEN) {
+            $msg->add(msg_id::PASSWORD_TOO_LONG, [msg_id::VAR_VALUE => self::PW_MAX_LEN]);
+            return;
+        }
+        $this->password = password_hash($pw_txt, PASSWORD_BCRYPT);
+    }
+
+    /**
+     * set the password has directly
+     * should only be called for internal system testing
+     *
+     * @param string $pw_hash the password already hashed
+     * @return void
+     */
+    function set_password_hash(string $pw_hash): void
+    {
+        $this->password = $pw_hash;
+    }
+
+    function get_password(): ?string
+    {
+        return $this->password;
+    }
+
+    /**
+     * verify credentials, set up the session on success
+     *
+     * @param string $usr_name username or email as typed by the user
+     * @param string $pw raw password as typed by the user
+     * @param user_message $msg populated with PASSWORD_WRONG or USER_NAME_NOT_FOUND on failure
+     * @return bool true if login succeeded and session has been initialised
+     */
+    function login(string $usr_name, string $pw, user_message $msg): bool
+    {
+        $this->load_by_name($usr_name);
+        if (!$this->has_db_id()) {
+            $msg->add(msg_id::USER_NAME_NOT_FOUND, [msg_id::VAR_USER_NAME => $usr_name]);
+        }
+        if (!password_verify($pw, $this->get_password())) {
+            $msg->add(msg_id::PASSWORD_WRONG, []);
+        }
+        if ($msg->is_ok()) {
+            session_start();
+            session_regenerate_id(true);
+            if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                try {
+                    $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                } catch (RandomException $e) {
+                    log_err('RandomException ' . $e->getMessage());
+                }
+            }
+            $_SESSION[url_var::SESSION_USER_ID] = $this->id();
+            $_SESSION[url_var::USERNAME_HUMAN] = $this->name();
+            $_SESSION[url_var::SESSION_LOGGED] = true;
+        }
+        return $msg->is_ok();
     }
 
     /**
@@ -1526,15 +1609,20 @@ class user extends db_id_object_non_sandbox
     {
         $can_change = false;
 
-        // if the user who wants to change it, is the owner, he can do it
-        // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        if ($this->id == $usr_msg->usr->id) {
-            $can_change = true;
-        } elseif ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
-            $can_change = true;
-            log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr_msg->usr->dsp_id());
+        if ($usr_msg->usr === null) {
+            log_err('user not set in user_message', 'can_be_changed_by');
+            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
-            log_warning('user ' . $usr_msg->usr->dsp_id() . ' has requested to change by user ' . $this->dsp_id() . ' without permission');
+            // if the user who wants to change it, is the owner, he can do it
+            // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
+            if ($this->id == $usr_msg->usr->id) {
+                $can_change = true;
+            } elseif ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+                $can_change = true;
+                log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr_msg->usr->dsp_id());
+            } else {
+                log_warning('user ' . $usr_msg->usr->dsp_id() . ' has requested to change by user ' . $this->dsp_id() . ' without permission');
+            }
         }
 
         return $can_change;
@@ -3501,6 +3589,54 @@ class user extends db_id_object_non_sandbox
             $fld_name = user_db::FLD_IP_ADDR;
         }
         return $fld_name;
+    }
+
+
+    /*
+     * db helper
+     */
+
+    /**
+     * check if the user can be added to the database
+     * e.g. reject if a reserved name is used or the username is missing
+     *
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
+     */
+    protected function check(user_message $msg): bool
+    {
+        // the username must be set
+        if ($this->name == '' or $this->name == null) {
+            $msg->add_err(msg_id::USERNAME_MISSING, [
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
+        }
+        // the username must fit the db column
+        if (strlen($this->name ?? '') > self::NAME_MAX_LEN) {
+            $msg->add_err(msg_id::USERNAME_TOO_LONG, [
+                msg_id::VAR_VALUE => self::NAME_MAX_LEN
+            ]);
+        }
+        // email is required for regular users (system users may have none)
+        if (!$this->is_system() and ($this->email == '' or $this->email == null)) {
+            $msg->add_err(msg_id::EMAIL_MISSING, [
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
+        }
+        // if an email is given it must have a valid format and fit the db column
+        if ($this->email != '' and $this->email != null) {
+            if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+                $msg->add_err(msg_id::EMAIL_INVALID, [
+                    msg_id::VAR_VALUE => $this->email
+                ]);
+            }
+            if (strlen($this->email) > self::EMAIL_MAX_LEN) {
+                $msg->add_err(msg_id::EMAIL_TOO_LONG, [
+                    msg_id::VAR_VALUE => self::EMAIL_MAX_LEN
+                ]);
+            }
+        }
+        return $msg->is_ok();
     }
 
 

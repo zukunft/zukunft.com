@@ -488,9 +488,13 @@ class system_tests
         $expected = file_get_contents(test_files::SYS_LOG_LIST_HTML);
         $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_HTML . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
+        $filepath = test_files::SYS_LOG_LIST_PAGE;
         $created = $log_lst_dsp->get_html_page($usr1_dsp);
-        $expected = file_get_contents(test_files::SYS_LOG_LIST_PAGE);
-        $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_PAGE . ')', $lib->trim_html($created), $lib->trim_html($expected));
+        $expected = file_get_contents($filepath);
+        $result = $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_PAGE . ')', $lib->trim_html($created), $lib->trim_html($expected));
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $t->update_path_file($filepath, $lib->format_html($created));
+        }
 
     }
 

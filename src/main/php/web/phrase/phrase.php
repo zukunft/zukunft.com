@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\web\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
@@ -55,6 +56,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -77,6 +79,36 @@ class phrase extends combine_named
     /*
      * construct and map
      */
+
+    /**
+     * set the vars of this phrase frontend object based on the url array
+     * dispatches to word::url_mapper or triple::url_mapper depending on the
+     * PHRASE_CLASS url field; falls back to a currently set obj if no class is provided
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    {
+        // PHRASE_CLASS encodes word vs triple; mirrors the OBJECT_CLASS dispatch in api_mapper
+        $class = $url_array[url_var::PHRASE_CLASS] ?? null;
+        if ($class === json_fields::CLASS_WORD) {
+            $this->set_obj(new word());
+        } elseif ($class === json_fields::CLASS_TRIPLE) {
+            $this->set_obj(new triple());
+        }
+        $obj = $this->obj();
+        if ($obj instanceof triple) {
+            $obj->url_mapper($url_array, $usr_msg, $dto);
+            $this->set_id($obj->id());
+        } elseif ($obj instanceof word) {
+            $obj->url_mapper($url_array, $usr_msg, $dto);
+        } else {
+            $usr_msg->add_error_text('Phrase class missing in url ' . json_encode($url_array));
+        }
+        return $usr_msg;
+    }
 
     /**
      * set the vars of this phrase frontend object bases on the api json array

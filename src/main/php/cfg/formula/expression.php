@@ -86,10 +86,10 @@
 
     Sample 2
     zu_calc("country_weight("Nestlé")")
-    -> formula = '="Country" "differentiator"/"differentiator total"' // convert predefined formula "differentiator total"
+    -> formula = '="country" "differentiator"/"differentiator total"' // convert predefined formula "differentiator total"
     -> "differentiator total" = '=sum("differentiator")' // convert predefined formula "differentiator total"
-    -> call 'get words("Nestlé" "Country" "differentiator")', which returns a list of words ergo the result will be a list
-    -> call 'get values("Nestlé" "Country" "differentiator")', which returns a list of values
+    -> call 'get words("Nestlé" "country" "differentiator")', which returns a list of words ergo the result will be a list
+    -> call 'get values("Nestlé" "country" "differentiator")', which returns a list of values
     -> call function sum to get the sum of the differentiators
     -> calc the percent result for each value
 
@@ -1072,7 +1072,7 @@ class expression extends shared_expression
 
     /**
      * similar to phr_lst, but
-     * e.g. for "sales" "differentiator" "Country" all "Country" words should be included
+     * e.g. for "sales" "differentiator" "country" all "country" words should be included
      * TODO should also include the words implied by the verbs
      */
     function phr_verb_lst(): phrase_list

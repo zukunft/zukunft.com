@@ -133,7 +133,10 @@ Coding team suggestions
 - when all agree on the story-points the story is assigned to one member
 - critical: if there is a delay other team member **offer to help** (no blaming)  
 - at the sprint retro one selects a perspective that the other done not know for spontaneous answers
-- **one tool** (not two or more) per purpose: git, tickets, wiki, message e.g. element.io 
+- **one tool** (not two or more) per purpose: git, tickets, wiki, message e.g. element.io
+
+LLM KI usage
+- for LLM KI systems the [LLM coding guide](docs/llm_coding.md) might be helpfully
 
 Decisions
 - use this program for a mind map with all arguments where each has a weight and value and all changes are logged

@@ -1235,6 +1235,10 @@ class sql_db
             $import->import_config_yaml($usr);
             $import->import_pod_config($usr);
             $import->import_test_config($usr);
+
+            // add the admin users if defined in the env file
+            $this->add_admin_users_from_env($usr_msg, $usr);
+
             $this->db_check_missing_owner();
 
             // TODO Prio 0 review
@@ -5739,6 +5743,55 @@ class sql_db
         }
 
         return $result;
+    }
+
+    /**
+     * add the admin user based on the env files
+     * make sure that this onl is called on initial setup
+     *
+     * @param user_message $msg to collect the user messages
+     * @param user $usr the user who is requesting the adding of the admin users
+     * @return bool true if the setup has been fine
+     */
+    function add_admin_users_from_env(user_message $msg, user $usr): bool
+    {
+        $sys_msg = clone $msg;
+        $sys_msg->usr = $usr;
+
+        if (ADMIN_USER != '' and ADMIN_PW != '' and ADMIN_MAIL != '') {
+            $usr = new user(ADMIN_USER, ADMIN_MAIL);
+            $usr->set_profile(user_profiles::ADMIN, $sys_msg);
+            $usr->set_password(ADMIN_PW, $msg);
+            if ($msg->is_ok()) {
+                $usr->save($sys_msg);
+            };
+        }
+        if (CO_ADMIN_USER != '' and CO_ADMIN_PW != '' and CO_ADMIN_MAIL != '') {
+            $usr = new user(CO_ADMIN_USER, CO_ADMIN_MAIL);
+            $usr->set_password(CO_ADMIN_PW, $msg);
+            $usr->set_profile(user_profiles::ADMIN, $sys_msg);
+            if ($msg->is_ok()) {
+                $usr->save($sys_msg);
+            };
+        }
+        if (USER_NAME != '' and USER_PW != '' and USER_MAIL != '') {
+            $usr = new user(USER_NAME, USER_MAIL);
+            $usr->set_password(USER_PW, $msg);
+            $usr->set_profile(user_profiles::EMAIL, $sys_msg);
+            if ($msg->is_ok()) {
+                $usr->save($sys_msg);
+            };
+        }
+        if (CO_USER_NAME != '' and CO_USER_PW != '' and CO_USER_MAIL != '') {
+            $usr = new user(CO_USER_NAME, CO_USER_MAIL);
+            $usr->set_password(CO_USER_PW, $msg);
+            $usr->set_profile(user_profiles::EMAIL, $sys_msg);
+            if ($msg->is_ok()) {
+                $usr->save($sys_msg);
+            };
+        }
+
+        return $msg->is_ok();
     }
 
     function import_verbs(user $usr): bool

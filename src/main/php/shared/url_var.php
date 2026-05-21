@@ -112,20 +112,34 @@ class url_var
     const string FORMULA_LINK_PRIO = 'fp';
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
+    const string LATEX = 'fx'; // the formula in latex format
     const string FORMULA_TYPE = 'fy';
     const string GROUP = 'g';
     const string GROUP_NAME = 'gn'; // TODO maybe it is possible to use NAME
     const string LOG = 'h'; // h for history of the object
+    const string LOG_STATUS = 'ha'; // the stAtus of a system log entry
     const string LOG_CLASS = 'hc'; // the object / class name used to filter the change log
     const string LOG_LINK = 'hl'; // history of a link object
     const string LOG_FIELD = 'hf'; // the field of the change log entry used to filter the log
+    const string LOG_LEVEL = 'hg'; // the grade / level of the log entry used to filter the system log
+    const string LOG_FUNCTION = 'hp'; // the process / function that has cause the log even
+    const string SYS_TRACE = 'hr'; // the record / trace of a system log entry
     const string SYS_LOG = 'hs'; // history of a system event
+    const string LOG_TIME = 'ht'; // the time of the creation of the log event
     const string FIGURE = 'i';
     const string ID = 'id'; // the internal database id of the main view object
     const string ID_LST = 'il'; // a comma separated list of internal database ids
     const string IP = 'ip'; // for ip ranges (for admin only)
     const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
     const string JOB = 'j'; // for system batch jobs
+    const string JOB_PARAMETER = 'ja'; // pArameter passed to a job e.g. the id of the phrase set
+    const string JOB_START_TIME = 'jb'; // Begin time of the job execution
+    const string JOB_CHANGE_FIELD = 'jc'; // the Changed field id for undo jobs
+    const string JOB_END_TIME = 'je'; // End time of the job execution
+    const string JOB_PRIORITY = 'jp'; // the Priority of the batch job
+    const string JOB_REQUEST_TIME = 'jq'; // the time when the job was reQuested
+    const string JOB_ROW_ID = 'jr'; // the Row id of the related object touched by the job
+    const string JOB_STATUS = 'js'; // the Status of the batch job e.g. new, running, done
     const string JOB_TYPE = 'jt'; // the job type
     const string NAME = 'k'; // the name of a word, verb, triple, ... of a form field (Kennung)
     const string CODE_ID = 'ki'; // the code id
@@ -139,6 +153,7 @@ class url_var
     const string NUMERIC_VALUE = 'n';
     const string DESCRIPTION = 'o'; // the description of a word, verb, triple, ... of a form field
     const string PHRASE = 'p'; // the id or name of one phrase
+    const string PHRASE_CLASS = 'pc'; // word or triple class indicator of the phrase
     const string DIRECTION = 'pd'; // 'up' to get the parents and 'down' for the children
     const string PHRASE_FROM = 'pf';
     const string PHRASE_LIST = 'pl'; // a list of phrase ids
@@ -171,6 +186,7 @@ class url_var
     const string USER_TYPE = 'ut';
     const string USAGE = 'uu'; // the usage value a form field
     const string USER_PASSWORD = 'uw';
+    const string USER_PASSWORD_RETYPE = 'uwr';
     const string VALUE = 'v';
     const string VALUE_TIME_SERIES = 'vs';
     const string WORD = 'w';
@@ -216,7 +232,7 @@ class url_var
 
 
     /*
-     * human readable url
+     * human-readable url
      */
 
     // init
@@ -299,6 +315,7 @@ class url_var
 
     // phrase
     const string PHRASE_HUMAN = 'phrase_id';
+    const string PHRASE_CLASS_HUMAN = 'phrase_class'; // word or triple class indicator of the phrase
     const string PHRASE_TYPE_HUMAN = 'phrase_type';
     const string PHRASE_LIST_HUMAN = 'phrase_ids';
     const string PHRASE_POS_HUMAN = 'phrase_id_pos_'; // used for a list of phrases where the list position is added to the name
@@ -333,6 +350,7 @@ class url_var
     const string FORMULA_TYPE_HUMAN = 'formula_type';
     const string NEED_ALL_HUMAN = 'need_all_val';
     const string USER_EXPRESSION_HUMAN = 'formula_text';
+    const string LATEX_HUMAN = 'latex'; // the formula in latex format
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -378,15 +396,28 @@ class url_var
 
     // log
     const string LOG_HUMAN = 'log_id'; // the id of a change log entry
+    const string LOG_STATUS_HUMAN = 'log_status'; // the stAtus of a system log entry
     const string LOG_CLASS_HUMAN = 'class'; // the short name of the object class name e.g. word instead of cfg/word
-    const string LOG_FIELD_HUMAN = 'field'; // the name of the field to filter the changes which might be more than one database field
+    const string LOG_FIELD_HUMAN = 'log_field'; // the name of the field to filter the changes which might be more than one database field
     const string LOG_LINK_HUMAN = 'log_link_id'; // the id of a log entry of a link change
+    const string LOG_LEVEL_HUMAN = 'log_level'; // the grade / level of the log entry used to filter the system log
+    const string LOG_FUNCTION_HUMAN = 'log_function'; // the process / function that has cause the log even
+    const string SYS_TRACE_HUMAN = 'log_trace'; // the record / trace of a system log entry
+    const string LOG_TIME_HUMAN = 'log_time'; // the time of the creation of the log event
 
     // system
     const string SYS_LOG_HUMAN = 'sys_log_id'; // the id of a system log entry e.g. of internal program errors
     const string IP_HUMAN = 'ip_addr_id'; // the id of an ip range to set rules
     const string JOB_HUMAN = 'job_id'; // the id of a concrete job with start, status and end
     const string JOB_TYPE_HUMAN = 'job_type'; // the id of the job type to link the functionality to the concrete job
+    const string JOB_STATUS_HUMAN = 'job_status'; // the status of the batch job e.g. new, running, done
+    const string JOB_PRIORITY_HUMAN = 'job_priority'; // the priority of the batch job
+    const string JOB_PARAMETER_HUMAN = 'job_parameter'; // parameter passed to a job e.g. the id of the phrase set
+    const string JOB_CHANGE_FIELD_HUMAN = 'job_change_field'; // the changed field id for undo jobs
+    const string JOB_ROW_ID_HUMAN = 'job_row_id'; // the row id of the related object touched by the job
+    const string JOB_REQUEST_TIME_HUMAN = 'job_request_time'; // the time when the job was requested
+    const string JOB_START_TIME_HUMAN = 'job_start_time'; // begin time of the job execution
+    const string JOB_END_TIME_HUMAN = 'job_end_time'; // end time of the job execution
 
     // access
     const string SHARE_HUMAN = 'share';
@@ -452,6 +483,7 @@ class url_var
         [self::USERNAME_HUMAN, self::USERNAME],
         [self::EMAIL_HUMAN, self::EMAIL],
         [self::USER_PASSWORD_HUMAN, self::USER_PASSWORD],
+        [self::USER_PASSWORD_RETYPE_HUMAN, self::USER_PASSWORD_RETYPE],
         [self::USER_FIRST_NAME_HUMAN, self::USER_FIRST_NAME],
         [self::USER_LAST_NAME_HUMAN, self::USER_LAST_NAME],
         [self::USER_PROFILE_HUMAN, self::USER_PROFILE],
@@ -496,6 +528,7 @@ class url_var
 
         // phrase
         [self::PHRASE_HUMAN, self::PHRASE],
+        [self::PHRASE_CLASS_HUMAN, self::PHRASE_CLASS],
         [self::PHRASE_LIST_HUMAN, self::PHRASE_LIST],
         [self::PHRASE_POS_HUMAN, self::PHRASE_POS],
 
@@ -526,6 +559,7 @@ class url_var
         [self::FORMULA_HUMAN, self::FORMULA],
         [self::FORMULA_TYPE_HUMAN, self::FORMULA_TYPE],
         [self::USER_EXPRESSION_HUMAN, self::USER_EXPRESSION],
+        [self::LATEX_HUMAN, self::LATEX],
         [self::NEED_ALL_HUMAN, self::NEED_ALL],
         [self::FORMULA_LINK_HUMAN, self::FORMULA_LINK],
         [self::FORMULA_LINK_PRIO_HUMAN, self::FORMULA_LINK_PRIO],
@@ -573,15 +607,28 @@ class url_var
 
         // log
         [self::LOG_HUMAN, self::LOG],
+        [self::LOG_STATUS_HUMAN, self::LOG_STATUS],
         [self::LOG_CLASS_HUMAN, self::LOG_CLASS],
         [self::LOG_FIELD_HUMAN, self::LOG_FIELD],
         [self::LOG_LINK_HUMAN, self::LOG_LINK],
+        [self::LOG_LEVEL_HUMAN, self::LOG_LEVEL],
+        [self::LOG_FUNCTION_HUMAN, self::LOG_FUNCTION],
+        [self::LOG_TIME_HUMAN, self::LOG_TIME],
 
         // system
         [self::SYS_LOG_HUMAN, self::SYS_LOG],
+        [self::SYS_TRACE_HUMAN, self::SYS_TRACE],
         [self::IP_HUMAN, self::IP],
         [self::JOB_HUMAN, self::JOB],
         [self::JOB_TYPE_HUMAN, self::JOB_TYPE],
+        [self::JOB_STATUS_HUMAN, self::JOB_STATUS],
+        [self::JOB_PRIORITY_HUMAN, self::JOB_PRIORITY],
+        [self::JOB_PARAMETER_HUMAN, self::JOB_PARAMETER],
+        [self::JOB_CHANGE_FIELD_HUMAN, self::JOB_CHANGE_FIELD],
+        [self::JOB_ROW_ID_HUMAN, self::JOB_ROW_ID],
+        [self::JOB_REQUEST_TIME_HUMAN, self::JOB_REQUEST_TIME],
+        [self::JOB_START_TIME_HUMAN, self::JOB_START_TIME],
+        [self::JOB_END_TIME_HUMAN, self::JOB_END_TIME],
 
         // access
         [self::SHARE_HUMAN, self::SHARE],
@@ -625,5 +672,22 @@ class url_var
         [self::MASK, views::START_ID, true],
         [self::STEP, 0]
     ];
+
+
+    /*
+     * functions
+     */
+
+    /**
+     * return only the back-navigation entries from a url array
+     * i.e. entries whose key starts with the BACK prefix character '9'
+     *
+     * @param array $url_array the full url parameter array
+     * @return array the subset of $url_array whose keys are prefixed with BACK
+     */
+    static function back_par(array $url_array): array
+    {
+        return array_filter($url_array, fn($k) => str_starts_with($k, self::BACK), ARRAY_FILTER_USE_KEY);
+    }
 
 }

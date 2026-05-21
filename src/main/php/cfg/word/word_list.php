@@ -11,7 +11,7 @@
     TODO: add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a company" is true
     TODO: add bool $incl_alias to include all alias words that are of the ids
     TODO: look at a word list and remove the general word, if there is a more specific word also part of the list
-          e.g. remove "Country", but keep "Switzerland"
+          e.g. remove "country", but keep "Switzerland"
 
     The main sections of this object are
     - construct and map: including the mapping of the db row to this word object
@@ -810,7 +810,7 @@ class word_list extends sandbox_list_named
     /**
      * look at a word list and remove the general word,
      * if there is a more specific word also part of the list
-     * e.g. remove "Country", but keep "Switzerland"
+     * e.g. remove "country", but keep "Switzerland"
      *
      * @returns word_list with the specific words
      */
@@ -878,8 +878,8 @@ class word_list extends sandbox_list_named
      * diff as a function, because it seems the array_diff does not work for an object list
      * TODO rename to del or intersect
      *
-     * e.g. if the $this word list is "January, February, March, April, May, June, Juli, August, September, October, November, December"
-     * and the $del_wrd_lst is "May, June, Juli, August"
+     * e.g. if the $this word list is "January, February, March, April, May, June, July, August, September, October, November, December"
+     * and the $del_wrd_lst is "May, June, July, August"
      * than $this->diff should be "January, February, March, April, September, October, November, December" and save to eat huîtres
      *
      * @param word_list $del_wrd_lst is the list of words that should be removed from this list object

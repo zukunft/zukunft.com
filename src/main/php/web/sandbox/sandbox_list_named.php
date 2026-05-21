@@ -35,7 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::HELPER . 'config.php';
+//include_once html_paths::HELPER . 'config.php';
 //include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::PHRASE . 'phrase.php';

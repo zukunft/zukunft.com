@@ -607,6 +607,11 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case FORMULA_TERM_NAME_MISSING = 'no word, triple, formula or verb found for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case FORMULA_NAME_EQUALS_TERM = 'the formula name "'
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . '" is also used as a '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' name, which is not allowed because both are terms and the shared name leads to an ambiguous id assignment during the import';
     case FORMULA_CREATED = 'formula with name "'
         . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
         . '" created';
@@ -883,10 +888,29 @@ enum messages: string
     case FORM_NAME_PASSWORD = 'password';
     case FORM_NAME_PASSWORD_RE = 're-type password';
     case FORM_NAME_LOGIN = 'Login';
+    case PASSWORD_TOO_SHORT = 'password must be at least '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
+    case PASSWORD_TOO_LONG = 'password must not exceed '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
     case PASSWORD_WRONG = 'Forgot password?';
     case PASSWORD_WRONG_TITLE = 'Request to reset the password';
     case SIGN_UP = 'Sign Up';
     case LOGIN_FAILED = 'Login failed';
+    case USERNAME_MISSING = 'username missing for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
+    case USERNAME_TOO_LONG = 'username must not exceed '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
+    case EMAIL_MISSING = 'email address missing for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
+    case EMAIL_INVALID = 'email address "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" is not valid';
+    case EMAIL_TOO_LONG = 'email address must not exceed '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
     case USER_NAME_NOT_FOUND = 'no user with the username '
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . ' found';
@@ -980,6 +1004,11 @@ enum messages: string
         . '" should be assigned to formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" but it is not defined.';
+    case IMPORT_FORMULA_ASSIGN_USE_ASSIGNED = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" tries to assign more than one phrase via "assigned_word"; use the "assigned" json array to assign several phrases';
 
     case IMPORT_FORMULA_FAILED = 'import of formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
@@ -1324,7 +1353,7 @@ enum messages: string
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' that links "'
         . self::VAR_START . self::VAR_NAME_FROM . self::VAR_END
-        . ' to "'
+        . '" to "'
         . self::VAR_START . self::VAR_NAME_TO . self::VAR_END
         . '" ' . self::ALREADY_EXISTS->value . '. Please select another '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
@@ -1332,6 +1361,7 @@ enum messages: string
     case ALREADY_EXISTS = 'already exists';
     case KEY_TYPE_NAME = 'name';
     case KEY_TYPE_LINK = 'link';
+    case LINK_EXTENDS = 'extends';
     case KEY_TYPE_EXTERNAL_KEY = 'external key';
     case CLASS_LIST_UNEXPECTED = 'Cannot create type for the list class '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
@@ -1451,6 +1481,11 @@ enum messages: string
     // text to be shown in frontend
     // TODO add translation
     case AND_MORE_BEFORE = 'and';
+    case OR = 'or';
+    case SIGNUP = 'signup';
+    case GO = 'go';
+    case CANCEL_AND_GO = 'cancel_and_go';
+    case BACK_LINK = 'back';
     case THREE_POINTS = '...';
 
     // text to be shown in buttons
@@ -1614,15 +1649,43 @@ enum messages: string
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
     case SYSTEM_TITLE_SIGNUP = 'system_title_signup';
+    case SIGNUP_ALPHA_NOTICE = 'signup_alpha_notice';
+    case SIGNUP_DATA_WARNING = 'signup_data_warning';
+    case SIGNUP_ERR_NAME_EXISTS = 'signup_err_name_exists';
+    case SIGNUP_ERR_EMAIL_EMPTY = 'signup_err_email_empty';
+    case SIGNUP_ERR_PW_EMPTY = 'signup_err_pw_empty';
+    case SIGNUP_ERR_PW_RETYPE_EMPTY = 'signup_err_pw_retype_empty';
+    case SIGNUP_ERR_PW_MISMATCH = 'signup_err_pw_mismatch';
+    case SIGNUP_ERR_FAILED = 'signup_err_failed';
     case SYSTEM_TITLE_LOGIN = 'system_title_login';
     case SYSTEM_TITLE_LOGIN_ACTIVATE = 'system_title_login_activate';
+    case ACTIVATE_SUBMIT = 'activate_submit';
+    case ACTIVATE_KEY_LABEL = 'activate_key_label';
+    case ACTIVATE_ERR_KEY_MISMATCH = 'activate_err_key_mismatch';
+    case ACTIVATE_ERR_KEY_EXPIRED = 'activate_err_key_expired';
+    case ACTIVATE_ERR_MISSING_ID = 'activate_err_missing_id';
+    case ACTIVATE_ERR_FAILED = 'activate_err_failed';
     case SYSTEM_TITLE_LOGIN_RESET = 'system_title_login_reset';
+    case RESET_SUBMIT = 'reset_submit';
+    case RESET_PROMPT = 'reset_prompt';
+    case RESET_ERR_NOT_FOUND = 'reset_err_not_found';
+    case RESET_ERR_KEY_GEN = 'reset_err_key_gen';
+    case RESET_MAIL_SUBJECT = 'reset_mail_subject';
+    case RESET_MAIL_HELLO = 'reset_mail_hello';
+    case RESET_MAIL_KEY_INTRO = 'reset_mail_key_intro';
+    case RESET_MAIL_LINK_INTRO = 'reset_mail_link_intro';
+    case RESET_MAIL_IGNORE = 'reset_mail_ignore';
     case SYSTEM_TITLE_LOGOUT = 'system_title_logout';
+    case LOGOUT_NOTICE = 'logout_notice';
     case SYSTEM_TITLE_VALUE_DETAIL = 'system_title_value_detail';
     case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
+    case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
+    case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';
+    case ERROR_UPDATE_NO_OPEN = 'error_update_no_open';
+    case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
 
 
     /*
@@ -1819,6 +1882,7 @@ enum messages: string
     case NAVBAR_LOGIN = 'navbar_login';
     case NAVBAR_SIGNUP = 'navbar_signup';
     case NAVBAR_SETTINGS = 'navbar_settings';
+    case NAVBAR_LOGOUT = 'navbar_logout';
 
     // about page text
     case ABOUT_SPONSORED_BY = 'about_sponsored_by';

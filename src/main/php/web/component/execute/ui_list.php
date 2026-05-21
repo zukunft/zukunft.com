@@ -48,11 +48,13 @@ include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'source.php';
+include_once html_paths::TYPES . 'type_object.php';
 //include_once html_paths::RESULT . 'result_list.php';
 //include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -69,10 +71,12 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -274,14 +278,14 @@ class ui_list extends ui_base
      * but additional an update of the list is request via api
      * if the updated list is returned from the backend the list is updated
      *
-     * @param word|db_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
+     * @param word|db_object|type_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
      * @return string the html code to show the list of values
      */
     function values_by_word(
-        word|db_object|null $dbo,
-        ?data_object        $dto = null,
-        ?int                $style_id = null
+        word|db_object|type_object|null $dbo,
+        ?data_object                    $dto = null,
+        ?int                            $style_id = null
     ): string
     {
         $val_lst = $dto->val_lst?->filter($dbo);
@@ -338,8 +342,8 @@ class ui_list extends ui_base
      */
     function results_by_word(
         formula|db_object|null $dbo,
-        ?data_object        $dto = null,
-        ?int                $style_id = null
+        ?data_object           $dto = null,
+        ?int                   $style_id = null
     ): string
     {
         $res_lst = $dto->res_lst?->filter($dbo);
@@ -385,8 +389,8 @@ class ui_list extends ui_base
      * @return string the html code to show the list of values
      */
     private function value_list_unit(
-        value_list  $val_lst,
-        ?int        $style_id = null
+        value_list $val_lst,
+        ?int       $style_id = null
     ): string
     {
         global $sys;
@@ -452,6 +456,28 @@ class ui_list extends ui_base
     function results(): string
     {
         return 'results component';
+    }
+
+    /**
+     * TODO Prio 0 fill with real code
+     * @param db_object|combine_named|null $dbo the term whose related results should be listed
+     * @param data_object|null $cfg the context used to create the view
+     * @return string the html code listing all results related to $dbo
+     */
+    function results_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
+    {
+        return 'results_related placeholder';
+    }
+
+    /**
+     * TODO Prio 0 fill with real code
+     * @param db_object|combine_named|null $dbo the term whose related phrases should be listed
+     * @param data_object|null $cfg the context used to create the view
+     * @return string the html code listing the related phrases with details
+     */
+    function phrases_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
+    {
+        return 'phrases_related placeholder';
     }
 
     /**

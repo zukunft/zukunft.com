@@ -134,6 +134,7 @@ class formula extends sandbox_code_id
     // the formula expression as shown to the user
     private string $usr_text = '';
     private string $ref_text = '';
+    private string $latex = '';            // the formula in latex format
     public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
     public ?phrase $name_wrd = null;         // the triple object for the formula name:
     // the impact used to sort the triples
@@ -159,6 +160,11 @@ class formula extends sandbox_code_id
             if (array_key_exists(url_var::USER_EXPRESSION, $url_array)) {
                 if ($url_array[url_var::USER_EXPRESSION] != null) {
                     $this->set_usr_text($url_array[url_var::USER_EXPRESSION]);
+                }
+            }
+            if (array_key_exists(url_var::LATEX, $url_array)) {
+                if ($url_array[url_var::LATEX] != null) {
+                    $this->set_latex($url_array[url_var::LATEX]);
                 }
             }
             if (array_key_exists(url_var::NEED_ALL, $url_array)) {
@@ -200,6 +206,11 @@ class formula extends sandbox_code_id
             $this->set_ref_text($json_array[json_fields::REF_TEXT]);
         } else {
             $this->set_ref_text(null);
+        }
+        if (array_key_exists(json_fields::LATEX, $json_array)) {
+            $this->set_latex($json_array[json_fields::LATEX]);
+        } else {
+            $this->set_latex(null);
         }
         if (array_key_exists(json_fields::NEED_ALL_VAL, $json_array)) {
             $this->need_all_val = $json_array[json_fields::NEED_ALL_VAL];
@@ -252,6 +263,18 @@ class formula extends sandbox_code_id
         return $this->ref_text;
     }
 
+    function set_latex(?string $latex): void
+    {
+        if ($latex != null) {
+            $this->latex = $latex;
+        }
+    }
+
+    function get_latex(): string
+    {
+        return $this->latex;
+    }
+
     function impact(): float
     {
         return $this->impact;
@@ -282,6 +305,7 @@ class formula extends sandbox_code_id
         $vars = parent::api_array();
 
         $vars[json_fields::USER_TEXT] = $this->get_usr_text();
+        $vars[json_fields::LATEX] = $this->get_latex();
         // usage and impact are not included here because this system value is never updated by the frontend
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

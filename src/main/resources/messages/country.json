@@ -7,7 +7,7 @@
   ],
   "description": "preloaded sample data to demonstrate how countries can be handled in zukunft.com",
   "words": [
-    { "name": "Country"},
+    { "name": "country"},
     { "name": "Switzerland", "refs": [ { "name": "Switzerland", "type": "wikipedia" } ] },
     { "name": "Canton"},
     { "name": "City"},
@@ -68,9 +68,9 @@
     { "name": "ZU" }
   ],
   "triples": [
-    {"from": "Country", "verb": "can use", "to": "ranking"},
-    {"from": "Switzerland", "verb": "is a", "to": "Country"},
-    {"from": "Germany", "verb": "is a", "to": "Country"},
+    {"from": "country", "verb": "can use", "to": "ranking"},
+    {"from": "Switzerland", "verb": "is a", "to": "country"},
+    {"from": "Germany", "verb": "is a", "to": "country"},
     {"name": "Zurich (Canton)", "from": "Zurich", "verb": "is a", "to": "Canton",
       "refs": [ { "name": "Canton of Zürich", "type": "wikipedia" },
                 { "name": "Q11943", "type": "wikidata" } ]
@@ -186,22 +186,22 @@
     {
       "name": "city population",
       "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"City\" )",
-      "assigned_word": "Country"
+      "assigned_word": "country"
     },
     {
       "name": "countryside population",
       "expression": "\"total\" = \"total\" \"inhabitants\" - \"city population\"",
-      "assigned_word": "Country"
+      "assigned_word": "country"
     },
     {
       "name": "suburb population",
       "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"suburb\" )",
-      "assigned_word": "Country"
+      "assigned_word": "country"
     },
     {
       "name": "countryside population without suburb",
       "expression": "\"total\" = \"countryside population\" - \"suburb population\"",
-      "assigned_word": "Country"
+      "assigned_word": "country"
     },
     {
       "name": "population in the city of Zurich in percent of Switzerland",
@@ -230,7 +230,7 @@
   ],
   "views": [
     {
-      "name": "Country ratios",
+      "name": "country ratios",
       "comment": "List all countries with the main ratios",
       "components": [
         {

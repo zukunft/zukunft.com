@@ -616,7 +616,8 @@ class test_base
         string|bool|array|null $target = '',
         float                  $exe_max_time = self::TIMEOUT_LIMIT,
         string                 $comment = '',
-        string                 $test_type = ''): bool
+        string                 $test_type = ''
+    ): bool
     {
         // init the test result vars
         $lib = new library();
@@ -1224,11 +1225,8 @@ class test_base
      */
     function assert_html_body(string $test_name, string $body, string $file_path): bool
     {
-        $lib = new library();
-
         $actual = $this->html_page($body);
-        $expected = $this->file($file_path . test_files::HTML);
-        return $this->assert($test_name, $lib->trim_html($actual), $lib->trim_html($expected));
+        return $this->assert_html_page($test_name, $actual, $file_path);
     }
 
     /**
@@ -1243,8 +1241,13 @@ class test_base
     {
         $lib = new library();
 
-        $expected = $this->file($file_path . test_files::HTML);
-        return $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
+        $resource_file = $file_path . test_files::HTML;
+        $expected = $this->file($resource_file);
+        $result = $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $this->update_file($resource_file, $lib->format_html($html));
+        }
+        return $result;
     }
 
 
@@ -4689,6 +4692,45 @@ class test_base
     function has_file(string $test_resource_path): bool
     {
         return file_exists(test_paths::RESOURCE . $test_resource_path);
+    }
+
+    /**
+     * overwrite the test resource file with the actual result to accept it as the new target
+     * @param string $test_resource_path the path of the file starting from the test resource path
+     * @param string $result the actual result that should become the new expected target
+     */
+    function update_file(string $test_resource_path, string $result): void
+    {
+        // TODO always set a breakpoint here
+        $filepath = test_paths::RESOURCE . $test_resource_path;
+        if (file_put_contents($filepath, $result) === false) {
+            log_err('Cannot write target file ' . $filepath);
+        }
+    }
+
+    /**
+     * overwrite the test file with the actual result to accept it as the new target
+     * @param string $filepath the path of the file including the path
+     * @param string $result the actual result that should become the new expected target
+     */
+    function update_path_file(string $filepath, string $result): void
+    {
+        // TODO always set a breakpoint here
+        if (file_put_contents($filepath, $result) === false) {
+            log_err('Cannot write target file ' . $filepath);
+        }
+    }
+
+    /**
+     * suggest deletion of an orphaned snapshot file; deletes immediately when AUTO_UPDATE_FILES is true
+     * @param string $file_path absolute path to the html snapshot file
+     */
+    function delete_path_file(string $file_path): void
+    {
+        log_warning('orphaned test snapshot – consider deleting: ' . $file_path);
+        if (test_files::AUTO_UPDATE_TEST_FILES) {
+            unlink($file_path);
+        }
     }
 
 

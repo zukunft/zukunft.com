@@ -88,6 +88,7 @@ include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'trm_ids.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
@@ -1697,7 +1698,7 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * look at a phrase list and remove the general phrase, if there is a more specific phrase also part of the list e.g. remove "Country", but keep "Switzerland"
+     * look at a phrase list and remove the general phrase, if there is a more specific phrase also part of the list e.g. remove "country", but keep "Switzerland"
      */
     function keep_only_specific(): array
     {

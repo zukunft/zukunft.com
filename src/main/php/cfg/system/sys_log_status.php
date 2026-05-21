@@ -46,6 +46,7 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -169,7 +171,10 @@ class sys_log_status extends type_object
     {
         parent::import_mapper($in_ex_json, $msg, $dto);
 
-        if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+        if ($msg->usr === null) {
+            log_err('user not set in user_message', 'import_mapper');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
             if (key_exists(json_fields::STATUS, $in_ex_json)) {
                 $this->status_id = $in_ex_json[json_fields::STATUS];
             }

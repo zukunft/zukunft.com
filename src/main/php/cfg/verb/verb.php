@@ -142,8 +142,8 @@ class verb extends type_object
     // TODO move to language forms
     public ?string $plural = null;
     // name used if displayed the other way round
-    // e.g. for "Country" "has a" "Human Development Index"
-    // the reverse would be "Human Development Index" "is used for" "Country"
+    // e.g. for "country" "has a" "Human Development Index"
+    // the reverse would be "Human Development Index" "is used for" "country"
     public ?string $reverse = null;
     // the reverse name for many words
     public ?string $rev_plural = null;
@@ -266,7 +266,10 @@ class verb extends type_object
         $this->common_mapper($in_ex_json, $msg);
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+            if ($msg->usr === null) {
+                log_err('user not set in user_message', 'import_mapper');
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 if ($in_ex_json[json_fields::CODE_ID] <> '') {
                     $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
                 }
@@ -623,7 +626,10 @@ class verb extends type_object
             }
             if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
-                    if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+                    if ($msg->usr === null) {
+                        log_err('user not set in user_message', 'import_obj');
+                        $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+                    } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                         $this->code_id = $value;
                     }
                 }

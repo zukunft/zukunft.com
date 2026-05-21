@@ -7,3 +7,7 @@ user_id,user_name,ip_address,password,description,code_id,user_profile_id,user_t
 6,zukunft.com system test no admin,,,an internal zukunft.com test user to check the deny for normal users,test_normal,3,1,,,test.normal@zukunft.com,,,,,,,,,,,,,,,,,,1
 7,zukunft.com system user creator,,,an internal zukunft.com user to automatically create normal users,signup,4,1,,,signup@zukunft.com,,,,,,,,,,,,,,,,,,1
 8,zukunft.com system log,,,an internal zukunft.com user to add to the log that cannot update or delete ,log,16,1,,,log@zukunft.com,,,,,,,,,,,,,,,,,,1
+9,timon,,,,,12,,,,admin@zukunft.com,,,,,,,,,,,,,,,,,,
+10,julian,,,,,12,,,,successor@zukunft.com,,,,,,,,,,,,,,,,,,
+11,heang,,,,,3,,,,vr@zukunft.com,,,,,,,,,,,,,,,,,,
+12,linus,,,,,3,,,,management@zukunft.com,,,,,,,,,,,,,,,,,,

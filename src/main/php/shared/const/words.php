@@ -276,8 +276,9 @@ class words
     const int LIGHT_ID = 86;
     const string SPEED = 'speed';
     const int SPEED_ID = 87;
-    const string METER = 'meter';
-    const int METER_ID = 1174;
+    // TODO Prio 2 allow to import translated words such as the US meter
+    const string METRE = 'metre';
+    const int METRE_ID = 27;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 131;
     const string TRANSITION = 'transition';
@@ -396,7 +397,8 @@ class words
     const int TAX_ID = 288;
 
     // words from import file country.json used for the start page in order of appearance
-    const string COUNTRY = 'Country';
+    const string CONFIG = 'config';
+    const string COUNTRY = 'country';
     const string CH = 'Switzerland';
     const int CH_ID = 206;
     const string GERMANY = 'Germany';
@@ -443,6 +445,53 @@ class words
     const string TIMEOUTS = 'timeouts';
     const string WARNINGS = 'warnings';
     const string ERRORS = 'errors';
+    const string CPU = 'CPU';
+    const string MB = 'MB';
+    const string ACCESS = 'access';
+    const string ACCOUNT = 'account';
+    const string API = 'api';
+    const string BOTTOM = 'bottom';
+    const string CACHE = 'cache';
+    const string COMBINATION = 'combination';
+    const string COMPONENT = 'component';
+    const string CONTRIBUTION = 'contribution';
+    const string DAYS = 'days';
+    const string DETAIL = 'detail';
+    const string ENTRIES = 'entries';
+    const string FACTORS = 'factors';
+    const string FORMAT = 'format';
+    const string HARDWARE = 'hardware';
+    const string IMPACT = 'impact';
+    const string INFO = 'info';
+    const string LIST = 'list';
+    const string LOG = 'log';
+    const string MEMORY = 'memory';
+    const string MESSAGE = 'message';
+    const string MONTH = 'month';
+    const string MORE = 'more';
+    const string NETWORK = 'network';
+    const string PEERS = 'peers';
+    const string PERMISSIONS = 'permissions';
+    const string PODS = 'pods';
+    const string PREDICTION = 'prediction';
+    const string RANK = 'rank';
+    const string RANKING = 'ranking';
+    const string RISK = 'risk';
+    const string SELECTIONS = 'selections';
+    const string STORAGE = 'storage';
+    const string SUGGESTED = 'suggested';
+    const string TARGET = 'target';
+    const string TOP = 'top';
+    const string TRUSTED = 'trusted';
+    const string TYPE = 'type';
+    const string USAGE = 'usage';
+    const string VALIDATE = 'validate';
+    const string WARNING = 'warning';
+    const string WEB = 'web';
+    const string WEIGHTS = 'weights';
+
+    // base words that are fixed part of the base setup
+    const string CURRENCY = 'currency';
 
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
@@ -832,7 +881,7 @@ class words
         self::YEAR_2020_ID => self::YEAR_2020,
         self::LIGHT_ID => self::LIGHT,
         self::SPEED_ID => self::SPEED,
-        self::METER_ID => self::METER,
+        self::METRE_ID => self::METRE,
         self::HYPERFINE_ID => self::HYPERFINE,
         self::TRANSITION_ID => self::TRANSITION,
         self::FREQUENCY_ID => self::FREQUENCY,

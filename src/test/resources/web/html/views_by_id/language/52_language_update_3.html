@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            Change language German (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="/http/find.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=52&9m=52&9a=r&9id=3&9k=German&9o=a%20translation%20to%20standard%20German&9ki=de&9qs=de&9uu=95000000&9z=0">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30&9m=52&9a=r&9id=3&9k=German&9o=a%20translation%20to%20standard%20German&9ki=de&9qs=de&9uu=95000000&9z=0">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=52&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=52&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=52&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=52&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=52&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=52&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=52&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=61&9m=52&9a=r&9id=3&9k=German&9o=a%20translation%20to%20standard%20German&9ki=de&9qs=de&9uu=95000000&9z=0">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=60&9m=52&9a=r&9id=3&9k=German&9o=a%20translation%20to%20standard%20German&9ki=de&9qs=de&9uu=95000000&9z=0">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings?9m=52&9a=r&9id=3&9k=German&9o=a%20translation%20to%20standard%20German&9ki=de&9qs=de&9uu=95000000&9z=0">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Change language (by admin)
+            </h4>
+            <form action="/http/view.php" id="language_edit">
+                <input class="form-control" type="hidden" name="mask" id="m" value="52">
+                <input class="form-control" type="hidden" name="id" id="id" value="3">
+                <input class="form-control" type="hidden" name="back" id="9" value="3">
+                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <div class="row col-md-12">
+                    <div class="form-group ">
+                        <label for="k">
+                            Name
+                        </label>
+                        <input class="form-control" type="text" name="Name" id="k" value="German">
+                    </div>
+                    <input class="form-control" type="text" name="form_field_language_symbol" id="qs" value="symbol field missing">
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="o">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="Description" id="o" value="a translation to standard German">
+                    </div>
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <a href="/http/view.php?m=0&id=3" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                        save
+                    </button>
+                </div>
+            </form>
+        </main>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

@@ -3,7 +3,7 @@
 /*
 
     model/view/view.php - the main display object
-    -----------------
+    -------------------
 
     The main sections of this object are
     - db const:          const for the database link

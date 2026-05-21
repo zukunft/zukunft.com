@@ -6369,6 +6369,18 @@
         "code_id": "39usage",
         "description": "",
         "id": 885
+      },
+      {
+        "name": "10latex",
+        "code_id": "10latex",
+        "description": "",
+        "id": 886
+      },
+      {
+        "name": "11latex",
+        "code_id": "11latex",
+        "description": "",
+        "id": 887
       }
     ],
     "db_cache_types": [
@@ -6887,7 +6899,7 @@
       {
         "name": "has a",
         "code_id": "has",
-        "description": "to assign potential properties e.g. a Country has a Human Development Index",
+        "description": "to assign potential properties e.g. a country has a Human Development Index",
         "plural": "has",
         "reverse": "is used for",
         "rev_plural": "is used for",
@@ -7219,6 +7231,54 @@
         "usage": null,
         "impact": null,
         "id": 34
+      },
+      {
+        "name": "between",
+        "code_id": "between",
+        "description": "to define a range e.g. a value between a lower and an upper bound",
+        "plural": "between",
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 35
+      },
+      {
+        "name": "kind of",
+        "code_id": "kind_of",
+        "description": "to assign a sub kind to a parent category e.g. the quadratic formula is a kind of formula",
+        "plural": "are kinds of",
+        "reverse": "has the kind",
+        "rev_plural": "have the kinds",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 36
+      },
+      {
+        "name": "name of",
+        "code_id": "name_of",
+        "description": "to assign a proper name to a category e.g. the Pythagorean theorem is named after Pythagoras",
+        "plural": "are names of",
+        "reverse": "is named",
+        "rev_plural": "are named",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 37
+      },
+      {
+        "name": "by parts",
+        "code_id": "by_parts",
+        "description": "to describe a method that operates on the parts of an expression e.g. integration by parts",
+        "plural": "by parts",
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 38
       }
     ],
     "phrase_types": [
@@ -20532,6 +20592,51 @@
         ]
       },
       {
+        "id": 108,
+        "name": "problem with solutions",
+        "description": "Explain a problem and show the potential solutions",
+        "type_id": null,
+        "code_id": "global_problem",
+        "components": [
+          {
+            "link_id": 1008,
+            "id": 1,
+            "name": "Word",
+            "description": "simply show the word or triple name",
+            "type_id": 8,
+            "position": 1,
+            "position_type": 1
+          },
+          {
+            "link_id": 1009,
+            "id": 285,
+            "name": "problem definition",
+            "description": "show the most relevant definitions related to a problem",
+            "type_id": 188,
+            "position": 2,
+            "position_type": 1
+          },
+          {
+            "link_id": 1010,
+            "id": 286,
+            "name": "problem size",
+            "description": "show the estimations of the size of a problem",
+            "type_id": 188,
+            "position": 3,
+            "position_type": 1
+          },
+          {
+            "link_id": 1011,
+            "id": 287,
+            "name": "problem solutions",
+            "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
+            "type_id": 188,
+            "position": 4,
+            "position_type": 1
+          }
+        ]
+      },
+      {
         "id": 109,
         "name": "System log",
         "description": "show the most relevant system log entries (placeholder only at the moment)",
@@ -20546,6 +20651,50 @@
         "type_id": null,
         "code_id": "phrase_default",
         "components": []
+      },
+      {
+        "id": 111,
+        "name": "Currency",
+        "description": "Show a currency with the most relevant exchange rates and related formulas",
+        "type_id": null,
+        "code_id": "currency",
+        "components": [
+          {
+            "link_id": 1012,
+            "id": 1,
+            "name": "Word",
+            "description": "simply show the word or triple name",
+            "type_id": 8,
+            "position": 1,
+            "position_type": 1
+          },
+          {
+            "link_id": 1013,
+            "id": 288,
+            "name": "exchange rates",
+            "description": "show the most relevant exchange rates",
+            "type_id": 188,
+            "position": 2,
+            "position_type": 1
+          },
+          {
+            "link_id": 1014,
+            "id": 280,
+            "name": "related values",
+            "description": "show the most relevant and related values",
+            "type_id": 11,
+            "position": 3,
+            "position_type": 1
+          },
+          {
+            "link_id": 1015,
+            "id": 289,
+            "name": "currency formulas",
+            "type_id": 188,
+            "position": 4,
+            "position_type": 1
+          }
+        ]
       }
     ]
   }

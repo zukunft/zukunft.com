@@ -52,6 +52,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::REF . 'source.php';
 //include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'triple.php';
@@ -84,6 +85,7 @@ use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -182,10 +184,10 @@ class value_list extends ListBase
     /**
      * get a list with the values related directly to the given word, triple or source
      *
-     * @param word|triple|source|formula|db_object|null $dbo to filter the values
+     * @param word|triple|source|formula|db_object|type_object|null $dbo to filter the values
      * @return value_list with only the direct linked values
      */
-    function filter(word|triple|source|formula|db_object|null $dbo = null): value_list
+    function filter(word|triple|source|formula|db_object|type_object|null $dbo = null): value_list
     {
         $val_lst = new value_list();
         if ($dbo::class == word::class or $dbo::class == triple::class) {
