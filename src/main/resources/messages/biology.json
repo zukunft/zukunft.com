@@ -1,0 +1,2078 @@
+{
+  "version": "0.0.3",
+  "time": "2026-05-22 09:30:00",
+  "user": "timon",
+  "selection": [
+    "biology"
+  ],
+  "description": "Main biological definitions and formulas that are not part of the units, physics, math or chemistry base data.",
+  "words": [
+    {
+      "name": "biology",
+      "description": "the natural science that studies life and living organisms",
+      "refs": [
+        {
+          "name": "Biology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q420",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "science"
+    },
+    {
+      "name": "cell biology",
+      "description": "the branch of biology that studies the structure and function of cells",
+      "refs": [
+        {
+          "name": "Cell biology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7141",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "molecular biology",
+      "description": "the branch of biology that studies biological activity at the molecular level",
+      "refs": [
+        {
+          "name": "Molecular biology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7202",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "genetics",
+      "description": "the branch of biology that studies genes, heredity and variation",
+      "refs": [
+        {
+          "name": "Genetics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7162",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "evolutionary biology",
+      "description": "the branch of biology that studies how populations of organisms change over generations",
+      "refs": [
+        {
+          "name": "Evolutionary biology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q840400",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ecology",
+      "description": "the branch of biology that studies organisms and their relationship with the environment",
+      "refs": [
+        {
+          "name": "Ecology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7150",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "physiology",
+      "description": "the branch of biology that studies the functions and mechanisms of living systems",
+      "refs": [
+        {
+          "name": "Physiology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q521",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "microbiology",
+      "description": "the branch of biology that studies microscopic organisms",
+      "refs": [
+        {
+          "name": "Microbiology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7193",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cell",
+      "description": "the basic structural and functional unit of all living organisms",
+      "refs": [
+        {
+          "name": "Cell (biology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7868",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cell membrane",
+      "description": "the semipermeable membrane that surrounds the cytoplasm of a cell",
+      "refs": [
+        {
+          "name": "Cell membrane",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q29548",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cytoplasm",
+      "description": "the material within a cell, excluding the nucleus",
+      "refs": [
+        {
+          "name": "Cytoplasm",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q79899",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cell nucleus",
+      "description": "the membrane-bound organelle that contains the cell genetic material",
+      "refs": [
+        {
+          "name": "Cell nucleus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q40260",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "organelle",
+      "description": "a specialized subunit within a cell that has a specific function",
+      "refs": [
+        {
+          "name": "Organelle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q45948",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mitochondrion",
+      "description": "the organelle that produces most of the cell supply of ATP",
+      "refs": [
+        {
+          "name": "Mitochondrion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39572",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chloroplast",
+      "description": "the organelle that conducts photosynthesis in plant cells",
+      "refs": [
+        {
+          "name": "Chloroplast",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q47263",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ribosome",
+      "description": "the cellular structure that synthesizes proteins",
+      "refs": [
+        {
+          "name": "Ribosome",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q42244",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cell wall",
+      "description": "the rigid layer outside the cell membrane in plants, fungi and bacteria",
+      "refs": [
+        {
+          "name": "Cell wall",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q128700",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cytoskeleton",
+      "description": "the network of filaments that gives a cell its shape and internal organization",
+      "refs": [
+        {
+          "name": "Cytoskeleton",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q154626",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cell division",
+      "description": "the process by which a parent cell divides into daughter cells",
+      "refs": [
+        {
+          "name": "Cell division",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q188909",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mitosis",
+      "description": "cell division producing two genetically identical daughter cells",
+      "refs": [
+        {
+          "name": "Mitosis",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q14763008",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "meiosis",
+      "description": "cell division producing four genetically diverse gametes",
+      "refs": [
+        {
+          "name": "Meiosis",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q16424695",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cell cycle",
+      "description": "the series of events that lead to cell division and duplication",
+      "refs": [
+        {
+          "name": "Cell cycle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q188941",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stem cell",
+      "description": "an undifferentiated cell that can differentiate into specialized cells",
+      "refs": [
+        {
+          "name": "Stem cell",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q48196",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "prokaryote",
+      "description": "a single-celled organism that lacks a membrane-bound nucleus",
+      "refs": [
+        {
+          "name": "Prokaryote",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q19081",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "eukaryote",
+      "description": "an organism whose cells contain a membrane-bound nucleus",
+      "refs": [
+        {
+          "name": "Eukaryote",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q19088",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "DNA",
+      "description": "the molecule that carries the genetic instructions of an organism",
+      "refs": [
+        {
+          "name": "DNA",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7430",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "RNA",
+      "description": "the molecule that conveys genetic information from DNA to ribosomes",
+      "refs": [
+        {
+          "name": "RNA",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11053",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gene",
+      "description": "a unit of heredity that is a segment of DNA coding for a function",
+      "refs": [
+        {
+          "name": "Gene",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7187",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "genome",
+      "description": "the complete set of genetic material of an organism",
+      "refs": [
+        {
+          "name": "Genome",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7020",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chromosome",
+      "description": "a threadlike structure of DNA carrying genes",
+      "refs": [
+        {
+          "name": "Chromosome",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37748",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "nucleotide",
+      "description": "the building block of nucleic acids such as DNA and RNA",
+      "refs": [
+        {
+          "name": "Nucleotide",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q28745",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "base pair",
+      "description": "two complementary nucleobases bonded across the DNA double helix",
+      "refs": [
+        {
+          "name": "Base pair",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q145911",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "codon",
+      "description": "a sequence of three nucleotides that codes for an amino acid",
+      "refs": [
+        {
+          "name": "Genetic code",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q180618",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "transcription",
+      "description": "the process of copying a DNA sequence into messenger RNA",
+      "refs": [
+        {
+          "name": "Transcription (biology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q177900",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "translation",
+      "description": "the process of synthesizing a protein from a messenger RNA template",
+      "refs": [
+        {
+          "name": "Translation (biology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q185917",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gene expression",
+      "description": "the process by which information from a gene is used to make a product",
+      "refs": [
+        {
+          "name": "Gene expression",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q26972",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "protein",
+      "description": "a large biomolecule made of chains of amino acids",
+      "refs": [
+        {
+          "name": "Protein",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8054",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "amino acid",
+      "description": "an organic molecule that is the building block of proteins",
+      "refs": [
+        {
+          "name": "Amino acid",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8066",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "nucleic acid",
+      "description": "a biopolymer such as DNA or RNA built from nucleotides",
+      "refs": [
+        {
+          "name": "Nucleic acid",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q123619",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "heredity",
+      "description": "the passing of traits from parents to offspring",
+      "refs": [
+        {
+          "name": "Heredity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q178694",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "genotype",
+      "description": "the genetic constitution of an organism",
+      "refs": [
+        {
+          "name": "Genotype",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q106016",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "phenotype",
+      "description": "the observable characteristics of an organism",
+      "refs": [
+        {
+          "name": "Phenotype",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q104053",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "allele",
+      "description": "one of two or more alternative forms of a gene",
+      "refs": [
+        {
+          "name": "Allele",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q80726",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "dominant allele",
+      "description": "an allele that masks the effect of a recessive allele",
+      "refs": [
+        {
+          "name": "Dominance (genetics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q19615136",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "recessive allele",
+      "description": "an allele whose effect is masked by a dominant allele",
+      "refs": [
+        {
+          "name": "Dominance (genetics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q19615136",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "homozygous",
+      "description": "having two identical alleles of a gene",
+      "refs": [
+        {
+          "name": "Zygosity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q13048280",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "heterozygous",
+      "description": "having two different alleles of a gene",
+      "refs": [
+        {
+          "name": "Zygosity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q13048280",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "genetic code",
+      "description": "the set of rules by which codons are translated into amino acids",
+      "refs": [
+        {
+          "name": "Genetic code",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q180618",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "trait",
+      "description": "a distinct variant of a characteristic of an organism",
+      "refs": [
+        {
+          "name": "Phenotypic trait",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1211967",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mutation",
+      "description": "a change in the nucleotide sequence of the genome",
+      "refs": [
+        {
+          "name": "Mutation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q42918",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "allele frequency",
+      "description": "the relative frequency of an allele in a population",
+      "refs": [
+        {
+          "name": "Allele frequency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q387981",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "genotype frequency",
+      "description": "the relative frequency of a genotype in a population"
+    },
+    {
+      "name": "gene pool",
+      "description": "the complete set of genes in a population",
+      "refs": [
+        {
+          "name": "Gene pool",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189800",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Mendelian inheritance",
+      "description": "inheritance following the laws formulated by Gregor Mendel",
+      "refs": [
+        {
+          "name": "Mendelian inheritance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q185055",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Hardy-Weinberg principle",
+      "description": "the principle that allele and genotype frequencies stay constant without evolutionary influences",
+      "refs": [
+        {
+          "name": "Hardy–Weinberg principle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q49974",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "evolution",
+      "description": "the change in heritable characteristics of populations over generations",
+      "refs": [
+        {
+          "name": "Evolution",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1063",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "natural selection",
+      "description": "the differential survival and reproduction of individuals due to traits",
+      "refs": [
+        {
+          "name": "Natural selection",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43478",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "adaptation",
+      "description": "a trait that increases the fitness of an organism in its environment",
+      "refs": [
+        {
+          "name": "Adaptation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q483921",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "species",
+      "description": "a group of organisms capable of interbreeding and producing fertile offspring",
+      "refs": [
+        {
+          "name": "Species",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7432",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "speciation",
+      "description": "the evolutionary process by which new species arise",
+      "refs": [
+        {
+          "name": "Speciation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39350",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fitness",
+      "description": "the reproductive success of an organism in a given environment",
+      "refs": [
+        {
+          "name": "Fitness (biology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q331710",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "common ancestor",
+      "description": "an ancestral organism shared by two or more descendant groups",
+      "refs": [
+        {
+          "name": "Common descent",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q333018",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "phylogeny",
+      "description": "the evolutionary history and relationships of a group of organisms",
+      "refs": [
+        {
+          "name": "Phylogenetics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q171184",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "genetic drift",
+      "description": "the change in allele frequencies due to random chance",
+      "refs": [
+        {
+          "name": "Genetic drift",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q486420",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "biodiversity",
+      "description": "the variety of life in a habitat or ecosystem",
+      "refs": [
+        {
+          "name": "Biodiversity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q47041",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ecosystem",
+      "description": "a community of organisms together with their physical environment",
+      "refs": [
+        {
+          "name": "Ecosystem",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37813",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "population",
+      "description": "all the individuals of a species living in a given area",
+      "refs": [
+        {
+          "name": "Population",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q175385",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "community",
+      "description": "all the populations of different species in a given area",
+      "refs": [
+        {
+          "name": "Community (ecology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5608096",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "habitat",
+      "description": "the natural environment in which an organism lives",
+      "refs": [
+        {
+          "name": "Habitat",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52105",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ecological niche",
+      "description": "the role and position a species has in its environment",
+      "refs": [
+        {
+          "name": "Ecological niche",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q172861",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "food chain",
+      "description": "a linear sequence of organisms through which energy and nutrients pass",
+      "refs": [
+        {
+          "name": "Food chain",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q159462",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "food web",
+      "description": "a network of interconnected food chains in an ecosystem",
+      "refs": [
+        {
+          "name": "Food web",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1775153",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "trophic level",
+      "description": "a position in a food chain defined by feeding relationships",
+      "refs": [
+        {
+          "name": "Trophic level",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1053008",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "producer",
+      "description": "an organism that makes its own food, usually by photosynthesis",
+      "refs": [
+        {
+          "name": "Autotroph",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q131427",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "consumer",
+      "description": "an organism that obtains energy by feeding on other organisms",
+      "refs": [
+        {
+          "name": "Heterotroph",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q159344",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "decomposer",
+      "description": "an organism that breaks down dead matter into simpler substances",
+      "refs": [
+        {
+          "name": "Decomposer",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q842391",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "biome",
+      "description": "a large community of plants and animals occupying a major habitat",
+      "refs": [
+        {
+          "name": "Biome",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q101998",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "carrying capacity",
+      "description": "the maximum population size an environment can sustain",
+      "refs": [
+        {
+          "name": "Carrying capacity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q866283",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "symbiosis",
+      "description": "a close and long-term biological interaction between two species",
+      "refs": [
+        {
+          "name": "Symbiosis",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q121610",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gross primary production",
+      "description": "the total amount of energy fixed by producers in an ecosystem",
+      "refs": [
+        {
+          "name": "Primary production",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q515905",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "net primary production",
+      "description": "the energy fixed by producers minus their respiration",
+      "refs": [
+        {
+          "name": "Primary production",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q515905",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "organ",
+      "description": "a group of tissues that perform a specific function",
+      "refs": [
+        {
+          "name": "Organ (biology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q712378",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "tissue",
+      "description": "a group of similar cells performing a specific function",
+      "refs": [
+        {
+          "name": "Tissue (biology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q40397",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "homeostasis",
+      "description": "the maintenance of a stable internal environment",
+      "refs": [
+        {
+          "name": "Homeostasis",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q103191",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hormone",
+      "description": "a signaling molecule that regulates physiology and behavior",
+      "refs": [
+        {
+          "name": "Hormone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11364",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "neuron",
+      "description": "an electrically excitable cell that transmits nerve impulses",
+      "refs": [
+        {
+          "name": "Neuron",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43054",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "photosynthesis",
+      "description": "the process by which plants convert light energy into chemical energy",
+      "refs": [
+        {
+          "name": "Photosynthesis",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11982",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cellular respiration",
+      "description": "the process by which cells release energy from glucose",
+      "refs": [
+        {
+          "name": "Cellular respiration",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q912751",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fermentation",
+      "description": "the anaerobic breakdown of glucose to release energy",
+      "refs": [
+        {
+          "name": "Fermentation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41760",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "heart rate",
+      "description": "the number of heartbeats per unit of time",
+      "refs": [
+        {
+          "name": "Heart rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1073121",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stroke volume",
+      "description": "the volume of blood pumped by the heart in one beat",
+      "refs": [
+        {
+          "name": "Stroke volume",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1698533",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cardiac output",
+      "description": "the volume of blood the heart pumps per minute",
+      "refs": [
+        {
+          "name": "Cardiac output",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q596579",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "body mass index",
+      "description": "a measure of body fat based on mass and height",
+      "refs": [
+        {
+          "name": "Body mass index",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q131191",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "birth rate",
+      "description": "the number of births per unit of population and time",
+      "refs": [
+        {
+          "name": "Birth rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q203516",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "death rate",
+      "description": "the number of deaths per unit of population and time",
+      "refs": [
+        {
+          "name": "Mortality rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q58702",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "population growth rate",
+      "description": "the change in population size per unit of time",
+      "refs": [
+        {
+          "name": "Population growth",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q386191",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "magnification",
+      "description": "the ratio of the apparent size of an image to the real size of the object",
+      "refs": [
+        {
+          "name": "Magnification",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q675287",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "image size",
+      "description": "the measured size of a magnified image"
+    },
+    {
+      "name": "object size",
+      "description": "the real size of an observed object"
+    },
+    {
+      "name": "microorganism",
+      "description": "a microscopic organism such as a bacterium or virus",
+      "refs": [
+        {
+          "name": "Microorganism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39833",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "bacterium",
+      "description": "a single-celled prokaryotic microorganism",
+      "refs": [
+        {
+          "name": "Bacteria",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q10876",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "virus",
+      "description": "an infectious agent that replicates only inside living cells",
+      "refs": [
+        {
+          "name": "Virus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q808",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "pathogen",
+      "description": "an organism that causes disease",
+      "refs": [
+        {
+          "name": "Pathogen",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170065",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "antibiotic",
+      "description": "a substance that kills or inhibits the growth of bacteria",
+      "refs": [
+        {
+          "name": "Antibiotic",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12187",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "antibody",
+      "description": "a protein produced by the immune system to neutralize pathogens",
+      "refs": [
+        {
+          "name": "Antibody",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q79460",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "antigen",
+      "description": "a molecule that triggers an immune response",
+      "refs": [
+        {
+          "name": "Antigen",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q103537",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "normal human body temperature",
+      "description": "the typical core body temperature of a healthy human, about 37 degree Celsius"
+    },
+    {
+      "name": "human chromosome number",
+      "description": "the number of chromosomes in a typical human somatic cell"
+    }
+  ],
+  "triples": [
+    {
+      "from": "biology",
+      "verb": "is part of",
+      "to": "science"
+    },
+    {
+      "from": "cell biology",
+      "verb": "is part of",
+      "to": "biology"
+    },
+    {
+      "from": "molecular biology",
+      "verb": "is part of",
+      "to": "biology"
+    },
+    {
+      "from": "genetics",
+      "verb": "is part of",
+      "to": "biology"
+    },
+    {
+      "from": "evolutionary biology",
+      "verb": "is part of",
+      "to": "biology"
+    },
+    {
+      "from": "ecology",
+      "verb": "is part of",
+      "to": "biology"
+    },
+    {
+      "from": "physiology",
+      "verb": "is part of",
+      "to": "biology"
+    },
+    {
+      "from": "microbiology",
+      "verb": "is part of",
+      "to": "biology"
+    },
+    {
+      "from": "cell",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "cell membrane",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "cytoplasm",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "cell nucleus",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "organelle",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "mitochondrion",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "chloroplast",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "ribosome",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "cell wall",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "cytoskeleton",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "cell division",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "mitosis",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "meiosis",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "cell cycle",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "stem cell",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "prokaryote",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "eukaryote",
+      "verb": "is part of",
+      "to": "cell biology"
+    },
+    {
+      "from": "DNA",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "RNA",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "gene",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "genome",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "chromosome",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "nucleotide",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "base pair",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "codon",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "transcription",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "translation",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "gene expression",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "protein",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "amino acid",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "nucleic acid",
+      "verb": "is part of",
+      "to": "molecular biology"
+    },
+    {
+      "from": "heredity",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "genotype",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "phenotype",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "allele",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "dominant allele",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "recessive allele",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "homozygous",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "heterozygous",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "genetic code",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "trait",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "mutation",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "allele frequency",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "genotype frequency",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "gene pool",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "Mendelian inheritance",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "Hardy-Weinberg principle",
+      "verb": "is part of",
+      "to": "genetics"
+    },
+    {
+      "from": "evolution",
+      "verb": "is part of",
+      "to": "evolutionary biology"
+    },
+    {
+      "from": "natural selection",
+      "verb": "is part of",
+      "to": "evolutionary biology"
+    },
+    {
+      "from": "adaptation",
+      "verb": "is part of",
+      "to": "evolutionary biology"
+    },
+    {
+      "from": "species",
+      "verb": "is part of",
+      "to": "evolutionary biology"
+    },
+    {
+      "from": "speciation",
+      "verb": "is part of",
+      "to": "evolutionary biology"
+    },
+    {
+      "from": "fitness",
+      "verb": "is part of",
+      "to": "evolutionary biology"
+    },
+    {
+      "from": "common ancestor",
+      "verb": "is part of",
+      "to": "evolutionary biology"
+    },
+    {
+      "from": "phylogeny",
+      "verb": "is part of",
+      "to": "evolutionary biology"
+    },
+    {
+      "from": "genetic drift",
+      "verb": "is part of",
+      "to": "evolutionary biology"
+    },
+    {
+      "from": "biodiversity",
+      "verb": "is part of",
+      "to": "evolutionary biology"
+    },
+    {
+      "from": "ecosystem",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "population",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "community",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "habitat",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "ecological niche",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "food chain",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "food web",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "trophic level",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "producer",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "consumer",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "decomposer",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "biome",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "carrying capacity",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "symbiosis",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "gross primary production",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "net primary production",
+      "verb": "is part of",
+      "to": "ecology"
+    },
+    {
+      "from": "organ",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "tissue",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "homeostasis",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "hormone",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "neuron",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "photosynthesis",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "cellular respiration",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "fermentation",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "heart rate",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "stroke volume",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "cardiac output",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "body mass index",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "birth rate",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "death rate",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "population growth rate",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "magnification",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "image size",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "object size",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "microorganism",
+      "verb": "is part of",
+      "to": "microbiology"
+    },
+    {
+      "from": "bacterium",
+      "verb": "is part of",
+      "to": "microbiology"
+    },
+    {
+      "from": "virus",
+      "verb": "is part of",
+      "to": "microbiology"
+    },
+    {
+      "from": "pathogen",
+      "verb": "is part of",
+      "to": "microbiology"
+    },
+    {
+      "from": "antibiotic",
+      "verb": "is part of",
+      "to": "microbiology"
+    },
+    {
+      "from": "antibody",
+      "verb": "is part of",
+      "to": "microbiology"
+    },
+    {
+      "from": "antigen",
+      "verb": "is part of",
+      "to": "microbiology"
+    },
+    {
+      "from": "normal human body temperature",
+      "verb": "is part of",
+      "to": "physiology"
+    },
+    {
+      "from": "human chromosome number",
+      "verb": "is part of",
+      "to": "genetics"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "Hardy-Weinberg allele frequencies",
+      "expression": "\"p\" + \"q\" = 1",
+      "latex": "p + q = 1",
+      "assigned_word": "allele frequency"
+    },
+    {
+      "name": "Hardy-Weinberg genotype frequencies",
+      "expression": "\"p\"^2 + 2*\"p\"*\"q\" + \"q\"^2 = 1",
+      "latex": "p^2 + 2pq + q^2 = 1",
+      "assigned_word": "genotype frequency"
+    },
+    {
+      "name": "definition of body mass index",
+      "expression": "\"body mass index\" = \"mass\" / \"height\"^2",
+      "latex": "\\mathrm{BMI} = \\frac{m}{h^2}",
+      "assigned_word": "body mass index"
+    },
+    {
+      "name": "definition of cardiac output",
+      "expression": "\"cardiac output\" = \"heart rate\" * \"stroke volume\"",
+      "latex": "Q = \\mathrm{HR} \\cdot \\mathrm{SV}",
+      "assigned_word": "cardiac output"
+    },
+    {
+      "name": "definition of population growth rate",
+      "expression": "\"population growth rate\" = \"birth rate\" - \"death rate\"",
+      "latex": "r = b - d",
+      "assigned_word": "population growth rate"
+    },
+    {
+      "name": "definition of magnification",
+      "expression": "\"magnification\" = \"image size\" / \"object size\"",
+      "latex": "M = \\frac{I}{O}",
+      "assigned_word": "magnification"
+    },
+    {
+      "name": "definition of net primary production",
+      "expression": "\"net primary production\" = \"gross primary production\" - \"cellular respiration\"",
+      "latex": "\\mathrm{NPP} = \\mathrm{GPP} - R",
+      "assigned_word": "net primary production"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "normal human body temperature"
+      ],
+      "number": "37",
+      "share": "public"
+    },
+    {
+      "words": [
+        "human chromosome number"
+      ],
+      "number": "46",
+      "share": "public"
+    }
+  ]
+}

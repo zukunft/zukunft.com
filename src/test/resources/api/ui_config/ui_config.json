@@ -7279,6 +7279,18 @@
         "usage": null,
         "impact": null,
         "id": 38
+      },
+      {
+        "name": "must be one of",
+        "code_id": "must_be_one_of",
+        "description": "to disambiguate a word that has several meanings by pinning each meaning to its own triple e.g. the word 'second' must be one of 'time unit' or 'ranking number'; the qualifier triple is referenced instead of the ambiguous word and only the original word is shown on a page while the qualifier appears in the tooltip",
+        "plural": "must be one of",
+        "reverse": "",
+        "rev_plural": "",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 39
       }
     ],
     "phrase_types": [
@@ -7548,6 +7560,12 @@
         "code_id": "scaling",
         "description": "a formula that adjust the scaling e.g. \"million = one \/ 1000000\"",
         "id": 6
+      },
+      {
+        "name": "calc with R",
+        "code_id": "calc_r",
+        "description": "redirect complex calculation to an R-project server if possible",
+        "id": 7
       }
     ],
     "formula_link_types": [

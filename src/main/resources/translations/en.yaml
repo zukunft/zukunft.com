@@ -103,6 +103,7 @@ messages:
   system_title_error_log: "Error log"
   system_title_error_update: "Error update"
   system_title_search: "search"
+  system_title_search_result: "search result for z$VarPattern$z"
   system_title_search_full: "search"
   system_title_value_detail: "Value"
   system_title_result_explain: "Explain"

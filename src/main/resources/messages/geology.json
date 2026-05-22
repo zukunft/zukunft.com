@@ -1,0 +1,2489 @@
+{
+  "version": "0.0.3",
+  "time": "2026-05-22 09:00:00",
+  "user": "timon",
+  "selection": [
+    "geology"
+  ],
+  "description": "Main geological definitions and formulas that are not part of the units, physics, math or chemistry base data.",
+  "words": [
+    {
+      "name": "geology",
+      "description": "study of the composition, structure, physical properties, and history of Earth's components, and the processes by which they are shaped",
+      "refs": [
+        {
+          "name": "Geology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1069",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "science"
+    },
+    {
+      "name": "density"
+    },
+    {
+      "name": "mineralogy",
+      "description": "scientific study of minerals",
+      "refs": [
+        {
+          "name": "Mineralogy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83353",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "petrology",
+      "description": "branch of geology that studies the origin, composition, distribution and structure of rocks",
+      "refs": [
+        {
+          "name": "Petrology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q163082",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "structural geology",
+      "description": "science of the description and interpretation of deformation in the earth's crust independent of extent",
+      "refs": [
+        {
+          "name": "Structural geology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q334823",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "geomorphology",
+      "description": "scientific study of landforms and the processes that shape them",
+      "refs": [
+        {
+          "name": "Geomorphology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52109",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sedimentology",
+      "description": "study of natural sediments and of the processes by which they are formed",
+      "refs": [
+        {
+          "name": "Sedimentology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q205768",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stratigraphy",
+      "description": "study of rock layers and the layering process",
+      "refs": [
+        {
+          "name": "Stratigraphy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q134783",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "volcanology",
+      "description": "field of geology dedicated to the research of volcanoes",
+      "refs": [
+        {
+          "name": "Volcanology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q102904",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "seismology",
+      "description": "scientific study of earthquakes",
+      "refs": [
+        {
+          "name": "Seismology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83371",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "geochemistry",
+      "description": "science that applies chemistry to geological systems",
+      "refs": [
+        {
+          "name": "Geochemistry",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q161764",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "geophysics",
+      "description": "study of physical processes and phenomena occurring in the Earth and in its vicinity, and of their characteristics",
+      "refs": [
+        {
+          "name": "Geophysics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q46255",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hydrogeology",
+      "description": "branch of science that studies distribution and movement of groundwater",
+      "refs": [
+        {
+          "name": "Hydrogeology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179509",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "paleontology",
+      "description": "scientific study of the past of life on Earth through fossils",
+      "refs": [
+        {
+          "name": "Paleontology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7205",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "geochronology",
+      "description": "science of determining the age of rocks, sediments and fossils",
+      "refs": [
+        {
+          "name": "Geochronology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q213891",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "glaciology",
+      "description": "study of glaciers",
+      "refs": [
+        {
+          "name": "Glaciology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52120",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "economic geology",
+      "description": "branch of geology concerning the scientific study of the formation, location, and use of marketable geologic materials including fuels, metals, minerals, and water.",
+      "refs": [
+        {
+          "name": "Economic geology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q853915",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mineral",
+      "description": "naturally occurring usually inorganic substance that has a (more or less) definite chemical composition and a crystal structure",
+      "refs": [
+        {
+          "name": "Mineral",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7946",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "crystal",
+      "description": "solid material whose constituent atoms, molecules, or ions are arranged in an ordered lattice extending in all three spatial dimensions",
+      "refs": [
+        {
+          "name": "Crystal",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43533",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "silicate mineral",
+      "description": "rock-forming minerals with predominantly silicate anions",
+      "refs": [
+        {
+          "name": "Silicate minerals",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q178977",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "quartz",
+      "description": "mineral made of silicon and oxygen",
+      "refs": [
+        {
+          "name": "Quartz",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43010",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "feldspar",
+      "description": "mineral group",
+      "refs": [
+        {
+          "name": "Feldspar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170258",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mica",
+      "description": "group of phyllosilicate minerals",
+      "refs": [
+        {
+          "name": "Mica",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q114675",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "calcite",
+      "description": "carbonate mineral",
+      "refs": [
+        {
+          "name": "Calcite",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q171917",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "olivine",
+      "description": "solid solution series",
+      "refs": [
+        {
+          "name": "Olivine",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q22693",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "pyroxene",
+      "description": "group of inosilicate minerals with single chains of silica tetrahedra",
+      "refs": [
+        {
+          "name": "Pyroxene",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q192880",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "amphibole",
+      "description": "any of a group of double chain inosilicates (mineralogy)",
+      "refs": [
+        {
+          "name": "Amphibole",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17159",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Mohs scale",
+      "description": "qualitative ordinal scale characterizing scratch resistance of various minerals",
+      "refs": [
+        {
+          "name": "Mohs scale",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41472",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hardness",
+      "description": "measure of how resistant solid matter is to various kinds of permanent shape change when a force is applied",
+      "refs": [
+        {
+          "name": "Hardness",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3236003",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cleavage",
+      "description": "tendency of crystalline materials to split along definite crystallographic structural planes",
+      "refs": [
+        {
+          "name": "Cleavage (crystal)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q107400",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "lustre",
+      "description": "manner in which light interacts with a crystal, rock, or mineral's surface",
+      "refs": [
+        {
+          "name": "Lustre (mineralogy)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11998326",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "streak",
+      "description": "color of the powder produced when a mineral specimen is dragged across an un-weathered surface",
+      "refs": [
+        {
+          "name": "Streak (mineralogy)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q107775",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "specific gravity",
+      "description": "ratio of the density (mass per volume) of a substance to the density of a given reference material",
+      "refs": [
+        {
+          "name": "Relative density",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11027905",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ore",
+      "description": "rock containing one or more valuable minerals, mined for metals but also non-metals that can be extracted from the minerals; metal ores usually contain the metals as parts of compounds with other elements",
+      "refs": [
+        {
+          "name": "Ore",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q102798",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "rock",
+      "description": "naturally occurring solid aggregate of one or more minerals or mineraloids",
+      "refs": [
+        {
+          "name": "Rock (geology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8063",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "igneous rock",
+      "description": "one of the three main rock types; formed through the cooling and solidification of magma or lava",
+      "refs": [
+        {
+          "name": "Igneous rock",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q42045",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sedimentary rock",
+      "description": "rock formed by the deposition of material",
+      "refs": [
+        {
+          "name": "Sedimentary rock",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q82480",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "metamorphic rock",
+      "description": "rock arising from metamorphism of original rock under high heat and pressure",
+      "refs": [
+        {
+          "name": "Metamorphic rock",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q47069",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "magma",
+      "description": "mixture of molten or semi-molten rock, volatiles and solids that is found beneath the surface of the Earth",
+      "refs": [
+        {
+          "name": "Magma",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q42278",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "lava",
+      "description": "molten rock expelled by a volcano during an eruption",
+      "refs": [
+        {
+          "name": "Lava",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q40157",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "granite",
+      "description": "common type of intrusive, felsic, igneous rock with grained texture",
+      "refs": [
+        {
+          "name": "Granite",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41177",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "basalt",
+      "description": "mafic igneous rock",
+      "refs": [
+        {
+          "name": "Basalt",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43338",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "limestone",
+      "description": "sedimentary rocks made of the chemical substance calcium carbonate",
+      "refs": [
+        {
+          "name": "Limestone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q23757",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sandstone",
+      "description": "type of sedimentary rock",
+      "refs": [
+        {
+          "name": "Sandstone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q13085",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "shale",
+      "description": "fine-grained, clastic sedimentary rock",
+      "refs": [
+        {
+          "name": "Shale",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q751300",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "marble",
+      "description": "non-foliated metamorphic rock commonly used for sculpture and as a building material",
+      "refs": [
+        {
+          "name": "Marble",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q40861",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gneiss",
+      "description": "common and widely distributed type of rock",
+      "refs": [
+        {
+          "name": "Gneiss",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q166409",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "schist",
+      "description": "medium-grade metamorphic rock",
+      "refs": [
+        {
+          "name": "Schist",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q15315",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "slate",
+      "description": "fine-grained, foliated, homogeneous, low-grade metamorphic rock",
+      "refs": [
+        {
+          "name": "Slate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q207079",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "metamorphism",
+      "description": "change of minerals in rocks without melting into magma, occurring due to heat, pressure, and chemically active fluids",
+      "refs": [
+        {
+          "name": "Metamorphism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q380971",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "crystallization",
+      "description": "process by which a solid with a highly organised atomic or molecular structure forms",
+      "refs": [
+        {
+          "name": "Crystallization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q284256",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "rock cycle",
+      "description": "time-consuming transitions through geologic time among the three main rock types: sedimentary, metamorphic, and igneous",
+      "refs": [
+        {
+          "name": "Rock cycle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1164398",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fault",
+      "description": "fracture or discontinuity in rock across which there is displacement",
+      "refs": [
+        {
+          "name": "Fault (geology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q47089",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fold",
+      "description": "geological structure",
+      "refs": [
+        {
+          "name": "Fold (geology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q81659",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "anticline",
+      "description": "in geology, an anticline is a type of fold that is an arch-like shape",
+      "refs": [
+        {
+          "name": "Anticline",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190147",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "syncline",
+      "description": "type of geological fold",
+      "refs": [
+        {
+          "name": "Syncline",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q319440",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "strike and dip",
+      "description": "terms used to denote the orientation of a geologic feature",
+      "refs": [
+        {
+          "name": "Strike and dip",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5988006",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "transform fault",
+      "description": "plate boundary where the motion is predominantly horizontal",
+      "refs": [
+        {
+          "name": "Transform fault",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q664573",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "weathering",
+      "description": "breaking down of rocks, soil and minerals as well as artificial materials through contact with the Earth's atmosphere, biota and waters",
+      "refs": [
+        {
+          "name": "Weathering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179177",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "erosion",
+      "description": "action of exogenic processes which remove soil and rock from one location on the Earth's crust, then transport it to another location where it is deposited",
+      "refs": [
+        {
+          "name": "Erosion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q80026",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "deposition",
+      "description": "geological process in which sediments, soil and rocks are added to a landform or land mass",
+      "refs": [
+        {
+          "name": "Deposition (geology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1987070",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "landslide",
+      "description": "type of natural disasters involving ground movements, often caused by slope instability triggered by specific event",
+      "refs": [
+        {
+          "name": "Landslide",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q167903",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "soil",
+      "description": "natural body consisting of layers that are primarily composed of minerals",
+      "refs": [
+        {
+          "name": "Soil",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q36133",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sediment",
+      "description": "particulate matter that is deposited on the surface of land",
+      "refs": [
+        {
+          "name": "Sediment",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q180184",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sedimentation",
+      "description": "depositing / withdrawal of particles from fluids or gases under the influence of gravity or the centrifugal force",
+      "refs": [
+        {
+          "name": "Sedimentation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q635485",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "lithification",
+      "description": "geologic process",
+      "refs": [
+        {
+          "name": "Lithification",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1191052",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "compaction",
+      "description": "geological process by which a sediment progressively loses its porosity due to the effects of pressure from loading",
+      "refs": [
+        {
+          "name": "Compaction (geology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1414356",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cementation",
+      "description": "term in geology",
+      "refs": [
+        {
+          "name": "Cementation (geology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189315",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stratum",
+      "description": "layer of sedimentary rock or soil with internally consistent characteristics",
+      "refs": [
+        {
+          "name": "Stratum",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12758989",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "unconformity",
+      "description": "distorted sediment deposition",
+      "refs": [
+        {
+          "name": "Unconformity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q876798",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "geologic time scale",
+      "description": "a system of chronological dating that classifies geological strata (stratigraphy) in time",
+      "refs": [
+        {
+          "name": "Geologic time scale",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43521",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "volcano",
+      "description": "natural, surface vent or fissure usually in a mountainous form",
+      "refs": [
+        {
+          "name": "Volcano",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8072",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "volcanic eruption",
+      "description": "natural phenomenon where lava, hot gases or other substances are emitted suddenly from a geological feature",
+      "refs": [
+        {
+          "name": "Volcanic eruption",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7692360",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "magma chamber",
+      "description": "underground accumulation of molten rock",
+      "refs": [
+        {
+          "name": "Magma chamber",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q488634",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "caldera",
+      "description": "cauldron-like volcanic feature usually formed by the collapse of land following a volcanic eruption",
+      "refs": [
+        {
+          "name": "Caldera",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q159954",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hotspot",
+      "description": "volcanic region",
+      "refs": [
+        {
+          "name": "Hotspot (geology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q105131",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "earthquake",
+      "description": "result of a sudden release of energy in the Earth's crust that creates seismic waves",
+      "refs": [
+        {
+          "name": "Earthquake",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7944",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "seismic wave",
+      "description": "seismic, volcanic, or explosive energy that travels through Earth's layers",
+      "refs": [
+        {
+          "name": "Seismic wave",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q186167",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "P wave",
+      "description": "longitudinal seismic wave",
+      "refs": [
+        {
+          "name": "P wave",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1208908",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "S wave",
+      "description": "transverse seismic wave",
+      "refs": [
+        {
+          "name": "S wave",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2053186",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "epicenter",
+      "description": "point on the Earth's surface that is directly above the hypocenter in an earthquake",
+      "refs": [
+        {
+          "name": "Epicenter",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q106032",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hypocenter",
+      "description": "site of an earthquake or a nuclear explosion",
+      "refs": [
+        {
+          "name": "Hypocenter",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q107410",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "moment magnitude scale",
+      "description": "measure of earthquake size, in terms of the energy released",
+      "refs": [
+        {
+          "name": "Moment magnitude scale",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q201605",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Richter scale",
+      "description": "measuring the strength (\"size\") of earthquakes",
+      "refs": [
+        {
+          "name": "Richter scale",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q38768",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "seismic moment",
+      "description": "product of the shear modulus, area of rupture along the fault, and the average slip",
+      "refs": [
+        {
+          "name": "Seismic moment",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1481983",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "tsunami",
+      "description": "series of water waves caused by the displacement of a large volume of a body of water",
+      "refs": [
+        {
+          "name": "Tsunami",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8070",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "crust",
+      "description": "outermost solid shell of a rocky planet, dwarf planet or natural satellite, which is chemically distinct from the underlying mantle",
+      "refs": [
+        {
+          "name": "Crust (geology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4232578",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mantle",
+      "description": "layer inside a planetary body",
+      "refs": [
+        {
+          "name": "Mantle (geology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4364434",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "lithosphere",
+      "description": "rigid, outermost shell of a terrestrial-type planet or natural satellite that is defined by its rigid mechanical properties",
+      "refs": [
+        {
+          "name": "Lithosphere",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83296",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "asthenosphere",
+      "description": "highly viscous, mechanically weak and ductile region of the Earth's mantle",
+      "refs": [
+        {
+          "name": "Asthenosphere",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q166257",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "oceanic crust",
+      "description": "part of Earth's lithosphere",
+      "refs": [
+        {
+          "name": "Oceanic crust",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q238851",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "continental crust",
+      "description": "layer of rocks that forms the continents and continental shelves",
+      "refs": [
+        {
+          "name": "Continental crust",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q858571",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "inner core",
+      "description": "innermost geologic layer of the Earth",
+      "refs": [
+        {
+          "name": "Earth's inner core",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q394352",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "outer core",
+      "description": "fluid layer composed of mostly iron and nickel between Earth's solid inner core and its mantle",
+      "refs": [
+        {
+          "name": "Earth's outer core",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q857867",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "isostasy",
+      "description": "state of gravitational equilibrium between Earth's crust and mantle",
+      "refs": [
+        {
+          "name": "Isostasy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q188719",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "geothermal gradient",
+      "description": "variation of temperature of Earth at different depths",
+      "refs": [
+        {
+          "name": "Geothermal gradient",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q636340",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "plate tectonics",
+      "description": "scientific theory that describes the large-scale motions of Earth's lithosphere",
+      "refs": [
+        {
+          "name": "Plate tectonics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7950",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "continental drift",
+      "description": "movement of Earth's continents relative to each other",
+      "refs": [
+        {
+          "name": "Continental drift",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q178605",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "subduction",
+      "description": "geological process at tectonic plate boundaries",
+      "refs": [
+        {
+          "name": "Subduction",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q176318",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "seafloor spreading",
+      "description": "process at mid-ocean ridges, where new oceanic crust is formed through volcanic activity and then gradually moves away from the ridge",
+      "refs": [
+        {
+          "name": "Seafloor spreading",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q215920",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "convergent boundary",
+      "description": "area where two tectonic plate collide",
+      "refs": [
+        {
+          "name": "Convergent boundary",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1255282",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "divergent boundary",
+      "description": "linear feature that exists between two tectonic plates that are moving away from each other",
+      "refs": [
+        {
+          "name": "Divergent boundary",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3150308",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "bulk modulus",
+      "description": "measure of how incompressible / resistant to compressibility a substance is",
+      "refs": [
+        {
+          "name": "Bulk modulus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q900371",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "shear modulus",
+      "description": "ratio of shear stress to the shear strain",
+      "refs": [
+        {
+          "name": "Shear modulus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q461466",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "groundwater",
+      "description": "water located beneath the ground surface",
+      "refs": [
+        {
+          "name": "Groundwater",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q161598",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "aquifer",
+      "description": "permeable rock containing groundwater",
+      "refs": [
+        {
+          "name": "Aquifer",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q208791",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "water table",
+      "description": "top of a saturated aquifer, or where the water pressure head is equal to the atmospheric pressure",
+      "refs": [
+        {
+          "name": "Water table",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3342272",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "porosity",
+      "description": "ratio of void volume and total volume of a porous material",
+      "refs": [
+        {
+          "name": "Porosity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q622669",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "permeability (geology)",
+      "description": "measure of the ability of a porous material to allow fluids to pass through it",
+      "refs": [
+        {
+          "name": "Permeability (earth sciences)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q256699",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hydraulic conductivity",
+      "description": "measure of the ability of a porous material to allow water to pass through it",
+      "refs": [
+        {
+          "name": "Hydraulic conductivity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2783041",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hydraulic head",
+      "description": "specific measurement of liquid pressure above a vertical datum",
+      "refs": [
+        {
+          "name": "Hydraulic head",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q369743",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "discharge",
+      "description": "volume of fluid which passes per time",
+      "refs": [
+        {
+          "name": "Volumetric flow rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1134348",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fossil",
+      "description": "preserved remains or traces of organisms from a past geological age",
+      "refs": [
+        {
+          "name": "Fossil",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q40614",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "radiometric dating",
+      "description": "a technique used to date materials such as rocks or carbon",
+      "refs": [
+        {
+          "name": "Radiometric dating",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q214753",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "glacier",
+      "description": "large persistent body of ice",
+      "refs": [
+        {
+          "name": "Glacier",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q35666",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "moraine",
+      "description": "glacially formed accumulation of unconsolidated glacial debris",
+      "refs": [
+        {
+          "name": "Moraine",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2610088",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fossil fuel",
+      "description": "combustible fuel containing hydrocarbons formed by natural processes such as anaerobic decomposition of buried dead organisms, examples being coal, petroleum and natural gas",
+      "refs": [
+        {
+          "name": "Fossil fuel",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12748",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "coal",
+      "description": "combustible sedimentary rock composed primarily of carbon",
+      "refs": [
+        {
+          "name": "Coal",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q24489",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "petroleum",
+      "description": "naturally occurring flammable liquid",
+      "refs": [
+        {
+          "name": "Petroleum",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q22656",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "natural gas",
+      "description": "fossil fuel",
+      "refs": [
+        {
+          "name": "Natural gas",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q40858",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "void volume",
+      "description": "the volume of the void (pore) spaces within a material"
+    },
+    {
+      "name": "total volume",
+      "description": "the total bulk volume of a material including solids and voids"
+    },
+    {
+      "name": "density of substance",
+      "description": "the mass per unit volume of the substance being measured"
+    },
+    {
+      "name": "density of water",
+      "description": "the mass per unit volume of pure water, about 1000 kg per cubic metre"
+    },
+    {
+      "name": "temperature change",
+      "description": "the difference in temperature between two points"
+    },
+    {
+      "name": "depth interval",
+      "description": "the vertical distance between two points below the surface"
+    },
+    {
+      "name": "cross-sectional area",
+      "description": "the area of a cross-section taken perpendicular to the direction of flow"
+    },
+    {
+      "name": "hydraulic gradient",
+      "description": "the change in hydraulic head per unit distance along the flow path"
+    },
+    {
+      "name": "rock density",
+      "description": "the mass per unit volume of a rock"
+    },
+    {
+      "name": "P wave velocity",
+      "description": "the propagation speed of a P wave through a medium"
+    },
+    {
+      "name": "moment magnitude",
+      "description": "a measure of the size of an earthquake based on the seismic moment released"
+    },
+    {
+      "name": "S wave velocity",
+      "description": "the propagation speed of an S wave through a medium"
+    },
+    {
+      "name": "void ratio",
+      "description": "the ratio of the volume of voids to the volume of solids in a material"
+    },
+    {
+      "name": "solid volume",
+      "description": "the volume occupied by the solid particles of a material"
+    },
+    {
+      "name": "head difference",
+      "description": "the difference in hydraulic head between two points"
+    },
+    {
+      "name": "flow length",
+      "description": "the distance along the flow path between two points"
+    }
+  ],
+  "triples": [
+    {
+      "from": "geology",
+      "verb": "is part of",
+      "to": "science"
+    },
+    {
+      "from": "mineralogy",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "petrology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "structural geology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "geomorphology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "sedimentology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "stratigraphy",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "volcanology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "seismology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "geochemistry",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "geophysics",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "hydrogeology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "paleontology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "geochronology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "glaciology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "economic geology",
+      "verb": "is part of",
+      "to": "geology"
+    },
+    {
+      "from": "mineral",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "crystal",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "silicate mineral",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "quartz",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "feldspar",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "mica",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "calcite",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "olivine",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "pyroxene",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "amphibole",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "Mohs scale",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "hardness",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "cleavage",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "lustre",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "streak",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "specific gravity",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "ore",
+      "verb": "is part of",
+      "to": "mineralogy"
+    },
+    {
+      "from": "rock",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "igneous rock",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "sedimentary rock",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "metamorphic rock",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "magma",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "lava",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "granite",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "basalt",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "limestone",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "sandstone",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "shale",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "marble",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "gneiss",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "schist",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "slate",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "metamorphism",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "crystallization",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "rock cycle",
+      "verb": "is part of",
+      "to": "petrology"
+    },
+    {
+      "from": "fault",
+      "verb": "is part of",
+      "to": "structural geology"
+    },
+    {
+      "from": "fold",
+      "verb": "is part of",
+      "to": "structural geology"
+    },
+    {
+      "from": "anticline",
+      "verb": "is part of",
+      "to": "structural geology"
+    },
+    {
+      "from": "syncline",
+      "verb": "is part of",
+      "to": "structural geology"
+    },
+    {
+      "from": "strike and dip",
+      "verb": "is part of",
+      "to": "structural geology"
+    },
+    {
+      "from": "transform fault",
+      "verb": "is part of",
+      "to": "structural geology"
+    },
+    {
+      "from": "weathering",
+      "verb": "is part of",
+      "to": "geomorphology"
+    },
+    {
+      "from": "erosion",
+      "verb": "is part of",
+      "to": "geomorphology"
+    },
+    {
+      "from": "deposition",
+      "verb": "is part of",
+      "to": "geomorphology"
+    },
+    {
+      "from": "landslide",
+      "verb": "is part of",
+      "to": "geomorphology"
+    },
+    {
+      "from": "soil",
+      "verb": "is part of",
+      "to": "geomorphology"
+    },
+    {
+      "from": "sediment",
+      "verb": "is part of",
+      "to": "sedimentology"
+    },
+    {
+      "from": "sedimentation",
+      "verb": "is part of",
+      "to": "sedimentology"
+    },
+    {
+      "from": "lithification",
+      "verb": "is part of",
+      "to": "sedimentology"
+    },
+    {
+      "from": "compaction",
+      "verb": "is part of",
+      "to": "sedimentology"
+    },
+    {
+      "from": "cementation",
+      "verb": "is part of",
+      "to": "sedimentology"
+    },
+    {
+      "from": "stratum",
+      "verb": "is part of",
+      "to": "stratigraphy"
+    },
+    {
+      "from": "unconformity",
+      "verb": "is part of",
+      "to": "stratigraphy"
+    },
+    {
+      "from": "geologic time scale",
+      "verb": "is part of",
+      "to": "stratigraphy"
+    },
+    {
+      "from": "volcano",
+      "verb": "is part of",
+      "to": "volcanology"
+    },
+    {
+      "from": "volcanic eruption",
+      "verb": "is part of",
+      "to": "volcanology"
+    },
+    {
+      "from": "magma chamber",
+      "verb": "is part of",
+      "to": "volcanology"
+    },
+    {
+      "from": "caldera",
+      "verb": "is part of",
+      "to": "volcanology"
+    },
+    {
+      "from": "hotspot",
+      "verb": "is part of",
+      "to": "volcanology"
+    },
+    {
+      "from": "earthquake",
+      "verb": "is part of",
+      "to": "seismology"
+    },
+    {
+      "from": "seismic wave",
+      "verb": "is part of",
+      "to": "seismology"
+    },
+    {
+      "from": "P wave",
+      "verb": "is part of",
+      "to": "seismology"
+    },
+    {
+      "from": "S wave",
+      "verb": "is part of",
+      "to": "seismology"
+    },
+    {
+      "from": "epicenter",
+      "verb": "is part of",
+      "to": "seismology"
+    },
+    {
+      "from": "hypocenter",
+      "verb": "is part of",
+      "to": "seismology"
+    },
+    {
+      "from": "moment magnitude scale",
+      "verb": "is part of",
+      "to": "seismology"
+    },
+    {
+      "from": "Richter scale",
+      "verb": "is part of",
+      "to": "seismology"
+    },
+    {
+      "from": "seismic moment",
+      "verb": "is part of",
+      "to": "seismology"
+    },
+    {
+      "from": "tsunami",
+      "verb": "is part of",
+      "to": "seismology"
+    },
+    {
+      "from": "crust",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "mantle",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "lithosphere",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "asthenosphere",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "oceanic crust",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "continental crust",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "inner core",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "outer core",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "isostasy",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "geothermal gradient",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "plate tectonics",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "continental drift",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "subduction",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "seafloor spreading",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "convergent boundary",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "divergent boundary",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "bulk modulus",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "shear modulus",
+      "verb": "is part of",
+      "to": "geophysics"
+    },
+    {
+      "from": "groundwater",
+      "verb": "is part of",
+      "to": "hydrogeology"
+    },
+    {
+      "from": "aquifer",
+      "verb": "is part of",
+      "to": "hydrogeology"
+    },
+    {
+      "from": "water table",
+      "verb": "is part of",
+      "to": "hydrogeology"
+    },
+    {
+      "from": "porosity",
+      "verb": "is part of",
+      "to": "hydrogeology"
+    },
+    {
+      "from": "permeability (geology)",
+      "verb": "is part of",
+      "to": "hydrogeology"
+    },
+    {
+      "from": "hydraulic conductivity",
+      "verb": "is part of",
+      "to": "hydrogeology"
+    },
+    {
+      "from": "hydraulic head",
+      "verb": "is part of",
+      "to": "hydrogeology"
+    },
+    {
+      "from": "discharge",
+      "verb": "is part of",
+      "to": "hydrogeology"
+    },
+    {
+      "from": "fossil",
+      "verb": "is part of",
+      "to": "paleontology"
+    },
+    {
+      "from": "radiometric dating",
+      "verb": "is part of",
+      "to": "geochronology"
+    },
+    {
+      "from": "glacier",
+      "verb": "is part of",
+      "to": "glaciology"
+    },
+    {
+      "from": "moraine",
+      "verb": "is part of",
+      "to": "glaciology"
+    },
+    {
+      "from": "fossil fuel",
+      "verb": "is part of",
+      "to": "economic geology"
+    },
+    {
+      "from": "coal",
+      "verb": "is part of",
+      "to": "economic geology"
+    },
+    {
+      "from": "petroleum",
+      "verb": "is part of",
+      "to": "economic geology"
+    },
+    {
+      "from": "natural gas",
+      "verb": "is part of",
+      "to": "economic geology"
+    },
+    {
+      "from": "density",
+      "verb": "of",
+      "to": "continental crust",
+      "name": "density of continental crust"
+    },
+    {
+      "from": "density",
+      "verb": "of",
+      "to": "oceanic crust",
+      "name": "density of oceanic crust"
+    },
+    {
+      "from": "density",
+      "verb": "of",
+      "to": "mantle",
+      "name": "density of mantle"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "definition of porosity",
+      "expression": "\"porosity\" = \"void volume\" / \"total volume\"",
+      "latex": "\\phi = \\frac{V_v}{V_t}",
+      "assigned": [
+        "void volume",
+        "total volume"
+      ]
+    },
+    {
+      "name": "definition of specific gravity",
+      "expression": "\"specific gravity\" = \"density of substance\" / \"density of water\"",
+      "latex": "SG = \\frac{\\rho_s}{\\rho_w}",
+      "assigned": [
+        "density of substance",
+        "density of water"
+      ]
+    },
+    {
+      "name": "definition of geothermal gradient",
+      "expression": "\"geothermal gradient\" = \"temperature change\" / \"depth interval\"",
+      "latex": "\\frac{dT}{dz} = \\frac{\\Delta T}{\\Delta z}",
+      "assigned": [
+        "temperature change",
+        "depth interval"
+      ]
+    },
+    {
+      "name": "Darcy's law",
+      "expression": "\"discharge\" = \"hydraulic conductivity\" * \"cross-sectional area\" * \"hydraulic gradient\"",
+      "latex": "Q = K \\cdot A \\cdot i",
+      "assigned": [
+        "hydraulic conductivity",
+        "cross-sectional area",
+        "hydraulic gradient"
+      ]
+    },
+    {
+      "name": "definition of moment magnitude",
+      "expression": "\"moment magnitude\" = ( 2 / 3 ) * log(\"seismic moment\") - 10.7",
+      "latex": "M_w = \\frac{2}{3}\\log_{10} M_0 - 10.7",
+      "assigned": [
+        "seismic moment"
+      ]
+    },
+    {
+      "name": "definition of P wave velocity",
+      "expression": "\"P wave velocity\" = sqrt(( \"bulk modulus\" + ( 4 / 3 ) * \"shear modulus\" ) / \"rock density\")",
+      "latex": "v_p = \\sqrt{\\frac{K + \\frac{4}{3}\\mu}{\\rho}}",
+      "assigned": [
+        "bulk modulus",
+        "shear modulus",
+        "rock density"
+      ]
+    },
+    {
+      "name": "definition of S wave velocity",
+      "expression": "\"S wave velocity\" = sqrt(\"shear modulus\" / \"rock density\")",
+      "latex": "v_s = \\sqrt{\\frac{\\mu}{\\rho}}",
+      "assigned": [
+        "shear modulus",
+        "rock density"
+      ]
+    },
+    {
+      "name": "definition of void ratio",
+      "expression": "\"void ratio\" = \"void volume\" / \"solid volume\"",
+      "latex": "e = \\frac{V_v}{V_s}",
+      "assigned": [
+        "void volume",
+        "solid volume"
+      ]
+    },
+    {
+      "name": "definition of hydraulic gradient",
+      "expression": "\"hydraulic gradient\" = \"head difference\" / \"flow length\"",
+      "latex": "i = \\frac{\\Delta h}{L}",
+      "assigned": [
+        "head difference",
+        "flow length"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "geology reference data",
+      "description": "typical reference values for common rocks and the Earth's interior, as cited in geology textbooks"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "density of continental crust"
+      ],
+      "number": "2700",
+      "source": "geology reference data"
+    },
+    {
+      "words": [
+        "density of oceanic crust"
+      ],
+      "number": "3000",
+      "source": "geology reference data"
+    },
+    {
+      "words": [
+        "density of mantle"
+      ],
+      "number": "3300",
+      "source": "geology reference data"
+    },
+    {
+      "words": [
+        "density of water"
+      ],
+      "number": "1000",
+      "source": "geology reference data"
+    },
+    {
+      "words": [
+        "geothermal gradient"
+      ],
+      "number": "0.025",
+      "source": "geology reference data"
+    }
+  ]
+}

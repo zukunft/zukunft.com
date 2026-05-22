@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -166,10 +167,12 @@ class system_views_read_tests
             'not permitted',
             ', frontend view.php?m=error_update contains at least', $is_connected);
         */
+        // the former find.php has been replaced by the word find view (m=67)
         $t->dsp_web_test(
-            api::SCRIPT_PATH_NAME . 'find.php?pattern=' . words::ABB,
+            api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID
+            . url_var::ADD . url_var::PATTERN_HUMAN . url_var::EQ . words::ABB,
             words::ABB,
-            ', frontend find.php contains at least', $is_connected);
+            ', frontend view.php for the word find view contains at least', $is_connected);
 
     }
 

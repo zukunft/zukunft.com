@@ -66,6 +66,7 @@ class config extends value_list
      */
 
     const int LIMIT_NAME_LIST = shared_config::LIMIT_NAME_LIST;
+    const int LIMIT_SEARCH_LIST = shared_config::LIMIT_SEARCH_LIST;
 
 
     /*

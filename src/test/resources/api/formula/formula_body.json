@@ -6,7 +6,7 @@
   "description": "to convert times in minutes to seconds and the other way round",
   "usage": 7,
   "type_id": 1,
-  "user_text": "\"second\" = \"minute\" * 60",
-  "ref_text": "{w24}={w104}*60",
+  "user_text": "\"second (time)\" = \"minute\" * 60",
+  "ref_text": "{t20}={w103}*60",
   "impact": 3.4
 }

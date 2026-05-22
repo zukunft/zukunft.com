@@ -163,6 +163,10 @@ class verbs
     const string BY_PARTS_PLURAL = "by parts";
     const string BY_PARTS_REVERSE = "";
     const string BY_PARTS_REV_PLURAL = "";
+    const string MUST_BE_ONE_OF = "must_be_one_of"; // to disambiguate a word with several meanings by pinning each meaning to its own qualifier triple e.g. "second (time unit)" and "second (ranking number)"
+    const string MUST_BE_ONE_OF_NAME = "must be one of";
+    const int MUST_BE_ONE_OF_ID = 39;
+    const string MUST_BE_ONE_OF_COM = "to disambiguate a word that has several meanings by pinning each meaning to its own triple e.g. the word 'second' must be one of 'time unit' or 'ranking number'; the qualifier triple is referenced instead of the ambiguous word and only the original word is shown on a page while the qualifier appears in the tooltip";
 
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const string FOLLOWED_BY = "is followed by";

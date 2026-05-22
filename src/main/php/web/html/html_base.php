@@ -335,7 +335,10 @@ class html_base
 
         global $mtr;
         $result = $this->logo() . "\n";
-        $result .= '<' . self::FORM . ' ' . self::ACTION . '="' . api::FIND_SCRIPT . '" ' . self::CLASS_HTML . '="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">' . "\n";
+        $result .= '<' . self::FORM . ' ' . self::ACTION . '="' . api::MAIN_SCRIPT . '" ' . self::CLASS_HTML . '="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">' . "\n";
+        // submit the search to the find view as a hidden field so the GET call is e.g. /http/view.php?m=67&pattern=ABB
+        // (a query string in the form action would be dropped by the browser on a GET submit)
+        $result .= $this->form_hidden(url_var::MASK, (string)views::WORD_FIND_ID) . "\n";
         $result .= '<' . self::LABEL . ' ' . self::FOR . '="kp" ' . self::CLASS_HTML . '="visually-hidden">' . $mtr->txt(msg_id::NAVBAR_SEARCH) . '</' . self::LABEL . '>' . "\n";
         $result .= '<' . self::INPUT . ' ' . self::CLASS_HTML . '="form-control me-2" ' . self::TYPE . '="search" ' . self::NAME . '="pattern" ' . self::ID . '="kp" ' . self::PLACEHOLDER . '="' . $mtr->txt(msg_id::NAVBAR_SEARCH_PLACEHOLDER) . '" ' . self::STYLE . '="min-width: 40vw; max-width: 800px;">' . "\n";
         $result .= '<' . self::BUTTON . ' ' . self::CLASS_HTML . '="btn btn-outline-primary" ' . self::TYPE . '="submit">' . $mtr->txt(msg_id::NAVBAR_GET_NUMBERS) . '</' . self::BUTTON . '>' . "\n";

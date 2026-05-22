@@ -77,6 +77,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'library.php';
+include_once test_paths::CONST . 'files.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'formula_link_write_tests.php';
@@ -123,6 +124,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\formula_link_write_tests;
@@ -1277,8 +1279,12 @@ class test_db_load
                 if ($diff != '') {
                     $target = implode("", $csv_db);
                     log_err('after database reset these ' . $lib->class_to_name($class)
-                        . 's have been unexpected changed in ' . $csv_file_path . ': ' . $diff)
-                    . ' target is ' . substr($target, 0, 1000);
+                        . 's have been unexpected changed in ' . $csv_file_path . ': ' . $diff
+                        . ' target is ' . substr($target, 0, 1000));
+                    if (test_files::AUTO_UPDATE_TEST_FILES) {
+                        // accept the current database content as the new expected csv
+                        $this->env->update_path_file($csv_file_path, $target);
+                    }
                 }
             }
         }

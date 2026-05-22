@@ -430,6 +430,11 @@ class verb_list extends type_list
         $vrb->set_name(verbs::BY_PARTS_NAME);
         $vrb->set_code_id_db(verbs::BY_PARTS);
         $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::MUST_BE_ONE_OF_ID;
+        $vrb->set_name(verbs::MUST_BE_ONE_OF_NAME);
+        $vrb->set_code_id_db(verbs::MUST_BE_ONE_OF);
+        $this->add_verb($vrb);
     }
 
 

@@ -73,9 +73,9 @@ class words
 
     // for the system setup and all pods of zukunft.com
     const string POD = 'pod';
-    const int POD_ID = 203;
+    const int POD_ID = 204;
     const string MASTER_POD_NAME = 'zukunft.com';
-    const int MASTER_POD_NAME_ID = 212;
+    const int MASTER_POD_NAME_ID = 213;
     const string JOB = 'job';
     const string USER = 'user';
     const string FRONTEND = 'frontend';
@@ -88,7 +88,7 @@ class words
     const int URL_ID = 207;
     // e.g. the launch date of the first beta version of zukunft.com
     const string LAUNCH = 'launch';
-    const int LAUNCH_ID = 197;
+    const int LAUNCH_ID = 199;
 
     const string LIMITS = 'limits';
     const string LIFETIME = 'lifetime';
@@ -124,16 +124,16 @@ class words
 
     // e.g. the geolocation of the development of zukunft.com
     const string POINT = 'point';
-    const int POINT_ID = 204;
+    const int POINT_ID = 205;
 
     // general words used also for the system configuration that have a fixed tooltip
     const string TIME = 'time';
     const string TIME_COM = 'Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future';
-    const int TIME_ID = 103;
+    const int TIME_ID = 102;
     const string YEAR = 'year';
     const string YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
     const string YEAR_CAP = 'year';
-    const int YEAR_CAP_ID = 109;
+    const int YEAR_CAP_ID = 108;
     const string CALCULATION = 'calculation';
     const string CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
     const string MIN = 'min';
@@ -240,9 +240,9 @@ class words
     const string SECOND = 'second';
     const int SECOND_ID = 24;
     const string FLOW = 'flow';
-    const int FLOW_ID = 101;
+    const int FLOW_ID = 100;
     const string MINUTE = 'minute';
-    const int MINUTE_ID = 104;
+    const int MINUTE_ID = 103;
     const string HOUR = 'hour';
     const int HOUR_ID = 105;
     const string YEAR_2019 = '2019';
@@ -251,25 +251,25 @@ class words
     const int YEAR_2020_ID = 140;
     const string YEAR_2020_COM = 'the year 2020';
     const string YEAR_2021 = '2021';
-    const int YEAR_2021_ID = 924;
+    const int YEAR_2021_ID = 926;
     const string YEAR_2022 = '2022';
-    const int YEAR_2022_ID = 923;
+    const int YEAR_2022_ID = 925;
     const string YEAR_2023 = '2023';
-    const int YEAR_2023_ID = 922;
+    const int YEAR_2023_ID = 924;
     const string YEAR_2024 = '2024';
-    const int YEAR_2024_ID = 262;
+    const int YEAR_2024_ID = 264;
     const string YEAR_2025 = '2025';
-    const int YEAR_2025_ID = 1089;
+    const int YEAR_2025_ID = 1091;
     const string YEAR_2026 = '2026';
-    const int YEAR_2026_ID = 1088;
+    const int YEAR_2026_ID = 1090;
     const string YEAR_2027 = '2027';
-    const int YEAR_2027_ID = 1087;
+    const int YEAR_2027_ID = 1089;
     const string YEAR_2028 = '2028';
-    const int YEAR_2028_ID = 1086;
+    const int YEAR_2028_ID = 1088;
     const string YEAR_2029 = '2029';
-    const int YEAR_2029_ID = 1085;
+    const int YEAR_2029_ID = 1087;
     const string YEAR_2030 = '2030';
-    const int YEAR_2030_ID = 1084;
+    const int YEAR_2030_ID = 1086;
 
     // SI units for testing
     const string LIGHT = 'light';
@@ -280,11 +280,11 @@ class words
     const string METRE = 'metre';
     const int METRE_ID = 27;
     const string HYPERFINE = 'hyperfine';
-    const int HYPERFINE_ID = 131;
+    const int HYPERFINE_ID = 130;
     const string TRANSITION = 'transition';
     const int TRANSITION_ID = 132;
     const string FREQUENCY = 'frequency';
-    const int FREQUENCY_ID = 98;
+    const int FREQUENCY_ID = 132;
     const string CS_133 = 'Caesium-133';
     const int CS_133_ID = 134;
     const string HZ = 'Hz';
@@ -299,142 +299,142 @@ class words
 
     // words from import file scaling.json in order of appearance
     const string MIO = 'million';
-    const int MIO_ID = 157;
+    const int MIO_ID = 159;
     const string MIO_SHORT = 'mio';
     const string BILLION = 'billion';
-    const int BILLION_ID = 158;
+    const int BILLION_ID = 160;
     const string PCT = 'percent';
-    const int PCT_ID = 159;
+    const int PCT_ID = 161;
 
     // words from import file time_definition.json in order of appearance
     const string THIS_NAME = 'this'; // the test name for the predefined word 'this'
-    const int THIS_ID = 179;
+    const int THIS_ID = 181;
     const string PRIOR_NAME = 'prior';
-    const int PRIOR_ID = 181;
+    const int PRIOR_ID = 183;
 
     // words from import file base_phrases.json used for the offline phrase selection
     const string DAY = 'day';
     const int DAY_ID = 106;
     const string FACT = 'fact';
-    const int FACT_ID = 190;
+    const int FACT_ID = 192;
     const string GOVERNMENT = 'government';
-    const int GOVERNMENT_ID = 192;
+    const int GOVERNMENT_ID = 194;
     const string GROUP = 'group';
-    const int GROUP_ID = 194;
+    const int GROUP_ID = 196;
     const string HAND = 'hand';
-    const int HAND_ID = 195;
+    const int HAND_ID = 197;
     const string LIFE = 'life';
     const int LIFE_ID = 12;
     const string MAN = 'man';
-    const int MAN_ID = 198;
+    const int MAN_ID = 200;
     const string NUMBER = 'number';
-    const int NUMBER_ID = 199;
+    const int NUMBER_ID = 201;
     const string PART = 'part';
-    const int PART_ID = 200;
+    const int PART_ID = 202;
     const string PERSON = 'person';
-    const int PERSON_ID = 201;
+    const int PERSON_ID = 203;
     const string PLACE = 'place';
-    const int PLACE_ID = 202;
+    const int PLACE_ID = 204;
     const string WAY = 'way';
-    const int WAY_ID = 208;
+    const int WAY_ID = 210;
     const string WEEK = 'week';
     const int WEEK_ID = 107;
     const string WOMAN = 'woman';
-    const int WOMAN_ID = 209;
+    const int WOMAN_ID = 210;
     const string WORK = 'work';
-    const int WORK_ID = 210;
+    const int WORK_ID = 211;
     const string WORLD = 'world';
-    const int WORLD_ID = 211;
+    const int WORLD_ID = 212;
 
     // words from import file solution_prio.json used for the start page in order of appearance
     const string PROBLEM = 'problem';
-    const int PROBLEM_ID = 205;
+    const int PROBLEM_ID = 206;
     const string GLOBAL = 'global';
-    const int GLOBAL_ID = 193;
+    const int GLOBAL_ID = 195;
     const string POTENTIAL = 'potential';
-    const int POTENTIAL_ID = 216;
+    const int POTENTIAL_ID = 217;
     const string CLIMATE = 'climate';
-    const int CLIMATE_ID = 219;
+    const int CLIMATE_ID = 220;
     const string WARMER = 'warmer';
-    const int WARMER_ID = 222;
+    const int WARMER_ID = 223;
     const string POPULISM = 'populism';
-    const int POPULISM_ID = 226;
+    const int POPULISM_ID = 227;
     const string HEALTH = 'health';
-    const int HEALTH_ID = 242;
+    const int HEALTH_ID = 243;
     const string POVERTY = 'poverty';
-    const int POVERTY_ID = 244;
+    const int POVERTY_ID = 245;
     const string EDUCATION = 'education';
-    const int EDUCATION_ID = 246;
+    const int EDUCATION_ID = 247;
     const string HAPPY = 'happy';
-    const int HAPPY_ID = 249;
+    const int HAPPY_ID = 250;
     const string POINTS = 'points';
-    const int POINTS_ID = 251;
+    const int POINTS_ID = 252;
     const string HTP = 'htp';
-    const int HTP_ID = 254;
+    const int HTP_ID = 255;
     const string TRILLION = 'trillion';
-    const int TRILLION_ID = 255;
+    const int TRILLION_ID = 256;
     const string CHF = 'CHF';
-    const int CHF_ID = 257;
+    const int CHF_ID = 258;
     const string EUR = 'Euro';
-    const int EUR_ID = 266;
+    const int EUR_ID = 268;
     const string USD = 'USD';
-    const int USD_ID = 258;
+    const int USD_ID = 259;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';
-    const int SALES_ID = 280;
+    const int SALES_ID = 281;
     const string CASH = 'cash';
-    const int CASH_ID = 281;
+    const int CASH_ID = 282;
     const string STATEMENT = 'statement';
-    const int STATEMENT_ID = 282;
+    const int STATEMENT_ID = 283;
     const string PARTS = 'parts';
-    const int PARTS_ID = 285;
+    const int PARTS_ID = 286;
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 286;
+    const int TOTAL_ID = 287;
     const string INCOME = 'income';
-    const int INCOME_ID = 287;
+    const int INCOME_ID = 288;
     const string TAX = 'tax';
-    const int TAX_ID = 288;
+    const int TAX_ID = 289;
 
     // words from import file country.json used for the start page in order of appearance
     const string CONFIG = 'config';
     const string COUNTRY = 'country';
     const string CH = 'Switzerland';
-    const int CH_ID = 206;
+    const int CH_ID = 208;
     const string GERMANY = 'Germany';
     const string CANTON = 'Canton';
-    const int CANTON_ID = 185;
+    const int CANTON_ID = 187;
     const string CITY = 'City';
-    const int CITY_ID = 187;
+    const int CITY_ID = 189;
     const string ZH = 'Zurich';
-    const int ZH_ID = 213;
+    const int ZH_ID = 214;
     const string BE = 'Bern';
-    const int BE_ID = 184;
+    const int BE_ID = 186;
     const string GE = 'Geneva';
-    const int GE_ID = 191;
-    const int INHABITANT_ID = 196;
+    const int GE_ID = 193;
+    const int INHABITANT_ID = 198;
     // TODO add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
     const string YEAR_2013 = '2013';
-    const int YEAR_2013_ID = 293;
+    const int YEAR_2013_ID = 294;
     const string YEAR_2014 = '2014';
-    const int YEAR_2014_ID = 294;
+    const int YEAR_2014_ID = 295;
     const string YEAR_2015 = '2015';
-    const int YEAR_2015_ID = 295;
+    const int YEAR_2015_ID = 296;
     const string YEAR_2016 = '2016';
-    const int YEAR_2016_ID = 296;
+    const int YEAR_2016_ID = 297;
     const string YEAR_2017 = '2017';
-    const int YEAR_2017_ID = 297;
+    const int YEAR_2017_ID = 298;
     const string YEAR_2018 = '2018';
-    const int YEAR_2018_ID = 298;
+    const int YEAR_2018_ID = 299;
 
     // words from import test file companies.json used for the start page in order of appearance
     const string COMPANY = 'company';
-    const int COMPANY_ID = 188;
+    const int COMPANY_ID = 190;
     const string ABB = 'ABB';
-    const int ABB_ID = 278;
+    const int ABB_ID = 279;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 279;
+    const int VESTAS_ID = 280;
 
     // for the config.yaml
     const string TEST = 'test';

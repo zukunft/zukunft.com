@@ -122,6 +122,27 @@ The `percent` measure word is auto-scaled by the formula engine: a formula whose
 
 A short symbol can be the alias of more than one phrase on purpose. For example `m` is the symbol for the SI unit `metre` (in `units.json`) and at the same time the abbreviation for `million` (in `scaling.json`). This is **by design**: the context — the other phrases in the value's group — disambiguates which meaning applies. Do not "fix" such overlaps by forcing the symbol to be unique or by renaming one side; only flag a genuine, unintended collision (e.g. a formula name equal to a triple name).
 
+### Disambiguate an ambiguous word with qualifier triples
+
+When a single word can mean more than one thing, the word stays **defined once**, and each distinct meaning is made unique by a **qualifier triple** — never by duplicating or renaming the word. The bare word is then only the shared label; the data always references the unambiguous triple, not the word.
+
+Take `second`, which can be a time unit or a ranking number:
+
+1. Define the word `second` **once**, with a description that states it has several usages (e.g. *"used both as the SI time unit and as the ranking number; reference the qualifier triple, not this word"*).
+2. Create one triple per meaning: `second (time unit)` and `second (ranking number)`. The disambiguation is expressed with the verb **`must be one of`** (a new verb for exactly this purpose), so each meaning `must be one of` the readings of `second`.
+3. In all data (import JSON, values, formulas, links) reference **only the triples**, never the bare word `second`, so the meaning is always unambiguous.
+
+This is the word-level counterpart of the intentional symbol ambiguity above: a symbol may *alias* several phrases on purpose, but an ambiguous *word* is resolved by pinning each meaning to its own qualifier triple.
+
+#### Display rule: show the original word, put the qualifier in the tooltip
+
+Although the data references the qualifier triple, the user should still see the short, familiar word. So when a qualifier triple is shown on a page or a page section, render **only the original word** and move the qualifier into the tooltip:
+
+- **Right**: `second (time unit)` is displayed as `second`, and the `time unit` qualifier appears only inside the mouse-over tooltip (e.g. as part of the title text).
+- **Wrong**: printing the full triple name `second (time unit)` inline on the page.
+
+This keeps pages readable while the underlying reference stays unambiguous; the qualifier is recoverable on hover for the user who needs it.
+
 ### A triple's `from`/`verb`/`to` combination must be unique within an import
 
 Within the same import JSON a triple is identified by its `from` + `verb` + `to` combination, so that same combination must not be reused for two triples with **different names or meanings** — the duplicate key leads to an ambiguous id assignment during import (the same triple cannot resolve to two names).
@@ -129,6 +150,65 @@ Within the same import JSON a triple is identified by its `from` + `verb` + `to`
 When two distinct concepts would otherwise share the same `from`/`verb`/`to`, introduce an intermediate **building-block triple** and point one concept at it so each key stays unique. For example `Newton` `name of` `law` was used for both *Newton's second law* and *Newton's law of gravitation*; the fix is to first create the triple `second law` (= `second` `kind of` `law`) and then build *Newton's second law* as `Newton` `name of` `second law`, so its key (`Newton`, `name of`, `second law`) differs from the gravitation triple's (`Newton`, `name of`, `law`). When such a building block already exists implicitly (e.g. `first`/`second` `kind of` `law` was also used directly by the thermodynamics laws), rebuild those users on top of the new block too (e.g. `first law of thermodynamics` = `first law` `of` `thermodynamics`) so no key is duplicated.
 
 This is distinct from the intentional symbol ambiguity above: the same **name** may alias several phrases on purpose, but the same **triple key** must never map to two different triple names.
+
+#### A triple whose `from` (or `to`) is a named triple must have its own explicit `name`
+
+When a triple references another **named** triple as its `from` (or `to`) — typically an `is part of` membership triple built on a named law/concept triple — it **must carry an explicit, unique `name`**. If `name` is omitted, the import cannot build a distinct generated name for it (the referenced triple's name has not been resolved yet at that point), and it ends up reusing the same name as the previous (referenced) triple — and two triples must not share a name, so the import fails.
+
+- **Wrong** — the second triple has no `name`, so it collides with the first triple's name `Faraday's law of electrolysis`:
+```json
+{ "name": "Faraday's law of electrolysis", "from": "Faraday", "verb": "name of", "to": "law" },
+{ "from": "Faraday's law of electrolysis", "verb": "is part of", "to": "electrochemistry" }
+```
+- **Right** — give the membership triple its own name:
+```json
+{ "name": "Faraday's law", "from": "Faraday", "verb": "name of", "to": "law" },
+{ "name": "Faraday's law of electrolysis",
+  "from": "Faraday's law", "verb": "is part of", "to": "electrochemistry" }
+```
+
+A membership triple whose `from` is a plain **word** (e.g. `force` `is part of` `mechanics`) can stay unnamed — the word's name is available, so a distinct name is generated. The clash arises only when the `from`/`to` is itself a named triple.
+
+### Assign an import formula to a same-file input phrase, not its result
+
+In an import JSON a formula is linked to its phrases via `assigned_word` (a single phrase) or the `assigned` array (several phrases). Assign the formula to the **phrase(s) the formula uses as input**, **never** to the result it computes. The assignment is what makes the formula *applicable*: a formula is offered wherever an assigned phrase has a value. For example `"pH" = - log("hydrogen ion concentration")` is assigned to `hydrogen ion concentration` (the input), so that wherever a hydrogen-ion concentration is known the pH can be computed. Assigning it to `pH` (the result) would be wrong — you would already need the pH to discover the formula that produces it.
+
+Use `assigned_word` for a single input phrase and the `assigned` json array when the formula has **several** input phrases — list every input phrase in the array.
+
+- **Right (single)**: `{"name": "definition of pH", "expression": "\"pH\" = - log(\"hydrogen ion concentration\")", "assigned_word": "hydrogen ion concentration"}`
+- **Right (several)**: `{"name": "self-ionization of water", "expression": "\"pH\" + \"pOH\" = 14", "assigned": ["pH", "pOH"]}`
+- **Wrong**: assigning either formula to its result
+
+**Import files must be strictly self-consistent: every phrase a formula is assigned to — whether via `assigned_word` or in the `assigned` array — must be defined in the same import file.** Each file is imported with its own per-file cache, so an assigned phrase that lives in another file cannot be resolved — never assign a formula to a phrase another file owns. If a formula's inputs are all defined elsewhere — e.g. a chemistry formula `"molar mass" = "mass" / "mole"` whose inputs `mass` and `mole` belong to the units/physics data and must **not** be redefined — then either define that formula in the file that owns its inputs, or leave it **unassigned** in this file.
+
+The same self-consistency applies to **triples**: every `from` and `to` phrase of a triple must be defined in the same import file too, because triples are also resolved from the per-file import cache. When a file only *references* a base word it does not own — e.g. `chemistry` `is part of` `science`, or a named-law triple `Avogadro` `name of` `law` — re-declare that base word in the file with a **name-only** entry `{"name": "science"}` / `{"name": "law"}` (this is exactly how `physics.json` re-declares the units `kg`, `metre`, `second` it uses). On import the name-only entry merges with the word's canonical definition in its home file, so no data is duplicated or overwritten.
+
+This self-consistency requirement is about the import resolution (assignments and triples). A formula's `expression` may still reference phrases from earlier base files (e.g. every physics formula uses units such as `kg` and `metre`); those are resolved when the formula is calculated, not via the per-file import cache.
+
+### Qualify a value as specifically as possible — prefer triples built from single words
+
+A value's `words` array is the phrase group the number belongs to. **Always describe a value as specifically as the data allows: add as many qualifying phrases as possible so the number is never ambiguous.** A bare `{"words": ["price"], "number": "20"}` claims that *the* price is 20 — which is meaningless on its own. Add the context that makes it true (which dataset, which entity, which period, which source, …).
+
+Express each qualifier as a **phrase that is itself built from single words**, and **prefer a triple over a flat extra word**:
+
+- Define the individual words (`economics`, `textbook`, `example`).
+- Combine them with **existing verbs** into triples, building up from single words. Because each triple's `to` (or `from`) is itself a named triple, give it an explicit `name` (per the rule above):
+  - `{"from": "textbook", "verb": "of", "to": "economics", "name": "economics textbook"}`
+  - `{"from": "example", "verb": "of", "to": "economics textbook", "name": "economics textbook example"}`
+- Reference the resulting triple by its name in the value's `words` array.
+
+This turns a vague value into a precise one:
+
+- **Vague**: `{"words": ["price"], "number": "20", "share": "public", "source": "economics textbook example"}`
+- **Specific**: `{"words": ["price", "economics textbook example"], "number": "20", "source": "economics textbook example"}`
+
+**`"share": "public"` is the default and must be omitted** — only add `share` when it differs from `public`.
+
+### `import_mapper` maps from the dto only — never read the database
+
+`import_mapper` (and the helpers it calls such as `import_map_names`) must **only map the object from the json and resolve its references from the passed-in `data_object` (the per-file import cache, `$dto`). It must never read from the database.** If a referenced phrase, word, triple, source, etc. is not present in the dto, **add a translatable error to `$msg`** (e.g. `msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING`) — do **not** load it from the database and do **not** silently create a placeholder object.
+
+This keeps the import deterministic and each file self-consistent: everything a file references must be present in that file's import (re-declared name-only if it is a base word, per the self-consistency rule above), and the mapper fails loudly when it is not. Any database access — loading existing rows, cross-file lookups, merging — belongs to the **save** step, not to `import_mapper`.
 
 ### Key Architectural Patterns
 
@@ -220,15 +300,30 @@ Commit messages reference issue numbers: e.g. `fix auth flow as part of fix #232
 
 ## Coding Principles
 
-- **DRY**: one point of change (intentional repetition allowed)
+- **DRY — critical**: one point of change. Never repeat a piece of logic; call the existing function instead of copying its body (intentional repetition is allowed only when explicitly justified). See "DRY and 'reduce to the max' are critical".
+- **Reduce to the max — critical**: prefer the smallest possible amount of code; remove duplication, dead code and needless indirection. See "DRY and 'reduce to the max' are critical".
 - **Push common logic to parent**: if two or more sibling classes contain the same code in a function, move that code to the shared parent. Child implementations call `parent::functionName()` and then extend with their own fields only. See the `api_array()` pattern below.
-- **Test first**: write unit test before implementation; each facade function needs a unit test
+- **Test first**: write unit test before implementation; every function needs at least one positive and one negative unit test (see "At least one positive and one negative test per function")
 - **Best guess**: on incomplete data, use assumptions to complete the process and report them upward — never silently fail
 - **Minimal dependencies**: keep external packages to a minimum
 - **Log all user changes**: every user action is logged with undo/redo support
 - **Small classes**: split when classes get too large; most important functions at the top
 - **No single-character variable names**: prefer short but readable names — 3-letter abbreviations are ideal (`$val`, `$key`, `$fmt`); only $i for loops is allowed as single character var name
 - **Document parameters**: every parameter gets a `@param` line in the docblock explaining its purpose and the effect of each meaningful value (e.g. what `true`/`false` does)
+
+### DRY and "reduce to the max" are critical
+
+These two are not nice-to-haves — they are critical and override convenience:
+
+- **DRY (don't repeat yourself)**: every piece of logic lives in exactly one place. When you need behaviour that already exists, **call the existing function** — never copy its body. If the same code would appear in two siblings, push it to the shared parent (see below).
+- **Reduce to the max**: write the least code that does the job. Remove duplication, dead code, redundant guards and needless indirection rather than adding more.
+
+A concrete reason this matters beyond aesthetics: a single source location can carry behaviour that *must* exist only once. For example `test_base::update_path_file()` is the one place that writes an accepted test target file, and it is the one place a developer sets a debugging breakpoint (`// TODO always set a breakpoint here`). If a caller such as `test_db_load::csv_recreate()` re-implements the `file_put_contents(...)` itself, that breakpoint no longer covers it, errors are reported inconsistently, and a later change has to be made in two places.
+
+- **Right**: `$this->env->update_path_file($csv_file_path, $target);`
+- **Wrong**: re-inlining `if (file_put_contents($csv_file_path, $target) === false) { log_err(...); }` in the caller
+
+So before writing new code, look for an existing function (and the right object/instance to call it on, e.g. an injected `test_cleanup`/`test_base` env) and reuse it.
 
 ### Allowed global variables
 
@@ -418,6 +513,26 @@ All objects used in tests must be created by a factory function in `src/test/php
 - **Wrong**: `$frm_lnk = new formula_link($usr); $frm_lnk->set_id(99); ...` — ad-hoc construction scattered across test files makes fixtures hard to maintain and diverge silently
 
 When a needed factory method does not yet exist, add it to the appropriate `test_*.php` file in `src/test/php/create/` before writing the test. The `test_mappers.php` class coordinates factory calls when a test needs to resolve a class name to a test object at runtime.
+
+### At least one positive and one negative test per function
+
+Every function — and at minimum every **new** function — must have at least one **positive** unit test (the expected input produces the expected result) and at least one **negative** unit test (an invalid, missing, or boundary input is rejected or handled gracefully). A function that only ever has a happy-path test is considered untested for review purposes.
+
+- **Positive**: the documented "good" case returns the documented result, e.g. `body_search()` with a populated word list returns the matching links.
+- **Negative**: the failure or edge case is exercised, e.g. `body_search()` with a `null` list returns an empty string instead of erroring; an `import_mapper()` with a missing mandatory field adds the expected `msg_id` and `is_ok()` becomes false.
+
+The negative test must assert the *reported* outcome (the `user_message` / `msg_id`, the empty result, the `false` return), never just that "no exception was thrown" — silent failure is itself a defect (see the "Best guess" principle).
+
+### Tests that depend on data files must be reproducible from a single point of change
+
+A test that relies on a generated artifact — a JSON import file, an SQL snapshot, an HTML snapshot — must be able to **recreate that artifact from code**, so the artifact never silently diverges from the constants it was built from. Apply the one-point-of-change concept: the artifact references a value through a shared constant, and regenerating the artifact uses the same constant.
+
+This matters most for **import round-trip tests** that create an object, then delete it during cleanup. The name used in the import JSON must come from a **reserved test constant** — for words, a reserved test word in `src/main/php/shared/const/words.php` — never a hard-coded string literal in the JSON.
+
+- **Right**: the test word in the import JSON is generated from `words::SOME_RESERVED_TEST_WORD`, and the same const drives the cleanup `del()` and any re-generation of the import file. If the const value changes, regenerating the import file picks up the new value automatically and the test still passes.
+- **Wrong**: the import JSON hard-codes `"Heron"` (or any literal) while the cleanup deletes `words::HERON` — the two drift apart the moment the const changes, the cleanup misses the row, and later runs fail on a leftover duplicate.
+
+So when adding such a test: (1) add a reserved test entry to `words.php` (or the matching `*_const` file) if none fits, (2) build the import file's name from that const, and (3) use the same const for the post-test cleanup and for any script that regenerates the import file.
 
 ### Page-based UI tests for component-type renderers
 

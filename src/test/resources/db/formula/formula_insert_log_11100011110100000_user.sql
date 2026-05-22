@@ -51,8 +51,8 @@ SELECT formula_insert_log_11100011110100000_user (
                31::smallint,
                1::smallint,
                33::smallint,
-               '{w24}={w104}*60'::text,
+               '{t20}={w103}*60'::text,
                32::smallint,
-               '"second" = "minute" * 60'::text,
+               '"second (time)" = "minute" * 60'::text,
                886::smallint,
                '\text{s} = 60 \cdot \text{min}'::text);

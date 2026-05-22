@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
@@ -55,6 +56,7 @@ include_once paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
@@ -70,18 +72,48 @@ class system_page extends component
     /**
      * HTML for a page title
      * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
+     * @param array $url_array the URL params; used to add the search pattern to the search result title
      * @return string the html code to start a new form and display the tile
      */
-    function system_tile(?msg_id $ui_msg_code_id = null): string
+    function system_tile(?msg_id $ui_msg_code_id = null, array $url_array = []): string
     {
         global $mtr;
 
         $html = new html_base();
         $result = '';
         if ($ui_msg_code_id != null) {
-            $result .= $html->text_h2($mtr->txt($ui_msg_code_id));
+            // on the search page show "search result for <pattern>" instead of the plain "search" title
+            if ($ui_msg_code_id == msg_id::FORM_TITLE_SEARCH) {
+                $result .= $html->text_h2($this->search_title($url_array));
+            } else {
+                $result .= $html->text_h2($mtr->txt($ui_msg_code_id));
+            }
         }
         return $result;
+    }
+
+    /**
+     * build the search page title; with a pattern it reads "search result for <pattern>",
+     * without a pattern it falls back to the plain search title
+     * @param array $url_array the URL params; the pattern is read from url_var::PATTERN with the
+     *                         human-readable url_var::PATTERN_HUMAN as fallback (see body_search)
+     * @return string the language specific search page title
+     */
+    private function search_title(array $url_array): string
+    {
+        global $mtr;
+        $lib = new library();
+
+        $pattern = $url_array[url_var::PATTERN] ?? $url_array[url_var::PATTERN_HUMAN] ?? '';
+        if ($pattern == '') {
+            $title = $mtr->txt(msg_id::FORM_TITLE_SEARCH);
+        } else {
+            $title = $lib->msg_var_replace(
+                $mtr->txt(msg_id::FORM_TITLE_SEARCH_RESULT),
+                msg_id::VAR_PATTERN,
+                $pattern);
+        }
+        return $title;
     }
 
     /**
@@ -297,16 +329,41 @@ class system_page extends component
         return $result;
     }
 
-    // TODO Prio 0 fill with real code
-
     /**
-     * @return string with the HTML code to search for words, verbs, triple, formulas
+     * the HTML code to show the search results with words, verbs, triple, formulas
+     * and allow to narrow or widen the selection
      * based on the context (foaf terms) and "fixed" selections like the type or the share or protection
      * limit the number of search and selection fields so that it matches a small screen
+     *
+     * @param array $url_array the URL params; the search pattern is read from url_var::PATTERN
+     *                          (the key the navbar search form submits) and falls back to the
+     *                          human-readable url_var::PATTERN_HUMAN alias, because the human->standard
+     *                          url remap only runs for human mask urls (mask_id=), not for a short mask (m=)
+     * @param term_list|null $trm_lst the terms matching the pattern; normally null so the list is
+     *                                loaded from the backend via the api, but it can be injected
+     *                                (e.g. for unit tests) to render a pre-loaded list without a backend call
+     * @return string with the HTML code of the search body
      */
-    function body_search(): string
+    function body_search(array $url_array = [], ?term_list $trm_lst = null): string
     {
-        return 'body_search placeholder';
+        $result = '';
+
+        // the search input field is part of the navbar search form, so it is not repeated here
+        $pattern = $url_array[url_var::PATTERN] ?? $url_array[url_var::PATTERN_HUMAN] ?? '';
+
+        // TODO Prio 0: if the search pattern is 'global' show the title 'search results for 'global*'
+
+        // show the terms (word, triple, formula or verb) that match the search pattern,
+        // most relevant (highest impact) first
+        if ($trm_lst === null and $pattern != '') {
+            $trm_lst = new term_list();
+            $trm_lst->get_by_pattern($pattern);
+        }
+        if ($trm_lst !== null and !$trm_lst->is_empty()) {
+            $result .= $trm_lst->links_with_context();
+        }
+
+        return $result;
     }
 
     // TODO Prio 0 fill with real code

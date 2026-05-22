@@ -41,6 +41,7 @@ include_once paths::SHARED_CONST . 'words.php';
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
@@ -120,7 +121,7 @@ class expression_tests
         $exp = $frm->expression();
         $trm_id_lst = $exp->phrase_id_list($usr_msg);
         $result = $trm_id_lst->dsp_id();
-        $target = 'phrase_id ' . words::SECOND_ID . ' for user ' . users::SYSTEM_TEST_ID . ' (' . users::SYSTEM_TEST_NAME . ')';
+        $target = 'phrase_id ' . triples::SECOND_ID * -1 . ' for user ' . users::SYSTEM_TEST_ID . ' (' . users::SYSTEM_TEST_NAME . ')';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'phrase id is invalid because the id is not a number';
@@ -137,7 +138,7 @@ class expression_tests
         $exp = $frm->expression();
         $trm_id_lst = $exp->term_id_list_all($usr_msg);
         $result = $trm_id_lst->dsp_id();
-        $target = '"","" (' . words::SECOND_ID * 2 - 1 . ',' . words::MINUTE_ID * 2 - 1 . ')';
+        $target = '"","" (' . triples::SECOND_ID * -2 + 1 . ',' . words::MINUTE_ID * 2 - 1 . ')';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'id list of missing terms is empty if all terms are given';
@@ -245,7 +246,7 @@ class expression_tests
         $target = '"parts","of","total" (element_id '
             . words::PARTS_ID . ',' . verbs::OF_ID . ',' . words::TOTAL_ID
             . ') for user 3 (zukunft.com system test)';
-        $target = '"parts","of","total" (element_id 1/285,1/5,1/286) for user 3 (zukunft.com system test)';
+        $target = '"parts","of","total" (element_id 1/286,1/5,1/287) for user 3 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 
@@ -281,7 +282,7 @@ class expression_tests
         $result = $trm_lst->dsp_id();
         $target = '"' . words::PERCENT . '","'
             . formulas::PRIOR . '","'
-            . formulas::THIS_NAME . '" (36,40,317)';
+            . formulas::THIS_NAME . '" (36,40,321)';
         $t->assert($test_name, $result, $target);
 
         // element_special_following

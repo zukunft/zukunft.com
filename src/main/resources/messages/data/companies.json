@@ -645,12 +645,6 @@
       "to": "cash flow statement"
     },
     {
-      "name": "income taxes is part of cash flow statement",
-      "from": "income taxes",
-      "verb": "is part of",
-      "to": "cash flow statement"
-    },
-    {
       "name": "sales of sustainable labels is part of sales",
       "from": "sales of sustainable labels",
       "verb": "is part of",

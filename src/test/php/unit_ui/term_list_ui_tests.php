@@ -32,8 +32,14 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::EXECUTE . 'system_page.php';
+
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -61,6 +67,27 @@ class term_list_ui_tests
         $from_rows = '<br>' . $html->text_h2('Selector tests');
         $from_rows .= $lst->selector($form, 0, url_var::TERM, msg_id::FORM_SELECT_TERM) . '<br>';
         $test_page .= $html->form($form, $from_rows);
+
+        // test the SYSTEM_BODY_SEARCH component-type renderer (system_page::body_search)
+        // which shows the terms matching the search pattern with the highest impact first;
+        // the term list is injected so no backend call is needed
+        $page = new system_page();
+        $wrd_low = new word();
+        $wrd_low->set_id(1);
+        $wrd_low->set_name('low impact term');
+        $wrd_low->impact = 1.0;
+        $wrd_high = new word();
+        $wrd_high->set_id(2);
+        $wrd_high->set_name('high impact term');
+        $wrd_high->impact = 9.0;
+        $search_lst = new term_list();
+        $search_lst->add($wrd_low->term());
+        $search_lst->add($wrd_high->term());
+        $test_page .= $html->text_h2('body_search test');
+        $test_page .= 'empty pattern shows no terms<br>';
+        $test_page .= $page->body_search() . '<br>';
+        $test_page .= 'terms matching the pattern with the highest impact first<br>';
+        $test_page .= $page->body_search([url_var::PATTERN => 'impact'], $search_lst) . '<br>';
 
         $t->html_page_test($test_page, 'term_list', 'term_list', $t);
     }

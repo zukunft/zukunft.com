@@ -1,6 +1,6 @@
 {
   "version": "0.0.3",
-  "time": "2026-05-21 09:028:00",
+  "time": "2026-05-21 09:28:00",
   "user": "timon",
   "selection": [
     "physics extra"
@@ -14,7 +14,20 @@
       "name": "metre"
     },
     {
-      "name": "second"
+      "name": "second",
+      "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "unit"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "ranking"
     },
     {
       "name": "ampere"
@@ -1288,9 +1301,57 @@
     {
       "name": "thermodynamics",
       "description": "the branch of physics that deals with heat, work, temperature and the statistical behaviour of systems."
+    },
+    {
+      "name": "physics",
+      "description": "the natural science that studies matter, energy, motion and their interactions; its subareas used here are mechanics, thermodynamics, electromagnetism, optics and quantum mechanics"
+    },
+    {
+      "name": "mechanics",
+      "description": "the branch of physics that deals with the motion, forces and energy of objects"
+    },
+    {
+      "name": "electromagnetism",
+      "description": "the branch of physics that deals with electric and magnetic phenomena and their interaction"
+    },
+    {
+      "name": "optics",
+      "description": "the branch of physics that deals with light and its interaction with matter"
+    },
+    {
+      "name": "quantum mechanics",
+      "description": "the branch of physics that describes matter and energy at atomic and subatomic scales"
     }
   ],
   "triples": [
+    {
+      "name": "time unit",
+      "from": "unit",
+      "verb": "of",
+      "to": "time",
+      "description": "a unit to measure a duration, used to disambiguate words like 'second' that also have a non-time meaning"
+    },
+    {
+      "name": "ranking number",
+      "from": "ranking",
+      "verb": "with",
+      "to": "number",
+      "description": "an ordinal position in a ranking (first, second, third, ...), used to disambiguate words like 'second' that also are a time unit"
+    },
+    {
+      "name": "second (time)",
+      "description": "the time-unit reading of the ambiguous word 'second'; displayed as 'second' with 'time unit' shown only in the tooltip",
+      "from": "second",
+      "verb": "must be one of",
+      "to": "time unit"
+    },
+    {
+      "name": "second (ranking)",
+      "description": "the ranking-number reading of the ambiguous word 'second'; displayed as 'second' with 'ranking number' shown only in the tooltip",
+      "from": "second",
+      "verb": "must be one of",
+      "to": "ranking number"
+    },
     {
       "name": "first law",
       "description": "a law that is the first in a numbered set of laws",
@@ -1301,7 +1362,7 @@
     {
       "name": "second law",
       "description": "a law that is the second in a numbered set of laws",
-      "from": "second",
+      "from": "second (ranking)",
       "verb": "kind of",
       "to": "law"
     },
@@ -1945,6 +2006,697 @@
           "type": "wikidata"
         }
       ]
+    },
+    {
+      "from": "mechanics",
+      "verb": "is part of",
+      "to": "physics"
+    },
+    {
+      "from": "thermodynamics",
+      "verb": "is part of",
+      "to": "physics"
+    },
+    {
+      "from": "electromagnetism",
+      "verb": "is part of",
+      "to": "physics"
+    },
+    {
+      "from": "optics",
+      "verb": "is part of",
+      "to": "physics"
+    },
+    {
+      "from": "quantum mechanics",
+      "verb": "is part of",
+      "to": "physics"
+    },
+    {
+      "from": "acceleration",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "amplitude",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "angular",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "angular momentum is part of mechanics",
+      "from": "angular momentum",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "angular velocity is part of mechanics",
+      "from": "angular velocity",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "area",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "Bernoulli's equation is part of mechanics",
+      "from": "Bernoulli's equation",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "centripetal",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "centripetal acceleration is part of mechanics",
+      "from": "centripetal acceleration",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "centripetal force is part of mechanics",
+      "from": "centripetal force",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "density",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "depth",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "displacement",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "distance",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "elastic",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "elastic potential energy is part of mechanics",
+      "from": "elastic potential energy",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "energy",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "force",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "frequency",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "friction",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "gravitational",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "gravitational potential energy is part of mechanics",
+      "from": "gravitational potential energy",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "gravity",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "height",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "Hooke's law is part of mechanics",
+      "from": "Hooke's law",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "impulse",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "inertia",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "joule",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "kg",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "kilogram",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "kinetic",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "kinetic energy is part of mechanics",
+      "from": "kinetic energy",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "length",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "linear",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "linear momentum is part of mechanics",
+      "from": "linear momentum",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "mass",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "metre",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "moment",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "moment of inertia is part of mechanics",
+      "from": "moment of inertia",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "momentum",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "newton",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "Newton's law of gravitation is part of mechanics",
+      "from": "Newton's law of gravitation",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "Newton's second law is part of mechanics",
+      "from": "Newton's second law",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "object",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "pascal",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "pendulum",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "period",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "phase",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "potential",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "potential energy is part of mechanics",
+      "from": "potential energy",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "power",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "pressure",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "radius",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "rotational",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "rotational kinetic energy is part of mechanics",
+      "from": "rotational kinetic energy",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "name": "second (time) is part of mechanics",
+      "from": "second (time)",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "spring",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "time",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "torque",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "velocity",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "volume",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "watt",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "wave",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "wavelength",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "work",
+      "verb": "is part of",
+      "to": "mechanics"
+    },
+    {
+      "from": "amount",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "enthalpy",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "entropy",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "name": "first law of thermodynamics is part of thermodynamics",
+      "from": "first law of thermodynamics",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "gas",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "heat",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "ideal",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "name": "ideal gas law is part of thermodynamics",
+      "from": "ideal gas law",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "internal",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "name": "internal energy is part of thermodynamics",
+      "from": "internal energy",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "molar",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "name": "second law of thermodynamics is part of thermodynamics",
+      "from": "second law of thermodynamics",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "name": "specific heat is part of thermodynamics",
+      "from": "specific heat",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "name": "Stefan-Boltzmann law is part of thermodynamics",
+      "from": "Stefan-Boltzmann law",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "substance",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "temperature",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "thermal",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "name": "thermal energy is part of thermodynamics",
+      "from": "thermal energy",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "name": "Wien's displacement law is part of thermodynamics",
+      "from": "Wien's displacement law",
+      "verb": "is part of",
+      "to": "thermodynamics"
+    },
+    {
+      "from": "ampere",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "Ampère's law is part of electromagnetism",
+      "from": "Ampère's law",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "capacitance",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "charge",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "coulomb",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "Coulomb's law is part of electromagnetism",
+      "from": "Coulomb's law",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "current",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "electric",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "electric field is part of electromagnetism",
+      "from": "electric field",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "electric flux is part of electromagnetism",
+      "from": "electric flux",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "electric potential is part of electromagnetism",
+      "from": "electric potential",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "Faraday's law is part of electromagnetism",
+      "from": "Faraday's law",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "field",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "flux",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "Gauss's law is part of electromagnetism",
+      "from": "Gauss's law",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "inductance",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "Lorentz force is part of electromagnetism",
+      "from": "Lorentz force",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "magnetic",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "magnetic field is part of electromagnetism",
+      "from": "magnetic field",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "magnetic flux is part of electromagnetism",
+      "from": "magnetic flux",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "name": "Ohm's law is part of electromagnetism",
+      "from": "Ohm's law",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "permeability",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "permittivity",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "resistance",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "volt",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "voltage",
+      "verb": "is part of",
+      "to": "electromagnetism"
+    },
+    {
+      "from": "lens",
+      "verb": "is part of",
+      "to": "optics"
+    },
+    {
+      "from": "reflection",
+      "verb": "is part of",
+      "to": "optics"
+    },
+    {
+      "from": "refraction",
+      "verb": "is part of",
+      "to": "optics"
+    },
+    {
+      "name": "Snell's law is part of optics",
+      "from": "Snell's law",
+      "verb": "is part of",
+      "to": "optics"
+    },
+    {
+      "from": "atom",
+      "verb": "is part of",
+      "to": "quantum mechanics"
+    },
+    {
+      "name": "de Broglie relation is part of quantum mechanics",
+      "from": "de Broglie relation",
+      "verb": "is part of",
+      "to": "quantum mechanics"
+    },
+    {
+      "from": "electron",
+      "verb": "is part of",
+      "to": "quantum mechanics"
+    },
+    {
+      "name": "Heisenberg uncertainty principle is part of quantum mechanics",
+      "from": "Heisenberg uncertainty principle",
+      "verb": "is part of",
+      "to": "quantum mechanics"
+    },
+    {
+      "from": "neutron",
+      "verb": "is part of",
+      "to": "quantum mechanics"
+    },
+    {
+      "from": "nucleus",
+      "verb": "is part of",
+      "to": "quantum mechanics"
+    },
+    {
+      "from": "photon",
+      "verb": "is part of",
+      "to": "quantum mechanics"
+    },
+    {
+      "name": "Planck-Einstein relation is part of quantum mechanics",
+      "from": "Planck-Einstein relation",
+      "verb": "is part of",
+      "to": "quantum mechanics"
+    },
+    {
+      "from": "proton",
+      "verb": "is part of",
+      "to": "quantum mechanics"
+    },
+    {
+      "name": "Schrödinger equation is part of quantum mechanics",
+      "from": "Schrödinger equation",
+      "verb": "is part of",
+      "to": "quantum mechanics"
+    },
+    {
+      "name": "Einstein mass-energy equivalence is part of physics",
+      "from": "Einstein mass-energy equivalence",
+      "verb": "is part of",
+      "to": "physics"
     }
   ],
   "formulas": [
@@ -2608,6 +3360,64 @@
       "expression": "\"E\" = - 13.6 / ( \"n\" * \"n\" )",
       "latex": "E_n = -13.6/n^2 \\,\\text{eV}",
       "assigned_word": "atom"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "G"
+      ],
+      "number": "6.67430E-11",
+      "share": "public"
+    },
+    {
+      "words": [
+        "g"
+      ],
+      "number": "9.80665",
+      "share": "public"
+    },
+    {
+      "words": [
+        "ℏ"
+      ],
+      "number": "1.054571817E-34",
+      "share": "public"
+    },
+    {
+      "words": [
+        "R"
+      ],
+      "number": "8.314462618",
+      "share": "public"
+    },
+    {
+      "words": [
+        "σ"
+      ],
+      "number": "5.670374419E-8",
+      "share": "public"
+    },
+    {
+      "words": [
+        "ε0"
+      ],
+      "number": "8.8541878128E-12",
+      "share": "public"
+    },
+    {
+      "words": [
+        "μ0"
+      ],
+      "number": "1.25663706212E-6",
+      "share": "public"
+    },
+    {
+      "words": [
+        "ke"
+      ],
+      "number": "8.9875517873681764E9",
+      "share": "public"
     }
   ]
 }

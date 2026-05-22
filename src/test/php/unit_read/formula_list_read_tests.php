@@ -78,11 +78,22 @@ class formula_list_read_tests
         $t->assert('load by ids for ' . $frm_lst->dsp_id(), $result, $target);
 
         // test loading the formulas that use the results related to the word second
+        // TODO Prio 0 activate
+        /*
         $test_name = 'formulas that use the word "second" are at least "scale minute to sec"';
         $wrd_sec = new word($t->usr1);
-        $wrd_sec->load_by_name(words::SECOND);
+        $wrd_sec->load_by_name(words::SECOND_TIME);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_word_ref($wrd_sec);
+        $t->assert_contains($test_name, $frm_lst->names(), [formulas::SCALE_TO_SEC]);
+        */
+
+        // test loading the formulas that use the results related to the word second
+        $test_name = 'formulas that use the word "second" are at least "scale minute to sec"';
+        $trp_sec = new triple($t->usr1);
+        $trp_sec->load_by_name(triples::SECOND);
+        $frm_lst = new formula_list($t->usr1);
+        $frm_lst->load_by_triple_ref($trp_sec);
         $t->assert_contains($test_name, $frm_lst->names(), [formulas::SCALE_TO_SEC]);
 
         // test loading the formulas that use the results related to the triple "Zurich (City)"

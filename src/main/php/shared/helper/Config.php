@@ -48,4 +48,7 @@ class Config
     // number of entries initial to show in a value list
     const int LIMIT_VALUE_LIST = 6;
 
+    // number of entries initial to show in a named list
+    const int LIMIT_SEARCH_LIST = 40;
+
 }

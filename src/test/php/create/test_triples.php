@@ -307,6 +307,13 @@ class test_triples extends test_objects
      * si units
      */
 
+    function second(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::SECOND_ID, triples::SECOND);
+        return $trp;
+    }
+
     /**
      * @return triple hyperfine transition frequency of Cs for unit testing of source values
      */

@@ -57,7 +57,7 @@ class formulas
     // TR_* is the formula expression in the database reference format
     const int NOT_SET_ID = 0;
     const string SCALE_TO_SEC = 'scale minute to sec';
-    const string SCALE_TO_SEC_EXP = '"second" = "minute" * 60';
+    const string SCALE_TO_SEC_EXP = '"second (time)" = "minute" * 60';
     const string SCALE_TO_SEC_EXP_REF = '{w24}={w104}*60';
     const string SCALE_TO_SEC_LATEX = '\text{s} = 60 \cdot \text{min}';
     const string SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL = '{w24}={w}*60';

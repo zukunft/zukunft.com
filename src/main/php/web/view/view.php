@@ -136,7 +136,9 @@ class view extends view_exe
         $html = new html_base();
         $result = '<nav class="navbar bg-light fixed-top">';
         $result .= $html->logo();
-        $result .= '  <form action="/http/find.php" class="form-inline my-2 my-lg-0">';
+        $result .= '  <form action="' . api::MAIN_SCRIPT . '" class="form-inline my-2 my-lg-0">';
+        // submit the search to the find view as a hidden field so the GET call is e.g. /http/view.php?m=67&pattern=ABB
+        $result .= $html->form_hidden(url_var::MASK, (string)views::WORD_FIND_ID);
         $result .= $html->label('', url_var::PATTERN );
         $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
@@ -177,7 +179,7 @@ class view extends view_exe
         $result .= '  </button>';
         $result .= '  <div class="collapse navbar-collapse" id="navbarSupportedContent">';
         $result .= '    <ul class="navbar-nav mr-auto">';
-        // $result .= '      <li><a href="/http/find.php?word='.$back).'"><span class="glyphicon glyphicon-search"></span></a></li>';
+        // $result .= '      <li><a href="' . api::FIND_SCRIPT . url_var::ADD . 'word=' . $back . '"><span class="glyphicon glyphicon-search"></span></a></li>';
         $result .= '      <li class="nav-item dropdown">';
         $result .= '        <a class="nav-link dropdown-toggle" ';
         $result .= '          href="/http/view_select.php?id='.$this->id.'&word='.$back.'&back='.$back.'"';
@@ -270,7 +272,7 @@ class view extends view_exe
             $result .= new button($url, $back)->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {
-            $url = '/http/find.php?word=' . $back;
+            $url = api::FIND_SCRIPT;
             $result .= new button($url, $back)->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
             $url = $html->url(api::DSP_VIEW_EDIT, $this->id());
