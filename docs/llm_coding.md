@@ -185,6 +185,25 @@ The same self-consistency applies to **triples**: every `from` and `to` phrase o
 
 This self-consistency requirement is about the import resolution (assignments and triples). A formula's `expression` may still reference phrases from earlier base files (e.g. every physics formula uses units such as `kg` and `metre`); those are resolved when the formula is calculated, not via the per-file import cache.
 
+### Qualify a value as specifically as possible — prefer triples built from single words
+
+A value's `words` array is the phrase group the number belongs to. **Always describe a value as specifically as the data allows: add as many qualifying phrases as possible so the number is never ambiguous.** A bare `{"words": ["price"], "number": "20"}` claims that *the* price is 20 — which is meaningless on its own. Add the context that makes it true (which dataset, which entity, which period, which source, …).
+
+Express each qualifier as a **phrase that is itself built from single words**, and **prefer a triple over a flat extra word**:
+
+- Define the individual words (`economics`, `textbook`, `example`).
+- Combine them with **existing verbs** into triples, building up from single words. Because each triple's `to` (or `from`) is itself a named triple, give it an explicit `name` (per the rule above):
+  - `{"from": "textbook", "verb": "of", "to": "economics", "name": "economics textbook"}`
+  - `{"from": "example", "verb": "of", "to": "economics textbook", "name": "economics textbook example"}`
+- Reference the resulting triple by its name in the value's `words` array.
+
+This turns a vague value into a precise one:
+
+- **Vague**: `{"words": ["price"], "number": "20", "share": "public", "source": "economics textbook example"}`
+- **Specific**: `{"words": ["price", "economics textbook example"], "number": "20", "source": "economics textbook example"}`
+
+**`"share": "public"` is the default and must be omitted** — only add `share` when it differs from `public`.
+
 ### `import_mapper` maps from the dto only — never read the database
 
 `import_mapper` (and the helpers it calls such as `import_map_names`) must **only map the object from the json and resolve its references from the passed-in `data_object` (the per-file import cache, `$dto`). It must never read from the database.** If a referenced phrase, word, triple, source, etc. is not present in the dto, **add a translatable error to `$msg`** (e.g. `msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING`) — do **not** load it from the database and do **not** silently create a placeholder object.

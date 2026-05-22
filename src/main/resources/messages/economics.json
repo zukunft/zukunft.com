@@ -1,0 +1,2624 @@
+{
+  "version": "0.0.3",
+  "time": "2026-05-22 09:00:00",
+  "user": "timon",
+  "selection": [
+    "economics"
+  ],
+  "description": "Main economic definitions and formulas that are not part of the units, physics, math or chemistry base data.",
+  "words": [
+    {
+      "name": "economics",
+      "description": "social science that studies the production, distribution, and consumption of goods and services",
+      "refs": [
+        {
+          "name": "Economics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8134",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "science"
+    },
+    {
+      "name": "social science",
+      "description": "academic disciplines concerned with society and the relationships between individuals in society",
+      "refs": [
+        {
+          "name": "Social science",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q34749",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "microeconomics",
+      "description": "branch of economics that studies the behavior of individual households and firms in making decisions on the allocation of limited resources",
+      "refs": [
+        {
+          "name": "Microeconomics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39072",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "macroeconomics",
+      "description": "branch of economics that studies aggregated indicators",
+      "refs": [
+        {
+          "name": "Macroeconomics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39680",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "econometrics",
+      "description": "academic discipline",
+      "refs": [
+        {
+          "name": "Econometrics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q160039",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "behavioral economics",
+      "description": "discipline of economy studying the effects of psychological, cognitive, emotional, cultural and social factors on decisions",
+      "refs": [
+        {
+          "name": "Behavioral economics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q647525",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "international economics",
+      "description": "academic discipline",
+      "refs": [
+        {
+          "name": "International economics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q47417",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "public economics",
+      "description": "study of government economic and fiscal policy",
+      "refs": [
+        {
+          "name": "Public economics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2248246",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "labour economics",
+      "description": "functioning and dynamics of the markets for labour",
+      "refs": [
+        {
+          "name": "Labour economics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q28161",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "financial economics",
+      "description": "branch of economics concerned with financial or monetary transactions",
+      "refs": [
+        {
+          "name": "Financial economics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2294553",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "monetary economics",
+      "description": "branch of economics that studies different theories of money",
+      "refs": [
+        {
+          "name": "Monetary economics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q580018",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "development economics",
+      "description": "economics of developing economies",
+      "refs": [
+        {
+          "name": "Development economics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1127188",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "supply",
+      "description": "in economics, the amount of a good that sellers are willing to provide in the market",
+      "refs": [
+        {
+          "name": "Supply (economics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q542869",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "demand",
+      "description": "in economics, the market force that causes buyers to be both willing and able to purchase a good or service, measured by the amount of that good or service that is currently salable at any given price point",
+      "refs": [
+        {
+          "name": "Demand",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4402708",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "price",
+      "description": "quantity of payment or compensation given by one party to another in return for goods or services; the proposed value for such a quantity as proposed by the seller",
+      "refs": [
+        {
+          "name": "Price",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q160151",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "market",
+      "description": "mechanisms whereby supply and demand confront each other and deals are made, involving places, processes and institutions in which exchanges occur (for physical venues, use Q132510 or Q330284)",
+      "refs": [
+        {
+          "name": "Market (economics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37654",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "economic equilibrium",
+      "description": "state where economic forces such as supply and demand are balanced and the values of economic variables will not change",
+      "refs": [
+        {
+          "name": "Economic equilibrium",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q836133",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "elasticity",
+      "description": "responsiveness of one economic variable to a change in another (e.g. supply or demand as a function of changed price, cross-price, income, wealth, advertising, etc.), ranging from inelastic to elastic",
+      "refs": [
+        {
+          "name": "Elasticity (economics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q223639",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "price elasticity of demand",
+      "description": "responsiveness of the quantity demanded of a good or service to a change in its price",
+      "refs": [
+        {
+          "name": "Price elasticity of demand",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3194154",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "price elasticity of supply",
+      "description": "responsiveness of the quantity supplied of a good or service to a change in its price",
+      "refs": [
+        {
+          "name": "Price elasticity of supply",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2620132",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "income elasticity of demand",
+      "description": "responsiveness of demand for goods with respect to income change",
+      "refs": [
+        {
+          "name": "Income elasticity of demand",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q734113",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cross elasticity of demand",
+      "description": "responsiveness in the quantity demand of one good when a change in price takes place in another good",
+      "refs": [
+        {
+          "name": "Cross elasticity of demand",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q372919",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "utility",
+      "description": "concept in economics & game theory: a relative measure of happiness or satisfaction",
+      "refs": [
+        {
+          "name": "Utility",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q466707",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "marginal utility",
+      "description": "change in satisfaction resulting from an increase or decrease in consumption of one unit of a good or service",
+      "refs": [
+        {
+          "name": "Marginal utility",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q842271",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "economic surplus",
+      "description": "monetary benefit that accrues to parties to an economic transaction",
+      "refs": [
+        {
+          "name": "Economic surplus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q268617",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "deadweight loss",
+      "description": "measure of lost economic efficiency",
+      "refs": [
+        {
+          "name": "Deadweight loss",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q358063",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "opportunity cost",
+      "description": "when presented with multiple opportunities, the cost of making a certain choice in comparison to its alternatives",
+      "refs": [
+        {
+          "name": "Opportunity cost",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q185715",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "comparative advantage",
+      "description": "in economics, the advantage one has over others in producing a particular good due to a lower relative marginal cost prior to trade",
+      "refs": [
+        {
+          "name": "Comparative advantage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q215551",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "absolute advantage",
+      "description": "economic concept",
+      "refs": [
+        {
+          "name": "Absolute advantage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q332593",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "economies of scale",
+      "description": "the cost advantages that enterprises obtain due to size, throughput, or scale of operation, with cost per unit of output generally decreasing with increasing scale as fixed costs are spread out over more units of output",
+      "refs": [
+        {
+          "name": "Economies of scale",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5970087",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "diminishing returns",
+      "description": "additional factor of production resulting in smaller increase in output",
+      "refs": [
+        {
+          "name": "Diminishing returns",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q863946",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "factors of production",
+      "description": "the resources used in the production of goods and services, such as land, labour and capital",
+      "refs": [
+        {
+          "name": "Factors of production",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q210947",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "capital",
+      "description": "assets used for the production of goods and services",
+      "refs": [
+        {
+          "name": "Capital (economics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8137",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "entrepreneurship",
+      "description": "creation or extraction of economic value",
+      "refs": [
+        {
+          "name": "Entrepreneurship",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3908516",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cost",
+      "description": "value of money that has been used up to produce something",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q240673",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fixed cost",
+      "description": "business expenses that are not dependent on the level of goods or services produced by the business",
+      "refs": [
+        {
+          "name": "Fixed cost",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q466764",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "variable cost",
+      "description": "costs that change in proportion to the good or service that a business produces",
+      "refs": [
+        {
+          "name": "Variable cost",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q174915",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "total cost",
+      "description": "total economic cost of production",
+      "refs": [
+        {
+          "name": "Total cost",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1289588",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "marginal cost",
+      "description": "factor in economics",
+      "refs": [
+        {
+          "name": "Marginal cost",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q382444",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "average cost",
+      "description": "factor in economics",
+      "refs": [
+        {
+          "name": "Average cost",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q945621",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "revenue",
+      "description": "income that a business has from its normal business activities",
+      "refs": [
+        {
+          "name": "Revenue",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q850210",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "marginal revenue",
+      "description": "term used in microeconomics",
+      "refs": [
+        {
+          "name": "Marginal revenue",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q841032",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "profit",
+      "description": "concept in economics",
+      "refs": [
+        {
+          "name": "Profit (economics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q26911",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cost of goods sold",
+      "description": "carrying value of goods sold during a particular period",
+      "refs": [
+        {
+          "name": "Cost of goods sold",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12154181",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gross margin",
+      "description": "relating gross profits to net sales",
+      "refs": [
+        {
+          "name": "Gross margin",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11157999",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "profit margin",
+      "description": "ratio between turnover and profit",
+      "refs": [
+        {
+          "name": "Profit margin",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1187906",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "markup",
+      "description": "ratio of the cost of a good or service and its selling price",
+      "refs": [
+        {
+          "name": "Markup (business)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q27884",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "break-even point",
+      "description": "equality of costs and revenues",
+      "refs": [
+        {
+          "name": "Break-even point",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q626990",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "contribution margin",
+      "description": "cost accounting term",
+      "refs": [
+        {
+          "name": "Contribution margin",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1545019",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "perfect competition",
+      "description": "market structure in which firms are price takers for a homogenous product",
+      "refs": [
+        {
+          "name": "Perfect competition",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q183384",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "monopoly",
+      "description": "market structure with a single firm dominating the market",
+      "refs": [
+        {
+          "name": "Monopoly",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43637",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "oligopoly",
+      "description": "market form in which a market or industry is dominated by a small number of sellers",
+      "refs": [
+        {
+          "name": "Oligopoly",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q103639",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "monopolistic competition",
+      "description": "imperfect competition of differentiated products that are not perfect substitutes",
+      "refs": [
+        {
+          "name": "Monopolistic competition",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q379579",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "market failure",
+      "description": "situation in which the allocation of goods and services by a free market is not efficient and can be improved upon from the societal point of view, often leading to a net loss of economic value",
+      "refs": [
+        {
+          "name": "Market failure",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q622657",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "externality",
+      "description": "impact on any party not involved in a given economic transaction or act",
+      "refs": [
+        {
+          "name": "Externality",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q275372",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "public good",
+      "description": "good that is non-excludable and non-rival",
+      "refs": [
+        {
+          "name": "Public good (economics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q272458",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gross domestic product",
+      "description": "market value of goods and services produced within a country",
+      "refs": [
+        {
+          "name": "Gross domestic product",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12638",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gross national product",
+      "description": "total domestic and foreign output claimed by residents of a country, consisting of gross domestic product, plus factor incomes earned by foreign residents, minus income earned in the domestic economy by nonresidents",
+      "refs": [
+        {
+          "name": "Gross national product",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q6803767",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "real gross domestic product",
+      "description": "macroeconomic measure of the value of economic output adjusted for price changes",
+      "refs": [
+        {
+          "name": "Real gross domestic product",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7301159",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "GDP deflator",
+      "description": "measure of the level of prices of all new, domestically produced, final goods and services in an economy, with respect to a specific base year, but not based on a fixed basket of goods and services",
+      "refs": [
+        {
+          "name": "GDP deflator",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q796024",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "consumption",
+      "description": "purchase and use of goods and services",
+      "refs": [
+        {
+          "name": "Consumption (economics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q192270",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "saving",
+      "description": "the portion of income that is not spent on current consumption",
+      "refs": [
+        {
+          "name": "Saving",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q319622",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "investment",
+      "description": "commitment of resources to achieve later benefits",
+      "refs": [
+        {
+          "name": "Investment",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4290",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "government spending",
+      "description": "government consumption, investment, and transfer payments",
+      "refs": [
+        {
+          "name": "Government spending",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1929688",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "aggregate demand",
+      "description": "total amount of demand for goods and services in an economy",
+      "refs": [
+        {
+          "name": "Aggregate demand",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1801078",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "aggregate supply",
+      "description": "economic concept",
+      "refs": [
+        {
+          "name": "Aggregate supply",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2474789",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "consumer price index",
+      "description": "indicates tracking prices of consumer goods as an economic measure",
+      "refs": [
+        {
+          "name": "Consumer price index",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q180687",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "inflation",
+      "description": "rise in price level in an economy over time",
+      "refs": [
+        {
+          "name": "Inflation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q35865",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "deflation",
+      "description": "decrease in the general price level of goods and services",
+      "refs": [
+        {
+          "name": "Deflation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q161081",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "unemployment",
+      "description": "state of being without work and actively seeking work",
+      "refs": [
+        {
+          "name": "Unemployment",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41171",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "workforce",
+      "description": "members of a particular organization or population who are able or eligible to work; labour pool in employment; it may also mean all those who are available for work",
+      "refs": [
+        {
+          "name": "Workforce",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q13440398",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "economic growth",
+      "description": "measure of increase in market value of goods",
+      "refs": [
+        {
+          "name": "Economic growth",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189833",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "business cycle",
+      "description": "fluctuation in the degree of utilization of the production potential of an economy",
+      "refs": [
+        {
+          "name": "Business cycle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q192311",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "recession",
+      "description": "business cycle contraction",
+      "refs": [
+        {
+          "name": "Recession",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q176494",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fiscal policy",
+      "description": "use of government revenue collection and spending to influence the economy",
+      "refs": [
+        {
+          "name": "Fiscal policy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q187021",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "monetary policy",
+      "description": "subclass of the economic policy",
+      "refs": [
+        {
+          "name": "Monetary policy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q178476",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "money supply",
+      "description": "component of macroeconomics",
+      "refs": [
+        {
+          "name": "Money supply",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q842206",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "monetary base",
+      "description": "portion of the commercial banks' reserves that are maintained in accounts with their central bank plus the total currency circulating in the public",
+      "refs": [
+        {
+          "name": "Monetary base",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q593105",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "velocity of money",
+      "description": "rate of money changing hands",
+      "refs": [
+        {
+          "name": "Velocity of money",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1323540",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reserve requirement",
+      "description": "type of regulation on commercial banks",
+      "refs": [
+        {
+          "name": "Reserve requirement",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1058762",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "money multiplier",
+      "description": "ratio of money generated by banking system to central bank's monetary base",
+      "refs": [
+        {
+          "name": "Money multiplier",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1499566",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "quantity theory of money",
+      "description": "theory in monetary economics",
+      "refs": [
+        {
+          "name": "Quantity theory of money",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q515911",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "interest rate",
+      "description": "percentage of a sum of money charged for its use",
+      "refs": [
+        {
+          "name": "Interest rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179179",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "nominal interest rate",
+      "description": "concept in finance and economics",
+      "refs": [
+        {
+          "name": "Nominal interest rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1205832",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "real interest rate",
+      "description": "the interest rate after taking inflation into account",
+      "refs": [
+        {
+          "name": "Real interest rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1140421",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "exchange rate",
+      "description": "rate at which one currency will be exchanged for another",
+      "refs": [
+        {
+          "name": "Exchange rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q66100",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "purchasing power parity",
+      "description": "economic theory that states that the exchange rate between two countries is equal to the ratio of the currencies' respective purchasing power",
+      "refs": [
+        {
+          "name": "Purchasing power parity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q82135",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "balance of trade",
+      "description": "difference between the monetary value of exports and imports",
+      "refs": [
+        {
+          "name": "Balance of trade",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q192796",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "current account",
+      "description": "concept in international economics",
+      "refs": [
+        {
+          "name": "Current account (balance of payments)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q746687",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "tariff",
+      "description": "tax on the import and export of goods",
+      "refs": [
+        {
+          "name": "Tariff",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52389",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "subsidy",
+      "description": "financial support to an economic sector",
+      "refs": [
+        {
+          "name": "Subsidy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q193219",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "tax",
+      "description": "mandatory financial charge or other type of levy imposed on a taxpayer (an individual or legal entity) by a governmental organization to collectively fund government spending, public expenditures, or to regulate and reduce negative externalities",
+      "refs": [
+        {
+          "name": "Tax",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8161",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "marginal propensity to consume",
+      "description": "metric in economics",
+      "refs": [
+        {
+          "name": "Marginal propensity to consume",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1879079",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "marginal propensity to save",
+      "description": "fraction of income increase that is saved",
+      "refs": [
+        {
+          "name": "Marginal propensity to save",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1661238",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fiscal multiplier",
+      "description": "the ratio of the change in aggregate demand to the change in government spending that caused it",
+      "refs": [
+        {
+          "name": "Fiscal multiplier",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q18907327",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Phillips curve",
+      "description": "economic model illustrating an inverse relationship between inflation and unemployment",
+      "refs": [
+        {
+          "name": "Phillips curve",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q220841",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Laffer curve",
+      "description": "representation of the relationship between taxation and government revenue",
+      "refs": [
+        {
+          "name": "Laffer curve",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q504749",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Lorenz curve",
+      "description": "graphical representation of the distribution of income or of wealth",
+      "refs": [
+        {
+          "name": "Lorenz curve",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q430378",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Gini coefficient",
+      "description": "measure of inequality in income or wealth distribution",
+      "refs": [
+        {
+          "name": "Gini coefficient",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q162455",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Okun's law",
+      "description": "economic relationship",
+      "refs": [
+        {
+          "name": "Okun's law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q595592",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "law of demand",
+      "description": "principle in economics",
+      "refs": [
+        {
+          "name": "Law of demand",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3875012",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "law of supply",
+      "description": "economic theory principle",
+      "refs": [
+        {
+          "name": "Law of supply",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3537482",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Pareto efficiency",
+      "description": "economic concept of a state in which no reallocation of resources can make everyone at least as well off",
+      "refs": [
+        {
+          "name": "Pareto efficiency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q36829",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "present value",
+      "description": "economic concept denoting value of an expected income stream determined as of the date of valuation",
+      "refs": [
+        {
+          "name": "Present value",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1100466",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "future value",
+      "description": "value of an asset at a specific date",
+      "refs": [
+        {
+          "name": "Future value",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q610286",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "net present value",
+      "description": "valuation in finance",
+      "refs": [
+        {
+          "name": "Net present value",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q192472",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "return on investment",
+      "description": "ratio between the net profit and cost of investment resulting from an investment of some resources",
+      "refs": [
+        {
+          "name": "Return on investment",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q939134",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "return on equity",
+      "description": "measure of the profitability of a business",
+      "refs": [
+        {
+          "name": "Return on equity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q591174",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "return on assets",
+      "description": "ratio to express the profitability of a company's assets in generating income",
+      "refs": [
+        {
+          "name": "Return on assets",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1163221",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "depreciation",
+      "description": "allocating the cost of a (tangible) asset over a period of time",
+      "refs": [
+        {
+          "name": "Depreciation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q114403",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "asset",
+      "description": "economic resource, from which future economic benefits are expected",
+      "refs": [
+        {
+          "name": "Asset",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q46737",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "liability",
+      "description": "a present obligation of an entity to transfer an economic benefit, shown on the balance sheet",
+      "refs": [
+        {
+          "name": "Liability (financial accounting)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q546972",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "equity",
+      "description": "difference between the value of the assets/interest and the cost of the liabilities of something owned",
+      "refs": [
+        {
+          "name": "Equity (finance)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q827451",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "debt",
+      "description": "deferred payment, or series of payments, that is owed in the future",
+      "refs": [
+        {
+          "name": "Debt",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3196867",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "money",
+      "description": "object or record accepted as payment",
+      "refs": [
+        {
+          "name": "Money",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1368",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "wage",
+      "description": "the payment made by an employer to an employee in return for work performed",
+      "refs": [
+        {
+          "name": "Wage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q6821213",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "population",
+      "description": "the number of people living in a given country or region",
+      "refs": [
+        {
+          "name": "Human population",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q33829",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "quantity",
+      "description": "property that exists in a range of magnitudes or multitudes; property that can exist as a magnitude or multitude",
+      "refs": [
+        {
+          "name": "Quantity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q309314",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "GDP per capita",
+      "description": "average income of an economy",
+      "refs": [
+        {
+          "name": "Per capita income",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q45918",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "rule of 72",
+      "description": "methods of estimating the doubling time of an investment",
+      "refs": [
+        {
+          "name": "Rule of 72",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q264016",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "doubling time",
+      "description": "time required to double a quantity",
+      "refs": [
+        {
+          "name": "Doubling time",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1424376",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "example",
+      "description": "a representative instance used to illustrate a rule or calculation"
+    },
+    {
+      "name": "textbook",
+      "description": "a book used as a standard work for the study of a subject"
+    }
+  ],
+  "triples": [
+    {
+      "from": "economics",
+      "verb": "is part of",
+      "to": "social science"
+    },
+    {
+      "from": "social science",
+      "verb": "is part of",
+      "to": "science"
+    },
+    {
+      "from": "microeconomics",
+      "verb": "is part of",
+      "to": "economics"
+    },
+    {
+      "from": "macroeconomics",
+      "verb": "is part of",
+      "to": "economics"
+    },
+    {
+      "from": "econometrics",
+      "verb": "is part of",
+      "to": "economics"
+    },
+    {
+      "from": "behavioral economics",
+      "verb": "is part of",
+      "to": "economics"
+    },
+    {
+      "from": "international economics",
+      "verb": "is part of",
+      "to": "economics"
+    },
+    {
+      "from": "public economics",
+      "verb": "is part of",
+      "to": "economics"
+    },
+    {
+      "from": "labour economics",
+      "verb": "is part of",
+      "to": "economics"
+    },
+    {
+      "from": "financial economics",
+      "verb": "is part of",
+      "to": "economics"
+    },
+    {
+      "from": "monetary economics",
+      "verb": "is part of",
+      "to": "economics"
+    },
+    {
+      "from": "development economics",
+      "verb": "is part of",
+      "to": "economics"
+    },
+    {
+      "from": "supply",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "demand",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "price",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "market",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "economic equilibrium",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "elasticity",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "price elasticity of demand",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "price elasticity of supply",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "income elasticity of demand",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "cross elasticity of demand",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "utility",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "marginal utility",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "economic surplus",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "deadweight loss",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "opportunity cost",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "comparative advantage",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "absolute advantage",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "economies of scale",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "diminishing returns",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "factors of production",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "capital",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "entrepreneurship",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "cost",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "fixed cost",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "variable cost",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "total cost",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "marginal cost",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "average cost",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "revenue",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "marginal revenue",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "profit",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "cost of goods sold",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "gross margin",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "profit margin",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "markup",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "break-even point",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "contribution margin",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "perfect competition",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "monopoly",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "oligopoly",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "monopolistic competition",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "market failure",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "externality",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "public good",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "law of demand",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "law of supply",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "Pareto efficiency",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "quantity",
+      "verb": "is part of",
+      "to": "microeconomics"
+    },
+    {
+      "from": "gross domestic product",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "gross national product",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "real gross domestic product",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "GDP deflator",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "GDP per capita",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "consumption",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "saving",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "investment",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "government spending",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "aggregate demand",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "aggregate supply",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "consumer price index",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "inflation",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "deflation",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "unemployment",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "workforce",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "economic growth",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "business cycle",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "recession",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "fiscal policy",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "monetary policy",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "money supply",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "monetary base",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "velocity of money",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "reserve requirement",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "money multiplier",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "quantity theory of money",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "interest rate",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "nominal interest rate",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "real interest rate",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "exchange rate",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "purchasing power parity",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "balance of trade",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "current account",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "tariff",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "subsidy",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "tax",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "marginal propensity to consume",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "marginal propensity to save",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "fiscal multiplier",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "Phillips curve",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "Laffer curve",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "Lorenz curve",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "Gini coefficient",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "Okun's law",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "money",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "wage",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "population",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "doubling time",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "rule of 72",
+      "verb": "is part of",
+      "to": "macroeconomics"
+    },
+    {
+      "from": "present value",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "future value",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "net present value",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "return on investment",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "return on equity",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "return on assets",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "depreciation",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "asset",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "liability",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "equity",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "debt",
+      "verb": "is part of",
+      "to": "financial economics"
+    },
+    {
+      "from": "textbook",
+      "verb": "of",
+      "to": "economics",
+      "name": "economics textbook"
+    },
+    {
+      "from": "example",
+      "verb": "of",
+      "to": "economics textbook",
+      "name": "economics textbook example"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "definition of revenue",
+      "expression": "\"revenue\" = \"price\" * \"quantity\"",
+      "latex": "R = P \\cdot Q",
+      "assigned": [
+        "price",
+        "quantity"
+      ]
+    },
+    {
+      "name": "definition of total cost",
+      "expression": "\"total cost\" = \"fixed cost\" + \"variable cost\"",
+      "latex": "TC = FC + VC",
+      "assigned": [
+        "fixed cost",
+        "variable cost"
+      ]
+    },
+    {
+      "name": "definition of profit",
+      "expression": "\"profit\" = \"revenue\" - \"total cost\"",
+      "latex": "\\pi = R - TC",
+      "assigned": [
+        "revenue",
+        "total cost"
+      ]
+    },
+    {
+      "name": "definition of average cost",
+      "expression": "\"average cost\" = \"total cost\" / \"quantity\"",
+      "latex": "AC = \\frac{TC}{Q}",
+      "assigned": [
+        "total cost",
+        "quantity"
+      ]
+    },
+    {
+      "name": "definition of profit margin",
+      "expression": "\"profit margin\" = \"profit\" / \"revenue\"",
+      "latex": "\\text{profit margin} = \\frac{\\pi}{R}",
+      "assigned": [
+        "profit",
+        "revenue"
+      ]
+    },
+    {
+      "name": "definition of gross margin",
+      "expression": "\"gross margin\" = ( \"revenue\" - \"cost of goods sold\" ) / \"revenue\"",
+      "latex": "\\text{gross margin} = \\frac{R - COGS}{R}",
+      "assigned": [
+        "revenue",
+        "cost of goods sold"
+      ]
+    },
+    {
+      "name": "definition of markup",
+      "expression": "\"markup\" = ( \"price\" - \"cost\" ) / \"cost\"",
+      "latex": "\\text{markup} = \\frac{P - C}{C}",
+      "assigned": [
+        "price",
+        "cost"
+      ]
+    },
+    {
+      "name": "definition of gross domestic product",
+      "expression": "\"gross domestic product\" = \"consumption\" + \"investment\" + \"government spending\" + \"balance of trade\"",
+      "latex": "GDP = C + I + G + NX",
+      "assigned": [
+        "consumption",
+        "investment",
+        "government spending",
+        "balance of trade"
+      ]
+    },
+    {
+      "name": "definition of GDP deflator",
+      "expression": "\"GDP deflator\" = \"gross domestic product\" / \"real gross domestic product\" * 100",
+      "latex": "\\text{deflator} = \\frac{GDP_{nominal}}{GDP_{real}} \\cdot 100",
+      "assigned": [
+        "gross domestic product",
+        "real gross domestic product"
+      ]
+    },
+    {
+      "name": "definition of GDP per capita",
+      "expression": "\"GDP per capita\" = \"gross domestic product\" / \"population\"",
+      "latex": "\\text{GDP per capita} = \\frac{GDP}{N}",
+      "assigned": [
+        "gross domestic product",
+        "population"
+      ]
+    },
+    {
+      "name": "definition of real interest rate",
+      "expression": "\"real interest rate\" = \"nominal interest rate\" - \"inflation\"",
+      "latex": "r = i - \\pi",
+      "assigned": [
+        "nominal interest rate",
+        "inflation"
+      ]
+    },
+    {
+      "name": "equation of exchange",
+      "expression": "\"money supply\" * \"velocity of money\" = \"price\" * \"real gross domestic product\"",
+      "latex": "M \\cdot V = P \\cdot Y",
+      "assigned": [
+        "money supply",
+        "velocity of money"
+      ]
+    },
+    {
+      "name": "definition of money multiplier",
+      "expression": "\"money multiplier\" = 1 / \"reserve requirement\"",
+      "latex": "m = \\frac{1}{R}",
+      "assigned": [
+        "reserve requirement"
+      ]
+    },
+    {
+      "name": "definition of present value",
+      "expression": "\"present value\" = \"future value\" / ( 1 + \"interest rate\" )",
+      "latex": "PV = \\frac{FV}{1 + r}",
+      "assigned": [
+        "future value",
+        "interest rate"
+      ]
+    },
+    {
+      "name": "definition of future value",
+      "expression": "\"future value\" = \"present value\" * ( 1 + \"interest rate\" )",
+      "latex": "FV = PV \\cdot ( 1 + r )",
+      "assigned": [
+        "present value",
+        "interest rate"
+      ]
+    },
+    {
+      "name": "definition of return on investment",
+      "expression": "\"return on investment\" = \"profit\" / \"investment\"",
+      "latex": "ROI = \\frac{\\pi}{I}",
+      "assigned": [
+        "profit",
+        "investment"
+      ]
+    },
+    {
+      "name": "definition of return on equity",
+      "expression": "\"return on equity\" = \"profit\" / \"equity\"",
+      "latex": "ROE = \\frac{\\pi}{E}",
+      "assigned": [
+        "profit",
+        "equity"
+      ]
+    },
+    {
+      "name": "definition of return on assets",
+      "expression": "\"return on assets\" = \"profit\" / \"asset\"",
+      "latex": "ROA = \\frac{\\pi}{A}",
+      "assigned": [
+        "profit",
+        "asset"
+      ]
+    },
+    {
+      "name": "propensity identity",
+      "expression": "\"marginal propensity to consume\" + \"marginal propensity to save\" = 1",
+      "latex": "MPC + MPS = 1",
+      "assigned": [
+        "marginal propensity to consume",
+        "marginal propensity to save"
+      ]
+    },
+    {
+      "name": "definition of fiscal multiplier",
+      "expression": "\"fiscal multiplier\" = 1 / ( 1 - \"marginal propensity to consume\" )",
+      "latex": "k = \\frac{1}{1 - MPC}",
+      "assigned": [
+        "marginal propensity to consume"
+      ]
+    },
+    {
+      "name": "doubling time by the rule of 72",
+      "expression": "\"doubling time\" = 72 / ( \"interest rate\" * 100 )",
+      "latex": "t \\approx \\frac{72}{r \\cdot 100}",
+      "assigned": [
+        "interest rate"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "by definition",
+      "description": "a value that is fixed by an unambiguous definition or convention rather than measured"
+    },
+    {
+      "name": "economics textbook example",
+      "description": "illustrative figures used to demonstrate the calculation of an economic formula"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "rule of 72"
+      ],
+      "number": "72",
+      "source": "by definition"
+    },
+    {
+      "words": [
+        "price",
+        "economics textbook example"
+      ],
+      "number": "20",
+      "source": "economics textbook example"
+    },
+    {
+      "words": [
+        "quantity",
+        "economics textbook example"
+      ],
+      "number": "50",
+      "source": "economics textbook example"
+    },
+    {
+      "words": [
+        "fixed cost",
+        "economics textbook example"
+      ],
+      "number": "300",
+      "source": "economics textbook example"
+    },
+    {
+      "words": [
+        "variable cost",
+        "economics textbook example"
+      ],
+      "number": "500",
+      "source": "economics textbook example"
+    },
+    {
+      "words": [
+        "cost of goods sold",
+        "economics textbook example"
+      ],
+      "number": "600",
+      "source": "economics textbook example"
+    },
+    {
+      "words": [
+        "cost",
+        "economics textbook example"
+      ],
+      "number": "15",
+      "source": "economics textbook example"
+    },
+    {
+      "words": [
+        "reserve requirement",
+        "economics textbook example"
+      ],
+      "number": "0.1",
+      "source": "economics textbook example"
+    },
+    {
+      "words": [
+        "interest rate",
+        "economics textbook example"
+      ],
+      "number": "0.05",
+      "source": "economics textbook example"
+    },
+    {
+      "words": [
+        "future value",
+        "economics textbook example"
+      ],
+      "number": "1050",
+      "source": "economics textbook example"
+    },
+    {
+      "words": [
+        "marginal propensity to consume",
+        "economics textbook example"
+      ],
+      "number": "0.8",
+      "source": "economics textbook example"
+    }
+  ]
+}

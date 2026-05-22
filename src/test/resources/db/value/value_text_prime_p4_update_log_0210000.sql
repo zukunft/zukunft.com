@@ -37,8 +37,8 @@ SELECT value_text_prime_p4_update_log_0210000
         421::smallint,
         'old db text sample value'::text,
         'zukunft.com'::text,
-        59955059111002208::bigint,
+        59955059111002209::bigint,
         213::smallint,
         207::smallint,
         204::smallint,
-        -96::smallint);
+        -97::smallint);

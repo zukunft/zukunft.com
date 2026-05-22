@@ -141,6 +141,12 @@ class files
     const string CHEMISTRY_FILE = 'chemistry' . self::JSON;
     const string BIOLOGY_FILE = 'biology' . self::JSON;
     const string ENGINEERING_FILE = 'engineering' . self::JSON;
+    const string ECONOMICS_FILE = 'economics' . self::JSON;
+    const string GEOLOGY_FILE = 'geology' . self::JSON;
+    const string METEOROLOGY_FILE = 'meteorology' . self::JSON;
+    const string SOCIOLOGY_FILE = 'sociology' . self::JSON;
+    const string PSYCHOLOGY_FILE = 'psychology' . self::JSON;
+    const string ACCOUNTING_FILE = 'accounting' . self::JSON;
 
     // initial data import
     CONST string IMPORT_COUNTRIES = self::DATA_PATH . 'countries' . self::JSON;
@@ -172,6 +178,12 @@ class files
         self::CHEMISTRY_FILE,
         self::BIOLOGY_FILE,
         self::ENGINEERING_FILE,
+        self::ECONOMICS_FILE,
+        self::GEOLOGY_FILE,
+        self::METEOROLOGY_FILE,
+        self::SOCIOLOGY_FILE,
+        self::PSYCHOLOGY_FILE,
+        self::ACCOUNTING_FILE,
     ];
 
     const array BASE_IMPORT_FILE_LIST = [

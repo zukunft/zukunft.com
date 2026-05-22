@@ -284,7 +284,7 @@
     },
     {
       "name": "base",
-      "description": "In mathematics, a base for the topology τ of a topological space (X, τ) is a family B of open subsets of X such that every open set of the topology is equal to the union of some sub-family of B.",
+      "description": "A base is something that serves as a foundation, reference point or starting value from which other things are built, derived or measured.",
       "protection": "admin_protection",
       "refs": [
         {
@@ -299,7 +299,7 @@
     },
     {
       "name": "unit",
-      "description": "In mathematics, an identity element or neutral element of a binary operation is an element that leaves unchanged every element when the operation is applied",
+      "description": "A unit is a defined amount of a quantity, fixed by convention or standard, that is used as a reference to measure or count other amounts of the same kind.",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1218,22 +1218,6 @@
       ]
     },
     {
-      "name": "frequency",
-      "description": "Frequency most often measured in hertz, is the number of occurrences of a repeating event per unit of time.",
-      "type": "measure",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Frequency",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11652",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "drift",
       "description": "In electrical engineering, frequency drift is an unintended and generally arbitrary offset of an oscillator from its nominal frequency.",
       "type": "measure",
@@ -1312,6 +1296,7 @@
     },
     {
       "name": "minute",
+      "description": "A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1327,6 +1312,7 @@
     },
     {
       "name": "hour",
+      "description": "An hour is a unit of time equal to 60 minutes, or 3600 seconds.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1342,6 +1328,7 @@
     },
     {
       "name": "day",
+      "description": "A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1357,6 +1344,7 @@
     },
     {
       "name": "week",
+      "description": "A week is a unit of time equal to 7 days.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1372,6 +1360,7 @@
     },
     {
       "name": "month",
+      "description": "A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1387,6 +1376,7 @@
     },
     {
       "name": "year",
+      "description": "A year is a unit of time equal to the orbital period of the Earth around the Sun, about 365.25 days.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -2423,8 +2413,27 @@
       "protection": "admin_protection"
     },
     {
-      "name": "frequency drift",
+      "name": "frequency (rate)",
+      "description": "the number of occurrences of a repeating event per unit of time, most often measured in hertz; the rate reading of the ambiguous word 'frequency', displayed as 'frequency' with 'rate' shown only in the tooltip",
       "from": "frequency",
+      "verb": "must be one of",
+      "to": "rate",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Frequency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11652",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "frequency drift",
+      "from": "frequency (rate)",
       "verb": "can",
       "to": "drift",
       "type": "measure",

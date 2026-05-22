@@ -30,5 +30,5 @@ SELECT formula_link_delete_log_user (
                'minute'::text,
                1::bigint,
                2::smallint,
-               104::bigint,
+               103::bigint,
                1::bigint);

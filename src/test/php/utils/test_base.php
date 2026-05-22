@@ -3560,9 +3560,9 @@ class test_base
     private
     function write_value_cleanup_one(
         value_base|sandbox_multi $sbx,
-        user       $usr,
-        group      $grp,
-        bool       $check = false
+        user                     $usr,
+        group                    $grp,
+        bool                     $check = false
     ): void
     {
         $usr_msg = new user_message($usr);
@@ -4727,9 +4727,11 @@ class test_base
      */
     function delete_path_file(string $file_path): void
     {
-        log_warning('orphaned test snapshot – consider deleting: ' . $file_path);
         if (test_files::AUTO_UPDATE_TEST_FILES) {
-            unlink($file_path);
+            log_warning('orphaned test snapshot – consider deleting: ' . $file_path);
+            if (test_files::AUTO_UPDATE_TEST_FILES) {
+                unlink($file_path);
+            }
         }
     }
 

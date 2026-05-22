@@ -129,11 +129,11 @@ class words
     // general words used also for the system configuration that have a fixed tooltip
     const string TIME = 'time';
     const string TIME_COM = 'Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future';
-    const int TIME_ID = 103;
+    const int TIME_ID = 102;
     const string YEAR = 'year';
     const string YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
     const string YEAR_CAP = 'year';
-    const int YEAR_CAP_ID = 109;
+    const int YEAR_CAP_ID = 108;
     const string CALCULATION = 'calculation';
     const string CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
     const string MIN = 'min';
@@ -240,9 +240,9 @@ class words
     const string SECOND = 'second';
     const int SECOND_ID = 24;
     const string FLOW = 'flow';
-    const int FLOW_ID = 101;
+    const int FLOW_ID = 100;
     const string MINUTE = 'minute';
-    const int MINUTE_ID = 104;
+    const int MINUTE_ID = 103;
     const string HOUR = 'hour';
     const int HOUR_ID = 105;
     const string YEAR_2019 = '2019';
@@ -280,11 +280,11 @@ class words
     const string METRE = 'metre';
     const int METRE_ID = 27;
     const string HYPERFINE = 'hyperfine';
-    const int HYPERFINE_ID = 131;
+    const int HYPERFINE_ID = 130;
     const string TRANSITION = 'transition';
     const int TRANSITION_ID = 132;
     const string FREQUENCY = 'frequency';
-    const int FREQUENCY_ID = 98;
+    const int FREQUENCY_ID = 132;
     const string CS_133 = 'Caesium-133';
     const int CS_133_ID = 134;
     const string HZ = 'Hz';

@@ -36,5 +36,5 @@ SELECT formula_link_delete_log
         'minute',
         1,
         2,
-        104,
+        103,
         1);
