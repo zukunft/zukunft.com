@@ -151,6 +151,46 @@ When two distinct concepts would otherwise share the same `from`/`verb`/`to`, in
 
 This is distinct from the intentional symbol ambiguity above: the same **name** may alias several phrases on purpose, but the same **triple key** must never map to two different triple names.
 
+#### A triple whose `from` (or `to`) is a named triple must have its own explicit `name`
+
+When a triple references another **named** triple as its `from` (or `to`) — typically an `is part of` membership triple built on a named law/concept triple — it **must carry an explicit, unique `name`**. If `name` is omitted, the import cannot build a distinct generated name for it (the referenced triple's name has not been resolved yet at that point), and it ends up reusing the same name as the previous (referenced) triple — and two triples must not share a name, so the import fails.
+
+- **Wrong** — the second triple has no `name`, so it collides with the first triple's name `Faraday's law of electrolysis`:
+```json
+{ "name": "Faraday's law of electrolysis", "from": "Faraday", "verb": "name of", "to": "law" },
+{ "from": "Faraday's law of electrolysis", "verb": "is part of", "to": "electrochemistry" }
+```
+- **Right** — give the membership triple its own name:
+```json
+{ "name": "Faraday's law", "from": "Faraday", "verb": "name of", "to": "law" },
+{ "name": "Faraday's law of electrolysis",
+  "from": "Faraday's law", "verb": "is part of", "to": "electrochemistry" }
+```
+
+A membership triple whose `from` is a plain **word** (e.g. `force` `is part of` `mechanics`) can stay unnamed — the word's name is available, so a distinct name is generated. The clash arises only when the `from`/`to` is itself a named triple.
+
+### Assign an import formula to a same-file input phrase, not its result
+
+In an import JSON a formula is linked to its phrases via `assigned_word` (a single phrase) or the `assigned` array (several phrases). Assign the formula to the **phrase(s) the formula uses as input**, **never** to the result it computes. The assignment is what makes the formula *applicable*: a formula is offered wherever an assigned phrase has a value. For example `"pH" = - log("hydrogen ion concentration")` is assigned to `hydrogen ion concentration` (the input), so that wherever a hydrogen-ion concentration is known the pH can be computed. Assigning it to `pH` (the result) would be wrong — you would already need the pH to discover the formula that produces it.
+
+Use `assigned_word` for a single input phrase and the `assigned` json array when the formula has **several** input phrases — list every input phrase in the array.
+
+- **Right (single)**: `{"name": "definition of pH", "expression": "\"pH\" = - log(\"hydrogen ion concentration\")", "assigned_word": "hydrogen ion concentration"}`
+- **Right (several)**: `{"name": "self-ionization of water", "expression": "\"pH\" + \"pOH\" = 14", "assigned": ["pH", "pOH"]}`
+- **Wrong**: assigning either formula to its result
+
+**Import files must be strictly self-consistent: every phrase a formula is assigned to — whether via `assigned_word` or in the `assigned` array — must be defined in the same import file.** Each file is imported with its own per-file cache, so an assigned phrase that lives in another file cannot be resolved — never assign a formula to a phrase another file owns. If a formula's inputs are all defined elsewhere — e.g. a chemistry formula `"molar mass" = "mass" / "mole"` whose inputs `mass` and `mole` belong to the units/physics data and must **not** be redefined — then either define that formula in the file that owns its inputs, or leave it **unassigned** in this file.
+
+The same self-consistency applies to **triples**: every `from` and `to` phrase of a triple must be defined in the same import file too, because triples are also resolved from the per-file import cache. When a file only *references* a base word it does not own — e.g. `chemistry` `is part of` `science`, or a named-law triple `Avogadro` `name of` `law` — re-declare that base word in the file with a **name-only** entry `{"name": "science"}` / `{"name": "law"}` (this is exactly how `physics.json` re-declares the units `kg`, `metre`, `second` it uses). On import the name-only entry merges with the word's canonical definition in its home file, so no data is duplicated or overwritten.
+
+This self-consistency requirement is about the import resolution (assignments and triples). A formula's `expression` may still reference phrases from earlier base files (e.g. every physics formula uses units such as `kg` and `metre`); those are resolved when the formula is calculated, not via the per-file import cache.
+
+### `import_mapper` maps from the dto only — never read the database
+
+`import_mapper` (and the helpers it calls such as `import_map_names`) must **only map the object from the json and resolve its references from the passed-in `data_object` (the per-file import cache, `$dto`). It must never read from the database.** If a referenced phrase, word, triple, source, etc. is not present in the dto, **add a translatable error to `$msg`** (e.g. `msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING`) — do **not** load it from the database and do **not** silently create a placeholder object.
+
+This keeps the import deterministic and each file self-consistent: everything a file references must be present in that file's import (re-declared name-only if it is a base word, per the self-consistency rule above), and the mapper fails loudly when it is not. Any database access — loading existing rows, cross-file lookups, merging — belongs to the **save** step, not to `import_mapper`.
+
 ### Key Architectural Patterns
 
 **User Sandbox**: Every main object (`word`, `triple`, `value`, `formula`, `view`, `component`) extends the `sandbox` hierarchy. Changes by one user never overwrite shared data; user-specific overrides are stored in `*_user` tables.
@@ -241,7 +281,8 @@ Commit messages reference issue numbers: e.g. `fix auth flow as part of fix #232
 
 ## Coding Principles
 
-- **DRY**: one point of change (intentional repetition allowed)
+- **DRY — critical**: one point of change. Never repeat a piece of logic; call the existing function instead of copying its body (intentional repetition is allowed only when explicitly justified). See "DRY and 'reduce to the max' are critical".
+- **Reduce to the max — critical**: prefer the smallest possible amount of code; remove duplication, dead code and needless indirection. See "DRY and 'reduce to the max' are critical".
 - **Push common logic to parent**: if two or more sibling classes contain the same code in a function, move that code to the shared parent. Child implementations call `parent::functionName()` and then extend with their own fields only. See the `api_array()` pattern below.
 - **Test first**: write unit test before implementation; every function needs at least one positive and one negative unit test (see "At least one positive and one negative test per function")
 - **Best guess**: on incomplete data, use assumptions to complete the process and report them upward — never silently fail
@@ -250,6 +291,20 @@ Commit messages reference issue numbers: e.g. `fix auth flow as part of fix #232
 - **Small classes**: split when classes get too large; most important functions at the top
 - **No single-character variable names**: prefer short but readable names — 3-letter abbreviations are ideal (`$val`, `$key`, `$fmt`); only $i for loops is allowed as single character var name
 - **Document parameters**: every parameter gets a `@param` line in the docblock explaining its purpose and the effect of each meaningful value (e.g. what `true`/`false` does)
+
+### DRY and "reduce to the max" are critical
+
+These two are not nice-to-haves — they are critical and override convenience:
+
+- **DRY (don't repeat yourself)**: every piece of logic lives in exactly one place. When you need behaviour that already exists, **call the existing function** — never copy its body. If the same code would appear in two siblings, push it to the shared parent (see below).
+- **Reduce to the max**: write the least code that does the job. Remove duplication, dead code, redundant guards and needless indirection rather than adding more.
+
+A concrete reason this matters beyond aesthetics: a single source location can carry behaviour that *must* exist only once. For example `test_base::update_path_file()` is the one place that writes an accepted test target file, and it is the one place a developer sets a debugging breakpoint (`// TODO always set a breakpoint here`). If a caller such as `test_db_load::csv_recreate()` re-implements the `file_put_contents(...)` itself, that breakpoint no longer covers it, errors are reported inconsistently, and a later change has to be made in two places.
+
+- **Right**: `$this->env->update_path_file($csv_file_path, $target);`
+- **Wrong**: re-inlining `if (file_put_contents($csv_file_path, $target) === false) { log_err(...); }` in the caller
+
+So before writing new code, look for an existing function (and the right object/instance to call it on, e.g. an injected `test_cleanup`/`test_base` env) and reuse it.
 
 ### Allowed global variables
 

@@ -8,10 +8,30 @@
   "description": "Main mathematical definitions that are not part of the base units.",
   "words": [
     {
-      "name": "mathematics"
+      "name": "mathematics",
+      "refs": [
+        {
+          "name": "Mathematics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q395",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "constant"
+      "name": "constant",
+      "refs": [
+        {
+          "name": "Mathematical constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q186509",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "time"
@@ -23,10 +43,30 @@
       "name": "Pi"
     },
     {
-      "name": "circumference"
+      "name": "circumference",
+      "refs": [
+        {
+          "name": "Circumference",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q843905",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "diameter"
+      "name": "diameter",
+      "refs": [
+        {
+          "name": "Diameter",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37221",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "tau",
@@ -418,19 +458,47 @@
       ]
     },
     {
-      "name": "secant"
+      "name": "secant",
+      "refs": [
+        {
+          "name": "Trigonometric functions",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "cosecant"
+      "name": "cosecant",
+      "refs": [
+        {
+          "name": "Trigonometric functions",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "name": "cotangent"
+      "name": "cotangent",
+      "refs": [
+        {
+          "name": "Trigonometric functions",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "theta"
     },
     {
-      "name": "degree"
+      "name": "degree",
+      "refs": [
+        {
+          "name": "Degree (angle)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q28390",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "radian",
@@ -478,7 +546,17 @@
       ]
     },
     {
-      "name": "point"
+      "name": "point",
+      "refs": [
+        {
+          "name": "Point (geometry)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q44946",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "line",
@@ -627,10 +705,30 @@
       "name": "formula"
     },
     {
-      "name": "equation"
+      "name": "equation",
+      "refs": [
+        {
+          "name": "Equation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11345",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "theorem"
+      "name": "theorem",
+      "refs": [
+        {
+          "name": "Theorem",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q65943",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "Pythagoras",
@@ -727,7 +825,17 @@
       ]
     },
     {
-      "name": "arithmetic"
+      "name": "arithmetic",
+      "refs": [
+        {
+          "name": "Arithmetic",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11205",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "geometric"
@@ -739,7 +847,17 @@
       "name": "term"
     },
     {
-      "name": "ratio"
+      "name": "ratio",
+      "refs": [
+        {
+          "name": "Ratio",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3481047",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "difference"
@@ -910,7 +1028,17 @@
       ]
     },
     {
-      "name": "event"
+      "name": "event",
+      "refs": [
+        {
+          "name": "Event (probability theory)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q10290214",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "mu"
@@ -974,7 +1102,17 @@
     },
     {
       "name": "sector",
-      "description": "the portion of a disk enclosed by two radii and the arc between them"
+      "description": "the portion of a disk enclosed by two radii and the arc between them",
+      "refs": [
+        {
+          "name": "Circular sector",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q203435",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "regular",
@@ -982,7 +1120,17 @@
     },
     {
       "name": "identity",
-      "description": "an equality that holds for all values of the variables involved"
+      "description": "an equality that holds for all values of the variables involved",
+      "refs": [
+        {
+          "name": "Identity (mathematics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q609647",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "double",
@@ -1018,7 +1166,17 @@
     },
     {
       "name": "union",
-      "description": "in set theory and probability, the set of outcomes in either of two events"
+      "description": "in set theory and probability, the set of outcomes in either of two events",
+      "refs": [
+        {
+          "name": "Union (set theory)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q185359",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "B"
@@ -1044,6 +1202,80 @@
     {
       "name": "old",
       "description": "the previous or earlier value in a comparison, e.g. in percent change"
+    },
+    {
+      "name": "algebra",
+      "description": "the branch of mathematics dealing with symbols, expressions, equations and their manipulation",
+      "refs": [
+        {
+          "name": "Algebra",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3968",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "geometry",
+      "description": "the branch of mathematics dealing with shapes, sizes, positions and properties of space",
+      "refs": [
+        {
+          "name": "Geometry",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8087",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "trigonometry",
+      "description": "the branch of mathematics dealing with the relations between the angles and sides of triangles",
+      "refs": [
+        {
+          "name": "Trigonometry",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8084",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "calculus",
+      "description": "the branch of mathematics dealing with limits, derivatives, integrals and continuous change",
+      "refs": [
+        {
+          "name": "Calculus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q149972",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "financial mathematics",
+      "description": "the branch of mathematics dealing with interest, value over time and financial calculations",
+      "refs": [
+        {
+          "name": "Mathematical finance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q335632",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "golden ratio",
+      "description": "the ratio (about 1.618) in which the whole is to the larger part as the larger part is to the smaller"
     }
   ],
   "triples": [
@@ -1199,7 +1431,17 @@
       "name": "perfect square",
       "from": "perfect",
       "verb": "kind of",
-      "to": "square"
+      "to": "square",
+      "refs": [
+        {
+          "name": "Square number",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q50705",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "sum of cubes",
@@ -1229,7 +1471,17 @@
       "name": "distance formula",
       "from": "distance",
       "verb": "kind of",
-      "to": "formula"
+      "to": "formula",
+      "refs": [
+        {
+          "name": "Euclidean distance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q847073",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "arc length",
@@ -1258,7 +1510,17 @@
       "name": "surface area",
       "from": "surface",
       "verb": "kind of",
-      "to": "area"
+      "to": "area",
+      "refs": [
+        {
+          "name": "Surface area",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1379273",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "slant height",
@@ -1270,7 +1532,17 @@
       "name": "regular polygon",
       "from": "regular",
       "verb": "kind of",
-      "to": "polygon"
+      "to": "polygon",
+      "refs": [
+        {
+          "name": "Regular polygon",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q714886",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "Pythagorean identity",
@@ -1556,7 +1828,17 @@
       "name": "complement event",
       "from": "complement",
       "verb": "of",
-      "to": "event"
+      "to": "event",
+      "refs": [
+        {
+          "name": "Complementary event",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3755832",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "union of events",
@@ -1612,6 +1894,680 @@
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "from": "algebra",
+      "verb": "is part of",
+      "to": "mathematics"
+    },
+    {
+      "from": "geometry",
+      "verb": "is part of",
+      "to": "mathematics"
+    },
+    {
+      "from": "trigonometry",
+      "verb": "is part of",
+      "to": "mathematics"
+    },
+    {
+      "from": "calculus",
+      "verb": "is part of",
+      "to": "mathematics"
+    },
+    {
+      "from": "statistics",
+      "verb": "is part of",
+      "to": "mathematics"
+    },
+    {
+      "from": "financial mathematics",
+      "verb": "is part of",
+      "to": "mathematics"
+    },
+    {
+      "from": "arithmetic",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "arithmetic sequence is part of algebra",
+      "from": "arithmetic sequence",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "arithmetic sum is part of algebra",
+      "from": "arithmetic sum",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "binomial",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "binomial theorem is part of algebra",
+      "from": "binomial theorem",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "common difference is part of algebra",
+      "from": "common difference",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "common ratio is part of algebra",
+      "from": "common ratio",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "difference",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "difference of cubes is part of algebra",
+      "from": "difference of cubes",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "difference of squares is part of algebra",
+      "from": "difference of squares",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "Euler's formula is part of algebra",
+      "from": "Euler's formula",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "exponent",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "geometric",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "geometric sequence is part of algebra",
+      "from": "geometric sequence",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "geometric sum is part of algebra",
+      "from": "geometric sum",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "logarithm",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "nth term is part of algebra",
+      "from": "nth term",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "perfect square is part of algebra",
+      "from": "perfect square",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "quadratic",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "quadratic formula is part of algebra",
+      "from": "quadratic formula",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "ratio",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "sequence",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "series",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "sum",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "name": "sum of cubes is part of algebra",
+      "from": "sum of cubes",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "term",
+      "verb": "is part of",
+      "to": "algebra"
+    },
+    {
+      "from": "angle",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "apothem",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "arc",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "arc length is part of geometry",
+      "from": "arc length",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "area",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "base",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "circle",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "circumference",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "cone",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "cube",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "cylinder",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "degree",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "diameter",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "distance",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "distance formula is part of geometry",
+      "from": "distance formula",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "ellipse",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "height",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "Heron's formula is part of geometry",
+      "from": "Heron's formula",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "intercept",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "length",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "line",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "parallelogram",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "perimeter",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "point",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "point slope form is part of geometry",
+      "from": "point slope form",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "polygon",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "prism",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "pyramid",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "Pythagorean theorem is part of geometry",
+      "from": "Pythagorean theorem",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "radian",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "radius",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "rectangle",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "regular polygon is part of geometry",
+      "from": "regular polygon",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "sector",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "sector area is part of geometry",
+      "from": "sector area",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "side",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "slant",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "slant height is part of geometry",
+      "from": "slant height",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "slope",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "slope intercept form is part of geometry",
+      "from": "slope intercept form",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "sphere",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "square",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "surface",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "name": "surface area is part of geometry",
+      "from": "surface area",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "trapezoid",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "triangle",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "volume",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "width",
+      "verb": "is part of",
+      "to": "geometry"
+    },
+    {
+      "from": "adjacent",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "from": "cosecant",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "from": "cosine",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "from": "cotangent",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "name": "double angle is part of trigonometry",
+      "from": "double angle",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "from": "hypotenuse",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "from": "identity",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "name": "law of cosines is part of trigonometry",
+      "from": "law of cosines",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "name": "law of sines is part of trigonometry",
+      "from": "law of sines",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "from": "opposite",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "name": "Pythagorean identity is part of trigonometry",
+      "from": "Pythagorean identity",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "from": "secant",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "from": "sine",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "name": "sum angle is part of trigonometry",
+      "from": "sum angle",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "from": "tangent",
+      "verb": "is part of",
+      "to": "trigonometry"
+    },
+    {
+      "name": "chain rule is part of calculus",
+      "from": "chain rule",
+      "verb": "is part of",
+      "to": "calculus"
+    },
+    {
+      "from": "derivative",
+      "verb": "is part of",
+      "to": "calculus"
+    },
+    {
+      "from": "function",
+      "verb": "is part of",
+      "to": "calculus"
+    },
+    {
+      "name": "fundamental theorem of calculus is part of calculus",
+      "from": "fundamental theorem of calculus",
+      "verb": "is part of",
+      "to": "calculus"
+    },
+    {
+      "from": "integral",
+      "verb": "is part of",
+      "to": "calculus"
+    },
+    {
+      "name": "integration by parts is part of calculus",
+      "from": "integration by parts",
+      "verb": "is part of",
+      "to": "calculus"
+    },
+    {
+      "from": "limit",
+      "verb": "is part of",
+      "to": "calculus"
+    },
+    {
+      "name": "power rule is part of calculus",
+      "from": "power rule",
+      "verb": "is part of",
+      "to": "calculus"
+    },
+    {
+      "name": "product rule is part of calculus",
+      "from": "product rule",
+      "verb": "is part of",
+      "to": "calculus"
+    },
+    {
+      "name": "quotient rule is part of calculus",
+      "from": "quotient rule",
+      "verb": "is part of",
+      "to": "calculus"
+    },
+    {
+      "from": "combination",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "name": "complement event is part of statistics",
+      "from": "complement event",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "name": "conditional probability is part of statistics",
+      "from": "conditional probability",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "from": "deviation",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "from": "event",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "from": "mean",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "from": "permutation",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "from": "probability",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "name": "standard deviation is part of statistics",
+      "from": "standard deviation",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "name": "union of events is part of statistics",
+      "from": "union of events",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "from": "variance",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "name": "z score is part of statistics",
+      "from": "z score",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "name": "compound interest is part of financial mathematics",
+      "from": "compound interest",
+      "verb": "is part of",
+      "to": "financial mathematics"
+    },
+    {
+      "name": "continuous compounding is part of financial mathematics",
+      "from": "continuous compounding",
+      "verb": "is part of",
+      "to": "financial mathematics"
+    },
+    {
+      "from": "interest",
+      "verb": "is part of",
+      "to": "financial mathematics"
+    },
+    {
+      "from": "percent",
+      "verb": "is part of",
+      "to": "financial mathematics"
+    },
+    {
+      "name": "percent change is part of financial mathematics",
+      "from": "percent change",
+      "verb": "is part of",
+      "to": "financial mathematics"
+    },
+    {
+      "from": "principal",
+      "verb": "is part of",
+      "to": "financial mathematics"
+    },
+    {
+      "from": "rate",
+      "verb": "is part of",
+      "to": "financial mathematics"
+    },
+    {
+      "name": "simple interest is part of financial mathematics",
+      "from": "simple interest",
+      "verb": "is part of",
+      "to": "financial mathematics"
+    },
+    {
+      "from": "golden ratio",
+      "verb": "is part of",
+      "to": "geometry"
     }
   ],
   "formulas": [
@@ -2226,6 +3182,22 @@
       "expression": "\"A\" = \"principal\" * \"e\"^(\"rate\" * \"time\")",
       "latex": "A = P e^{rt}",
       "assigned_word": "continuous compounding"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "tau"
+      ],
+      "number": "6.283185307179586",
+      "share": "public"
+    },
+    {
+      "words": [
+        "golden ratio"
+      ],
+      "number": "1.618033988749895",
+      "share": "public"
     }
   ]
 }

@@ -138,6 +138,9 @@ class files
     // temp setup files that are loaded at the end not to change the id of objects used by the system tests
     const string MATH_FILE = 'math' . self::JSON;
     const string PHYSICS_FILE = 'physics' . self::JSON;
+    const string CHEMISTRY_FILE = 'chemistry' . self::JSON;
+    const string BIOLOGY_FILE = 'biology' . self::JSON;
+    const string ENGINEERING_FILE = 'engineering' . self::JSON;
 
     // initial data import
     CONST string IMPORT_COUNTRIES = self::DATA_PATH . 'countries' . self::JSON;
@@ -166,6 +169,9 @@ class files
         self::COUNTRY_FILE,
         self::MATH_FILE,
         self::PHYSICS_FILE,
+        self::CHEMISTRY_FILE,
+        self::BIOLOGY_FILE,
+        self::ENGINEERING_FILE,
     ];
 
     const array BASE_IMPORT_FILE_LIST = [
