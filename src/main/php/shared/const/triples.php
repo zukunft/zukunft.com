@@ -43,7 +43,7 @@ class triples
 
     // keyword to select the system configuration
     const string SYSTEM_CONFIG = 'system configuration';
-    const int SYSTEM_CONFIG_ID = 92;
+    const int SYSTEM_CONFIG_ID = 96;
 
     // triple names used for the system configuration
     const string NUMBER_FORMAT = 'number format';
@@ -85,51 +85,51 @@ class triples
 
     // si units
     const string SPEED_OF_LIGHT = 'speed of light';
-    const int SPEED_OF_LIGHT_ID = 46;
+    const int SPEED_OF_LIGHT_ID = 50;
     const string SPEED_OF_LIGHT_COM = 'The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.';
     const string M_PER_S = 'm/s';
-    const int M_PER_S_ID = 63;
+    const int M_PER_S_ID = 67;
     const string M_PER_S_COM = 'The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.';
     const string TRANSITION_CS = 'hyperfine transition frequency of Cs';
-    const int TRANSITION_CS_ID = 78;
+    const int TRANSITION_CS_ID = 82;
     const string TRANSITION_FREQUENCY = 'hyperfine transition frequency';
-    const int TRANSITION_FREQUENCY_ID = 77;
+    const int TRANSITION_FREQUENCY_ID = 81;
     const string HYPERFINE_TRANSITION = 'hyperfine transition';
-    const int HYPERFINE_TRANSITION_ID = 76;
+    const int HYPERFINE_TRANSITION_ID = 80;
     const string DEFINITION_YEAR_1983 = '1983 (year of definition)';
-    const int DEFINITION_YEAR_1983_ID = 86;
+    const int DEFINITION_YEAR_1983_ID = 90;
     const string DEFINITION_YEAR_1967 = '1967 (year of definition)';
-    const int DEFINITION_YEAR_1967_ID = 84;
+    const int DEFINITION_YEAR_1967_ID = 88;
     const string DEFINITION_YEAR = 'year of definition';
-    const int DEFINITION_YEAR_ID = 83;
+    const int DEFINITION_YEAR_ID = 87;
     const string YEAR_1983 = '1983 (year)';
-    const int YEAR_1983_ID = 81;
+    const int YEAR_1983_ID = 85;
     const string YEAR_1967 = '1967 (year)';
-    const int YEAR_1967_ID = 79;
+    const int YEAR_1967_ID = 83;
     const string YEAR_2019 = '2019 (year)';
-    const int YEAR_2019_ID = 82;
+    const int YEAR_2019_ID = 86;
     const string YEAR_2020 = '2020 (year)';
-    const int YEAR_2020_ID = 143;
+    const int YEAR_2020_ID = 147;
     const string YEAR_2021 = '2021 (year)';
-    const int YEAR_2021_ID = 1152;
+    const int YEAR_2021_ID = 1156;
     const string YEAR_2022 = '2022 (year)';
-    const int YEAR_2022_ID = 1151;
+    const int YEAR_2022_ID = 1155;
     const string YEAR_2023 = '2023 (year)';
-    const int YEAR_2023_ID = 1150;
+    const int YEAR_2023_ID = 1154;
     const string YEAR_2024 = '2024 (year)';
-    const int YEAR_2024_ID = 1149;
+    const int YEAR_2024_ID = 1153;
     const string YEAR_2025 = '2025 (year)';
-    const int YEAR_2025_ID = 1148;
+    const int YEAR_2025_ID = 1152;
     const string YEAR_2026 = '2026 (year)';
-    const int YEAR_2026_ID = 1147;
+    const int YEAR_2026_ID = 1151;
     const string YEAR_2027 = '2027 (year)';
-    const int YEAR_2027_ID = 1146;
+    const int YEAR_2027_ID = 1150;
     const string YEAR_2028 = '2028 (year)';
-    const int YEAR_2028_ID = 1145;
+    const int YEAR_2028_ID = 1149;
     const string YEAR_2029 = '2029 (year)';
-    const int YEAR_2029_ID = 1144;
+    const int YEAR_2029_ID = 1148;
     const string YEAR_2030 = '2030 (year)';
-    const int YEAR_2030_ID = 1143;
+    const int YEAR_2030_ID = 1147;
 
 
     const string SYSTEM_TEST_ADD = 'System Test Triple';
@@ -144,44 +144,46 @@ class triples
 
     // triple used in the default start view
     const string GLOBAL_PROBLEM = 'global problem';
-    const int GLOBAL_PROBLEM_ID = 91;
+    const int GLOBAL_PROBLEM_ID = 95;
     const string GLOBAL_WARMING = 'global warming';
-    const int GLOBAL_WARMING_ID = 99;
+    const int GLOBAL_WARMING_ID = 103;
     const string GWP = 'global warming potential';
-    const int GWP_ID = 100;
+    const int GWP_ID = 104;
     const string TIME_POINTS = 'time points';
-    const int TIME_POINTS_ID = 103;
+    const int TIME_POINTS_ID = 107;
     const string HAPPY_TIME_POINTS = 'happy time points';
-    const int HAPPY_TIME_POINTS_ID = 104;
+    const int HAPPY_TIME_POINTS_ID = 108;
     const string GLOBAL_WARMING_PROBLEM = 'global warming (global problem)';
-    const int GLOBAL_WARMING_PROBLEM_ID = 107;
+    const int GLOBAL_WARMING_PROBLEM_ID = 111;
     const string POPULISM_PROBLEM = 'populism (global problem)';
-    const int POPULISM_PROBLEM_ID = 108;
+    const int POPULISM_PROBLEM_ID = 112;
     const string POTENTIAL_HEALTH_PROBLEM = 'health can be a global problem';
-    const int POTENTIAL_HEALTH_PROBLEM_ID = 109;
+    const int POTENTIAL_HEALTH_PROBLEM_ID = 113;
     const string POVERTY_PROBLEM = 'poverty (global problem)';
-    const int POVERTY_PROBLEM_ID = 111;
+    const int POVERTY_PROBLEM_ID = 115;
     const string POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
-    const int POTENTIAL_EDUCATION_PROBLEM_ID = 112;
+    const int POTENTIAL_EDUCATION_PROBLEM_ID = 116;
     const string CASH_FLOW = 'cash flow';
-    const int CASH_FLOW_ID = 126;
+    const int CASH_FLOW_ID = 130;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';
-    const int CASH_FLOW_STATEMENT_ID = 127;
+    const int CASH_FLOW_STATEMENT_ID = 131;
     const string INCOME_TAX = 'income taxes';
-    const int INCOME_TAX_ID = 128;
+    const int INCOME_TAX_ID = 132;
 
+    const string SECOND = 'second (time)';
+    const int SECOND_ID = 20;
     const string TN_CUBIC_METER = 'm3';
 
     const string CANTON_ZURICH = 'Zurich (Canton)';
-    const int CANTON_ZURICH_ID = 94;
+    const int CANTON_ZURICH_ID = 98;
     const string CITY_ZH = 'Zurich (City)';
-    const int CITY_ZH_ID = 93;
+    const int CITY_ZH_ID = 97;
     const string CITY_ZH_NAME = 'City of Zurich';
     const string CITY_ZH_COM = 'the city of Zurich';
     const string CITY_BE = 'Bern (City)';
-    const int CITY_BE_ID = 95;
+    const int CITY_BE_ID = 99;
     const string CITY_GE = 'Geneva (City)';
-    const int CITY_GE_ID = 96;
+    const int CITY_GE_ID = 100;
     const string CANTON_ZURICH_NAME = 'Canton Zurich';
     const string COMPANY_ZURICH = "Zurich Insurance";
     const string COMPANY_VESTAS = "Vestas SA";

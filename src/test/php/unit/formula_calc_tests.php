@@ -33,6 +33,8 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'expression.php';
@@ -192,8 +194,8 @@ class formula_calc_tests
         $frm = $t_frm->formula();
         $trm_lst = $frm->term_list($t_trm->term_list_time());
         $t->assert($test_name, $trm_lst->dsp_id(),
-            '"' . words::MINUTE . '","' . words::SECOND . '" ('
-            . $lib->term_id(words::SECOND_ID, word::class) . ','
+            '"' . words::MINUTE . '","' . triples::SECOND . '" ('
+            . $lib->term_id(triples::SECOND_ID, triple::class) . ','
             . $lib->term_id(words::MINUTE_ID, word::class) . ')');
 
         // TODO add result display test

@@ -170,8 +170,9 @@ class test_terms
     function term_list_time(): term_list
     {
         $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         $lst = new term_list($this->env->usr1);
-        $lst->add($t_wrd->second()->term());
+        $lst->add($t_trp->second()->term());
         $lst->add($t_wrd->word_minute()->term());
         $lst->add($t_wrd->word_hour()->term());
         return $lst;

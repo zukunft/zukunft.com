@@ -304,6 +304,14 @@
       "name_plural_reverse": "",
       "name_plural": "by parts",
       "name_reverse": ""
+    },
+    {
+      "name": "must be one of",
+      "code_id": "must_be_one_of",
+      "description": "to disambiguate a word that has several meanings by pinning each meaning to its own triple e.g. the word 'second' must be one of 'time unit' or 'ranking number'; the qualifier triple is referenced instead of the ambiguous word and only the original word is shown on a page while the qualifier appears in the tooltip",
+      "name_plural_reverse": "",
+      "name_plural": "must be one of",
+      "name_reverse": ""
     }
   ]
 }

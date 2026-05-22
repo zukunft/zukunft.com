@@ -344,20 +344,7 @@
     },
     {
       "name": "second",
-      "description": "The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",
-      "plural": "seconds",
-      "type": "measure",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Second",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11574",
-          "type": "wikidata"
-        }
-      ]
+      "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)"
     },
     {
       "name": "s",
@@ -1736,6 +1723,12 @@
       "name": "per 100 km",
       "type": "measure_divisor",
       "protection": "admin_protection"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "ranking"
     }
   ],
   "triples": [
@@ -1915,8 +1908,49 @@
       "protection": "admin_protection"
     },
     {
-      "name": "second (unit)",
+      "name": "time unit",
+      "from": "unit",
+      "verb": "of",
+      "to": "time",
+      "description": "a unit to measure a duration, used to disambiguate words like 'second' that also have a non-time meaning"
+    },
+    {
+      "name": "ranking number",
+      "from": "ranking",
+      "verb": "with",
+      "to": "number",
+      "description": "an ordinal position in a ranking (first, second, third, ...), used to disambiguate words like 'second' that also are a time unit"
+    },
+    {
+      "name": "second (time)",
+      "description": "The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",
       "from": "second",
+      "verb": "must be one of",
+      "to": "time unit",
+      "plural": "seconds",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Second",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11574",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "second (ranking)",
+      "description": "the ranking-number reading of the ambiguous word 'second'; displayed as 'second' with 'ranking number' shown only in the tooltip",
+      "from": "second",
+      "verb": "must be one of",
+      "to": "ranking number"
+    },
+    {
+      "name": "second (unit)",
+      "from": "second (time)",
       "verb": "is a",
       "to": "SI base unit"
     },
@@ -2577,13 +2611,13 @@
   "formulas": [
     {
       "name": "scale minute to sec",
-      "expression": "\"second\" = \"minute\" * 60",
+      "expression": "\"second (time)\" = \"minute\" * 60",
       "latex": "\\text{s} = 60 \\cdot \\text{min}",
       "assigned_word": "minute"
     },
     {
       "name": "scale hour to sec",
-      "expression": "\"second\" = \"hour\" * 3600",
+      "expression": "\"second (time)\" = \"hour\" * 3600",
       "latex": "\\text{s} = 3600 \\cdot \\text{h}",
       "assigned_word": "hour"
     },
@@ -2595,7 +2629,7 @@
     },
     {
       "name": "scale day to sec",
-      "expression": "\"second\" = \"day\" * 86400",
+      "expression": "\"second (time)\" = \"day\" * 86400",
       "latex": "\\text{s} = 86400 \\cdot \\text{d}",
       "assigned_word": "day"
     },
@@ -2613,7 +2647,7 @@
     },
     {
       "name": "scale year to second",
-      "expression": "\"second\" = \"year\" * 31557600",
+      "expression": "\"second (time)\" = \"year\" * 31557600",
       "latex": "\\text{s} = 31557600 \\cdot \\text{a}",
       "assigned_word": "year"
     },
@@ -2655,7 +2689,7 @@
     },
     {
       "name": "definition of joule",
-      "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / ( \"second\" * \"second\" )",
+      "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / ( \"second (time)\" * \"second (time)\" )",
       "latex": "\\text{J} = \\dfrac{\\text{kg} \\cdot \\text{m}^2}{\\text{s}^2}",
       "assigned_word": "joule"
     }

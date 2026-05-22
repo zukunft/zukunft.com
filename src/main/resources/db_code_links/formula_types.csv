@@ -5,3 +5,4 @@ formula_type_id, type_name, description, code_id
 4, 'this', 'selects the assumed time term', 'time_this'
 5, 'reversible', 'a formula that can be included also in the reversed version e.g. "minute = second / 60" and "second = minute * 60"', 'reversible'
 6, 'scaling', 'a formula that adjust the scaling e.g. "million = one / 1000000"', 'scaling'
+7, 'calc with R', 'redirect complex calculation to an R-project server if possible', 'calc_r'

@@ -122,6 +122,27 @@ The `percent` measure word is auto-scaled by the formula engine: a formula whose
 
 A short symbol can be the alias of more than one phrase on purpose. For example `m` is the symbol for the SI unit `metre` (in `units.json`) and at the same time the abbreviation for `million` (in `scaling.json`). This is **by design**: the context — the other phrases in the value's group — disambiguates which meaning applies. Do not "fix" such overlaps by forcing the symbol to be unique or by renaming one side; only flag a genuine, unintended collision (e.g. a formula name equal to a triple name).
 
+### Disambiguate an ambiguous word with qualifier triples
+
+When a single word can mean more than one thing, the word stays **defined once**, and each distinct meaning is made unique by a **qualifier triple** — never by duplicating or renaming the word. The bare word is then only the shared label; the data always references the unambiguous triple, not the word.
+
+Take `second`, which can be a time unit or a ranking number:
+
+1. Define the word `second` **once**, with a description that states it has several usages (e.g. *"used both as the SI time unit and as the ranking number; reference the qualifier triple, not this word"*).
+2. Create one triple per meaning: `second (time unit)` and `second (ranking number)`. The disambiguation is expressed with the verb **`must be one of`** (a new verb for exactly this purpose), so each meaning `must be one of` the readings of `second`.
+3. In all data (import JSON, values, formulas, links) reference **only the triples**, never the bare word `second`, so the meaning is always unambiguous.
+
+This is the word-level counterpart of the intentional symbol ambiguity above: a symbol may *alias* several phrases on purpose, but an ambiguous *word* is resolved by pinning each meaning to its own qualifier triple.
+
+#### Display rule: show the original word, put the qualifier in the tooltip
+
+Although the data references the qualifier triple, the user should still see the short, familiar word. So when a qualifier triple is shown on a page or a page section, render **only the original word** and move the qualifier into the tooltip:
+
+- **Right**: `second (time unit)` is displayed as `second`, and the `time unit` qualifier appears only inside the mouse-over tooltip (e.g. as part of the title text).
+- **Wrong**: printing the full triple name `second (time unit)` inline on the page.
+
+This keeps pages readable while the underlying reference stays unambiguous; the qualifier is recoverable on hover for the user who needs it.
+
 ### A triple's `from`/`verb`/`to` combination must be unique within an import
 
 Within the same import JSON a triple is identified by its `from` + `verb` + `to` combination, so that same combination must not be reused for two triples with **different names or meanings** — the duplicate key leads to an ambiguous id assignment during import (the same triple cannot resolve to two names).
@@ -222,7 +243,7 @@ Commit messages reference issue numbers: e.g. `fix auth flow as part of fix #232
 
 - **DRY**: one point of change (intentional repetition allowed)
 - **Push common logic to parent**: if two or more sibling classes contain the same code in a function, move that code to the shared parent. Child implementations call `parent::functionName()` and then extend with their own fields only. See the `api_array()` pattern below.
-- **Test first**: write unit test before implementation; each facade function needs a unit test
+- **Test first**: write unit test before implementation; every function needs at least one positive and one negative unit test (see "At least one positive and one negative test per function")
 - **Best guess**: on incomplete data, use assumptions to complete the process and report them upward — never silently fail
 - **Minimal dependencies**: keep external packages to a minimum
 - **Log all user changes**: every user action is logged with undo/redo support
@@ -418,6 +439,26 @@ All objects used in tests must be created by a factory function in `src/test/php
 - **Wrong**: `$frm_lnk = new formula_link($usr); $frm_lnk->set_id(99); ...` — ad-hoc construction scattered across test files makes fixtures hard to maintain and diverge silently
 
 When a needed factory method does not yet exist, add it to the appropriate `test_*.php` file in `src/test/php/create/` before writing the test. The `test_mappers.php` class coordinates factory calls when a test needs to resolve a class name to a test object at runtime.
+
+### At least one positive and one negative test per function
+
+Every function — and at minimum every **new** function — must have at least one **positive** unit test (the expected input produces the expected result) and at least one **negative** unit test (an invalid, missing, or boundary input is rejected or handled gracefully). A function that only ever has a happy-path test is considered untested for review purposes.
+
+- **Positive**: the documented "good" case returns the documented result, e.g. `body_search()` with a populated word list returns the matching links.
+- **Negative**: the failure or edge case is exercised, e.g. `body_search()` with a `null` list returns an empty string instead of erroring; an `import_mapper()` with a missing mandatory field adds the expected `msg_id` and `is_ok()` becomes false.
+
+The negative test must assert the *reported* outcome (the `user_message` / `msg_id`, the empty result, the `false` return), never just that "no exception was thrown" — silent failure is itself a defect (see the "Best guess" principle).
+
+### Tests that depend on data files must be reproducible from a single point of change
+
+A test that relies on a generated artifact — a JSON import file, an SQL snapshot, an HTML snapshot — must be able to **recreate that artifact from code**, so the artifact never silently diverges from the constants it was built from. Apply the one-point-of-change concept: the artifact references a value through a shared constant, and regenerating the artifact uses the same constant.
+
+This matters most for **import round-trip tests** that create an object, then delete it during cleanup. The name used in the import JSON must come from a **reserved test constant** — for words, a reserved test word in `src/main/php/shared/const/words.php` — never a hard-coded string literal in the JSON.
+
+- **Right**: the test word in the import JSON is generated from `words::SOME_RESERVED_TEST_WORD`, and the same const drives the cleanup `del()` and any re-generation of the import file. If the const value changes, regenerating the import file picks up the new value automatically and the test still passes.
+- **Wrong**: the import JSON hard-codes `"Heron"` (or any literal) while the cleanup deletes `words::HERON` — the two drift apart the moment the const changes, the cleanup misses the row, and later runs fail on a leftover duplicate.
+
+So when adding such a test: (1) add a reserved test entry to `words.php` (or the matching `*_const` file) if none fits, (2) build the import file's name from that const, and (3) use the same const for the post-test cleanup and for any script that regenerates the import file.
 
 ### Page-based UI tests for component-type renderers
 

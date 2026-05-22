@@ -48,8 +48,8 @@ SELECT formula_insert_log_11100011110100000_user (
                31,
                1,
                33,
-               '{w24}={w104}*60',
+               '{t20}={w104}*60',
                32,
-               '"second" = "minute" * 60',
+               '"second (time)" = "minute" * 60',
                886,
                '\text{s} = 60 \cdot \text{min}');

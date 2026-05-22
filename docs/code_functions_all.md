@@ -5322,6 +5322,7 @@
     \-- fill_by_name - section for function fill_by_name not yet defined that it should be modify in /sandbox/sandbox_list_named.php
     \-- sort_by_name - section for function sort_by_name not yet defined that it should be modify in /sandbox/sandbox_list_named.php
     \-- get_by_name - section for function get_by_name is expected to be set and get in /sandbox/sandbox_list_named.php
+    \-- get_by_pattern - section for function get_by_pattern is expected to be set and get in /sandbox/sandbox_list_named.php
     \-- order error - order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names,order of section base has difference at name_link should be before name_tip of name_tip,name_link does not match 1,name_link,val_formatted,name_linked,display,display_linked,names_linked,br2,br,term_by_obj_id,name_tip,names
 \-- sandbox_named
     \-- name - section for function name is expected to be debug in /sandbox/sandbox_named.php
@@ -6559,7 +6560,7 @@
     \-- logout_body
         \-- system_page - HTML shown on the logout confirmation page
     \-- body_search
-        \-- system_page - the HTML code to search for words, verbs, triple, formulas
+        \-- system_page - the HTML code to show the search results with words, verbs, triple, formulas
     \-- body_search_full
         \-- system_page - like body_search but with all possible fields
     \-- value_details

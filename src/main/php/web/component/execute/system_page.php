@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
@@ -56,6 +57,7 @@ include_once paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
@@ -300,7 +302,8 @@ class system_page extends component
     }
 
     /**
-     * the HTML code to search for words, verbs, triple, formulas
+     * the HTML code to show the search results with words, verbs, triple, formulas
+     * and allow to narrow or widen the selection
      * based on the context (foaf terms) and "fixed" selections like the type or the share or protection
      * limit the number of search and selection fields so that it matches a small screen
      *
@@ -314,17 +317,14 @@ class system_page extends component
     {
         $result = '';
 
-        // show a search field
         // the search input field is part of the navbar search form, so it is not repeated here
 
-        // show the matching words to select
-        // TODO replace by term or phrase list
-        if ($wrd_lst != null) {
-            $result .= $wrd_lst->name_link();
-        }
+        // TODO Prio 0: if the search pattern is 'global' show the title 'search results for 'global*'
 
-        // show the matching terms to select
-        // TODO create a term list object
+        // TODO Prio 0: add a term list that shows the top xxx terms that match the given pattern
+        //$trm_lst = new term_list();
+        //$trm_lst->get_by_name();
+
 
         return $result;
     }

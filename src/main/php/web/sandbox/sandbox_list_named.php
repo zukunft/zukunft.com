@@ -44,6 +44,8 @@ include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::HTML . 'rest_call.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
@@ -52,6 +54,7 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\result\result;
@@ -61,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -355,6 +359,28 @@ class sandbox_list_named extends sandbox_list
         } else {
             return null;
         }
+    }
+
+    /**
+     * get the named objects (e.g. the terms) that match the given name pattern
+     * from the backend via the api and add them to this list
+     * the frontend (api based) counterpart of the backend load_by_pattern / load_like
+     *
+     * @param string $pattern the text part used to select the named objects e.g. "sec" to find "second"
+     * @return bool true if at least one matching object has been received from the backend
+     */
+    function get_by_pattern(string $pattern = '%'): bool
+    {
+        $result = false;
+
+        $data = array(url_var::PATTERN => $pattern);
+        $rest = new rest_call();
+        $json_body = $rest->api_get($this::class, $data);
+        $this->api_mapper($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
+        return $result;
     }
 
 
