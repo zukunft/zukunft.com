@@ -360,7 +360,7 @@ class system_page extends component
             $trm_lst->get_by_pattern($pattern);
         }
         if ($trm_lst !== null and !$trm_lst->is_empty()) {
-            $result .= $trm_lst->name_link_by_impact();
+            $result .= $trm_lst->links_with_context();
         }
 
         return $result;

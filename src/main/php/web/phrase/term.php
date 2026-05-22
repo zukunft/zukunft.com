@@ -41,6 +41,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
@@ -50,14 +51,17 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -522,6 +526,38 @@ class term extends combine_named
             log_err($msg);
             return $msg;
         }
+    }
+
+    /**
+     * @return string the html code of a "fas fa-edit" icon that links to the edit page of the
+     *                wrapped object e.g. /http/view.php?m=10&id=206 for triple 206
+     */
+    function edit_link(): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $url = $html->url_new($this->edit_view_id(), $this->obj_id());
+        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="fas fa-edit"></' . html_base::I . '>';
+        return $html->ref($url, $icon, $mtr->txt($this->obj()::MSG_EDIT));
+    }
+
+    /**
+     * @return int the database id of the edit view that matches the wrapped object type
+     *             so that the edit link points to the right edit page (word, triple, formula or verb)
+     */
+    private function edit_view_id(): int
+    {
+        if ($this->is_triple()) {
+            $view_id = views::TRIPLE_EDIT_ID;
+        } elseif ($this->is_formula()) {
+            $view_id = views::FORMULA_EDIT_ID;
+        } elseif ($this->is_verb()) {
+            $view_id = views::VERB_EDIT_ID;
+        } else {
+            $view_id = views::WORD_EDIT_ID;
+        }
+        return $view_id;
     }
 
     /**
