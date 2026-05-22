@@ -182,7 +182,7 @@ class sandbox_list_named extends sandbox_list
      * @param int $limit the max number of entries to show
      * @return array with a list of the component names with html links
      */
-    private function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
+    protected function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
     {
         $result = array();
         $i = 0;

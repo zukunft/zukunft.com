@@ -245,7 +245,7 @@ class def
 
     // TODO Prio 2 allow overwrite by the config value
     const int MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
-    const int MAX_RECURSIVE = 10; // max number of recursive call to avoid endless looping in case of a program error
+    const int MAX_RECURSIVE = 20; // max number of recursive call to avoid endless looping in case of a program error
 
 
     /*

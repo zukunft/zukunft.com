@@ -496,6 +496,15 @@ class term extends combine_named
     }
 
     /**
+     * @return float the system calculated impact of the wrapped word, triple, formula or verb;
+     *               used to sort a term list so that the most relevant term is shown first
+     */
+    function impact(): float
+    {
+        return $this->obj()->impact();
+    }
+
+    /**
      * @returns string the html code to display the phrase with reference links
      */
     function name_link(): string

@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_list_value.php';
+include_once html_paths::HELPER . 'config.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
@@ -65,6 +66,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\group\group_list;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
@@ -241,13 +243,18 @@ class result_list extends sandbox_list_value
 
     /**
      * @param string $back the back trace url for the undo functionality
+     * @param int $limit the max number of entries to show (kept compatible with the parent signature)
      * @return array with a list of the result names with html links
      */
-    function names_linked(string $back = ''): array
+    protected function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
     {
         $result = array();
+        $i = 0;
         foreach ($this->lst() as $res) {
-            $result[] = $res->display_linked();
+            if ($i < $limit) {
+                $result[] = $res->display_linked();
+                $i++;
+            }
         }
         return $result;
     }

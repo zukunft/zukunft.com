@@ -166,6 +166,8 @@ enum messages: string
     const string VAR_FUNCTION_NAME = 'VarFunctionName';
     // value how many times the object is referenced
     const string VAR_USAGE = 'VarUsage';
+    // the search pattern used to select a list of terms, words, ...
+    const string VAR_PATTERN = 'VarPattern';
     // the share permission of a sandbox object
     const string VAR_SHARE = 'VarShare';
     // the share permission of the compare sandbox object
@@ -1628,6 +1630,7 @@ enum messages: string
     case FORM_TITLE_ERROR_LOG = 'system_title_error_log';
     case FORM_TITLE_ERROR_UPDATE = 'system_title_error_update';
     case FORM_TITLE_SEARCH = 'system_title_search';
+    case FORM_TITLE_SEARCH_RESULT = 'system_title_search_result';
     case FORM_TITLE_SEARCH_FULL = 'system_title_search_full';
     case FORM_TITLE_SANDBOX = 'system_title_sandbox';
     case FORM_TITLE_UNDO = 'system_title_undo';

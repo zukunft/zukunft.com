@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -106,6 +107,41 @@ class term_list_tests
 
         $trm_lst = $t_trm->term_list_short();
         $t->assert_api_to_ui($trm_lst, new term_list_ui());
+
+
+        $t->subheader($ts . 'sort by impact');
+
+        // build a frontend term list with two words of different impact
+        $wrd_low = new word_ui();
+        $wrd_low->set_id(1);
+        $wrd_low->set_name('low impact term');
+        $wrd_low->impact = 1.0;
+        $wrd_high = new word_ui();
+        $wrd_high->set_id(2);
+        $wrd_high->set_name('high impact term');
+        $wrd_high->impact = 9.0;
+        $trm_lst = new term_list_ui();
+        $trm_lst->add($wrd_low->term());
+        $trm_lst->add($wrd_high->term());
+
+        // positive: term->impact returns the impact of the wrapped word
+        $test_name = 'term->impact returns the impact of the wrapped word';
+        $t->assert($test_name, $wrd_high->term()->impact() == 9.0, true);
+
+        // positive: sort_by_impact orders the list with the highest impact term first
+        $test_name = 'term_list->sort_by_impact shows the highest impact term first';
+        $trm_lst->sort_by_impact();
+        $t->assert($test_name, $trm_lst->names(), ['high impact term', 'low impact term']);
+
+        // positive: name_link_by_impact lists the highest impact term before the lower one
+        $test_name = 'term_list->name_link_by_impact lists the highest impact term first';
+        $links = $trm_lst->name_link_by_impact();
+        $t->assert($test_name, strpos($links, 'high impact term') < strpos($links, 'low impact term'), true);
+
+        // negative: an empty term list renders no impact links
+        $test_name = 'term_list->name_link_by_impact of an empty list is empty';
+        $empty_lst = new term_list_ui();
+        $t->assert($test_name, $empty_lst->name_link_by_impact(), '');
 
     }
 

@@ -42,6 +42,7 @@ messages:
   activate_err_missing_id: "Fehler: fehlende Benutzer-ID. Bitte fordern Sie die Passwortzurücksetzung erneut an."
   activate_err_failed: "Benutzer nach Passwortänderung nicht gefunden. Bitte fordern Sie die Passwortzurücksetzung erneut an."
   system_title_login_reset: "Passwort zurücksetzen für"
+  system_title_search_result: "Suchergebnis für z$VarPattern$z"
   reset_submit: "Passwort zurücksetzen"
   reset_prompt: "Füllen Sie eines der Felder aus, um ein temporäres Passwort per E-Mail zu erhalten:"
   reset_err_not_found: "Benutzername und E-Mail nicht gefunden. Bitte versuchen Sie es erneut."

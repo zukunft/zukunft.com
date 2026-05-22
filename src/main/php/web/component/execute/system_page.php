@@ -47,7 +47,6 @@ include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::USER . 'user.php';
-include_once html_paths::WORD . 'word_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
@@ -62,7 +61,6 @@ use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -74,18 +72,48 @@ class system_page extends component
     /**
      * HTML for a page title
      * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
+     * @param array $url_array the URL params; used to add the search pattern to the search result title
      * @return string the html code to start a new form and display the tile
      */
-    function system_tile(?msg_id $ui_msg_code_id = null): string
+    function system_tile(?msg_id $ui_msg_code_id = null, array $url_array = []): string
     {
         global $mtr;
 
         $html = new html_base();
         $result = '';
         if ($ui_msg_code_id != null) {
-            $result .= $html->text_h2($mtr->txt($ui_msg_code_id));
+            // on the search page show "search result for <pattern>" instead of the plain "search" title
+            if ($ui_msg_code_id == msg_id::FORM_TITLE_SEARCH) {
+                $result .= $html->text_h2($this->search_title($url_array));
+            } else {
+                $result .= $html->text_h2($mtr->txt($ui_msg_code_id));
+            }
         }
         return $result;
+    }
+
+    /**
+     * build the search page title; with a pattern it reads "search result for <pattern>",
+     * without a pattern it falls back to the plain search title
+     * @param array $url_array the URL params; the pattern is read from url_var::PATTERN with the
+     *                         human-readable url_var::PATTERN_HUMAN as fallback (see body_search)
+     * @return string the language specific search page title
+     */
+    private function search_title(array $url_array): string
+    {
+        global $mtr;
+        $lib = new library();
+
+        $pattern = $url_array[url_var::PATTERN] ?? $url_array[url_var::PATTERN_HUMAN] ?? '';
+        if ($pattern == '') {
+            $title = $mtr->txt(msg_id::FORM_TITLE_SEARCH);
+        } else {
+            $title = $lib->msg_var_replace(
+                $mtr->txt(msg_id::FORM_TITLE_SEARCH_RESULT),
+                msg_id::VAR_PATTERN,
+                $pattern);
+        }
+        return $title;
     }
 
     /**
@@ -307,24 +335,33 @@ class system_page extends component
      * based on the context (foaf terms) and "fixed" selections like the type or the share or protection
      * limit the number of search and selection fields so that it matches a small screen
      *
-     * @param word_list|null $wrd_lst the words matching the search pattern offered to the user for selection
-     *                                or null if no word has been found yet
-     * @param string $pattern the search pattern entered by the user; the input field itself is part of
-     *                        the navbar search form, so it is not repeated in the body
+     * @param array $url_array the URL params; the search pattern is read from url_var::PATTERN
+     *                          (the key the navbar search form submits) and falls back to the
+     *                          human-readable url_var::PATTERN_HUMAN alias, because the human->standard
+     *                          url remap only runs for human mask urls (mask_id=), not for a short mask (m=)
+     * @param term_list|null $trm_lst the terms matching the pattern; normally null so the list is
+     *                                loaded from the backend via the api, but it can be injected
+     *                                (e.g. for unit tests) to render a pre-loaded list without a backend call
      * @return string with the HTML code of the search body
      */
-    function body_search(?word_list $wrd_lst = null, string $pattern = ''): string
+    function body_search(array $url_array = [], ?term_list $trm_lst = null): string
     {
         $result = '';
 
         // the search input field is part of the navbar search form, so it is not repeated here
+        $pattern = $url_array[url_var::PATTERN] ?? $url_array[url_var::PATTERN_HUMAN] ?? '';
 
         // TODO Prio 0: if the search pattern is 'global' show the title 'search results for 'global*'
 
-        // TODO Prio 0: add a term list that shows the top xxx terms that match the given pattern
-        //$trm_lst = new term_list();
-        //$trm_lst->get_by_name();
-
+        // show the terms (word, triple, formula or verb) that match the search pattern,
+        // most relevant (highest impact) first
+        if ($trm_lst === null and $pattern != '') {
+            $trm_lst = new term_list();
+            $trm_lst->get_by_pattern($pattern);
+        }
+        if ($trm_lst !== null and !$trm_lst->is_empty()) {
+            $result .= $trm_lst->name_link_by_impact();
+        }
 
         return $result;
     }

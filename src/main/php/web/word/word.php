@@ -258,6 +258,16 @@ class word extends sandbox_code_id
         return $this->plural;
     }
 
+    /**
+     * @return float the system calculated impact of this word used to sort the words by relevance
+     *               (highest impact first); same accessor as triple, formula and verb so a term can
+     *               read the impact of its wrapped object without knowing the concrete class
+     */
+    function impact(): float
+    {
+        return $this->impact;
+    }
+
     function set_parent(?phrase $parent): void
     {
         $this->parent = $parent;

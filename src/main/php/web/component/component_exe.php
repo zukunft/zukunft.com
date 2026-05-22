@@ -316,7 +316,7 @@ class component_exe extends component
             component_types::SYSTEM_SHOW_VIEW_DIFF => $preview->view_diff(),
 
             // fixed system pages - usage only allowed for fixed internal system pages
-            component_types::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
+            component_types::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id, $url_array),
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
             component_types::SYSTEM_BODY_SIGNUP => $page->signup_body($url_array),
@@ -324,7 +324,7 @@ class component_exe extends component
             component_types::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body($url_array),
             component_types::SYSTEM_BODY_LOGIN_RESET => $page->reset_body($url_array),
             component_types::SYSTEM_BODY_LOGOUT => $page->logout_body(),
-            component_types::SYSTEM_BODY_SEARCH => $page->body_search(),
+            component_types::SYSTEM_BODY_SEARCH => $page->body_search($url_array),
             component_types::SYSTEM_BODY_SEARCH_FULL => $page->body_search_full(),
             component_types::SYSTEM_BODY_VALUE_DETAIL => $page->value_details(),
             component_types::SYSTEM_BODY_RESULT_EXPLAIN => $page->result_explain(),
