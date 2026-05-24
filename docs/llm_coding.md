@@ -210,6 +210,25 @@ This turns a vague value into a precise one:
 
 This keeps the import deterministic and each file self-consistent: everything a file references must be present in that file's import (re-declared name-only if it is a base word, per the self-consistency rule above), and the mapper fails loudly when it is not. Any database access — loading existing rows, cross-file lookups, merging — belongs to the **save** step, not to `import_mapper`.
 
+### A view component's `ui_msg_code_id` is globally unique — never reuse one on a new component
+
+The `components` table has a unique key `components_ui_msg_code_id_uk` on `ui_msg_code_id` (it does **not** cover `ui_msg_code_id_vars` or `ui_msg_code_id_exception`, and NULL is allowed many times). So a `ui_msg_code_id` effectively identifies one single component. Two component definitions in the import JSON must never carry the same `ui_msg_code_id` under **different** `code_id`s — the import then tries to `INSERT` a second row with a duplicate `ui_msg_code_id` and the save fails with `duplicate key value violates unique constraint "components_ui_msg_code_id_uk"`.
+
+Because the import `$dto` is **per file** (`get_data_object()` builds a fresh `data_object` for every json file and a view-component link resolves only via `$dto->get_component_by_name()`), a view defined in one file (e.g. `base_views.json`) cannot link a component that is only defined in another file (e.g. `system_views.json`). The fix is the component counterpart of the name-only base-word re-declaration: **re-declare the existing system component in the file with its exact canonical `name` + `code_id` (and the same `type`/`ui_msg_code_id*` fields)**, then link it by that name. On save the component is matched by its `code_id` and **merged** (updated in place) instead of inserted, so the unique `ui_msg_code_id` is not duplicated.
+
+- **Wrong** — a new component with a fresh `code_id` but a borrowed `ui_msg_code_id` (fails on import):
+```json
+{ "name": "word values subtitle", "type": "system_sub_title",
+  "code_id": "word_default_values_subtitle", "ui_msg_code_id": "system_sub_title_values" }
+```
+- **Right** — re-declare the canonical component so the save merges by `code_id`:
+```json
+{ "name": "system sub title values", "type": "system_sub_title",
+  "code_id": "system_sub_title_values", "ui_msg_code_id": "system_sub_title_values" }
+```
+
+This mirrors the "define once, link many" pattern already used inside `system_views.json`, where a single subtitle component (e.g. `system sub title values`) is defined once and referenced by name from many views.
+
 ### Key Architectural Patterns
 
 **User Sandbox**: Every main object (`word`, `triple`, `value`, `formula`, `view`, `component`) extends the `sandbox` hierarchy. Changes by one user never overwrite shared data; user-specific overrides are stored in `*_user` tables.

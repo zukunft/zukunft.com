@@ -382,6 +382,8 @@ class component_exe extends component
             // view only -
             component_types::SHOW_NAME => $form->show_name($dbo, $this->code_id),
             component_types::SHOW_DESCRIPTION => $form->show_description($dbo),
+            component_types::SHOW_PLURAL => $form->show_plural($dbo),
+            component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo),
             component_types::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_types::WORD_RESULTS => $form->result($dbo),
             component_types::USED_IN_AS_TEXT => $form->used_as_text($dbo),

@@ -62,6 +62,7 @@ include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -89,6 +90,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -236,6 +238,31 @@ class system_form extends component
     function show_description(db_object|type_object $dbo): string
     {
         return $dbo->get_description();
+    }
+
+    /**
+     * @param word|db_object $dbo the word
+     * @return string the plural form of the word as read-only text (empty if no plural is set)
+     */
+    function show_plural(word|db_object $dbo): string
+    {
+        return $dbo->get_plural() ?? '';
+    }
+
+    /**
+     * @param word|db_object $dbo the word
+     * @return string the user-readable name of the word's phrase type (empty if no type is set)
+     */
+    function show_phrase_type(word|db_object $dbo): string
+    {
+        global $sys;
+
+        $result = '';
+        $type_id = $dbo->type_id();
+        if ($type_id !== null) {
+            $result = $sys->typ_lst->phr_typ->name($type_id);
+        }
+        return $result;
     }
 
     /**

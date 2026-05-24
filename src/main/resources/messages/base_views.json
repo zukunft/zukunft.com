@@ -124,6 +124,78 @@
       "name": "currency formulas",
       "description": "",
       "type": "phrases_related"
+    },
+    {
+      "name": "system show field description",
+      "description": "the object description as read only",
+      "type": "system_show_field_description",
+      "code_id": "show_field_description"
+    },
+    {
+      "name": "system show field plural",
+      "description": "show the plural form of a word as read only text",
+      "type": "system_show_field_plural",
+      "code_id": "show_field_plural"
+    },
+    {
+      "name": "system show field phrase type",
+      "description": "show the phrase type of a word as read only text",
+      "type": "system_show_field_phrase_type",
+      "code_id": "show_field_phrase_type"
+    },
+    {
+      "name": "system sub title usage number",
+      "description": "show the language specific sub title and the number how many times the object has been used",
+      "type": "system_sub_title_var",
+      "code_id": "system_sub_title_value_usage",
+      "ui_msg_code_id_vars": "system_sub_title_var_usage",
+      "ui_msg_code_id_exception": "system_sub_title_no_usage",
+      "ui_msg_value_exception": 0
+    },
+    {
+      "name": "parents of word",
+      "description": "list of words or triples that lead to this word",
+      "type": "list_parents_of_word",
+      "code_id": "list_parents_of_word"
+    },
+    {
+      "name": "children of word",
+      "description": "list of words or triples where this word leading to",
+      "type": "list_children_of_word",
+      "code_id": "list_children_of_word"
+    },
+    {
+      "name": "system sub title values",
+      "description": "show the language specific sub title for a value list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_values",
+      "ui_msg_code_id": "system_sub_title_values"
+    },
+    {
+      "name": "system sub title references",
+      "description": "show the language specific sub title for a reference list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_references",
+      "ui_msg_code_id": "system_sub_title_references"
+    },
+    {
+      "name": "ref list word",
+      "description": "changeable list of reference of this word",
+      "type": "ref_list",
+      "code_id": "ref_list_word"
+    },
+    {
+      "name": "system sub title log",
+      "description": "show the language specific sub title for the change log",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_log",
+      "ui_msg_code_id": "system_sub_title_log"
+    },
+    {
+      "name": "change log word",
+      "description": "show the change log of this word",
+      "type": "change_log",
+      "code_id": "change_log_word"
     }
   ],
   "views": [
@@ -139,7 +211,51 @@
         },
         {
           "position": "2",
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field plural"
+        },
+        {
+          "position": "4",
+          "name": "system show field phrase type"
+        },
+        {
+          "position": "5",
+          "name": "system sub title usage number"
+        },
+        {
+          "position": "6",
+          "name": "parents of word"
+        },
+        {
+          "position": "7",
+          "name": "children of word"
+        },
+        {
+          "position": "8",
+          "name": "system sub title values"
+        },
+        {
+          "position": "9",
           "name": "related values"
+        },
+        {
+          "position": "10",
+          "name": "system sub title references"
+        },
+        {
+          "position": "11",
+          "name": "ref list word"
+        },
+        {
+          "position": "12",
+          "name": "system sub title log"
+        },
+        {
+          "position": "13",
+          "name": "change log word"
         }
       ]
     },

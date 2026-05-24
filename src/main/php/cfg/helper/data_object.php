@@ -1272,7 +1272,7 @@ class data_object
                                     $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
                                 } else {
                                     $cmp->id = $cmp_reloaded->id();
-                                    $lnk->set_component_id($cmp_reloaded->id());
+                                    $lnk->set_component($cmp_reloaded);
                                 }
                             }
                         }
