@@ -65,6 +65,7 @@ class value_ui_tests
         $test_page .= 'add button: ' . $val->btn_add() . '<br>';
         $test_page .= 'edit button: ' . $val->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $val->btn_del() . '<br>';
+        $test_page .= $t->dsp_title_named_edit($val);
         $t->html_page_test($test_page, 'value html components', 'value', $t);
 
 

@@ -12,6 +12,12 @@
       "type": "phrase_name"
     },
     {
+      "name": "Word title",
+      "description": "show the word name as a page title",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_word"
+    },
+    {
       "name": "spreadsheet",
       "description": "changeable sheet with words, number and formulas",
       "type": "calc_sheet"
@@ -207,7 +213,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Word"
+          "name": "Word title"
         },
         {
           "position": "2",

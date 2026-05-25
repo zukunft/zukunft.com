@@ -76,6 +76,7 @@ class triple_ui_tests
         $test_page .= $html->form(views::TRIPLE_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($trp->tr()));
+        $test_page .= $t->dsp_title_named_edit($trp);
         $t->html_page_test($test_page, 'triple', 'triple', $t);
     }
 

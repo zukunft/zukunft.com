@@ -417,6 +417,15 @@ Every numeric or string value that has a defined constant must be referenced via
 
 When a constant from another class cannot yet be referenced (e.g. due to a missing `use` or include chain), add a `// TODO: replace literal with ConstClass::CONST_NAME` comment so the gap is tracked and fixed in a follow-up.
 
+#### Use a named icon constant from `web/const/icons.php` — no inline icon literals
+
+Every frontend icon css class string (Font Awesome `fas`/`far`/`fab` or any other set) is declared as a constant in `src/main/php/web/const/icons.php` (the `icons` class). Use that constant instead of writing the class string inline, so an icon-set change can be made in one place and every rendered icon is searchable in the codebase by its constant name.
+
+- **Wrong**: `'<i class="fas fa-edit"></i>'` — the icon class is hidden behind a literal that does not appear in any const list
+- **Right**: `'<i class="' . icons::EDIT . '"></i>'` — the renderer references the canonical constant
+
+When a needed icon is not yet declared in `icons.php`, add a constant there first (one constant per full css class string, e.g. `const string EDIT = 'fas fa-edit';`) and then use it from the renderer.
+
 ### Back-navigation parameter convention
 
 Back navigation (where to redirect after an action completes) is encoded as **`'9'`-prefixed URL parameters**, never as a standalone `url_var::BACK` parameter.
@@ -531,7 +540,20 @@ All objects used in tests must be created by a factory function in `src/test/php
 - **Right**: `$obj = $t_frm->formula_link_filled();` — uses the shared factory; any change to the test fixture is made in one place
 - **Wrong**: `$frm_lnk = new formula_link($usr); $frm_lnk->set_id(99); ...` — ad-hoc construction scattered across test files makes fixtures hard to maintain and diverge silently
 
+This applies to **every** named test object, including the small frontend / unit-test fixtures (e.g. a `web/word/word` built just to exercise a render or accessor). A renderer test that needs a word with a plural and a phrase type must obtain it from `test_words` (adding a method like `word_with_plural()` if none fits), not by `new word(); $w->set_name('apple'); $w->set_plural('apples');` inside the test. Ad-hoc literal names in tests bypass the factory, collide with real data on shared DB-backed tests, and break the one-point-of-change rule the next section relies on.
+
 When a needed factory method does not yet exist, add it to the appropriate `test_*.php` file in `src/test/php/create/` before writing the test. The `test_mappers.php` class coordinates factory calls when a test needs to resolve a class name to a test object at runtime.
+
+#### Use only `RESERVED_NAMES` for named test objects
+
+Every named object type has a `RESERVED_NAMES` list in `src/main/php/shared/const/<type>.php` — e.g. `words::RESERVED_NAMES`, `triples::RESERVED_NAMES`, `views::RESERVED_NAMES`, `formulas::RESERVED_NAMES`, `sources::RESERVED_NAMES`, `users::RESERVED_NAMES`, `components::RESERVED_COMPONENTS`, `groups::RESERVED_GROUP_NAMES`, `refs::RESERVED_REFERENCES_TYPES`/`RESERVED_REFERENCES_KEYS`. These are the names guaranteed not to be renamed and reserved for testing.
+
+Test objects — both ad-hoc fixtures and the factory methods in `src/test/php/create/test_*.php` — must reference names **only** through these constants (or the individual consts they list, e.g. `words::PI`, `words::CH`, `views::WORD_DEFAULT`), never as a free-form string literal. Tests with hand-typed names like `'apple'`, `'second'`, `'foo bar'` are wrong even when they happen to work today: the name can change meaning when the same string is added to real data, the reserved-list cleanup misses them, and an import round-trip that re-creates the fixture diverges silently.
+
+- **Right**: a factory method `$t_wrd->word_pi()` returning a word built from `words::PI`; a test then calls `$wrd = $t_wrd->word_pi();` and asserts against `words::PI`.
+- **Wrong**: `$wrd = new word_ui(); $wrd->set_name('apple');` directly in the test — even for a one-line renderer test. Add a factory method backed by a `words::RESERVED_NAMES` entry (or extend `RESERVED_NAMES` if a fitting reserved name does not yet exist) and use it.
+
+When no existing reserved name fits the new fixture, add a new const to the type's `*.php` file and append it to `RESERVED_NAMES` before writing the test, so the cleanup and any future round-trip pick it up automatically. This is the same one-point-of-change discipline as the "Tests that depend on data files" rule below — the test references a constant, the factory uses the same constant, and the cleanup deletes by the same constant.
 
 ### At least one positive and one negative test per function
 
@@ -561,6 +583,17 @@ Every UI rendering function dispatched from `web/component/component_exe.php` �
 - **Wrong**: adding a new component-type renderer to the `component_exe.php` match arm without a corresponding entry in any `*_ui_tests::run()` — the HTML output goes untested and regressions are silent.
 
 Pick the topic file by the domain the renderer belongs to (jobs → `job_ui_tests`, sources → `source_ui_tests`, references → `reference_ui_tests`, etc.). When a renderer fits no existing topic, add a new `*_ui_tests.php` file in `src/test/php/unit_ui/` rather than overloading an unrelated one.
+
+#### Every HTML-returning function in a frontend class must contribute to an `object_pages` snapshot
+
+The page-based rule above is not limited to `component_exe.php` match arms — it applies to **every function in `src/main/php/web/`** whose return type is HTML (`string` of html). For each such function a unit test must append a fragment to the `$test_page` that a `*_ui_tests::run()` snapshots into `src/test/resources/web/html/object_pages/<name>.html`. A frontend HTML-returning function with no entry in any `object_pages/*.html` snapshot is considered untested for review purposes — its output drifts silently when the underlying html, css class, or wrapped renderer changes.
+
+When the same new renderer must be exercised across many object pages (e.g. a generic title or footer component that appears on `word`, `triple`, `formula`, …), do **not** copy three lines into ten test files. Add a reusable helper in `src/test/php/utils/test_base.php` and have each `*_ui_tests::run()` call that helper with its main `db_object`. This keeps the per-file change to one line and makes a later wording or markup change a one-point edit.
+
+- **Right (worked example — TITLE_NAMED_EDIT, component type id 192)**: the new `system_form::title_of_named_with_edit_link(db_object $dbo)` renderer is exercised by the helper `test_base::dsp_title_named_edit(db_object $dbo)` which wraps the renderer with an `h2` heading. Each of `word_ui_tests`, `triple_ui_tests`, `formula_ui_tests`, `verb_ui_tests`, `view_ui_tests`, `component_ui_tests`, `source_ui_tests`, `reference_ui_tests`, `value_ui_tests` and `result_ui_tests` then appends `$test_page .= $t->dsp_title_named_edit($main_dbo);` immediately before its `html_page_test(...)` call, so the new renderer ends up in all ten `object_pages/{word,triple,formula,verb,view,component,source,reference,value,result}.html` snapshots in one shot.
+- **Wrong**: adding a new HTML-returning function (e.g. `system_form::title_of_named_with_edit_link()`) without any matching `*_ui_tests` change, so no `object_pages/*.html` covers its output and a future class-name or icon change goes unnoticed.
+
+When the new renderer does not apply to an object type (e.g. the object has no `VIEW_EDIT` constant the renderer relies on), skip that test rather than forcing the call — and either add the missing piece to the object (preferred, so all object pages stay consistent) or document the skip in the helper's docblock.
 
 ### Single return per function
 

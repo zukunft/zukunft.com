@@ -119,9 +119,11 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -173,6 +175,8 @@ include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::EXECUTE . 'system_form.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -4606,6 +4610,26 @@ class test_base
             . $html->navbar(views::START_ID)
             . $html->main($body)
             . $html->footer();
+    }
+
+    /**
+     * build the html section that exercises the TITLE_NAMED_EDIT component renderer
+     * (system_form::title_of_named_with_edit_link) for the given object, so every
+     * object_pages snapshot covers the page-title-with-edit-link component type;
+     * each object UI test is expected to append this to its $test_page before the
+     * html_page_test() call
+     *
+     * @param db_object $dbo the named object whose page is being snapshotted; must
+     *                       define VIEW_EDIT and MSG_EDIT (word, triple, formula,
+     *                       verb, view, component, source, ref, value, result, ...)
+     * @return string a h2 heading plus the rendered TITLE_NAMED_EDIT html
+     */
+    function dsp_title_named_edit(db_object $dbo): string
+    {
+        $html = new html_base();
+        $frm = new system_form();
+        return $html->text_h2('title named with edit link')
+            . $frm->title_of_named_with_edit_link($dbo);
     }
 
     function class_without_namespace(string $class_name_with_namespace): string

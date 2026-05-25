@@ -378,6 +378,7 @@ the object structure is:
 +-- ui_rankUi - html user interface components for ranking objects
 +-- ui_selectUi - html interface components to select an object
 +-- position_listUi - a list of positions of a data object within a sheet
++-- iconsUi - the css class strings of the icons used in the frontend
 +-- pathsUi - set the path const for the frontend php scripts
 +-- frontendUi - the main html frontend application
 +-- data_objectUi - frontend cache object

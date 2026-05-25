@@ -63,6 +63,7 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::CONST . 'icons.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -91,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -120,6 +122,33 @@ class system_form extends component
         }
         $result .= $html->form_start($form_name);
         return $result;
+    }
+
+    /**
+     * the page title of a non-form display view: shows the object name as a h2 heading and
+     * appends a fas fa-edit icon link to the object's edit view (using the object's own
+     * VIEW_EDIT / MSG_EDIT constants — the same pair db_object::btn_edit uses)
+     *
+     * the title text is the object name as currently held by the dbo; once the language field
+     * is added to all sandbox objects this renderer will fetch the same object in the user's
+     * frontend language and use that name, so the title is translated without needing a separate
+     * ui_msg_code_id per object
+     *
+     * @param db_object $dbo the object whose name is shown as the page title; must expose the
+     *                       VIEW_EDIT (string code id of the edit view) and MSG_EDIT (msg_id
+     *                       for the edit tooltip) constants — word, triple, formula, verb and
+     *                       every other sandbox_code_id / sandbox_named subclass do
+     * @return string the html code for the page title with the edit link
+     */
+    function title_of_named_with_edit_link(db_object $dbo): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $url = $html->url_new($dbo::VIEW_EDIT, $dbo->id());
+        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
+        $edit_link = ' ' . $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT));
+        return $html->text_h2($dbo->name() . $edit_link);
     }
 
     /**
