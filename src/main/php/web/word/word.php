@@ -123,6 +123,7 @@ class word extends sandbox_code_id
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
+    const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::WORD_ADD;
@@ -140,6 +141,16 @@ class word extends sandbox_code_id
 
     // the main parent phrase
     private ?phrase $parent = null;
+
+    // the phrases connected to this word by a triple (this word is the from or the to
+    // of each triple — direction is "both"); populated by the backend api json when
+    // the api_types::INCL_RELATED flag is set on the request; null when not requested
+    // or empty when no triple references this word; each entry is a phrase wrapping the
+    // connecting triple so the renderer can use the triple's "other end" word as the
+    // link label and the triple itself as the link target (e.g. for the word "Zurich"
+    // the entries are the triples "City of Zurich", "Canton of Zurich", "Zurich Insurance");
+    // count per verb is bounded by the related-per-verb config so the list stays compact
+    public ?phrase_list $phrases_related = null;
 
     // the impact used to sort the words
     public float $impact = 0.0;
@@ -218,6 +229,18 @@ class word extends sandbox_code_id
         } else {
             $this->set_parent(null);
         }
+        if (array_key_exists(json_fields::PHRASES_RELATED, $json_array)) {
+            $value = $json_array[json_fields::PHRASES_RELATED];
+            if (is_array($value)) {
+                $lst = new phrase_list();
+                $lst->api_mapper($value);
+                $this->phrases_related = $lst;
+            } else {
+                $this->phrases_related = null;
+            }
+        } else {
+            $this->phrases_related = null;
+        }
         return $msg->is_ok();
     }
 
@@ -239,6 +262,9 @@ class word extends sandbox_code_id
         $vars[json_fields::PLURAL] = $this->get_plural();
         if ($this->has_parent()) {
             $vars[json_fields::PARENT] = $this->parent()->api_array();
+        }
+        if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
+            $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_array();
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

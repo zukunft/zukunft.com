@@ -46,15 +46,26 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -165,9 +176,83 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api($wrd, 'word_body');
 
+        $t->subheader($ts . 'api/word handler reads the ?incl_related URL param into the api_type_list');
+        // the api/word/index.php GET handler now opts into api_types::INCL_RELATED only when
+        // ?incl_related is truthy on the URL — this keeps single-word fetches cheap by default
+        // and lets callers (e.g. the default word view) ask for the related list explicitly.
+        // these tests cover the url_array -> api_type_list translation (api_type_list::from_url_array)
+        // since reading $_GET inside a function is forbidden by the unit-testability rule
+        $base = [api_types::HEADER];
+        $with = api_type_list::from_url_array([url_var::INCL_RELATED => '1'], $base);
+        $without = api_type_list::from_url_array([], $base);
+        $test_name = 'api/word ?incl_related=1 enables api_types::INCL_RELATED';
+        $t->assert_true($t->name . $test_name, $with->incl_related());
+        $test_name = 'api/word without ?incl_related does NOT enable api_types::INCL_RELATED';
+        $t->assert_true($t->name . $test_name, !$without->incl_related());
+        $test_name = 'api/word HEADER base flag is preserved in both cases';
+        $t->assert_true($t->name . $test_name, $with->use_header() and $without->use_header());
+
+        $t->subheader($ts . 'backend api_json_array emits phrases_related only when INCL_RELATED is set');
+        // assign a related phrase list manually so the test stays DB-free; one entry is enough
+        // to verify the gating + serialisation (the per-verb load logic is covered separately
+        // by the load_phrases_related unit test against the triple_list fixture)
+        $wrd = $t_wrd->word_chf();
+        $related = new phrase_list($t->usr1);
+        $related->add((new test_phrases($t))->phrase_pi());
+        $wrd->phrases_related = $related;
+        $with_related = new api_type_list([api_types::INCL_RELATED, api_types::TEST_MODE]);
+        $without_related = new api_type_list([api_types::TEST_MODE]);
+        $vars_with = $wrd->api_json_array($with_related);
+        $vars_without = $wrd->api_json_array($without_related);
+        $test_name = 'word api_json_array includes phrases_related when INCL_RELATED is set';
+        $t->assert_true($t->name . $test_name, array_key_exists(json_fields::PHRASES_RELATED, $vars_with));
+        $test_name = 'word api_json_array omits phrases_related without INCL_RELATED';
+        $t->assert_true($t->name . $test_name, !array_key_exists(json_fields::PHRASES_RELATED, $vars_without));
+        // negative: a word with an empty phrases_related list does not emit the key
+        $bare_wrd = $t_wrd->word_chf();
+        $bare_wrd->phrases_related = new phrase_list($t->usr1);
+        $vars_bare = $bare_wrd->api_json_array($with_related);
+        $test_name = 'word api_json_array omits phrases_related when the list is empty';
+        $t->assert_true($t->name . $test_name, !array_key_exists(json_fields::PHRASES_RELATED, $vars_bare));
+
         $t->subheader($ts . 'html frontend');
         $wrd = $t_wrd->word();
         $t->assert_api_to_ui($wrd, new word_ui());
+
+        $t->subheader($ts . 'frontend page title with related phrases is truncated by the per-verb limit');
+        // build a Zurich word_ui and a phrase_list with three related triples (City, Canton,
+        // Company). With related_limit=2 the title shows "Zurich (City, Canton, ...)" — the
+        // "..." links to views::WORD_RELATED_ID for the full grouped-by-verb overview.
+        // With related_limit=4 all three fit so the title shows "Zurich (City, Canton, Company)"
+        // and no "..." appears. The phrase entries carry short display labels (City, Canton,
+        // Company) so the renderer's `$phr->name()` lookup yields the user-facing word and
+        // its `$phr->id()` points at the connecting triple so the link targets the triple.
+        $wrd_ui_render = new word_ui();
+        $wrd_ui_render->set_name(words::ZH);
+        $wrd_ui_render->set_id(words::ZH_ID);
+        $wrd_ui_render->phrases_related = self::related_zurich_phrases();
+        $form = new system_form();
+        $title_short = $form->title_of_named_with_edit_link($wrd_ui_render, 2);
+        $test_name = 'title shows City link for related limit 2';
+        $t->assert_true($t->name . $test_name,
+            str_contains($title_short, '<a href="/http/view.php?m=' . views::PHRASE_ID . '&id='
+                . triples::CITY_ZH_ID . '">City</a>'));
+        $test_name = 'title shows Canton link for related limit 2';
+        $t->assert_true($t->name . $test_name,
+            str_contains($title_short, '<a href="/http/view.php?m=' . views::PHRASE_ID . '&id='
+                . triples::CANTON_ZURICH_ID . '">Canton</a>'));
+        $test_name = 'title shows "..." linking to WORD_RELATED when count > limit';
+        $t->assert_true($t->name . $test_name,
+            str_contains($title_short, '<a href="/http/view.php?m=' . views::WORD_RELATED_ID . '&id='
+                . words::ZH_ID . '">...</a>'));
+        $test_name = 'title with limit 2 hides the third (Company) entry';
+        $t->assert_true($t->name . $test_name, !str_contains($title_short, '>Company</a>'));
+
+        $title_full = $form->title_of_named_with_edit_link($wrd_ui_render, 4);
+        $test_name = 'title with limit 4 includes the Company link';
+        $t->assert_true($t->name . $test_name, str_contains($title_full, '>Company</a>'));
+        $test_name = 'title with limit 4 omits the "..." overflow indicator';
+        $t->assert_true($t->name . $test_name, !str_contains($title_full, '>...</a>'));
 
         $t->subheader($ts . 'im- and export');
         // TODO check that all objects have a im and export test
@@ -272,6 +357,33 @@ class word_tests
             $qp = $wrd->view_sql($db_con);
             $t->assert_qp($qp, $db_con->db_type);
         }
+    }
+
+    /**
+     * build a frontend phrase_list with three related-phrase entries for the Zurich title test:
+     * City (links to triple "City of Zurich"), Canton (links to "Canton Zurich"), and
+     * Company (links to "Zurich Insurance"). Each entry wraps a word_ui whose name is the
+     * short display label (so the renderer's $phr->name() yields "City"/"Canton"/"Company")
+     * and whose id is the connecting triple's id (so the renderer's $phr->id() points the
+     * link at the triple's detail view via views::PHRASE_ID)
+     */
+    private static function related_zurich_phrases(): phrase_list_ui
+    {
+        $lst = new phrase_list_ui();
+        $lst->add(self::related_phrase(triples::CITY_ZH_ID, 'City'));
+        $lst->add(self::related_phrase(triples::CANTON_ZURICH_ID, 'Canton'));
+        $lst->add(self::related_phrase(triples::COMPANY_ZURICH_ID, 'Company'));
+        return $lst;
+    }
+
+    private static function related_phrase(int $id, string $display): phrase_ui
+    {
+        $wrd = new word_ui();
+        $wrd->id = $id;
+        $wrd->set_name($display);
+        $phr = new phrase_ui();
+        $phr->set_obj($wrd);
+        return $phr;
     }
 
 }

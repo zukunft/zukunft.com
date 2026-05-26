@@ -1550,7 +1550,7 @@ class import
                 if ($to == null) {
                     $to = $wrd;
                 } else {
-                    log_err($key . ' is unexpect number of words for a triple (max 2 words are expected');
+                    log_err('"' . $key . '" is unexpect number of words for a triple (max 2 words are expected');
                 }
             }
         }

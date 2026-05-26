@@ -45,8 +45,10 @@ include_once paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -77,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
@@ -95,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -125,30 +129,88 @@ class system_form extends component
     }
 
     /**
-     * the page title of a non-form display view: shows the object name as a h2 heading and
-     * appends a fas fa-edit icon link to the object's edit view (using the object's own
-     * VIEW_EDIT / MSG_EDIT constants — the same pair db_object::btn_edit uses)
+     * the page title of a non-form display view: shows the object name as a h2 heading,
+     * inlines a parenthesised list of related phrases (truncated to $related_limit with a
+     * "..." link to the full list when the per-verb load found more), and appends a
+     * fas fa-edit icon link to the object's edit view (using VIEW_EDIT_ID / MSG_EDIT)
      *
-     * the title text is the object name as currently held by the dbo; once the language field
-     * is added to all sandbox objects this renderer will fetch the same object in the user's
-     * frontend language and use that name, so the title is translated without needing a separate
-     * ui_msg_code_id per object
+     * example outputs:
+     * - no related loaded:        "Zurich <edit-icon>"
+     * - 3 related, limit=2:       "Zurich (City, Canton, ...) <edit-icon>"
+     * - 3 related, limit=4:       "Zurich (City, Canton, Company) <edit-icon>"
+     *
+     * each related entry links to the phrase's default detail view (phrase_default, m=110),
+     * and the "..." link points at the per-object related-phrases overview view
+     * (word_related, m=111) so the user can browse the full set
+     *
+     * the edit link carries an inline styles::HEADING_ICON_INLINE attribute so the icon renders
+     * at body-text size and vertically centred — the title stays prominent while the inline
+     * action stays unobtrusive
      *
      * @param db_object $dbo the object whose name is shown as the page title; must expose the
-     *                       VIEW_EDIT (string code id of the edit view) and MSG_EDIT (msg_id
-     *                       for the edit tooltip) constants — word, triple, formula, verb and
-     *                       every other sandbox_code_id / sandbox_named subclass do
-     * @return string the html code for the page title with the edit link
+     *                       VIEW_EDIT_ID and MSG_EDIT constants. If the object also exposes
+     *                       a public ?phrase_list $phrases_related field (currently word_ui
+     *                       and triple_ui), that list drives the inline related-phrases part
+     * @param int $related_limit max related phrases shown inline before the title falls back
+     *                           to a "..." link; defaults to def::LIMIT_RELATED_PER_VERB
+     *                           which mirrors the config.yaml `related per verb` setting
+     * @return string the html code for the page title with the related-phrases and edit links
      */
-    function title_of_named_with_edit_link(db_object $dbo): string
+    function title_of_named_with_edit_link(
+        db_object $dbo,
+        int $related_limit = def::LIMIT_RELATED_PER_VERB
+    ): string
     {
         global $mtr;
 
         $html = new html_base();
-        $url = $html->url_new($dbo::VIEW_EDIT, $dbo->id());
+        $related_inline = $this->related_phrases_inline($dbo, $html, $related_limit);
+        $url = $html->url_new($dbo::VIEW_EDIT_ID, $dbo->id());
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
-        $edit_link = ' ' . $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT));
-        return $html->text_h2($dbo->name() . $edit_link);
+        $edit_link = ' <' . html_base::A
+            . ' ' . html_base::HREF . '="' . $url . '"'
+            . ' ' . html_base::TITLE_HTML . '="' . $mtr->txt($dbo::MSG_EDIT) . '"'
+            . ' ' . html_base::STYLE . '="' . styles::HEADING_ICON_INLINE . '"'
+            . '>' . $icon . '</' . html_base::A . '>';
+        return $html->text_h2($dbo->name() . $related_inline . $edit_link);
+    }
+
+    /**
+     * build the " (phr1, phr2, ...)" segment for title_of_named_with_edit_link()
+     *
+     * reads $dbo->phrases_related when present (word_ui / triple_ui carry it); returns the
+     * empty string when the field is missing, null or empty so other named objects render
+     * unchanged. Each shown phrase is an <a> linking to its default detail view; the trailing
+     * "..." appears only when the loaded count exceeds $limit, and links to the WORD_RELATED
+     * view with the dbo's id so the user can open the full grouped-by-verb list
+     */
+    private function related_phrases_inline(db_object $dbo, html_base $html, int $limit): string
+    {
+        if (!property_exists($dbo, 'phrases_related')) {
+            return '';
+        }
+        $related = $dbo->phrases_related;
+        if ($related === null or $related->is_empty()) {
+            return '';
+        }
+        $entries = $related->lst();
+        $links = [];
+        $shown = 0;
+        foreach ($entries as $phr) {
+            if ($shown >= $limit) {
+                break;
+            }
+            $phr_url = $html->url_new(views::PHRASE_ID, $phr->id());
+            $links[] = '<' . html_base::A . ' ' . html_base::HREF . '="' . $phr_url . '">'
+                . $phr->name() . '</' . html_base::A . '>';
+            $shown++;
+        }
+        if (count($entries) > $limit) {
+            $more_url = $html->url_new(views::WORD_RELATED_ID, $dbo->id());
+            $links[] = '<' . html_base::A . ' ' . html_base::HREF . '="' . $more_url . '">...</'
+                . html_base::A . '>';
+        }
+        return ' (' . implode(', ', $links) . ')';
     }
 
     /**

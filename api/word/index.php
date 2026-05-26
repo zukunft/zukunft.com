@@ -38,6 +38,7 @@ include_once html_paths::HTML . 'rest_call.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -46,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
@@ -97,13 +99,17 @@ if ($db_con->is_open()) {
             // get the parameters
             $wrd_id = $_GET[url_var::ID] ?? 0;
             $wrd_name = $_GET[url_var::NAME] ?? '';
+            // INCL_RELATED is opt-in via the ?incl_related=1 url param so the default
+            // single-word fetch stays cheap (no extra triple_list query); callers that
+            // need the related phrases (e.g. the default word view) add the flag
+            $typ_lst = api_type_list::from_url_array($_GET, [api_types::HEADER]);
 
             if ($wrd_id > 0) {
                 $wrd->load_by_id($wrd_id);
-                $result = $wrd->api_json([api_types::HEADER], $usr);
+                $result = $wrd->api_json($typ_lst, $usr);
             } elseif ($wrd_name != '') {
                 $wrd->load_by_name($wrd_name);
-                $result = $wrd->api_json([api_types::HEADER], $usr);
+                $result = $wrd->api_json($typ_lst, $usr);
             } else {
                 $msg = 'word id or name is missing';
             }

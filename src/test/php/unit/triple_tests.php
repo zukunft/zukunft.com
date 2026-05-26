@@ -14,6 +14,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -109,6 +110,34 @@ class triple_tests
         $t->subheader($ts . 'frontend');
         $trp = $t_trp->triple_pi();
         $t->assert_api_to_ui($trp, new triple_ui());
+
+        $t->subheader($ts . 'frontend phrases_related round-trip');
+        // build a target phrase ("Pi") that should appear in the triple's related list, and
+        // wrap it in a one-entry json array. The frontend phrase_list api_mapper then turns
+        // it into a phrase_list whose api_array round-trips back to the same json shape.
+        $target_trp = $t_trp->triple_pi();
+        $related_json = [[
+            json_fields::OBJECT_CLASS => json_fields::CLASS_TRIPLE,
+            json_fields::ID => $target_trp->id(),
+            json_fields::NAME => $target_trp->name(),
+        ]];
+        $symbol_trp = $t_trp->triple_pi_symbol();
+        $trp_json = json_decode($symbol_trp->api_json(), true);
+        $trp_json[json_fields::PHRASES_RELATED] = $related_json;
+        $trp_ui = new triple_ui(json_encode($trp_json));
+        $test_name = 'triple ui api_mapper populates phrases_related from json';
+        $t->assert_true($t->name . $test_name,
+            $trp_ui->phrases_related !== null and !$trp_ui->phrases_related->is_empty());
+        $test_name = 'triple ui api_array re-emits phrases_related';
+        $t->assert_true($t->name . $test_name,
+            array_key_exists(json_fields::PHRASES_RELATED, $trp_ui->api_array()));
+        // negative: a triple without phrases_related in its json keeps the field null
+        $bare_trp_ui = new triple_ui($symbol_trp->api_json());
+        $test_name = 'triple ui phrases_related stays null when json key is absent';
+        $t->assert_true($t->name . $test_name, $bare_trp_ui->phrases_related === null);
+        $test_name = 'triple ui api_array omits phrases_related when null';
+        $t->assert_true($t->name . $test_name,
+            !array_key_exists(json_fields::PHRASES_RELATED, $bare_trp_ui->api_array()));
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_trp->triple(), $usr_sys);

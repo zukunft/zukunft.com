@@ -98,10 +98,13 @@ class db_object extends TextIdObject
      * const
      */
 
-    // the fallback crud views that are expected to be overwritten by the child objects
+    // the fallback crud views that are expected to be overwritten by the child objects;
+    // the *_ID variants are the numeric view ids used in URLs (m=<id>) so links
+    // resolve through the view-by-id router instead of the slower code-id lookup
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
+    const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
 
     // the fallback crud message id that are expected to be overwritten by the child objects
     const msg_id MSG_ADD = msg_id::WORD_ADD;

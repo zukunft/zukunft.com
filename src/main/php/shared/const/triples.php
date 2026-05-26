@@ -186,6 +186,7 @@ class triples
     const int CITY_GE_ID = 101;
     const string CANTON_ZURICH_NAME = 'Canton Zurich';
     const string COMPANY_ZURICH = "Zurich Insurance";
+    const int COMPANY_ZURICH_ID = 140;
     const string COMPANY_VESTAS = "Vestas SA";
     const string COMPANY_ABB = "ABB (company)";
     const string YEAR_2013_FOLLOW = "2014 is follower of 2013";
@@ -218,6 +219,7 @@ class triples
     const string NOT_TRUSTED = 'not trusted';
     const string PER_DAY = 'per day';
     const string PER_MONTH = 'per month';
+    const string PER_VERB = 'per verb';
     const string PER_WEEK = 'per week';
     const string PER_YEAR = 'per year';
     const string PHRASE_DISTRIBUTION = 'phrase distribution';
@@ -239,6 +241,7 @@ class triples
         [self::CITY_BE, self::CITY_BE_ID],
         [self::CITY_GE, self::CITY_GE_ID],
         [self::CITY_ZH, self::CITY_ZH_ID],
+        [self::COMPANY_ZURICH, self::COMPANY_ZURICH_ID],
         [self::E, self::E_ID],
         [self::GLOBAL_PROBLEM, self::GLOBAL_PROBLEM_ID],
         [self::GLOBAL_WARMING, self::GLOBAL_WARMING_ID],
@@ -285,6 +288,7 @@ class triples
         self::CITY_BE_ID => self::CITY_BE,
         self::CITY_GE_ID => self::CITY_GE,
         self::CITY_ZH_ID => self::CITY_ZH,
+        self::COMPANY_ZURICH_ID => self::COMPANY_ZURICH,
         self::E_ID => self::E,
         self::SPEED_OF_LIGHT_ID => self::SPEED_OF_LIGHT,
         self::M_PER_S_ID => self::M_PER_S,

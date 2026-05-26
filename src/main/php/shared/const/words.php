@@ -117,6 +117,7 @@ class words
     const string CHANGES = 'changes';
     const string PERCENT = 'percent';
     const string DECIMAL = 'decimal';
+    const string RELATED = 'related';
 
     // to exchange system configurations
     const string USERS = 'users';

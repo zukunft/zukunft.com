@@ -98,6 +98,7 @@ class triple extends sandbox_code_id
     const string VIEW_ADD = views::TRIPLE_ADD;
     const string VIEW_EDIT = views::TRIPLE_EDIT;
     const string VIEW_DEL = views::TRIPLE_DEL;
+    const int VIEW_EDIT_ID = views::TRIPLE_EDIT_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::TRIPLE_ADD;
@@ -125,6 +126,12 @@ class triple extends sandbox_code_id
     }
     // the impact used to sort the triples
     private float $impact = 0.0;
+
+    // the phrases connected to this triple by another triple (this triple is the from
+    // or the to of those triples); populated by the backend api json when the
+    // api_types::INCL_RELATED flag is set on the request; null when not requested or
+    // empty when no triple references this one; see web/word/word.php for the full shape
+    public ?phrase_list $phrases_related = null;
 
 
     /*
@@ -250,6 +257,18 @@ class triple extends sandbox_code_id
         } else {
             $this->impact = 0.0;
         }
+        if (array_key_exists(json_fields::PHRASES_RELATED, $json_array)) {
+            $value = $json_array[json_fields::PHRASES_RELATED];
+            if (is_array($value)) {
+                $lst = new phrase_list();
+                $lst->api_mapper($value);
+                $this->phrases_related = $lst;
+            } else {
+                $this->phrases_related = null;
+            }
+        } else {
+            $this->phrases_related = null;
+        }
         return $msg->is_ok();
     }
 
@@ -271,6 +290,9 @@ class triple extends sandbox_code_id
         $vars[json_fields::WEIGHT] = $this->weight;
         $vars[json_fields::PLURAL] = $this->plural;
         // usage and impact are not included here because this system value is never updated by the frontend
+        if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
+            $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_array();
+        }
         return $vars;
     }
 

@@ -38,6 +38,9 @@ enum api_types: string
     // include the phrases in the value list api message
     case INCL_PHRASES = 'incl_phrases';
 
+    // include the most often used related objects in the api message e.g. for a symbol like 'CHF' the related 'Swiss Franc'
+    case INCL_RELATED = 'incl_related';
+
     // include only the phrase names for a short list that is at least somehow user human-readable
     case PHRASE_NAMES = 'phrase_names';
 

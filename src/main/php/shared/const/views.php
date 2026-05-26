@@ -50,7 +50,7 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 110;
+    const int MAX_TEST_ID = 111;
 
     // curl views for main objects
     const string WORD_ADD = 'word_add';
@@ -331,6 +331,13 @@ class views
     const string PHRASE = 'phrase_default';
     const int PHRASE_ID = 110;
 
+    // full list of phrases related to a word/triple — the "..." link target shown in the
+    // page title when the title's truncated related-list overflows the per-verb config limit
+    // (e.g. for Zurich with limit=2 the title 'Zurich (City, Canton, ...)' links the '...'
+    // to this view, which then renders every related triple grouped by verb)
+    const string WORD_RELATED = 'word_related';
+    const int WORD_RELATED_ID = 111;
+
 
     /*
      * const string for system testing
@@ -456,6 +463,7 @@ class views
         self::WORD_DEL_ID,
         self::WORD_ID,
         self::WORD_LOG_ID,
+        self::WORD_RELATED_ID,
     ];
 
     // system masks that have a verb as the main object
@@ -693,6 +701,7 @@ class views
         self::SYSTEM_LOG_ID,
         self::GLOBAL_PROBLEM_ID,
         self::PHRASE_ID,
+        self::WORD_RELATED_ID,
     ];
 
     // system masks that add a sandbox object

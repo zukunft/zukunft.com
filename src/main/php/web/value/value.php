@@ -96,6 +96,7 @@ class value extends sandbox_value
     const string VIEW_ADD = views::VALUE_ADD;
     const string VIEW_EDIT = views::VALUE_EDIT;
     const string VIEW_DEL = views::VALUE_DEL;
+    const int VIEW_EDIT_ID = views::VALUE_EDIT_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VALUE_ADD;

@@ -408,6 +408,33 @@ function api_array(): array
 
 The same rule applies to all other layered functions: `url_mapper()`, `api_mapper()`, `api_json()`, `sql_insert()`, `sql_update()`, etc. — each child calls the parent version first, then extends.
 
+### Frontend (`web/`) class properties are `public` — use PHP 8.4 property hooks for custom set/get
+
+In classes under `src/main/php/web/` (the HTML frontend layer), object properties must be declared `public`. The frontend objects are thin view-models populated from the backend api json and consumed by renderers; trivial private fields with a one-line `get_x()` / `set_x()` pair only add boilerplate and force every renderer to go through accessors that do nothing. Direct property access (`$wrd->plural`) is the intended style.
+
+When a property genuinely needs non-trivial set or get behaviour (validation, lazy computation, normalisation), express it with **PHP 8.4 property hooks declared inline on the property**, not as separate `set_x()` / `get_x()` methods. The hook keeps the custom behaviour at the property declaration, so a reader sees in one place that the field is special and what extra logic runs on access. Callers still use the same `$obj->prop` / `$obj->prop = …` syntax — there is no second API to learn or to keep in sync.
+
+- **Right** — public property with inline hooks for the non-standard part:
+```php
+public ?string $plural = null {
+    get => $this->plural;
+    set => $this->plural = trim($value);
+}
+```
+- **Right** — plain public property when no custom logic is needed:
+```php
+public ?float $weight = null;
+```
+- **Wrong** — `private` field with hand-written accessors that add nothing:
+```php
+private ?string $plural = null;
+public function get_plural(): ?string { return $this->plural; }
+public function set_plural(?string $v): void { $this->plural = $v; }
+```
+- **Wrong** — public property *and* a separate `set_plural()` method carrying the custom logic (two ways to write the field, easy to bypass).
+
+Backend (`cfg/`) classes are **not** covered by this rule: they keep `private` fields and explicit accessors because they enforce user-sandbox, log, and DB-write invariants on every change, which the property-hook form cannot express as clearly. Apply the public-property + inline-hook rule only to the frontend layer under `web/`.
+
 ### Always use named constants — no magic literals
 
 Every numeric or string value that has a defined constant must be referenced via that constant, never as a literal. This applies to IDs, URL parameters, field names, and any other value with a canonical name in the codebase.
@@ -425,6 +452,27 @@ Every frontend icon css class string (Font Awesome `fas`/`far`/`fab` or any othe
 - **Right**: `'<i class="' . icons::EDIT . '"></i>'` — the renderer references the canonical constant
 
 When a needed icon is not yet declared in `icons.php`, add a constant there first (one constant per full css class string, e.g. `const string EDIT = 'fas fa-edit';`) and then use it from the renderer.
+
+#### `config.yaml` keys are at most two space-separated words (one word or one triple)
+
+Every key in `src/main/resources/config.yaml` is imported as either a **word** (one space-separated token) or a **triple** (exactly two tokens, mapped from-verb-to). Keys with **three or more tokens cannot be auto-imported** — `import::yaml_data_object_map_triple` fails with `"<key>" is unexpect number of words for a triple (max 2 words are expected)`, because a triple has only one `from` and one `to`.
+
+**Rule:** when a config key would naturally have three or more tokens, split it into a parent/child yaml structure where each level is one or two tokens, and register the matching const in `shared/const/words.php` (one token) or `shared/const/triples.php` (two tokens). The runtime config lookup (`$cfg->get_by([leaf, …, root])`) walks the same path, so the deeper nesting is the canonical access pattern, not a workaround.
+
+- **Wrong** — three-token key, fails on import:
+```yaml
+related per verb:
+  sys-conf-value: 2
+```
+- **Right** — split into nested one-token + two-token keys:
+```yaml
+related:
+  per verb:
+    sys-conf-value: 2
+```
+with `words::RELATED = 'related'` and `triples::PER_VERB = 'per verb'` registered as consts so the existing "every config.yaml key has a const in words.php or triples.php" coding rule test (`src/test/php/unit/coding_rule_tests.php`) keeps passing.
+
+Meta keys consumed by the loader itself (`tooltip-comment`, `sys-conf-value`, `source-name`, `source-description`, `pod-user-config`) are skipped by the check and don't need this treatment — they may contain dashes and multiple tokens.
 
 ### Back-navigation parameter convention
 
