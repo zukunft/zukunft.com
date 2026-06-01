@@ -2,7 +2,7 @@
 
 /*
 
-    web/html/styles.php - style constants used for html frontend
+    web/html/styles.php - css class constants used for html frontend
     -------------------
 
 
@@ -44,10 +44,12 @@ class styles
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
 
-    // inline-style attribute value (not a css class): an icon link inside a heading
-    // rendered at body-text size and vertically centred, so the heading stays prominent
-    // while the inline action stays unobtrusive
-    const string HEADING_ICON_INLINE = 'font-size: 1rem; vertical-align: middle;';
+    // css class for an icon link inside a heading: body-text size and vertically
+    // centred, so the heading stays prominent while the inline action stays unobtrusive
+    const string HEADING_ICON_INLINE = 'heading-icon-inline';
+
+    // css class for the small category line under a page-title heading
+    const string SUBTITLE = 'subtitle';
 
 
 }

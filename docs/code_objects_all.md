@@ -80,6 +80,7 @@ the object structure is:
 +-- filesShared - resource file names used in backend and frontend
 +-- formulasShared - predefined formulas used in the backend and frontend as code id
 +-- groupsShared - phrase group or value names used by the system for testing
++-- impactsShared - fixed impact values for system testing
 +-- ip_rangesShared - ip ranges used for system testing
 +-- refsShared - references used by the system for testing
 +-- rest_ctrlShared - constants used for the backend to frontend api of zukunft.com
@@ -393,7 +394,7 @@ the object structure is:
 +-- rest_callUi - functions used by the frontend to call the backend api of zukunft.com
 +-- scopesUi - scope constants used for html frontend
 +-- sheetUi - create the html code to display a spreadsheet
-+-- stylesUi - style constants used for html frontend
++-- stylesUi - css class constants used for html frontend
 +-- tableUi - create the html code to display a spreadsheet
 +-- user_log_displayUi - a combined object to display single value changes or changes of links by the user
 +-- user_sandbox_displayUi - extends the user sandbox superclass for common display functions

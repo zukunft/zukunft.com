@@ -452,8 +452,10 @@ class word extends sandbox_code_id
                         $this->load_phrases_related();
                     }
                     if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
+                        // INCL_PHRASES so each related triple emits its from/verb/to phrases,
+                        // not just id+name — the page-title renderer needs the link names
                         $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
-                            new api_type_list([api_types::PHRASE_NAMES]), $usr);
+                            new api_type_list([api_types::INCL_PHRASES]), $usr);
                     }
                 }
             }
@@ -467,21 +469,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * load the phrases related to this word via a triple (this word is the from or the to
-     * of each loaded triple — direction is "both") and assign them to $this->phrases_related
-     * as a phrase_list whose entries each wrap one connecting triple (so the renderer can
-     * use the triple's "other end" word as the link label and the triple itself as link target)
-     *
-     * the per-verb limit caps how many triples per verb are kept (impact-sorted, with one
-     * extra "peek" row so the frontend can render a "more" indicator when the load was capped);
-     * the default falls back to def::LIMIT_RELATED_PER_VERB until the config integration via
-     * $cfg->get_by([triples::PER_VERB, words::RELATED, words::LIMIT, words::LISTS, words::FRONTEND,
-     * words::USER], def::LIMIT_RELATED_PER_VERB) is wired through the api request path
-     * (matches the nested "related > per verb" config.yaml key per the two-token rule in
-     * docs/llm_coding.md)
-     *
-     * called lazily by api_json_array() when api_types::INCL_RELATED is set, so the extra
-     * triple query is only paid by callers that actually want the related objects
+     * load the phrases related to this word via a triple
      *
      * @param int $per_verb_limit upper bound on triples kept per verb; the loader keeps one
      *                            extra row so the caller can detect overflow without a count
@@ -502,6 +490,26 @@ class word extends sandbox_code_id
             }
         }
         $this->phrases_related = $kept;
+    }
+
+    /**
+     * load a word by id and, in the same call, populate the related phrases that the
+     * default word view's page-title renderer expects (City, Canton, ... inline list and
+     * the "is symbol for <X>" symbol-line layout). Used by the default-word-view path —
+     * test snapshot generation via test_base::assert_view and any other caller that wants
+     * the rendered HTML to reflect a word's connecting triples without going through the
+     * INCL_RELATED-gated api_json round-trip
+     *
+     * @param int $id the word id to load
+     * @return int the id of the loaded word, or 0 if not found
+     */
+    function load_by_id_with_related(int $id): int
+    {
+        $loaded_id = parent::load_by_id($id);
+        if ($loaded_id > 0) {
+            $this->load_phrases_related();
+        }
+        return $loaded_id;
     }
 
 

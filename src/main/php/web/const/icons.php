@@ -7,7 +7,7 @@
 
     the central place for the css class string of every icon rendered by the
     frontend (Font Awesome and any other icon set used). adding the literal
-    e.g. 'fas fa-edit' inline is not allowed (see docs/llm_coding.md "use a
+    e.g. 'fas fa-edit' inline is not allowed (see docs/llm/coding.md "use a
     named icon constant from web/const/icons.php — no inline icon literals");
     use the constant defined here so that an icon-set change can be made in
     one place and the rendered icon is searchable by its constant name.

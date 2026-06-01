@@ -260,6 +260,28 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word_ui the word "CHF" (Swiss Franc currency code) for frontend
+     *                unit testing — used as the canonical "is symbol for" example
+     *                in the page-title category subtitle renderer tests
+     */
+    function chf_ui(): word_ui
+    {
+        $wrd = $this->word_chf();
+        return new word_ui($wrd->api_json());
+    }
+
+    /**
+     * @return word_ui the word "Zurich" for frontend unit testing — the canonical
+     *                multi-related-entry example (city/canton/company) used by the
+     *                page-title category subtitle and inline-related renderer tests
+     */
+    function zh_ui(): word_ui
+    {
+        $wrd = $this->word_zh();
+        return new word_ui($wrd->api_json());
+    }
+
+    /**
      * @return word "constant" to create the main triple for unit testing
      */
     function word_const(): word
@@ -825,6 +847,29 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(words::CHF_ID, words::CHF);
         return $wrd;
+    }
+
+    /**
+     * @return word the currency "Swiss franc" — the target of the "CHF is symbol for
+     *              Swiss franc" triple used as the canonical symbol example
+     */
+    function swiss_franc(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::SWISS_FRANC_ID, words::SWISS_FRANC);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the "Swiss franc" word for frontend unit testing (e.g. as the
+     *                 symbol target a CHF page-title category subtitle links to);
+     *                 the *_ui suffix marks this as a frontend/UI factory per the
+     *                 naming rule in docs/llm/coding.md
+     */
+    function swiss_franc_ui(): word_ui
+    {
+        $wrd = $this->swiss_franc();
+        return new word_ui($wrd->api_json());
     }
 
     function word_eur(): word

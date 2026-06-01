@@ -45,18 +45,13 @@ include_once paths::SHARED_CONST . 'words.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -65,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -82,6 +78,7 @@ class word_tests
         // init
         $sc = new sql_creator();
         $t_wrd = new test_words($t);
+        $t_phr = new test_phrases($t);
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
 
@@ -219,40 +216,72 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api_to_ui($wrd, new word_ui());
 
-        $t->subheader($ts . 'frontend page title with related phrases is truncated by the per-verb limit');
-        // build a Zurich word_ui and a phrase_list with three related triples (City, Canton,
-        // Company). With related_limit=2 the title shows "Zurich (City, Canton, ...)" — the
-        // "..." links to views::WORD_RELATED_ID for the full grouped-by-verb overview.
-        // With related_limit=4 all three fit so the title shows "Zurich (City, Canton, Company)"
-        // and no "..." appears. The phrase entries carry short display labels (City, Canton,
-        // Company) so the renderer's `$phr->name()` lookup yields the user-facing word and
-        // its `$phr->id()` points at the connecting triple so the link targets the triple.
-        $wrd_ui_render = new word_ui();
-        $wrd_ui_render->set_name(words::ZH);
-        $wrd_ui_render->set_id(words::ZH_ID);
-        $wrd_ui_render->phrases_related = self::related_zurich_phrases();
-        $form = new system_form();
-        $title_short = $form->title_of_named_with_edit_link($wrd_ui_render, 2);
-        $test_name = 'title shows City link for related limit 2';
-        $t->assert_true($t->name . $test_name,
-            str_contains($title_short, '<a href="/http/view.php?m=' . views::PHRASE_ID . '&id='
-                . triples::CITY_ZH_ID . '">City</a>'));
-        $test_name = 'title shows Canton link for related limit 2';
-        $t->assert_true($t->name . $test_name,
-            str_contains($title_short, '<a href="/http/view.php?m=' . views::PHRASE_ID . '&id='
-                . triples::CANTON_ZURICH_ID . '">Canton</a>'));
-        $test_name = 'title shows "..." linking to WORD_RELATED when count > limit';
-        $t->assert_true($t->name . $test_name,
-            str_contains($title_short, '<a href="/http/view.php?m=' . views::WORD_RELATED_ID . '&id='
-                . words::ZH_ID . '">...</a>'));
-        $test_name = 'title with limit 2 hides the third (Company) entry';
-        $t->assert_true($t->name . $test_name, !str_contains($title_short, '>Company</a>'));
 
-        $title_full = $form->title_of_named_with_edit_link($wrd_ui_render, 4);
-        $test_name = 'title with limit 4 includes the Company link';
-        $t->assert_true($t->name . $test_name, str_contains($title_full, '>Company</a>'));
-        $test_name = 'title with limit 4 omits the "..." overflow indicator';
-        $t->assert_true($t->name . $test_name, !str_contains($title_full, '>...</a>'));
+        $t->subheader($ts . 'subtitle with phrase limit');
+
+        $test_name = '"Zurich" subtitle has city when limit is at 2';
+        $form = new system_form();
+        $wrd = $t_wrd->zh_ui();
+        $wrd->phr_lst = $t_phr->list_ui();
+        $txt = $form->title_named($wrd, 2);
+        $lnk = words::CITY_ID . '">' . words::CITY . '</a>';
+        $t->assert_text_contains($test_name, $txt, $lnk);
+        $test_name = '... and canton';
+        $lnk = words::CANTON_ID . '">' . words::CANTON . '</a>';
+        $t->assert_text_contains($test_name, $txt, $lnk);
+        $test_name = '... and "..." for more';
+        $lnk = views::WORD_RELATED_ID . '&id=' . words::ZH_ID . '">...</a>';
+        $t->assert_text_contains($test_name, $txt, $lnk);
+        $test_name = '... but company is NOT';
+        $t->assert_text_not_contains($test_name, $txt, words::COMPANY);
+
+        $test_name = 'company is part if limit is higher';
+        $txt = $form->title_named($wrd, 4);
+        $t->assert_text_contains($test_name, $txt, words::COMPANY);
+        $test_name = '... and "..." for more is goner';
+        $t->assert_text_not_contains($test_name, $txt, '>...</a>');
+
+        $test_name = 'verb of "CHF is symbol for Swiss Frank"';
+        $wrd = $t_wrd->chf_ui();
+        $wrd->phr_lst = $t_phr->list_ui();
+        $txt = $form->title_named($wrd);
+        $t->assert_text_contains($test_name, $txt, verbs::SYMBOL_NAME);
+        $test_name = 'link of "CHF is symbol for Swiss Frank"';
+        $lnk = '<a href="/http/view.php?m=' . views::WORD_ID
+            . '&id=' . words::SWISS_FRANC_ID . '">' . words::SWISS_FRANC . '</a>';
+        $t->assert_text_contains($test_name, $txt, $lnk);
+        $test_name = 'name of "CHF is symbol for Swiss Frank';
+        $t->assert_text_contains($test_name, $txt, '>CHF</h4>');
+
+        $test_name = 'moves the edit icon onto the subtitle line';
+        $heading_end = strpos($txt, '</h4>');
+        $edit_pos = strpos($txt, icons::EDIT);
+        $t->assert_true($test_name,
+            $heading_end !== false
+            and $edit_pos !== false
+            and $edit_pos > $heading_end);
+
+        $test_name = 'reverse priority "Zurich is" subtitle has company when company is relevant';
+        $wrd = $t_wrd->zh_ui();
+        $wrd->phr_lst = $t_phr->list_zh_impact_ui();
+        $txt = $form->title_named($wrd);
+        $t->assert_text_contains($test_name, $txt, '>' . words::COMPANY . '</a>');
+        $test_name = '... and still canton';
+        $t->assert_text_contains($test_name, $txt, '>' . words::CANTON . '</a>');
+        $test_name = '... but city NOT';
+        $t->assert_text_not_contains($test_name, $txt, '>' . words::CITY . '</a>');
+
+        $test_name = 'if there is no subtitle the edit icon is in the same line';
+        $wrd = $t_wrd->chf_ui();
+        $wrd->phr_lst = $t_phr->list_zh_ui();
+        $txt = $form->title_named($wrd);
+        $t->assert_text_contains($test_name, $txt, 'fas fa-edit');
+
+        $test_name = 'category_html for CHF emits the "is symbol for" verb verbatim';
+        $wrd = $t_wrd->swiss_franc_ui();
+        $wrd->phr_lst = $t_phr->list_ui();
+        $txt = $form->title_named($wrd);
+        $t->assert_text_not_contains($test_name, $txt, words::CHF);
 
         $t->subheader($ts . 'im- and export');
         // TODO check that all objects have a im and export test
@@ -357,33 +386,6 @@ class word_tests
             $qp = $wrd->view_sql($db_con);
             $t->assert_qp($qp, $db_con->db_type);
         }
-    }
-
-    /**
-     * build a frontend phrase_list with three related-phrase entries for the Zurich title test:
-     * City (links to triple "City of Zurich"), Canton (links to "Canton Zurich"), and
-     * Company (links to "Zurich Insurance"). Each entry wraps a word_ui whose name is the
-     * short display label (so the renderer's $phr->name() yields "City"/"Canton"/"Company")
-     * and whose id is the connecting triple's id (so the renderer's $phr->id() points the
-     * link at the triple's detail view via views::PHRASE_ID)
-     */
-    private static function related_zurich_phrases(): phrase_list_ui
-    {
-        $lst = new phrase_list_ui();
-        $lst->add(self::related_phrase(triples::CITY_ZH_ID, 'City'));
-        $lst->add(self::related_phrase(triples::CANTON_ZURICH_ID, 'Canton'));
-        $lst->add(self::related_phrase(triples::COMPANY_ZURICH_ID, 'Company'));
-        return $lst;
-    }
-
-    private static function related_phrase(int $id, string $display): phrase_ui
-    {
-        $wrd = new word_ui();
-        $wrd->id = $id;
-        $wrd->set_name($display);
-        $phr = new phrase_ui();
-        $phr->set_obj($wrd);
-        return $phr;
     }
 
 }

@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value.php';
@@ -56,6 +57,7 @@ include_once paths::SHARED_HELPER . 'Message.php';
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -269,10 +271,10 @@ class sandbox_list_named extends sandbox_list
      * add the names and other variables from the given list and add missing words, triples, ...
      * select the related object by the id
      *
-     * @param sandbox_list_named $lst_new a list of sandbox object e.g. that might have more vars set e.g. the name
+     * @param phrase_list|sandbox_list_named $lst_new a list of sandbox object e.g. that might have more vars set e.g. the name
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill_by_id(sandbox_list_named $lst_new): user_message
+    function fill_by_id(phrase_list|sandbox_list_named $lst_new): user_message
     {
         global $usr;
 

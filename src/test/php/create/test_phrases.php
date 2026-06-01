@@ -781,9 +781,111 @@ class test_phrases
         return $lst;
     }
 
-    function phrase_list_dsp(): phrase_list_ui
+    /**
+     * a list of city and canton related phrases
+     * e.g. to test the subtitle for the city zurich
+     *
+     * @return phrase_list with symbol triples
+     */
+    function list_zh(): phrase_list
     {
-        return new phrase_list_ui($this->phrase_list()->api_json());
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_zh()->phrase());
+        $lst->add($t_wrd->word_city()->phrase());
+        $lst->add($t_trp->zh_city()->phrase());
+        $lst->add($t_wrd->word_canton()->phrase());
+        $lst->add($t_trp->zh_canton()->phrase());
+        $lst->add($t_wrd->word_company()->phrase());
+        $lst->add($t_trp->company_zurich()->phrase());
+        return $lst;
+    }
+
+    /**
+     * a list of city and canton related phrases
+     * e.g. to test the subtitle for the city zurich in a different order
+     *
+     * @return phrase_list with symbol triples
+     */
+    function list_zh_impact(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_zh();
+        $lst_imp = new phrase_list($this->env->usr1);
+        $lst_imp->add($t_trp->zh_city_low_impact()->phrase());
+        $lst_imp->add($t_trp->zh_canton_low_impact()->phrase());
+        $lst_imp->add($t_trp->company_zurich_high_impact()->phrase());
+        $lst->fill_by_id($lst_imp);
+        return $lst;
+    }
+
+    /**
+     * a frontend list of all test phrases e.g. to check if the selections are fine
+     *
+     * @return phrase_list_ui with all phrases used for testing
+     */
+    function list_ui(): phrase_list_ui
+    {
+        $lst = $this->list_symbols_ui();
+        $lst->merge($this->list_zh_ui());
+        return $lst;
+    }
+
+    /**
+     * a list of symbol triples to test the selection of the relevant symbols
+     *
+     * @return phrase_list_ui with symbol triples
+     */
+    function list_symbols_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->symbol_chf()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the frontend list of city and canton related phrases
+     * e.g. to test the subtitle for the city zurich
+     *
+     * @return phrase_list_ui with symbol triples
+     */
+    function list_zh_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_zh());
+    }
+
+    /**
+     * the frontend list of city and canton related phrases
+     * e.g. to test the subtitle for the city zurich in a different order
+     *
+     * @return phrase_list_ui with symbol triples
+     */
+    function list_zh_impact_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_zh_impact());
+    }
+
+    function ui_phrase_list(): phrase_list_ui
+    {
+        return $this->ui_list($this->phrase_list());
+    }
+
+
+    /*
+     * convert
+     */
+
+    /**
+     * convert a backend phrase list to a frontend list
+     *
+     * @param phrase_list $lst tbe backend list to convert
+     * @return phrase_list_ui the converted frontend list
+     */
+    private function ui_list(phrase_list $lst): phrase_list_ui
+    {
+        return new phrase_list_ui($lst->api_json([api_types::INCL_PHRASES]));
     }
 
 }

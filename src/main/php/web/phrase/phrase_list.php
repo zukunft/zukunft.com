@@ -62,7 +62,9 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
@@ -89,6 +91,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -244,6 +247,81 @@ class phrase_list extends sandbox_list_named
         // TODO review temp solution
         //$phr->load_by_name();
         return $phr;
+    }
+
+    /**
+     * build the category subtitle html for the page-title
+     * based on the verbs::CATEGORY_VERBS priority list
+     *
+     * e.g. "CHF is symbol for <Swiss Franc>"
+     * or if not a symbol e.g. "Zurich is a <City>, <Canton>, <Company>")
+     *
+     * @param phrase $phr the starting phrase whose category subtitle is being rendered
+     * @param int|null $max the maximal number of links to show
+     * @return string the rendered subtitle html, or '' when no category verb matches
+     */
+    function category_subtitle(
+        phrase $phr,
+        ?int   $max = null
+    ): string
+    {
+        global $ui_cac;
+
+        $result = '';
+
+        $vrb_cac = $ui_cac->typ_lst_cache->html_verbs ?? null;
+
+        if ($this->is_empty()) {
+            log_debug('list of related phrase is empty for ' . $phr->dsp_id());
+            // an empty related list is normal (e.g. a word with no connecting triples)
+        } elseif ($vrb_cac === null) {
+            log_err('the verb type cache is not loaded, so the category subtitle for '
+                . $phr->dsp_id() . ' cannot be built');
+        } else {
+            $this->sort_impact();
+            foreach (verbs::CATEGORY_VERBS as [$vrb_code_id, $direction]) {
+                // the first (highest-priority) category verb with matching entries wins
+                if ($result === '') {
+                    $vrb = $vrb_cac->get_by_code_id($vrb_code_id);
+                    if ($vrb === null) {
+                        log_err('the category verb "' . $vrb_code_id . '" is missing in the verb cache');
+                    } else {
+                        $links = [];
+                        foreach ($this->lst() as $lnk_phr) {
+                            if ($lnk_phr->is_triple()) {
+                                $trp = $lnk_phr->obj();
+                                $lnk = $trp->get_link_by_verb($phr, $vrb, $direction);
+                                if ($lnk !== null) {
+                                    if (count($links) < $max or $max === null) {
+                                        $links[] = $lnk;
+                                    } else {
+                                        $links[] = $this->more_link($phr->id());
+                                    }
+                                }
+                            }
+                        }
+                        if (count($links) > 0) {
+                            $result = $vrb->name() . ' ' . implode(', ', $links);
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * placeholder link to all related object for a (too) long list
+     * @param int $parent_id the id of the object who related objects should be shown
+     * @return ?string the html code of the more placeholder
+     */
+    private function more_link(
+        int $parent_id
+    ): ?string
+    {
+        $html = new html_base();
+        $url = $html->url_new(views::WORD_RELATED_ID, $parent_id);
+        return $html->ref($url, '...');
     }
 
 
@@ -490,6 +568,23 @@ class phrase_list extends sandbox_list_named
         }
 
         return $trp_lst;
+    }
+
+
+    /*
+     * sort
+     */
+
+    /**
+     * sort this phrase list in place so that the phrase with the highest impact is first
+     * the impact is the system calculated relevance of the wrapped word or triple
+     * @return void
+     */
+    function sort_impact(): void
+    {
+        $lst = $this->lst();
+        usort($lst, fn(phrase $a, phrase $b) => $b->impact() <=> $a->impact());
+        $this->set_lst($lst);
     }
 
 

@@ -142,15 +142,8 @@ class word extends sandbox_code_id
     // the main parent phrase
     private ?phrase $parent = null;
 
-    // the phrases connected to this word by a triple (this word is the from or the to
-    // of each triple — direction is "both"); populated by the backend api json when
-    // the api_types::INCL_RELATED flag is set on the request; null when not requested
-    // or empty when no triple references this word; each entry is a phrase wrapping the
-    // connecting triple so the renderer can use the triple's "other end" word as the
-    // link label and the triple itself as the link target (e.g. for the word "Zurich"
-    // the entries are the triples "City of Zurich", "Canton of Zurich", "Zurich Insurance");
-    // count per verb is bounded by the related-per-verb config so the list stays compact
-    public ?phrase_list $phrases_related = null;
+    // the phrases connected to this word by a triple
+    public ?phrase_list $phr_lst = null;
 
     // the impact used to sort the words
     public float $impact = 0.0;
@@ -234,12 +227,12 @@ class word extends sandbox_code_id
             if (is_array($value)) {
                 $lst = new phrase_list();
                 $lst->api_mapper($value);
-                $this->phrases_related = $lst;
+                $this->phr_lst = $lst;
             } else {
-                $this->phrases_related = null;
+                $this->phr_lst = null;
             }
         } else {
-            $this->phrases_related = null;
+            $this->phr_lst = null;
         }
         return $msg->is_ok();
     }
@@ -263,10 +256,35 @@ class word extends sandbox_code_id
         if ($this->has_parent()) {
             $vars[json_fields::PARENT] = $this->parent()->api_array();
         }
-        if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
-            $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_array();
+        if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
+            $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load the word by id AND ask the backend to include the related-phrases view-model
+     * (the connecting triples in both directions, capped by the per-verb config limit)
+     * so the page-title renderer can produce the category subtitle below the heading
+     * (e.g. for "CHF": "is symbol for Swiss Franc"; for "Zurich": "is a City, Canton, ...")
+     *
+     * Overrides the no-op base implementation by attaching the ?incl_related=1 URL flag
+     * to the REST GET call. The backend handler (api/word/index.php) translates that flag
+     * into api_types::INCL_RELATED via api_type_list::from_url_array(), which makes
+     * word::api_json_array() emit the phrases_related array (each entry carrying its
+     * connecting verb_id), and the frontend api_mapper picks it up into $this->phrases_related
+     *
+     * @param int|string $id the word id to load
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id): bool
+    {
+        return $this->load_by_id($id, [url_var::INCL_RELATED => '1']);
     }
 
 

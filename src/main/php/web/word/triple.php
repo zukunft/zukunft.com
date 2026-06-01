@@ -43,7 +43,6 @@
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
@@ -62,6 +61,7 @@ include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -81,10 +81,12 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class triple extends sandbox_code_id
@@ -127,11 +129,8 @@ class triple extends sandbox_code_id
     // the impact used to sort the triples
     private float $impact = 0.0;
 
-    // the phrases connected to this triple by another triple (this triple is the from
-    // or the to of those triples); populated by the backend api json when the
-    // api_types::INCL_RELATED flag is set on the request; null when not requested or
-    // empty when no triple references this one; see web/word/word.php for the full shape
-    public ?phrase_list $phrases_related = null;
+    // the phrases connected to this triple by another triple
+    public ?phrase_list $phr_lst = null;
 
 
     /*
@@ -262,12 +261,12 @@ class triple extends sandbox_code_id
             if (is_array($value)) {
                 $lst = new phrase_list();
                 $lst->api_mapper($value);
-                $this->phrases_related = $lst;
+                $this->phr_lst = $lst;
             } else {
-                $this->phrases_related = null;
+                $this->phr_lst = null;
             }
         } else {
-            $this->phrases_related = null;
+            $this->phr_lst = null;
         }
         return $msg->is_ok();
     }
@@ -290,8 +289,8 @@ class triple extends sandbox_code_id
         $vars[json_fields::WEIGHT] = $this->weight;
         $vars[json_fields::PLURAL] = $this->plural;
         // usage and impact are not included here because this system value is never updated by the frontend
-        if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
-            $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_array();
+        if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
+            $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
         }
         return $vars;
     }
@@ -691,6 +690,51 @@ class triple extends sandbox_code_id
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 
+    /**
+     * if this triple links a phrase with the given verb and direction
+     * create a html link to the linked phrase
+     *
+     * @param phrase $phr the staring phrase to select the link
+     * @param verb $vrb use only triples with this verb
+     * @param foaf_direction $dir to select either only parents or children
+     * @return string|null the html code to show the linked phrase if it matches
+     */
+    function get_link_by_verb(
+        phrase         $phr,
+        verb           $vrb,
+        foaf_direction $dir
+    ): string|null
+    {
+        $result = null;
+
+        $html = new html_base();
+        $lnk_phr = null;
+
+        // only act when this triple actually uses the requested verb and side
+        if ($this->get_verb()->id() === $vrb->id()) {
+            if ($dir == foaf_direction::DOWN) {
+                if ($this->get_from()->id() == $phr->id()) {
+                    $lnk_phr = $this->get_to();
+                }
+            } else {
+                if ($this->get_to()->id() == $phr->id()) {
+                    $lnk_phr = $this->get_from();
+                }
+            }
+        }
+
+        // build the link
+        if ($lnk_phr != null) {
+            $msk_id = views::WORD_ID;
+            if ($lnk_phr->is_triple()) {
+                $msk_id = views::TRIPLE_ID;
+            }
+            $url = $html->url_new($msk_id, $lnk_phr->id());
+            $result = $html->ref($url, $lnk_phr->name());
+        }
+        return $result;
+    }
+
     /*
      * to review
      */
@@ -761,7 +805,5 @@ class triple extends sandbox_code_id
     {
         return (new html_base())->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $this->name());
     }
-
-
 
 }

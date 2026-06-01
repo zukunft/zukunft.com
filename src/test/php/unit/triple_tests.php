@@ -127,14 +127,14 @@ class triple_tests
         $trp_ui = new triple_ui(json_encode($trp_json));
         $test_name = 'triple ui api_mapper populates phrases_related from json';
         $t->assert_true($t->name . $test_name,
-            $trp_ui->phrases_related !== null and !$trp_ui->phrases_related->is_empty());
+            $trp_ui->phr_lst !== null and !$trp_ui->phr_lst->is_empty());
         $test_name = 'triple ui api_array re-emits phrases_related';
         $t->assert_true($t->name . $test_name,
             array_key_exists(json_fields::PHRASES_RELATED, $trp_ui->api_array()));
         // negative: a triple without phrases_related in its json keeps the field null
         $bare_trp_ui = new triple_ui($symbol_trp->api_json());
         $test_name = 'triple ui phrases_related stays null when json key is absent';
-        $t->assert_true($t->name . $test_name, $bare_trp_ui->phrases_related === null);
+        $t->assert_true($t->name . $test_name, $bare_trp_ui->phr_lst === null);
         $test_name = 'triple ui api_array omits phrases_related when null';
         $t->assert_true($t->name . $test_name,
             !array_key_exists(json_fields::PHRASES_RELATED, $bare_trp_ui->api_array()));

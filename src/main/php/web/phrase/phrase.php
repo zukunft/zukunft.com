@@ -233,6 +233,18 @@ class phrase extends combine_named
         }
     }
 
+    /**
+     * @return int|null the id of the connecting verb when this phrase wraps a triple, else null
+     */
+    function get_verb_id(): ?int
+    {
+        if ($this->is_triple()) {
+            return $this->get_verb()?->id();
+        } else {
+            return null;
+        }
+    }
+
     function get_from(): ?phrase
     {
         if ($this->is_triple()) {
@@ -339,6 +351,15 @@ class phrase extends combine_named
     function is_info(): bool
     {
         return $this->obj()->is_info();
+    }
+
+    /**
+     * @return float the system calculated impact of the wrapped word or triple;
+     *               used to sort a phrase list so that the most relevant phrase is shown first
+     */
+    function impact(): float
+    {
+        return $this->obj()->impact();
     }
 
 

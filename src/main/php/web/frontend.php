@@ -692,13 +692,15 @@ class frontend
             $view = views::START_ID;
         }
 
-        // get the view id if the view code id is used
-        // TODO Prio 1 move to url_to_standard
+        // get the view, id and code if the view code id or id is used
         if (is_numeric($view)) {
             $view_id = $view;
+            $msk = $this->dto->typ_lst_cache->get_view_by_id($view_id);
+            $view_code_id = $msk?->code_id ?? '';
         } else {
             $msk = $this->dto->typ_lst_cache->get_view($view);
             $view_id = $msk->id();
+            $view_code_id = $view;
         }
 
         // select the main object to display
@@ -735,7 +737,11 @@ class frontend
             // if only the id is included in the url load the data via api
             // TODO Prio 1 why? better always reload from db
             if (count($url_array) <= 3) {
-                $dbo->load_by_id($id);
+                if (in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
+                    $dbo->load_by_id($id);
+                } else {
+                    $dbo->load_by_id_with_related($id);
+                }
             } else {
                 $dbo->url_mapper($url_array, $usr_msg, $dto);
             }

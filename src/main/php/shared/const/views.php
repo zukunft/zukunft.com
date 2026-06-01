@@ -447,6 +447,29 @@ class views
         self::USER_ID,
     ];
 
+    // system and base views whose page-title renderer does NOT show the category subtitle
+    const array VIEWS_WITHOUT_RELATED = [
+        // entry / static info
+        self::START,
+        self::ABOUT,
+        self::SETUP,
+        // authentication flow
+        self::LOGIN,
+        self::LOGIN_ACTIVATE,
+        self::LOGIN_RESET,
+        self::LOGOUT,
+        self::SIGNUP,
+        // language picker
+        self::LANGUAGE_SELECT,
+        // confirm dialogs and user-sandbox status views (no main-object subtitle)
+        self::CONFIRM_ADD,
+        self::CONFIRM_EDIT,
+        self::CONFIRM_DEL,
+        self::CONFIRM_VIEW,
+        self::SANDBOX,
+        self::UNDO,
+    ];
+
     // system masks that only admin user can see
     const array ADMIN_MASK_IDS = [
         self::USER_ADMIN_ADD_ID,

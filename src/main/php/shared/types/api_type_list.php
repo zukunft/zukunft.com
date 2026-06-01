@@ -57,7 +57,7 @@ class api_type_list
     /**
      * build an api_type_list from URL query parameters — the http entry points read $_GET once
      * and pass it here so this conversion stays unit-testable (no superglobals inside the
-     * function, per the testability rule in docs/llm_coding.md)
+     * function, per the testability rule in docs/llm/coding.md)
      *
      * currently translates:
      *   - url_var::INCL_RELATED (truthy)  → api_types::INCL_RELATED

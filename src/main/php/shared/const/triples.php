@@ -187,6 +187,8 @@ class triples
     const string CANTON_ZURICH_NAME = 'Canton Zurich';
     const string COMPANY_ZURICH = "Zurich Insurance";
     const int COMPANY_ZURICH_ID = 140;
+    const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
+    const int CHF_SYMBOL_ID = 2333;
     const string COMPANY_VESTAS = "Vestas SA";
     const string COMPANY_ABB = "ABB (company)";
     const string YEAR_2013_FOLLOW = "2014 is follower of 2013";
@@ -236,6 +238,7 @@ class triples
     const array BASE_TRIPLES = [
         [self::MATH_CONST, self::MATH_CONST_ID],
         [self::CANTON_ZURICH, self::CANTON_ZURICH_ID],
+        [self::CHF_SYMBOL, self::CHF_SYMBOL_ID],
         [self::CASH_FLOW, self::CASH_FLOW_ID],
         [self::CASH_FLOW_STATEMENT, self::CASH_FLOW_STATEMENT_ID],
         [self::CITY_BE, self::CITY_BE_ID],
@@ -283,6 +286,7 @@ class triples
     // list of triples where the id is used for system testing
     const array TEST_TRIPLE_IDS = array(
         self::CANTON_ZURICH_ID => self::CANTON_ZURICH,
+        self::CHF_SYMBOL_ID => self::CHF_SYMBOL,
         self::CASH_FLOW_ID => self::CASH_FLOW,
         self::CASH_FLOW_STATEMENT_ID => self::CASH_FLOW_STATEMENT,
         self::CITY_BE_ID => self::CITY_BE,
