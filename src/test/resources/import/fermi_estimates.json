@@ -5,10 +5,44 @@
   "selection": [
     "fermi estimates"
   ],
-  "description": "Fermi estimates expressed as words, triples, formulas, sources and values, following the same schema as the meteorology base data. Contains the disinformation-dam expected-value estimate discussed in the categorical-imperative working paper, and a meteorology-native worked example (raindrops in a thunderstorm).",
+  "description": "Fermi estimates expressed as single words combined into triples, plus formulas, sources and values, following the same schema as the meteorology base data. Contains the disinformation-dam expected-value estimate discussed in the categorical-imperative working paper, and a meteorology-native worked example (raindrops in a thunderstorm).",
   "words": [
+    {"name": "fermi"},
+    {"name": "estimate"},
+    {"name": "disinformation"},
+    {"name": "dam"},
+    {"name": "expected"},
+    {"name": "value"},
+    {"name": "potential"},
+    {"name": "harm"},
+    {"name": "democratic"},
+    {"name": "decline"},
+    {"name": "probability"},
+    {"name": "causal"},
+    {"name": "link"},
+    {"name": "leverage"},
+    {"name": "measure"},
+    {"name": "cost"},
+    {"name": "test"},
+    {"name": "decision"},
+    {"name": "uncertainty"},
+    {"name": "raindrop"},
+    {"name": "thunderstorm"},
+    {"name": "storm"},
+    {"name": "cell"},
+    {"name": "area"},
+    {"name": "rain"},
+    {"name": "rainfall"},
+    {"name": "depth"},
+    {"name": "volume"},
+    {"name": "total"}
+  ],
+  "triples": [
     {
       "name": "fermi estimate",
+      "from": "estimate",
+      "verb": "of",
+      "to": "fermi",
       "description": "order-of-magnitude estimation that decomposes an unknown quantity into a product of roughly knowable factors",
       "refs": [
         {
@@ -22,116 +56,211 @@
       ]
     },
     {
-      "name": "disinformation dam expected value",
-      "description": "expected avoided harm of building a regulatory dam against deliberate flooding of public discourse with disinformation, used to decide whether testing the measure is worthwhile"
+      "name": "expected value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "expected"
     },
     {
-      "name": "potential harm from democratic decline",
-      "description": "monetised order-of-magnitude harm if the digital-overstimulation-to-democratic-decline link is real, dominated by populism-induced economic loss across affected economies"
+      "name": "disinformation dam",
+      "from": "dam",
+      "verb": "of",
+      "to": "disinformation"
     },
     {
-      "name": "probability of the causal link",
-      "description": "subjective probability that digital sensory overload at least partly causes the observed cognitive and democratic decline"
+      "name": "democratic decline",
+      "from": "decline",
+      "verb": "of",
+      "to": "democratic"
+    },
+    {
+      "name": "potential harm",
+      "from": "harm",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "causal link",
+      "from": "link",
+      "verb": "kind of",
+      "to": "causal"
+    },
+    {
+      "name": "storm cell",
+      "from": "cell",
+      "verb": "of",
+      "to": "storm"
+    },
+    {
+      "name": "rain volume",
+      "from": "volume",
+      "verb": "of",
+      "to": "rain"
+    },
+    {
+      "name": "rainfall depth",
+      "from": "depth",
+      "verb": "of",
+      "to": "rainfall"
+    },
+    {
+      "name": "raindrop volume",
+      "from": "volume",
+      "verb": "of",
+      "to": "raindrop",
+      "description": "volume of a single representative raindrop"
     },
     {
       "name": "leverage of the measure",
+      "from": "leverage",
+      "verb": "of",
+      "to": "measure",
       "description": "fraction of the potential harm that a feasible, rule-of-law-bound regulatory dam could plausibly avert"
     },
     {
       "name": "cost of the test",
+      "from": "cost",
+      "verb": "of",
+      "to": "test",
       "description": "order-of-magnitude cost and risk of running the regulatory experiment, including risk to legitimate free expression"
     },
     {
-      "name": "expected value to cost ratio",
-      "description": "ratio of expected avoided harm to test cost; a value far above one indicates the test is worthwhile"
+      "name": "decision under uncertainty",
+      "from": "decision",
+      "verb": "with",
+      "to": "uncertainty",
+      "description": "choosing an action when outcomes and their probabilities are only roughly known"
     },
     {
       "name": "raindrops in a thunderstorm",
+      "from": "raindrop",
+      "verb": "in",
+      "to": "thunderstorm",
       "description": "order-of-magnitude number of raindrops falling from a single mid-size thunderstorm cell over its lifetime"
     },
     {
+      "name": "probability of the causal link",
+      "from": "probability",
+      "verb": "of",
+      "to": "causal link",
+      "description": "subjective probability that digital sensory overload at least partly causes the observed cognitive and democratic decline"
+    },
+    {
       "name": "storm cell area",
+      "from": "area",
+      "verb": "of",
+      "to": "storm cell",
       "description": "ground area covered by a single mid-size thunderstorm cell"
     },
     {
-      "name": "total rainfall depth",
-      "description": "depth of water deposited by the storm over its lifetime"
-    },
-    {
       "name": "total rain volume",
+      "from": "rain volume",
+      "verb": "kind of",
+      "to": "total",
       "description": "volume of water deposited by the storm, the area times the rainfall depth"
     },
     {
-      "name": "raindrop volume",
-      "description": "volume of a single representative raindrop"
+      "name": "total rainfall depth",
+      "from": "rainfall depth",
+      "verb": "kind of",
+      "to": "total",
+      "description": "depth of water deposited by the storm over its lifetime"
     },
     {
-      "name": "decision under uncertainty",
-      "description": "choosing an action when outcomes and their probabilities are only roughly known"
-    }
-  ],
-  "triples": [
+      "name": "potential harm from democratic decline",
+      "from": "potential harm",
+      "verb": "of",
+      "to": "democratic decline",
+      "description": "monetised order-of-magnitude harm if the digital-overstimulation-to-democratic-decline link is real, dominated by populism-induced economic loss across affected economies"
+    },
     {
+      "name": "disinformation dam expected value",
+      "from": "expected value",
+      "verb": "of",
+      "to": "disinformation dam",
+      "description": "expected avoided harm of building a regulatory dam against deliberate flooding of public discourse with disinformation, used to decide whether testing the measure is worthwhile"
+    },
+    {
+      "name": "expected value to cost ratio",
+      "from": "disinformation dam expected value",
+      "verb": "per",
+      "to": "cost of the test",
+      "description": "ratio of expected avoided harm to test cost; a value far above one indicates the test is worthwhile"
+    },
+    {
+      "name": "harm in dam value",
       "from": "potential harm from democratic decline",
       "verb": "is part of",
       "to": "disinformation dam expected value"
     },
     {
+      "name": "probability in dam value",
       "from": "probability of the causal link",
       "verb": "is part of",
       "to": "disinformation dam expected value"
     },
     {
+      "name": "leverage in dam value",
       "from": "leverage of the measure",
       "verb": "is part of",
       "to": "disinformation dam expected value"
     },
     {
+      "name": "test cost in dam value",
       "from": "cost of the test",
       "verb": "is part of",
       "to": "disinformation dam expected value"
     },
     {
+      "name": "value cost ratio in dam value",
       "from": "expected value to cost ratio",
       "verb": "is part of",
       "to": "disinformation dam expected value"
     },
     {
+      "name": "dam value in fermi estimate",
       "from": "disinformation dam expected value",
       "verb": "is part of",
       "to": "fermi estimate"
     },
     {
+      "name": "dam value in decision",
       "from": "disinformation dam expected value",
       "verb": "is part of",
       "to": "decision under uncertainty"
     },
     {
+      "name": "area in raindrops",
       "from": "storm cell area",
       "verb": "is part of",
       "to": "raindrops in a thunderstorm"
     },
     {
+      "name": "rainfall depth in raindrops",
       "from": "total rainfall depth",
       "verb": "is part of",
       "to": "raindrops in a thunderstorm"
     },
     {
+      "name": "rain volume in raindrops",
       "from": "total rain volume",
       "verb": "is part of",
       "to": "raindrops in a thunderstorm"
     },
     {
+      "name": "drop volume in raindrops",
       "from": "raindrop volume",
       "verb": "is part of",
       "to": "raindrops in a thunderstorm"
     },
     {
+      "name": "raindrops in fermi estimate",
       "from": "raindrops in a thunderstorm",
       "verb": "is part of",
       "to": "fermi estimate"
     },
     {
+      "name": "fermi estimate in decision",
       "from": "fermi estimate",
       "verb": "is part of",
       "to": "decision under uncertainty"
