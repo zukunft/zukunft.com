@@ -3,11 +3,11 @@
   "time": "2026-06-03 09:00:00",
   "user": "timon",
   "selection": [
-    "fermi estimates"
+    "Fermi estimates"
   ],
   "description": "Fermi estimates expressed as single words combined into triples, plus formulas, sources and values, following the same schema as the meteorology base data. Contains the disinformation-dam expected-value estimate discussed in the categorical-imperative working paper, and a meteorology-native worked example (raindrops in a thunderstorm).",
   "words": [
-    {"name": "fermi"},
+    {"name": "Fermi"},
     {"name": "estimate"},
     {"name": "disinformation"},
     {"name": "dam"},
@@ -39,10 +39,10 @@
   ],
   "triples": [
     {
-      "name": "fermi estimate",
+      "name": "Fermi estimate",
       "from": "estimate",
       "verb": "of",
-      "to": "fermi",
+      "to": "Fermi",
       "description": "order-of-magnitude estimation that decomposes an unknown quantity into a product of roughly knowable factors",
       "refs": [
         {
@@ -218,10 +218,10 @@
       "to": "disinformation dam expected value"
     },
     {
-      "name": "dam value in fermi estimate",
+      "name": "dam value in Fermi estimate",
       "from": "disinformation dam expected value",
       "verb": "is part of",
-      "to": "fermi estimate"
+      "to": "Fermi estimate"
     },
     {
       "name": "dam value in decision",
@@ -254,21 +254,21 @@
       "to": "raindrops in a thunderstorm"
     },
     {
-      "name": "raindrops in fermi estimate",
+      "name": "raindrops in Fermi estimate",
       "from": "raindrops in a thunderstorm",
       "verb": "is part of",
-      "to": "fermi estimate"
+      "to": "Fermi estimate"
     },
     {
-      "name": "fermi estimate in decision",
-      "from": "fermi estimate",
+      "name": "Fermi estimate in decision",
+      "from": "Fermi estimate",
       "verb": "is part of",
       "to": "decision under uncertainty"
     }
   ],
   "formulas": [
     {
-      "name": "disinformation dam expected value",
+      "name": "disinformation dam expected value formula",
       "expression": "\"disinformation dam expected value\" = \"potential harm from democratic decline\" * \"probability of the causal link\" * \"leverage of the measure\"",
       "latex": "E = H \\cdot p \\cdot \\lambda",
       "assigned": [
@@ -278,7 +278,7 @@
       ]
     },
     {
-      "name": "expected value to cost ratio",
+      "name": "expected value to cost ratio formula",
       "expression": "\"expected value to cost ratio\" = \"disinformation dam expected value\" / \"cost of the test\"",
       "latex": "r = \\frac{E}{C}",
       "assigned": [
@@ -287,7 +287,7 @@
       ]
     },
     {
-      "name": "total rain volume",
+      "name": "total rain volume formula",
       "expression": "\"total rain volume\" = \"storm cell area\" * \"total rainfall depth\"",
       "latex": "V = A \\cdot h",
       "assigned": [
@@ -296,7 +296,7 @@
       ]
     },
     {
-      "name": "raindrops in a thunderstorm",
+      "name": "raindrops in a thunderstorm formula",
       "expression": "\"raindrops in a thunderstorm\" = \"total rain volume\" / \"raindrop volume\"",
       "latex": "N = \\frac{V}{V_d}",
       "assigned": [
@@ -307,7 +307,7 @@
   ],
   "sources": [
     {
-      "name": "fermi estimate",
+      "name": "Fermi estimate",
       "description": "an order-of-magnitude figure assumed for a Fermi estimation, deliberately rough and chosen to be defensible within a factor of a few"
     },
     {
@@ -321,77 +321,77 @@
         "potential harm from democratic decline"
       ],
       "number": "1e13",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     },
     {
       "words": [
         "probability of the causal link"
       ],
       "number": "0.3",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     },
     {
       "words": [
         "leverage of the measure"
       ],
       "number": "0.1",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     },
     {
       "words": [
         "disinformation dam expected value"
       ],
       "number": "3e11",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     },
     {
       "words": [
         "cost of the test"
       ],
       "number": "1e9",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     },
     {
       "words": [
         "expected value to cost ratio"
       ],
       "number": "300",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     },
     {
       "words": [
         "storm cell area"
       ],
       "number": "100000000",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     },
     {
       "words": [
         "total rainfall depth"
       ],
       "number": "0.02",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     },
     {
       "words": [
         "total rain volume"
       ],
       "number": "2000000",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     },
     {
       "words": [
         "raindrop volume"
       ],
       "number": "0.000000004",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     },
     {
       "words": [
         "raindrops in a thunderstorm"
       ],
       "number": "5e14",
-      "source": "fermi estimate"
+      "source": "Fermi estimate"
     }
   ]
 }
