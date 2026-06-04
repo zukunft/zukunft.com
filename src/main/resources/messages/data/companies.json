@@ -102,7 +102,10 @@
       "name": "Revenues"
     },
     {
-      "name": "balance sheet"
+      "name": "balance"
+    },
+    {
+      "name": "sheet"
     },
     {
       "name": "cash"
@@ -135,64 +138,79 @@
       "name": "Nestle"
     },
     {
-      "name": "Other revenues"
+      "name": "Other"
     },
     {
-      "name": "Selling expenses"
+      "name": "Selling"
     },
     {
-      "name": "General administrative expenses"
+      "name": "expenses"
     },
     {
-      "name": "sales of sustainable labels"
+      "name": "expense"
     },
     {
-      "name": "Other operating expense"
+      "name": "General"
     },
     {
-      "name": "Other trading expense"
+      "name": "administrative"
     },
     {
-      "name": "sales"
+      "name": "sustainable"
     },
     {
-      "name": "Other trading income"
+      "name": "labels"
     },
     {
-      "name": "Other trading expenses"
+      "name": "operating"
     },
     {
-      "name": "Other operating net"
+      "name": "trading"
     },
     {
-      "name": "Cost of sales (reported)"
+      "name": "net"
     },
     {
-      "name": "Cost of goods sold"
+      "name": "Cost"
     },
     {
-      "name": "Distribution costs"
+      "name": "reported"
     },
     {
-      "name": "Research costs"
+      "name": "goods"
     },
     {
-      "name": "Profit/loss on equity method investments, net"
+      "name": "sold"
     },
     {
-      "name": "Other financial income/expense, net"
+      "name": "Distribution"
     },
     {
-      "name": "Financial income"
+      "name": "costs"
     },
     {
-      "name": "Financial expense"
+      "name": "Research"
     },
     {
-      "name": "Interest income"
+      "name": "Profit"
     },
     {
-      "name": "Interest expense"
+      "name": "loss"
+    },
+    {
+      "name": "equity"
+    },
+    {
+      "name": "method"
+    },
+    {
+      "name": "investments"
+    },
+    {
+      "name": "Financial"
+    },
+    {
+      "name": "Interest"
     },
     {
       "name": "income"
@@ -201,30 +219,61 @@
       "name": "tax"
     },
     {
-      "name": "Share price"
+      "name": "Share"
     },
     {
-      "name": "Number of shares"
+      "name": "price"
     },
     {
-      "name": "Target Price Earning Ratio"
+      "name": "Number"
     },
     {
-      "name": "Income from associates and joint ventures"
+      "name": "shares"
     },
     {
-      "name": "Profit attributable to non-controlling interests"
+      "name": "Target"
     },
     {
-      "name": "Prepared dishes"
+      "name": "Price"
     },
     {
-      "name": "Operating profit (reported)",
-      "plural": "Operating profit (reported)"
+      "name": "Earning"
     },
     {
-      "name": "Financial income",
-      "plural": "Financial income"
+      "name": "Ratio"
+    },
+    {
+      "name": "Income"
+    },
+    {
+      "name": "associates"
+    },
+    {
+      "name": "joint"
+    },
+    {
+      "name": "ventures"
+    },
+    {
+      "name": "attributable"
+    },
+    {
+      "name": "non-controlling"
+    },
+    {
+      "name": "interests"
+    },
+    {
+      "name": "Prepared"
+    },
+    {
+      "name": "dishes"
+    },
+    {
+      "name": "Operating"
+    },
+    {
+      "name": "profit"
     },
     {
       "name": "percent"
@@ -311,6 +360,13 @@
   ],
   "triples": [
     {
+      "name": "balance sheet",
+      "from": "sheet",
+      "verb": "of",
+      "to": "balance"
+    },
+    {
+      "name": "company has a balance sheet",
       "from": "company",
       "verb": "has a",
       "to": "balance sheet"
@@ -591,12 +647,6 @@
       "to": "2016"
     },
     {
-      "name": "2017 is follower of 2016",
-      "from": "2017",
-      "verb": "is follower of",
-      "to": "2016"
-    },
-    {
       "name": "2016 is follower of 2015",
       "from": "2016",
       "verb": "is follower of",
@@ -645,6 +695,18 @@
       "to": "cash flow statement"
     },
     {
+      "name": "sustainable labels",
+      "from": "labels",
+      "verb": "kind of",
+      "to": "sustainable"
+    },
+    {
+      "name": "sales of sustainable labels",
+      "from": "sales",
+      "verb": "of",
+      "to": "sustainable labels"
+    },
+    {
       "name": "sales of sustainable labels is part of sales",
       "from": "sales of sustainable labels",
       "verb": "is part of",
@@ -679,6 +741,288 @@
       "from": "Nestle",
       "verb": "is alias of",
       "to": "Nestlé"
+    },
+    {
+      "name": "Other revenues",
+      "from": "Revenues",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "Selling expenses",
+      "from": "expenses",
+      "verb": "kind of",
+      "to": "Selling"
+    },
+    {
+      "name": "General administrative",
+      "from": "administrative",
+      "verb": "kind of",
+      "to": "General"
+    },
+    {
+      "name": "General administrative expenses",
+      "from": "expenses",
+      "verb": "of",
+      "to": "General administrative"
+    },
+    {
+      "name": "operating expense",
+      "from": "expense",
+      "verb": "kind of",
+      "to": "operating"
+    },
+    {
+      "name": "Other operating expense",
+      "from": "operating expense",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "trading expense",
+      "from": "expense",
+      "verb": "kind of",
+      "to": "trading"
+    },
+    {
+      "name": "Other trading expense",
+      "from": "trading expense",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "trading income",
+      "from": "income",
+      "verb": "of",
+      "to": "trading"
+    },
+    {
+      "name": "Other trading income",
+      "from": "trading income",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "trading expenses",
+      "from": "expenses",
+      "verb": "of",
+      "to": "trading"
+    },
+    {
+      "name": "Other trading expenses",
+      "from": "trading expenses",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "operating net",
+      "from": "net",
+      "verb": "of",
+      "to": "operating"
+    },
+    {
+      "name": "Other operating net",
+      "from": "operating net",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "Cost of sales",
+      "from": "Cost",
+      "verb": "of",
+      "to": "sales"
+    },
+    {
+      "name": "Cost of sales (reported)",
+      "from": "Cost of sales",
+      "verb": "kind of",
+      "to": "reported"
+    },
+    {
+      "name": "goods sold",
+      "from": "goods",
+      "verb": "kind of",
+      "to": "sold"
+    },
+    {
+      "name": "Cost of goods sold",
+      "from": "Cost",
+      "verb": "of",
+      "to": "goods sold"
+    },
+    {
+      "name": "Distribution costs",
+      "from": "costs",
+      "verb": "of",
+      "to": "Distribution"
+    },
+    {
+      "name": "Research costs",
+      "from": "costs",
+      "verb": "of",
+      "to": "Research"
+    },
+    {
+      "name": "equity method",
+      "from": "method",
+      "verb": "kind of",
+      "to": "equity"
+    },
+    {
+      "name": "equity method investments",
+      "from": "investments",
+      "verb": "of",
+      "to": "equity method"
+    },
+    {
+      "name": "Profit/loss",
+      "from": "Profit",
+      "verb": "and",
+      "to": "loss"
+    },
+    {
+      "name": "Profit/loss on equity method investments",
+      "from": "Profit/loss",
+      "verb": "on",
+      "to": "equity method investments"
+    },
+    {
+      "name": "Profit/loss on equity method investments, net",
+      "from": "Profit/loss on equity method investments",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "income/expense",
+      "from": "income",
+      "verb": "and",
+      "to": "expense"
+    },
+    {
+      "name": "financial income/expense",
+      "from": "income/expense",
+      "verb": "kind of",
+      "to": "Financial"
+    },
+    {
+      "name": "Other financial income/expense",
+      "from": "financial income/expense",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "Other financial income/expense, net",
+      "from": "Other financial income/expense",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "Financial income",
+      "from": "income",
+      "verb": "of",
+      "to": "Financial"
+    },
+    {
+      "name": "Financial expense",
+      "from": "expense",
+      "verb": "of",
+      "to": "Financial"
+    },
+    {
+      "name": "Interest income",
+      "from": "income",
+      "verb": "of",
+      "to": "Interest"
+    },
+    {
+      "name": "Interest expense",
+      "from": "expense",
+      "verb": "of",
+      "to": "Interest"
+    },
+    {
+      "name": "Share price",
+      "from": "price",
+      "verb": "of",
+      "to": "Share"
+    },
+    {
+      "name": "Number of shares",
+      "from": "Number",
+      "verb": "of",
+      "to": "shares"
+    },
+    {
+      "name": "Price Earning",
+      "from": "Earning",
+      "verb": "and",
+      "to": "Price"
+    },
+    {
+      "name": "Price Earning Ratio",
+      "from": "Ratio",
+      "verb": "of",
+      "to": "Price Earning"
+    },
+    {
+      "name": "Target Price Earning Ratio",
+      "from": "Price Earning Ratio",
+      "verb": "kind of",
+      "to": "Target"
+    },
+    {
+      "name": "joint ventures",
+      "from": "ventures",
+      "verb": "kind of",
+      "to": "joint"
+    },
+    {
+      "name": "associates and joint ventures",
+      "from": "associates",
+      "verb": "and",
+      "to": "joint ventures"
+    },
+    {
+      "name": "Income from associates and joint ventures",
+      "from": "Income",
+      "verb": "of",
+      "to": "associates and joint ventures"
+    },
+    {
+      "name": "non-controlling interests",
+      "from": "interests",
+      "verb": "kind of",
+      "to": "non-controlling"
+    },
+    {
+      "name": "attributable to non-controlling interests",
+      "from": "attributable",
+      "verb": "to",
+      "to": "non-controlling interests"
+    },
+    {
+      "name": "Profit attributable to non-controlling interests",
+      "from": "Profit",
+      "verb": "kind of",
+      "to": "attributable to non-controlling interests"
+    },
+    {
+      "name": "Prepared dishes",
+      "from": "dishes",
+      "verb": "kind of",
+      "to": "Prepared"
+    },
+    {
+      "name": "Operating profit",
+      "from": "profit",
+      "verb": "kind of",
+      "to": "Operating"
+    },
+    {
+      "name": "Operating profit (reported)",
+      "from": "Operating profit",
+      "verb": "kind of",
+      "to": "reported"
     }
   ],
   "formulas": [
@@ -703,13 +1047,13 @@
       "assigned_word": "company"
     },
     {
-      "name": "Cost of sales",
+      "name": "Cost of sales formula",
       "expression": "= \"Cost of sales (reported)\" + \"Cost of goods sold\"",
       "assigned_word": "company"
     },
     {
       "name": "Operating Profit",
-      "expression": "= \"sales\" + \"Other trading net\" + \"Other operating net\" + \"Cost of sales\" + \"Distribution costs\" + \"Research costs\"",
+      "expression": "= \"sales\" + \"Other trading net\" + \"Other operating net\" + \"Cost of sales formula\" + \"Distribution costs\" + \"Research costs\"",
       "assigned_word": "company"
     },
     {

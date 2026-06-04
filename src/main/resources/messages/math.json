@@ -1260,22 +1260,10 @@
       ]
     },
     {
-      "name": "financial mathematics",
-      "description": "the branch of mathematics dealing with interest, value over time and financial calculations",
-      "refs": [
-        {
-          "name": "Mathematical finance",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q335632",
-          "type": "wikidata"
-        }
-      ]
+      "name": "financial"
     },
     {
-      "name": "golden ratio",
-      "description": "the ratio (about 1.618) in which the whole is to the larger part as the larger part is to the smaller"
+      "name": "golden"
     }
   ],
   "triples": [
@@ -1285,8 +1273,6 @@
       "from": "constant",
       "verb": "is part of",
       "to": "mathematics",
-      "type": "constant",
-      "protection": "admin_protection",
       "refs": [
         {
           "name": "Mathematical_constant",
@@ -1296,10 +1282,11 @@
           "name": "Q186509",
           "type": "wikidata"
         }
-      ]
+      ],
+      "type": "constant",
+      "protection": "admin_protection"
     },
     {
-      "name": "time of discovery",
       "from": "time",
       "verb": "of",
       "to": "discovery"
@@ -1896,6 +1883,20 @@
       ]
     },
     {
+      "name": "financial mathematics",
+      "description": "the branch of mathematics dealing with interest, value over time and financial calculations. see Wikipedia: Mathematical finance (Q335632)",
+      "from": "mathematics",
+      "verb": "kind of",
+      "to": "financial"
+    },
+    {
+      "name": "golden ratio",
+      "description": "the ratio (about 1.618) in which the whole is to the larger part as the larger part is to the smaller",
+      "from": "ratio",
+      "verb": "kind of",
+      "to": "golden"
+    },
+    {
       "from": "algebra",
       "verb": "is part of",
       "to": "mathematics"
@@ -1931,13 +1932,11 @@
       "to": "algebra"
     },
     {
-      "name": "arithmetic sequence is part of algebra",
       "from": "arithmetic sequence",
       "verb": "is part of",
       "to": "algebra"
     },
     {
-      "name": "arithmetic sum is part of algebra",
       "from": "arithmetic sum",
       "verb": "is part of",
       "to": "algebra"
@@ -1948,19 +1947,16 @@
       "to": "algebra"
     },
     {
-      "name": "binomial theorem is part of algebra",
       "from": "binomial theorem",
       "verb": "is part of",
       "to": "algebra"
     },
     {
-      "name": "common difference is part of algebra",
       "from": "common difference",
       "verb": "is part of",
       "to": "algebra"
     },
     {
-      "name": "common ratio is part of algebra",
       "from": "common ratio",
       "verb": "is part of",
       "to": "algebra"
@@ -1971,19 +1967,16 @@
       "to": "algebra"
     },
     {
-      "name": "difference of cubes is part of algebra",
       "from": "difference of cubes",
       "verb": "is part of",
       "to": "algebra"
     },
     {
-      "name": "difference of squares is part of algebra",
       "from": "difference of squares",
       "verb": "is part of",
       "to": "algebra"
     },
     {
-      "name": "Euler's formula is part of algebra",
       "from": "Euler's formula",
       "verb": "is part of",
       "to": "algebra"
@@ -1999,13 +1992,11 @@
       "to": "algebra"
     },
     {
-      "name": "geometric sequence is part of algebra",
       "from": "geometric sequence",
       "verb": "is part of",
       "to": "algebra"
     },
     {
-      "name": "geometric sum is part of algebra",
       "from": "geometric sum",
       "verb": "is part of",
       "to": "algebra"
@@ -2016,13 +2007,11 @@
       "to": "algebra"
     },
     {
-      "name": "nth term is part of algebra",
       "from": "nth term",
       "verb": "is part of",
       "to": "algebra"
     },
     {
-      "name": "perfect square is part of algebra",
       "from": "perfect square",
       "verb": "is part of",
       "to": "algebra"
@@ -2033,7 +2022,6 @@
       "to": "algebra"
     },
     {
-      "name": "quadratic formula is part of algebra",
       "from": "quadratic formula",
       "verb": "is part of",
       "to": "algebra"
@@ -2059,7 +2047,6 @@
       "to": "algebra"
     },
     {
-      "name": "sum of cubes is part of algebra",
       "from": "sum of cubes",
       "verb": "is part of",
       "to": "algebra"
@@ -2085,7 +2072,6 @@
       "to": "geometry"
     },
     {
-      "name": "arc length is part of geometry",
       "from": "arc length",
       "verb": "is part of",
       "to": "geometry"
@@ -2141,7 +2127,6 @@
       "to": "geometry"
     },
     {
-      "name": "distance formula is part of geometry",
       "from": "distance formula",
       "verb": "is part of",
       "to": "geometry"
@@ -2157,7 +2142,6 @@
       "to": "geometry"
     },
     {
-      "name": "Heron's formula is part of geometry",
       "from": "Heron's formula",
       "verb": "is part of",
       "to": "geometry"
@@ -2193,7 +2177,6 @@
       "to": "geometry"
     },
     {
-      "name": "point slope form is part of geometry",
       "from": "point slope form",
       "verb": "is part of",
       "to": "geometry"
@@ -2214,7 +2197,6 @@
       "to": "geometry"
     },
     {
-      "name": "Pythagorean theorem is part of geometry",
       "from": "Pythagorean theorem",
       "verb": "is part of",
       "to": "geometry"
@@ -2235,7 +2217,6 @@
       "to": "geometry"
     },
     {
-      "name": "regular polygon is part of geometry",
       "from": "regular polygon",
       "verb": "is part of",
       "to": "geometry"
@@ -2246,7 +2227,6 @@
       "to": "geometry"
     },
     {
-      "name": "sector area is part of geometry",
       "from": "sector area",
       "verb": "is part of",
       "to": "geometry"
@@ -2262,7 +2242,6 @@
       "to": "geometry"
     },
     {
-      "name": "slant height is part of geometry",
       "from": "slant height",
       "verb": "is part of",
       "to": "geometry"
@@ -2273,7 +2252,6 @@
       "to": "geometry"
     },
     {
-      "name": "slope intercept form is part of geometry",
       "from": "slope intercept form",
       "verb": "is part of",
       "to": "geometry"
@@ -2294,7 +2272,6 @@
       "to": "geometry"
     },
     {
-      "name": "surface area is part of geometry",
       "from": "surface area",
       "verb": "is part of",
       "to": "geometry"
@@ -2340,7 +2317,6 @@
       "to": "trigonometry"
     },
     {
-      "name": "double angle is part of trigonometry",
       "from": "double angle",
       "verb": "is part of",
       "to": "trigonometry"
@@ -2356,13 +2332,11 @@
       "to": "trigonometry"
     },
     {
-      "name": "law of cosines is part of trigonometry",
       "from": "law of cosines",
       "verb": "is part of",
       "to": "trigonometry"
     },
     {
-      "name": "law of sines is part of trigonometry",
       "from": "law of sines",
       "verb": "is part of",
       "to": "trigonometry"
@@ -2373,7 +2347,6 @@
       "to": "trigonometry"
     },
     {
-      "name": "Pythagorean identity is part of trigonometry",
       "from": "Pythagorean identity",
       "verb": "is part of",
       "to": "trigonometry"
@@ -2389,7 +2362,6 @@
       "to": "trigonometry"
     },
     {
-      "name": "sum angle is part of trigonometry",
       "from": "sum angle",
       "verb": "is part of",
       "to": "trigonometry"
@@ -2400,7 +2372,6 @@
       "to": "trigonometry"
     },
     {
-      "name": "chain rule is part of calculus",
       "from": "chain rule",
       "verb": "is part of",
       "to": "calculus"
@@ -2416,7 +2387,6 @@
       "to": "calculus"
     },
     {
-      "name": "fundamental theorem of calculus is part of calculus",
       "from": "fundamental theorem of calculus",
       "verb": "is part of",
       "to": "calculus"
@@ -2427,7 +2397,6 @@
       "to": "calculus"
     },
     {
-      "name": "integration by parts is part of calculus",
       "from": "integration by parts",
       "verb": "is part of",
       "to": "calculus"
@@ -2438,19 +2407,16 @@
       "to": "calculus"
     },
     {
-      "name": "power rule is part of calculus",
       "from": "power rule",
       "verb": "is part of",
       "to": "calculus"
     },
     {
-      "name": "product rule is part of calculus",
       "from": "product rule",
       "verb": "is part of",
       "to": "calculus"
     },
     {
-      "name": "quotient rule is part of calculus",
       "from": "quotient rule",
       "verb": "is part of",
       "to": "calculus"
@@ -2461,13 +2427,11 @@
       "to": "statistics"
     },
     {
-      "name": "complement event is part of statistics",
       "from": "complement event",
       "verb": "is part of",
       "to": "statistics"
     },
     {
-      "name": "conditional probability is part of statistics",
       "from": "conditional probability",
       "verb": "is part of",
       "to": "statistics"
@@ -2498,13 +2462,11 @@
       "to": "statistics"
     },
     {
-      "name": "standard deviation is part of statistics",
       "from": "standard deviation",
       "verb": "is part of",
       "to": "statistics"
     },
     {
-      "name": "union of events is part of statistics",
       "from": "union of events",
       "verb": "is part of",
       "to": "statistics"
@@ -2515,19 +2477,16 @@
       "to": "statistics"
     },
     {
-      "name": "z score is part of statistics",
       "from": "z score",
       "verb": "is part of",
       "to": "statistics"
     },
     {
-      "name": "compound interest is part of financial mathematics",
       "from": "compound interest",
       "verb": "is part of",
       "to": "financial mathematics"
     },
     {
-      "name": "continuous compounding is part of financial mathematics",
       "from": "continuous compounding",
       "verb": "is part of",
       "to": "financial mathematics"
@@ -2543,7 +2502,6 @@
       "to": "financial mathematics"
     },
     {
-      "name": "percent change is part of financial mathematics",
       "from": "percent change",
       "verb": "is part of",
       "to": "financial mathematics"
@@ -2559,7 +2517,6 @@
       "to": "financial mathematics"
     },
     {
-      "name": "simple interest is part of financial mathematics",
       "from": "simple interest",
       "verb": "is part of",
       "to": "financial mathematics"
