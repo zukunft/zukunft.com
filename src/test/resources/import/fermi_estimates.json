@@ -1,5 +1,5 @@
 {
-  "version": "0.0.4",
+  "version": "0.0.3",
   "time": "2026-06-04 08:00:00",
   "user": "timon",
   "selection": [
@@ -734,6 +734,18 @@
     {
       "name": "by definition",
       "description": "a value that is fixed by an unambiguous definition or convention rather than measured"
+    },
+    {
+      "name": "Berns et al. (2005)",
+      "description": "Berns GS, Chappelow J, Zink CF, Pagnoni G, Martin-Skurski ME, Richards J (2005): Neurobiological Correlates of Social Conformity and Independence During Mental Rotation. Biol Psychiatry 58:245-253"
+    },
+    {
+      "name": "Historical media estimation",
+      "description": "order-of-magnitude estimate of the share of facts on which the population reached a common consensus in the pre-internet broadcast media era"
+    },
+    {
+      "name": "Pre-internet virality estimation",
+      "description": "order-of-magnitude estimate of the share of fringe content that bypassed editorial gatekeepers and reached a mass audience before the rise of algorithmic social media"
     }
   ],
   "values": [

@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
 
     /*
      * types and extensions
@@ -119,6 +119,7 @@ class files
     CONST string IMPORT_UNDO_EXT = '_undo';
 
     CONST string IMPORT_WARNING = test_paths::IMPORT . 'warning_and_error_test' . self::JSON;
+    CONST string IMPORT_VERSION_NEWER_TEST = test_paths::IMPORT . 'version_newer_test' . self::JSON;
 
     CONST string IMPORT_COMPANIES = test_paths::IMPORT . 'companies' . self::JSON;
     CONST string IMPORT_COUNTRY_ISO = test_paths::IMPORT_WIKIPEDIA . 'country-ISO-3166' . self::JSON;

@@ -58,6 +58,7 @@ class files
     const string RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
     const string DATA_PATH = self::MESSAGE_PATH . 'data' . DIRECTORY_SEPARATOR;
+    const string DATA_START_PAGE_PATH = self::MESSAGE_PATH . 'start_page' . DIRECTORY_SEPARATOR;
     const string DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_V003_PATH = self::DB_UPGRADE_PATH . 'v0.0.3' . DIRECTORY_SEPARATOR;
@@ -130,6 +131,7 @@ class files
 
     // data for the default start page
     const string START_PAGE_DATA_FILE = 'solution_prio' . self::JSON;
+    const string CONFORMITY_MRI_BERNS_FILE = self::DATA_START_PAGE_PATH . 'conformity_mri_berns' . self::JSON;
 
     // initial data just to add some sample data and for system testing
     const string COUNTRY_FILE = 'country' . self::JSON;
@@ -192,7 +194,9 @@ class files
         self::IMPORT_DEMOCRACY_INDEX,
         self::IMPORT_CURRENCIES,
         self::IMPORT_COMPANIES,
-        self::IMPORT_WIND_INVESTMENT
+        self::IMPORT_WIND_INVESTMENT,
+        // TODO Prio 0 activate
+        //self::CONFORMITY_MRI_BERNS_FILE,
     ];
 
     // to load the default data for all pods
