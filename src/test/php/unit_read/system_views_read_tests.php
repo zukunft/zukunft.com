@@ -79,8 +79,9 @@ class system_views_read_tests
 
         // create the stable test context that is not based on the database so that the test results rarely change
         // unlike ti horizontal system view test for this test the object can be filled with data for special cases
+        global $sys;
         $ui = new frontend('system_views_read_tests');
-        $ui->load_cache();
+        $ui->load_cache($sys);
         $cfg = new data_object_ui();
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         //$cfg = new data_object_ui();

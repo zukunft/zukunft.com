@@ -303,7 +303,6 @@ class view_list extends ListBase
     function selector_page($wrd_id, $back): string
     {
 
-        global $db_con;
         $result = '';
 
         $sql = "SELECT view_id, view_name

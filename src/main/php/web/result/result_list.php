@@ -147,8 +147,7 @@ class result_list extends sandbox_list_value
      */
     function load_by_obj(object $obj, bool $by_source = false): bool
     {
-        global $db_con;
-
+        // TODO Prio 0 move to backend
         $qp = $this->load_sql_by_obj_old($db_con, $obj, $by_source);
         return $this->load($qp);
     }

@@ -299,8 +299,8 @@ class ref extends sandbox
      */
     function type_name(): string
     {
-        global $sys;
-        return $sys->typ_lst->ref_typ->name($this->predicate_id());
+        global $ui_sys;
+        return $ui_sys->typ_lst_cache->html_ref_types->name($this->predicate_id());
     }
 
     /**

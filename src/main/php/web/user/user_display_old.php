@@ -128,7 +128,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $html = new html_base();
         $result = ''; // reset the html code var
 
@@ -171,7 +172,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -337,7 +339,8 @@ class user_display_old extends user
     {
         log_debug('user_dsp->dsp_sandbox_frm(u' . $this->id() . ')');
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -386,7 +389,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -550,7 +554,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -718,7 +723,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -884,7 +890,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -1049,7 +1056,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -1219,8 +1227,11 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
-        global $usr;
+        global $ui_sys;
+
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
+        $usr = $ui_sys->usr;
         $result = ''; // reset the html code var
         $html = new html_base();
         $usr_msg = new user_message();

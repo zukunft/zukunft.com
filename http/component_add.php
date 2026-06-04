@@ -55,7 +55,8 @@ include_once paths::SHARED . 'json_fields.php';
 
 // open database
 $app = new frontend();
-$db_con = $app->start("component_add");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "component_add", $cac, $cfg);
 $lib = new library();
 
 // get the parameters
@@ -162,4 +163,4 @@ if ($usr->id > 0) {
 
 echo $result;
 
-$app->end($db_con);
+$app->end($sys, $db_con);

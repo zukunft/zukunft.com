@@ -293,11 +293,11 @@ class word extends sandbox_code_id
      */
     function set_type(?string $code_id): void
     {
-        global $sys;
+        global $ui_sys;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($sys->typ_lst->phr_typ->id($code_id));
+            $this->set_type_id($ui_sys->typ_lst_cache->html_phrase_types->id($code_id));
         }
     }
 
@@ -452,10 +452,10 @@ class word extends sandbox_code_id
      */
     function dsp_type_selector(string $form, string $style = '', ?type_lists $typ_lst = null): string
     {
-        global $sys;
+        global $ui_sys;
         $result = '';
-        if ($sys->typ_lst->phr_typ->code_id($this->type_id()) == phrase_types::FORMULA_LINK) {
-            $result .= ' type: ' . $sys->typ_lst->phr_typ->name($this->type_id());
+        if ($ui_sys->typ_lst_cache->html_phrase_types->get_code_id($this->type_id()) == phrase_types::FORMULA_LINK) {
+            $result .= ' type: ' . $ui_sys->typ_lst_cache->html_phrase_types->name($this->type_id());
         } else {
             $result .= $this->phrase_type_selector($form, $typ_lst);
         }
@@ -570,10 +570,10 @@ class word extends sandbox_code_id
      */
     function is_type(string $type): bool
     {
-        global $sys;
+        global $ui_sys;
         $result = false;
         if ($this->type_id() != Null) {
-            if ($this->type_id() == $sys->typ_lst->phr_typ->id($type)) {
+            if ($this->type_id() == $ui_sys->typ_lst_cache->html_phrase_types->id($type)) {
                 $result = true;
             }
         }
@@ -781,7 +781,6 @@ class word extends sandbox_code_id
     {
         /*
         log_debug('verb id ' . $id);
-        global $db_con;
 
         $result = '';
 
@@ -813,7 +812,8 @@ class word extends sandbox_code_id
         $sel->selected = $id;
         $sel->dummy_text = '';
         */
-        global $usr;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
         // TODO add $id to the parameters
         $result = $typ_lst->html_verbs->selector($form);
 

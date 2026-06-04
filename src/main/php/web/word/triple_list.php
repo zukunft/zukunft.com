@@ -162,7 +162,7 @@ class triple_list extends ListBase
      */
     function graph(string $back = ''): string
     {
-        global $sys;
+        global $ui_sys;
 
         $html = new html_base();
         $result = '';
@@ -244,13 +244,13 @@ class triple_list extends ListBase
 
                 // use the last word as a sample for the new word type
                 $last_linked_word_id = 0;
-                if ($lnk->get_verb()->id() == $sys->typ_lst->vrb->id(verbs::FOLLOW)) {
+                if ($lnk->get_verb()->id() == $ui_sys->typ_lst_cache->html_verbs->id(verbs::FOLLOW)) {
                     $last_linked_word_id = $lnk->get_to()->id();
                 }
 
                 // in case of the verb "following" continue the series after the last element
                 $start_id = 0;
-                if ($lnk->get_verb()->id() == $sys->typ_lst->vrb->id(verbs::FOLLOW)) {
+                if ($lnk->get_verb()->id() == $ui_sys->typ_lst_cache->html_verbs->id(verbs::FOLLOW)) {
                     $start_id = $last_linked_word_id;
                     // and link with the same direction (looks like not needed!)
                     /* if ($directional_link_type_id > 0) {

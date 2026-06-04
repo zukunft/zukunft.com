@@ -240,12 +240,12 @@ class sandbox extends db_object
      */
     public function share_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $usr;
+        global $ui_sys;
         $used_share_id = $this->share_id;
         if ($used_share_id == null) {
             $used_share_id = $typ_lst->html_share_types->default_id();
         }
-        if ($usr === $this->owner or $this->owner == null) {
+        if ($ui_sys->usr === $this->owner or $this->owner == null) {
             return $typ_lst->html_share_types->selector($form, $used_share_id);
         } else {
             return '';
@@ -259,12 +259,12 @@ class sandbox extends db_object
      */
     public function protection_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $usr;
+        global $ui_sys;
         $used_protection_id = $this->protection_id;
         if ($used_protection_id == null) {
             $used_protection_id = $typ_lst->html_protection_types->default_id();
         }
-        if ($usr === $this->owner or $this->owner == null) {
+        if ($ui_sys->usr === $this->owner or $this->owner == null) {
             return $typ_lst->html_protection_types->selector($form, $used_protection_id);
         } else {
             return '';

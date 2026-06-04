@@ -41,7 +41,6 @@ namespace Zukunft\ZukunftCom\main\php\web\html;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'language_list.php';
 //include_once paths::SHARED_CONST . 'def.php';
 //include_once paths::SHARED_CONST . 'files.php';
@@ -64,7 +63,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\language_list;
 
 class html_base
@@ -324,14 +322,12 @@ class html_base
      */
     function navbar(int $msk_id = 0, array $url_array = [], ?string $usr_name = null, ?string $usr_role = null): string
     {
-        global $sys;
+        global $ui_sys;
 
-        $api_json = $sys->typ_lst->lan->api_json_array();
-        $ui_lst = new language_list();
-        $ui_lst->set_from_json_array($api_json, language::class);
+        $lan_lst = $ui_sys?->typ_lst_cache?->html_languages ?? new language_list();
         $html = new html_base();
         $url = $html->url_new($msk_id);
-        $lan_lst = $ui_lst->select_list_item($url);
+        $lan_txt = $lan_lst->select_list_item($url);
 
         global $mtr;
         $result = $this->logo() . "\n";
@@ -348,12 +344,12 @@ class html_base
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        // TODO switch the view mask on the suggesten related to the view
+        // TODO switch the view mask to a suggested related view
         $result .= $this->view_change_list($msk_id, $url_array) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        $result .= $lan_lst . "\n";
+        $result .= $lan_txt . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="user-menu">' . "\n";
         $usr_tooltip = $usr_name !== null
@@ -446,7 +442,6 @@ class html_base
      */
     function footer(bool $no_about = false): string
     {
-        global $sys;
         global $mtr;
         $result = '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
 
@@ -1778,17 +1773,12 @@ class html_base
 
     function get_style_code(?int $style_id = null): string
     {
+        global $ui_sys;
+        $result = '';
         if ($style_id != null) {
-            global $sys;
-            $style = $sys->typ_lst->msk_sty->get($style_id);
-            if ($style != null) {
-                return $style->get_code_id();
-            } else {
-                return '';
-            }
-        } else {
-            return '';
+            $result = $ui_sys?->typ_lst_cache?->html_view_styles?->get_code_id($style_id) ?? '';
         }
+        return $result;
     }
 
     /**

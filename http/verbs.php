@@ -54,7 +54,8 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
-$db_con = $app->start("verbs");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "verbs", $cac, $cfg);
 
 $result = ''; // reset the html code var
 $lib = new library();
@@ -92,4 +93,4 @@ if ($usr->id() > 0) {
 echo $result;
 
 // Closing connection
-$app->end($db_con);
+$app->end($sys, $db_con);

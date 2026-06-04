@@ -339,12 +339,12 @@ class system_form extends component
      */
     function show_phrase_type(word|db_object $dbo): string
     {
-        global $sys;
+        global $ui_sys;
 
         $result = '';
         $type_id = $dbo->type_id();
         if ($type_id !== null) {
-            $result = $sys->typ_lst->phr_typ->name($type_id);
+            $result = $ui_sys->typ_lst_cache->html_phrase_types->name($type_id);
         }
         return $result;
     }

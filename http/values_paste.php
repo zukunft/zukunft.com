@@ -46,7 +46,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 
 // open database
 $app = new frontend();
-$db_con = $app->start("values_paste");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "values_paste", $cac, $cfg);
 
 $result = ''; // reset the html code var
 
@@ -130,4 +131,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-$app->end($db_con);
+$app->end($sys, $db_con);

@@ -310,16 +310,15 @@ class view_exe extends view_base
      */
     function dsp_edit($add_cmp, $wrd, $back): string
     {
-        global $usr;
-        global $sys;
-        global $cfg;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
 
         $result = '';
         $html = new html_base();
 
         // use the default settings if needed
         if ($this->type_id() <= 0) {
-            $this->set_type_id($sys->typ_lst->msk_typ->id(view_types::DEFAULT));
+            $this->set_type_id($ui_sys->typ_lst_cache->html_view_types->id(view_types::DEFAULT));
         }
 
         // the header to add or change a view
@@ -368,7 +367,11 @@ class view_exe extends view_base
             $result .= '</div>';
 
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
-            $row_limit = $cfg->get_by([triples::ROW_LIMIT, words::DATABASE], def::FALLBACK_DB_PAGE_ROWS);
+            if ($ui_sys?->cfg !== null) {
+                $row_limit = $ui_sys->cfg->get_by([triples::ROW_LIMIT, words::DATABASE], def::FALLBACK_DB_PAGE_ROWS);
+            } else {
+                $row_limit = def::FALLBACK_DB_PAGE_ROWS;
+            }
 
             // collect the history
             $changes = $this->dsp_hist(0, $row_limit, '', $back);
@@ -415,7 +418,7 @@ class view_exe extends view_base
     private function linked_components($add_cmp, $wrd, string $script, $back): string
     {
         $html = new html_base();
-        global $ui_cfg;
+        global $ui_sys;
 
         $result = '';
 
@@ -444,14 +447,14 @@ class view_exe extends view_base
                 $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
                 $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
-                $result .= $this->component_selector($script, '', $id_selected, $ui_cfg->component_list());
+                $result .= $this->component_selector($script, '', $id_selected, $ui_sys->component_list());
 
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
-                $result .= $this->component_selector($script, '', $this->type_id(), $ui_cfg->component_list());
+                $result .= $this->component_selector($script, '', $this->type_id(), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');

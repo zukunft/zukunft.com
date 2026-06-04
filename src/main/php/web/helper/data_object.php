@@ -181,6 +181,9 @@ class data_object
     // the user-specific frontend configuration (loaded once at request start)
     public ?config $cfg = null;
 
+    // the interactive debug level (0 = off) set once at request start from the url
+    public int $debug = 0;
+
     // the session user
     public user $usr;
 

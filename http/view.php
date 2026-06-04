@@ -102,7 +102,8 @@ $url_array = [
 
 // open database
 $app = new frontend();
-$db_con = $app->start("view", $msg, $_POST);
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "view", $cac, $cfg, $msg, $_POST);
 
 
 if ($db_con->is_open()) {
@@ -125,7 +126,7 @@ if ($db_con->is_open()) {
         $usr_dsp->set_from_json($usr->api_json(), $msg);
 
         $ui = new frontend('view');
-        $ui->load_cache();
+        $ui->load_cache($sys);
 
         // publish the loaded ui cache to the allowed global so renderers
         // (e.g. phrase_list::category_subtitle) can read the verb type cache
@@ -134,7 +135,7 @@ if ($db_con->is_open()) {
         // load the user-specific frontend configuration onto the ui cache
         // TODO Prio 1 load the config from cache if nothing has been changed
         $ui_sys->cfg = new config();
-        $ui_sys->cfg->load();
+        $ui_sys->cfg->load($sys);
 
         // execute the user request and POST-Redirect-GET to prevent re-submission on reload
         $sys->times->switch(system_time_type::URL_TO_ACTION);
@@ -151,7 +152,7 @@ if ($db_con->is_open()) {
     }
 
     // close the database
-    $app->end($db_con, false);
+    $app->end($sys, $db_con, false);
 } else {
     $web_txt .= 'database connection lost';
 }

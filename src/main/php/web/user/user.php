@@ -404,11 +404,11 @@ class user extends db_object
      */
     function is_ip_only(): bool
     {
-        global $sys;
+        global $ui_sys;
         if ($this->profile_id <= 0) {
             return true;
         }
-        return $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::IP_ONLY);
+        return $this->profile_id == $ui_sys->typ_lst_cache->html_user_profiles->id(user_profiles::IP_ONLY);
     }
 
     /**
@@ -416,12 +416,12 @@ class user extends db_object
      */
     function is_admin(): bool
     {
-        global $sys;
+        global $ui_sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->html_user_profiles->id(user_profiles::ADMIN)) {
                 $result = true;
             }
         }
@@ -433,13 +433,13 @@ class user extends db_object
      */
     function is_system(): bool
     {
-        global $sys;
+        global $ui_sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->html_user_profiles->id(user_profiles::TEST)
+                or $this->profile_id == $ui_sys->typ_lst_cache->html_user_profiles->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
         }
@@ -451,9 +451,9 @@ class user extends db_object
      */
     function profile_name(): ?string
     {
-        global $sys;
+        global $ui_sys;
         if ($this->profile_id > 0) {
-            return $sys->typ_lst->usr_pro->name($this->profile_id);
+            return $ui_sys->typ_lst_cache->html_user_profiles->name($this->profile_id);
         } else {
             return null;
         }
@@ -467,7 +467,7 @@ class user extends db_object
      */
     function navbar_role(): ?string
     {
-        global $sys;
+        global $ui_sys;
         $elevated = [
             user_profiles::SYS_LINK,
             user_profiles::ADMIN,
@@ -477,7 +477,7 @@ class user extends db_object
             user_profiles::SYSTEM,
         ];
         foreach ($elevated as $prf) {
-            if ($this->profile_id == $sys->typ_lst->usr_pro->id($prf)) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->html_user_profiles->id($prf)) {
                 return $this->profile_name();
             }
         }

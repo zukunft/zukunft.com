@@ -276,7 +276,8 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_id(phrase_list|sandbox_list_named $lst_new): user_message
     {
-        global $usr;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
 
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {

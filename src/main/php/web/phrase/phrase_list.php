@@ -783,7 +783,6 @@ class phrase_list extends sandbox_list_named
      */
     function mainly(): ?phrase
     {
-        global $db_con;
         $phr = null;
         if ($this->count() > 1) {
             $cfg = new config();
@@ -836,7 +835,8 @@ class phrase_list extends sandbox_list_named
      */
     function dsp_name(): string
     {
-        global $debug;
+        global $ui_sys;
+        $debug = $ui_sys->debug;
         $lib = new library();
 
         $name_lst = $this->names();

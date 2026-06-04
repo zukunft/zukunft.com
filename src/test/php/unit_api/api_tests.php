@@ -120,6 +120,7 @@ class api_tests
      */
     function run(test_cleanup $t): void
     {
+        global $sys;
 
         // start the test section (ts)
         $ts = 'api ';
@@ -186,12 +187,12 @@ class api_tests
         $t->subheader($ts . 'api config');
 
         $cfg = new config();
-        $cfg->load();
+        $cfg->load($sys);
         $test_name = 'the default configuration api message must at least contain the pod name';
         $t->assert($test_name, $cfg->get_by([words::POD, words::URL]), POD_NAME);
 
         $cfg_all = new config();
-        $cfg_all->load(api::CONFIG_ALL);
+        $cfg_all->load($sys, api::CONFIG_ALL);
         $test_name = 'there must be more configuration values than the frontend configuration values';
         // TODO Prio 2 activate
         //$t->assert_greater($test_name, $cfg->count(), $cfg_all->count());
@@ -206,7 +207,7 @@ class api_tests
         $t->subheader($ts . 'api frontend config');
 
         $cfg = new config();
-        $cfg->load(api::CONFIG_FRONTEND);
+        $cfg->load($sys, api::CONFIG_FRONTEND);
         $test_name = 'at least one frontend configuration value must be loaded via api message';
         $t->assert_not($test_name, $cfg->count(), 0);
         $test_name = 'the frontend configuration must at least contain some user number format settings';
@@ -223,7 +224,7 @@ class api_tests
         $t->subheader($ts . 'api user config');
 
         $cfg = new config();
-        $cfg->load(api::CONFIG_USER);
+        $cfg->load($sys, api::CONFIG_USER);
         $test_name = 'at least one frontend configuration value must be loaded via api message';
         $t->assert_not($test_name, $cfg->count(), 0);
         $test_name = 'the frontend configuration must at least contain some user number format settings';

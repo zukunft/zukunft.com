@@ -58,7 +58,8 @@ $html = new html_base();
 
 // open database
 $app = new frontend();
-$db_con = $app->start("value_del");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "value_del", $cac, $cfg);
 
 global $mtr;
 
@@ -113,4 +114,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-$app->end($db_con);
+$app->end($sys, $db_con);

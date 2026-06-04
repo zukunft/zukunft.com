@@ -237,8 +237,12 @@ class value_list extends ListBase
 
         if (!$this->is_empty()) {
             if ($limit == null) {
-                global $cfg;
-                $limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+                global $ui_sys;
+                if ($ui_sys?->cfg !== null) {
+                    $limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+                } else {
+                    $limit = config::LIMIT_VALUE_LIST;
+                }
             }
 
             $i = 0;
@@ -283,8 +287,12 @@ class value_list extends ListBase
 
         if (!$this->is_empty()) {
             if ($limit == null) {
-                global $cfg;
-                $limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+                global $ui_sys;
+                if ($ui_sys?->cfg !== null) {
+                    $limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+                } else {
+                    $limit = config::LIMIT_VALUE_LIST;
+                }
             }
 
             $i = 0;
@@ -410,7 +418,7 @@ class value_list extends ListBase
     /*
     function dsp_table($phr_row, $back): string
     {
-        global $usr;
+        $usr = $ui_sys->usr;
 
         $result = '';
         $html = new html_base();

@@ -38,6 +38,7 @@ namespace Zukunft\ZukunftCom\main\php\web\helper;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once paths::MODEL_HELPER . 'system_object.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
@@ -48,6 +49,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
@@ -104,12 +106,12 @@ class config extends value_list
 
     /**
      * request the user-specific frontend configuration from the backend
+     * @param system_object $sys the backend system control object for the execution time tracking
+     * @param string $part the config part to load e.g. the frontend config
      * @return user_message if it fails the reason why
      */
-    function load(string $part = api::CONFIG_FRONTEND): user_message
+    function load(system_object $sys, string $part = api::CONFIG_FRONTEND): user_message
     {
-        global $sys;
-
         $msg = new user_message();
         $sys->times->switch(system_time_type::LOAD_CONFIG);
 

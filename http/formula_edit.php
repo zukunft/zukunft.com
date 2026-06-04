@@ -54,7 +54,8 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views as views;
 
 $app = new frontend();
-$db_con = $app->start("formula_edit");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "formula_edit", $cac, $cfg);
 $html = new html_base();
 
 // get the parameters
@@ -165,4 +166,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-$app->end($db_con);
+$app->end($sys, $db_con);
