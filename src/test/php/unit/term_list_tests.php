@@ -126,7 +126,7 @@ class term_list_tests
 
         // positive: term->impact returns the impact of the wrapped word
         $test_name = 'term->impact returns the impact of the wrapped word';
-        $t->assert($test_name, $wrd_high->term()->impact() == 9.0, true);
+        $t->assert($test_name, $wrd_high->term()->get_impact() == 9.0, true);
 
         // positive: sort_by_impact orders the list with the highest impact term first
         $test_name = 'term_list->sort_by_impact shows the highest impact term first';

@@ -330,7 +330,7 @@ class system_form extends component
      */
     function show_plural(word|db_object $dbo): string
     {
-        return $dbo->get_plural() ?? '';
+        return $dbo->plural ?? '';
     }
 
     /**
