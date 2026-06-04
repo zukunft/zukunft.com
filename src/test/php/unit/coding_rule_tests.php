@@ -104,6 +104,9 @@ class coding_rule_tests
 
         $this->php_cfg_no_web_tests($t);
 
+        $t->subheader($ts . 'frontend globals');
+        $this->php_web_only_allowed_globals_tests($t);
+
         $t->subheader($ts . 'config.yaml consistency');
         $this->config_yaml_word_triple_tests($t);
 
@@ -343,6 +346,45 @@ class coding_rule_tests
                 }
             }
             $pos++;
+        }
+    }
+
+    /**
+     * check that files in src/main/php/web/** declare no PHP global other than
+     * $ui_sys and $mtr — the only frontend-scoped globals allowed by
+     * docs/llm/state-and-messages.md
+     *
+     * each violation produces one failing assertion identifying the file, line
+     * and offending name; a clean tree produces no assertions
+     *
+     * positive (test fires when it should): a line like "global $sys;" inside
+     *     web/ flags the rule violation
+     * negative (test tolerates good code): "global $ui_sys;" and "global $mtr;"
+     *     in web/ pass without an assertion
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_web_only_allowed_globals_tests(test_cleanup $t): void
+    {
+        $allowed = ['ui_sys', 'mtr'];
+        $lib = new library();
+        $file_array = $lib->dir_to_array(paths::WEB);
+        $code_files = $lib->array_to_path($file_array);
+        foreach ($code_files as $code_file) {
+            $ctrl_code = file(paths::WEB . $code_file);
+            foreach ($ctrl_code as $line_idx => $line) {
+                if (preg_match_all('/global\s+\$([a-zA-Z_][a-zA-Z0-9_]*)/', $line, $matches)) {
+                    foreach ($matches[1] as $name) {
+                        if (!in_array($name, $allowed, true)) {
+                            $test_name = 'web/ must declare only $ui_sys and $mtr as globals'
+                                . ' but found $' . $name
+                                . ' in ' . $code_file . ':' . ($line_idx + 1);
+                            $t->assert($test_name, '', $name);
+                        }
+                    }
+                }
+            }
         }
     }
 

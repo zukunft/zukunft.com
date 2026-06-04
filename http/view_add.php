@@ -51,7 +51,8 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
-$db_con = $app->start("view_add");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "view_add", $cac, $cfg);
 $html = new html_base();
 
 global $sys_msk_cac;
@@ -132,4 +133,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-$app->end($db_con);
+$app->end($sys, $db_con);

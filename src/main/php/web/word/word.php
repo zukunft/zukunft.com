@@ -136,16 +136,17 @@ class word extends sandbox_code_id
      */
 
     // the language specific forms
-    // TODO make most ui vars public and check the mappings
-    private ?string $plural = null;
+    public ?string $plural = null;
 
     // the main parent phrase
-    private ?phrase $parent = null;
+    public ?phrase $parent = null;
 
     // the phrases connected to this word by a triple
     public ?phrase_list $phr_lst = null;
 
-    // the impact used to sort the words
+    // the system calculated impact of this word used to sort the words by relevance
+    // (highest impact first); same field name as triple, formula and verb so a term can
+    // read the impact of its wrapped object without knowing the concrete class
     public float $impact = 0.0;
 
 
@@ -166,9 +167,9 @@ class word extends sandbox_code_id
         parent::url_mapper($url_array, $usr_msg, $dto);
         if ($usr_msg->is_ok()) {
             if (array_key_exists(url_var::PLURAL, $url_array)) {
-                $this->set_plural($url_array[url_var::PLURAL]);
+                $this->plural = $url_array[url_var::PLURAL];
             } else {
-                $this->set_plural(null);
+                $this->plural = null;
             }
             if (array_key_exists(url_var::IMPACT, $url_array)) {
                 if ($url_array[url_var::IMPACT] != null) {
@@ -199,14 +200,9 @@ class word extends sandbox_code_id
 
         parent::api_mapper($json_array, $msg);
         if (array_key_exists(json_fields::PLURAL, $json_array)) {
-            $this->set_plural($json_array[json_fields::PLURAL]);
+            $this->plural = $json_array[json_fields::PLURAL];
         } else {
-            $this->set_plural(null);
-        }
-        if (array_key_exists(json_fields::PLURAL, $json_array)) {
-            $this->set_plural($json_array[json_fields::PLURAL]);
-        } else {
-            $this->set_plural(null);
+            $this->plural = null;
         }
         if (array_key_exists(json_fields::IMPACT, $json_array)) {
             if ($json_array[json_fields::IMPACT] != null) {
@@ -218,9 +214,9 @@ class word extends sandbox_code_id
             $this->impact = 0.0;
         }
         if (array_key_exists(json_fields::PARENT, $json_array)) {
-            $this->set_parent($json_array[json_fields::PARENT]);
+            $this->parent = $json_array[json_fields::PARENT];
         } else {
-            $this->set_parent(null);
+            $this->parent = null;
         }
         if (array_key_exists(json_fields::PHRASES_RELATED, $json_array)) {
             $value = $json_array[json_fields::PHRASES_RELATED];
@@ -252,9 +248,9 @@ class word extends sandbox_code_id
         $vars = parent::api_array();
 
         // usage and impact are not included here because this system value is never updated by the frontend
-        $vars[json_fields::PLURAL] = $this->get_plural();
+        $vars[json_fields::PLURAL] = $this->plural;
         if ($this->has_parent()) {
-            $vars[json_fields::PARENT] = $this->parent()->api_array();
+            $vars[json_fields::PARENT] = $this->parent->api_array();
         }
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
@@ -292,52 +288,33 @@ class word extends sandbox_code_id
      * set and get
      */
 
-    function set_plural(?string $plural): void
+    /**
+     * @param string|null $code_id the code id of the phrase type
+     */
+    function set_type(?string $code_id): void
     {
-        $this->plural = $plural;
-    }
-
-    function get_plural(): ?string
-    {
-        return $this->plural;
+        global $ui_sys;
+        if ($code_id == null) {
+            $this->set_type_id();
+        } else {
+            $this->set_type_id($ui_sys->typ_lst_cache->html_phrase_types->id($code_id));
+        }
     }
 
     /**
-     * @return float the system calculated impact of this word used to sort the words by relevance
-     *               (highest impact first); same accessor as triple, formula and verb so a term can
-     *               read the impact of its wrapped object without knowing the concrete class
+     * @return float the impact value as a function to overwrite the parent function
      */
     function impact(): float
     {
         return $this->impact;
     }
 
-    function set_parent(?phrase $parent): void
-    {
-        $this->parent = $parent;
-    }
-
-    function parent(): ?phrase
-    {
-        return $this->parent;
-    }
-
-    function set_view_id(?int $view_id): void
-    {
-        $this->view_id = $view_id;
-    }
-
     /**
-     * @param string|null $code_id the code id of the phrase type
+     * @return string|null the plural string as a function to overwrite the parent function
      */
-    function set_type(?string $code_id): void
+    function get_plural(): ?string
     {
-        global $sys;
-        if ($code_id == null) {
-            $this->set_type_id();
-        } else {
-            $this->set_type_id($sys->typ_lst->phr_typ->id($code_id));
-        }
+        return $this->plural;
     }
 
 
@@ -376,27 +353,40 @@ class word extends sandbox_code_id
 
 
     /*
-     * load
-     */
-
-    /*
      * related
      */
 
     /**
      * get the parent phrases of the given phrase
-     * if a phrase list is given get only the parent phrases within the list
+     * if a phrase list is given get only the parent phrases within the list (no api call)
      * if no phrase list is given get the phrases from the api
      * e.g. for Zurich the list is City and Canton based on a phrase list with City, Canton and country
      * but  for Zurich the list is City, Canton and company based on a phrase list with company, City, Canton and country
-     * @param phrase_list|null $phr_lst
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
      * @param int $levels the number of parent levels
-     * @return phrase_list
+     * @return phrase_list capped by the user-specific frontend config limit
      */
     function parents(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
     {
-        $lst = new phrase_list();
-        $lst->load_related($this->phrase(), foaf_direction::UP);
+        if ($phr_lst !== null) {
+            $lst = $phr_lst->parents($this->phrase());
+        } else {
+            $lst = new phrase_list();
+            $lst->load_related($this->phrase(), foaf_direction::UP);
+        }
+        // limit the number of parents shown to keep the page-title category subtitle readable
+        global $ui_sys;
+        if ($ui_sys?->cfg !== null) {
+            $limit = $ui_sys->cfg->get_by(
+                [words::RELATED, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                def::FALLBACK_PHRASES_RELATED
+            );
+        } else {
+            $limit = def::FALLBACK_PHRASES_RELATED;
+        }
+        if ($lst->count() > $limit) {
+            $lst->set_lst(array_slice($lst->lst(), 0, $limit));
+        }
         return $lst;
     }
 
@@ -462,10 +452,10 @@ class word extends sandbox_code_id
      */
     function dsp_type_selector(string $form, string $style = '', ?type_lists $typ_lst = null): string
     {
-        global $sys;
+        global $ui_sys;
         $result = '';
-        if ($sys->typ_lst->phr_typ->code_id($this->type_id()) == phrase_types::FORMULA_LINK) {
-            $result .= ' type: ' . $sys->typ_lst->phr_typ->name($this->type_id());
+        if ($ui_sys->typ_lst_cache->html_phrase_types->get_code_id($this->type_id()) == phrase_types::FORMULA_LINK) {
+            $result .= ' type: ' . $ui_sys->typ_lst_cache->html_phrase_types->name($this->type_id());
         } else {
             $result .= $this->phrase_type_selector($form, $typ_lst);
         }
@@ -580,10 +570,10 @@ class word extends sandbox_code_id
      */
     function is_type(string $type): bool
     {
-        global $sys;
+        global $ui_sys;
         $result = false;
         if ($this->type_id() != Null) {
-            if ($this->type_id() == $sys->typ_lst->phr_typ->id($type)) {
+            if ($this->type_id() == $ui_sys->typ_lst_cache->html_phrase_types->id($type)) {
                 $result = true;
             }
         }
@@ -724,7 +714,7 @@ class word extends sandbox_code_id
             $hidden_fields .= $html->form_hidden("back", $back);
             $hidden_fields .= $html->form_hidden("confirm", '1');
             $detail_fields = $dsp_frm;
-            $detail_fields .= $html->form_text(url_var::PLURAL, $this->get_plural(), msg_id::FORM_FIELD_PLURAL);
+            $detail_fields .= $html->form_text(url_var::PLURAL, $this->plural, msg_id::FORM_FIELD_PLURAL);
             $detail_fields .= $html->form_text(url_var::DESCRIPTION, $this->get_description(), msg_id::FORM_FIELD_DESCRIPTION);
             $detail_fields .= $dsp_type;
             $detail_row = $html->fr($detail_fields) . '<br>';
@@ -791,7 +781,6 @@ class word extends sandbox_code_id
     {
         /*
         log_debug('verb id ' . $id);
-        global $db_con;
 
         $result = '';
 
@@ -823,7 +812,8 @@ class word extends sandbox_code_id
         $sel->selected = $id;
         $sel->dummy_text = '';
         */
-        global $usr;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
         // TODO add $id to the parameters
         $result = $typ_lst->html_verbs->selector($form);
 
@@ -967,7 +957,7 @@ class word extends sandbox_code_id
 
     private function has_parent(): bool
     {
-        if ($this->parent() == null) {
+        if ($this->parent == null) {
             return false;
         } else {
             return true;

@@ -39,6 +39,7 @@ namespace Zukunft\ZukunftCom\main\php\web\types;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'change_action_list.php';
@@ -73,6 +74,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view;
@@ -405,7 +407,7 @@ class type_lists
     function set_languages(?array $json_array = null): void
     {
         $this->html_languages = new language_list();
-        $this->html_languages->set_from_json_array($json_array);
+        $this->html_languages->set_from_json_array($json_array, language::class);
     }
 
     function set_language_forms(?array $json_array = null): void

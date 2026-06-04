@@ -226,12 +226,12 @@ class term extends combine_named
     private
     function load_word_by_id(int $id): bool
     {
-        global $sys;
+        global $ui_sys;
 
         $result = false;
         $wrd = new word();
         if ($wrd->load_by_id($id)) {
-            if ($wrd->type_id() == $sys->typ_lst->phr_typ->id(phrase_types::FORMULA_LINK)) {
+            if ($wrd->type_id() == $ui_sys->typ_lst_cache->html_phrase_types->id(phrase_types::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
@@ -503,9 +503,9 @@ class term extends combine_named
      * @return float the system calculated impact of the wrapped word, triple, formula or verb;
      *               used to sort a term list so that the most relevant term is shown first
      */
-    function impact(): float
+    function get_impact(): float
     {
-        return $this->obj()->impact();
+        return $this->obj()->impact;
     }
 
     /**

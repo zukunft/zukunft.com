@@ -67,3 +67,4 @@ messages:
   link: "Verknüpfung"
   to: "zu"
   extends: "erweitert"
+  system_sub_title_no_usage: "Nicht verwendet"

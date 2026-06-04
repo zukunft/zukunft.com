@@ -315,12 +315,12 @@ class phrase extends combine_named
 
     function is_type_phrase(phrase $phr): bool
     {
-        global $ui_cac;
+        global $ui_sys;
 
         $result = false;
         $typ_id = $this->type_id();
         if ($typ_id != null) {
-            $typ = $ui_cac?->typ_lst_cache?->html_phrase_types?->get($this->type_id());
+            $typ = $ui_sys?->typ_lst_cache?->html_phrase_types?->get($this->type_id());
             if ($typ != null) {
                 $typ_phr_lst = $typ->type_phrases();
                 foreach ($typ_phr_lst->lst() as $typ_phr) {

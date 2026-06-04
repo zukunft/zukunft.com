@@ -29,6 +29,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO fix issues in the unit tests for all component types ('Component display test' in src/test/php/unit_ui/base_ui_tests.php)
     TODO add unit test for all frontend components
     TODO test user activate and password reset
+    TODO create a coded unit test for all possible coding rules e.g. that in frontend only the global vars $ui_sys and $mtr should be used
 
     TODO review the base import files:
          in src/test/resources/import/fermi_estimates.json add a description to the words and try to fimd a wikipedia / wikidata ref
@@ -132,7 +133,7 @@ A proper issue ticket should be created for these TODOs notes:
          - $db_con for the database connection
          - $cfg for the user configuration numbers that changes more often than the types and the system views  
          - $cac for the backend cache of user-specific data_object
-         - $ui_cac for the frontend cache including the session user
+         - $ui_sys for the frontend cache including the session user
          - $mtr for the message translation use as the last step in the frontend
          - $t for the base test object with the functions for assert and cleanup
          - $t_sys for error counting and the execution times 
@@ -175,7 +176,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add a frontend db cache table (until it is known how e.g. a cockie can be used as a cache)
          the fields of the table "cache_ui" are the same as for the backend but without user and backend config: 
 
-    TODO use global $ui_cac for the frontend cache and $cac for the global backend cache and remove all other caches
+    TODO use global $ui_sys for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
 

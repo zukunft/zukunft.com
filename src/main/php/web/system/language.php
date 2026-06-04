@@ -40,14 +40,12 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
-include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -93,12 +91,9 @@ class language extends type_object
      * selectors
      */
 
-    function select_list_item(string $url): string
+    function select_list_item(string $url, string $field = url_var::LANGUAGE, ?string $name = null, ?string $tip = null): string
     {
-        $html = new html_base();
-        $url = $url . url_var::ADD . url_var::LANGUAGE . url_var::EQ . $this->code_id;
-        $txt = $html->ref($url, $this->get_local_name(), $this->name);
-        return $html->list_item($txt);
+        return parent::select_list_item($url, $field, $this->get_local_name(), $this->name);
     }
 
 

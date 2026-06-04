@@ -684,9 +684,9 @@ class component extends sandbox_code_id
      */
     function html(?phrase $phr = null, ?db_object $dbo = null, ?data_object $cfg = null): string
     {
-        global $sys;
+        global $ui_sys;
         $base = new ui_base();
-        return match ($sys->typ_lst->cmp_typ->code_id($this->type_id())) {
+        return match ($ui_sys->typ_lst_cache->html_component_types->get_code_id($this->type_id())) {
             component_types::TEXT => $this->text(),
             component_types::PHRASE_NAME => $this->word_name($phr),
             component_types::VALUES_RELATED => $base->table($dbo, $cfg),
@@ -707,8 +707,8 @@ class component extends sandbox_code_id
      */
     function word_name(phrase $phr): string
     {
-        global $sys;
-        if ($sys->typ_lst->cmp_typ->code_id($this->type_id()) == component_types::PHRASE_NAME) {
+        global $ui_sys;
+        if ($ui_sys->typ_lst_cache->html_component_types->get_code_id($this->type_id()) == component_types::PHRASE_NAME) {
             return $phr->name();
         } else {
             return 'Missing component type';
@@ -722,8 +722,6 @@ class component extends sandbox_code_id
     {
         $this->log_debug("id " . $this->id() . " (word " . $wrd->id() . ", add " . $add_link . ").");
 
-        global $usr;
-        global $db_con;
         $html = new html_base();
         $result = '';
 

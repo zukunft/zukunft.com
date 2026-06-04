@@ -52,7 +52,8 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
-$db_con = $app->start("link_del");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "link_del", $cac, $cfg);
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
@@ -104,4 +105,4 @@ if ($usr->id > 0) {
 
 echo $result;
 
-$app->end($db_con);
+$app->end($sys, $db_con);

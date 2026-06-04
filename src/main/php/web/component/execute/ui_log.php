@@ -53,12 +53,12 @@ class ui_log
         // TODO review
         // if the given change og is empty use the global cache
         if ($log_lst->is_empty()) {
-            global $ui_cac;
-            if ($ui_cac == null) {
+            global $ui_sys;
+            if ($ui_sys == null) {
                 log_warning('ui cache is empty');
                 $log_lst = new change_log_list();
             } else {
-                $log_lst = $ui_cac->chg_log;
+                $log_lst = $ui_sys->chg_log;
             }
         }
         // filter the change log based on the given object

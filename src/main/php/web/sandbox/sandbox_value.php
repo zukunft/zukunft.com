@@ -312,7 +312,8 @@ class sandbox_value extends sandbox
      */
     function val_formatted(): string
     {
-        global $usr;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
         $result = '';
 
         // TODO check that the phrases are set

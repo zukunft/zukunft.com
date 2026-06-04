@@ -79,14 +79,14 @@ class type_object
     public int $id;                // the database id is also used as the array pointer
     public string $name;           // simply the type name as shown to the user
     public string $code_id;        // this id text is unique for all code links and is used for system im- and export
-    public ?string $comment = '';  // to explain the type to the user as a tooltip
+    public ?string $description = '';  // to explain the type to the user as a tooltip
 
 
     /*
      * construct and map
      */
 
-    function __construct(int $id, ?string $code_id, string $name = '', ?string $comment = '')
+    function __construct(int $id, ?string $code_id, string $name = '', ?string $description = '')
     {
         $this->set_id($id);
         $this->set_name($name);
@@ -97,9 +97,9 @@ class type_object
             // TODO create an action e.g. to add a code id to the new verb
             log_warning('code id is missing for type ' . $name . ' (' . $id . ')');
         }
-        if ($comment != null) {
-            if ($comment != '') {
-                $this->set_comment($comment);
+        if ($description != null) {
+            if ($description != '') {
+                $this->set_description($description);
             }
         }
     }
@@ -124,9 +124,9 @@ class type_object
         $this->code_id = $code_id;
     }
 
-    function set_comment(string $comment): void
+    function set_description(string $description): void
     {
-        $this->comment = $comment;
+        $this->description = $description;
     }
 
     function id(): int
@@ -144,14 +144,14 @@ class type_object
         return $this->code_id;
     }
 
-    function comment(): string
+    function description(): string
     {
-        return $this->comment;
+        return $this->description;
     }
 
     function get_description(): ?string
     {
-        return $this->comment;
+        return $this->description;
     }
 
     /**
@@ -164,7 +164,28 @@ class type_object
     {
         $html = new html_base();
         $url = $html->url_new($msk_id, $this->id(), '', $back);
-        return $html->ref($url, $this->name(), $this->comment, $style);
+        return $html->ref($url, $this->name(), $this->description, $style);
+    }
+
+
+    /*
+     * selectors
+     */
+
+    /**
+     * create the html list item to select this type by adding its code id to the given url
+     * @param string $url the base url to which the selection of this type is appended
+     * @param string $field the url field name used to select this type e.g. url_var::LANGUAGE
+     * @param string|null $name the text shown for the item; the type name if not set
+     * @param string|null $tip the tooltip shown for the item; the type description if not set
+     * @return string the html code of the list item
+     */
+    function select_list_item(string $url, string $field, ?string $name = null, ?string $tip = null): string
+    {
+        $html = new html_base();
+        $url = $url . url_var::ADD . $field . url_var::EQ . $this->code_id;
+        $txt = $html->ref($url, $name ?? $this->name(), $tip ?? $this->description);
+        return $html->list_item($txt);
     }
 
 
@@ -194,7 +215,7 @@ class type_object
             $this->set_code_id($url_array[url_var::CODE_ID]);
         }
         if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
-            $this->set_comment($url_array[url_var::DESCRIPTION]);
+            $this->set_description($url_array[url_var::DESCRIPTION]);
         }
         return $usr_msg;
     }
@@ -228,9 +249,9 @@ class type_object
             $this->code_id = null;
         }
         if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
-            $this->comment = $json_array[json_fields::DESCRIPTION];
+            $this->description = $json_array[json_fields::DESCRIPTION];
         } else {
-            $this->comment = null;
+            $this->description = null;
         }
 
         return $msg->is_ok();
@@ -246,7 +267,7 @@ class type_object
         $vars[json_fields::ID] = $this->id();
         $vars[json_fields::NAME] = $this->name;
         $vars[json_fields::CODE_ID] = $this->code_id;
-        $vars[json_fields::DESCRIPTION] = $this->comment;
+        $vars[json_fields::DESCRIPTION] = $this->description;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

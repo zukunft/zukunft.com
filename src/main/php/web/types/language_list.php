@@ -57,7 +57,7 @@ class language_list extends type_list
         $html = new html_base();
         $txt = '';
         foreach ($this->lst as $lan) {
-            $txt .= $lan->select_list_item($url);
+            $txt .= $lan->select_list_item($url, self::NAME, $lan->local_name, $lan->name);
         }
         $txt .= $this->select_list_item_more();
         return $html->list_unsorted($txt);

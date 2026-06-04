@@ -39,7 +39,8 @@ The steps should be
 */
 
 $app = new frontend();
-$db_con = $app->start("setup", "center_form");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "setup", $cac, $cfg, "center_form");
 
 // load the session user parameters
 $usr = new user;
@@ -61,4 +62,4 @@ if ($usr->id() > 0) {
 
         log_debug("setup ... done.");
     }}
-$app->end($db_con);
+$app->end($sys, $db_con);

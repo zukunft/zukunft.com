@@ -116,7 +116,7 @@ class ui_list extends ui_base
      */
     function phrases_of_formula(formula|db_object $frm, ?data_object $cac = null): string
     {
-        global $cfg;
+        global $ui_sys;
 
         $page = new system_page();
 
@@ -132,7 +132,11 @@ class ui_list extends ui_base
             $phr_lst = new phrase_list();
             $phr_lst->load_by_formula($frm);
         }
-        $row_limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_NAME_LIST);
+        if ($ui_sys?->cfg !== null) {
+            $row_limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_NAME_LIST);
+        } else {
+            $row_limit = config::LIMIT_NAME_LIST;
+        }
         $result .= $phr_lst->name_link('', $row_limit);
         return $result;
     }
@@ -369,11 +373,10 @@ class ui_list extends ui_base
         ?int        $style_id = null
     ): string
     {
-        global $sys;
+        global $ui_sys;
         $style_txt = '';
         if ($style_id != null) {
-            $style = $sys->typ_lst->msk_sty->get($style_id);
-            $style_txt = $style->get_code_id();
+            $style_txt = $ui_sys->typ_lst_cache->html_view_styles->get_code_id($style_id);
         }
         return $val_lst->list($phr_lst, '', $style_txt);
     }
@@ -393,11 +396,10 @@ class ui_list extends ui_base
         ?int       $style_id = null
     ): string
     {
-        global $sys;
+        global $ui_sys;
         $style_txt = '';
         if ($style_id != null) {
-            $style = $sys->typ_lst->msk_sty->get($style_id);
-            $style_txt = $style->get_code_id();
+            $style_txt = $ui_sys->typ_lst_cache->html_view_styles->get_code_id($style_id);
         }
         return $val_lst->list_unit();
     }
@@ -419,11 +421,10 @@ class ui_list extends ui_base
         ?int        $style_id = null
     ): string
     {
-        global $sys;
+        global $ui_sys;
         $style_txt = '';
         if ($style_id != null) {
-            $style = $sys->typ_lst->msk_sty->get($style_id);
-            $style_txt = $style->get_code_id();
+            $style_txt = $ui_sys->typ_lst_cache->html_view_styles->get_code_id($style_id);
         }
         return $res_lst->list($phr_lst, '', $style_txt);
     }

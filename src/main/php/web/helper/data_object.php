@@ -178,6 +178,12 @@ class data_object
     // TODO Prio 0 rename to $typ_lst
     public ?type_lists $typ_lst_cache = null;
 
+    // the user-specific frontend configuration (loaded once at request start)
+    public ?config $cfg = null;
+
+    // the interactive debug level (0 = off) set once at request start from the url
+    public int $debug = 0;
+
     // the session user
     public user $usr;
 

@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -48,6 +49,7 @@ class word_ui_tests
         $html = new html_base();
         $t_wrd = new test_words($t);
         $t_msk = new test_views($t);
+        $t_phr = new test_phrases($t);
 
         // start the test section (ts)
         $ts = 'unit ui html word ';
@@ -81,11 +83,15 @@ class word_ui_tests
         $test_page .= 'unlink in columns: ' . $html->tbl($wrd_pi->dsp_unlink($wrd->id)) . '<br>';
         $test_page .= $html->text_h2('view header');
         $test_page .= $wrd->header() . '<br>';
+        $test_page .= $html->text_h2('parents of ' . $wrd_zh->name());
+        $test_page .= 'all: ' . $wrd_zh->parents()->name_link_list() . '<br>';
+        $test_page .= 'filtered by a phrase list: '
+            . $wrd_zh->parents($t_phr->list_zh_ui())->name_link_list() . '<br>';
+        $test_page .= 'two levels up: '
+            . $wrd_zh->parents(null, 2)->name_link_list() . '<br>';
         // TODO Prio 1 activate based on test resources
-        //$test_page .= $html->text_h2('parents of ' . $wrd_zh->name());
-        //$test_page .= $wrd_zh->parents()->name_link() . '<br>';
         //$test_page .= $html->text_h2('children of ' . $wrd_city->name());
-        //$test_page .= $wrd_city->children()->name_link() . '<br>';
+        //$test_page .= $wrd_city->children()->name_link_list() . '<br>';
         $test_page .= $t->dsp_title_named_edit($wrd);
         $t->html_page_test($test_page, 'word html components', 'word', $t);
 

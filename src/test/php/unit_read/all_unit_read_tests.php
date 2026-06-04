@@ -130,8 +130,9 @@ class all_unit_read_tests extends all_unit_tests
         (new job_read_tests)->run($this);
 
         $t->subheader($ts . 'api based ui tests');
+        global $sys;
         $ui = new frontend('api based ui tests');
-        $ui->load_cache();
+        $ui->load_cache($sys);
         (new type_lists_ui_tests)->run($t, $ui);
         (new word_ui_read_tests)->run($this, $ui);
         (new start_ui_read_tests)->run($t, $ui);

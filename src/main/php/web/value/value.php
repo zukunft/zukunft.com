@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\value;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -696,7 +697,8 @@ class value extends sandbox_value
     {
         log_debug("value->dsp_samples (" . $wrd_id . ",rt" . implode(",", $start_wrd_ids) . ",size" . $size . ")");
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
 
         $html = new html_base();

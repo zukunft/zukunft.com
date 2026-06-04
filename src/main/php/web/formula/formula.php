@@ -530,8 +530,8 @@ class formula extends sandbox_code_id
      */
     function dsp_edit($add, $wrd, $back): string
     {
-        global $usr;
-        global $cac;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
 
         log_debug(" for " . $wrd->name() . ", back:" . $back);
         $result = '';
@@ -570,7 +570,7 @@ class formula extends sandbox_code_id
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_8);
-        $result .= $this->dsp_type_selector($form_name, $cac->typ_lis->frm_typ);
+        $result .= $this->dsp_type_selector($form_name, $ui_sys?->typ_lst_cache->html_formula_types);
         $result .= '</div>';
         $result .= $html->form_field(
             url_var::DESCRIPTION,
@@ -708,7 +708,8 @@ class formula extends sandbox_code_id
 
     function dsp_test_and_samples(string $back = ''): string
     {
-        global $usr;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
         log_debug($this->ref_text);
         $result = '<br>';
         $html = new html_base();

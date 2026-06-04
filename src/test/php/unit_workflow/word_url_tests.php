@@ -59,8 +59,9 @@ class word_url_tests
         // init
         global $mtr;
         $usr_msg = new user_message();
+        global $sys;
         $ui = new frontend('view');
-        $ui->load_cache();
+        $ui->load_cache($sys);
         $usr_ui = new user_ui();
         $usr_ui->set_from_json($t->usr1->api_json(), $usr_msg);
         $usr_sys_ui = new user_ui();

@@ -1051,8 +1051,9 @@ class test_base
         $dsp_html = new view_ui;
         $dsp_html->set_from_json($api_msg, $usr_msg_ui);
         if ($cfg == null) {
+            global $sys;
             $ui = new frontend('');
-            $ui->load_cache();
+            $ui->load_cache($sys);
             $cfg = new data_object_ui();
             $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         }

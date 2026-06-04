@@ -269,10 +269,10 @@ class view_relation extends sandbox_link
      */
     function relation_type(): ?type_object
     {
-        global $ui_cac;
+        global $ui_sys;
         $result = null;
         if ($this->predicate_id != null) {
-            $result = $ui_cac->typ_lst_cache->html_view_relation_types->get($this->predicate_id);
+            $result = $ui_sys->typ_lst_cache->html_view_relation_types->get($this->predicate_id);
         }
         return $result;
     }

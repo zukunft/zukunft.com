@@ -42,7 +42,6 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 // load the main frontend class
 include_once paths::WEB . 'frontend.php';
 
-use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -55,11 +54,14 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 // reset the html code var
-$html_str = '';
+$web_txt = '';
 
-// init global objects
+// init global objects for the database connection until the api is completed
 global $debug;
 global $sys;
+
+// init global frontend objects
+global $ui_sys;
 global $mtr;
 $mtr = new Translator();
 $msg = new user_message();
@@ -100,7 +102,8 @@ $url_array = [
 
 // open database
 $app = new frontend();
-$db_con = $app->start("view", $msg, $_POST);
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "view", $cac, $cfg, $msg, $_POST);
 
 
 if ($db_con->is_open()) {
@@ -108,7 +111,7 @@ if ($db_con->is_open()) {
     // load the session user parameters
     // TODO Prio 2 create a session object and include the user in the prg_start return object
     $usr = new user;
-    $html_str .= $usr->get();
+    $web_txt .= $usr->get();
     // TODO Prio 1 set the user of the $msg and make the the only place where the requesting user is stored
 
 
@@ -122,14 +125,17 @@ if ($db_con->is_open()) {
         $usr_dsp = new user_ui();
         $usr_dsp->set_from_json($usr->api_json(), $msg);
 
-        // load the user changeable configuration once via api
-        // TODO Prio 1 load the config from cache if nothing has been changed
-        global $cfg;
-        $cfg = new config();
-        $cfg->load();
-
         $ui = new frontend('view');
-        $ui->load_cache();
+        $ui->load_cache($sys);
+
+        // publish the loaded ui cache to the allowed global so renderers
+        // (e.g. phrase_list::category_subtitle) can read the verb type cache
+        $ui_sys = $ui->dto;
+
+        // load the user-specific frontend configuration onto the ui cache
+        // TODO Prio 1 load the config from cache if nothing has been changed
+        $ui_sys->cfg = new config();
+        $ui_sys->cfg->load($sys);
 
         // execute the user request and POST-Redirect-GET to prevent re-submission on reload
         $sys->times->switch(system_time_type::URL_TO_ACTION);
@@ -141,23 +147,23 @@ if ($db_con->is_open()) {
 
         // show the result to the user
         $sys->times->switch(system_time_type::URL_TO_HTML);
-        $html_str .= $ui->url_to_html($url_array, $usr_dsp, $msg, $ui->dto);
+        $web_txt .= $ui->url_to_html($url_array, $usr_dsp, $msg, $ui->dto);
         $sys->times->switch(system_time_type::CLOSE);
     }
 
     // close the database
-    $app->end($db_con, false);
+    $app->end($sys, $db_con, false);
 } else {
-    $html_str .= 'database connection lost';
+    $web_txt .= 'database connection lost';
 }
 
 if ($debug == url_var::DEBUG_EXE_TIME_REPORT) {
     // TODO Prio 2 remove temp overwrite for debug
     $end_time = microtime(true);
     $duration = $end_time - $start_time;
-    $html_str .= '<br>Execution times for debugging: ' . $sys->times->report($duration);
+    $web_txt .= '<br>Execution times for debugging: ' . $sys->times->report($duration);
 }
 
 // show the page
-echo $html_str;
+echo $web_txt;
 

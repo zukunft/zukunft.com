@@ -238,9 +238,8 @@ class ListBase extends ListOfIdObjects
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
-        global $db_con;
         $api_msg = new api_message();
-        $pod_name = $api_msg->api_site_name($db_con);
+        $pod_name = $api_msg->api_site_name();
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }

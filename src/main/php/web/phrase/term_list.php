@@ -176,7 +176,7 @@ class term_list extends sandbox_list_named
     function sort_by_impact(): void
     {
         $lst = $this->lst();
-        usort($lst, fn(term $a, term $b) => $b->impact() <=> $a->impact());
+        usort($lst, fn(term $a, term $b) => $b->get_impact() <=> $a->get_impact());
         $this->set_lst($lst);
     }
 

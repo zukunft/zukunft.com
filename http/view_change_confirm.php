@@ -46,7 +46,8 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 
 // open database
 $app = new frontend();
-$db_con = $app->start("view_confirm");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "view_confirm", $cac, $cfg);
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -99,5 +100,5 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-$app->end($db_con);
+$app->end($sys, $db_con);
 

@@ -57,7 +57,8 @@ if ($debug > 1) {
 
 // open database
 $app = new frontend();
-$db_con = $app->start("progress display");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "progress display", $cac, $cfg);
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
@@ -112,4 +113,4 @@ if ($usr->id > 0) {
 }
 
 // Closing connection
-$app->end($db_con);
+$app->end($sys, $db_con);

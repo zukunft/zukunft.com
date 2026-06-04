@@ -120,7 +120,7 @@ class api_message
     }
 
     // TODO call once in global $sys
-    function api_site_name(sql_db $db_con): string
+    function api_site_name(sql_db $db_con = new sql_db()): string
     {
         $cfg = new config();
         // for unit tests use the default pod name

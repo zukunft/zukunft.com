@@ -67,7 +67,8 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
-$db_con = $app->start("start formula_test.php");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "start formula_test.php", $cac, $cfg);
 $html = new html_base();
 
 global $sys_msk_cac;
@@ -265,4 +266,4 @@ if ($session_usr->id > 0) {
 }
 
 // Closing connection
-$app->end($db_con);
+$app->end($sys, $db_con);

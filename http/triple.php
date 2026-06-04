@@ -46,7 +46,8 @@ $result = ''; // reset the html code var
 
 // open database
 $app = new frontend();
-$db_con = $app->start("triple");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "triple", $cac, $cfg);
 
 if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
@@ -75,4 +76,4 @@ if (!$db_con->connected()) {
 
 echo $result;
 
-$app->end($db_con);
+$app->end($sys, $db_con);

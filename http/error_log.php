@@ -61,7 +61,8 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 $app = new frontend();
-$db_con = $app->start("error_log");
+global $sys, $cac, $cfg;
+$db_con = $app->start($sys, "error_log", $cac, $cfg);
 
 global $sys_msk_cac;
 
@@ -102,7 +103,7 @@ if ($usr->id > 0) {
 echo $result;
 
 // Closing connection
-$app->end($db_con);
+$app->end($sys, $db_con);
 
 function err_dsp($err_id, $user_id): string
 {

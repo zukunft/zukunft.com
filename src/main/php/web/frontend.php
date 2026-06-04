@@ -123,6 +123,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'system_object.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
@@ -135,6 +136,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
+use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log as sys_log_backend;
@@ -255,15 +257,15 @@ class frontend
      * TODO to be deprecated
      * start a frontend session with direct db access
      *
+     * @param system_object $sys the backend system control object with the preloaded types
      * @param string $code_name
+     * @param data_object_backend|null $cac set to the loaded backend user data cache (by reference output)
+     * @param config_numbers|null $cfg set to the loaded user configuration values (by reference output)
      * @param Message $msg to collect any messages and suggested solutions for the user
      * @return sql_db
      */
-    function start(string $code_name, Message $msg = new Message(), array $post_array = []): sql_db
+    function start(system_object $sys, string $code_name, ?data_object_backend &$cac = null, ?config_numbers &$cfg = null, Message $msg = new Message(), array $post_array = []): sql_db
     {
-        global $sys;
-        global $errors;
-
         $sys->script = $code_name;
         $sys->times->switch(system_time_type::INIT);
 
@@ -304,8 +306,6 @@ class frontend
 
         $sys->pod_name = POD_NAME;
 
-        $errors = 0;
-
         log_debug($code_name . ': session_start');
 
         // log environment
@@ -318,7 +318,7 @@ class frontend
         */
 
         if ($session_is_fine) {
-            return $this->open_db($code_name);
+            return $this->open_db($sys, $code_name, $cac, $cfg);
         } else {
             return new sql_db();
         }
@@ -327,16 +327,15 @@ class frontend
     /**
      * TODO to be deprecated
      * open the database connection and load the base cache
+     * @param system_object $sys the backend system control object with the preloaded types
      * @param string $code_name the place that is displayed to the user e.g. add word
+     * @param data_object_backend|null $cac set to the loaded backend user data cache (by reference output)
+     * @param config_numbers|null $cfg set to the loaded user configuration values (by reference output)
      * @return sql_db the open database connection
      */
-    private function open_db(string $code_name): sql_db
+    private function open_db(system_object $sys, string $code_name, ?data_object_backend &$cac = null, ?config_numbers &$cfg = null): sql_db
     {
 
-        global $sys;       // the global system time control including the preloaded types
-        global $db_con;    // the database connection
-        global $cac;       // the global user data cache including the system views
-        global $cfg;       // the user configuration values
         global $mtr;       // the translation object
 
         // link to database
@@ -404,10 +403,11 @@ class frontend
     /**
      * start a frontend session via api
      *
+     * @param system_object $sys the backend system control object for the execution time tracking
      * @param string $title the name of the called frontend view for logging
      * @return string the page header
      */
-    function start_ui(string $title): string
+    function start_ui(system_object $sys, string $title): string
     {
         global $mtr;
         $result = '';
@@ -428,7 +428,7 @@ class frontend
         $mtr = new Translator(language_codes::SYS);
         $usr = $this->get_user();
 
-        $this->load_cache();
+        $this->load_cache($sys);
 
         // html header
         $html = new html_base();
@@ -444,13 +444,13 @@ class frontend
      * write the execution time if it took too long
      * and because the frontend is using direct database access
      * close the database connection
+     * @param system_object $sys the backend system control object for the execution time tracking
      * @param sql_db $db_con the database connection open on start
      * @param float $start_time the start time of the calling script
      * @return string any error messages if the closing fails or if the execution time should be shown
      */
-    function end(sql_db $db_con, float $start_time = 0): string
+    function end(system_object $sys, sql_db $db_con, float $start_time = 0): string
     {
-        global $sys;
         if ($start_time != 0) {
             $sys->times->add($start_time - $this->start_time, 'script loading');
             $duration = microtime(true) - $start_time;
@@ -477,12 +477,11 @@ class frontend
 
     /**
      * load the frontend cache once upfront via api
+     * @param system_object $sys the backend system control object for the execution time tracking
      * @return user_message
      */
-    function load_cache(): user_message
+    function load_cache(system_object $sys): user_message
     {
-        global $sys;
-
         $sys->times->switch(system_time_type::LOAD_FRONTEND);
         $msg = new user_message();
         if ($this->dto?->typ_lst_cache == null) {
@@ -570,7 +569,6 @@ class frontend
 
     function get_user(): user_ui
     {
-        global $usr;
         $usr = new user_ui();
         return $usr;
     }
