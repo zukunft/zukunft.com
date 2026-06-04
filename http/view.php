@@ -131,6 +131,11 @@ if ($db_con->is_open()) {
         $ui = new frontend('view');
         $ui->load_cache();
 
+        // publish the loaded ui cache to the allowed global so renderers
+        // (e.g. phrase_list::category_subtitle) can read the verb type cache
+        global $ui_cac;
+        $ui_cac = $ui->dto;
+
         // execute the user request and POST-Redirect-GET to prevent re-submission on reload
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         $is_post_action = isset($url_array[url_var::POST_SUBMIT]);

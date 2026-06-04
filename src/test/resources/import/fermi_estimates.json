@@ -1,5 +1,5 @@
 {
-  "version": "0.0.4",
+  "version": "0.0.3",
   "time": "2026-06-04 08:00:00",
   "user": "timon",
   "selection": [
@@ -734,6 +734,18 @@
     {
       "name": "by definition",
       "description": "a value that is fixed by an unambiguous definition or convention rather than measured"
+    },
+    {
+      "name": "Berns et al. (2005)",
+      "description": "Berns, G. S., Chappelow, J., Zink, C. F., Pagnoni, G., Martin-Skurski, M. E., & Richards, J. (2005), study on the neurobiological correlates of social conformity and independence during mental rotation"
+    },
+    {
+      "name": "Historical media estimation",
+      "description": "order-of-magnitude figure assumed from historical analysis of regulated 1970s mass-media environments"
+    },
+    {
+      "name": "Pre-internet virality estimation",
+      "description": "order-of-magnitude figure assumed from analysis of information spread under pre-internet gatekeeper-filtered channels"
     }
   ],
   "values": [

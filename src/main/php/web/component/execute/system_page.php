@@ -153,7 +153,7 @@ class system_page extends component
 
         $html = new html_base();
         $result = '';
-        if ($value_exception != null and $value_numeric == $value_exception) {
+        if ($value_exception !== null and $value_numeric === $value_exception) {
             if ($ui_msg_code_id_exception != null) {
                 $result .= $html->text_h3($mtr->txt($ui_msg_code_id_exception));
             }
