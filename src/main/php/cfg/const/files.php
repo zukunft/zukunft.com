@@ -195,8 +195,7 @@ class files
         self::IMPORT_CURRENCIES,
         self::IMPORT_COMPANIES,
         self::IMPORT_WIND_INVESTMENT,
-        // TODO Prio 0 activate
-        //self::CONFORMITY_MRI_BERNS_FILE,
+        self::CONFORMITY_MRI_BERNS_FILE,
     ];
 
     // to load the default data for all pods
