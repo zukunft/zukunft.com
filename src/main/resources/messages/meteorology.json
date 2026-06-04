@@ -1,6 +1,6 @@
 {
   "version": "0.0.3",
-  "time": "2026-05-22 09:00:00",
+  "time": "2026-06-04 12:00:00",
   "user": "timon",
   "selection": [
     "meteorology"
@@ -39,62 +39,6 @@
       ]
     },
     {
-      "name": "atmospheric physics",
-      "description": "application of physics to the study of the atmosphere",
-      "refs": [
-        {
-          "name": "Atmospheric physics",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q5334416",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "atmospheric chemistry",
-      "description": "branch of atmospheric science",
-      "refs": [
-        {
-          "name": "Atmospheric chemistry",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q287919",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "synoptic meteorology",
-      "description": "1000-km-order method of measuring weather systems",
-      "refs": [
-        {
-          "name": "Synoptic scale meteorology",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1233837",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "dynamic meteorology",
-      "description": "branch of science dealing with the study of atmospheric phenomena and the short term variation of weather conditions including wind, precipitation, temperature, humidity, cloud cover, and air pressure",
-      "refs": [
-        {
-          "name": "Atmospheric dynamics",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q25261",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "hydrometeorology",
       "description": "study of water in the atmosphere",
       "refs": [
@@ -118,20 +62,6 @@
         },
         {
           "name": "Q16360",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "weather forecasting",
-      "description": "application of science and technology to predict the conditions of the atmosphere for a given location and time",
-      "refs": [
-        {
-          "name": "Weather forecasting",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q182868",
           "type": "wikidata"
         }
       ]
@@ -235,90 +165,6 @@
       ]
     },
     {
-      "name": "atmospheric pressure",
-      "description": "static pressure exerted by the weight of the atmosphere",
-      "refs": [
-        {
-          "name": "Atmospheric pressure",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q81809",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "pressure gradient force",
-      "description": "physical force from a pressure differential",
-      "refs": [
-        {
-          "name": "Pressure-gradient force",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1541234",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "lapse rate",
-      "description": "vertical rate of change of temperature in atmosphere",
-      "refs": [
-        {
-          "name": "Lapse rate",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q66900467",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "temperature inversion",
-      "description": "deviation from the normal change of an atmospheric property with altitude",
-      "refs": [
-        {
-          "name": "Inversion (meteorology)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q190096",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "adiabatic process",
-      "description": "thermodynamic process with zero heat transfer",
-      "refs": [
-        {
-          "name": "Adiabatic process",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q182453",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "atmospheric convection",
-      "description": "atmospheric phenomenon",
-      "refs": [
-        {
-          "name": "Atmospheric convection",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q931652",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "advection",
       "description": "transport of a substance by bulk motion",
       "refs": [
@@ -328,34 +174,6 @@
         },
         {
           "name": "Q379788",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "potential temperature",
-      "description": "temperature that a fluid would attain if adiabatically brought to a standard reference pressure",
-      "refs": [
-        {
-          "name": "Potential temperature",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q760765",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "solar irradiance",
-      "description": "power per unit area received from the Sun in the form of electromagnetic radiation",
-      "refs": [
-        {
-          "name": "Solar irradiance",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7556707",
           "type": "wikidata"
         }
       ]
@@ -389,90 +207,6 @@
       ]
     },
     {
-      "name": "greenhouse effect",
-      "description": "atmospheric heat retention",
-      "refs": [
-        {
-          "name": "Greenhouse effect",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q41560",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "outgoing longwave radiation",
-      "description": "electromagnetic radiation of wavelengths between 3.0 and 100 μm emitted from Earth and its atmosphere out to space in the form of thermal radiation",
-      "refs": [
-        {
-          "name": "Outgoing longwave radiation",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2999493",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "shortwave radiation",
-      "description": "type of radiant energy",
-      "refs": [
-        {
-          "name": "Shortwave radiation",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7502259",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "solar constant",
-      "description": "intensity of sunlight",
-      "refs": [
-        {
-          "name": "Solar constant",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q335272",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "Coriolis force",
-      "description": "apparent or fictitious force on objects moving within a reference frame that rotates with respect to an inertial frame",
-      "refs": [
-        {
-          "name": "Coriolis force",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q169973",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "geostrophic wind",
-      "description": "theoretical wind that would result from an exact balance between the Coriolis force and the pressure gradient force",
-      "refs": [
-        {
-          "name": "Geostrophic wind",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q929043",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "ozone",
       "description": "chemical compound",
       "refs": [
@@ -482,20 +216,6 @@
         },
         {
           "name": "Q36933",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "ozone layer",
-      "description": "region of Earth's stratosphere that absorbs most of the Sun's UV radiation",
-      "refs": [
-        {
-          "name": "Ozone layer",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q79995",
           "type": "wikidata"
         }
       ]
@@ -572,115 +292,7 @@
     },
     {
       "name": "El Nino-Southern Oscillation",
-      "description": "irregularly periodic variation in winds and sea surface temperatures over the tropical eastern Pacific Ocean",
-      "refs": [
-        {
-          "name": "El Niño–Southern Oscillation",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q14524818",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "water cycle",
-      "description": "continuous movement of water on, above and below the surface of the Earth",
-      "refs": [
-        {
-          "name": "Water cycle",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q81041",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "air mass",
-      "description": "widespread body of air approximately homogeneous in its horizontal extent with vertical temperature and moisture variations that are approximately the same over its horizontal extent",
-      "refs": [
-        {
-          "name": "Air mass",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q216823",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "weather front",
-      "description": "boundary separating two masses of air of different densities",
-      "refs": [
-        {
-          "name": "Weather front",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q189796",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "cold front",
-      "description": "leading edge of a cooler mass of air",
-      "refs": [
-        {
-          "name": "Cold front",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q210316",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "warm front",
-      "description": "boundary of advancing mass of warm air",
-      "refs": [
-        {
-          "name": "Warm front",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q537536",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "occluded front",
-      "description": "part of cyclone formation",
-      "refs": [
-        {
-          "name": "Occluded front",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q747330",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "stationary front",
-      "description": "weather front",
-      "refs": [
-        {
-          "name": "Stationary front",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1194255",
-          "type": "wikidata"
-        }
-      ]
+      "description": "irregularly periodic variation in winds and sea surface temperatures over the tropical eastern Pacific Ocean; see Wikipedia: El Niño–Southern Oscillation (Q14524818)"
     },
     {
       "name": "cyclone",
@@ -720,76 +332,6 @@
         },
         {
           "name": "Q8094",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "wind speed",
-      "description": "measure",
-      "refs": [
-        {
-          "name": "Wind speed",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1464943",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "wind direction",
-      "description": "geographic direction from which a wind blows",
-      "refs": [
-        {
-          "name": "Wind direction",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1057900",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "jet stream",
-      "description": "fast-flowing atmospheric air-current",
-      "refs": [
-        {
-          "name": "Jet stream",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q202325",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "trade winds",
-      "description": "permanent east-to-west prevailing winds that flow in the Earth's equatorial region",
-      "refs": [
-        {
-          "name": "Trade winds",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q160603",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "tropical cyclone",
-      "description": "rapidly rotating storm system that forms in the tropics",
-      "refs": [
-        {
-          "name": "Tropical cyclone",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q8092",
           "type": "wikidata"
         }
       ]
@@ -860,90 +402,6 @@
         },
         {
           "name": "Q180600",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "relative humidity",
-      "description": "amount of water vapor in the air",
-      "refs": [
-        {
-          "name": "Humidity",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q180600",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "specific humidity",
-      "description": "amount of water vapor in the air",
-      "refs": [
-        {
-          "name": "Specific humidity",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q180600",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "mixing ratio",
-      "description": "abundance of one component of a mixture relative to others",
-      "refs": [
-        {
-          "name": "Mixing ratio",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q171293",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "dew point",
-      "description": "temperature at which air becomes saturated with water vapour",
-      "refs": [
-        {
-          "name": "Dew point",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q178828",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "water vapor",
-      "description": "gaseous phase of water; unlike other forms of water, water vapor is invisible",
-      "refs": [
-        {
-          "name": "Water vapor",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q190120",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "vapor pressure",
-      "description": "pressure exterted by a vapor in thermodynamic equilibrium",
-      "refs": [
-        {
-          "name": "Vapor pressure",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2661322",
           "type": "wikidata"
         }
       ]
@@ -1089,62 +547,6 @@
       ]
     },
     {
-      "name": "cumulus cloud",
-      "description": "genus of clouds, low-level cloud",
-      "refs": [
-        {
-          "name": "Cumulus cloud",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q14189",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "stratus cloud",
-      "description": "type of cloud",
-      "refs": [
-        {
-          "name": "Stratus cloud",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q40526",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "cirrus cloud",
-      "description": "cloud type",
-      "refs": [
-        {
-          "name": "Cirrus cloud",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q185638",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "cumulonimbus cloud",
-      "description": "genus of clouds, dense towering vertical cloud associated with thunderstorms and atmospheric instability",
-      "refs": [
-        {
-          "name": "Cumulonimbus cloud",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q182311",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "fog",
       "description": "atmospheric phenomenon",
       "refs": [
@@ -1187,20 +589,6 @@
       ]
     },
     {
-      "name": "surface runoff",
-      "description": "flow of excess rainwater not infiltrating in the ground over its surface",
-      "refs": [
-        {
-          "name": "Surface runoff",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1444790",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "dew",
       "description": "water in the form of droplets that appears on thin, exposed objects in the morning or evening",
       "refs": [
@@ -1238,34 +626,6 @@
         },
         {
           "name": "Q654068",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "heat index",
-      "description": "temperature index that accounts for the effects of humidity",
-      "refs": [
-        {
-          "name": "Heat index",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2141844",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "wind chill",
-      "description": "lowering of body temperature due to the passing-flow of lower-temperature air",
-      "refs": [
-        {
-          "name": "Wind chill",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1044340",
           "type": "wikidata"
         }
       ]
@@ -1327,20 +687,6 @@
       ]
     },
     {
-      "name": "rain gauge",
-      "description": "meteorological instrumentation",
-      "refs": [
-        {
-          "name": "Rain gauge",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q190052",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "radiosonde",
       "description": "meteorological instrumentation",
       "refs": [
@@ -1350,34 +696,6 @@
         },
         {
           "name": "Q852817",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "weather balloon",
-      "description": "meteorological instrumentation",
-      "refs": [
-        {
-          "name": "Weather balloon",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1128180",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "weather station",
-      "description": "set of sensors that record and provide physical measurements and meteorological parameters",
-      "refs": [
-        {
-          "name": "Weather station",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q190107",
           "type": "wikidata"
         }
       ]
@@ -1411,20 +729,6 @@
       ]
     },
     {
-      "name": "standard atmospheric pressure",
-      "description": "physical conditions at sea level",
-      "refs": [
-        {
-          "name": "Standard sea-level conditions",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7598376",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "El Niño",
       "description": "the warm phase of the El Niño–Southern Oscillation, with warmer sea surface temperatures in the central and eastern Pacific"
     },
@@ -1433,59 +737,700 @@
       "description": "the cool phase of the El Niño–Southern Oscillation, with cooler sea surface temperatures in the central and eastern Pacific"
     },
     {
-      "name": "saturation vapor pressure",
-      "description": "the vapor pressure at which air is saturated with water vapor at a given temperature"
+      "name": "atmospheric"
     },
     {
-      "name": "Coriolis parameter",
-      "description": "twice the vertical component of the Earth's angular velocity, used in the equations of atmospheric motion"
+      "name": "physics"
     },
     {
-      "name": "angular velocity of Earth",
-      "description": "the rate of rotation of the Earth about its axis, about 7.292e-5 radians per second"
+      "name": "chemistry"
     },
     {
-      "name": "mass of water vapor",
-      "description": "the mass of water vapor contained in a parcel of air"
+      "name": "synoptic"
     },
     {
-      "name": "mass of dry air",
-      "description": "the mass of the dry air, excluding water vapor, in a parcel of air"
+      "name": "dynamic"
     },
     {
-      "name": "mass of moist air",
-      "description": "the total mass of a parcel of moist air including its water vapor"
+      "name": "forecasting"
     },
     {
-      "name": "reflected radiation",
-      "description": "the amount of radiation reflected by a surface"
+      "name": "pressure"
     },
     {
-      "name": "incoming radiation",
-      "description": "the amount of radiation arriving at a surface"
+      "name": "gradient"
     },
     {
-      "name": "temperature in celsius",
-      "description": "the air temperature expressed in degrees Celsius"
+      "name": "force"
     },
     {
-      "name": "temperature difference",
-      "description": "the difference in temperature between two points"
+      "name": "lapse"
     },
     {
-      "name": "height difference",
-      "description": "the difference in height between two points"
+      "name": "rate"
     },
     {
-      "name": "dry adiabatic lapse rate",
-      "description": "the rate at which an unsaturated air parcel cools as it rises, about 9.8 K per kilometre"
+      "name": "temperature"
     },
     {
-      "name": "environmental lapse rate",
-      "description": "the actual rate at which air temperature decreases with height in the atmosphere"
+      "name": "inversion"
+    },
+    {
+      "name": "adiabatic"
+    },
+    {
+      "name": "process"
+    },
+    {
+      "name": "convection"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "solar"
+    },
+    {
+      "name": "irradiance"
+    },
+    {
+      "name": "greenhouse"
+    },
+    {
+      "name": "effect"
+    },
+    {
+      "name": "outgoing"
+    },
+    {
+      "name": "longwave"
+    },
+    {
+      "name": "radiation"
+    },
+    {
+      "name": "shortwave"
+    },
+    {
+      "name": "constant"
+    },
+    {
+      "name": "Coriolis"
+    },
+    {
+      "name": "geostrophic"
+    },
+    {
+      "name": "layer"
+    },
+    {
+      "name": "cycle"
+    },
+    {
+      "name": "water"
+    },
+    {
+      "name": "mass"
+    },
+    {
+      "name": "air"
+    },
+    {
+      "name": "front"
+    },
+    {
+      "name": "cold"
+    },
+    {
+      "name": "warm"
+    },
+    {
+      "name": "occluded"
+    },
+    {
+      "name": "stationary"
+    },
+    {
+      "name": "speed"
+    },
+    {
+      "name": "direction"
+    },
+    {
+      "name": "jet"
+    },
+    {
+      "name": "stream"
+    },
+    {
+      "name": "trade"
+    },
+    {
+      "name": "tropical"
+    },
+    {
+      "name": "relative"
+    },
+    {
+      "name": "specific"
+    },
+    {
+      "name": "mixing"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "vapor"
+    },
+    {
+      "name": "cumulus"
+    },
+    {
+      "name": "stratus"
+    },
+    {
+      "name": "cirrus"
+    },
+    {
+      "name": "cumulonimbus"
+    },
+    {
+      "name": "surface"
+    },
+    {
+      "name": "runoff"
+    },
+    {
+      "name": "heat"
+    },
+    {
+      "name": "index"
+    },
+    {
+      "name": "chill"
+    },
+    {
+      "name": "gauge"
+    },
+    {
+      "name": "balloon"
+    },
+    {
+      "name": "station"
+    },
+    {
+      "name": "standard"
+    },
+    {
+      "name": "saturation"
+    },
+    {
+      "name": "parameter"
+    },
+    {
+      "name": "angular"
+    },
+    {
+      "name": "velocity"
+    },
+    {
+      "name": "Earth"
+    },
+    {
+      "name": "dry"
+    },
+    {
+      "name": "moist"
+    },
+    {
+      "name": "reflected"
+    },
+    {
+      "name": "incoming"
+    },
+    {
+      "name": "celsius"
+    },
+    {
+      "name": "difference"
+    },
+    {
+      "name": "height"
+    },
+    {
+      "name": "environmental"
     }
   ],
   "triples": [
+    {
+      "name": "atmospheric physics",
+      "description": "application of physics to the study of the atmosphere. see Wikipedia: Atmospheric physics (Q5334416)",
+      "from": "physics",
+      "verb": "kind of",
+      "to": "atmospheric"
+    },
+    {
+      "name": "atmospheric chemistry",
+      "description": "branch of atmospheric science. see Wikipedia: Atmospheric chemistry (Q287919)",
+      "from": "chemistry",
+      "verb": "kind of",
+      "to": "atmospheric"
+    },
+    {
+      "name": "synoptic meteorology",
+      "description": "1000-km-order method of measuring weather systems. see Wikipedia: Synoptic scale meteorology (Q1233837)",
+      "from": "meteorology",
+      "verb": "kind of",
+      "to": "synoptic"
+    },
+    {
+      "name": "dynamic meteorology",
+      "description": "branch of science dealing with the study of atmospheric phenomena and the short term variation of weather conditions including wind, precipitation, temperature, humidity, cloud cover, and air pressure. see Wikipedia: Atmospheric dynamics (Q25261)",
+      "from": "meteorology",
+      "verb": "kind of",
+      "to": "dynamic"
+    },
+    {
+      "name": "weather forecasting",
+      "description": "application of science and technology to predict the conditions of the atmosphere for a given location and time. see Wikipedia: Weather forecasting (Q182868)",
+      "from": "forecasting",
+      "verb": "of",
+      "to": "weather"
+    },
+    {
+      "name": "atmospheric pressure",
+      "description": "static pressure exerted by the weight of the atmosphere. see Wikipedia: Atmospheric pressure (Q81809)",
+      "from": "pressure",
+      "verb": "kind of",
+      "to": "atmospheric"
+    },
+    {
+      "name": "pressure gradient",
+      "from": "gradient",
+      "verb": "of",
+      "to": "pressure"
+    },
+    {
+      "name": "pressure gradient force",
+      "description": "physical force from a pressure differential. see Wikipedia: Pressure-gradient force (Q1541234)",
+      "from": "force",
+      "verb": "of",
+      "to": "pressure gradient"
+    },
+    {
+      "name": "lapse rate",
+      "description": "vertical rate of change of temperature in atmosphere. see Wikipedia: Lapse rate (Q66900467)",
+      "from": "rate",
+      "verb": "of",
+      "to": "lapse"
+    },
+    {
+      "name": "temperature inversion",
+      "description": "deviation from the normal change of an atmospheric property with altitude. see Wikipedia: Inversion (meteorology) (Q190096)",
+      "from": "inversion",
+      "verb": "of",
+      "to": "temperature"
+    },
+    {
+      "name": "adiabatic process",
+      "description": "thermodynamic process with zero heat transfer. see Wikipedia: Adiabatic process (Q182453)",
+      "from": "process",
+      "verb": "kind of",
+      "to": "adiabatic"
+    },
+    {
+      "name": "atmospheric convection",
+      "description": "atmospheric phenomenon. see Wikipedia: Atmospheric convection (Q931652)",
+      "from": "convection",
+      "verb": "kind of",
+      "to": "atmospheric"
+    },
+    {
+      "name": "potential temperature",
+      "description": "temperature that a fluid would attain if adiabatically brought to a standard reference pressure. see Wikipedia: Potential temperature (Q760765)",
+      "from": "temperature",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "solar irradiance",
+      "description": "power per unit area received from the Sun in the form of electromagnetic radiation. see Wikipedia: Solar irradiance (Q7556707)",
+      "from": "irradiance",
+      "verb": "of",
+      "to": "solar"
+    },
+    {
+      "name": "greenhouse effect",
+      "description": "atmospheric heat retention. see Wikipedia: Greenhouse effect (Q41560)",
+      "from": "effect",
+      "verb": "of",
+      "to": "greenhouse"
+    },
+    {
+      "name": "longwave radiation",
+      "from": "radiation",
+      "verb": "kind of",
+      "to": "longwave"
+    },
+    {
+      "name": "outgoing longwave radiation",
+      "description": "electromagnetic radiation of wavelengths between 3.0 and 100 μm emitted from Earth and its atmosphere out to space in the form of thermal radiation. see Wikipedia: Outgoing longwave radiation (Q2999493)",
+      "from": "longwave radiation",
+      "verb": "kind of",
+      "to": "outgoing"
+    },
+    {
+      "name": "shortwave radiation",
+      "description": "type of radiant energy. see Wikipedia: Shortwave radiation (Q7502259)",
+      "from": "radiation",
+      "verb": "kind of",
+      "to": "shortwave"
+    },
+    {
+      "name": "solar constant",
+      "description": "intensity of sunlight. see Wikipedia: Solar constant (Q335272)",
+      "from": "constant",
+      "verb": "of",
+      "to": "solar"
+    },
+    {
+      "name": "Coriolis force",
+      "description": "apparent or fictitious force on objects moving within a reference frame that rotates with respect to an inertial frame. see Wikipedia: Coriolis force (Q169973)",
+      "from": "force",
+      "verb": "of",
+      "to": "Coriolis"
+    },
+    {
+      "name": "geostrophic wind",
+      "description": "theoretical wind that would result from an exact balance between the Coriolis force and the pressure gradient force. see Wikipedia: Geostrophic wind (Q929043)",
+      "from": "wind",
+      "verb": "kind of",
+      "to": "geostrophic"
+    },
+    {
+      "name": "ozone layer",
+      "description": "region of Earth's stratosphere that absorbs most of the Sun's UV radiation. see Wikipedia: Ozone layer (Q79995)",
+      "from": "layer",
+      "verb": "of",
+      "to": "ozone"
+    },
+    {
+      "name": "water cycle",
+      "description": "continuous movement of water on, above and below the surface of the Earth. see Wikipedia: Water cycle (Q81041)",
+      "from": "cycle",
+      "verb": "of",
+      "to": "water"
+    },
+    {
+      "name": "air mass",
+      "description": "widespread body of air approximately homogeneous in its horizontal extent with vertical temperature and moisture variations that are approximately the same over its horizontal extent. see Wikipedia: Air mass (Q216823)",
+      "from": "mass",
+      "verb": "of",
+      "to": "air"
+    },
+    {
+      "name": "weather front",
+      "description": "boundary separating two masses of air of different densities. see Wikipedia: Weather front (Q189796)",
+      "from": "front",
+      "verb": "of",
+      "to": "weather"
+    },
+    {
+      "name": "cold front",
+      "description": "leading edge of a cooler mass of air. see Wikipedia: Cold front (Q210316)",
+      "from": "front",
+      "verb": "kind of",
+      "to": "cold"
+    },
+    {
+      "name": "warm front",
+      "description": "boundary of advancing mass of warm air. see Wikipedia: Warm front (Q537536)",
+      "from": "front",
+      "verb": "kind of",
+      "to": "warm"
+    },
+    {
+      "name": "occluded front",
+      "description": "part of cyclone formation. see Wikipedia: Occluded front (Q747330)",
+      "from": "front",
+      "verb": "kind of",
+      "to": "occluded"
+    },
+    {
+      "name": "stationary front",
+      "description": "weather front. see Wikipedia: Stationary front (Q1194255)",
+      "from": "front",
+      "verb": "kind of",
+      "to": "stationary"
+    },
+    {
+      "name": "wind speed",
+      "description": "measure. see Wikipedia: Wind speed (Q1464943)",
+      "from": "speed",
+      "verb": "of",
+      "to": "wind"
+    },
+    {
+      "name": "wind direction",
+      "description": "geographic direction from which a wind blows. see Wikipedia: Wind direction (Q1057900)",
+      "from": "direction",
+      "verb": "of",
+      "to": "wind"
+    },
+    {
+      "name": "jet stream",
+      "description": "fast-flowing atmospheric air-current. see Wikipedia: Jet stream (Q202325)",
+      "from": "stream",
+      "verb": "kind of",
+      "to": "jet"
+    },
+    {
+      "name": "trade winds",
+      "description": "permanent east-to-west prevailing winds that flow in the Earth's equatorial region. see Wikipedia: Trade winds (Q160603)",
+      "from": "wind",
+      "verb": "kind of",
+      "to": "trade"
+    },
+    {
+      "name": "tropical cyclone",
+      "description": "rapidly rotating storm system that forms in the tropics. see Wikipedia: Tropical cyclone (Q8092)",
+      "from": "cyclone",
+      "verb": "kind of",
+      "to": "tropical"
+    },
+    {
+      "name": "relative humidity",
+      "description": "amount of water vapor in the air. see Wikipedia: Humidity (Q180600)",
+      "from": "humidity",
+      "verb": "kind of",
+      "to": "relative"
+    },
+    {
+      "name": "specific humidity",
+      "description": "amount of water vapor in the air. see Wikipedia: Specific humidity (Q180600)",
+      "from": "humidity",
+      "verb": "kind of",
+      "to": "specific"
+    },
+    {
+      "name": "mixing ratio",
+      "description": "abundance of one component of a mixture relative to others. see Wikipedia: Mixing ratio (Q171293)",
+      "from": "ratio",
+      "verb": "of",
+      "to": "mixing"
+    },
+    {
+      "name": "dew point",
+      "description": "temperature at which air becomes saturated with water vapour. see Wikipedia: Dew point (Q178828)",
+      "from": "point",
+      "verb": "of",
+      "to": "dew"
+    },
+    {
+      "name": "water vapor",
+      "description": "gaseous phase of water; unlike other forms of water, water vapor is invisible. see Wikipedia: Water vapor (Q190120)",
+      "from": "vapor",
+      "verb": "of",
+      "to": "water"
+    },
+    {
+      "name": "vapor pressure",
+      "description": "pressure exterted by a vapor in thermodynamic equilibrium. see Wikipedia: Vapor pressure (Q2661322)",
+      "from": "pressure",
+      "verb": "of",
+      "to": "vapor"
+    },
+    {
+      "name": "cumulus cloud",
+      "description": "genus of clouds, low-level cloud. see Wikipedia: Cumulus cloud (Q14189)",
+      "from": "cloud",
+      "verb": "kind of",
+      "to": "cumulus"
+    },
+    {
+      "name": "stratus cloud",
+      "description": "type of cloud. see Wikipedia: Stratus cloud (Q40526)",
+      "from": "cloud",
+      "verb": "kind of",
+      "to": "stratus"
+    },
+    {
+      "name": "cirrus cloud",
+      "description": "cloud type. see Wikipedia: Cirrus cloud (Q185638)",
+      "from": "cloud",
+      "verb": "kind of",
+      "to": "cirrus"
+    },
+    {
+      "name": "cumulonimbus cloud",
+      "description": "genus of clouds, dense towering vertical cloud associated with thunderstorms and atmospheric instability. see Wikipedia: Cumulonimbus cloud (Q182311)",
+      "from": "cloud",
+      "verb": "kind of",
+      "to": "cumulonimbus"
+    },
+    {
+      "name": "surface runoff",
+      "description": "flow of excess rainwater not infiltrating in the ground over its surface. see Wikipedia: Surface runoff (Q1444790)",
+      "from": "runoff",
+      "verb": "of",
+      "to": "surface"
+    },
+    {
+      "name": "heat index",
+      "description": "temperature index that accounts for the effects of humidity. see Wikipedia: Heat index (Q2141844)",
+      "from": "index",
+      "verb": "of",
+      "to": "heat"
+    },
+    {
+      "name": "wind chill",
+      "description": "lowering of body temperature due to the passing-flow of lower-temperature air. see Wikipedia: Wind chill (Q1044340)",
+      "from": "chill",
+      "verb": "of",
+      "to": "wind"
+    },
+    {
+      "name": "rain gauge",
+      "description": "meteorological instrumentation. see Wikipedia: Rain gauge (Q190052)",
+      "from": "gauge",
+      "verb": "of",
+      "to": "rain"
+    },
+    {
+      "name": "weather balloon",
+      "description": "meteorological instrumentation. see Wikipedia: Weather balloon (Q1128180)",
+      "from": "balloon",
+      "verb": "of",
+      "to": "weather"
+    },
+    {
+      "name": "weather station",
+      "description": "set of sensors that record and provide physical measurements and meteorological parameters. see Wikipedia: Weather station (Q190107)",
+      "from": "station",
+      "verb": "of",
+      "to": "weather"
+    },
+    {
+      "name": "standard atmospheric pressure",
+      "description": "physical conditions at sea level. see Wikipedia: Standard sea-level conditions (Q7598376)",
+      "from": "atmospheric pressure",
+      "verb": "kind of",
+      "to": "standard"
+    },
+    {
+      "name": "saturation vapor pressure",
+      "description": "the vapor pressure at which air is saturated with water vapor at a given temperature",
+      "from": "vapor pressure",
+      "verb": "kind of",
+      "to": "saturation"
+    },
+    {
+      "name": "Coriolis parameter",
+      "description": "twice the vertical component of the Earth's angular velocity, used in the equations of atmospheric motion",
+      "from": "parameter",
+      "verb": "of",
+      "to": "Coriolis"
+    },
+    {
+      "name": "angular velocity",
+      "from": "velocity",
+      "verb": "kind of",
+      "to": "angular"
+    },
+    {
+      "description": "the rate of rotation of the Earth about its axis, about 7.292e-5 radians per second",
+      "from": "angular velocity",
+      "verb": "of",
+      "to": "Earth"
+    },
+    {
+      "description": "the mass of water vapor contained in a parcel of air",
+      "from": "mass",
+      "verb": "of",
+      "to": "water vapor"
+    },
+    {
+      "name": "dry air",
+      "from": "air",
+      "verb": "kind of",
+      "to": "dry"
+    },
+    {
+      "description": "the mass of the dry air, excluding water vapor, in a parcel of air",
+      "from": "mass",
+      "verb": "of",
+      "to": "dry air"
+    },
+    {
+      "name": "moist air",
+      "from": "air",
+      "verb": "kind of",
+      "to": "moist"
+    },
+    {
+      "description": "the total mass of a parcel of moist air including its water vapor",
+      "from": "mass",
+      "verb": "of",
+      "to": "moist air"
+    },
+    {
+      "name": "reflected radiation",
+      "description": "the amount of radiation reflected by a surface",
+      "from": "radiation",
+      "verb": "kind of",
+      "to": "reflected"
+    },
+    {
+      "name": "incoming radiation",
+      "description": "the amount of radiation arriving at a surface",
+      "from": "radiation",
+      "verb": "kind of",
+      "to": "incoming"
+    },
+    {
+      "description": "the air temperature expressed in degrees Celsius",
+      "from": "temperature",
+      "verb": "in",
+      "to": "celsius"
+    },
+    {
+      "name": "temperature difference",
+      "description": "the difference in temperature between two points",
+      "from": "difference",
+      "verb": "of",
+      "to": "temperature"
+    },
+    {
+      "name": "height difference",
+      "description": "the difference in height between two points",
+      "from": "difference",
+      "verb": "of",
+      "to": "height"
+    },
+    {
+      "name": "dry adiabatic",
+      "from": "adiabatic",
+      "verb": "kind of",
+      "to": "dry"
+    },
+    {
+      "name": "dry adiabatic lapse rate",
+      "description": "the rate at which an unsaturated air parcel cools as it rises, about 9.8 K per kilometre",
+      "from": "lapse rate",
+      "verb": "kind of",
+      "to": "dry adiabatic"
+    },
+    {
+      "name": "environmental lapse rate",
+      "description": "the actual rate at which air temperature decreases with height in the atmosphere",
+      "from": "lapse rate",
+      "verb": "kind of",
+      "to": "environmental"
+    },
     {
       "from": "meteorology",
       "verb": "is part of",
@@ -1977,16 +1922,16 @@
       "to": "weather forecasting"
     },
     {
+      "name": "El Niño phase",
       "from": "El Niño",
       "verb": "is part of",
-      "to": "El Nino-Southern Oscillation",
-      "name": "El Niño phase"
+      "to": "El Nino-Southern Oscillation"
     },
     {
+      "name": "La Niña phase",
       "from": "La Niña",
       "verb": "is part of",
-      "to": "El Nino-Southern Oscillation",
-      "name": "La Niña phase"
+      "to": "El Nino-Southern Oscillation"
     }
   ],
   "formulas": [

@@ -377,7 +377,7 @@ class words
     const string CHF = 'CHF';
     const int CHF_ID = 258;
     const string SWISS_FRANC = 'Swiss franc';
-    const int SWISS_FRANC_ID = 2501;
+    const int SWISS_FRANC_ID = 2465;
     const string EUR = 'Euro';
     const int EUR_ID = 268;
     const string USD = 'USD';

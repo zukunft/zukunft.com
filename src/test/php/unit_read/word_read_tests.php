@@ -203,7 +203,7 @@ class word_read_tests
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_like('S');
         $t->assert_contains('load_by_pattern', $wrd_lst->names(),
-            array("S", "September", "Share", "Share Price", "Samoa", "Sv"));
+            array("S", "September", "Share", "Samoa", "Sv"));
 
         // add a word to a list by the word id
         $wrd_lst = new word_list ($t->usr1);

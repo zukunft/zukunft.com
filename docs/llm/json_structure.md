@@ -112,6 +112,33 @@ If you find yourself adding a multi-word `name` to the `words` array, stop and
 decompose first — add the missing single-word atoms (often half are already in
 the file) and a building-block triple per compound.
 
+### No leading or trailing whitespace in any phrase name
+
+A phrase `name` (word *or* triple), and every `from` / `to` / `assigned` /
+`assigned_word` / value-`words[]` reference to one, is matched **byte-for-byte**.
+A stray trailing space turns `"Civil liberties "` and `"Civil liberties"` into
+two different phrases — the import either treats them as separate or fails to
+resolve the reference, and the duplicate quietly proliferates as values copy
+the typo.
+
+- **Wrong** — name with trailing space:
+
+```json
+{ "name": "Civil liberties ", "from": "liberties", "verb": "kind of", "to": "Civil" }
+```
+
+- **Right** — trimmed name; references match exactly:
+
+```json
+{ "name": "Civil liberties",  "from": "liberties", "verb": "kind of", "to": "Civil" }
+```
+
+The same trim applies to every place a name appears: word/triple/source `name`,
+triple `from`/`to`, formula `assigned`/`assigned_word`, value `words[]` entries,
+and `value.source`. When you notice a trailing-space name in an existing file,
+fix it everywhere in that file — partial trims create the same split-identity
+problem.
+
 ### Intentional symbol / abbreviation aliasing
 
 A short symbol may alias several phrases on purpose. `m` is the symbol for the
@@ -206,6 +233,43 @@ referenced triple's name — two triples must not share a name, so import fails.
 A membership triple whose `from` is a plain **word** (e.g. `force` `is part of`
 `mechanics`) can stay unnamed — the word's name is available. The clash arises
 only when the `from`/`to` is itself a named triple.
+
+### Omit `name` when it is just the auto-generated `<from> <verb> <to>`
+
+The importer auto-generates a triple's name from `<from> <verb> <to>` when no
+`name` is given. **Never repeat that exact string in an explicit `name`** — it is
+pure noise and clutters the file. Only add an explicit `name` when the desired
+display name **differs** from the auto-generated form (e.g. it omits the verb,
+reorders parts, or carries a domain-of-art label), or when there would otherwise
+be a name clash described above.
+
+- **Wrong** — `name` repeats the auto-generated `<from> <verb> <to>`:
+
+```json
+{ "name": "ecosystem is part of ecology",
+  "from": "ecosystem", "verb": "is part of", "to": "ecology" }
+```
+
+- **Right** — omit the `name`; the importer derives `ecosystem is part of ecology`:
+
+```json
+{ "from": "ecosystem", "verb": "is part of", "to": "ecology" }
+```
+
+- **Right** — keep an explicit `name` when it differs from the auto-form
+  (here the display name `cell biology` is shorter than `biology kind of cell`):
+
+```json
+{ "name": "cell biology",
+  "from": "biology", "verb": "kind of", "to": "cell" }
+```
+
+This applies even when `from` and/or `to` are named triples: the importer can
+still build `<from> <verb> <to>` deterministically from the referenced phrase
+names, so the explicit `name` is only required when a different display name is
+wanted or when the auto-name would actually collide with another triple's name
+in the file. Re-importing files where every `is part of` triple repeats its own
+auto-name is a common LLM mistake — strip them.
 
 ### Composition pattern
 
