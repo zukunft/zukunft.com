@@ -7,17 +7,22 @@ Detail for the "State & messages" and "Unit-testability" rules in `CLAUDE.md`.
 The project uses a small fixed set of globals (see also `docs/todo.md`). No
 others may be introduced.
 
-| Global | Purpose |
-|---|---|
-| `$sys` | Execution times, type cache, system config (rarely changes, not user-specific) |
-| `$db_con` | Database connection |
-| `$cfg` | User-specific configuration numbers (changes more often than types) |
-| `$cac` | Backend cache of user-specific `data_object` |
-| `$ui_cac` | Frontend cache including the session user |
-| `$mtr` | Message translation — created **once** in `http/view.php`; language priority: (1) `url_var::LANGUAGE` URL param, (2) session var, (3) user config (`$cfg`), (4) default |
-| `$t` | Base test object (assert + cleanup helpers) |
-| `$t_sys` | Error counting and execution times for tests |
-| `$debug` | Activates additional logging levels |
+| Global    | Scope    | Purpose                                                                                                                                                                 |
+|-----------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `$sys`    | backend  | Execution times, type cache, system config (rarely changes, not user-specific)                                                                                          |
+| `$db_con` | backend  | Database connection                                                                                                                                                     |
+| `$cfg`    | backend  | User-specific configuration numbers (changes more often than types)                                                                                                     |
+| `$cac`    | backend  | Backend cache of user-specific `data_object`                                                                                                                            |
+| `$ui_sys` | frontend | Frontend cache including the session user and the user config                                                                                                           |
+| `$mtr`    | frontend | Message translation — created **once** in `http/view.php`; language priority: (1) `url_var::LANGUAGE` URL param, (2) session var, (3) user config (`$cfg`), (4) default |
+| `$t`      | tests    | Base test object (assert + cleanup helpers)                                                                                                                             |
+| `$t_sys`  | tests    | Error counting and execution times for tests                                                                                                                            |
+| `$debug`  | any      | Activates additional logging levels                                                                                                                                     |
+
+Code in the wrong scope must not read these globals — frontend renderers
+(`src/main/php/web/**`) may not touch `$sys`/`$db_con`/`$cfg`/`$cac`; backend
+code (`src/main/php/cfg/**`) may not touch `$ui_sys`/`$mtr`; tests own
+`$t`/`$t_sys`, production code does not.
 
 ## Unit-testability
 

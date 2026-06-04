@@ -265,11 +265,11 @@ class phrase_list extends sandbox_list_named
         ?int   $max = null
     ): string
     {
-        global $ui_cac;
+        global $ui_sys;
 
         $result = '';
 
-        $vrb_cac = $ui_cac->typ_lst_cache->html_verbs ?? null;
+        $vrb_cac = $ui_sys->typ_lst_cache->html_verbs ?? null;
 
         if ($this->is_empty()) {
             log_debug('list of related phrase is empty for ' . $phr->dsp_id());

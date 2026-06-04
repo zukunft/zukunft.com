@@ -183,7 +183,7 @@ class test_lib
      */
     function ui_test_cache(user $usr, test_cleanup $t): data_object_ui
     {
-        global $ui_cac;
+        global $ui_sys;
 
         $dto_ui = new data_object_ui();
         $dto_ui->usr = $this->cast_user($usr);
@@ -240,7 +240,7 @@ class test_lib
         $dto_ui->chg_log = $t_log->log_list_named_ui();
 
         // set the global cache var
-        $ui_cac = $dto_ui;
+        $ui_sys = $dto_ui;
 
         return $dto_ui;
     }

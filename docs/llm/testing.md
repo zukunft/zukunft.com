@@ -327,3 +327,38 @@ When the new renderer doesn't apply to an object type (e.g. no `VIEW_EDIT`
 constant the renderer relies on), skip that test rather than forcing the call —
 and either add the missing piece to the object (preferred, so all object pages
 stay consistent) or document the skip in the helper's docblock.
+
+## Every machine-checkable coding rule has a coded test
+
+A coding rule in `docs/llm/` is only enforced when there is an automated test
+that fails when the rule is violated. Reviewer attention is not a substitute —
+the rule must be expressed as code in
+`src/test/php/unit/coding_rule_tests.php` (run via
+`test/test_coding_rules.php`), so every PR sees the violation before merge.
+
+When you add or change a rule whose violations can be detected by static
+inspection of the source tree (file layout, global usage, naming, section
+order, forbidden patterns), add the matching check in the same change. Without
+it the rule is a wish, not a rule.
+
+Worked examples of rules that belong here:
+
+- **Frontend globals** — files under `src/main/php/web/**` may only read the
+  frontend-scoped globals `$ui_sys` and `$mtr` (see
+  `docs/llm/state-and-messages.md`). The test greps the tree for `global $sys`,
+  `global $db_con`, `global $cfg`, `global $cac` in `web/**` and fails on any
+  hit. Mirror checks for backend (`src/main/php/cfg/**` must not read
+  `$ui_sys`/`$mtr`) and tests (`$t`/`$t_sys` only in `src/test/**`).
+- **Allowed-global set is closed** — fail if a `global $X` appears anywhere with
+  `$X` outside the table in `state-and-messages.md`.
+- **No PHP superglobals inside functions** — fail on `$_GET`/`$_POST`/`$_SESSION`
+  reads outside `http/*.php` entry points.
+- **Frontend icons come from `web/const/icons.php`** — fail on inline
+  `fas fa-*` strings in `web/**` (already a documented rule).
+- **`AUTO_UPDATE_HTML` is `false`** — fail the run if `files::AUTO_UPDATE_HTML`
+  is `true`, so a forgotten `true` cannot land on a branch.
+
+Each check is one positive + one negative test in `coding_rule_tests.php` (the
+positive proves the check catches a known bad fixture line; the negative proves
+it tolerates a known good fixture line), matching the per-function discipline
+above.

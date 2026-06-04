@@ -358,18 +358,35 @@ class word extends sandbox_code_id
 
     /**
      * get the parent phrases of the given phrase
-     * if a phrase list is given get only the parent phrases within the list
+     * if a phrase list is given get only the parent phrases within the list (no api call)
      * if no phrase list is given get the phrases from the api
      * e.g. for Zurich the list is City and Canton based on a phrase list with City, Canton and country
      * but  for Zurich the list is City, Canton and company based on a phrase list with company, City, Canton and country
-     * @param phrase_list|null $phr_lst
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
      * @param int $levels the number of parent levels
-     * @return phrase_list
+     * @return phrase_list capped by the user-specific frontend config limit
      */
     function parents(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
     {
-        $lst = new phrase_list();
-        $lst->load_related($this->phrase(), foaf_direction::UP);
+        if ($phr_lst !== null) {
+            $lst = $phr_lst->parents($this->phrase());
+        } else {
+            $lst = new phrase_list();
+            $lst->load_related($this->phrase(), foaf_direction::UP);
+        }
+        // limit the number of parents shown to keep the page-title category subtitle readable
+        global $ui_sys;
+        if ($ui_sys?->cfg !== null) {
+            $limit = $ui_sys->cfg->get_by(
+                [words::RELATED, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                def::FALLBACK_PHRASES_RELATED
+            );
+        } else {
+            $limit = def::FALLBACK_PHRASES_RELATED;
+        }
+        if ($lst->count() > $limit) {
+            $lst->set_lst(array_slice($lst->lst(), 0, $limit));
+        }
         return $lst;
     }
 

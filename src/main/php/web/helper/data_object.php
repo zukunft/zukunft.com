@@ -178,6 +178,9 @@ class data_object
     // TODO Prio 0 rename to $typ_lst
     public ?type_lists $typ_lst_cache = null;
 
+    // the user-specific frontend configuration (loaded once at request start)
+    public ?config $cfg = null;
+
     // the session user
     public user $usr;
 

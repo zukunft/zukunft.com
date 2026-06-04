@@ -233,8 +233,8 @@ class view_base extends sandbox_code_id
 
     function type_code_id(): ?string
     {
-        global $ui_cac;
-        $msk_typ_lst = $ui_cac->typ_lst_cache->html_view_types;
+        global $ui_sys;
+        $msk_typ_lst = $ui_sys->typ_lst_cache->html_view_types;
         $id = $this->type_id();
         if ($id != null) {
             return $msk_typ_lst->get($this->type_id())?->get_code_id();

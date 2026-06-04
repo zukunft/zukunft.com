@@ -53,7 +53,7 @@ detail file. Order is by how often they fire, not importance.
 ### State & messages
 - Mutable state passes as explicit parameters (`&` only when the variable itself is reassigned); never via globals or return side effects. → `docs/llm/coding/state-and-messages.md`
 - A stateless, freshly-constructed helper (`new html_base()`) is instantiated locally, not threaded as a parameter. → `docs/llm/coding/state-and-messages.md`
-- Only the fixed global set is allowed (`$sys $db_con $cfg $cac $ui_cac $mtr $t $t_sys $debug`); introduce no others. → `docs/llm/coding/state-and-messages.md`
+- Only the fixed global set is allowed (`$sys $db_con $cfg $cac $ui_sys $mtr $t $t_sys $debug`); introduce no others. → `docs/llm/coding/state-and-messages.md`
 - `$msg` (the single `user_message` from `http/view.php`) is append-only: never overwrite, reset, or re-create it; use a local buffer + `merge()`. → `docs/llm/coding/state-and-messages.md`
 - User-facing messages use `$msg->add(msg_id::X, [])` with a `messages.php` case + en/de translations; never `add_message(string)`. → `docs/llm/coding/state-and-messages.md`
 - Back-navigation is `'9'`-prefixed URL params (`url_var::BACK` is a prefix char), never a standalone `BACK` field. → `docs/llm/coding/state-and-messages.md`
@@ -100,6 +100,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Data-file-dependent tests recreate the artifact from a shared const (one point of change), e.g. import-JSON names from a reserved test word.
 - Every component-type renderer arm in `component_exe.php` has a page-based test in `unit_ui/<topic>_ui_tests.php`.
 - Every HTML-returning function in `web/` contributes a fragment to an `object_pages/<name>.html` snapshot; cross-object renderers go through a `test_base` helper.
+- Every machine-checkable coding rule (e.g. frontend code may only read `$ui_sys`/`$mtr`) has a coded check in `unit/coding_rule_tests.php`; reviewer attention is not a substitute. → `docs/llm/testing.md`
 
 ## Pre-commit checklist
 
