@@ -68,8 +68,9 @@ detail file. Order is by how often they fire, not importance.
 
 ## Domain & import rules
 
-These fire only when touching domain objects or import JSON. Detail and worked
-examples: `docs/llm/import-and-domain.md`.
+These fire only when touching domain objects or import JSON. JSON import
+file-format detail and worked examples: `docs/llm/json_structure.md`. Domain
+noun definitions: `docs/llm/architecture.md`.
 
 - Use the domain nouns exactly: word, verb, triple, source, ref, value, group, formula, result, view, component. `phrase` = word|triple; `term` = word|verb|triple|formula. Every phrase is a term; a verb/formula is a term but not a phrase.
 - `percent`-measure formulas auto-scale: never add `* 100` to a ratio assigned to `percent`.
