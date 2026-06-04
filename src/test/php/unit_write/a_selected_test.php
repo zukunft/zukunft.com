@@ -187,8 +187,8 @@ class a_selected_test extends test_cleanup
             */
             //new import_write_tests()->run($t);
             $imf = new import_file();
-            //$ta = new all_unit_write_tests();
-            //$ta->import_test_files($usr);
+            $ta = new all_unit_write_tests();
+            $ta->import_test_files($usr);
             //$imf->json_file(files::MESSAGE_PATH . files::TIME_FILE, $usr, false);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);

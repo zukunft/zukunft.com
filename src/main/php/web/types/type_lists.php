@@ -89,6 +89,7 @@ class type_lists
      * object vars
      */
 
+    // TODO Prio 0 rename e.g. $html_user_profiles to $usr_pro
     public ?user_profile $html_user_profiles = null;
     public ?phrase_type_list $html_phrase_types = null;
     public ?formula_type_list $html_formula_types = null;

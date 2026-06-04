@@ -76,6 +76,7 @@ class result extends sandbox_value
     // curl views
     const string VIEW_EDIT = views::RESULT_EDIT;
     const string VIEW_DEL = views::RESULT_DEL;
+    const int VIEW_EDIT_ID = views::RESULT_EDIT_ID;
 
     // curl message id
     const msg_id MSG_EDIT = msg_id::RESULT_EDIT;

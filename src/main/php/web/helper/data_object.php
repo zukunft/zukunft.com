@@ -175,6 +175,7 @@ class data_object
     }
     public view_list $msk_lst;
     private component_list $cmp_lst;
+    // TODO Prio 0 rename to $typ_lst
     public ?type_lists $typ_lst_cache = null;
 
     // the session user

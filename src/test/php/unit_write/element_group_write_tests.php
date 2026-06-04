@@ -162,7 +162,7 @@ class element_group_write_tests
 
                     $result = $fig_dsp->display_linked();
                     //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
-                    $target = '<a href="/http/result_edit.php?id=' . $fig->id() . '" title="8.51">8.51</a>';
+                    $target = '<a href="/http/result_edit.php?id=' . $fig->id() . '">8.51</a>';
                     $t->assert('figure->display_linked', $result, $target);
                 }
             } else {
@@ -182,7 +182,7 @@ class element_group_write_tests
             //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
             $fig_lst = $elm_grp->figures();
             $fig_id = $fig_lst->get_first_id();
-            $target = ' 8.505251 {f18}'  . words::YEAR_2020 . ','  . words::INHABITANTS . ','  . words::MIO . ','  . words::CH . '  (57984687026274444)';
+            $target = ' 8.505251 {f18}'  . words::YEAR_2020 . ','  . words::INHABITANTS . ','  . words::MIO . ','  . words::CH . '  (58266170593050764)';
             $t->assert('figure_list->dsp_id', $result, $target);
 
             $fig_lst_dsp = new figure_list($fig_lst->api_json());

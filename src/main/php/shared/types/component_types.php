@@ -68,6 +68,12 @@ class component_types
     // general fields used in several views
     const string FORM_TITLE = "system_form_title";
     const int FORM_TITLE_ID = 17;
+    // like FORM_TITLE but for non-form display views: shows the object name as the page title
+    // plus a fas fa-edit link to the object's edit view; the title text is the object name and
+    // is rendered in the user's frontend language by loading the same object in that language
+    // (will be done via the sandbox language field once it has been added to all sandbox objects)
+    const string TITLE_NAMED_EDIT = "title_of_named_with_edit_link";
+    const int TITLE_NAMED_EDIT_ID = 192;
     const string FORM_FIELD_NAME = "system_form_field_name";
     const int FORM_FIELD_NAME_ID = 21;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";
@@ -463,6 +469,10 @@ class component_types
     const int SHOW_NAME_ID = 20;
     const string SHOW_DESCRIPTION = "system_show_field_description";
     const int SHOW_DESCRIPTION_ID = 147;
+    const string SHOW_PLURAL = "system_show_field_plural";
+    const int SHOW_PLURAL_ID = 190;
+    const string SHOW_PHRASE_TYPE = "system_show_field_phrase_type";
+    const int SHOW_PHRASE_TYPE_ID = 191;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -689,6 +699,7 @@ class component_types
         [self::PHRASE_NAME, self::PHRASE_NAME_ID],
         [self::CALC_SHEET, self::CALC_SHEET_ID],
         [self::FORM_TITLE, self::FORM_TITLE_ID],
+        [self::TITLE_NAMED_EDIT, self::TITLE_NAMED_EDIT_ID],
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
         [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],
@@ -839,6 +850,8 @@ class component_types
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
+        [self::SHOW_PLURAL, self::SHOW_PLURAL_ID],
+        [self::SHOW_PHRASE_TYPE, self::SHOW_PHRASE_TYPE_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],

@@ -119,9 +119,11 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -173,6 +175,8 @@ include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::EXECUTE . 'system_form.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -801,6 +805,31 @@ class test_base
     }
 
     /**
+     * check that the result text does NOT contain the given needle
+     *
+     * @param string $msg (unique) description of the test
+     * @param string $haystack the actual result
+     * @param string $needle the text that is expected to be absent from the haystack
+     * @param float $exe_max_time the expected max time to create the result
+     * @param string $comment
+     * @return bool true if the needle is absent from the haystack
+     */
+    function assert_text_not_contains(
+        string $msg,
+        string $haystack,
+        string $needle,
+        float  $exe_max_time = self::TIMEOUT_LIMIT,
+        string $comment = ''): bool
+    {
+        if (str_contains($haystack, $needle)) {
+            $result = $needle;
+        } else {
+            $result = '';
+        }
+        return $this->assert($msg, $result, $needle, $exe_max_time, $comment, self::TEST_TYPE_NOT);
+    }
+
+    /**
      * check if the test for results contains at least all expected results
      * or in other words if all needles can be found in the haystack
      *
@@ -1007,11 +1036,11 @@ class test_base
         // create the api message that send to the frontend
         $api_msg = $msk->api_json([api_types::INCL_COMPONENTS]);
         if ($id != 0) {
-            // add the database object json to the api message
-            // to send only one message to the frontend
-            $dbo->load_by_id($id);
+            // add the related database objects
+            $dbo->load_by_id_with_related($id);
         }
-        $dbo_api_msg = $dbo->api_json();
+        // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above
+        $dbo_api_msg = $dbo->api_json([api_types::INCL_RELATED, api_types::INCL_PHRASES]);
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
         $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($id != 0) {
@@ -4606,6 +4635,26 @@ class test_base
             . $html->navbar(views::START_ID)
             . $html->main($body)
             . $html->footer();
+    }
+
+    /**
+     * build the html section that exercises the TITLE_NAMED_EDIT component renderer
+     * (system_form::title_of_named_with_edit_link) for the given object, so every
+     * object_pages snapshot covers the page-title-with-edit-link component type;
+     * each object UI test is expected to append this to its $test_page before the
+     * html_page_test() call
+     *
+     * @param db_object $dbo the named object whose page is being snapshotted; must
+     *                       define VIEW_EDIT and MSG_EDIT (word, triple, formula,
+     *                       verb, view, component, source, ref, value, result, ...)
+     * @return string a h2 heading plus the rendered TITLE_NAMED_EDIT html
+     */
+    function dsp_title_named_edit(db_object $dbo): string
+    {
+        $html = new html_base();
+        $frm = new system_form();
+        return $html->text_h2('title named with edit link')
+            . $frm->title_named($dbo);
     }
 
     function class_without_namespace(string $class_name_with_namespace): string

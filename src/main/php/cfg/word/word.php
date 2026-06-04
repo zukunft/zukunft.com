@@ -116,6 +116,7 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -161,6 +162,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -219,6 +221,16 @@ class word extends sandbox_code_id
             $this->impact = $impact;
         }
     }
+
+    // the phrases connected to this word by a triple (this word is the from or the to
+    // of each triple — direction is "both"); populated lazily by load_phrases_related()
+    // and only emitted via api_json_array() when the api_types::INCL_RELATED flag is
+    // set on the caller's api_type_list; each entry is a phrase wrapping the connecting
+    // triple, so the frontend renderer can display the triple's "other end" word as the
+    // link label and the triple itself as the link target — e.g. for the word "Zurich"
+    // the entries are the triples "City of Zurich", "Canton of Zurich", "Zurich Insurance";
+    // the per-verb count is bounded by the related-per-verb config so the list stays compact
+    public ?phrase_list $phrases_related = null;
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -435,6 +447,17 @@ class word extends sandbox_code_id
                 $vars = parent::api_json_array($typ_lst, $usr);
                 $vars[json_fields::PLURAL] = $this->plural;
                 $vars[json_fields::IMPACT] = $this->impact;
+                if ($typ_lst->incl_related()) {
+                    if ($this->phrases_related == null and !$typ_lst->test_mode()) {
+                        $this->load_phrases_related();
+                    }
+                    if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
+                        // INCL_PHRASES so each related triple emits its from/verb/to phrases,
+                        // not just id+name — the page-title renderer needs the link names
+                        $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
+                            new api_type_list([api_types::INCL_PHRASES]), $usr);
+                    }
+                }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -443,6 +466,50 @@ class word extends sandbox_code_id
         }
 
         return $vars;
+    }
+
+    /**
+     * load the phrases related to this word via a triple
+     *
+     * @param int $per_verb_limit upper bound on triples kept per verb; the loader keeps one
+     *                            extra row so the caller can detect overflow without a count
+     */
+    function load_phrases_related(int $per_verb_limit = def::LIMIT_RELATED_PER_VERB): void
+    {
+        $trp_lst = new triple_list($this->get_user());
+        $trp_lst->load_by_phr($this->phrase(), null, foaf_direction::BOTH);
+        $kept = new phrase_list($this->get_user());
+        $per_verb_count = [];
+        foreach ($trp_lst->lst() as $trp) {
+            $vrb_id = $trp->get_verb()?->id() ?? 0;
+            $seen = $per_verb_count[$vrb_id] ?? 0;
+            // keep one extra row beyond the limit so the renderer can show a "more" indicator
+            if ($seen <= $per_verb_limit) {
+                $kept->add($trp->phrase());
+                $per_verb_count[$vrb_id] = $seen + 1;
+            }
+        }
+        $this->phrases_related = $kept;
+    }
+
+    /**
+     * load a word by id and, in the same call, populate the related phrases that the
+     * default word view's page-title renderer expects (City, Canton, ... inline list and
+     * the "is symbol for <X>" symbol-line layout). Used by the default-word-view path —
+     * test snapshot generation via test_base::assert_view and any other caller that wants
+     * the rendered HTML to reflect a word's connecting triples without going through the
+     * INCL_RELATED-gated api_json round-trip
+     *
+     * @param int $id the word id to load
+     * @return int the id of the loaded word, or 0 if not found
+     */
+    function load_by_id_with_related(int $id): int
+    {
+        $loaded_id = parent::load_by_id($id);
+        if ($loaded_id > 0) {
+            $this->load_phrases_related();
+        }
+        return $loaded_id;
     }
 
 

@@ -261,6 +261,9 @@ class def
     const int FALLBACK_RECURSIVE_MAX = 99; // the maximal number of recursive calls of a function
     const int FALLBACK_DB_PAGE_ROWS = 20; // the number of database rows that should be loaded at once
     const float FALLBACK_RESPONSE_TIME = 1.0; // the response time to update the frontend in seconds
+    // fallback for the per-verb limit of related phrases shown in the page title (Zurich -> City, Canton, ...);
+    // overridden by config.yaml entry frontend.lists.limit.related per verb once the $cfg accessor is wired
+    const int LIMIT_RELATED_PER_VERB = 2;
 
 
     /*

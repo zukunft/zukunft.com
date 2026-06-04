@@ -51,6 +51,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
 //include_once paths::MODEL_PHRASE . 'phrase_list.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
+//include_once paths::MODEL_PHRASE . 'term_list.php';
 //include_once paths::MODEL_REF . 'source_list.php';
 include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -548,7 +550,11 @@ class sandbox_list_named extends sandbox_list
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get($sbx_new->term()->id());
+                if ($this::class == term_list::class) {
+                    $sbx_old = $this->get($sbx_new->term()->id());
+                } else {
+                    $sbx_old = $this->get($sbx_new->id());
+                }
                 if ($sbx_old != null) {
                     $sbx_old->fill($sbx_new, $usr);
                 } else {

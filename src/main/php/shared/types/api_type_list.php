@@ -35,8 +35,10 @@ namespace Zukunft\ZukunftCom\main\php\shared\types;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class api_type_list
 {
@@ -50,6 +52,30 @@ class api_type_list
     function __construct(array $lst = [])
     {
         $this->lst = $lst;
+    }
+
+    /**
+     * build an api_type_list from URL query parameters — the http entry points read $_GET once
+     * and pass it here so this conversion stays unit-testable (no superglobals inside the
+     * function, per the testability rule in docs/llm/coding.md)
+     *
+     * currently translates:
+     *   - url_var::INCL_RELATED (truthy)  → api_types::INCL_RELATED
+     *
+     * $base seeds the result so callers can include flags that always apply (e.g. HEADER for
+     * a top-level api response); flags from $base are kept verbatim
+     *
+     * @param array $url_array typically $_GET decoded into an associative array
+     * @param array $base flags that are always part of the resulting list (e.g. [api_types::HEADER])
+     * @return self the resulting api_type_list with $base plus any url-driven flags
+     */
+    public static function from_url_array(array $url_array, array $base = []): self
+    {
+        $types = $base;
+        if (!empty($url_array[url_var::INCL_RELATED])) {
+            $types[] = api_types::INCL_RELATED;
+        }
+        return new self($types);
     }
 
     public function set(array $lst): void
@@ -130,6 +156,16 @@ class api_type_list
     public function phrase_names(): bool
     {
         return in_array(api_types::PHRASE_NAMES, $this->lst);
+    }
+
+    /**
+     * @return bool true if the api message should include the most often used related
+     *              objects e.g. for a symbol like 'CHF' the related 'Swiss Franc'
+     *              reached via the "is symbol for" verb
+     */
+    public function incl_related(): bool
+    {
+        return in_array(api_types::INCL_RELATED, $this->lst);
     }
 
     /**

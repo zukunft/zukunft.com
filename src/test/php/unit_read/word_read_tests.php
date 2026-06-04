@@ -41,11 +41,13 @@ include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -80,6 +82,47 @@ class word_read_tests
         $t->assert($ts . $test_name . 'description', $wrd->description, words::MATH_COM);
 
         // TODO load plural, type and view
+
+
+        $t->subheader($ts . 'load related');
+        $test_name = 'load_by_id_with_related populates the word';
+        $wrd_chf = new word($t->usr1);
+        $loaded_id = $wrd_chf->load_by_id_with_related(words::CHF_ID);
+        $t->assert_true($test_name, $loaded_id > 0 and $wrd_chf->name() == words::CHF);
+
+        $test_name = 'load_by_id_with_related fills phrases_related from triples';
+        $t->assert_true($test_name,
+            $wrd_chf->phrases_related !== null and !$wrd_chf->phrases_related->is_empty());
+
+        $test_name = 'load_by_id_with_related includes the SYMBOL-verb triple for CHF';
+        // resolve the SYMBOL verb's runtime id via the preloaded cache (per the
+        // "code_id-only for code↔DB links" rule in docs/llm/coding.md) rather than
+        // the seed-bound verbs::SYMBOL_ID const, so the test stays portable across pods
+        $symbol_vrb_id = $sys->typ_lst->vrb->get_verb(verbs::SYMBOL)?->id() ?? 0;
+        $has_symbol = false;
+        if ($wrd_chf->phrases_related !== null) {
+            foreach ($wrd_chf->phrases_related->lst() as $rel_phr) {
+                $rel_obj = $rel_phr->obj();
+                if ($rel_obj instanceof triple
+                    and $rel_obj->get_verb()?->id() === $symbol_vrb_id) {
+                    $has_symbol = true;
+                    break;
+                }
+            }
+        }
+        $t->assert_true($test_name, $has_symbol);
+
+        // negative: an unknown id returns 0 and leaves phrases_related null/empty —
+        // the asserted reported outcome is the int 0 return AND no spurious related
+        $test_name = 'load_by_id_with_related returns 0 for an unknown id';
+        $wrd_missing = new word($t->usr1);
+        $loaded_missing = $wrd_missing->load_by_id_with_related(999999999);
+        $t->assert_true($test_name, $loaded_missing === 0);
+
+        $test_name = 'load_by_id_with_related leaves phrases_related empty for an unknown id';
+        $t->assert_true($test_name,
+            $wrd_missing->phrases_related === null
+            or $wrd_missing->phrases_related->is_empty());
 
 
         $t->subheader($ts . 'types');

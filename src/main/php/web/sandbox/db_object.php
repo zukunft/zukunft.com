@@ -98,10 +98,13 @@ class db_object extends TextIdObject
      * const
      */
 
-    // the fallback crud views that are expected to be overwritten by the child objects
+    // the fallback crud views that are expected to be overwritten by the child objects;
+    // the *_ID variants are the numeric view ids used in URLs (m=<id>) so links
+    // resolve through the view-by-id router instead of the slower code-id lookup
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
+    const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
 
     // the fallback crud message id that are expected to be overwritten by the child objects
     const msg_id MSG_ADD = msg_id::WORD_ADD;
@@ -255,6 +258,26 @@ class db_object extends TextIdObject
             }
         }
         return $result;
+    }
+
+    /**
+     * load the object by id AND ask the backend to include the related-objects view-model
+     * that the page-title renderer expects (see backend cfg/word/word::phrases_related and
+     * the title_of_named_with_edit_link symbol/category subtitle layouts).
+     *
+     * The base implementation is a no-op beyond load_by_id, so any frontend dbo type that
+     * does NOT publish a related-objects view-model (verb_ui, source_ui, …) behaves exactly
+     * like a plain load_by_id and the caller (frontend::url_to_html) can use this method
+     * polymorphically without a class check. Concrete classes that DO publish such a
+     * view-model (currently web/word/word.php) override this to attach the ?incl_related=1
+     * URL flag so the api handler builds an api_type_list with api_types::INCL_RELATED set
+     *
+     * @param int|string $id the database id of the object to load
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id): bool
+    {
+        return $this->load_by_id($id);
     }
 
 

@@ -30,6 +30,15 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add unit test for all frontend components
     TODO test user activate and password reset
 
+    TODO review the base import files:
+         in src/test/resources/import/fermi_estimates.json add a description to the words and try to fimd a wikipedia / wikidata ref
+         add to src/test/resources/import/fermi_estimates.json some results that should be checked on import
+         add to src/test/resources/import/fermi_estimates.json the calculation for the potentail gain, the risk aand the next test step in currency and htp
+    TODO review the import in full test so that each file is only imported once
+    TODO add to import the option to create a warning if the user changes a object parameter to make sure that the system user does not import contradicting data
+    TODO in import calculate the result values once based on the data_object and report an error if the result values cannot be reproduced and add a sample json for the fail test to src/test/resources/import/inconsistency_tests
+         after data import check that the result values can be reproduced
+
     TODO Release 0.0.4
     TODO use the name "nud" (New User Default) for the default data that should be used if the user has not done an overwrite
     TODO use the name "psv" (Public Standard Value) for values and results that are no read and write restrictions 

@@ -130,6 +130,16 @@ class json_fields
     const string SCALE = 'scale';
     const string SYMBOL = 'symbol';
 
+    // for a phrase: the list of phrases that are related to this phrase via a triple
+    // (the phrase is the from or to of the triple, including the verb context);
+    // populated by the backend when api_types::INCL_RELATED is set on the request;
+    // each entry is a phrase wrapping a triple so the renderer can show the "other end"
+    // word as the link text and the triple's detail view as the link target — e.g. for
+    // the word "Zurich" the entries are the triples "City of Zurich", "Canton of Zurich",
+    // "Zurich Insurance" (their `to` words "City", "Canton", "Company" are the link labels);
+    // the number per verb is bounded by the related-per-verb config so the list stays compact
+    const string PHRASES_RELATED = 'phrases_related';
+
 
     /*
      * api - fields used only for the api json messages

@@ -45,16 +45,23 @@ include_once paths::SHARED_CONST . 'words.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -71,6 +78,7 @@ class word_tests
         // init
         $sc = new sql_creator();
         $t_wrd = new test_words($t);
+        $t_phr = new test_phrases($t);
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
 
@@ -165,9 +173,115 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api($wrd, 'word_body');
 
+        $t->subheader($ts . 'api/word handler reads the ?incl_related URL param into the api_type_list');
+        // the api/word/index.php GET handler now opts into api_types::INCL_RELATED only when
+        // ?incl_related is truthy on the URL — this keeps single-word fetches cheap by default
+        // and lets callers (e.g. the default word view) ask for the related list explicitly.
+        // these tests cover the url_array -> api_type_list translation (api_type_list::from_url_array)
+        // since reading $_GET inside a function is forbidden by the unit-testability rule
+        $base = [api_types::HEADER];
+        $with = api_type_list::from_url_array([url_var::INCL_RELATED => '1'], $base);
+        $without = api_type_list::from_url_array([], $base);
+        $test_name = 'api/word ?incl_related=1 enables api_types::INCL_RELATED';
+        $t->assert_true($t->name . $test_name, $with->incl_related());
+        $test_name = 'api/word without ?incl_related does NOT enable api_types::INCL_RELATED';
+        $t->assert_true($t->name . $test_name, !$without->incl_related());
+        $test_name = 'api/word HEADER base flag is preserved in both cases';
+        $t->assert_true($t->name . $test_name, $with->use_header() and $without->use_header());
+
+        $t->subheader($ts . 'backend api_json_array emits phrases_related only when INCL_RELATED is set');
+        // assign a related phrase list manually so the test stays DB-free; one entry is enough
+        // to verify the gating + serialisation (the per-verb load logic is covered separately
+        // by the load_phrases_related unit test against the triple_list fixture)
+        $wrd = $t_wrd->word_chf();
+        $related = new phrase_list($t->usr1);
+        $related->add((new test_phrases($t))->phrase_pi());
+        $wrd->phrases_related = $related;
+        $with_related = new api_type_list([api_types::INCL_RELATED, api_types::TEST_MODE]);
+        $without_related = new api_type_list([api_types::TEST_MODE]);
+        $vars_with = $wrd->api_json_array($with_related);
+        $vars_without = $wrd->api_json_array($without_related);
+        $test_name = 'word api_json_array includes phrases_related when INCL_RELATED is set';
+        $t->assert_true($t->name . $test_name, array_key_exists(json_fields::PHRASES_RELATED, $vars_with));
+        $test_name = 'word api_json_array omits phrases_related without INCL_RELATED';
+        $t->assert_true($t->name . $test_name, !array_key_exists(json_fields::PHRASES_RELATED, $vars_without));
+        // negative: a word with an empty phrases_related list does not emit the key
+        $bare_wrd = $t_wrd->word_chf();
+        $bare_wrd->phrases_related = new phrase_list($t->usr1);
+        $vars_bare = $bare_wrd->api_json_array($with_related);
+        $test_name = 'word api_json_array omits phrases_related when the list is empty';
+        $t->assert_true($t->name . $test_name, !array_key_exists(json_fields::PHRASES_RELATED, $vars_bare));
+
         $t->subheader($ts . 'html frontend');
         $wrd = $t_wrd->word();
         $t->assert_api_to_ui($wrd, new word_ui());
+
+
+        $t->subheader($ts . 'subtitle with phrase limit');
+
+        $test_name = '"Zurich" subtitle has city when limit is at 2';
+        $form = new system_form();
+        $wrd = $t_wrd->zh_ui();
+        $wrd->phr_lst = $t_phr->list_ui();
+        $txt = $form->title_named($wrd, 2);
+        $lnk = words::CITY_ID . '">' . words::CITY . '</a>';
+        $t->assert_text_contains($test_name, $txt, $lnk);
+        $test_name = '... and canton';
+        $lnk = words::CANTON_ID . '">' . words::CANTON . '</a>';
+        $t->assert_text_contains($test_name, $txt, $lnk);
+        $test_name = '... and "..." for more';
+        $lnk = views::WORD_RELATED_ID . '&id=' . words::ZH_ID . '">...</a>';
+        $t->assert_text_contains($test_name, $txt, $lnk);
+        $test_name = '... but company is NOT';
+        $t->assert_text_not_contains($test_name, $txt, words::COMPANY);
+
+        $test_name = 'company is part if limit is higher';
+        $txt = $form->title_named($wrd, 4);
+        $t->assert_text_contains($test_name, $txt, words::COMPANY);
+        $test_name = '... and "..." for more is goner';
+        $t->assert_text_not_contains($test_name, $txt, '>...</a>');
+
+        $test_name = 'verb of "CHF is symbol for Swiss Frank"';
+        $wrd = $t_wrd->chf_ui();
+        $wrd->phr_lst = $t_phr->list_ui();
+        $txt = $form->title_named($wrd);
+        $t->assert_text_contains($test_name, $txt, verbs::SYMBOL_NAME);
+        $test_name = 'link of "CHF is symbol for Swiss Frank"';
+        $lnk = '<a href="/http/view.php?m=' . views::WORD_ID
+            . '&id=' . words::SWISS_FRANC_ID . '">' . words::SWISS_FRANC . '</a>';
+        $t->assert_text_contains($test_name, $txt, $lnk);
+        $test_name = 'name of "CHF is symbol for Swiss Frank';
+        $t->assert_text_contains($test_name, $txt, '>CHF</h4>');
+
+        $test_name = 'moves the edit icon onto the subtitle line';
+        $heading_end = strpos($txt, '</h4>');
+        $edit_pos = strpos($txt, icons::EDIT);
+        $t->assert_true($test_name,
+            $heading_end !== false
+            and $edit_pos !== false
+            and $edit_pos > $heading_end);
+
+        $test_name = 'reverse priority "Zurich is" subtitle has company when company is relevant';
+        $wrd = $t_wrd->zh_ui();
+        $wrd->phr_lst = $t_phr->list_zh_impact_ui();
+        $txt = $form->title_named($wrd);
+        $t->assert_text_contains($test_name, $txt, '>' . words::COMPANY . '</a>');
+        $test_name = '... and still canton';
+        $t->assert_text_contains($test_name, $txt, '>' . words::CANTON . '</a>');
+        $test_name = '... but city NOT';
+        $t->assert_text_not_contains($test_name, $txt, '>' . words::CITY . '</a>');
+
+        $test_name = 'if there is no subtitle the edit icon is in the same line';
+        $wrd = $t_wrd->chf_ui();
+        $wrd->phr_lst = $t_phr->list_zh_ui();
+        $txt = $form->title_named($wrd);
+        $t->assert_text_contains($test_name, $txt, 'fas fa-edit');
+
+        $test_name = 'category_html for CHF emits the "is symbol for" verb verbatim';
+        $wrd = $t_wrd->swiss_franc_ui();
+        $wrd->phr_lst = $t_phr->list_ui();
+        $txt = $form->title_named($wrd);
+        $t->assert_text_not_contains($test_name, $txt, words::CHF);
 
         $t->subheader($ts . 'im- and export');
         // TODO check that all objects have a im and export test
