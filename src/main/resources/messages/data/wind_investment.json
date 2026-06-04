@@ -1,6 +1,6 @@
 {
   "version": "0.0.3",
-  "time": "2022-09-02 19:15:41",
+  "time": "2026-06-04 21:02:00",
   "user": "timon",
   "selection": [
     "wind power investment"
@@ -119,7 +119,7 @@
       "name": "Euro"
     },
     {
-      "name": "gramm"
+      "name": "gram"
     },
     {
       "name": "percent"
@@ -137,17 +137,13 @@
       ]
     },
     {
-      "name": "Power rating",
-      "refs": [
-        {
-          "name": "Power_rating",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "rating"
     },
     {
-      "name": "Top Seller",
-      "description": "The most often sold product type"
+      "name": "Top"
+    },
+    {
+      "name": "Seller"
     },
     {
       "name": "Watt"
@@ -162,7 +158,7 @@
       "name": "Giga"
     },
     {
-      "name": "Terra"
+      "name": "Tera"
     },
     {
       "name": "Diameter",
@@ -198,19 +194,16 @@
       ]
     },
     {
-      "name": "global warming potential",
-      "refs": [
-        {
-          "name": "Global warming potential",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "global"
+    },
+    {
+      "name": "potential"
     },
     {
       "name": "Germany"
     },
     {
-      "name": "North Sea"
+      "name": "Sea"
     },
     {
       "name": "Coast"
@@ -225,7 +218,7 @@
       "name": "second"
     },
     {
-      "name": "Power density"
+      "name": "density"
     },
     {
       "name": "Vestas"
@@ -234,13 +227,16 @@
       "name": "company"
     },
     {
-      "name": "Power Plant"
+      "name": "Plant"
     },
     {
       "name": "hour"
     },
     {
-      "name": "full load"
+      "name": "full"
+    },
+    {
+      "name": "load"
     },
     {
       "name": "electricity"
@@ -258,22 +254,10 @@
       "name": "production"
     },
     {
-      "name": "Share Price"
+      "name": "sheet"
     },
     {
-      "name": "balance sheet"
-    },
-    {
-      "name": "year"
-    },
-    {
-      "name": "production climate emissions"
-    },
-    {
-      "name": "climate gas emissions"
-    },
-    {
-      "name": "Production per year"
+      "name": "balance"
     }
   ],
   "triples": [
@@ -284,10 +268,22 @@
       "to": "Wind"
     },
     {
+      "name": "North Sea",
+      "from": "Sea",
+      "verb": "kind of",
+      "to": "North"
+    },
+    {
       "name": "North Sea Coast",
       "from": "North Sea",
       "verb": "has a",
       "to": "Coast"
+    },
+    {
+      "name": "Power Plant",
+      "from": "Plant",
+      "verb": "of",
+      "to": "Power"
     },
     {
       "name": "Wind Turbine (Power Plant)",
@@ -312,12 +308,6 @@
       "from": "Watt",
       "verb": "scaled by",
       "to": "Mega"
-    },
-    {
-      "name": "North Sea Coast",
-      "from": "North Sea",
-      "verb": "has a",
-      "to": "Coast"
     },
     {
       "name": "German North Sea Coast",
@@ -352,6 +342,12 @@
       "from": "Power",
       "verb": "per",
       "to": "Wind Turbine"
+    },
+    {
+      "name": "full load",
+      "from": "load",
+      "verb": "kind of",
+      "to": "full"
     },
     {
       "name": "Full load hours",
@@ -462,8 +458,20 @@
       "to": "Germany"
     },
     {
-      "name": "energy production per year",
+      "name": "Production per year",
       "from": "Production",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "energy production",
+      "from": "production",
+      "verb": "of",
+      "to": "energy"
+    },
+    {
+      "name": "energy production per year",
+      "from": "energy production",
       "verb": "per",
       "to": "year"
     },
@@ -478,6 +486,63 @@
       "from": "Investment",
       "verb": "has a",
       "to": "duration"
+    },
+    {
+      "name": "Power rating",
+      "from": "Power",
+      "verb": "of",
+      "to": "rating",
+      "description": "see Wikipedia: Power_rating"
+    },
+    {
+      "name": "Top Seller",
+      "from": "Seller",
+      "verb": "kind of",
+      "to": "Top",
+      "description": "The most often sold product type"
+    },
+    {
+      "name": "global warming",
+      "from": "warming",
+      "verb": "kind of",
+      "to": "global"
+    },
+    {
+      "name": "global warming potential",
+      "from": "potential",
+      "verb": "of",
+      "to": "global warming",
+      "description": "see Wikipedia: Global warming potential"
+    },
+    {
+      "name": "Power density",
+      "from": "density",
+      "verb": "of",
+      "to": "Power"
+    },
+    {
+      "name": "Share Price",
+      "from": "Price",
+      "verb": "of",
+      "to": "Share"
+    },
+    {
+      "name": "balance sheet",
+      "from": "sheet",
+      "verb": "of",
+      "to": "balance"
+    },
+    {
+      "name": "climate gas emissions",
+      "from": "emissions",
+      "verb": "of",
+      "to": "climate gas"
+    },
+    {
+      "name": "production climate emissions",
+      "from": "climate gas emissions",
+      "verb": "of",
+      "to": "production"
     }
   ],
   "formulas": [
@@ -497,12 +562,12 @@
       "assigned_word": "Power Plant"
     },
     {
-      "name": "CO2 über Laufzeit",
+      "name": "lifetime CO2 emissions",
       "expression": "=\"CO2-eq\" \"climate gas emissions\" * \"lifetime\"",
       "assigned_word": "Power Plant"
     },
     {
-      "name": "Euro pro tonne",
+      "name": "Euro per tonne",
       "expression": "=\"CO2-eq\" \"climate gas emissions\" * \"lifetime\" /  \"investment\"",
       "assigned_word": "Power Plant"
     }
@@ -662,7 +727,7 @@
         "replacement mix",
         "North Germany",
         "CO2-eq",
-        "gramm",
+        "gram",
         "kilowatt hour"
       ],
       "number": "600"
@@ -676,7 +741,7 @@
         "Wind",
         "Turbine",
         "CO2-eq",
-        "gramm"
+        "gram"
       ],
       "number": "15"
     },
@@ -745,4 +810,3 @@
     }
   ]
 }
-

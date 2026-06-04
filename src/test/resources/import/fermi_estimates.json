@@ -737,15 +737,15 @@
     },
     {
       "name": "Berns et al. (2005)",
-      "description": "Berns, G. S., Chappelow, J., Zink, C. F., Pagnoni, G., Martin-Skurski, M. E., & Richards, J. (2005), study on the neurobiological correlates of social conformity and independence during mental rotation"
+      "description": "Berns GS, Chappelow J, Zink CF, Pagnoni G, Martin-Skurski ME, Richards J (2005): Neurobiological Correlates of Social Conformity and Independence During Mental Rotation. Biol Psychiatry 58:245-253"
     },
     {
       "name": "Historical media estimation",
-      "description": "order-of-magnitude figure assumed from historical analysis of regulated 1970s mass-media environments"
+      "description": "order-of-magnitude estimate of the share of facts on which the population reached a common consensus in the pre-internet broadcast media era"
     },
     {
       "name": "Pre-internet virality estimation",
-      "description": "order-of-magnitude figure assumed from analysis of information spread under pre-internet gatekeeper-filtered channels"
+      "description": "order-of-magnitude estimate of the share of fringe content that bypassed editorial gatekeepers and reached a mass audience before the rise of algorithmic social media"
     }
   ],
   "values": [

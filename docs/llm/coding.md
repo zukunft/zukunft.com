@@ -68,15 +68,16 @@ detail file. Order is by how often they fire, not importance.
 
 ## Domain & import rules
 
-These fire only when touching domain objects or import JSON. Detail and worked
-examples: `docs/llm/import-and-domain.md`.
+These fire only when touching domain objects or import JSON. JSON import
+file-format detail and worked examples: `docs/llm/json_structure.md`. Domain
+noun definitions: `docs/llm/architecture.md`.
 
 - Use the domain nouns exactly: word, verb, triple, source, ref, value, group, formula, result, view, component. `phrase` = word|triple; `term` = word|verb|triple|formula. Every phrase is a term; a verb/formula is a term but not a phrase.
 - `percent`-measure formulas auto-scale: never add `* 100` to a ratio assigned to `percent`.
 - Symbols/abbreviations may alias several phrases on purpose (`m` = metre = million); only flag genuine unintended collisions, never force-uniquify.
 - Disambiguate an ambiguous *word* with qualifier triples via the `must be one of` verb — define the word once, reference the triples; display the bare word, qualifier in the tooltip.
 - A triple's `from`/`verb`/`to` key is unique within an import; split a clashing key with an intermediate building-block triple.
-- A triple whose `from`/`to` is a *named* triple must carry its own explicit `name`.
+- A triple whose `from`/`to` is a *named* triple must carry its own explicit `name` — but never repeat the auto-generated `<from> <verb> <to>` as the `name` (the importer builds that for you; only set `name` when it differs or would clash).
 - Import files are self-consistent: every assigned phrase, and every triple `from`/`to`, is defined in the same file (re-declare base words name-only).
 - Assign an import formula to its *input* phrase(s) (`assigned_word` / `assigned`), never to its result.
 - Qualify a value as specifically as the data allows; build qualifiers as triples from single words; omit `"share":"public"` (the default).

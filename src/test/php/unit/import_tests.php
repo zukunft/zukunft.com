@@ -118,6 +118,14 @@ class import_tests
         $target = 'Unknown element "test"';
         $t->assert($test_name, $usr_msg->get_last_message_translated(), $target);
 
+        $test_name = 'JSON import newer version detection';
+        $usr_msg = new user_message($usr);
+        $json_str = file_get_contents(test_files::IMPORT_VERSION_NEWER_TEST);
+        $imp = new import(test_files::IMPORT_VERSION_NEWER_TEST);
+        $imp->put_json_direct($json_str, $usr_msg);
+        $target = 'Import file has been created with version "9.9.9"';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $target);
+
         $t->subheader($ts . 'convert');
 
         $test_name = 'wikipedia table to zukunft.com JSON string';

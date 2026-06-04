@@ -1,0 +1,573 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-04 08:00:00",
+  "user": "timon",
+  "selection": [
+    "conformity estimates"
+  ],
+  "description": "Measured values, statistics and formulas extracted from Berns et al. (2005), 'Neurobiological Correlates of Social Conformity and Independence During Mental Rotation', expressed as single words combined into triples, plus formulas, sources and values. An fMRI study using a modified Asch paradigm with a mental rotation task.",
+  "words": [
+    {
+      "name": "conformity",
+      "description": "agreeing with an exogenous source of information when that information is wrong",
+      "refs": [
+        {
+          "name": "Conformity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "independence",
+      "description": "giving the correct answer when the external information presented is incorrect",
+      "refs": [
+        {
+          "name": "Nonconformity_(quality)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "social",
+      "description": "relating to interaction with other people, as opposed to interaction with machines or non-human sources"
+    },
+    {
+      "name": "participant",
+      "description": "a normal adult volunteer who performed the mental rotation task"
+    },
+    {
+      "name": "actor",
+      "description": "hired confederate who posed as a fellow participant and gave predetermined answers"
+    },
+    {
+      "name": "error",
+      "description": "an incorrect same/different judgment in the mental rotation task"
+    },
+    {
+      "name": "rate",
+      "description": "frequency or proportion measured per unit of comparison"
+    },
+    {
+      "name": "count",
+      "description": "numerical extent or number of a set"
+    },
+    {
+      "name": "age",
+      "description": "age of a participant in years"
+    },
+    {
+      "name": "baseline",
+      "description": "trials in which no group or computer information was given"
+    },
+    {
+      "name": "group",
+      "description": "the social source of external information, i.e. the four peer actors"
+    },
+    {
+      "name": "computer",
+      "description": "the non-human source of external information"
+    },
+    {
+      "name": "incorrect",
+      "description": "external information that was wrong"
+    },
+    {
+      "name": "reaction",
+      "description": "the act of responding to a stimulus",
+      "refs": [
+        {
+          "name": "Mental_chronometry",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "time",
+      "description": "duration measured for a process"
+    },
+    {
+      "name": "disparity",
+      "description": "angular difference of orientation between the two rotated objects"
+    },
+    {
+      "name": "angle",
+      "description": "an angular quantity measured in degrees"
+    },
+    {
+      "name": "stimulus",
+      "description": "one of the paired three-dimensional Shepard and Metzler objects"
+    },
+    {
+      "name": "same",
+      "description": "stimulus pairs that are the same object rotated relative to each other"
+    },
+    {
+      "name": "different",
+      "description": "stimulus pairs that are mirror images rotated relative to each other"
+    },
+    {
+      "name": "accuracy",
+      "description": "rated or actual proportion of correct judgments"
+    },
+    {
+      "name": "self",
+      "description": "rating made by the participant about their own performance"
+    },
+    {
+      "name": "actual",
+      "description": "the true measured performance"
+    },
+    {
+      "name": "trial",
+      "description": "a single presentation and judgment cycle in the task"
+    },
+    {
+      "name": "voxel",
+      "description": "a volumetric pixel, the unit of a functional MRI image"
+    },
+    {
+      "name": "cluster",
+      "description": "a contiguous group of significantly activated voxels"
+    },
+    {
+      "name": "activation",
+      "description": "increase in blood-oxygenation-level-dependent (BOLD) signal",
+      "refs": [
+        {
+          "name": "Blood-oxygen-level-dependent_imaging",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "threshold",
+      "description": "significance level applied to select activated voxels"
+    },
+    {
+      "name": "scan",
+      "description": "an individual echo-planar imaging acquisition volume"
+    },
+    {
+      "name": "kernel",
+      "description": "the gaussian smoothing kernel applied to functional images"
+    },
+    {
+      "name": "field",
+      "description": "magnetic field strength of the MRI scanner",
+      "refs": [
+        {
+          "name": "Magnetic_resonance_imaging",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "statistic",
+      "description": "a value summarising a statistical test (t or F)"
+    },
+    {
+      "name": "amygdala",
+      "description": "subcortical structure associated with emotional salience",
+      "refs": [
+        {
+          "name": "Amygdala",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "caudate",
+      "description": "head of the caudate nucleus, part of the striatum",
+      "refs": [
+        {
+          "name": "Caudate_nucleus",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "triples": [
+    {
+      "name": "participant count",
+      "from": "count",
+      "verb": "of",
+      "to": "participant",
+      "description": "number of participants retained in the final analysis"
+    },
+    {
+      "name": "actor count",
+      "from": "count",
+      "verb": "of",
+      "to": "actor",
+      "description": "number of hired actors who played the role of the group"
+    },
+    {
+      "name": "mean participant age",
+      "from": "age",
+      "verb": "of",
+      "to": "participant",
+      "description": "mean age of the participant sample in years"
+    },
+    {
+      "name": "error rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "error"
+    },
+    {
+      "name": "baseline error rate",
+      "from": "error rate",
+      "verb": "kind of",
+      "to": "baseline",
+      "description": "mean error rate on trials with no external information"
+    },
+    {
+      "name": "group incorrect error rate",
+      "from": "error rate",
+      "verb": "kind of",
+      "to": "group",
+      "description": "mean error rate when the group gave wrong information"
+    },
+    {
+      "name": "computer incorrect error rate",
+      "from": "error rate",
+      "verb": "kind of",
+      "to": "computer",
+      "description": "mean error rate when the computers gave wrong information"
+    },
+    {
+      "name": "reaction time",
+      "from": "time",
+      "verb": "of",
+      "to": "reaction"
+    },
+    {
+      "name": "different minus same reaction time",
+      "from": "reaction time",
+      "verb": "kind of",
+      "to": "different",
+      "description": "additional reaction time for Different stimuli relative to Same stimuli"
+    },
+    {
+      "name": "incorrect minus correct reaction time",
+      "from": "reaction time",
+      "verb": "kind of",
+      "to": "incorrect",
+      "description": "additional reaction time for incorrect responses relative to correct responses"
+    },
+    {
+      "name": "disparity angle",
+      "from": "angle",
+      "verb": "of",
+      "to": "disparity"
+    },
+    {
+      "name": "mean disparity angle",
+      "from": "disparity angle",
+      "verb": "kind of",
+      "to": "same",
+      "description": "mean angle of disparity of the stimulus pairs used"
+    },
+    {
+      "name": "accuracy rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "accuracy"
+    },
+    {
+      "name": "self rated group accuracy",
+      "from": "accuracy rate",
+      "verb": "kind of",
+      "to": "group",
+      "description": "participants' mean rating of the group's accuracy"
+    },
+    {
+      "name": "self rated computer accuracy",
+      "from": "accuracy rate",
+      "verb": "kind of",
+      "to": "computer",
+      "description": "participants' mean rating of the computers' accuracy"
+    },
+    {
+      "name": "trial count",
+      "from": "count",
+      "verb": "of",
+      "to": "trial"
+    },
+    {
+      "name": "run trial count",
+      "from": "trial count",
+      "verb": "kind of",
+      "to": "stimulus",
+      "description": "number of trials in one run with the group (or computers)"
+    },
+    {
+      "name": "conformity trial count",
+      "from": "trial count",
+      "verb": "kind of",
+      "to": "conformity",
+      "description": "mean number of conformity trials per participant"
+    },
+    {
+      "name": "field strength",
+      "from": "field",
+      "verb": "of",
+      "to": "scan",
+      "description": "magnetic field strength of the MRI scanner in tesla"
+    },
+    {
+      "name": "smoothing kernel",
+      "from": "kernel",
+      "verb": "of",
+      "to": "scan",
+      "description": "full width of the isotropic gaussian smoothing kernel in mm"
+    },
+    {
+      "name": "significance threshold",
+      "from": "threshold",
+      "verb": "of",
+      "to": "activation",
+      "description": "uncorrected p-value threshold used for selecting activated voxels"
+    },
+    {
+      "name": "minimum cluster size",
+      "from": "count",
+      "verb": "of",
+      "to": "voxel",
+      "description": "minimum number of contiguous voxels required for a significant cluster"
+    },
+    {
+      "name": "conformity error increase",
+      "from": "error rate",
+      "verb": "kind of",
+      "to": "conformity",
+      "description": "absolute increase in error rate from baseline to the group-incorrect condition"
+    },
+    {
+      "name": "social conformity error factor",
+      "from": "error rate",
+      "verb": "kind of",
+      "to": "social",
+      "description": "ratio of group-incorrect error rate to computer-incorrect error rate; isolates the human social component"
+    },
+    {
+      "name": "intraparietal sulcus cluster size",
+      "from": "count",
+      "verb": "of",
+      "to": "cluster",
+      "description": "size in voxels of the right intraparietal sulcus cluster for Group > Computer information"
+    },
+    {
+      "name": "intraparietal sulcus t statistic",
+      "from": "statistic",
+      "verb": "of",
+      "to": "cluster",
+      "description": "t statistic of the right intraparietal sulcus cluster for Group > Computer information"
+    },
+    {
+      "name": "conformity ROI mean difference",
+      "from": "activation",
+      "verb": "kind of",
+      "to": "conformity",
+      "description": "mean BOLD beta difference for conforming to the Group versus the Computers in the right intraparietal sulcus ROI"
+    },
+    {
+      "name": "amygdala activation",
+      "from": "activation",
+      "verb": "of",
+      "to": "amygdala",
+      "description": "right amygdala activation associated with social independence"
+    },
+    {
+      "name": "caudate activation",
+      "from": "activation",
+      "verb": "of",
+      "to": "caudate",
+      "description": "right caudate head activation associated with social independence"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "social conformity error factor formula",
+      "expression": "\"social conformity error factor\" = \"group incorrect error rate\" / \"computer incorrect error rate\"",
+      "latex": "F = \\frac{E_{group}}{E_{computer}}",
+      "assigned": [
+        "group incorrect error rate",
+        "computer incorrect error rate"
+      ]
+    },
+    {
+      "name": "conformity error increase formula",
+      "expression": "\"conformity error increase\" = \"group incorrect error rate\" - \"baseline error rate\"",
+      "latex": "\\Delta E = E_{group} - E_{baseline}",
+      "assigned": [
+        "group incorrect error rate",
+        "baseline error rate"
+      ]
+    },
+    {
+      "name": "self accuracy regression formula",
+      "expression": "\"self\" = 0.17 + 0.69 * \"actual\"",
+      "latex": "S = 0.17 + 0.69 \\cdot A",
+      "assigned": [
+        "self rated group accuracy",
+        "self rated computer accuracy"
+      ]
+    },
+    {
+      "name": "self accuracy origin formula",
+      "expression": "\"self\" = 0.90 * \"actual\"",
+      "latex": "S = 0.90 \\cdot A",
+      "assigned": []
+    }
+  ],
+  "sources": [
+    {
+      "name": "Berns paper",
+      "description": "Berns GS, Chappelow J, Zink CF, Pagnoni G, Martin-Skurski ME, Richards J (2005): Neurobiological Correlates of Social Conformity and Independence During Mental Rotation. Biol Psychiatry 58:245-253",
+      "url": "https://doi.org/10.1016/j.biopsych.2005.04.012"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "participant count"
+      ],
+      "number": "32",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "actor count"
+      ],
+      "number": "4",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "mean participant age"
+      ],
+      "number": "26.0",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "baseline error rate"
+      ],
+      "number": "0.138",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "group incorrect error rate"
+      ],
+      "number": "0.41",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "computer incorrect error rate"
+      ],
+      "number": "0.32",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "different minus same reaction time"
+      ],
+      "number": "0.815",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "incorrect minus correct reaction time"
+      ],
+      "number": "1.11",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "mean disparity angle"
+      ],
+      "number": "134",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "self rated group accuracy"
+      ],
+      "number": "0.651",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "self rated computer accuracy"
+      ],
+      "number": "0.612",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "run trial count"
+      ],
+      "number": "48",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "conformity trial count"
+      ],
+      "number": "5.5",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "field strength"
+      ],
+      "number": "3",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "smoothing kernel"
+      ],
+      "number": "8",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "significance threshold"
+      ],
+      "number": "0.001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "minimum cluster size"
+      ],
+      "number": "5",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "intraparietal sulcus cluster size"
+      ],
+      "number": "12",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "intraparietal sulcus t statistic"
+      ],
+      "number": "4.52",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "conformity ROI mean difference"
+      ],
+      "number": "0.271",
+      "source": "Berns paper"
+    }
+  ]
+}
