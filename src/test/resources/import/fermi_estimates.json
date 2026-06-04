@@ -1,41 +1,390 @@
 {
-  "version": "0.0.3",
-  "time": "2026-06-03 09:00:00",
+  "version": "0.0.4",
+  "time": "2026-06-04 08:00:00",
   "user": "timon",
   "selection": [
     "Fermi estimates"
   ],
   "description": "Fermi estimates expressed as single words combined into triples, plus formulas, sources and values, following the same schema as the meteorology base data. Contains the disinformation-dam expected-value estimate discussed in the categorical-imperative working paper, and a meteorology-native worked example (raindrops in a thunderstorm).",
   "words": [
-    {"name": "Fermi"},
-    {"name": "estimate"},
-    {"name": "disinformation"},
-    {"name": "dam"},
-    {"name": "expected"},
-    {"name": "value"},
-    {"name": "potential"},
-    {"name": "harm"},
-    {"name": "democratic"},
-    {"name": "decline"},
-    {"name": "probability"},
-    {"name": "causal"},
-    {"name": "link"},
-    {"name": "leverage"},
-    {"name": "measure"},
-    {"name": "cost"},
-    {"name": "test"},
-    {"name": "decision"},
-    {"name": "uncertainty"},
-    {"name": "raindrop"},
-    {"name": "thunderstorm"},
-    {"name": "storm"},
-    {"name": "cell"},
-    {"name": "area"},
-    {"name": "rain"},
-    {"name": "rainfall"},
-    {"name": "depth"},
-    {"name": "volume"},
-    {"name": "total"}
+    {
+      "name": "Fermi",
+      "description": "Enrico Fermi, Italian-American physicist after whom order-of-magnitude estimation is named",
+      "refs": [
+        {
+          "name": "Enrico_Fermi",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8753",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "estimate",
+      "description": "rough approximation of a quantity made without exact measurement",
+      "refs": [
+        {
+          "name": "Estimation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "disinformation",
+      "description": "false information spread deliberately to deceive",
+      "refs": [
+        {
+          "name": "Disinformation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189656",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "dam",
+      "description": "barrier built to stop or restrict the flow of water or other material; here used metaphorically for a regulatory barrier against disinformation",
+      "refs": [
+        {
+          "name": "Dam",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12323",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "expected",
+      "description": "anticipated; in probability theory the probability-weighted average outcome"
+    },
+    {
+      "name": "value",
+      "description": "quantitative worth, magnitude or payoff assigned to a quantity"
+    },
+    {
+      "name": "potential",
+      "description": "latent or possible, as opposed to actual or realised"
+    },
+    {
+      "name": "harm",
+      "description": "damage or detrimental effect, including economic loss",
+      "refs": [
+        {
+          "name": "Harm",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "democratic",
+      "description": "relating to democracy as a system of government",
+      "refs": [
+        {
+          "name": "Democracy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7174",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "decline",
+      "description": "sustained decrease or deterioration over time"
+    },
+    {
+      "name": "probability",
+      "description": "numerical measure between 0 and 1 of how likely an event is",
+      "refs": [
+        {
+          "name": "Probability",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9492",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "causal",
+      "description": "relating to or expressing a cause-and-effect relationship",
+      "refs": [
+        {
+          "name": "Causality",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179289",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "link",
+      "description": "connection between two entities"
+    },
+    {
+      "name": "leverage",
+      "description": "ratio of effect to effort; here the fraction of potential harm a feasible measure could avert"
+    },
+    {
+      "name": "measure",
+      "description": "intervention or action taken; also the numerical result of a measurement",
+      "refs": [
+        {
+          "name": "Measurement",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cost",
+      "description": "resources consumed or value sacrificed to obtain something",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "test",
+      "description": "controlled trial or experiment to check a hypothesis",
+      "refs": [
+        {
+          "name": "Experiment",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "decision",
+      "description": "choice made between alternatives",
+      "refs": [
+        {
+          "name": "Decision-making",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "uncertainty",
+      "description": "state of limited knowledge about outcomes or values",
+      "refs": [
+        {
+          "name": "Uncertainty",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q210898",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "raindrop",
+      "description": "single drop of liquid water falling from a cloud",
+      "refs": [
+        {
+          "name": "Drop_(liquid)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "thunderstorm",
+      "description": "convective storm producing thunder and lightning, typically with heavy rain",
+      "refs": [
+        {
+          "name": "Thunderstorm",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q35311",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "storm",
+      "description": "violent atmospheric disturbance",
+      "refs": [
+        {
+          "name": "Storm",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cell",
+      "description": "localised unit; here a single convective updraft column of a thunderstorm"
+    },
+    {
+      "name": "area",
+      "description": "two-dimensional extent of a surface",
+      "refs": [
+        {
+          "name": "Area",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11500",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "rain",
+      "description": "liquid water droplets falling from clouds",
+      "refs": [
+        {
+          "name": "Rain",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7925",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "rainfall",
+      "description": "precipitation of rain accumulated over a given area and time",
+      "refs": [
+        {
+          "name": "Precipitation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "depth",
+      "description": "vertical distance measured from a top surface downward"
+    },
+    {
+      "name": "volume",
+      "description": "three-dimensional space occupied by a body or quantity",
+      "refs": [
+        {
+          "name": "Volume",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39297",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "total",
+      "description": "sum or aggregate of parts"
+    },
+    {
+      "name": "conformity",
+      "description": "tendency of individuals to align beliefs or behaviour with a group",
+      "refs": [
+        {
+          "name": "Conformity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "rate",
+      "description": "frequency or proportion measured per unit of comparison"
+    },
+    {
+      "name": "baseline",
+      "description": "reference value used as a starting point for comparison"
+    },
+    {
+      "name": "error",
+      "description": "deviation from a correct or true value",
+      "refs": [
+        {
+          "name": "Error",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "machine",
+      "description": "mechanical or computational device"
+    },
+    {
+      "name": "influence",
+      "description": "effect one entity has on another's state or behaviour",
+      "refs": [
+        {
+          "name": "Social_influence",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "unconscious",
+      "description": "below the level of conscious awareness or deliberate intent"
+    },
+    {
+      "name": "takeover",
+      "description": "act of assuming control of something"
+    },
+    {
+      "name": "fact",
+      "description": "statement consistent with observable reality",
+      "refs": [
+        {
+          "name": "Fact",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "consensus",
+      "description": "shared agreement among a group",
+      "refs": [
+        {
+          "name": "Consensus",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gatekeeper",
+      "description": "person or process controlling access to or flow through a channel",
+      "refs": [
+        {
+          "name": "Gatekeeping_(communication)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "filter",
+      "description": "process that selectively allows certain items to pass"
+    },
+    {
+      "name": "social",
+      "description": "relating to society or interaction among people"
+    },
+    {
+      "name": "offloading",
+      "description": "transferring a task or responsibility to another entity",
+      "refs": [
+        {
+          "name": "Cognitive_offloading",
+          "type": "wikipedia"
+        }
+      ]
+    }
   ],
   "triples": [
     {
@@ -264,6 +613,78 @@
       "from": "Fermi estimate",
       "verb": "is part of",
       "to": "decision under uncertainty"
+    },
+    {
+      "name": "conformity rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "conformity",
+      "description": "percentage of individuals conforming to incorrect group opinions under social pressure, based on Berns et al. (2005)"
+    },
+    {
+      "name": "baseline error",
+      "from": "error",
+      "verb": "of",
+      "to": "baseline",
+      "description": "inherent human error rate when performing tasks in isolation without external influence"
+    },
+    {
+      "name": "machine influence",
+      "from": "influence",
+      "verb": "of",
+      "to": "machine",
+      "description": "error rate of individuals when presented with incorrect information from a computer source"
+    },
+    {
+      "name": "unconscious takeover",
+      "from": "takeover",
+      "verb": "kind of",
+      "to": "unconscious",
+      "description": "share of participants who unconsciously adopt group distortions as their own reality"
+    },
+    {
+      "name": "fact consensus",
+      "from": "consensus",
+      "verb": "of",
+      "to": "fact",
+      "description": "historical estimated reach of shared factual consensus under regulated 1970s media environments"
+    },
+    {
+      "name": "gatekeeper filter",
+      "from": "filter",
+      "verb": "of",
+      "to": "gatekeeper",
+      "description": "structural reduction of unverified disinformation throughput by media gatekeepers"
+    },
+    {
+      "name": "social conformity",
+      "from": "conformity",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "machine offloading",
+      "from": "offloading",
+      "verb": "of",
+      "to": "machine"
+    },
+    {
+      "name": "conformity rate in social conformity",
+      "from": "conformity rate",
+      "verb": "is part of",
+      "to": "social conformity"
+    },
+    {
+      "name": "machine influence in machine offloading",
+      "from": "machine influence",
+      "verb": "is part of",
+      "to": "machine offloading"
+    },
+    {
+      "name": "fact consensus in gatekeeper filter",
+      "from": "fact consensus",
+      "verb": "is part of",
+      "to": "gatekeeper filter"
     }
   ],
   "formulas": [
@@ -392,6 +813,48 @@
       ],
       "number": "5e14",
       "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "baseline error"
+      ],
+      "number": "0.14",
+      "source": "Berns et al. (2005)"
+    },
+    {
+      "words": [
+        "machine influence"
+      ],
+      "number": "0.32",
+      "source": "Berns et al. (2005)"
+    },
+    {
+      "words": [
+        "conformity rate"
+      ],
+      "number": "0.41",
+      "source": "Berns et al. (2005)"
+    },
+    {
+      "words": [
+        "unconscious takeover"
+      ],
+      "number": "0.83",
+      "source": "Berns et al. (2005)"
+    },
+    {
+      "words": [
+        "fact consensus"
+      ],
+      "number": "0.85",
+      "source": "Historical media estimation"
+    },
+    {
+      "words": [
+        "gatekeeper filter"
+      ],
+      "number": "0.05",
+      "source": "Pre-internet virality estimation"
     }
   ]
 }
