@@ -45,8 +45,10 @@ include_once paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -62,6 +64,8 @@ include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::CONST . 'icons.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -75,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
@@ -89,8 +94,11 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -118,6 +126,84 @@ class system_form extends component
         }
         $result .= $html->form_start($form_name);
         return $result;
+    }
+
+    /**
+     * page title of named object with explaining subtitle
+     *
+     * example outputs:
+     * - no related loaded:   "Zurich <edit-icon>"
+     * - related limit=2:     "Zurich" /n "is a <City>, <Canton>, ... <edit-icon>"
+     * - related limit=high:  "Zurich" /n "is a City, Canton, Company <edit-icon>"
+     * - related symbol:      "CHF" /n "is symbol for <Swiss Franc> <edit-icon>"
+     *
+     * @param db_object $dbo the object whose name is shown as the page title
+     * @param int $max to limit the number of related phrases shown before a "..." link
+     * @return string the html code for the page title with the related-phrases and edit links
+     */
+    function title_named(
+        db_object $dbo,
+        int $max = def::LIMIT_RELATED_PER_VERB
+    ): string
+    {
+        $html = new html_base();
+
+        $result = '';
+
+        $edit_link = $this->edit_link($dbo);
+
+        // category subtitle is created based on verbs listed in verbs::CATEGORY_VERBS
+        $category = $this->category_subtitle($dbo, $max);
+
+        $heading = '<' . html_base::H4 . ' ' . html_base::STYLE . '="display: inline;">'
+            . $dbo->name() . '</' . html_base::H4 . '>';
+        $content = $heading . $edit_link;
+        if ($category !== '') {
+            $content .= $html->div('(' . $category . ')', styles::SUBTITLE);
+        }
+        $result = $html->row_start() . $content . $html->row_end();
+        return $result;
+    }
+
+    /**
+     * category subtitle for a phrase like "<verb name> <link1>, <link2>, ..."
+     *
+     * @param db_object $dbo the object whose name is shown as the page title
+     * @param int $max to limit the number of related phrases shown before a "..." link
+     * @return string the html code for the page title with the related-phrases and edit links
+     */
+    private function category_subtitle(
+        db_object $dbo,
+        int       $max = def::LIMIT_RELATED_PER_VERB
+    ): string
+    {
+        $result = '';
+
+        if ($dbo::class == word::class or $dbo::class == triple::class) {
+            if ($dbo->phr_lst != null) {
+                $result = $dbo->phr_lst->category_subtitle($dbo->phrase(), $max);
+            }
+        } else {
+            $lib = new library();
+            log_warning('category_subtitle not yet defined for ' . $lib->class_to_name($dbo::class));
+        }
+        return $result;
+    }
+
+    /**
+     * create a html link to change an object e.g. a word, value or formula
+     *
+     * @param db_object $dbo any database object that can be changed by the user or an admin
+     * @return string for a link icon to change the object
+     */
+    private function edit_link(db_object $dbo): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $url = $html->url_new($dbo::VIEW_EDIT_ID, $dbo->id());
+        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
+        return $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT), styles::HEADING_ICON_INLINE);
     }
 
     /**
@@ -236,6 +322,31 @@ class system_form extends component
     function show_description(db_object|type_object $dbo): string
     {
         return $dbo->get_description();
+    }
+
+    /**
+     * @param word|db_object $dbo the word
+     * @return string the plural form of the word as read-only text (empty if no plural is set)
+     */
+    function show_plural(word|db_object $dbo): string
+    {
+        return $dbo->get_plural() ?? '';
+    }
+
+    /**
+     * @param word|db_object $dbo the word
+     * @return string the user-readable name of the word's phrase type (empty if no type is set)
+     */
+    function show_phrase_type(word|db_object $dbo): string
+    {
+        global $sys;
+
+        $result = '';
+        $type_id = $dbo->type_id();
+        if ($type_id !== null) {
+            $result = $sys->typ_lst->phr_typ->name($type_id);
+        }
+        return $result;
     }
 
     /**

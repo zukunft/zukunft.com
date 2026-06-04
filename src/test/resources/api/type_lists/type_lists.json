@@ -8910,6 +8910,24 @@
         "code_id": "phrases_related_1\/3",
         "description": "show a number of related phrases with so many details that it fits 1\/3 of the screen; the number of related phrases if taken from the user configuration var selections\/target",
         "id": 189
+      },
+      {
+        "name": "show plural",
+        "code_id": "system_show_field_plural",
+        "description": "show the plural form of a word without link or form field",
+        "id": 190
+      },
+      {
+        "name": "show phrase type",
+        "code_id": "system_show_field_phrase_type",
+        "description": "show the phrase type name of a word without link or form field",
+        "id": 191
+      },
+      {
+        "name": "title of named with edit link",
+        "code_id": "title_of_named_with_edit_link",
+        "description": "shows the object name as a page title with a link to the edit view; the name is rendered in the user frontend language by loading the same object in that language once the sandbox language field is added",
+        "id": 192
       }
     ],
     "component_link_types": [
@@ -20257,20 +20275,136 @@
         "components": [
           {
             "link_id": 985,
-            "id": 1,
-            "name": "Word",
-            "description": "simply show the word or triple name",
-            "type_id": 8,
+            "id": 269,
+            "name": "Word title",
+            "description": "show the word name as a page title",
+            "type_id": 192,
+            "code_id": "title_of_named_with_edit_link_word",
             "position": 1,
             "position_type": 1
           },
           {
             "link_id": 986,
-            "id": 280,
+            "id": 193,
+            "name": "system show field description",
+            "description": "the object description as read only",
+            "type_id": 147,
+            "code_id": "show_field_description",
+            "position": 2,
+            "position_type": 1
+          },
+          {
+            "link_id": 987,
+            "id": 291,
+            "name": "system show field plural",
+            "description": "show the plural form of a word as read only text",
+            "type_id": 190,
+            "code_id": "show_field_plural",
+            "position": 3,
+            "position_type": 1
+          },
+          {
+            "link_id": 988,
+            "id": 292,
+            "name": "system show field phrase type",
+            "description": "show the phrase type of a word as read only text",
+            "type_id": 191,
+            "code_id": "show_field_phrase_type",
+            "position": 4,
+            "position_type": 1
+          },
+          {
+            "link_id": 989,
+            "id": 58,
+            "name": "system sub title usage number",
+            "description": "show the language specific sub title and the number how many times the object has been used",
+            "type_id": 146,
+            "code_id": "system_sub_title_value_usage",
+            "ui_msg_code_id_vars": "system_sub_title_var_usage",
+            "ui_msg_code_id_exception": "system_sub_title_no_usage",
+            "position": 5,
+            "position_type": 1
+          },
+          {
+            "link_id": 990,
+            "id": 225,
+            "name": "parents of word",
+            "description": "list of words or triples that lead to this word",
+            "type_id": 96,
+            "code_id": "list_parents_of_word",
+            "position": 6,
+            "position_type": 1
+          },
+          {
+            "link_id": 991,
+            "id": 226,
+            "name": "children of word",
+            "description": "list of words or triples where this word leading to",
+            "type_id": 47,
+            "code_id": "list_children_of_word",
+            "position": 7,
+            "position_type": 1
+          },
+          {
+            "link_id": 992,
+            "id": 61,
+            "name": "system sub title values",
+            "description": "show the language specific sub title for a value list",
+            "type_id": 145,
+            "code_id": "system_sub_title_values",
+            "ui_msg_code_id": "system_sub_title_values",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 993,
+            "id": 281,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
-            "position": 2,
+            "position": 9,
+            "position_type": 1
+          },
+          {
+            "link_id": 994,
+            "id": 60,
+            "name": "system sub title references",
+            "description": "show the language specific sub title for a reference list",
+            "type_id": 145,
+            "code_id": "system_sub_title_references",
+            "ui_msg_code_id": "system_sub_title_references",
+            "position": 10,
+            "position_type": 1
+          },
+          {
+            "link_id": 995,
+            "id": 230,
+            "name": "ref list word",
+            "description": "changeable list of reference of this word",
+            "type_id": 41,
+            "code_id": "ref_list_word",
+            "position": 11,
+            "position_type": 1
+          },
+          {
+            "link_id": 996,
+            "id": 64,
+            "name": "system sub title log",
+            "description": "show the language specific sub title for the change log",
+            "type_id": 145,
+            "code_id": "system_sub_title_log",
+            "ui_msg_code_id": "system_sub_title_log",
+            "position": 12,
+            "position_type": 1
+          },
+          {
+            "link_id": 997,
+            "id": 248,
+            "name": "change log word",
+            "description": "show the change log of this word",
+            "type_id": 44,
+            "code_id": "change_log_word",
+            "position": 13,
             "position_type": 1
           }
         ]
@@ -20283,8 +20417,8 @@
         "code_id": "verb_default",
         "components": [
           {
-            "link_id": 987,
-            "id": 270,
+            "link_id": 998,
+            "id": 271,
             "name": "Verb",
             "description": "simply show the verb name",
             "type_id": 37,
@@ -20292,8 +20426,8 @@
             "position_type": 1
           },
           {
-            "link_id": 988,
-            "id": 271,
+            "link_id": 999,
+            "id": 272,
             "name": "related triples",
             "description": "triples where this verb is used",
             "type_id": 47,
@@ -20310,8 +20444,8 @@
         "code_id": "triple_default",
         "components": [
           {
-            "link_id": 989,
-            "id": 272,
+            "link_id": 1000,
+            "id": 273,
             "name": "triple name",
             "description": "simply show the name of a triple",
             "type_id": 57,
@@ -20319,8 +20453,8 @@
             "position_type": 1
           },
           {
-            "link_id": 990,
-            "id": 280,
+            "link_id": 1001,
+            "id": 281,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -20337,8 +20471,8 @@
         "code_id": "source_default",
         "components": [
           {
-            "link_id": 991,
-            "id": 273,
+            "link_id": 1002,
+            "id": 274,
             "name": "source name",
             "description": "simply show the name of a source",
             "type_id": 58,
@@ -20346,8 +20480,8 @@
             "position_type": 1
           },
           {
-            "link_id": 992,
-            "id": 280,
+            "link_id": 1003,
+            "id": 281,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -20364,8 +20498,8 @@
         "code_id": "ref_default",
         "components": [
           {
-            "link_id": 993,
-            "id": 274,
+            "link_id": 1004,
+            "id": 275,
             "name": "reference name",
             "description": "simply show the name of a reference",
             "type_id": 59,
@@ -20373,8 +20507,8 @@
             "position_type": 1
           },
           {
-            "link_id": 994,
-            "id": 280,
+            "link_id": 1005,
+            "id": 281,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -20391,8 +20525,8 @@
         "code_id": "language_default",
         "components": [
           {
-            "link_id": 995,
-            "id": 275,
+            "link_id": 1006,
+            "id": 276,
             "name": "language name",
             "description": "simply show the name of a language",
             "type_id": 60,
@@ -20400,8 +20534,8 @@
             "position_type": 1
           },
           {
-            "link_id": 996,
-            "id": 280,
+            "link_id": 1007,
+            "id": 281,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -20418,8 +20552,8 @@
         "code_id": "value_default",
         "components": [
           {
-            "link_id": 997,
-            "id": 279,
+            "link_id": 1008,
+            "id": 280,
             "name": "main value",
             "description": "show one most relevant value",
             "type_id": 38,
@@ -20436,7 +20570,7 @@
         "code_id": "formula_default",
         "components": [
           {
-            "link_id": 998,
+            "link_id": 1009,
             "id": 1,
             "name": "Word",
             "description": "simply show the word or triple name",
@@ -20445,16 +20579,16 @@
             "position_type": 1
           },
           {
-            "link_id": 999,
-            "id": 269,
+            "link_id": 1010,
+            "id": 270,
             "name": "Expression",
             "type_id": 62,
             "position": 2,
             "position_type": 1
           },
           {
-            "link_id": 1000,
-            "id": 281,
+            "link_id": 1011,
+            "id": 282,
             "name": "related results",
             "description": "show the most relevant and related results",
             "type_id": 61,
@@ -20471,8 +20605,8 @@
         "code_id": "result_default",
         "components": [
           {
-            "link_id": 1001,
-            "id": 281,
+            "link_id": 1012,
+            "id": 282,
             "name": "related results",
             "description": "show the most relevant and related results",
             "type_id": 61,
@@ -20489,8 +20623,8 @@
         "code_id": "ranking",
         "components": [
           {
-            "link_id": 1002,
-            "id": 282,
+            "link_id": 1013,
+            "id": 283,
             "name": "phrase",
             "description": "simply show the name of a word or triple",
             "type_id": 8,
@@ -20498,8 +20632,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1003,
-            "id": 283,
+            "link_id": 1014,
+            "id": 284,
             "name": "ranking parameters",
             "description": "the parameters used to calculate a ranking",
             "type_id": 45,
@@ -20507,8 +20641,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1004,
-            "id": 284,
+            "link_id": 1015,
+            "id": 285,
             "name": "ranking list",
             "description": "list sorted by the calculated ranking",
             "type_id": 46,
@@ -20581,7 +20715,7 @@
         "code_id": "math_const",
         "components": [
           {
-            "link_id": 1005,
+            "link_id": 1016,
             "id": 1,
             "name": "Word",
             "description": "simply show the word or triple name",
@@ -20590,8 +20724,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1006,
-            "id": 278,
+            "link_id": 1017,
+            "id": 279,
             "name": "related words",
             "description": "show the most relevant and related words or triples",
             "type_id": 9,
@@ -20599,8 +20733,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1007,
-            "id": 277,
+            "link_id": 1018,
+            "id": 278,
             "name": "formulas",
             "description": "simply show all related formulas",
             "type_id": 12,
@@ -20617,7 +20751,7 @@
         "code_id": "global_problem",
         "components": [
           {
-            "link_id": 1008,
+            "link_id": 1019,
             "id": 1,
             "name": "Word",
             "description": "simply show the word or triple name",
@@ -20626,8 +20760,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1009,
-            "id": 285,
+            "link_id": 1020,
+            "id": 286,
             "name": "problem definition",
             "description": "show the most relevant definitions related to a problem",
             "type_id": 188,
@@ -20635,8 +20769,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1010,
-            "id": 286,
+            "link_id": 1021,
+            "id": 287,
             "name": "problem size",
             "description": "show the estimations of the size of a problem",
             "type_id": 188,
@@ -20644,8 +20778,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1011,
-            "id": 287,
+            "link_id": 1022,
+            "id": 288,
             "name": "problem solutions",
             "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
             "type_id": 188,
@@ -20678,7 +20812,7 @@
         "code_id": "currency",
         "components": [
           {
-            "link_id": 1012,
+            "link_id": 1023,
             "id": 1,
             "name": "Word",
             "description": "simply show the word or triple name",
@@ -20687,8 +20821,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1013,
-            "id": 288,
+            "link_id": 1024,
+            "id": 289,
             "name": "exchange rates",
             "description": "show the most relevant exchange rates",
             "type_id": 188,
@@ -20696,8 +20830,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1014,
-            "id": 280,
+            "link_id": 1025,
+            "id": 281,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -20705,8 +20839,8 @@
             "position_type": 1
           },
           {
-            "link_id": 1015,
-            "id": 289,
+            "link_id": 1026,
+            "id": 290,
             "name": "currency formulas",
             "type_id": 188,
             "position": 4,

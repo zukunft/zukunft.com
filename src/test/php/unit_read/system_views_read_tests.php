@@ -88,10 +88,13 @@ class system_views_read_tests
         $cfg->set_view_list($t_msk->view_list_ui());
         $cfg->set_component_list($t_cmp->component_list_ui());
         // create the test pages
-        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), 1, $cfg);
-        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));
-        $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), 1, $cfg);
-        $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), 1, $cfg);
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::MATH_ID, $cfg);
+        // Zurich and CHF is the example for the page-title symbol-line layout
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::ZH_ID, $cfg);
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::CHF_ID, $cfg);
+        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1), words::MATH_ID);
+        $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), words::MATH_ID, $cfg);
+        $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), words::MATH_ID, $cfg);
         $t->assert_view(views::VERB, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_ADD, $t->usr1, new verb());
         $t->assert_view(views::VERB_EDIT, $t->usr1, new verb(), 1, $cfg);

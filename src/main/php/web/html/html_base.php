@@ -485,17 +485,17 @@ class html_base
      * @param string $url the target url
      * @param string $name the text shown to the user for the link e.g. 'global warming' to show the triple global warming
      * @param string $title
-     * @param string $style
+     * @param string $css_class
      * @return string
      */
-    function ref(string $url, string $name, string $title = '', string $style = ''): string
+    function ref(string $url, string $name, string $title = '', string $css_class = ''): string
     {
         $result = '<' . self::A . ' ' . self::HREF . '="' . $url . '"';
         if ($title != '' && $title != $name) {
             $result .= ' ' . self::TITLE_HTML . '="' . $title . '"';
         }
-        if ($style != '') {
-            $result .= ' ' . self::CLASS_HTML . '="' . $style . '"';
+        if ($css_class != '') {
+            $result .= ' ' . self::CLASS_HTML . '="' . $css_class . '"';
         }
         $result .= '>';
         $result .= $name;

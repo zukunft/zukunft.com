@@ -33,7 +33,6 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -44,6 +43,7 @@ include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'impacts.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -63,10 +63,12 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -539,7 +541,17 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Zurich (City)" used for unit testing
+     * @return triple "Zurich (City)" with a low impact to test sort by impact
+     */
+    function zh_city_low_impact(): triple
+    {
+        $trp = $this->zh_city();
+        $trp->set_impact(impacts::LOW);
+        return $trp;
+    }
+
+    /**
+     * @return triple "Zurich (Canton)" used for unit testing
      */
     function zh_canton(): triple
     {
@@ -550,6 +562,57 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_zh()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_canton()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Zurich (Canton)" with a medium impact to test sort by impact
+     */
+    function zh_canton_low_impact(): triple
+    {
+        $trp = $this->zh_canton();
+        $trp->set_impact(impacts::MEDIUM);
+        return $trp;
+    }
+
+    /**
+     * @return triple "Zurich Insurance" (Zurich is a company) used for unit testing
+     */
+    function company_zurich(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::COMPANY_ZURICH_ID, triples::COMPANY_ZURICH);
+        $trp->set_from($t_wrd->word_zh()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->word_company()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Zurich Insurance" with a high impact
+     */
+    function company_zurich_high_impact(): triple
+    {
+        $trp = $this->company_zurich();
+        $trp->set_impact(impacts::HIGH);
+        return $trp;
+    }
+
+    /**
+     * @return triple "CHF is symbol for Swiss franc" used for unit testing the
+     *         page-title category subtitle for SYMBOL-typed related entries
+     */
+    function symbol_chf(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::CHF_SYMBOL_ID, triples::CHF_SYMBOL);
+        $trp->set_from($t_wrd->word_chf()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->swiss_franc()->phrase());
         return $trp;
     }
 

@@ -119,6 +119,7 @@ class files
     CONST string IMPORT_UNDO_EXT = '_undo';
 
     CONST string IMPORT_WARNING = test_paths::IMPORT . 'warning_and_error_test' . self::JSON;
+    CONST string IMPORT_VERSION_NEWER_TEST = test_paths::IMPORT . 'version_newer_test' . self::JSON;
 
     CONST string IMPORT_COMPANIES = test_paths::IMPORT . 'companies' . self::JSON;
     CONST string IMPORT_COUNTRY_ISO = test_paths::IMPORT_WIKIPEDIA . 'country-ISO-3166' . self::JSON;
@@ -130,10 +131,15 @@ class files
     CONST string IMPORT_CURRENCY_WIKI = test_paths::IMPORT_WIKIPEDIA . 'currency-wiki' . self::JSON;
     CONST string IMPORT_CURRENCY_CONTEXT = test_paths::IMPORT_WIKIPEDIA . 'currency-context' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING = test_paths::IMPORT . 'travel_scoring' . self::JSON;
+    CONST string IMPORT_POPULISM_FERMI_ESTIMATE = test_paths::IMPORT . 'fermi_estimates' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING_VALUE_LIST = test_paths::IMPORT . 'travel_scoring_value_list' . self::JSON;
     CONST string IMPORT_WIKI_DEMOCRACY = test_paths::IMPORT_WIKIPEDIA . 'democracy_index_table' . self::JSON;
 
     CONST string FIXED_DB_CSV = 'list' . self::CSV;
+
+    const array TEST_IMPORT_FILES = [
+        self::IMPORT_POPULISM_FERMI_ESTIMATE,
+    ];
 
     const array TEST_DIRECT_IMPORT_FILE_LIST = [
         self::IMPORT_TRAVEL_SCORING_VALUE_LIST,

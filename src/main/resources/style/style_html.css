@@ -210,6 +210,18 @@ body {
     border-radius: 4px;
 }
 
+/* make the subtitle smaller */
+.subtitle {
+    font-size: 0.8rem;
+}
+
+/* icon link inside a heading: body-text size and vertically centred so the */
+/* heading stays prominent while the inline action stays unobtrusive */
+.heading-icon-inline {
+    font-size: 0.6rem;
+    vertical-align: middle;
+}
+
 /* buttons */
 .btn {
     background: #9ea09e; /* Sets the button background to zukunft.com specific grey */

@@ -117,6 +117,7 @@ class words
     const string CHANGES = 'changes';
     const string PERCENT = 'percent';
     const string DECIMAL = 'decimal';
+    const string RELATED = 'related';
 
     // to exchange system configurations
     const string USERS = 'users';
@@ -282,7 +283,7 @@ class words
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 130;
     const string TRANSITION = 'transition';
-    const int TRANSITION_ID = 132;
+    const int TRANSITION_ID = 131;
     const string FREQUENCY = 'frequency';
     const int FREQUENCY_ID = 132;
     const string CS_133 = 'Caesium-133';
@@ -375,6 +376,8 @@ class words
     const int TRILLION_ID = 256;
     const string CHF = 'CHF';
     const int CHF_ID = 258;
+    const string SWISS_FRANC = 'Swiss franc';
+    const int SWISS_FRANC_ID = 2501;
     const string EUR = 'Euro';
     const int EUR_ID = 268;
     const string USD = 'USD';
@@ -563,6 +566,7 @@ class words
         [self::CASH, self::CASH_ID],
         [self::CH, self::CH_ID],
         [self::CHF, self::CHF_ID],
+        [self::SWISS_FRANC, self::SWISS_FRANC_ID],
         [self::CIRCUMFERENCE, self::CIRCUMFERENCE_ID],
         [self::CITY, self::CITY_ID],
         [self::CLIMATE, self::CLIMATE_ID],
@@ -828,6 +832,7 @@ class words
         self::STATEMENT_ID => self::STATEMENT,
         self::CH_ID => self::CH,
         self::CHF_ID => self::CHF,
+        self::SWISS_FRANC_ID => self::SWISS_FRANC,
         self::CIRCUMFERENCE_ID => self::CIRCUMFERENCE,
         self::CITY_ID => self::CITY,
         self::CLIMATE_ID => self::CLIMATE,

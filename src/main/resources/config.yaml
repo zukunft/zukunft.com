@@ -298,6 +298,10 @@ zukunft.com:
               link list:
                 sys-conf-value: 8
                 tooltip-comment: "number of initial entries to show in a list of links"
+              related:
+                per verb:
+                  sys-conf-value: 2
+                  tooltip-comment: "maximal number of related phrases shown inline per verb in a page title (e.g. for Zurich with limit 2 the title 'Zurich (City, Canton, ...)' shows the first two and a '...' link to the full list); also bounds the load on the backend so the response stays compact"
           row limit:
             tooltip-comment: "number of rows to be shown"
             word changes: 20

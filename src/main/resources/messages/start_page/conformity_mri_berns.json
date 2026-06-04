@@ -1,0 +1,3359 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-04 08:00:00",
+  "user": "timon",
+  "selection": [
+    "conformity estimates"
+  ],
+  "description": "Measured values, statistics and formulas extracted from Berns et al. (2005), 'Neurobiological Correlates of Social Conformity and Independence During Mental Rotation', expressed as single words combined into triples, plus formulas, sources and values. An fMRI study using a modified Asch paradigm with a mental rotation task.",
+  "words": [
+    {
+      "name": "conformity",
+      "description": "agreeing with an exogenous source of information when that information is wrong",
+      "refs": [
+        {
+          "name": "Conformity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "independence",
+      "description": "giving the correct answer when the external information presented is incorrect",
+      "refs": [
+        {
+          "name": "Nonconformity_(quality)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "social",
+      "description": "relating to interaction with other people, as opposed to interaction with machines or non-human sources",
+      "refs": [
+        {
+          "name": "Social",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "fMRI"
+    },
+    {
+      "name": "participant",
+      "description": "a normal adult volunteer who performed the mental rotation task"
+    },
+    {
+      "name": "actor",
+      "description": "hired confederate who posed as a fellow participant and gave predetermined answers"
+    },
+    {
+      "name": "error",
+      "description": "an incorrect same/different judgment in the mental rotation task"
+    },
+    {
+      "name": "rate",
+      "description": "frequency or proportion measured per unit of comparison"
+    },
+    {
+      "name": "count",
+      "description": "numerical extent or number of a set"
+    },
+    {
+      "name": "age",
+      "description": "age of a participant in years"
+    },
+    {
+      "name": "baseline",
+      "description": "trials in which no group or computer information was given"
+    },
+    {
+      "name": "group",
+      "description": "the social source of external information, i.e. the four peer actors"
+    },
+    {
+      "name": "computer",
+      "description": "the non-human source of external information"
+    },
+    {
+      "name": "incorrect",
+      "description": "external information that was wrong"
+    },
+    {
+      "name": "reaction",
+      "description": "the act of responding to a stimulus",
+      "refs": [
+        {
+          "name": "Mental_chronometry",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "time",
+      "description": "duration measured for a process"
+    },
+    {
+      "name": "disparity",
+      "description": "angular difference of orientation between the two rotated objects"
+    },
+    {
+      "name": "angle",
+      "description": "an angular quantity measured in degrees"
+    },
+    {
+      "name": "stimulus",
+      "description": "one of the paired three-dimensional Shepard and Metzler objects"
+    },
+    {
+      "name": "same",
+      "description": "stimulus pairs that are the same object rotated relative to each other"
+    },
+    {
+      "name": "different",
+      "description": "stimulus pairs that are mirror images rotated relative to each other"
+    },
+    {
+      "name": "accuracy",
+      "description": "rated or actual proportion of correct judgments"
+    },
+    {
+      "name": "self",
+      "description": "rating made by the participant about their own performance"
+    },
+    {
+      "name": "actual",
+      "description": "the true measured performance"
+    },
+    {
+      "name": "trial",
+      "description": "a single presentation and judgment cycle in the task"
+    },
+    {
+      "name": "voxel",
+      "description": "a volumetric pixel, the unit of a functional MRI image"
+    },
+    {
+      "name": "cluster",
+      "description": "a contiguous group of significantly activated voxels"
+    },
+    {
+      "name": "activation",
+      "description": "increase in blood-oxygenation-level-dependent (BOLD) signal",
+      "refs": [
+        {
+          "name": "Blood-oxygen-level-dependent_imaging",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "threshold",
+      "description": "significance level applied to select activated voxels"
+    },
+    {
+      "name": "scan",
+      "description": "an individual echo-planar imaging acquisition volume"
+    },
+    {
+      "name": "kernel",
+      "description": "the gaussian smoothing kernel applied to functional images"
+    },
+    {
+      "name": "field",
+      "description": "magnetic field strength of the MRI scanner",
+      "refs": [
+        {
+          "name": "Magnetic_resonance_imaging",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "statistic",
+      "description": "a value summarising a statistical test (t or F)"
+    },
+    {
+      "name": "amygdala",
+      "description": "subcortical structure associated with emotional salience",
+      "refs": [
+        {
+          "name": "Amygdala",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "caudate",
+      "description": "head of the caudate nucleus, part of the striatum",
+      "refs": [
+        {
+          "name": "Caudate_nucleus",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "study",
+      "description": "systematic investigation undertaken to discover facts or reach new conclusions",
+      "refs": [
+        {
+          "name": "Research",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "neurobiological",
+      "description": "relating to the biology of the nervous system, in particular brain structure and function",
+      "refs": [
+        {
+          "name": "Neuroscience",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "mental",
+      "description": "relating to the mind and cognitive processes",
+      "refs": [
+        {
+          "name": "Mind",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "rotation",
+      "description": "the action of turning an object about an axis",
+      "refs": [
+        {
+          "name": "Rotation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "year",
+      "description": "the orbital period of the Earth around the Sun, the standard unit for dating calendar events",
+      "refs": [
+        {
+          "name": "Year",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "2005",
+      "description": "the common-era calendar year 2005",
+      "refs": [
+        {
+          "name": "2005",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "duration",
+      "description": "a length of time in the experiment"
+    },
+    {
+      "name": "page",
+      "description": "journal page number"
+    },
+    {
+      "name": "volume",
+      "description": "journal volume number"
+    },
+    {
+      "name": "percent",
+      "description": "unit, percentage",
+      "type": "measure"
+    },
+    {
+      "name": "millisecond",
+      "description": "1/1000 of a second",
+      "type": "measure"
+    },
+    {
+      "name": "millimetre",
+      "description": "1/1000 of a metre",
+      "type": "measure"
+    },
+    {
+      "name": "mean",
+      "description": "arithmetic mean"
+    },
+    {
+      "name": "SD",
+      "description": "standard deviation"
+    },
+    {
+      "name": "SEM",
+      "description": "standard error of the mean"
+    },
+    {
+      "name": "minimum",
+      "description": "lower bound of a range"
+    },
+    {
+      "name": "maximum",
+      "description": "upper bound of a range"
+    },
+    {
+      "name": "x",
+      "description": "x stereotactic coordinate"
+    },
+    {
+      "name": "y",
+      "description": "y stereotactic coordinate"
+    },
+    {
+      "name": "z",
+      "description": "z stereotactic coordinate"
+    },
+    {
+      "name": "lower",
+      "description": "lower value of a stated range"
+    },
+    {
+      "name": "upper",
+      "description": "upper value of a stated range"
+    },
+    {
+      "name": "uncorrected",
+      "description": "uncorrected for multiple comparisons"
+    },
+    {
+      "name": "female",
+      "description": "female participants"
+    },
+    {
+      "name": "male",
+      "description": "male participants"
+    },
+    {
+      "name": "excluded",
+      "description": "participants excluded from analysis"
+    },
+    {
+      "name": "discarded",
+      "description": "participant discarded for imaging artifact"
+    },
+    {
+      "name": "initial",
+      "description": "value before exclusions"
+    },
+    {
+      "name": "interaction",
+      "description": "interaction effect in the ANOVA model"
+    },
+    {
+      "name": "display",
+      "description": "stimulus/response display duration"
+    },
+    {
+      "name": "reslicing",
+      "description": "spatial normalization reslicing resolution"
+    },
+    {
+      "name": "1",
+      "description": "the natural number one"
+    },
+    {
+      "name": "2",
+      "description": "the natural number two"
+    },
+    {
+      "name": "F",
+      "description": "Fisher F test statistic"
+    },
+    {
+      "name": "MNI",
+      "description": "Montreal Neurological Institute stereotactic space"
+    },
+    {
+      "name": "ROI",
+      "description": "region of interest selected for analysis"
+    },
+    {
+      "name": "answer",
+      "description": "response given to a stimulus"
+    },
+    {
+      "name": "both",
+      "description": "two qualifying entities holding simultaneously"
+    },
+    {
+      "name": "centre",
+      "description": "central point of a region"
+    },
+    {
+      "name": "coefficient",
+      "description": "a multiplicative factor or constant"
+    },
+    {
+      "name": "condition",
+      "description": "experimental condition under which a trial was run"
+    },
+    {
+      "name": "conformed",
+      "description": "agreed with the external information despite being confident"
+    },
+    {
+      "name": "coordinate",
+      "description": "numerical position in a coordinate system"
+    },
+    {
+      "name": "correct",
+      "description": "matching the ground truth answer"
+    },
+    {
+      "name": "correlation",
+      "description": "statistical association between two variables"
+    },
+    {
+      "name": "decision",
+      "description": "choice made between alternatives"
+    },
+    {
+      "name": "degree",
+      "description": "unit of angle equal to 1/360 of a full rotation"
+    },
+    {
+      "name": "diameter",
+      "description": "straight-line distance through the centre of a sphere"
+    },
+    {
+      "name": "difference",
+      "description": "arithmetic difference between two values"
+    },
+    {
+      "name": "dimension",
+      "description": "size of one axis of a multi-axis array"
+    },
+    {
+      "name": "echo",
+      "description": "reflected signal recorded after excitation"
+    },
+    {
+      "name": "effect",
+      "description": "change attributable to a manipulation"
+    },
+    {
+      "name": "extent",
+      "description": "spatial reach of a contiguous activation cluster"
+    },
+    {
+      "name": "freedom",
+      "description": "unconstrained parameter that may vary independently"
+    },
+    {
+      "name": "gyrus",
+      "description": "rounded ridge on the cerebral cortex"
+    },
+    {
+      "name": "head",
+      "description": "anterior portion of the caudate nucleus"
+    },
+    {
+      "name": "hoc",
+      "description": "for the specific purpose described"
+    },
+    {
+      "name": "information",
+      "description": "message provided to the participant about the correct response"
+    },
+    {
+      "name": "intercept",
+      "description": "value of the regression line at the origin of the independent variable"
+    },
+    {
+      "name": "intraparietal",
+      "description": "within the parietal lobe, between the somatosensory and visual areas"
+    },
+    {
+      "name": "laptop",
+      "description": "portable personal computer"
+    },
+    {
+      "name": "left",
+      "description": "on the left side of the brain"
+    },
+    {
+      "name": "limit",
+      "description": "maximum allowable value of a quantity"
+    },
+    {
+      "name": "main",
+      "description": "primary, isolated from interactions"
+    },
+    {
+      "name": "majority",
+      "description": "larger fraction of a group"
+    },
+    {
+      "name": "matrix",
+      "description": "rectangular grid of acquired samples"
+    },
+    {
+      "name": "no",
+      "description": "negation; indicates the absence of the qualified concept"
+    },
+    {
+      "name": "occipital",
+      "description": "relating to the occipital lobe of the brain"
+    },
+    {
+      "name": "origin",
+      "description": "point at which a coordinate axis crosses zero"
+    },
+    {
+      "name": "p",
+      "description": "probability of obtaining the observed result under the null hypothesis"
+    },
+    {
+      "name": "per",
+      "description": "partitioning qualifier; once for each instance of the named unit"
+    },
+    {
+      "name": "phase",
+      "description": "one distinguishable segment of a procedure"
+    },
+    {
+      "name": "post",
+      "description": "after the primary analysis"
+    },
+    {
+      "name": "practice",
+      "description": "preparatory exercise before the actual measurement"
+    },
+    {
+      "name": "publication",
+      "description": "release of a written work"
+    },
+    {
+      "name": "questionnaire",
+      "description": "set of written questions used to gather responses"
+    },
+    {
+      "name": "rating",
+      "description": "rated value on a scale, often self-reported"
+    },
+    {
+      "name": "regression",
+      "description": "fit of a relationship between variables"
+    },
+    {
+      "name": "repetition",
+      "description": "periodic interval at which an event repeats"
+    },
+    {
+      "name": "resolution",
+      "description": "smallest distinguishable difference"
+    },
+    {
+      "name": "response",
+      "description": "reaction emitted by the participant"
+    },
+    {
+      "name": "right",
+      "description": "on the right side or, in answers, matching the correct option"
+    },
+    {
+      "name": "round",
+      "description": "one cycle of a repeated procedure"
+    },
+    {
+      "name": "rt",
+      "description": "reaction time abbreviation"
+    },
+    {
+      "name": "second",
+      "description": "SI base unit of time"
+    },
+    {
+      "name": "size",
+      "description": "extent or number of constituents of a set"
+    },
+    {
+      "name": "slice",
+      "description": "one two-dimensional acquisition plane of a volume"
+    },
+    {
+      "name": "slope",
+      "description": "rate of change of the regression line"
+    },
+    {
+      "name": "sphere",
+      "description": "three-dimensional ball-shaped region"
+    },
+    {
+      "name": "split",
+      "description": "separated into two parts; here describing ambiguous decision trials"
+    },
+    {
+      "name": "sulcus",
+      "description": "fissure between two brain gyri"
+    },
+    {
+      "name": "superior",
+      "description": "upper, located dorsally"
+    },
+    {
+      "name": "sure",
+      "description": "participant is confident in their own answer"
+    },
+    {
+      "name": "t",
+      "description": "Student t test statistic"
+    },
+    {
+      "name": "type",
+      "description": "category to which an instance belongs"
+    },
+    {
+      "name": "unit",
+      "description": "standard quantity used as a measure"
+    },
+    {
+      "name": "unsure",
+      "description": "participant lacks confidence in their own answer"
+    },
+    {
+      "name": "value",
+      "description": "a quantitative magnitude assigned to a quantity"
+    }
+  ],
+  "triples": [
+    {
+      "name": "participant count",
+      "from": "count",
+      "verb": "of",
+      "to": "participant",
+      "description": "number of participants retained in the final analysis"
+    },
+    {
+      "name": "actor count",
+      "from": "count",
+      "verb": "of",
+      "to": "actor",
+      "description": "number of hired actors who played the role of the group"
+    },
+    {
+      "name": "mean participant age",
+      "from": "age",
+      "verb": "of",
+      "to": "participant",
+      "description": "mean age of the participant sample in years"
+    },
+    {
+      "name": "error rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "error"
+    },
+    {
+      "name": "baseline error rate",
+      "from": "error rate",
+      "verb": "kind of",
+      "to": "baseline",
+      "description": "mean error rate on trials with no external information"
+    },
+    {
+      "name": "group incorrect error rate",
+      "from": "error rate",
+      "verb": "kind of",
+      "to": "group",
+      "description": "mean error rate when the group gave wrong information"
+    },
+    {
+      "name": "computer incorrect error rate",
+      "from": "error rate",
+      "verb": "kind of",
+      "to": "computer",
+      "description": "mean error rate when the computers gave wrong information"
+    },
+    {
+      "name": "reaction time",
+      "from": "time",
+      "verb": "of",
+      "to": "reaction"
+    },
+    {
+      "name": "different minus same reaction time",
+      "from": "reaction time",
+      "verb": "kind of",
+      "to": "different",
+      "description": "additional reaction time for Different stimuli relative to Same stimuli"
+    },
+    {
+      "name": "incorrect minus correct reaction time",
+      "from": "reaction time",
+      "verb": "kind of",
+      "to": "incorrect",
+      "description": "additional reaction time for incorrect responses relative to correct responses"
+    },
+    {
+      "name": "disparity angle",
+      "from": "angle",
+      "verb": "of",
+      "to": "disparity"
+    },
+    {
+      "name": "mean disparity angle",
+      "from": "disparity angle",
+      "verb": "kind of",
+      "to": "same",
+      "description": "mean angle of disparity of the stimulus pairs used"
+    },
+    {
+      "name": "accuracy rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "accuracy"
+    },
+    {
+      "name": "self rated group accuracy",
+      "from": "accuracy rate",
+      "verb": "kind of",
+      "to": "group",
+      "description": "participants' mean rating of the group's accuracy"
+    },
+    {
+      "name": "self rated computer accuracy",
+      "from": "accuracy rate",
+      "verb": "kind of",
+      "to": "computer",
+      "description": "participants' mean rating of the computers' accuracy"
+    },
+    {
+      "name": "trial count",
+      "from": "count",
+      "verb": "of",
+      "to": "trial"
+    },
+    {
+      "name": "run trial count",
+      "from": "trial count",
+      "verb": "kind of",
+      "to": "stimulus",
+      "description": "number of trials in one run with the group (or computers)"
+    },
+    {
+      "name": "conformity trial count",
+      "from": "trial count",
+      "verb": "kind of",
+      "to": "conformity",
+      "description": "mean number of conformity trials per participant"
+    },
+    {
+      "name": "field strength",
+      "from": "field",
+      "verb": "of",
+      "to": "scan",
+      "description": "magnetic field strength of the MRI scanner in tesla"
+    },
+    {
+      "name": "smoothing kernel",
+      "from": "kernel",
+      "verb": "of",
+      "to": "scan",
+      "description": "full width of the isotropic gaussian smoothing kernel in mm"
+    },
+    {
+      "name": "significance threshold",
+      "from": "threshold",
+      "verb": "of",
+      "to": "activation",
+      "description": "uncorrected p-value threshold used for selecting activated voxels"
+    },
+    {
+      "name": "minimum cluster size",
+      "from": "count",
+      "verb": "of",
+      "to": "voxel",
+      "description": "minimum number of contiguous voxels required for a significant cluster"
+    },
+    {
+      "name": "conformity error increase",
+      "from": "error rate",
+      "verb": "kind of",
+      "to": "conformity",
+      "description": "absolute increase in error rate from baseline to the group-incorrect condition"
+    },
+    {
+      "name": "social conformity error factor",
+      "from": "error rate",
+      "verb": "kind of",
+      "to": "social",
+      "description": "ratio of group-incorrect error rate to computer-incorrect error rate; isolates the human social component"
+    },
+    {
+      "name": "intraparietal sulcus cluster size",
+      "from": "count",
+      "verb": "of",
+      "to": "cluster",
+      "description": "size in voxels of the right intraparietal sulcus cluster for Group > Computer information"
+    },
+    {
+      "name": "intraparietal sulcus t statistic",
+      "from": "statistic",
+      "verb": "of",
+      "to": "cluster",
+      "description": "t statistic of the right intraparietal sulcus cluster for Group > Computer information"
+    },
+    {
+      "name": "conformity ROI mean difference",
+      "from": "activation",
+      "verb": "kind of",
+      "to": "conformity",
+      "description": "mean BOLD beta difference for conforming to the Group versus the Computers in the right intraparietal sulcus ROI"
+    },
+    {
+      "name": "amygdala activation",
+      "from": "activation",
+      "verb": "of",
+      "to": "amygdala",
+      "description": "right amygdala activation associated with social independence"
+    },
+    {
+      "name": "caudate activation",
+      "from": "activation",
+      "verb": "of",
+      "to": "caudate",
+      "description": "right caudate head activation associated with social independence"
+    },
+    {
+      "name": "social conformity",
+      "from": "conformity",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "social independence",
+      "from": "independence",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "mental rotation",
+      "from": "rotation",
+      "verb": "kind of",
+      "to": "mental"
+    },
+    {
+      "name": "neurobiological study",
+      "from": "study",
+      "verb": "kind of",
+      "to": "neurobiological"
+    },
+    {
+      "name": "year 2005",
+      "from": "2005",
+      "verb": "kind of",
+      "to": "year"
+    },
+    {
+      "name": "social conformity and independence",
+      "from": "social conformity",
+      "verb": "and",
+      "to": "social independence"
+    },
+    {
+      "name": "mental rotation neurobiological study",
+      "from": "neurobiological study",
+      "verb": "of",
+      "to": "mental rotation"
+    },
+    {
+      "name": "social conformity neurobiological mental rotation study",
+      "from": "mental rotation neurobiological study",
+      "verb": "of",
+      "to": "social conformity and independence"
+    },
+    {
+      "name": "social conformity study 2005 Berns",
+      "from": "social conformity neurobiological mental rotation study",
+      "verb": "in",
+      "to": "year 2005",
+      "description": "Berns et al. (2005) fMRI study of social conformity and independence during mental rotation; used as a per-value qualifier so every measurement in this file points back to its originating study"
+    },
+    {
+      "name": "accuracy rating",
+      "from": "rating",
+      "verb": "of",
+      "to": "accuracy",
+      "description": "self- or other-rated accuracy on a visual analogue scale"
+    },
+    {
+      "name": "MNI coordinate",
+      "from": "coordinate",
+      "verb": "of",
+      "to": "MNI",
+      "description": "Montreal Neurological Institute stereotactic coordinate"
+    },
+    {
+      "name": "cluster size",
+      "from": "size",
+      "verb": "of",
+      "to": "cluster",
+      "description": "number of voxels in an activation cluster"
+    },
+    {
+      "name": "t statistic",
+      "from": "statistic",
+      "verb": "kind of",
+      "to": "t",
+      "description": "t value of a statistical test"
+    },
+    {
+      "name": "F statistic",
+      "from": "statistic",
+      "verb": "kind of",
+      "to": "F",
+      "description": "F value of an analysis of variance"
+    },
+    {
+      "name": "p value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "p",
+      "description": "probability value of a statistical test"
+    },
+    {
+      "name": "correlation coefficient",
+      "from": "coefficient",
+      "verb": "of",
+      "to": "correlation",
+      "description": "Pearson correlation R"
+    },
+    {
+      "name": "regression intercept",
+      "from": "intercept",
+      "verb": "of",
+      "to": "regression",
+      "description": "intercept of a linear regression"
+    },
+    {
+      "name": "regression slope",
+      "from": "slope",
+      "verb": "of",
+      "to": "regression",
+      "description": "slope of a linear regression"
+    },
+    {
+      "name": "scan count",
+      "from": "count",
+      "verb": "of",
+      "to": "scan",
+      "description": "number of MRI scans acquired in a run"
+    },
+    {
+      "name": "matrix dimension",
+      "from": "dimension",
+      "verb": "of",
+      "to": "matrix",
+      "description": "in-plane acquisition matrix size"
+    },
+    {
+      "name": "slice count",
+      "from": "count",
+      "verb": "of",
+      "to": "slice",
+      "description": "number of imaging slices"
+    },
+    {
+      "name": "voxel resolution",
+      "from": "resolution",
+      "verb": "of",
+      "to": "voxel",
+      "description": "spatial resolution of a voxel"
+    },
+    {
+      "name": "mean difference",
+      "from": "difference",
+      "verb": "of",
+      "to": "mean",
+      "description": "difference between two means in the ROI analysis"
+    },
+    {
+      "name": "repetition time",
+      "from": "time",
+      "verb": "of",
+      "to": "repetition",
+      "description": "MRI TR"
+    },
+    {
+      "name": "echo time",
+      "from": "time",
+      "verb": "of",
+      "to": "echo",
+      "description": "MRI TE"
+    },
+    {
+      "name": "ROI diameter",
+      "from": "diameter",
+      "verb": "of",
+      "to": "ROI",
+      "description": "diameter of the region-of-interest sphere"
+    },
+    {
+      "name": "extent threshold",
+      "from": "threshold",
+      "verb": "of",
+      "to": "extent",
+      "description": "minimum cluster extent for significance"
+    },
+    {
+      "name": "publication year",
+      "from": "year",
+      "verb": "of",
+      "to": "publication",
+      "description": "year of publication"
+    },
+    {
+      "name": "laptop count",
+      "from": "count",
+      "verb": "of",
+      "to": "laptop",
+      "description": "number of networked laptop computers"
+    },
+    {
+      "name": "cluster 1",
+      "from": "cluster",
+      "verb": "kind of",
+      "to": "1",
+      "description": "first cluster of a pair"
+    },
+    {
+      "name": "cluster 2",
+      "from": "cluster",
+      "verb": "kind of",
+      "to": "2",
+      "description": "second cluster of a pair"
+    },
+    {
+      "name": "no questionnaire",
+      "from": "questionnaire",
+      "verb": "kind of",
+      "to": "no",
+      "description": "participants who did not complete the questionnaire"
+    },
+    {
+      "name": "practice round",
+      "from": "round",
+      "verb": "of",
+      "to": "practice",
+      "description": "the pre-scan practice round"
+    },
+    {
+      "name": "per type",
+      "from": "type",
+      "verb": "kind of",
+      "to": "per",
+      "description": "per trial type"
+    },
+    {
+      "name": "split-decision",
+      "from": "decision",
+      "verb": "kind of",
+      "to": "split",
+      "description": "split-decision filler trials"
+    },
+    {
+      "name": "baseline condition",
+      "from": "condition",
+      "verb": "kind of",
+      "to": "baseline",
+      "description": "trials with no group/computer information"
+    },
+    {
+      "name": "group incorrect",
+      "from": "incorrect",
+      "verb": "kind of",
+      "to": "group",
+      "description": "trials where the group gave wrong information"
+    },
+    {
+      "name": "computers incorrect",
+      "from": "incorrect",
+      "verb": "kind of",
+      "to": "computer",
+      "description": "trials where the computers gave wrong information"
+    },
+    {
+      "name": "group correct",
+      "from": "correct",
+      "verb": "kind of",
+      "to": "group",
+      "description": "trials where the group gave correct information"
+    },
+    {
+      "name": "group accuracy",
+      "from": "accuracy",
+      "verb": "of",
+      "to": "group",
+      "description": "rated accuracy of the group"
+    },
+    {
+      "name": "computers accuracy",
+      "from": "accuracy",
+      "verb": "of",
+      "to": "computer",
+      "description": "rated accuracy of the computers"
+    },
+    {
+      "name": "right amygdala",
+      "from": "amygdala",
+      "verb": "kind of",
+      "to": "right",
+      "description": "brain region"
+    },
+    {
+      "name": "group vs computers",
+      "from": "group",
+      "verb": "and",
+      "to": "computer",
+      "description": "contrast of group versus computer source"
+    },
+    {
+      "name": "no answer",
+      "from": "answer",
+      "verb": "kind of",
+      "to": "no",
+      "description": "trials with no response within the time limit"
+    },
+    {
+      "name": "same different",
+      "from": "same",
+      "verb": "and",
+      "to": "different",
+      "description": "effect of Same vs Different stimulus pairs"
+    },
+    {
+      "name": "type of information",
+      "from": "type",
+      "verb": "of",
+      "to": "information",
+      "description": "correct, incorrect or none"
+    },
+    {
+      "name": "conformity vs independence",
+      "from": "conformity",
+      "verb": "and",
+      "to": "independence",
+      "description": "contrast of conforming versus independent behaviour"
+    },
+    {
+      "name": "incorrect vs correct",
+      "from": "incorrect",
+      "verb": "and",
+      "to": "correct",
+      "description": "contrast of incorrect versus correct responses"
+    },
+    {
+      "name": "self vs actual",
+      "from": "self",
+      "verb": "and",
+      "to": "actual",
+      "description": "self-rated versus actual accuracy"
+    },
+    {
+      "name": "origin intercept",
+      "from": "intercept",
+      "verb": "kind of",
+      "to": "origin",
+      "description": "regression assuming intercept at the origin"
+    },
+    {
+      "name": "both right",
+      "from": "right",
+      "verb": "kind of",
+      "to": "both",
+      "description": "sure self and source were both right"
+    },
+    {
+      "name": "unsure majority",
+      "from": "majority",
+      "verb": "kind of",
+      "to": "unsure",
+      "description": "unsure, went with the majority"
+    },
+    {
+      "name": "sure but conformed",
+      "from": "conformed",
+      "verb": "kind of",
+      "to": "sure",
+      "description": "sure of answer but went with majority anyway"
+    },
+    {
+      "name": "post hoc",
+      "from": "hoc",
+      "verb": "kind of",
+      "to": "post",
+      "description": "post hoc comparison"
+    },
+    {
+      "name": "main effect",
+      "from": "effect",
+      "verb": "kind of",
+      "to": "main",
+      "description": "main effect in the ANOVA model"
+    },
+    {
+      "name": "response limit",
+      "from": "limit",
+      "verb": "of",
+      "to": "response",
+      "description": "time limit to respond"
+    },
+    {
+      "name": "decision phase",
+      "from": "phase",
+      "verb": "of",
+      "to": "decision",
+      "description": "group decision phase duration"
+    },
+    {
+      "name": "degrees of freedom",
+      "from": "degree",
+      "verb": "of",
+      "to": "freedom",
+      "description": "degrees of freedom of a statistical test"
+    },
+    {
+      "name": "year (unit)",
+      "from": "year",
+      "verb": "must be one of",
+      "to": "unit",
+      "description": "unit of time, years",
+      "type": "measure"
+    },
+    {
+      "name": "second (time)",
+      "from": "second",
+      "verb": "must be one of",
+      "to": "time",
+      "description": "SI unit of time",
+      "type": "measure"
+    },
+    {
+      "name": "degree (angle)",
+      "from": "degree",
+      "verb": "must be one of",
+      "to": "angle",
+      "description": "unit of plane angle",
+      "type": "measure"
+    },
+    {
+      "name": "intraparietal sulcus",
+      "from": "sulcus",
+      "verb": "kind of",
+      "to": "intraparietal"
+    },
+    {
+      "name": "occipital gyrus",
+      "from": "gyrus",
+      "verb": "kind of",
+      "to": "occipital"
+    },
+    {
+      "name": "caudate head",
+      "from": "head",
+      "verb": "of",
+      "to": "caudate"
+    },
+    {
+      "name": "ROI sphere",
+      "from": "sphere",
+      "verb": "of",
+      "to": "ROI"
+    },
+    {
+      "name": "rt interaction",
+      "from": "interaction",
+      "verb": "kind of",
+      "to": "rt",
+      "description": "interaction of RT with nature of external information"
+    },
+    {
+      "name": "superior occipital gyrus",
+      "from": "occipital gyrus",
+      "verb": "kind of",
+      "to": "superior"
+    },
+    {
+      "name": "source x type interaction",
+      "from": "interaction",
+      "verb": "of",
+      "to": "type of information",
+      "description": "interaction of source and type of information"
+    },
+    {
+      "name": "right intraparietal sulcus",
+      "from": "intraparietal sulcus",
+      "verb": "kind of",
+      "to": "right",
+      "description": "brain region, right intraparietal sulcus"
+    },
+    {
+      "name": "right caudate head",
+      "from": "caudate head",
+      "verb": "kind of",
+      "to": "right",
+      "description": "brain region, head of the caudate nucleus"
+    },
+    {
+      "name": "ROI sphere centre",
+      "from": "centre",
+      "verb": "of",
+      "to": "ROI sphere",
+      "description": "centre of the region-of-interest sphere"
+    },
+    {
+      "name": "left superior occipital gyrus",
+      "from": "superior occipital gyrus",
+      "verb": "kind of",
+      "to": "left",
+      "description": "brain region"
+    },
+    {
+      "name": "right superior occipital gyrus",
+      "from": "superior occipital gyrus",
+      "verb": "kind of",
+      "to": "right",
+      "description": "brain region"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "social conformity error factor formula",
+      "expression": "\"social conformity error factor\" = \"group incorrect error rate\" / \"computer incorrect error rate\"",
+      "latex": "F = \\frac{E_{group}}{E_{computer}}",
+      "assigned": [
+        "group incorrect error rate",
+        "computer incorrect error rate"
+      ]
+    },
+    {
+      "name": "conformity error increase formula",
+      "expression": "\"conformity error increase\" = \"group incorrect error rate\" - \"baseline error rate\"",
+      "latex": "\\Delta E = E_{group} - E_{baseline}",
+      "assigned": [
+        "group incorrect error rate",
+        "baseline error rate"
+      ]
+    },
+    {
+      "name": "self accuracy regression formula",
+      "expression": "\"self\" = 0.17 + 0.69 * \"actual\"",
+      "latex": "S = 0.17 + 0.69 \\cdot A",
+      "assigned": [
+        "self rated group accuracy",
+        "self rated computer accuracy"
+      ]
+    },
+    {
+      "name": "self accuracy origin formula",
+      "expression": "\"self\" = 0.90 * \"actual\"",
+      "latex": "S = 0.90 \\cdot A",
+      "assigned": []
+    }
+  ],
+  "sources": [
+    {
+      "name": "Berns paper",
+      "description": "Berns GS, Chappelow J, Zink CF, Pagnoni G, Martin-Skurski ME, Richards J (2005): Neurobiological Correlates of Social Conformity and Independence During Mental Rotation. Biol Psychiatry 58:245-253",
+      "url": "https://doi.org/10.1016/j.biopsych.2005.04.012"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "participant count",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "32",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "actor count",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "4",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "mean participant age",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "26.0",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "baseline error rate",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.138",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "group incorrect error rate",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.41",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "computer incorrect error rate",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.32",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "different minus same reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.815",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "incorrect minus correct reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "1.11",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "mean disparity angle",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "134",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "self rated group accuracy",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.651",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "self rated computer accuracy",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.612",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "run trial count",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "48",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "conformity trial count",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "5.5",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "field strength",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "smoothing kernel",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "8",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "significance threshold",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "minimum cluster size",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "5",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "intraparietal sulcus cluster size",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "12",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "intraparietal sulcus t statistic",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "4.52",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "conformity ROI mean difference",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.271",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "participant count",
+        "initial",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "33",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "participant count",
+        "female",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "14",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "participant count",
+        "male",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "19",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "age",
+        "SD",
+        "year (unit)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "5.8",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "age",
+        "minimum",
+        "year (unit)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "19",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "age",
+        "maximum",
+        "year (unit)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "41",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "participant count",
+        "excluded",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "2",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "participant count",
+        "discarded",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "1",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "actor count",
+        "female",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "2",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "actor count",
+        "male",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "2",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "trial count",
+        "practice round",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "20",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "laptop count",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "5",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "disparity angle",
+        "minimum",
+        "degree (angle)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "100",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "disparity angle",
+        "maximum",
+        "degree (angle)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "180",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "trial count",
+        "per type",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "16",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "trial count",
+        "split-decision",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "6",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "duration",
+        "display",
+        "second (time)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "duration",
+        "response limit",
+        "second (time)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "12",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "error rate",
+        "no answer",
+        "mean",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "2.0",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "error rate",
+        "no answer",
+        "SEM",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.5",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "duration",
+        "decision phase",
+        "minimum",
+        "second (time)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "5",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "duration",
+        "decision phase",
+        "maximum",
+        "second (time)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "7",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "repetition time",
+        "second (time)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "2.345",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "echo time",
+        "millisecond",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "30",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "matrix dimension",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "64",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "slice count",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "35",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "voxel resolution",
+        "millimetre",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "scan count",
+        "minimum",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "363",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "scan count",
+        "maximum",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "551",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "voxel resolution",
+        "reslicing",
+        "millimetre",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "participant count",
+        "no questionnaire",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "error rate",
+        "baseline condition",
+        "SEM",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "2",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "error rate",
+        "group incorrect",
+        "SEM",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "5",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "error rate",
+        "computers incorrect",
+        "SEM",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "4",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "t statistic",
+        "group vs computers",
+        "error rate",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3.55",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "degrees of freedom",
+        "group vs computers",
+        "error rate",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "32",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "group vs computers",
+        "error rate",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "F statistic",
+        "type of information",
+        "error rate",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "31.29",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "type of information",
+        "error rate",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.0001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "baseline condition",
+        "group correct",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.348",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "F statistic",
+        "source x type interaction",
+        "error rate",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "6.53",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "source x type interaction",
+        "error rate",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.004",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "F statistic",
+        "type of information",
+        "reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "20.27",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "type of information",
+        "reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.0001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "F statistic",
+        "conformity vs independence",
+        "reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "2.65",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "conformity vs independence",
+        "reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.105",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "F statistic",
+        "group vs computers",
+        "reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.554",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "group vs computers",
+        "reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.457",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "F statistic",
+        "same different",
+        "reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "66.38",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "same different",
+        "reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.0001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "reaction time",
+        "same different",
+        "SEM",
+        "second (time)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.100",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "reaction time",
+        "incorrect vs correct",
+        "SEM",
+        "second (time)",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.18",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "t statistic",
+        "incorrect vs correct",
+        "reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "6.2",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "incorrect vs correct",
+        "reaction time",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.0001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "F statistic",
+        "rt interaction",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "20.87",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "rt interaction",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.0001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "regression intercept",
+        "self vs actual",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.17",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "regression slope",
+        "self vs actual",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.69",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "correlation coefficient",
+        "self vs actual",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.67",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "self vs actual",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.0001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "degrees of freedom",
+        "self vs actual",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "27",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "regression slope",
+        "origin intercept",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.90",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "accuracy rating",
+        "group accuracy",
+        "SEM",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "2.5",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "accuracy rating",
+        "computers accuracy",
+        "SEM",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "2.7",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "t statistic",
+        "group vs computers",
+        "accuracy rating",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "1.491",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "degrees of freedom",
+        "group vs computers",
+        "accuracy rating",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "28",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "group vs computers",
+        "accuracy rating",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.147",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "accuracy rating",
+        "group accuracy",
+        "both right",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "82.8",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "accuracy rating",
+        "computers accuracy",
+        "both right",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "89.7",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "accuracy rating",
+        "group accuracy",
+        "unsure majority",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "58.6",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "accuracy rating",
+        "computers accuracy",
+        "unsure majority",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "44.8",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "accuracy rating",
+        "group accuracy",
+        "sure but conformed",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3.4",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "accuracy rating",
+        "computers accuracy",
+        "sure but conformed",
+        "percent",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3.4",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "group vs computers",
+        "MNI coordinate",
+        "x",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "24",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "group vs computers",
+        "MNI coordinate",
+        "y",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "-69",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "group vs computers",
+        "MNI coordinate",
+        "z",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "39",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "group vs computers",
+        "threshold",
+        "uncorrected",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "extent threshold",
+        "group vs computers",
+        "voxel",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "10",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "left superior occipital gyrus",
+        "social conformity",
+        "MNI coordinate",
+        "x",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "-18",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "left superior occipital gyrus",
+        "social conformity",
+        "MNI coordinate",
+        "y",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "-90",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "left superior occipital gyrus",
+        "social conformity",
+        "MNI coordinate",
+        "z",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "9",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "left superior occipital gyrus",
+        "social conformity",
+        "cluster size",
+        "voxel",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "21",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "left superior occipital gyrus",
+        "social conformity",
+        "t statistic",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "4.99",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right superior occipital gyrus",
+        "social conformity",
+        "MNI coordinate",
+        "x",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "24",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right superior occipital gyrus",
+        "social conformity",
+        "MNI coordinate",
+        "y",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "-87",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right superior occipital gyrus",
+        "social conformity",
+        "MNI coordinate",
+        "z",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "9",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right superior occipital gyrus",
+        "social conformity",
+        "cluster size",
+        "voxel",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "34",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right superior occipital gyrus",
+        "social conformity",
+        "t statistic",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "4.87",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "social conformity",
+        "cluster 1",
+        "MNI coordinate",
+        "x",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "24",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "social conformity",
+        "cluster 1",
+        "MNI coordinate",
+        "y",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "-69",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "social conformity",
+        "cluster 1",
+        "MNI coordinate",
+        "z",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "36",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "social conformity",
+        "cluster 1",
+        "cluster size",
+        "voxel",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "21",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "social conformity",
+        "cluster 1",
+        "t statistic",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "4.83",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "social conformity",
+        "cluster 2",
+        "MNI coordinate",
+        "x",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "18",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "social conformity",
+        "cluster 2",
+        "MNI coordinate",
+        "y",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "-57",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "social conformity",
+        "cluster 2",
+        "MNI coordinate",
+        "z",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "48",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "social conformity",
+        "cluster 2",
+        "cluster size",
+        "voxel",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "20",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "social conformity",
+        "cluster 2",
+        "t statistic",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "4.09",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right amygdala",
+        "social independence",
+        "MNI coordinate",
+        "x",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "15",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right amygdala",
+        "social independence",
+        "MNI coordinate",
+        "y",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "-3",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right amygdala",
+        "social independence",
+        "MNI coordinate",
+        "z",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "-18",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right amygdala",
+        "social independence",
+        "cluster size",
+        "voxel",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right amygdala",
+        "social independence",
+        "t statistic",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "4.30",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right caudate head",
+        "social independence",
+        "MNI coordinate",
+        "x",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "6",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right caudate head",
+        "social independence",
+        "MNI coordinate",
+        "y",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "12",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right caudate head",
+        "social independence",
+        "MNI coordinate",
+        "z",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right caudate head",
+        "social independence",
+        "cluster size",
+        "voxel",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "7",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right caudate head",
+        "social independence",
+        "t statistic",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "3.85",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "ROI diameter",
+        "millimetre",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "12",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "ROI sphere centre",
+        "MNI coordinate",
+        "x",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "25",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "ROI sphere centre",
+        "MNI coordinate",
+        "y",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "-66",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "right intraparietal sulcus",
+        "ROI sphere centre",
+        "MNI coordinate",
+        "z",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "32",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "F statistic",
+        "main effect",
+        "group vs computers",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "6.56",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "main effect",
+        "group vs computers",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.01",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "F statistic",
+        "interaction",
+        "social conformity",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "5.80",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "interaction",
+        "social conformity",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.016",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "mean difference",
+        "social conformity",
+        "group vs computers",
+        "SEM",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.078",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "F statistic",
+        "post hoc",
+        "social conformity",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "11.98",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "p value",
+        "post hoc",
+        "social conformity",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "0.001",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "trial count",
+        "social conformity",
+        "lower",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "5",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "trial count",
+        "social conformity",
+        "upper",
+        "study",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "6",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "page",
+        "minimum",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "245",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "page",
+        "maximum",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "253",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "volume",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "58",
+      "source": "Berns paper"
+    },
+    {
+      "words": [
+        "publication year",
+        "study",
+        "social conformity",
+        "fMRI",
+        "year",
+        "2005"
+      ],
+      "number": "2005",
+      "source": "Berns paper"
+    }
+  ]
+}

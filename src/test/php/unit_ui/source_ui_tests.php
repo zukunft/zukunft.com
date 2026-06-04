@@ -53,6 +53,7 @@ class source_ui_tests
         $test_page = $html->text_h2('source display test');
         $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
         $test_page .= 'with link: ' . $src->name_link() . '<br>';
+        $test_page .= $t->dsp_title_named_edit($src);
         $t->html_page_test($test_page, 'source', 'source', $t);
     }
 

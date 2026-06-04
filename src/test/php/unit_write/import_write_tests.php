@@ -184,6 +184,16 @@ class import_write_tests
         $this->assert_import_json_named($t, $ts, new view($usr),
             views::TEST_ADD_NAME, views::TEST_ADD_COM, test_files::IMPORT_VIEWS);
 
+        $t->subheader($ts . 'version check');
+
+        $test_name = 'json_file rejects a file created with a newer program version';
+        $imf = new import_file();
+        $imp_msg = $imf->json_file(test_files::IMPORT_VERSION_NEWER_TEST, $usr, true, true);
+        $t->assert_false($test_name, $imp_msg->is_ok());
+        $test_name = 'json_file version-newer message text';
+        $target = 'Import file has been created with version "9.9.9"';
+        $t->assert_text_contains($test_name, $imp_msg->all_message_text(), $target);
+
         $db_con->check_sequences();
     }
 

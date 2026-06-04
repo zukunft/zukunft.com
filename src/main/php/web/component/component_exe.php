@@ -177,6 +177,7 @@ class component_exe extends component
             // system form - components that can only be used for internal system forms
             // general form fields
             component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
+            component_types::TITLE_NAMED_EDIT => $form->title_named($dbo),
             component_types::FORM_FIELD_NAME => $form->form_name($dbo, $style),
             component_types::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
 
@@ -382,6 +383,8 @@ class component_exe extends component
             // view only -
             component_types::SHOW_NAME => $form->show_name($dbo, $this->code_id),
             component_types::SHOW_DESCRIPTION => $form->show_description($dbo),
+            component_types::SHOW_PLURAL => $form->show_plural($dbo),
+            component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo),
             component_types::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_types::WORD_RESULTS => $form->result($dbo),
             component_types::USED_IN_AS_TEXT => $form->used_as_text($dbo),

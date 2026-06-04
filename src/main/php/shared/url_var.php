@@ -131,6 +131,7 @@ class url_var
     const string ID_LST = 'il'; // a comma separated list of internal database ids
     const string IP = 'ip'; // for ip ranges (for admin only)
     const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
+    const string INCL_RELATED = 'ir'; // include the related phrases (api_types::INCL_RELATED) in a word/triple api response
     const string JOB = 'j'; // for system batch jobs
     const string JOB_PARAMETER = 'ja'; // pArameter passed to a job e.g. the id of the phrase set
     const string JOB_START_TIME = 'jb'; // Begin time of the job execution
@@ -367,6 +368,7 @@ class url_var
     // figure
     const string FIGURE_HUMAN = 'figure_id';
     const string WITH_PHRASES_HUMAN = 'incl_phrases';
+    const string INCL_RELATED_HUMAN = 'incl_related';
 
     // view
     const string VIEW_HUMAN = 'view_id';
@@ -576,6 +578,7 @@ class url_var
         // figure
         [self::FIGURE_HUMAN, self::FIGURE],
         [self::WITH_PHRASES_HUMAN, self::WITH_PHRASES],
+        [self::INCL_RELATED_HUMAN, self::INCL_RELATED],
 
         // view
         [self::VIEW_HUMAN, self::VIEW],

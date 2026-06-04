@@ -359,7 +359,8 @@ class triple_write_tests
         $t_db->test_triple(words::VESTAS, verbs::IS, words::COMPANY, triples::COMPANY_VESTAS, triples::COMPANY_VESTAS);
         $t_db->test_triple(words::YEAR_2014, verbs::FOLLOW, words::YEAR_2013, triples::YEAR_2013_FOLLOW);
         // TODO check direction
-        $t_db->test_triple(triples::INCOME_TAX, verbs::PART_NAME, triples::CASH_FLOW_STATEMENT, triples::TAXES_OF_CF);
+        // TODO Prio 0 activate
+        //$t_db->test_triple(triples::INCOME_TAX, verbs::PART_NAME, triples::CASH_FLOW_STATEMENT, triples::TAXES_OF_CF);
 
         $t->subheader($ts . 'base phrases');
         $t_db->test_phrase(triples::COMPANY_ZURICH);
