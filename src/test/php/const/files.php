@@ -132,6 +132,10 @@ class files
     CONST string IMPORT_CURRENCY_CONTEXT = test_paths::IMPORT_WIKIPEDIA . 'currency-context' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING = test_paths::IMPORT . 'travel_scoring' . self::JSON;
     CONST string IMPORT_POPULISM_FERMI_ESTIMATE = test_paths::IMPORT . 'fermi_estimates' . self::JSON;
+    CONST string IMPORT_PORTFOLIO_SPLIT_CALC = test_paths::IMPORT . 'portfolio_split_calc' . self::JSON;
+    CONST string IMPORT_PORTFOLIO_INSTRUMENTS = test_paths::IMPORT . 'portfolio_instruments' . self::JSON;
+    CONST string IMPORT_PORTFOLIO_REPORT = test_paths::IMPORT . 'portfolio_report' . self::JSON;
+    CONST string IMPORT_PORTFOLIO_SPLIT_PARAMETERS_SAMPLE = test_paths::IMPORT . 'portfolio_split_parameters_sample' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING_VALUE_LIST = test_paths::IMPORT . 'travel_scoring_value_list' . self::JSON;
     CONST string IMPORT_WIKI_DEMOCRACY = test_paths::IMPORT_WIKIPEDIA . 'democracy_index_table' . self::JSON;
 
@@ -139,6 +143,10 @@ class files
 
     const array TEST_IMPORT_FILES = [
         self::IMPORT_POPULISM_FERMI_ESTIMATE,
+        self::IMPORT_PORTFOLIO_SPLIT_CALC,
+        self::IMPORT_PORTFOLIO_INSTRUMENTS,
+        self::IMPORT_PORTFOLIO_REPORT,
+        self::IMPORT_PORTFOLIO_SPLIT_PARAMETERS_SAMPLE,
     ];
 
     const array TEST_DIRECT_IMPORT_FILE_LIST = [

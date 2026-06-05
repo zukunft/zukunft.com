@@ -1,0 +1,46 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-05 12:00:00",
+  "user": "timon",
+  "selection": [
+    "portfolio split parameters sample"
+  ],
+  "description": "Concrete parameters for the sample inheritance split: the agreed target weights (mother 30%, child 1 35%, child 2 35%) and the resulting per-portfolio share allocations for the two highest-priced positions (Lindt & Sprüngli PS and Lindt & Sprüngli registered) where the round-lot constraint binds. The remaining 28 stocks and 5 bonds drop out of this file because at their lower per-unit price the rounding error from this two-step illustration already absorbs most of the residual; the full walk is implemented by the formulas in portfolio_split_calc.json. All referenced concepts (portfolios, target weight) live canonically in portfolio_split_calc.json, the tickers in portfolio_instruments.json; they are re-declared here name-only (words) or with their canonical from/verb/to (triples) so this file imports on its own.",
+  "words": [
+    {"name": "portfolio"},
+    {"name": "mother"},
+    {"name": "one"},
+    {"name": "two"},
+    {"name": "share"},
+    {"name": "target"},
+    {"name": "weight"},
+
+    {"name": "LISP"},
+    {"name": "LISN"}
+  ],
+  "triples": [
+    {"name": "mother portfolio", "from": "portfolio", "verb": "of",      "to": "mother"},
+    {"name": "portfolio one",    "from": "portfolio", "verb": "of",      "to": "one"},
+    {"name": "portfolio two",    "from": "portfolio", "verb": "of",      "to": "two"},
+    {"name": "target weight",    "from": "weight",    "verb": "kind of", "to": "target"}
+  ],
+  "sources": [
+    {
+      "name": "split agreement",
+      "description": "the family's written agreement that fixes the 30/35/35 split weights and signs off on the resulting per-position allocations"
+    }
+  ],
+  "values": [
+    {"words": ["mother portfolio", "target weight"], "number": "0.30", "source": "split agreement"},
+    {"words": ["portfolio one",    "target weight"], "number": "0.35", "source": "split agreement"},
+    {"words": ["portfolio two",    "target weight"], "number": "0.35", "source": "split agreement"},
+
+    {"words": ["LISP", "share", "portfolio one"],    "number": "4",  "source": "split agreement"},
+    {"words": ["LISP", "share", "portfolio two"],    "number": "4",  "source": "split agreement"},
+    {"words": ["LISP", "share", "mother portfolio"], "number": "2",  "source": "split agreement"},
+
+    {"words": ["LISN", "share", "portfolio one"],    "number": "9",  "source": "split agreement"},
+    {"words": ["LISN", "share", "portfolio two"],    "number": "9",  "source": "split agreement"},
+    {"words": ["LISN", "share", "mother portfolio"], "number": "22", "source": "split agreement"}
+  ]
+}

@@ -1,0 +1,274 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-05 12:00:00",
+  "user": "timon",
+  "selection": [
+    "portfolio report"
+  ],
+  "description": "Concrete portfolio reported by the depot bank: per-security share counts, share prices and round lots for the 30 Swiss equities, nominal value / price percentage / round lot for the 5 bonds, cash positions in the 7 currencies, FX rates against CHF, and the bank's total portfolio value in CHF. All instruments, currencies and the share/price/round-lot/nominal-value/portfolio-value concepts are defined fully in portfolio_instruments.json and portfolio_split_calc.json; they are re-declared here name-only (for words) or with their canonical from/verb/to (for triples) so this file remains importable on its own.",
+  "words": [
+    {"name": "portfolio"},
+    {"name": "original"},
+    {"name": "share"},
+    {"name": "price"},
+    {"name": "round"},
+    {"name": "lot"},
+    {"name": "nominal"},
+    {"name": "value"},
+    {"name": "cash"},
+    {"name": "currency"},
+    {"name": "exchange",
+     "description": "qualifier denoting the conversion of one currency into another"},
+    {"name": "rate",
+     "description": "qualifier denoting a per-unit ratio (here CHF per unit of foreign currency)"},
+    {"name": "reference",
+     "description": "qualifier denoting the chosen base currency that every position value is converted to (CHF for this portfolio)"},
+    {"name": "position"},
+
+    {"name": "CHF"},
+    {"name": "EUR"},
+    {"name": "USD"},
+    {"name": "GBP"},
+    {"name": "JPY"},
+    {"name": "DKK"},
+    {"name": "SEK"},
+
+    {"name": "NESN"},{"name": "ROG"},{"name": "NOVN"},{"name": "UBSG"},{"name": "ABBN"},
+    {"name": "ZURN"},{"name": "CFR"},{"name": "SREN"},{"name": "LONN"},{"name": "GIVN"},
+    {"name": "SIKA"},{"name": "HOLN"},{"name": "ALC"},{"name": "GEBN"},{"name": "SOON"},
+    {"name": "LOGN"},{"name": "PGHN"},{"name": "LISN"},{"name": "LISP"},{"name": "SCMN"},
+    {"name": "ADEN"},{"name": "KNIN"},{"name": "UHR"},{"name": "BAER"},{"name": "VACN"},
+    {"name": "SCHP"},{"name": "SGSN"},{"name": "STMN"},{"name": "SDZ"},{"name": "BANB"},
+
+    {"name": "ConfedBond30"},
+    {"name": "NestleBond27"},
+    {"name": "RocheBond28"},
+    {"name": "BundDE30"},
+    {"name": "TreasuryUS27"}
+  ],
+  "triples": [
+    {"name": "share price",     "from": "price", "verb": "of",      "to": "share"},
+    {"name": "round lot",       "from": "lot",   "verb": "kind of", "to": "round"},
+    {"name": "nominal value",   "from": "value", "verb": "kind of", "to": "nominal"},
+    {"name": "portfolio value", "from": "value", "verb": "of",      "to": "portfolio"},
+    {"name": "exchange rate",   "description": "the price of one currency expressed in another; here always quoted as 1 unit of the foreign currency in CHF (so 1 EUR = 0.98 CHF means an exchange rate of 0.98)",
+     "from": "rate",  "verb": "of",      "to": "exchange"},
+    {"name": "position value",   "from": "value", "verb": "of",      "to": "position"},
+    {"name": "reference currency",
+     "description": "the currency in which the bank consolidates and reports the total portfolio value; every native-currency position value is converted using its currency's exchange rate to the reference currency",
+     "from": "currency", "verb": "kind of", "to": "reference"},
+    {"name": "portfolio reference currency",
+     "description": "asserts that this portfolio's reporting currency is CHF; values qualified by both 'position value' and 'CHF' are the CHF-converted market values used to compute the portfolio total",
+     "from": "portfolio", "verb": "in", "to": "CHF"}
+  ],
+  "sources": [
+    {
+      "name": "bank reporting bank leu client xy",
+      "description": "synthetic statement used as the source of holdings, prices and FX rates for this sample",
+      "url": "https://bankleu.com/api/client_xy/portfolio_reporting.json"
+    }
+  ],
+  "values": [
+    {"words": ["LISP", "share", "original"], "number": "10",   "source": "bank reporting bank leu client xy"},
+    {"words": ["LISP", "share price", "CHF"], "number": "117000"},
+    {"words": ["LISP", "round lot"], "number": "1"},
+
+    {"words": ["LISN", "share", "original"], "number": "40",   "source": "bank reporting bank leu client xy"},
+    {"words": ["LISN", "share price", "CHF"], "number": "11000"},
+    {"words": ["LISN", "round lot"], "number": "1"},
+
+    {"words": ["GIVN", "share", "original"], "number": "100",  "source": "bank reporting bank leu client xy"},
+    {"words": ["GIVN", "share price", "CHF"], "number": "3700"},
+    {"words": ["GIVN", "round lot"], "number": "1"},
+
+    {"words": ["PGHN", "share", "original"], "number": "250",  "source": "bank reporting bank leu client xy"},
+    {"words": ["PGHN", "share price", "CHF"], "number": "1200"},
+    {"words": ["PGHN", "round lot"], "number": "1"},
+
+    {"words": ["GEBN", "share", "original"], "number": "500",  "source": "bank reporting bank leu client xy"},
+    {"words": ["GEBN", "share price", "CHF"], "number": "590"},
+    {"words": ["GEBN", "round lot"], "number": "1"},
+
+    {"words": ["LONN", "share", "original"], "number": "600",  "source": "bank reporting bank leu client xy"},
+    {"words": ["LONN", "share price", "CHF"], "number": "530"},
+    {"words": ["LONN", "round lot"], "number": "1"},
+
+    {"words": ["ZURN", "share", "original"], "number": "600",  "source": "bank reporting bank leu client xy"},
+    {"words": ["ZURN", "share price", "CHF"], "number": "530"},
+    {"words": ["ZURN", "round lot"], "number": "1"},
+
+    {"words": ["SCMN", "share", "original"], "number": "600",  "source": "bank reporting bank leu client xy"},
+    {"words": ["SCMN", "share price", "CHF"], "number": "530"},
+    {"words": ["SCMN", "round lot"], "number": "1"},
+
+    {"words": ["VACN", "share", "original"], "number": "800",  "source": "bank reporting bank leu client xy"},
+    {"words": ["VACN", "share price", "CHF"], "number": "380"},
+    {"words": ["VACN", "round lot"], "number": "1"},
+
+    {"words": ["ROG",  "share", "original"], "number": "2000", "source": "bank reporting bank leu client xy"},
+    {"words": ["ROG",  "share price", "CHF"], "number": "240"},
+    {"words": ["ROG",  "round lot"], "number": "1"},
+
+    {"words": ["SOON", "share", "original"], "number": "1200", "source": "bank reporting bank leu client xy"},
+    {"words": ["SOON", "share price", "CHF"], "number": "240"},
+    {"words": ["SOON", "round lot"], "number": "1"},
+
+    {"words": ["SCHP", "share", "original"], "number": "1200", "source": "bank reporting bank leu client xy"},
+    {"words": ["SCHP", "share price", "CHF"], "number": "230"},
+    {"words": ["SCHP", "round lot"], "number": "1"},
+
+    {"words": ["SIKA", "share", "original"], "number": "1300", "source": "bank reporting bank leu client xy"},
+    {"words": ["SIKA", "share price", "CHF"], "number": "220"},
+    {"words": ["SIKA", "round lot"], "number": "1"},
+
+    {"words": ["KNIN", "share", "original"], "number": "1300", "source": "bank reporting bank leu client xy"},
+    {"words": ["KNIN", "share price", "CHF"], "number": "220"},
+    {"words": ["KNIN", "round lot"], "number": "1"},
+
+    {"words": ["UHR",  "share", "original"], "number": "1500", "source": "bank reporting bank leu client xy"},
+    {"words": ["UHR",  "share price", "CHF"], "number": "180"},
+    {"words": ["UHR",  "round lot"], "number": "1"},
+
+    {"words": ["CFR",  "share", "original"], "number": "2000", "source": "bank reporting bank leu client xy"},
+    {"words": ["CFR",  "share price", "CHF"], "number": "130"},
+    {"words": ["CFR",  "round lot"], "number": "1"},
+
+    {"words": ["SREN", "share", "original"], "number": "2000", "source": "bank reporting bank leu client xy"},
+    {"words": ["SREN", "share price", "CHF"], "number": "130"},
+    {"words": ["SREN", "round lot"], "number": "1"},
+
+    {"words": ["STMN", "share", "original"], "number": "2500", "source": "bank reporting bank leu client xy"},
+    {"words": ["STMN", "share price", "CHF"], "number": "110"},
+    {"words": ["STMN", "round lot"], "number": "1"},
+
+    {"words": ["LOGN", "share", "original"], "number": "3000", "source": "bank reporting bank leu client xy"},
+    {"words": ["LOGN", "share price", "CHF"], "number": "90"},
+    {"words": ["LOGN", "round lot"], "number": "1"},
+
+    {"words": ["NOVN", "share", "original"], "number": "3000", "source": "bank reporting bank leu client xy"},
+    {"words": ["NOVN", "share price", "CHF"], "number": "90"},
+    {"words": ["NOVN", "round lot"], "number": "1"},
+
+    {"words": ["SGSN", "share", "original"], "number": "3000", "source": "bank reporting bank leu client xy"},
+    {"words": ["SGSN", "share price", "CHF"], "number": "87"},
+    {"words": ["SGSN", "round lot"], "number": "1"},
+
+    {"words": ["HOLN", "share", "original"], "number": "3500", "source": "bank reporting bank leu client xy"},
+    {"words": ["HOLN", "share price", "CHF"], "number": "80"},
+    {"words": ["HOLN", "round lot"], "number": "1"},
+
+    {"words": ["NESN", "share", "original"], "number": "3500", "source": "bank reporting bank leu client xy"},
+    {"words": ["NESN", "share price", "CHF"], "number": "80"},
+    {"words": ["NESN", "round lot"], "number": "1"},
+
+    {"words": ["ALC",  "share", "original"], "number": "3500", "source": "bank reporting bank leu client xy"},
+    {"words": ["ALC",  "share price", "CHF"], "number": "75"},
+    {"words": ["ALC",  "round lot"], "number": "1"},
+
+    {"words": ["BAER", "share", "original"], "number": "4500", "source": "bank reporting bank leu client xy"},
+    {"words": ["BAER", "share price", "CHF"], "number": "60"},
+    {"words": ["BAER", "round lot"], "number": "1"},
+
+    {"words": ["BANB", "share", "original"], "number": "4500", "source": "bank reporting bank leu client xy"},
+    {"words": ["BANB", "share price", "CHF"], "number": "60"},
+    {"words": ["BANB", "round lot"], "number": "1"},
+
+    {"words": ["ABBN", "share", "original"], "number": "5500", "source": "bank reporting bank leu client xy"},
+    {"words": ["ABBN", "share price", "CHF"], "number": "50"},
+    {"words": ["ABBN", "round lot"], "number": "1"},
+
+    {"words": ["SDZ",  "share", "original"], "number": "7000", "source": "bank reporting bank leu client xy"},
+    {"words": ["SDZ",  "share price", "CHF"], "number": "38"},
+    {"words": ["SDZ",  "round lot"], "number": "1"},
+
+    {"words": ["ADEN", "share", "original"], "number": "9000", "source": "bank reporting bank leu client xy"},
+    {"words": ["ADEN", "share price", "CHF"], "number": "30"},
+    {"words": ["ADEN", "round lot"], "number": "1"},
+
+    {"words": ["UBSG", "share", "original"], "number": "10000","source": "bank reporting bank leu client xy"},
+    {"words": ["UBSG", "share price", "CHF"], "number": "28"},
+    {"words": ["UBSG", "round lot"], "number": "1"},
+
+    {"words": ["ConfedBond30", "nominal value", "CHF"], "number": "1500000", "source": "bank reporting bank leu client xy"},
+    {"words": ["ConfedBond30", "price"], "number": "100.5"},
+    {"words": ["ConfedBond30", "round lot", "CHF"], "number": "5000"},
+
+    {"words": ["NestleBond27", "nominal value", "CHF"], "number": "1500000", "source": "bank reporting bank leu client xy"},
+    {"words": ["NestleBond27", "price"], "number": "99.8"},
+    {"words": ["NestleBond27", "round lot", "CHF"], "number": "5000"},
+
+    {"words": ["RocheBond28", "nominal value", "CHF"], "number": "1000000", "source": "bank reporting bank leu client xy"},
+    {"words": ["RocheBond28", "price"], "number": "99.0"},
+    {"words": ["RocheBond28", "round lot", "CHF"], "number": "5000"},
+
+    {"words": ["BundDE30", "nominal value", "EUR"], "number": "1000000", "source": "bank reporting bank leu client xy"},
+    {"words": ["BundDE30", "price"], "number": "96.0"},
+    {"words": ["BundDE30", "round lot", "EUR"], "number": "1000"},
+
+    {"words": ["TreasuryUS27", "nominal value", "USD"], "number": "1200000", "source": "bank reporting bank leu client xy"},
+    {"words": ["TreasuryUS27", "price"], "number": "99.0"},
+    {"words": ["TreasuryUS27", "round lot", "USD"], "number": "1000"},
+
+    {"words": ["cash", "EUR", "original"], "number": "1800000",   "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "CHF", "original"], "number": "1000000",   "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "USD", "original"], "number": "500000",    "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "GBP", "original"], "number": "200000",    "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "JPY", "original"], "number": "30000000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "DKK", "original"], "number": "1000000",   "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "SEK", "original"], "number": "1000000",   "source": "bank reporting bank leu client xy"},
+
+    {"words": ["EUR", "exchange rate"], "number": "0.98",    "source": "bank reporting bank leu client xy"},
+    {"words": ["USD", "exchange rate"], "number": "0.90",    "source": "bank reporting bank leu client xy"},
+    {"words": ["GBP", "exchange rate"], "number": "1.13",    "source": "bank reporting bank leu client xy"},
+    {"words": ["JPY", "exchange rate"], "number": "0.006",   "source": "bank reporting bank leu client xy"},
+    {"words": ["DKK", "exchange rate"], "number": "0.1304",  "source": "bank reporting bank leu client xy"},
+    {"words": ["SEK", "exchange rate"], "number": "0.0875",  "source": "bank reporting bank leu client xy"},
+
+    {"words": ["LISP", "position value", "CHF"], "number": "1170000", "source": "bank reporting bank leu client xy"},
+    {"words": ["LISN", "position value", "CHF"], "number": "440000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["GIVN", "position value", "CHF"], "number": "370000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["PGHN", "position value", "CHF"], "number": "300000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["GEBN", "position value", "CHF"], "number": "295000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["LONN", "position value", "CHF"], "number": "318000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["ZURN", "position value", "CHF"], "number": "318000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["SCMN", "position value", "CHF"], "number": "318000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["VACN", "position value", "CHF"], "number": "304000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["ROG",  "position value", "CHF"], "number": "480000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["SOON", "position value", "CHF"], "number": "288000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["SCHP", "position value", "CHF"], "number": "276000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["SIKA", "position value", "CHF"], "number": "286000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["KNIN", "position value", "CHF"], "number": "286000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["UHR",  "position value", "CHF"], "number": "270000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["CFR",  "position value", "CHF"], "number": "260000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["SREN", "position value", "CHF"], "number": "260000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["STMN", "position value", "CHF"], "number": "275000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["LOGN", "position value", "CHF"], "number": "270000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["NOVN", "position value", "CHF"], "number": "270000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["SGSN", "position value", "CHF"], "number": "261000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["HOLN", "position value", "CHF"], "number": "280000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["NESN", "position value", "CHF"], "number": "280000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["ALC",  "position value", "CHF"], "number": "262500",  "source": "bank reporting bank leu client xy"},
+    {"words": ["BAER", "position value", "CHF"], "number": "270000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["BANB", "position value", "CHF"], "number": "270000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["ABBN", "position value", "CHF"], "number": "275000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["SDZ",  "position value", "CHF"], "number": "266000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["ADEN", "position value", "CHF"], "number": "270000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["UBSG", "position value", "CHF"], "number": "280000",  "source": "bank reporting bank leu client xy"},
+
+    {"words": ["ConfedBond30", "position value", "CHF"], "number": "1507500", "source": "bank reporting bank leu client xy"},
+    {"words": ["NestleBond27", "position value", "CHF"], "number": "1497000", "source": "bank reporting bank leu client xy"},
+    {"words": ["RocheBond28",  "position value", "CHF"], "number": "990000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["BundDE30",     "position value", "CHF"], "number": "940800",  "source": "bank reporting bank leu client xy"},
+    {"words": ["TreasuryUS27", "position value", "CHF"], "number": "1069200", "source": "bank reporting bank leu client xy"},
+
+    {"words": ["cash", "CHF", "position value", "CHF"], "number": "1000000", "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "EUR", "position value", "CHF"], "number": "1764000", "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "USD", "position value", "CHF"], "number": "450000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "GBP", "position value", "CHF"], "number": "226000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "JPY", "position value", "CHF"], "number": "180000",  "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "DKK", "position value", "CHF"], "number": "130400",  "source": "bank reporting bank leu client xy"},
+    {"words": ["cash", "SEK", "position value", "CHF"], "number": "87500",   "source": "bank reporting bank leu client xy"},
+
+    {"words": ["portfolio value", "original", "CHF"], "number": "19610900", "source": "bank reporting bank leu client xy"}
+  ]
+}
