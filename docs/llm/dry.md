@@ -107,6 +107,50 @@ The same rule applies to all layered functions: `url_mapper()`, `api_mapper()`,
 `api_json()`, `sql_insert()`, `sql_update()`, etc. — each child calls the parent
 version first, then extends.
 
+## Two near-identical functions collapse into one parameterised helper
+
+When two functions differ only in a few constant values, don't keep two copies of
+the body — move the shared logic into one helper that takes the differences as
+parameters, and let each entry point be a thin wrapper that supplies its constants.
+This is the same-class sibling of "push common logic to the parent": no inheritance
+is involved, just one private function instead of a copied loop.
+
+The coding-rule checks `php_web_only_allowed_globals_tests()` and
+`php_cfg_only_allowed_globals_tests()` walked a directory and flagged every
+disallowed `global $x` declaration with identical loops; only the path, the
+allowed-name set, and the message text differed. The body now lives once in
+`php_only_allowed_globals_tests($t, $base_path, $allowed, $rule_msg)`:
+
+```php
+// the single place the scan logic lives
+private function php_only_allowed_globals_tests(
+    test_cleanup $t, string $base_path, array $allowed, string $rule_msg): void
+{
+    // ... walk every file under $base_path, assert for any `global $x` not in $allowed ...
+}
+
+// web/ check — supplies only its constants
+function php_web_only_allowed_globals_tests(test_cleanup $t): void
+{
+    $this->php_only_allowed_globals_tests(
+        $t, paths::WEB, ['ui_sys', 'mtr'],
+        'web/ must declare only $ui_sys and $mtr as globals');
+}
+
+// cfg/ check — same body, different constants
+function php_cfg_only_allowed_globals_tests(test_cleanup $t): void
+{
+    $this->php_only_allowed_globals_tests(
+        $t, paths::MODEL, ['sys', 'db_con', 'cfg', 'cac', 'mtr', 'debug'],
+        'cfg/ must declare only $sys, $db_con, $cfg, $cac, $mtr and $debug as globals');
+}
+```
+
+A later change to the scan (e.g. skip commented-out lines) is then made once and
+covers both rules, and adding a third scope is a one-line wrapper, not another
+copied loop. The trigger is duplicated *behaviour*: if you are about to paste a
+function and tweak a literal or two, extract the helper instead.
+
 ## DRY applies to test fixtures too
 
 A frontend (`_ui`) test fixture must not hand-rebuild an object with duplicated

@@ -71,7 +71,7 @@ global $sys, $cac, $cfg;
 $db_con = $app->start($sys, "start formula_test.php", $cac, $cfg);
 $html = new html_base();
 
-global $sys_msk_cac;
+global $sys;
 
 // load the session user parameters
 $session_usr = new user;
@@ -85,7 +85,7 @@ if ($session_usr->id > 0) {
 
     // show the header even if all parameters are wrong
     $msk = new view($session_usr);
-    $msk->id = $sys_msk_cac->id(views::FORMULA_TEST);
+    $msk->id = $sys->msk_cac->id(views::FORMULA_TEST);
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_ui($msk->api_json());

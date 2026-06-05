@@ -82,7 +82,6 @@ class test_app
     ): sql_db
     {
         global $sys;
-        global $errors;
 
         $sys->script = $code_name;
         $sys->times->switch(system_time_type::INIT);
@@ -115,7 +114,7 @@ class test_app
 
         $sys->pod_name = $code_name;
 
-        $errors = 0;
+        $sys->errors = 0;
 
         log_debug($code_name . ': session_start');
 

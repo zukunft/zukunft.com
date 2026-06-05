@@ -190,7 +190,6 @@ class application
     ): sql_db
     {
         global $sys;
-        global $errors;
 
         $sys->script = $code_name;
         $sys->times->switch(system_time_type::INIT);
@@ -226,7 +225,7 @@ class application
         // TODO Prio 0 combine with frontend.php
         $sys->pod_name = POD_NAME;
 
-        $errors = 0;
+        $sys->errors = 0;
 
         log_debug($code_name . ': session_start');
 

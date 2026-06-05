@@ -1166,8 +1166,8 @@ class sql_db
     {
         global $sys;
         global $db_con;
-        global $log_txt;
         global $cac;
+        $log_txt = $sys->log_txt;
 
         $usr_msg = new user_message();
 
@@ -1207,10 +1207,10 @@ class sql_db
             $this->import_system_users();
 
             // use the system user for the database updates
-            global $usr;
             $usr = new user;
             $usr->load_by_id(users::SYSTEM_ID);
             $usr_msg->usr = $usr;
+            $sys->usr_req = $usr;
 
             // recreate the code link database rows
             $log_txt->echo_text_log('Create the code links');
@@ -1322,7 +1322,6 @@ class sql_db
     function run_db_truncate(user $sys_usr): void
     {
         global $sys;
-        global $log_txt;
 
         $lib = new library();
         $sys->times->switch(system_time_type::DB_WRITE);
@@ -1330,7 +1329,7 @@ class sql_db
         // the tables in order to avoid the usage of CASCADE
         $table_names = sql_db::DB_TABLE_CLASSES_DESC_DEPENDING;
 
-        $log_txt->echo_log('truncate ');
+        $sys->log_txt->echo_log('truncate ');
 
         // truncate tables that have already a build in truncate statement creation
         $sql = '';
@@ -1602,7 +1601,8 @@ class sql_db
      */
     function set_class(string $class, bool $usr_table = false, string $ext = ''): bool
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
 
         $lib = new library();
         $this->reset();
@@ -5584,10 +5584,10 @@ class sql_db
 
     function truncate_table_all(): void
     {
-        global $log_txt;
+        global $sys;
 
         // the sequence names of the tables to reset
-        $log_txt->echo_log('truncate all tables ');
+        $sys->log_txt->echo_log('truncate all tables ');
         foreach (def::DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
@@ -5595,9 +5595,9 @@ class sql_db
 
     function truncate_table(string $table_name): void
     {
-        global $log_txt;
+        global $sys;
 
-        $log_txt->echo_log('truncate table ' . $table_name);
+        $sys->log_txt->echo_log('truncate table ' . $table_name);
         $sql = sql::TRUNCATE . ' ' . $this->get_table_name_esc($table_name) . ' ' . sql::CASCADE . '; ';
         try {
             $this->exe($sql);
@@ -5609,11 +5609,10 @@ class sql_db
     function drop_table(string $table_name): void
     {
         global $sys;
-        global $log_txt;
 
         $sys->times->switch(system_time_type::DB_WRITE);
 
-        $log_txt->echo_log('DROP TABLE ' . $table_name);
+        $sys->log_txt->echo_log('DROP TABLE ' . $table_name);
         if ($this->has_table($table_name)) {
             $sql = 'drop table ' . $table_name . ' cascade;';
             try {
@@ -5636,11 +5635,10 @@ class sql_db
     function reset_seq(string $seq_name, int $start_id = 1): void
     {
         global $sys;
-        global $log_txt;
 
         $sys->times->switch(system_time_type::DB_WRITE);
 
-        $log_txt->echo_log('RESET SEQUENCE ' . $seq_name);
+        $sys->log_txt->echo_log('RESET SEQUENCE ' . $seq_name);
         $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
         try {
             $this->exe($sql);
@@ -5898,7 +5896,7 @@ class sql_db
     function import_system_views(user $usr): bool
     {
         global $db_con;
-        global $sys_msk_cac;
+        global $sys;
 
         $result = false;
 
@@ -5910,8 +5908,8 @@ class sql_db
             }
         }
 
-        $sys_msk_cac = new view_sys_list($usr);
-        $sys_msk_cac->load($db_con);
+        $sys->msk_cac = new view_sys_list($usr);
+        $sys->msk_cac->load($db_con);
 
         return $result;
     }

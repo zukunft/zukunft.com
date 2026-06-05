@@ -171,10 +171,10 @@ class all_tests extends all_unit_write_tests
 
     function run_all_tests(): void
     {
-        global $errors;
+        global $sys;
 
         // init
-        $errors = 0;
+        $sys->errors = 0;
         $t_db = new test_db_load($this);
         $usr_msg = new user_message();
         $map = new MapObject();
@@ -195,36 +195,36 @@ class all_tests extends all_unit_write_tests
             $this->run_unit();
 
             // run the database read tests also to check if the test results are influenced by any leftovers
-            if ($errors <= ERROR_LIMIT) {
+            if ($sys->errors <= ERROR_LIMIT) {
                 $this->run_unit_db_tests($this);
             }
 
             // check if database reading via api still produces the expected results
-            if ($errors <= ERROR_LIMIT and API_TEST) {
+            if ($sys->errors <= ERROR_LIMIT and API_TEST) {
                 $t_api = new all_api_tests();
                 $t_api->run_api_tests($this, $this->usr1, $usr_msg_ui);
             }
 
             // database reset is switched off here for better detection of leftovers
             // it can be started via reset_db
-            if ($this->db_reset_allowed() and $errors <= ERROR_LIMIT and !$this->only_unit_tests()) {
+            if ($this->db_reset_allowed() and $sys->errors <= ERROR_LIMIT and !$this->only_unit_tests()) {
                 $this->run_db_recreate();
             }
 
             // html page creation based on the url
-            if ($errors <= ERROR_LIMIT and FRONTEND_TEST) {
+            if ($sys->errors <= ERROR_LIMIT and FRONTEND_TEST) {
                 // test the html ui on localhost without api
                 $ui = new frontend('unit ui tests');
                 $ui->load_dummy_cache_from_test_resources($this->usr1);
                 new all_ui_tests()->run($this, $ui);
             }
 
-            if ($errors <= ERROR_LIMIT and WORKFLOW_TEST) {
+            if ($sys->errors <= ERROR_LIMIT and WORKFLOW_TEST) {
                 $t_wf = new all_workflow_tests();
                 $t_wf->run_workflow_tests($this, $this->usr1, $usr_msg_ui);
             }
 
-            if ($errors <= ERROR_LIMIT and WRITE_TEST) {
+            if ($sys->errors <= ERROR_LIMIT and WRITE_TEST) {
                 $this->run_db_write_tests($this);
             }
 

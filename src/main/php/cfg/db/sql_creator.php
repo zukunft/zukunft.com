@@ -605,7 +605,8 @@ class sql_creator
      */
     function set_class(string $class, sql_type_list $sc_par_lst = new sql_type_list(), string $ext = ''): bool
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
 
         $this->reset();
         $this->class = $class;

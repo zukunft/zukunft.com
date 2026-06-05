@@ -4513,7 +4513,6 @@ class test_base
     function dsp_result(): void
     {
         global $sys;
-        global $errors;
 
         echo "\n";
         $since_start = microtime(true) - $this->start_time();
@@ -4526,7 +4525,7 @@ class test_base
         echo "\n";
         echo $this->error_counter . ' test errors';
         echo "\n";
-        echo $errors . ' internal errors';
+        echo $sys->errors . ' internal errors';
         echo "\n";
     }
 

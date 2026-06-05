@@ -87,8 +87,14 @@ class all_unit_tests extends test_cleanup
         // remember the global var for restore after the unit tests
         global $db_con;
         global $usr;
+        global $sys;
         $global_db_con = $db_con;
         $global_usr = $usr;
+
+        // create the testing users
+        $this->subheader($ts . 'prepare');
+        $this->set_users();
+        $sys->usr_req = $this->usr1;
 
         $t_typ = new test_types($this);
 

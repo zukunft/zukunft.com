@@ -31,12 +31,12 @@ Each rule is one line. When one governs your current edit, open the linked
 detail file. Order is by how often they fire, not importance.
 
 ### Structure & style
-- One `return` per function, at the end, into a named variable; top-of-function guard clauses excepted. → `docs/llm/coding/structure.md`
-- An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/coding/structure.md`
-- No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/coding/constants.md`
-- Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/coding/constants.md`
-- Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/coding/constants.md`
-- Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/coding/file-layout.md`
+- One `return` per function, at the end, into a named variable; top-of-function guard clauses excepted. → `docs/llm/structure.md`
+- An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
+- No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
+- Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
+- Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
+- Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
 - Main object files follow the standard section order; functions use the standard names. → `docs/llm/architecture.md`
 - Variable names are the 3-letter abbreviations (or combinations); only `$i` may be single-char. → `docs/llm/architecture.md`
 - Every class file declares its suggested `$abbr` var name in the opening docblock. → `docs/llm/architecture.md`
@@ -44,26 +44,26 @@ detail file. Order is by how often they fire, not importance.
 - `@param` / `@return` descriptions stay on one line where possible; longer rationale belongs in a `docs/` file the docblock can point to.
 
 ### DRY / reduce to the max (critical)
-- Logic lives in exactly one place: call the existing function, never copy its body. → `docs/llm/coding/dry.md`
-- Ask an existing predicate/getter (`is_triple()`) instead of re-deriving it inline. → `docs/llm/coding/dry.md`
-- A call chain of 3+ steps belongs behind a dedicated function on the owning class. → `docs/llm/coding/dry.md`
-- Shared sibling-class logic is pushed to the parent; children call `parent::fn()` then extend. → `docs/llm/coding/dry.md`
+- Logic lives in exactly one place: call the existing function, never copy its body. → `docs/llm/dry.md`
+- Ask an existing predicate/getter (`is_triple()`) instead of re-deriving it inline. → `docs/llm/dry.md`
+- A call chain of 3+ steps belongs behind a dedicated function on the owning class. → `docs/llm/dry.md`
+- Shared sibling-class logic is pushed to the parent; children call `parent::fn()` then extend. → `docs/llm/dry.md`
 - Prefer the smallest code that works: remove duplication, dead code, redundant guards, needless indirection.
 
 ### State & messages
-- Mutable state passes as explicit parameters (`&` only when the variable itself is reassigned); never via globals or return side effects. → `docs/llm/coding/state-and-messages.md`
-- A stateless, freshly-constructed helper (`new html_base()`) is instantiated locally, not threaded as a parameter. → `docs/llm/coding/state-and-messages.md`
-- Only the fixed global set is allowed (`$sys $db_con $cfg $cac $ui_sys $mtr $t $t_sys $debug`); introduce no others. → `docs/llm/coding/state-and-messages.md`
-- `$msg` (the single `user_message` from `http/view.php`) is append-only: never overwrite, reset, or re-create it; use a local buffer + `merge()`. → `docs/llm/coding/state-and-messages.md`
-- User-facing messages use `$msg->add(msg_id::X, [])` with a `messages.php` case + en/de translations; never `add_message(string)`. → `docs/llm/coding/state-and-messages.md`
-- Back-navigation is `'9'`-prefixed URL params (`url_var::BACK` is a prefix char), never a standalone `BACK` field. → `docs/llm/coding/state-and-messages.md`
+- Mutable state passes as explicit parameters (`&` only when the variable itself is reassigned); never via globals or return side effects. → `docs/llm/state-and-messages.md`
+- A stateless, freshly-constructed helper (`new html_base()`) is instantiated locally, not threaded as a parameter. → `docs/llm/state-and-messages.md`
+- Only the fixed global set is allowed (`$sys $db_con $cfg $cac $ui_sys $mtr $t $t_sys $debug`); introduce no others. → `docs/llm/state-and-messages.md`
+- `$msg` (the single `user_message` from `http/view.php`) is append-only: never overwrite, reset, or re-create it; use a local buffer + `merge()`. → `docs/llm/state-and-messages.md`
+- User-facing messages use `$msg->add(msg_id::X, [])` with a `messages.php` case + en/de translations; never `add_message(string)`. → `docs/llm/state-and-messages.md`
+- Back-navigation is `'9'`-prefixed URL params (`url_var::BACK` is a prefix char), never a standalone `BACK` field. → `docs/llm/state-and-messages.md`
 
 ### Frontend (`web/`)
-- `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/coding/frontend.md`
-- Any function returning/operating on a frontend object ends in `_ui` (`_dsp` is the display-class suffix only). → `docs/llm/coding/frontend.md`
+- `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/frontend.md`
+- Any function returning/operating on a frontend object ends in `_ui` (`_dsp` is the display-class suffix only). → `docs/llm/frontend.md`
 
 ### Unit-testability
-- No PHP superglobals inside functions (`$_GET/$_POST/$_SESSION/$_SERVER/...`); the allowed fixed globals are the only exception. → `docs/llm/coding/state-and-messages.md`
+- No PHP superglobals inside functions (`$_GET/$_POST/$_SESSION/$_SERVER/...`); the allowed fixed globals are the only exception. → `docs/llm/state-and-messages.md`
 - Any global not in the allowed set is passed as an explicit parameter.
 
 ## Domain & import rules
@@ -109,3 +109,4 @@ Detail and worked examples: `docs/llm/testing.md`.
 - When PHP changes affect HTML output, update the matching `src/test/resources/web/html/` snapshot; the test scripts verify the rest — don't hand-audit fixtures.
 - No real secrets anywhere (source, fixtures, config, commit messages). Dummy passwords must be explicitly labelled; remove an accidentally-staged secret before committing, not in a follow-up.
 - Run `test/test_coding_rules.php`; fix what it reports.
+- `test/test.php` must run without error; fix any failure before committing.

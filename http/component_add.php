@@ -84,9 +84,9 @@ if ($usr->id > 0) {
     $usr->load_usr_data();
 
     // init the display object to show the standard elements such as the header
-    global $sys_msk_cac;
+    global $sys;
     $dsp_db = new view($usr);
-    $dsp_db->load_by_id($sys_msk_cac->id(views::COMPONENT_ADD));
+    $dsp_db->load_by_id($sys->msk_cac->id(views::COMPONENT_ADD));
     $msk = new view_ui($dsp_db->api_json());
 
     // create the view component object to apply the user changes to it

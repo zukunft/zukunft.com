@@ -107,6 +107,9 @@ class coding_rule_tests
         $t->subheader($ts . 'frontend globals');
         $this->php_web_only_allowed_globals_tests($t);
 
+        $t->subheader($ts . 'backend globals');
+        $this->php_cfg_only_allowed_globals_tests($t);
+
         $t->subheader($ts . 'config.yaml consistency');
         $this->config_yaml_word_triple_tests($t);
 
@@ -367,17 +370,72 @@ class coding_rule_tests
      */
     function php_web_only_allowed_globals_tests(test_cleanup $t): void
     {
-        $allowed = ['ui_sys', 'mtr'];
+        $this->php_only_allowed_globals_tests(
+            $t,
+            paths::WEB,
+            ['ui_sys', 'mtr'],
+            'web/ must declare only $ui_sys and $mtr as globals'
+        );
+    }
+
+    /**
+     * check that files in src/main/php/cfg/** declare no PHP global other than
+     * $sys, $db_con, $cfg, $cac, $mtr and $debug — the only backend-scoped globals
+     * allowed by docs/llm/state-and-messages.md
+     *
+     * each violation produces one failing assertion identifying the file, line
+     * and offending name; a clean tree produces no assertions
+     *
+     * positive (test fires when it should): a line like "global $usr;" inside
+     *     cfg/ flags the rule violation
+     * negative (test tolerates good code): "global $sys;", "global $db_con;",
+     *     "global $cfg;", "global $cac;", "global $mtr;" and "global $debug;" in
+     *     cfg/ pass without an assertion
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_cfg_only_allowed_globals_tests(test_cleanup $t): void
+    {
+        $this->php_only_allowed_globals_tests(
+            $t,
+            paths::MODEL,
+            ['sys', 'db_con', 'cfg', 'cac', 'mtr', 'debug'],
+            'cfg/ must declare only $sys, $db_con, $cfg, $cac, $mtr and $debug as globals'
+        );
+    }
+
+    /**
+     * shared scanner for the global-declaration coding rules: assert that no file
+     * under $base_path declares a PHP global whose name is not in $allowed
+     *
+     * each violation produces one failing assertion identifying the file, line and
+     * offending name; a clean tree produces no assertions
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @param string $base_path the source dir to scan e.g. paths::WEB or paths::MODEL
+     * @param array $allowed the permitted global names without the leading $ e.g. ['ui_sys', 'mtr']
+     * @param string $rule_msg the rule description shown before the offending name e.g.
+     *     'web/ must declare only $ui_sys and $mtr as globals'
+     * @return void
+     */
+    private function php_only_allowed_globals_tests(
+        test_cleanup $t,
+        string       $base_path,
+        array        $allowed,
+        string       $rule_msg
+    ): void
+    {
         $lib = new library();
-        $file_array = $lib->dir_to_array(paths::WEB);
+        $file_array = $lib->dir_to_array($base_path);
         $code_files = $lib->array_to_path($file_array);
         foreach ($code_files as $code_file) {
-            $ctrl_code = file(paths::WEB . $code_file);
+            $ctrl_code = file($base_path . $code_file);
             foreach ($ctrl_code as $line_idx => $line) {
                 if (preg_match_all('/global\s+\$([a-zA-Z_][a-zA-Z0-9_]*)/', $line, $matches)) {
                     foreach ($matches[1] as $name) {
                         if (!in_array($name, $allowed, true)) {
-                            $test_name = 'web/ must declare only $ui_sys and $mtr as globals'
+                            $test_name = $rule_msg
                                 . ' but found $' . $name
                                 . ' in ' . $code_file . ':' . ($line_idx + 1);
                             $t->assert($test_name, '', $name);

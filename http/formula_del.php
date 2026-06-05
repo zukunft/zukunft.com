@@ -54,7 +54,7 @@ $app = new frontend();
 global $sys, $cac, $cfg;
 $db_con = $app->start($sys, "formula_del", $cac, $cfg);
 
-global $sys_msk_cac;
+global $sys;
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
@@ -72,7 +72,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(view_shared::FORMULA_DEL));
+    $msk->load_by_id($sys->msk_cac->id(view_shared::FORMULA_DEL));
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]);
 

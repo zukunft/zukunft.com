@@ -227,7 +227,6 @@ class import_file
         global $sys;
         global $db_con;
         global $mtr;
-        global $log_txt;
 
         $msg = new user_message();
 
@@ -315,7 +314,7 @@ class import_file
 
             // show the last message to the user which is hopefully a confirmation how many config values have been imported
             $msg_txt = $msg->all_message_text();
-            $log_txt->echo_log($mtr->txt(msg_id::IMPORT_JSON) . ' ' . basename(files::SYSTEM_CONFIG) . ' ' . $msg_txt);
+            $sys->log_txt->echo_log($mtr->txt(msg_id::IMPORT_JSON) . ' ' . basename(files::SYSTEM_CONFIG) . ' ' . $msg_txt);
             if (!$msg->is_ok()) {
                 log_warning($msg_txt);
             }
