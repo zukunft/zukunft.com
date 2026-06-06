@@ -9,16 +9,174 @@
     {
       "name": "2013",
       "type": "time"
+    },
+    {
+      "name": "ABB"
+    },
+    {
+      "name": "sales",
+      "type": "measure"
+    },
+    {
+      "name": "CHF"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "sector"
+    },
+    {
+      "name": "discrete"
+    },
+    {
+      "name": "automation"
+    },
+    {
+      "name": "motion"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "voltage"
+    },
+    {
+      "name": "products"
+    },
+    {
+      "name": "process"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "systems"
+    },
+    {
+      "name": "corporate"
+    },
+    {
+      "name": "other"
     }
   ],
   "triples": [
     {
-      "from": "Discrete Automation and Motion",
+      "name": "discrete automation",
+      "from": "automation",
+      "verb": "kind of",
+      "to": "discrete",
+      "description": "automation of discrete manufacturing processes (parts, assemblies) as opposed to continuous process control"
+    },
+    {
+      "from": "discrete automation",
+      "verb": "and",
+      "to": "motion",
+      "description": "ABB business division (until 2014) covering motors, drives, robotics and power electronics"
+    },
+    {
+      "name": "low voltage",
+      "from": "voltage",
+      "verb": "kind of",
+      "to": "low",
+      "description": "electrical systems operating up to ~1000 V AC / 1500 V DC",
+      "refs": [
+        {
+          "name": "Low_voltage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1404745",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "low voltage products",
+      "from": "products",
+      "verb": "of",
+      "to": "low voltage",
+      "description": "ABB business division (until 2014) for low-voltage switchgear, breakers and control products"
+    },
+    {
+      "name": "process automation",
+      "from": "automation",
+      "verb": "kind of",
+      "to": "process",
+      "description": "continuous-process automation for industries such as oil & gas, pulp & paper, mining and chemicals",
+      "refs": [
+        {
+          "name": "Process_automation_system",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "power products",
+      "from": "products",
+      "verb": "of",
+      "to": "power",
+      "description": "ABB business division (until 2014) for transformers, high-voltage breakers and other power-grid equipment"
+    },
+    {
+      "name": "power systems",
+      "from": "systems",
+      "verb": "of",
+      "to": "power",
+      "description": "ABB business division (until 2014) for grid integration, substations and FACTS / HVDC systems"
+    },
+    {
+      "from": "corporate",
+      "verb": "and",
+      "to": "other",
+      "description": "ABB residual reporting segment covering corporate functions and items not allocated to operating divisions"
+    },
+    {
+      "from": "discrete automation and motion",
+      "verb": "is a",
+      "to": "sector"
+    },
+    {
+      "from": "low voltage products",
+      "verb": "is a",
+      "to": "sector"
+    },
+    {
+      "from": "process automation",
+      "verb": "is a",
+      "to": "sector"
+    },
+    {
+      "from": "power products",
+      "verb": "is a",
+      "to": "sector"
+    },
+    {
+      "from": "power systems",
+      "verb": "is a",
+      "to": "sector"
+    },
+    {
+      "from": "corporate and other",
       "verb": "is a",
       "to": "sector"
     }
   ],
-  "formulas": [],
+  "formulas": [
+    {
+      "name": "ABB total sales 2013",
+      "expression": "ABB sales 2013 = sum of ABB sales 2013 per sector",
+      "result": "41848",
+      "components": [
+        "discrete automation and motion",
+        "low voltage products",
+        "process automation",
+        "power products",
+        "power systems",
+        "corporate and other"
+      ]
+    }
+  ],
   "sources": [
     {
       "name": "ABB XBRL files for 2013",
@@ -33,10 +191,87 @@
         "2013",
         "CHF",
         "million",
-        "Discrete Automation and Motion",
+        "discrete automation and motion",
         "2013"
       ],
       "number": "9915",
+      "source": "ABB XBRL files for 2013"
+    },
+    {
+      "words": [
+        "ABB",
+        "sales",
+        "2013",
+        "CHF",
+        "million",
+        "low voltage products",
+        "2013"
+      ],
+      "number": "7729",
+      "source": "ABB XBRL files for 2013"
+    },
+    {
+      "words": [
+        "ABB",
+        "sales",
+        "2013",
+        "CHF",
+        "million",
+        "process automation",
+        "2013"
+      ],
+      "number": "8497",
+      "source": "ABB XBRL files for 2013"
+    },
+    {
+      "words": [
+        "ABB",
+        "sales",
+        "2013",
+        "CHF",
+        "million",
+        "power products",
+        "2013"
+      ],
+      "number": "11032",
+      "source": "ABB XBRL files for 2013"
+    },
+    {
+      "words": [
+        "ABB",
+        "sales",
+        "2013",
+        "CHF",
+        "million",
+        "power systems",
+        "2013"
+      ],
+      "number": "8375",
+      "source": "ABB XBRL files for 2013"
+    },
+    {
+      "words": [
+        "ABB",
+        "sales",
+        "2013",
+        "CHF",
+        "million",
+        "corporate and other",
+        "2013"
+      ],
+      "number": "1776",
+      "source": "ABB XBRL files for 2013"
+    },
+    {
+      "words": [
+        "ABB",
+        "sales",
+        "2013",
+        "CHF",
+        "million",
+        "2013"
+      ],
+      "number": "41848",
       "source": "ABB XBRL files for 2013"
     }
   ],

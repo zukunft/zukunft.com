@@ -54,6 +54,7 @@ class files
     CONST string TXT = '.txt';
     CONST string MD = '.md';
     CONST string CSV = '.csv';
+    CONST string ZIP = '.zip';
 
 
     /*
@@ -132,13 +133,43 @@ class files
     CONST string IMPORT_CURRENCY_CONTEXT = test_paths::IMPORT_WIKIPEDIA . 'currency-context' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING = test_paths::IMPORT . 'travel_scoring' . self::JSON;
     CONST string IMPORT_POPULISM_FERMI_ESTIMATE = test_paths::IMPORT . 'fermi_estimates' . self::JSON;
+    CONST string IMPORT_PORTFOLIO_SPLIT_CALC = test_paths::IMPORT . 'portfolio_split_calc' . self::JSON;
+    CONST string IMPORT_PORTFOLIO_INSTRUMENTS = test_paths::IMPORT . 'portfolio_instruments' . self::JSON;
+    CONST string IMPORT_PORTFOLIO_REPORT = test_paths::IMPORT . 'portfolio_report' . self::JSON;
+    CONST string IMPORT_PORTFOLIO_SPLIT_PARAMETERS_SAMPLE = test_paths::IMPORT . 'portfolio_split_parameters_sample' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING_VALUE_LIST = test_paths::IMPORT . 'travel_scoring_value_list' . self::JSON;
     CONST string IMPORT_WIKI_DEMOCRACY = test_paths::IMPORT_WIKIPEDIA . 'democracy_index_table' . self::JSON;
+
+    // remaining JSON files in test/resources/import/, in alphabetical order
+    CONST string IMPORT_ABB_2013 = test_paths::IMPORT . 'ABB_2013' . self::JSON;
+    CONST string IMPORT_ABB_2017 = test_paths::IMPORT . 'ABB_2017' . self::JSON;
+    CONST string IMPORT_ABB_2019 = test_paths::IMPORT . 'ABB_2019' . self::JSON;
+    CONST string IMPORT_BASE_TEST_DATA = test_paths::IMPORT . 'base_test_data' . self::JSON;
+    CONST string IMPORT_BUS_LINE_MEILEN_USTER = test_paths::IMPORT . 'BusLineMeilenUster' . self::JSON;
+    CONST string IMPORT_CAR_COSTS = test_paths::IMPORT . 'car_costs' . self::JSON;
+    CONST string IMPORT_CBAM_BLUEBERRY_PACKED = test_paths::IMPORT . 'CBAM_blueberry_packed' . self::JSON;
+    CONST string IMPORT_COVID_19 = test_paths::IMPORT . 'COVID-19' . self::JSON;
+    CONST string IMPORT_ELECTRICITY_PRICES = test_paths::IMPORT . 'electricity_prices' . self::JSON;
+    CONST string IMPORT_FERMI_POLARISATION_US = test_paths::IMPORT . 'fermi_polarisation_us' . self::JSON;
+    CONST string IMPORT_NESN_2019 = test_paths::IMPORT . 'NESN_2019' . self::JSON;
+    CONST string IMPORT_PERSONAL_CLIMATE_GAS_EMISSIONS_TIMON = test_paths::IMPORT . 'personal_climate_gas_emissions_timon' . self::JSON;
+    CONST string IMPORT_REAL_ESTATE = test_paths::IMPORT . 'real_estate' . self::JSON;
+    CONST string IMPORT_REFERENCES = test_paths::IMPORT . 'references' . self::JSON;
+    CONST string IMPORT_THOMY_TEST = test_paths::IMPORT . 'THOMY_test' . self::JSON;
+    CONST string IMPORT_ULTIMATUM_GAME = test_paths::IMPORT . 'Ultimatum_game' . self::JSON;
+    CONST string IMPORT_WORK = test_paths::IMPORT . 'work' . self::JSON;
+
+    // XBRL filesets (zipped instance + taxonomy delivered by an issuer)
+    CONST string IMPORT_XBRL_ABB_2013_ZIP = test_paths::IMPORT_XBRL_ZIP . 'abb-2013-xbrl_fileset-20131231' . self::ZIP;
 
     CONST string FIXED_DB_CSV = 'list' . self::CSV;
 
     const array TEST_IMPORT_FILES = [
         self::IMPORT_POPULISM_FERMI_ESTIMATE,
+        self::IMPORT_PORTFOLIO_SPLIT_CALC,
+        self::IMPORT_PORTFOLIO_INSTRUMENTS,
+        self::IMPORT_PORTFOLIO_REPORT,
+        self::IMPORT_PORTFOLIO_SPLIT_PARAMETERS_SAMPLE,
     ];
 
     const array TEST_DIRECT_IMPORT_FILE_LIST = [
@@ -148,16 +179,23 @@ class files
     const array TEST_IMPORT_FILE_LIST_ALL = [
         self::IMPORT_TRAVEL_SCORING,
         self::IMPORT_TRAVEL_SCORING_VALUE_LIST,
-        self::IMPORT_COMPANIES,
-        'ABB_2013.json',
-        'ABB_2017.json',
-        'ABB_2019.json',
-        'NESN_2019.json',
-        'real_estate.json',
-        'Ultimatum_game.json',
-        'COVID-19.json',
-        'personal_climate_gas_emissions_timon.json',
-        'THOMY_test.json'
+        self::IMPORT_ABB_2013,
+        self::IMPORT_ABB_2017,
+        self::IMPORT_ABB_2019,
+        self::IMPORT_NESN_2019,
+        self::IMPORT_REAL_ESTATE,
+        self::IMPORT_ULTIMATUM_GAME,
+        self::IMPORT_COVID_19,
+        self::IMPORT_PERSONAL_CLIMATE_GAS_EMISSIONS_TIMON,
+        self::IMPORT_THOMY_TEST,
+        self::IMPORT_BASE_TEST_DATA,
+        self::IMPORT_BUS_LINE_MEILEN_USTER,
+        self::IMPORT_CAR_COSTS,
+        self::IMPORT_CBAM_BLUEBERRY_PACKED,
+        self::IMPORT_ELECTRICITY_PRICES,
+        self::IMPORT_FERMI_POLARISATION_US,
+        self::IMPORT_REFERENCES,
+        self::IMPORT_WORK,
     ];
 
 

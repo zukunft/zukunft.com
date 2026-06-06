@@ -48,6 +48,7 @@ the object structure is:
 +-- type_lists - helper class to combine all preloaded types in one class for the API
 +-- convert_wikipedia_table - convert a wikipedia table to a
 +-- import - import data - take a object from a json, yaml or XML message and trigger the object saves
++-- import_convert_xbrl - convert an XBRL fileset to a zukunft.com import
 +-- import_file - IMPORT a json in the zukunft.com exchange format
 +-- change_table_field - helper class to create the database view with the log table and field name
 +-- text_log - object to handle standard io logging

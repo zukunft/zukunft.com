@@ -1803,7 +1803,7 @@
       "description": "covering or affecting the entire world"
     },
     {
-      "name": "Gross",
+      "name": "gross",
       "description": "aggregated before deductions"
     },
     {
@@ -1913,6 +1913,64 @@
     {
       "name": "visits",
       "description": "instances of going to a place"
+    },
+    {
+      "name": "Asia & Australasia"
+    },
+    {
+      "name": "Eastern Europe"
+    },
+    {
+      "name": "Latin America"
+    },
+    {
+      "name": "Middle East & North Africa"
+    },
+    {
+      "name": "North America"
+    },
+    {
+      "name": "Sub-Saharan Africa"
+    },
+    {
+      "name": "Western Europe"
+    },
+    {
+      "name": "Democratic Republic of the Congo"
+    },
+    {
+      "name": "Ivory Coast"
+    },
+    {
+      "name": "North Korea"
+    },
+    {
+      "name": "Palestine"
+    },
+    {
+      "name": "Syria"
+    },
+    {
+      "name": "Timor-Leste"
+    },
+    {
+      "name": "Adjustment",
+      "description": "scoring adjustment applied to a raw rating"
+    },
+    {
+      "name": "Cote d'Ivoire",
+      "description": "French name of Ivory Coast; the country is referenced under both names in the source rankings"
+    },
+    {
+      "name": "Kyrgyz Republic",
+      "description": "official name of Kyrgyzstan as used in some rankings"
+    },
+    {
+      "name": "Somalia"
+    },
+    {
+      "name": "The Gambia",
+      "description": "official name of Gambia as used in some rankings"
     }
   ],
   "triples": [
@@ -4270,13 +4328,13 @@
       ]
     },
     {
-      "name": "Gross domestic product",
+      "name": "gross domestic product",
       "from": "domestic product",
       "verb": "kind of",
-      "to": "Gross",
+      "to": "gross",
       "refs": [
         {
-          "name": "Gross_domestic_product",
+          "name": "gross_domestic_product",
           "type": "wikipedia"
         }
       ]
@@ -4286,6 +4344,21 @@
       "from": "Electoral process",
       "verb": "and",
       "to": "pluralism"
+    },
+    {
+      "from": "Cote d'Ivoire",
+      "verb": "is alias of",
+      "to": "Ivory Coast"
+    },
+    {
+      "from": "Kyrgyz Republic",
+      "verb": "is alias of",
+      "to": "Kyrgyzstan"
+    },
+    {
+      "from": "The Gambia",
+      "verb": "is alias of",
+      "to": "Gambia"
     }
   ],
   "formulas": [
@@ -4312,6 +4385,10 @@
     {
       "name": "World Economic Outlook Database (International Monetary Fund)",
       "url": "https://www.imf.org/en/Publications/WEO/weo-database/2020/October/"
+    },
+    {
+      "name": "personal agreement",
+      "description": "values held by personal arrangement between the data owner and zukunft.com, used for share=personal value rows"
     }
   ],
   "values": [
@@ -17638,7 +17715,7 @@
     {
       "words": [
         "Afghanistan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17650,7 +17727,7 @@
     {
       "words": [
         "Albania",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17662,7 +17739,7 @@
     {
       "words": [
         "Algeria",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17674,7 +17751,7 @@
     {
       "words": [
         "Angola",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17686,7 +17763,7 @@
     {
       "words": [
         "Antigua and Barbuda",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17698,7 +17775,7 @@
     {
       "words": [
         "Argentina",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17710,7 +17787,7 @@
     {
       "words": [
         "Armenia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17722,7 +17799,7 @@
     {
       "words": [
         "Aruba",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17734,7 +17811,7 @@
     {
       "words": [
         "Australia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17746,7 +17823,7 @@
     {
       "words": [
         "Austria",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17758,7 +17835,7 @@
     {
       "words": [
         "Azerbaijan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17770,7 +17847,7 @@
     {
       "words": [
         "Bahamas",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17782,7 +17859,7 @@
     {
       "words": [
         "Bahrain",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17794,7 +17871,7 @@
     {
       "words": [
         "Bangladesh",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17806,7 +17883,7 @@
     {
       "words": [
         "Barbados",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17818,7 +17895,7 @@
     {
       "words": [
         "Belarus",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17830,7 +17907,7 @@
     {
       "words": [
         "Belgium",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17842,7 +17919,7 @@
     {
       "words": [
         "Belize",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17854,7 +17931,7 @@
     {
       "words": [
         "Benin",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17866,7 +17943,7 @@
     {
       "words": [
         "Bhutan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17878,7 +17955,7 @@
     {
       "words": [
         "Bolivia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17890,7 +17967,7 @@
     {
       "words": [
         "Bosnia and Herzegovina",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17902,7 +17979,7 @@
     {
       "words": [
         "Botswana",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17914,7 +17991,7 @@
     {
       "words": [
         "Brazil",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17926,7 +18003,7 @@
     {
       "words": [
         "Brunei",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17938,7 +18015,7 @@
     {
       "words": [
         "Bulgaria",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17950,7 +18027,7 @@
     {
       "words": [
         "Burkina Faso",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17962,7 +18039,7 @@
     {
       "words": [
         "Burundi",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17974,7 +18051,7 @@
     {
       "words": [
         "Cambodia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17986,7 +18063,7 @@
     {
       "words": [
         "Cameroon",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -17998,7 +18075,7 @@
     {
       "words": [
         "Canada",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18010,7 +18087,7 @@
     {
       "words": [
         "Cape Verde",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18022,7 +18099,7 @@
     {
       "words": [
         "Central African Republic",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18034,7 +18111,7 @@
     {
       "words": [
         "Chad",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18046,7 +18123,7 @@
     {
       "words": [
         "Chile",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18058,7 +18135,7 @@
     {
       "words": [
         "China",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18070,7 +18147,7 @@
     {
       "words": [
         "Colombia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18082,7 +18159,7 @@
     {
       "words": [
         "Comoros",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18094,7 +18171,7 @@
     {
       "words": [
         "Congo",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18106,7 +18183,7 @@
     {
       "words": [
         "Costa Rica",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18118,7 +18195,7 @@
     {
       "words": [
         "Côte d'Ivoire",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18130,7 +18207,7 @@
     {
       "words": [
         "Croatia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18142,7 +18219,7 @@
     {
       "words": [
         "Cuba",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18154,7 +18231,7 @@
     {
       "words": [
         "Cyprus",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18166,7 +18243,7 @@
     {
       "words": [
         "Czech Republic",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18178,7 +18255,7 @@
     {
       "words": [
         "Denmark",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18190,7 +18267,7 @@
     {
       "words": [
         "Djibouti",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18202,7 +18279,7 @@
     {
       "words": [
         "Dominica",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18214,7 +18291,7 @@
     {
       "words": [
         "Dominican Republic",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18226,7 +18303,7 @@
     {
       "words": [
         "East Timor",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18238,7 +18315,7 @@
     {
       "words": [
         "Ecuador",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18250,7 +18327,7 @@
     {
       "words": [
         "Egypt",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18262,7 +18339,7 @@
     {
       "words": [
         "El Salvador",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18274,7 +18351,7 @@
     {
       "words": [
         "Equatorial Guinea",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18286,7 +18363,7 @@
     {
       "words": [
         "Eritrea",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18298,7 +18375,7 @@
     {
       "words": [
         "Estonia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18310,7 +18387,7 @@
     {
       "words": [
         "Eswatini",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18322,7 +18399,7 @@
     {
       "words": [
         "Ethiopia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18334,7 +18411,7 @@
     {
       "words": [
         "Fiji",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18346,7 +18423,7 @@
     {
       "words": [
         "Finland",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18358,7 +18435,7 @@
     {
       "words": [
         "France",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18370,7 +18447,7 @@
     {
       "words": [
         "Gabon",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18382,7 +18459,7 @@
     {
       "words": [
         "Gambia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18394,7 +18471,7 @@
     {
       "words": [
         "Georgia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18406,7 +18483,7 @@
     {
       "words": [
         "Germany",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18418,7 +18495,7 @@
     {
       "words": [
         "Ghana",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18430,7 +18507,7 @@
     {
       "words": [
         "Greece",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18442,7 +18519,7 @@
     {
       "words": [
         "Grenada",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18454,7 +18531,7 @@
     {
       "words": [
         "Guatemala",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18466,7 +18543,7 @@
     {
       "words": [
         "Guinea",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18478,7 +18555,7 @@
     {
       "words": [
         "Guinea-Bissau",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18490,7 +18567,7 @@
     {
       "words": [
         "Guyana",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18502,7 +18579,7 @@
     {
       "words": [
         "Haiti",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18514,7 +18591,7 @@
     {
       "words": [
         "Honduras",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18526,7 +18603,7 @@
     {
       "words": [
         "Hong Kong",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18538,7 +18615,7 @@
     {
       "words": [
         "Hungary",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18550,7 +18627,7 @@
     {
       "words": [
         "Iceland",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18562,7 +18639,7 @@
     {
       "words": [
         "India",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18574,7 +18651,7 @@
     {
       "words": [
         "Indonesia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18586,7 +18663,7 @@
     {
       "words": [
         "Iran",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18598,7 +18675,7 @@
     {
       "words": [
         "Iraq",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18610,7 +18687,7 @@
     {
       "words": [
         "Ireland",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18622,7 +18699,7 @@
     {
       "words": [
         "Israel",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18634,7 +18711,7 @@
     {
       "words": [
         "Italy",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18646,7 +18723,7 @@
     {
       "words": [
         "Jamaica",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18658,7 +18735,7 @@
     {
       "words": [
         "Japan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18670,7 +18747,7 @@
     {
       "words": [
         "Jordan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18682,7 +18759,7 @@
     {
       "words": [
         "Kazakhstan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18694,7 +18771,7 @@
     {
       "words": [
         "Kenya",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18706,7 +18783,7 @@
     {
       "words": [
         "Kiribati",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18718,7 +18795,7 @@
     {
       "words": [
         "Kosovo",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18730,7 +18807,7 @@
     {
       "words": [
         "Kuwait",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18742,7 +18819,7 @@
     {
       "words": [
         "Kyrgyzstan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18754,7 +18831,7 @@
     {
       "words": [
         "Laos",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18766,7 +18843,7 @@
     {
       "words": [
         "Latvia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18778,7 +18855,7 @@
     {
       "words": [
         "Lebanon",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18790,7 +18867,7 @@
     {
       "words": [
         "Lesotho",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18802,7 +18879,7 @@
     {
       "words": [
         "Liberia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18814,7 +18891,7 @@
     {
       "words": [
         "Libya",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18826,7 +18903,7 @@
     {
       "words": [
         "Lithuania",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18838,7 +18915,7 @@
     {
       "words": [
         "Luxembourg",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18850,7 +18927,7 @@
     {
       "words": [
         "Macau",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18862,7 +18939,7 @@
     {
       "words": [
         "Madagascar",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18874,7 +18951,7 @@
     {
       "words": [
         "Malawi",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18886,7 +18963,7 @@
     {
       "words": [
         "Malaysia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18898,7 +18975,7 @@
     {
       "words": [
         "Maldives",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18910,7 +18987,7 @@
     {
       "words": [
         "Mali",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18922,7 +18999,7 @@
     {
       "words": [
         "Malta",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18934,7 +19011,7 @@
     {
       "words": [
         "Marshall Islands",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18946,7 +19023,7 @@
     {
       "words": [
         "Mauritania",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18958,7 +19035,7 @@
     {
       "words": [
         "Mauritius",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18970,7 +19047,7 @@
     {
       "words": [
         "Mexico",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18982,7 +19059,7 @@
     {
       "words": [
         "Micronesia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -18994,7 +19071,7 @@
     {
       "words": [
         "Moldova",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19006,7 +19083,7 @@
     {
       "words": [
         "Mongolia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19018,7 +19095,7 @@
     {
       "words": [
         "Montenegro",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19030,7 +19107,7 @@
     {
       "words": [
         "Morocco",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19042,7 +19119,7 @@
     {
       "words": [
         "Mozambique",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19054,7 +19131,7 @@
     {
       "words": [
         "Myanmar",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19066,7 +19143,7 @@
     {
       "words": [
         "Namibia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19078,7 +19155,7 @@
     {
       "words": [
         "Nauru",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19090,7 +19167,7 @@
     {
       "words": [
         "Nepal",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19102,7 +19179,7 @@
     {
       "words": [
         "Netherlands",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19114,7 +19191,7 @@
     {
       "words": [
         "New Zealand",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19126,7 +19203,7 @@
     {
       "words": [
         "Nicaragua",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19138,7 +19215,7 @@
     {
       "words": [
         "Niger",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19150,7 +19227,7 @@
     {
       "words": [
         "Nigeria",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19162,7 +19239,7 @@
     {
       "words": [
         "North Macedonia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19174,7 +19251,7 @@
     {
       "words": [
         "Norway",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19186,7 +19263,7 @@
     {
       "words": [
         "Oman",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19198,7 +19275,7 @@
     {
       "words": [
         "Pakistan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19210,7 +19287,7 @@
     {
       "words": [
         "Palau",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19222,7 +19299,7 @@
     {
       "words": [
         "Panama",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19234,7 +19311,7 @@
     {
       "words": [
         "Papua New Guinea",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19246,7 +19323,7 @@
     {
       "words": [
         "Paraguay",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19258,7 +19335,7 @@
     {
       "words": [
         "Peru",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19270,7 +19347,7 @@
     {
       "words": [
         "Philippines",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19282,7 +19359,7 @@
     {
       "words": [
         "Poland",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19294,7 +19371,7 @@
     {
       "words": [
         "Portugal",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19306,7 +19383,7 @@
     {
       "words": [
         "Puerto Rico",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19318,7 +19395,7 @@
     {
       "words": [
         "Qatar",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19330,7 +19407,7 @@
     {
       "words": [
         "Republic of the Congo",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19342,7 +19419,7 @@
     {
       "words": [
         "Romania",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19354,7 +19431,7 @@
     {
       "words": [
         "Russia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19366,7 +19443,7 @@
     {
       "words": [
         "Rwanda",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19378,7 +19455,7 @@
     {
       "words": [
         "Saint Kitts and Nevis",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19390,7 +19467,7 @@
     {
       "words": [
         "Saint Lucia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19402,7 +19479,7 @@
     {
       "words": [
         "Saint Vincent and the Grenadines",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19414,7 +19491,7 @@
     {
       "words": [
         "Samoa",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19426,7 +19503,7 @@
     {
       "words": [
         "San Marino",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19438,7 +19515,7 @@
     {
       "words": [
         "São Tomé and Príncipe",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19450,7 +19527,7 @@
     {
       "words": [
         "Saudi Arabia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19462,7 +19539,7 @@
     {
       "words": [
         "Senegal",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19474,7 +19551,7 @@
     {
       "words": [
         "Serbia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19486,7 +19563,7 @@
     {
       "words": [
         "Seychelles",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19498,7 +19575,7 @@
     {
       "words": [
         "Sierra Leone",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19510,7 +19587,7 @@
     {
       "words": [
         "Singapore",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19522,7 +19599,7 @@
     {
       "words": [
         "Slovakia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19534,7 +19611,7 @@
     {
       "words": [
         "Slovenia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19546,7 +19623,7 @@
     {
       "words": [
         "Solomon Islands",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19558,7 +19635,7 @@
     {
       "words": [
         "South Africa",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19570,7 +19647,7 @@
     {
       "words": [
         "South Korea",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19582,7 +19659,7 @@
     {
       "words": [
         "South Sudan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19594,7 +19671,7 @@
     {
       "words": [
         "Spain",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19606,7 +19683,7 @@
     {
       "words": [
         "Sri Lanka",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19618,7 +19695,7 @@
     {
       "words": [
         "Sudan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19630,7 +19707,7 @@
     {
       "words": [
         "Suriname",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19642,7 +19719,7 @@
     {
       "words": [
         "Sweden",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19654,7 +19731,7 @@
     {
       "words": [
         "Switzerland",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19666,7 +19743,7 @@
     {
       "words": [
         "Taiwan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19678,7 +19755,7 @@
     {
       "words": [
         "Tajikistan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19690,7 +19767,7 @@
     {
       "words": [
         "Tanzania",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19702,7 +19779,7 @@
     {
       "words": [
         "Thailand",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19714,7 +19791,7 @@
     {
       "words": [
         "Togo",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19726,7 +19803,7 @@
     {
       "words": [
         "Tonga",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19738,7 +19815,7 @@
     {
       "words": [
         "Trinidad and Tobago",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19750,7 +19827,7 @@
     {
       "words": [
         "Tunisia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19762,7 +19839,7 @@
     {
       "words": [
         "Turkey",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19774,7 +19851,7 @@
     {
       "words": [
         "Turkmenistan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19786,7 +19863,7 @@
     {
       "words": [
         "Tuvalu",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19798,7 +19875,7 @@
     {
       "words": [
         "Uganda",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19810,7 +19887,7 @@
     {
       "words": [
         "Ukraine",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19822,7 +19899,7 @@
     {
       "words": [
         "United Arab Emirates",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19834,7 +19911,7 @@
     {
       "words": [
         "United Kingdom",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19846,7 +19923,7 @@
     {
       "words": [
         "United States",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19858,7 +19935,7 @@
     {
       "words": [
         "Uruguay",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19870,7 +19947,7 @@
     {
       "words": [
         "Uzbekistan",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19882,7 +19959,7 @@
     {
       "words": [
         "Vanuatu",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19894,7 +19971,7 @@
     {
       "words": [
         "Venezuela",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19906,7 +19983,7 @@
     {
       "words": [
         "Vietnam",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19918,7 +19995,7 @@
     {
       "words": [
         "Yemen",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19930,7 +20007,7 @@
     {
       "words": [
         "Zambia",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -19942,7 +20019,7 @@
     {
       "words": [
         "Zimbabwe",
-        "Gross domestic product",
+        "gross domestic product",
         "per capita",
         "current prices",
         "$",
@@ -20044,6 +20121,13 @@
           "name": "Word"
         }
       ]
+    }
+  ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
     }
   ]
 }

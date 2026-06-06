@@ -210,7 +210,7 @@
     { "name": "Factor", "description": "multiplicative constant applied in a calculation"},
     { "name": "Functioning", "description": "manner in which something operates or fulfils its purpose"},
     { "name": "Global", "description": "covering or affecting the entire world"},
-    { "name": "Gross", "description": "aggregated before deductions"},
+    { "name": "gross", "description": "aggregated before deductions"},
     { "name": "Index", "description": "composite numerical indicator that ranks or measures"},
     { "name": "Level", "description": "position on a measurement scale"},
     { "name": "Peace", "description": "absence of war or violent conflict"},
@@ -625,12 +625,12 @@
     {"name": "Peace Index", "from": "Index", "verb": "of", "to": "Peace"},
     {"name": "domestic product", "from": "product", "verb": "kind of", "to": "domestic"},
     {"name": "Electoral process", "from": "process", "verb": "kind of", "to": "Electoral"},
-    {"name": "Gross domestic product", "from": "domestic product", "verb": "kind of", "to": "Gross"},
+    {"name": "gross domestic product", "from": "domestic product", "verb": "kind of", "to": "gross"},
     {"name": "Scoring Reference Level", "from": "Reference Level", "verb": "of", "to": "Scoring"},
     {"name": "Scoring Scaling Factor", "from": "Scaling Factor", "verb": "of", "to": "Scoring"},
     {"name": "Global Peace Index", "from": "Peace Index", "verb": "kind of", "to": "Global"},
     {"name": "Electoral process and pluralism", "from": "Electoral process", "verb": "and", "to": "pluralism"},
-    {"name": "Gross domestic product per capita", "from": "Gross domestic product", "verb": "per", "to": "capita"}
+    {"name": "gross domestic product per capita", "from": "gross domestic product", "verb": "per", "to": "capita"}
   ],
   "formulas": [
     {
@@ -2047,7 +2047,7 @@
       ]
     },
     {
-      "context": ["Gross domestic product per capita","In nominal per capita","current prices","$","2019"],
+      "context": ["gross domestic product per capita","In nominal per capita","current prices","$","2019"],
       "source": "World Economic Outlook Database (International Monetary Fund)",
       "values": [
         {"Afghanistan": 513},

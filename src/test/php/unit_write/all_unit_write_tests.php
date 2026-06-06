@@ -371,17 +371,28 @@ class all_unit_write_tests extends all_unit_read_tests
 
         $imf = new import_file();
 
+        // import the data that is used for read, write and consistency tests
+        // and is used for the main demo pages e.g. the start page
         foreach (files::BASE_IMPORT_FILE_LIST as $filename) {
             $result .= $imf->json_file($filename, $usr, false)->get_last_message();
         }
 
+        // import json files to test the import and fill the database with initial data
         foreach (test_files::TEST_IMPORT_FILES as $filename) {
             $result .= $imf->json_file($filename, $usr, false)->get_last_message();
         }
 
+        // TODO Prio 2 complete data object base import and move these file to TEST_IMPORT_FILES
+        // import JSON files that cannot jet be fully imported via data object
         foreach (test_files::TEST_DIRECT_IMPORT_FILE_LIST as $filename) {
             // TODO Prio 1 fix error reports
             $result .= $imf->json_file($filename, $usr, true, true)->get_last_message();
+        }
+
+        // TODO Prio 3 test the import and if fine move these file to TEST_IMPORT_FILES
+        // import JSON files that are not jet reviewed
+        foreach (test_files::TEST_IMPORT_FILE_LIST_ALL as $filename) {
+            $result .= $imf->json_file($filename, $usr, false)->get_last_message();
         }
 
 

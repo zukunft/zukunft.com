@@ -1441,6 +1441,30 @@ class library
         return $result;
     }
 
+    /**
+     * recursively delete a directory and everything inside it
+     * caller-side guard: a missing directory is treated as already-removed (returns true)
+     * @param string $dir absolute path of the directory to remove
+     * @return bool true if the directory no longer exists when the function returns
+     */
+    function dir_remove(string $dir): bool
+    {
+        $result = true;
+        if (is_dir($dir)) {
+            $entries = array_diff(scandir($dir), ['.', '..']);
+            foreach ($entries as $entry) {
+                $path = $dir . DIRECTORY_SEPARATOR . $entry;
+                if (is_dir($path)) {
+                    $this->dir_remove($path);
+                } else {
+                    unlink($path);
+                }
+            }
+            $result = rmdir($dir);
+        }
+        return $result;
+    }
+
     function php_code_use(array $lines): array
     {
         $result = [];

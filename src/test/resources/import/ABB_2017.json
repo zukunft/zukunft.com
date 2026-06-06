@@ -9,9 +9,418 @@
     {
       "name": "2017",
       "type": "time"
+    },
+    {
+      "name": "ABB"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "statement"
+    },
+    {
+      "name": "sales"
+    },
+    {
+      "name": "products"
+    },
+    {
+      "name": "services"
+    },
+    {
+      "name": "other"
+    },
+    {
+      "name": "revenues"
+    },
+    {
+      "name": "total"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "gross"
+    },
+    {
+      "name": "profit"
+    },
+    {
+      "name": "selling"
+    },
+    {
+      "name": "general"
+    },
+    {
+      "name": "administrative"
+    },
+    {
+      "name": "expenses"
+    },
+    {
+      "name": "expense"
+    },
+    {
+      "name": "non-order"
+    },
+    {
+      "name": "related"
+    },
+    {
+      "name": "research"
+    },
+    {
+      "name": "development"
+    },
+    {
+      "name": "finance"
+    },
+    {
+      "name": "interest"
+    },
+    {
+      "name": "dividend"
+    },
+    {
+      "name": "operations"
+    },
+    {
+      "name": "continuing"
+    },
+    {
+      "name": "discontinued"
+    },
+    {
+      "name": "taxes"
+    },
+    {
+      "name": "provision"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "noncontrolling"
+    },
+    {
+      "name": "interests"
     }
   ],
   "triples": [
+    {
+      "name": "income statement",
+      "from": "statement",
+      "verb": "of",
+      "to": "income",
+      "description": "financial statement showing a company's revenues, expenses and resulting profit or loss over a period",
+      "refs": [
+        {
+          "name": "income_statement",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q193224",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "sales",
+      "verb": "of",
+      "to": "products"
+    },
+    {
+      "from": "services",
+      "verb": "and",
+      "to": "other"
+    },
+    {
+      "from": "sales",
+      "verb": "of",
+      "to": "services and other"
+    },
+    {
+      "name": "total revenues",
+      "from": "revenues",
+      "verb": "kind of",
+      "to": "total",
+      "description": "sum of all revenue line items for the period"
+    },
+    {
+      "name": "cost of sales of products",
+      "from": "cost",
+      "verb": "of",
+      "to": "sales of products"
+    },
+    {
+      "name": "cost of services and other",
+      "from": "cost",
+      "verb": "of",
+      "to": "services and other"
+    },
+    {
+      "from": "cost",
+      "verb": "of",
+      "to": "sales",
+      "description": "direct cost attributable to the goods or services sold",
+      "refs": [
+        {
+          "name": "Cost_of_goods_sold",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1108445",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "total cost of sales",
+      "from": "cost of sales",
+      "verb": "kind of",
+      "to": "total"
+    },
+    {
+      "name": "gross profit",
+      "from": "profit",
+      "verb": "kind of",
+      "to": "gross",
+      "description": "revenue minus cost of goods sold, before deducting operating expenses",
+      "refs": [
+        {
+          "name": "gross_profit",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1571317",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "general",
+      "verb": "and",
+      "to": "administrative"
+    },
+    {
+      "name": "selling, general and administrative",
+      "from": "selling",
+      "verb": "and",
+      "to": "general and administrative"
+    },
+    {
+      "name": "selling, general and administrative expenses",
+      "from": "expenses",
+      "verb": "kind of",
+      "to": "selling, general and administrative",
+      "description": "operating expenses for sales, marketing, executive and back-office functions (SG&A)",
+      "refs": [
+        {
+          "name": "SG%26A",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7396041",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "research",
+      "verb": "and",
+      "to": "development",
+      "description": "activities a company undertakes to innovate and introduce new products and services",
+      "refs": [
+        {
+          "name": "Research_and_development",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q635757",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "non-order related",
+      "from": "related",
+      "verb": "kind of",
+      "to": "non-order"
+    },
+    {
+      "name": "non-order related research and development",
+      "from": "research and development",
+      "verb": "kind of",
+      "to": "non-order related"
+    },
+    {
+      "name": "non-order related research and development expenses",
+      "from": "expenses",
+      "verb": "kind of",
+      "to": "non-order related research and development",
+      "description": "R&D expenses not directly attributable to a specific customer order"
+    },
+    {
+      "name": "other income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "other"
+    },
+    {
+      "name": "other income (expense), net",
+      "from": "other income",
+      "verb": "kind of",
+      "to": "net",
+      "description": "net of other income and other expense items outside the company's core operations"
+    },
+    {
+      "name": "income from operations",
+      "from": "income",
+      "verb": "of",
+      "to": "operations",
+      "description": "profit from the company's core business activities before interest and taxes",
+      "refs": [
+        {
+          "name": "Earnings_before_interest_and_taxes",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2090322",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "interest",
+      "verb": "and",
+      "to": "dividend"
+    },
+    {
+      "name": "interest and dividend income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "interest and dividend"
+    },
+    {
+      "from": "interest",
+      "verb": "and",
+      "to": "finance"
+    },
+    {
+      "name": "interest and other finance expense",
+      "from": "expense",
+      "verb": "kind of",
+      "to": "interest and finance"
+    },
+    {
+      "name": "continuing operations",
+      "from": "operations",
+      "verb": "kind of",
+      "to": "continuing"
+    },
+    {
+      "name": "income from continuing operations",
+      "from": "income",
+      "verb": "of",
+      "to": "continuing operations"
+    },
+    {
+      "name": "income from continuing operations before taxes",
+      "from": "income from continuing operations",
+      "verb": "of",
+      "to": "taxes"
+    },
+    {
+      "name": "provision for taxes",
+      "from": "provision",
+      "verb": "of",
+      "to": "taxes",
+      "description": "income tax expense recognised on the income statement"
+    },
+    {
+      "name": "income from continuing operations, net of tax",
+      "from": "income from continuing operations",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "discontinued operations",
+      "from": "operations",
+      "verb": "kind of",
+      "to": "discontinued",
+      "description": "parts of a company that have been sold, abandoned, or otherwise disposed of and are reported separately",
+      "refs": [
+        {
+          "name": "Discontinued_operations",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "income from discontinued operations",
+      "from": "income",
+      "verb": "of",
+      "to": "discontinued operations"
+    },
+    {
+      "name": "income (loss) from discontinued operations, net of tax",
+      "from": "income from discontinued operations",
+      "verb": "can be",
+      "to": "net"
+    },
+    {
+      "name": "net income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "net",
+      "description": "total profit of a company after all expenses, taxes and other deductions; the bottom line of the income statement",
+      "refs": [
+        {
+          "name": "Net_income",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q193219",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "noncontrolling interests",
+      "from": "interests",
+      "verb": "kind of",
+      "to": "noncontrolling",
+      "description": "equity ownership in a subsidiary not attributable to the parent company",
+      "refs": [
+        {
+          "name": "Minority_interest",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1232293",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "net income attributable to noncontrolling interests",
+      "from": "net income",
+      "verb": "of",
+      "to": "noncontrolling interests"
+    },
+    {
+      "name": "net income attributable to ABB",
+      "from": "net income",
+      "verb": "of",
+      "to": "ABB"
+    },
     {
       "from": "sales of products",
       "verb": "is part of",
@@ -23,92 +432,92 @@
       "to": "income statement"
     },
     {
-      "from": "Total revenues",
+      "from": "total revenues",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Cost of sales of products",
+      "from": "cost of sales of products",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Cost of services and other",
+      "from": "cost of services and other",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Total cost of sales",
+      "from": "total cost of sales",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Gross profit",
+      "from": "gross profit",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Selling, general and administrative expenses",
+      "from": "selling, general and administrative expenses",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Non-order related research and development expenses",
+      "from": "non-order related research and development expenses",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Other income (expense), net",
+      "from": "other income (expense), net",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Income from operations",
+      "from": "income from operations",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Interest and dividend income",
+      "from": "interest and dividend income",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Interest and other finance expense",
+      "from": "interest and other finance expense",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Income from continuing operations before taxes",
+      "from": "income from continuing operations before taxes",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Provision for taxes",
+      "from": "provision for taxes",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Income from continuing operations, net of tax",
+      "from": "income from continuing operations, net of tax",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Income (loss) from discontinued operations, net of tax",
+      "from": "income (loss) from discontinued operations, net of tax",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Net income",
+      "from": "net income",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Net income attributable to noncontrolling interests",
+      "from": "net income attributable to noncontrolling interests",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Net income attributable to ABB",
+      "from": "net income attributable to ABB",
       "verb": "is part of",
       "to": "income statement"
     }
@@ -151,7 +560,7 @@
         "2017",
         "USD",
         "million",
-        "Total revenues"
+        "total revenues"
       ],
       "number": "34312",
       "protection": "admin_protection",
@@ -163,7 +572,7 @@
         "2017",
         "USD",
         "million",
-        "Cost of sales of products"
+        "cost of sales of products"
       ],
       "number": "-20313",
       "protection": "admin_protection",
@@ -175,7 +584,7 @@
         "2017",
         "USD",
         "million",
-        "Cost of services and other"
+        "cost of services and other"
       ],
       "number": "-3733",
       "protection": "admin_protection",
@@ -187,7 +596,7 @@
         "2017",
         "USD",
         "million",
-        "Total cost of sales"
+        "total cost of sales"
       ],
       "number": "-24046",
       "protection": "admin_protection",
@@ -199,7 +608,7 @@
         "2017",
         "USD",
         "million",
-        "Gross profit"
+        "gross profit"
       ],
       "number": "10266",
       "protection": "admin_protection",
@@ -211,7 +620,7 @@
         "2017",
         "USD",
         "million",
-        "Selling, general and administrative expenses"
+        "selling, general and administrative expenses"
       ],
       "number": "-5607",
       "protection": "admin_protection",
@@ -223,7 +632,7 @@
         "2017",
         "USD",
         "million",
-        "Non-order related research and development expenses"
+        "non-order related research and development expenses"
       ],
       "number": "-1365",
       "protection": "admin_protection",
@@ -235,7 +644,7 @@
         "2017",
         "USD",
         "million",
-        "Other income (expense), net"
+        "other income (expense), net"
       ],
       "number": "140",
       "protection": "admin_protection",
@@ -247,7 +656,7 @@
         "2017",
         "USD",
         "million",
-        "Income from operations"
+        "income from operations"
       ],
       "number": "3434",
       "protection": "admin_protection",
@@ -259,7 +668,7 @@
         "2017",
         "USD",
         "million",
-        "Interest and dividend income"
+        "interest and dividend income"
       ],
       "number": "74",
       "protection": "admin_protection",
@@ -271,7 +680,7 @@
         "2017",
         "USD",
         "million",
-        "Interest and other finance expense"
+        "interest and other finance expense"
       ],
       "number": "-277",
       "protection": "admin_protection",
@@ -283,7 +692,7 @@
         "2017",
         "USD",
         "million",
-        "Income from continuing operations before taxes"
+        "income from continuing operations before taxes"
       ],
       "number": "3231",
       "protection": "admin_protection",
@@ -295,7 +704,7 @@
         "2017",
         "USD",
         "million",
-        "Provision for taxes"
+        "provision for taxes"
       ],
       "number": "-860",
       "protection": "admin_protection",
@@ -307,7 +716,7 @@
         "2017",
         "USD",
         "million",
-        "Income from continuing operations, net of tax"
+        "income from continuing operations, net of tax"
       ],
       "number": "2371",
       "protection": "admin_protection",
@@ -319,7 +728,7 @@
         "2017",
         "USD",
         "million",
-        "Income (loss) from discontinued operations, net of tax"
+        "income (loss) from discontinued operations, net of tax"
       ],
       "number": "-6",
       "protection": "admin_protection",
@@ -331,7 +740,7 @@
         "2017",
         "USD",
         "million",
-        "Net income"
+        "net income"
       ],
       "number": "2365",
       "protection": "admin_protection",
@@ -343,7 +752,7 @@
         "2017",
         "USD",
         "million",
-        "Net income attributable to noncontrolling interests"
+        "net income attributable to noncontrolling interests"
       ],
       "number": "-152",
       "protection": "admin_protection",
@@ -355,7 +764,7 @@
         "2017",
         "USD",
         "million",
-        "Net income attributable to ABB"
+        "net income attributable to ABB"
       ],
       "number": "2213",
       "protection": "admin_protection",
