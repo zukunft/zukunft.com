@@ -81,7 +81,7 @@ class system_views_read_tests
         // unlike ti horizontal system view test for this test the object can be filled with data for special cases
         global $sys;
         $ui = new frontend('system_views_read_tests');
-        $ui->load_cache($sys);
+        $ui->load_cache();
         $cfg = new data_object_ui();
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         //$cfg = new data_object_ui();

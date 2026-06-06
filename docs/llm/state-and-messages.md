@@ -36,6 +36,12 @@ Every function must be fully unit-testable:
 - **Allowed globals inside functions**: the fixed globals above may be used,
   because tests initialise the same globals at start-up, making behaviour
   reproducible without parameter injection.
+- **Never pass an allowed global as a parameter**: since the fixed globals are
+  reachable via `global $x` everywhere (and tests initialise them), a function
+  that needs `$sys`/`$db_con`/`$cac`/… declares `global $sys;` in its body — it
+  must not accept the global as a function parameter. Threading an allowed global
+  through signatures is redundant indirection that forces every caller to
+  re-supply what is already globally available.
 - **No other hidden globals**: any global not in the list above is passed as an
   explicit parameter.
 

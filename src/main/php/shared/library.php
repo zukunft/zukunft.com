@@ -393,6 +393,9 @@ class library
         $result = preg_replace('/ >/', '>', $result);
         $result = preg_replace('/ </', '<', $result);
 
+        // remove a space directly after a tag e.g. '<td> 5' is the same as '<td>5'
+        $result = preg_replace('/> /', '>', $result);
+
         // remove spaces not needed
         $result = preg_replace('/> </', '><', $result);
 

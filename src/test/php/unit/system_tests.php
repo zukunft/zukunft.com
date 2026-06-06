@@ -485,9 +485,13 @@ class system_tests
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json (file ' . test_files::SYS_LOG_LIST_TEST . ')', $lib->trim_json($created), $lib->trim_json($expected));
 
+        $filepath = test_files::SYS_LOG_LIST_HTML;
         $created = $log_lst_dsp->get_html($usr1_dsp);
-        $expected = file_get_contents(test_files::SYS_LOG_LIST_HTML);
-        $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_HTML . ')', $lib->trim_html($created), $lib->trim_html($expected));
+        $expected = file_get_contents($filepath);
+        $result = $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_HTML . ')', $lib->trim_html($created), $lib->trim_html($expected));
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $t->update_path_file($filepath, $lib->format_html($created));
+        }
 
         $filepath = test_files::SYS_LOG_LIST_PAGE;
         $created = $log_lst_dsp->get_html_page($usr1_dsp);

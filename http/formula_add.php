@@ -56,8 +56,8 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "formula_add", $cac, $cfg);
+global $sys;
+$db_con = $app->start("formula_add");
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -180,4 +180,4 @@ $result .= $html->dsp_err($usr_msg->all_message_text());
 
 echo $result;
 
-$app->end($sys, $db_con);
+$app->end($db_con);

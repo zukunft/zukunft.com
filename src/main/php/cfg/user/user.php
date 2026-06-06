@@ -1397,9 +1397,15 @@ class user extends db_id_object_non_sandbox
     function get(): string
     {
         global $debug;
+        global $sys;
 
         $result = ''; // for the result message e.g. if the user is blocked
         $usr_msg = new user_message();
+
+        // remember this as the user requesting the current action so backend writes
+        // (e.g. the auto-created ip user via save_user) have a requesting user available;
+        // the web flow also sets this in load_usr_data, but the api flow only calls get()
+        $sys->usr_req = $this;
 
         // test first if the IP is blocked
         if ($this->ip_addr == '') {
@@ -2481,7 +2487,8 @@ class user extends db_id_object_non_sandbox
         $usr = $sys?->usr_req;
 
         if ($usr_req == null) {
-            $usr_req = clone $usr;
+            // fall back to the user being saved when no requesting user is set on $sys
+            $usr_req = clone ($usr ?? $this);
         }
 
         // configure the global database connection object for the select, insert, update and delete queries

@@ -61,7 +61,7 @@ class word_url_tests
         $usr_msg = new user_message();
         global $sys;
         $ui = new frontend('view');
-        $ui->load_cache($sys);
+        $ui->load_cache();
         $usr_ui = new user_ui();
         $usr_ui->set_from_json($t->usr1->api_json(), $usr_msg);
         $usr_sys_ui = new user_ui();
@@ -116,6 +116,18 @@ class word_url_tests
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $result, words::TEST_ADD);
+
+
+        $t->subheader($ts . 'search');
+
+        // simulates http://localhost/http/view.php?m=67&pattern=def
+        $test_name = 'search words by pattern via url';
+        $url_arr = [];
+        $url_arr[url_var::MASK] = views::WORD_FIND_ID;
+        $url_arr[url_var::PATTERN_HUMAN] = 'def';
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
+        // TODO Prio 0 activate
+        //$t->assert_text_contains($test_name, $result, 'def');
 
 
         $t->subheader($ts . 'cleanup');

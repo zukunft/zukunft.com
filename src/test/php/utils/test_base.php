@@ -1053,7 +1053,7 @@ class test_base
         if ($cfg == null) {
             global $sys;
             $ui = new frontend('');
-            $ui->load_cache($sys);
+            $ui->load_cache();
             $cfg = new data_object_ui();
             $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         }

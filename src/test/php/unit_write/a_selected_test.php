@@ -158,7 +158,7 @@ class a_selected_test extends test_cleanup
 
             global $sys;
             $ui = new frontend('api based ui tests');
-            $ui->load_cache($sys);
+            $ui->load_cache();
             new type_lists_ui_tests()->run($this, $ui);
 
             // check and update the fixed csv files

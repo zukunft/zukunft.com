@@ -51,8 +51,8 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 include_once paths::SHARED_CONST . 'views.php';
 
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "formula_del", $cac, $cfg);
+global $sys;
+$db_con = $app->start("formula_del");
 
 global $sys;
 
@@ -110,4 +110,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-$app->end($sys, $db_con);
+$app->end($db_con);

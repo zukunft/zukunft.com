@@ -51,8 +51,8 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 
 // open database
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "calculate", $cac, $cfg);
+global $sys;
+$db_con = $app->start("calculate");
 
 // load the requesting user
 $usr = new user;
@@ -127,4 +127,4 @@ if ($usr->id > 0) {
 }
 
 // Closing connection
-$app->end($sys, $db_con);
+$app->end($db_con);

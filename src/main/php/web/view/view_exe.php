@@ -409,7 +409,8 @@ class view_exe extends view_base
     private function dsp_type_selector(string $form): string
     {//$sel->bs_class = $class;
         //$sel->attribute = $attribute;
-        return null->html_view_types->selector($form);
+        global $ui_sys;
+        return $ui_sys->typ_lst_cache->html_view_types->selector($form);
     }
 
     /**

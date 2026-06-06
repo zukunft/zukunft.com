@@ -127,7 +127,7 @@ class triple extends sandbox_code_id
         }
     }
     // the impact used to sort the triples
-    private float $impact = 0.0;
+    public float $impact = 0.0;
 
     // the phrases connected to this triple by another triple
     public ?phrase_list $phr_lst = null;

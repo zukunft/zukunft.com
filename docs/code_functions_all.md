@@ -6893,7 +6893,7 @@
         \-- phrase_list - @return phrase_list list of phrases without the info phrases e.g. without 1967 (year of definition)
 \-- session
     \-- start
-        \-- frontend - TODO to be deprecated
+        \-- frontend - TODO Prio 3 to be deprecated and replaced with ?
     \-- start_ui
         \-- frontend - start a frontend session via api
     \-- end

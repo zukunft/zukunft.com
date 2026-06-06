@@ -52,8 +52,8 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "source_edit", $cac, $cfg);
+global $sys;
+$db_con = $app->start("source_edit");
 
 global $sys;
 
@@ -131,4 +131,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-$app->end($sys, $db_con);
+$app->end($db_con);

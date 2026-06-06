@@ -555,7 +555,7 @@ class test_db_load
             $grp->set_name($grp_name);
             $usr_msg = new user_message($test_usr);
             if (!$grp->save($usr_msg)) {
-                log_err('add group failed due to: ' . $usr_msg->get_last_message());
+                log_err('add group failed due to: ' . $usr_msg->text());
             }
         }
         return $grp;

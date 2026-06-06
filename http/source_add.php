@@ -55,8 +55,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 /* open database */
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "source_add", $cac, $cfg);
+global $sys;
+$db_con = $app->start("source_add");
 $html = new html_base();
 
 global $sys;
@@ -145,4 +145,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-$app->end($sys, $db_con);
+$app->end($db_con);
