@@ -67,6 +67,7 @@ backend - internal
 - shr (SHaRe)              - the sharing settings
 - ptc (ProTeCt)            - the protection settings
 - lst (LiST)               - an array of objects
+- arr (ARRay)              - an array of standard var types
 - typ (TYPe)               - field name to connect predefined functionality to a core object
 - pdi (PreDIcate)          - define the connection type between two core objects (verb is a special form of predicate for triples)
 - id (IDentifier)          - internal prime key of a database row

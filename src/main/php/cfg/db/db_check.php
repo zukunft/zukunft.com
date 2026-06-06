@@ -98,7 +98,7 @@ class db_check
     function db_check(sql_db $db_con): user_message
     {
         global $cfg;
-        global $log_txt;
+        global $sys;
 
         $usr_msg = new user_message(); // the message that should be shown to the user immediately
         $do_consistency_check = false;
@@ -109,7 +109,8 @@ class db_check
         $main_tbl_name = $lib->class_to_name(config::class);
         if (!$db_con->has_table($main_tbl_name)) {
             // because no log yet exists here echo instead of log_echo() is used
-            $log_txt->echo_text_log('zukunft.com: empty database detected');
+            // TODO Prio 1 maybe use the $msg object parameter
+            $sys->log_txt->echo_text_log('zukunft.com: empty database detected');
             $usr_msg = $db_con->setup_db();
             if ($usr_msg->is_ok()) {
                 $db_con->db_fill_code_links();

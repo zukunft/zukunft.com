@@ -546,7 +546,8 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_id(sandbox_list_named $lst_new): user_message
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
@@ -584,10 +585,11 @@ class sandbox_list_named extends sandbox_list
         bool               $fill_all = false
     ): user_message
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
         $msg = new user_message();
 
-        // loop over the objects of theis list because it is expected to be smaller than tha cache list
+        // loop over the objects of this list because it is expected to be smaller than tha cache list
         foreach ($this->lst() as $obj_to_fill) {
             if ($obj_to_fill->id() == 0 and $obj_to_fill->name($fill_all) != '') {
                 $db_obj = $db_lst->get_by_name($obj_to_fill->name($fill_all), $fill_all);

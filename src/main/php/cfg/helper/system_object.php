@@ -48,6 +48,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 
@@ -92,6 +94,15 @@ class system_object
     // the system users as a private var to restrict the access
     // TODO Prio check where this is used and make sure it is only used for system testing
     public user_list $sys_usr_lst;
+
+    // the session user that has requested the current action (set once the user data is loaded)
+    public ?user $usr_req = null;
+
+    // the preloaded system views (mask cache) used to link code to the views by code id
+    public ?view_sys_list $msk_cac = null;
+
+    // the number of internal errors logged during the request (read e.g. by the test runner)
+    public int $errors = 0;
 
 
     /*

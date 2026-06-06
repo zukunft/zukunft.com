@@ -2383,8 +2383,9 @@ class triple extends sandbox_link_named
      */
     protected function check_preserved(user_message $msg): bool
     {
-        global $usr;
+        global $sys;
         global $mtr;
+        $usr = $sys?->usr_req;
 
         // init
         $msg_res = $mtr->txt(msg_id::IS_RESERVED);

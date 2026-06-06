@@ -139,7 +139,7 @@ class formula extends sandbox_code_id
     public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
     public ?phrase $name_wrd = null;         // the triple object for the formula name:
     // the impact used to sort the triples
-    private float $impact = 0.0;
+    public float $impact = 0.0;
 
 
     /*

@@ -62,8 +62,8 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "user", $cac, $cfg);
+global $sys;
+$db_con = $app->start("user");
 $html = new html_base();
 
 global $sys;
@@ -226,4 +226,4 @@ $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
 echo $result;
 
 // Closing connection
-$app->end($sys, $db_con);
+$app->end($db_con);

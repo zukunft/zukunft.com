@@ -1096,7 +1096,8 @@ class formula_list extends sandbox_list_named
         bool                            $report_missing = true
     ): void
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
         if ($frm->id() == 0 and $frm->name($fill_all) != '') {
             $db_obj = $db_lst->get_by_name($frm->name($fill_all), $fill_all);
             // a word, triple or verb may share its name with a formula; only a matching formula

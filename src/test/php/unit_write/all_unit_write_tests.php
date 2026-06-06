@@ -82,7 +82,7 @@ class all_unit_write_tests extends all_unit_read_tests
     {
         global $usr;
         global $db_con;
-        global $errors;
+        global $sys;
 
         // init
         $t_db = new test_db_load($this);
@@ -114,7 +114,7 @@ class all_unit_write_tests extends all_unit_read_tests
             // start testing the system functionality
             // --------------------------------------
 
-            if ($errors <= ERROR_LIMIT) {
+            if ($sys->errors <= ERROR_LIMIT) {
                 run_system_test($t);
                 run_user_test($t);
             }
@@ -124,12 +124,12 @@ class all_unit_write_tests extends all_unit_read_tests
             //$this->test_api_write_no_rest_all();
             //$this->test_api_write_all();
 
-            if ($errors <= ERROR_LIMIT) {
+            if ($sys->errors <= ERROR_LIMIT) {
                 run_db_link_test($t);
                 run_sandbox_test($t);
             }
 
-            if ($errors <= ERROR_LIMIT) {
+            if ($sys->errors <= ERROR_LIMIT) {
                 new lib_tests()->run($t); // test functions not yet split into single unit tests
 
                 // create the test dataset to check the basic write functions
@@ -276,7 +276,7 @@ class all_unit_write_tests extends all_unit_read_tests
     {
         global $usr;
         global $db_con;
-        global $errors;
+        global $sys;
 
         $t_db = new test_db_load($this);
 
@@ -351,7 +351,7 @@ class all_unit_write_tests extends all_unit_read_tests
         // reload the system database rows (all db rows, that have a code id)
 
         echo "\n";
-        echo $errors . ' internal errors';
+        echo $sys->errors . ' internal errors';
 
     }
 

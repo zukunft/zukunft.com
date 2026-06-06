@@ -394,10 +394,14 @@ class term extends combine_named
      */
     function is_word(): bool
     {
-        if ($this->obj()::class == word::class) {
-            return true;
-        } else {
+        if ($this->obj() === null) {
             return false;
+        } else {
+            if ($this->obj()::class == word::class) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -406,10 +410,14 @@ class term extends combine_named
      */
     function is_triple(): bool
     {
-        if ($this->obj()::class == triple::class) {
-            return true;
-        } else {
+        if ($this->obj() === null) {
             return false;
+        } else {
+            if ($this->obj()::class == triple::class) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -418,10 +426,14 @@ class term extends combine_named
      */
     function is_verb(): bool
     {
-        if ($this->obj()::class == verb::class) {
-            return true;
-        } else {
+        if ($this->obj() === null) {
             return false;
+        } else {
+            if ($this->obj()::class == verb::class) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -430,10 +442,14 @@ class term extends combine_named
      */
     function is_formula(): bool
     {
-        if ($this->obj()::class == formula::class) {
-            return true;
-        } else {
+        if ($this->obj() === null) {
             return false;
+        } else {
+            if ($this->obj()::class == formula::class) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

@@ -110,6 +110,12 @@ class lib_tests
         $result = $lib->trim_html($text);
         $t->assert("trim_html", $result, $target);
 
+        // a space directly after a tag is ignored e.g. '<td> 5</td>' is the same as '<td>5</td>'
+        $text = '<td> 5</td>';
+        $target = $lib->trim_html('<td>5</td>');
+        $result = $lib->trim_html($text);
+        $t->assert("trim_html space after tag", $result, $target);
+
         // replace volatile CSRF token with a fixed dummy value for snapshot tests
         $token = test_const::DUMMY_SESSION_TOKEN;
         $live_token = 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2';

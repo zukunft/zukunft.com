@@ -50,10 +50,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "formula_result", $cac, $cfg);
+global $sys;
+$db_con = $app->start("formula_result");
 
-global $sys_msk_cac;
+global $sys;
 
 $result = ''; // reset the html code var
 
@@ -68,7 +68,7 @@ if ($session_usr->id() > 0) {
 
     // show the header
     $msk = new view($session_usr);
-    $msk->id = $sys_msk_cac->id(views::FORMULA_EXPLAIN);
+    $msk->id = $sys->msk_cac->id(views::FORMULA_EXPLAIN);
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_ui($msk->api_json());
@@ -104,4 +104,4 @@ if ($session_usr->id() > 0) {
 
 echo $result;
 
-$app->end($sys, $db_con);
+$app->end($db_con);

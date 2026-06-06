@@ -73,28 +73,6 @@ $msg = new user_message();
 // TODO llm: if the lan is given use it for $mtr
 $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
 log_debug('view $_POST array: ' . library::dsp_array($_POST, true));
-// e.g. view $_POST array: username=timon,password=pw,token=9b7e93ace811c182a3fef8c3f7a6fe9832e814f3b872b6534b9d318852952917,m=61,9m=2,9id=1,9z=0,submit=Login.
-/*
- * login
-$url_array = [
-    'username' => 'timon',
-    'password' => 'wind4surfen',
-    'token'    => '9b7e93ace811c182a3fef8c3f7a6fe9832e814f3b872b6534b9d318852952917',
-    'm'        => 61,
-    '9m'       => 2,
-    '9id'      => 1,
-    '9z'       => 0,
-    'submit'   => 'Login',
-];
-logout
-http://localhost/http/view.php?m=64&9m=1&9z=0
-$url_array = [
-    'token'    => '9b7e93ace811c182a3fef8c3f7a6fe9832e814f3b872b6534b9d318852952917',
-    'm'        => 64,
-    '9m'       => 1,
-    '9z'       => 0
-];
-*/
 
 // TODO llm: if the request is a static page (views::STATIC_VIEWS), just show it e.g. from the html file stored in the root folder /login or /start and skip the database opening and closing
 // TODO llm: create a process to refresh the static pages for via /http/update_static.php script that cal also be called by an admin user or a scheduled batch job (make sure that no other files are overwritten and that this cannot be user for code injections)
@@ -102,8 +80,8 @@ $url_array = [
 
 // open database
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "view", $cac, $cfg, $msg, $_POST);
+global $sys;
+$db_con = $app->start("view", $msg, $url_array);
 
 
 if ($db_con->is_open()) {
@@ -126,7 +104,7 @@ if ($db_con->is_open()) {
         $usr_dsp->set_from_json($usr->api_json(), $msg);
 
         $ui = new frontend('view');
-        $ui->load_cache($sys);
+        $ui->load_cache();
 
         // publish the loaded ui cache to the allowed global so renderers
         // (e.g. phrase_list::category_subtitle) can read the verb type cache
@@ -152,7 +130,7 @@ if ($db_con->is_open()) {
     }
 
     // close the database
-    $app->end($sys, $db_con, false);
+    $app->end($db_con, false);
 } else {
     $web_txt .= 'database connection lost';
 }

@@ -51,8 +51,8 @@ $result = '';
 
 // start the user session
 $session = new frontend('view');
-global $sys, $cac, $cfg;
-$db_con = $session->start($sys, 'view pur', $cac, $cfg); // e.g. if requested write to the system log server that a user has sent a new request
+global $sys;
+$db_con = $session->start('view pur'); // e.g. if requested write to the system log server that a user has sent a new request
 
 // check e.g. if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($result != '') {
@@ -79,4 +79,4 @@ if ($result != '') {
 echo $result;
 
 // report the result to be displayed
-$session->end($sys, $db_con);
+$session->end($db_con);

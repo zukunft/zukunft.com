@@ -13,6 +13,7 @@ others may be introduced.
 | `$db_con` | backend  | Database connection                                                                                                                                                     |
 | `$cfg`    | backend  | User-specific configuration numbers (changes more often than types)                                                                                                     |
 | `$cac`    | backend  | Backend cache of user-specific `data_object`                                                                                                                            |
+| `$mtr`    | backend  | the message translatro is used in the backend only to get the english text of a message_id                                                                              |
 | `$ui_sys` | frontend | Frontend cache including the session user and the user config                                                                                                           |
 | `$mtr`    | frontend | Message translation — created **once** in `http/view.php`; language priority: (1) `url_var::LANGUAGE` URL param, (2) session var, (3) user config (`$cfg`), (4) default |
 | `$t`      | tests    | Base test object (assert + cleanup helpers)                                                                                                                             |
@@ -35,6 +36,12 @@ Every function must be fully unit-testable:
 - **Allowed globals inside functions**: the fixed globals above may be used,
   because tests initialise the same globals at start-up, making behaviour
   reproducible without parameter injection.
+- **Never pass an allowed global as a parameter**: since the fixed globals are
+  reachable via `global $x` everywhere (and tests initialise them), a function
+  that needs `$sys`/`$db_con`/`$cac`/… declares `global $sys;` in its body — it
+  must not accept the global as a function parameter. Threading an allowed global
+  through signatures is redundant indirection that forces every caller to
+  re-supply what is already globally available.
 - **No other hidden globals**: any global not in the list above is passed as an
   explicit parameter.
 
@@ -67,6 +74,7 @@ allocation), and would be initialised the same way at every call site. When all
 three hold, it belongs inside the function.
 
 - **Wrong** — `html_base` threaded through a chain even though no caller pre-configures it:
+
 ```php
 function category_html(html_base $html): string { … $html->url_new(views::PHRASE_ID, $phr->id()) … }
 function category_subtitle(db_object $dbo, html_base $html): string { return $related->category_html($html); }
@@ -76,7 +84,9 @@ function title_of_named_with_edit_link(db_object $dbo): string {
     …
 }
 ```
+
 - **Right** — created where used; one less parameter at every step:
+
 ```php
 function category_html(): string { $html = new html_base(); … }
 function category_subtitle(db_object $dbo): string { return $related->category_html(); }
@@ -131,6 +141,7 @@ bypass translation and break serialisation, so the message won't survive the
 - **Wrong**: `$msg->add_message_text('User name already exists');`
 
 Every new user-visible string needs:
+
 1. A `case` in `src/main/php/shared/enum/messages.php`
 2. An English entry in `src/main/resources/translations/en.yaml`
 3. A German entry in `src/main/resources/translations/de.yaml` (and any other active locale)

@@ -44,12 +44,12 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 $app = new frontend();
 // TODO Prio 0 use message in all frontend calls
 $msg = new Message();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "about", $cac, $cfg, $msg);
+global $sys;
+$db_con = $app->start("about", $msg);
 
 // display the view
 $html = new html_base();
 echo $html->about_page();
 
 // close the database  
-$app->end($sys, $db_con);
+$app->end($db_con);

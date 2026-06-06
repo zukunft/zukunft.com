@@ -1995,7 +1995,7 @@ class value_base extends sandbox_value
     function save_field_trigger_update($db_con): string
     {
         global $sys;
-        global $usr;
+        $usr = $sys?->usr_req;
 
         $result = '';
         $usr_msg = new user_message($usr);

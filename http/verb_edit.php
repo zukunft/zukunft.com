@@ -56,8 +56,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 // open database
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "verb_edit", $cac, $cfg);
+global $sys;
+$db_con = $app->start("verb_edit");
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -142,4 +142,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-$app->end($sys, $db_con);
+$app->end($db_con);

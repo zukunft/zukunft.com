@@ -1328,15 +1328,14 @@ class user extends db_id_object_non_sandbox
     {
         global $sys;
         global $db_con;
-        global $sys;
-        global $sys_msk_cac;
 
         $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $sys->usr_req = $this;
         $sys->typ_lst->vrb = new verb_list($this);
         $sys->typ_lst->vrb->load($db_con);
 
-        $sys_msk_cac = new view_sys_list($this);
-        $sys_msk_cac->load($db_con);
+        $sys->msk_cac = new view_sys_list($this);
+        $sys->msk_cac->load($db_con);
 
         $sys->times->switch(system_time_type::DEFAULT);
     }
@@ -1398,9 +1397,15 @@ class user extends db_id_object_non_sandbox
     function get(): string
     {
         global $debug;
+        global $sys;
 
         $result = ''; // for the result message e.g. if the user is blocked
         $usr_msg = new user_message();
+
+        // remember this as the user requesting the current action so backend writes
+        // (e.g. the auto-created ip user via save_user) have a requesting user available;
+        // the web flow also sets this in load_usr_data, but the api flow only calls get()
+        $sys->usr_req = $this;
 
         // test first if the IP is blocked
         if ($this->ip_addr == '') {
@@ -1795,7 +1800,7 @@ class user extends db_id_object_non_sandbox
     ): bool
     {
         global $sys;
-        global $usr;
+        $usr = $sys?->usr_req;
 
         if ($usr_req == null) {
             $usr_req = $usr;
@@ -2478,10 +2483,12 @@ class user extends db_id_object_non_sandbox
         // use the already open database connection of the already started process
         global $db_con;
         // get the user that is logged in and is requesting the changes
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
 
         if ($usr_req == null) {
-            $usr_req = clone $usr;
+            // fall back to the user being saved when no requesting user is set on $sys
+            $usr_req = clone ($usr ?? $this);
         }
 
         // configure the global database connection object for the select, insert, update and delete queries
@@ -3551,8 +3558,8 @@ class user extends db_id_object_non_sandbox
                             . ' has been deleted in the meantime.', (new Exception)->getTraceAsString());
                     } else {
                         if ($usr_req == null) {
-                            global $usr;
-                            $usr_req = $usr;
+                            global $sys;
+                            $usr_req = $sys?->usr_req;
                         }
                         // TODO check if there are related log entries and if yes exclude it instead of delete
                         $msg->merge(parent::del_exe($usr_req));

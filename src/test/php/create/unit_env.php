@@ -273,10 +273,10 @@ class unit_env
      */
     private function init_views(user $usr): void
     {
-        global $sys_msk_cac;
+        global $sys;
 
-        $sys_msk_cac = new view_sys_list($usr);
-        $sys_msk_cac->load_dummy();
+        $sys->msk_cac = new view_sys_list($usr);
+        $sys->msk_cac->load_dummy();
 
     }
 

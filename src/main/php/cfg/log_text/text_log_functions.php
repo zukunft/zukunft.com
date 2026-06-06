@@ -166,8 +166,10 @@ function log_err(string $msg_text,
                  string $trace = '',
                  ?user  $calling_usr = null): string
 {
-    global $errors;
-    $errors++;
+    global $sys;
+    if ($sys !== null) {
+        $sys->errors++;
+    }
     // TODO move the next lines to a class and a private function "get_function_name"
     $lib = new library();
     if ($function_name == '' or $function_name == null) {

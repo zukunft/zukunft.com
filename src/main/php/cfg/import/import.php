@@ -472,8 +472,6 @@ class import
         ?data_object $dto = null
     ): bool
     {
-        global $usr;
-
         log_debug();
         $lib = new library();
         $this->last_display_time = microtime(true);
@@ -503,7 +501,8 @@ class import
         }
         // if no user is defined in the json to import use the active user
         if ($usr_import == null) {
-            $usr_import = $usr;
+            global $sys;
+            $usr_import = $sys->usr_req;
         }
 
         // remember the usr_msg and view that should be validated after the import

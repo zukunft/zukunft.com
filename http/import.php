@@ -53,8 +53,8 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "import", $cac, $cfg);
+global $sys;
+$db_con = $app->start("import");
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -198,4 +198,4 @@ $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
 echo $result;
 
 // Closing connection
-$app->end($sys, $db_con);
+$app->end($db_con);

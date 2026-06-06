@@ -61,10 +61,10 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "error_log", $cac, $cfg);
+global $sys;
+$db_con = $app->start("error_log");
 
-global $sys_msk_cac;
+global $sys;
 
 $result = ''; // reset the html code var
 
@@ -88,7 +88,7 @@ if ($usr->id > 0) {
         $usr->load_usr_data();
 
         // prepare the display to edit the view
-        $view_id = $sys_msk_cac->id(views::ERR_LOG);
+        $view_id = $sys->msk_cac->id(views::ERR_LOG);
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();
@@ -103,7 +103,7 @@ if ($usr->id > 0) {
 echo $result;
 
 // Closing connection
-$app->end($sys, $db_con);
+$app->end($db_con);
 
 function err_dsp($err_id, $user_id): string
 {

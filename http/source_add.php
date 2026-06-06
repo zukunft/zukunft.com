@@ -55,11 +55,11 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 /* open database */
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "source_add", $cac, $cfg);
+global $sys;
+$db_con = $app->start("source_add");
 $html = new html_base();
 
-global $sys_msk_cac;
+global $sys;
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
@@ -77,7 +77,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(views::SOURCE_ADD));
+    $msk->load_by_id($sys->msk_cac->id(views::SOURCE_ADD));
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]);      // the calling word which should be displayed after saving
 
@@ -145,4 +145,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-$app->end($sys, $db_con);
+$app->end($db_con);

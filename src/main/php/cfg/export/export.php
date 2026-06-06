@@ -74,7 +74,6 @@ class export
     {
 
         global $db_con;
-        global $cfg_sys;
 
         $lib = new library();
         $cfg_sys = new config();

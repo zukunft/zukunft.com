@@ -207,17 +207,27 @@ class group_write_tests
      */
     function create_test_groups(all_tests $t): void
     {
+        global $sys;
         $t_db = new test_db_load($t);
 
         // start the test section (ts)
         $ts = 'db create test groups ';
         $t->header($ts);
 
+        // request as the system test user so that reserved group names such as
+        // 'Pi (math)' (groups::TN_READ) pass group::check_preserved and can be added;
+        // this is only permitted because test.php is run by an admin user
+        $usr_req_prev = $sys->usr_req;
+        $sys->usr_req = $t->usr_system;
+
         foreach (groups::TEST_GROUPS_CREATE as $group) {
             $grp_name = $group[0];
             $phr_names = $group[1];
-            $t_db->test_group($phr_names, $grp_name, $t->usr1);
+            $t_db->test_group($phr_names, $grp_name, $t->usr_system);
         }
+
+        // restore the previous requesting user so later tests are not affected
+        $sys->usr_req = $usr_req_prev;
     }
 
     /**

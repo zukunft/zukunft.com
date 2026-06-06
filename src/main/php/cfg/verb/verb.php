@@ -1003,7 +1003,8 @@ class verb extends type_object
      */
     protected function check_preserved(user_message $msg): bool
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
 
         // init
         $lib = new library();

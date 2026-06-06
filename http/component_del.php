@@ -53,8 +53,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 
 // open database
 $app = new frontend();
-global $sys, $cac, $cfg;
-$db_con = $app->start($sys, "component_del", $cac, $cfg);
+global $sys;
+$db_con = $app->start("component_del");
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -106,4 +106,4 @@ if ($usr->id > 0) {
 
 echo $result;
 
-$app->end($sys, $db_con);
+$app->end($db_con);

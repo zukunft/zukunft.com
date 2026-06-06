@@ -173,7 +173,8 @@ class ref_list extends type_list
      */
     protected function load_list(sql_db $db_con, string $class): array
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
         $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
         $db_lst = $db_con->get($qp);
@@ -218,7 +219,8 @@ class ref_list extends type_list
      */
     function load_dummy(): void
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
         $type = new ref($usr);
         $type->id = 1;
         $type->set_name(refs::WIKIDATA_TYPE);
