@@ -38,3 +38,7 @@ verb_id,verb_name,code_id,description,condition_type,formula_name,name_plural_re
 37,name of,name_of,to assign a proper name to a category e.g. the Pythagorean theorem is named after Pythagoras,,,are named,are names of,is named,,
 38,by parts,by_parts,to describe a method that operates on the parts of an expression e.g. integration by parts,,,,by parts,,,
 39,must be one of,must_be_one_of,to disambiguate a word that has several meanings by pinning each meaning to its own triple e.g. the word 'second' must be one of 'time unit' or 'ranking number'; the qualifier triple is referenced instead of the ambiguous word and only the original word is shown on a page while the qualifier appears in the tooltip,,,,must be one of,,,
+40,is used by,used_by,passive form of 'uses' when the dependent phrase is the subject e.g. cent is used by Euro,,,use,are used by,uses,,
+41,can be made of,can_be_made_of,to specify possible materials or composition options e.g. a porringer can be made of plastic,,,can make,can be made of,can make,,
+42,can be packed in,can_be_packed_in,to specify possible packaging options e.g. a blueberry can be packed in a plastic porringer,,,can pack,can be packed in,can pack,,
+43,used for,used_for,to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel),,,uses,are used for,uses,,
