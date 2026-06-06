@@ -435,6 +435,26 @@ class verb_list extends type_list
         $vrb->set_name(verbs::MUST_BE_ONE_OF_NAME);
         $vrb->set_code_id_db(verbs::MUST_BE_ONE_OF);
         $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::USED_BY_ID;
+        $vrb->set_name(verbs::USED_BY_NAME);
+        $vrb->set_code_id_db(verbs::USED_BY);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::CAN_BE_MADE_OF_ID;
+        $vrb->set_name(verbs::CAN_BE_MADE_OF_NAME);
+        $vrb->set_code_id_db(verbs::CAN_BE_MADE_OF);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::CAN_BE_PACKED_IN_ID;
+        $vrb->set_name(verbs::CAN_BE_PACKED_IN_NAME);
+        $vrb->set_code_id_db(verbs::CAN_BE_PACKED_IN);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::USED_FOR_ID;
+        $vrb->set_name(verbs::USED_FOR_NAME);
+        $vrb->set_code_id_db(verbs::USED_FOR);
+        $this->add_verb($vrb);
     }
 
 

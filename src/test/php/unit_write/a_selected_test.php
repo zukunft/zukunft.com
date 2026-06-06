@@ -59,6 +59,7 @@ use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\formula_calc_tests;
+use Zukunft\ZukunftCom\test\php\unit\import_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\value_read_tests;
@@ -106,7 +107,7 @@ class a_selected_test extends test_cleanup
 
         // run the selected unit tests
         //new system_tests()->run($this);
-        //new import_tests()->run($this);
+        new import_tests()->run($this);
         //new formula_link_tests()->run($this);
         //new formula_calc_tests()->run($this);
         //new api_tests()->run($this);

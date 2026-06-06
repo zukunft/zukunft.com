@@ -843,27 +843,27 @@ class import
                 $this->step_end($dto->source_list()->count(), $src_per_sec);
             }
             if (key_exists(json_fields::REFERENCES, $json_array)) {
-                $ref_array = $json_array[json_fields::SOURCES];
+                $ref_array = $json_array[json_fields::REFERENCES];
                 $this->step_start(msg_id::COUNT, ref::class, count($ref_array), $step_time);
                 $usr_msg->merge($this->dto_get_references($ref_array, $dto, $usr_msg, $ref_per_sec));
                 $this->step_end($dto->source_list()->count(), $ref_per_sec);
             }
-            // TODO add json_fields::PHRASE_VALUES
+            // TODO Prio 0 add json_fields::PHRASE_VALUES
             if (key_exists(json_fields::VALUES, $json_array)) {
                 $val_array = $json_array[json_fields::VALUES];
                 $this->step_start(msg_id::COUNT, value::class, count($val_array), $step_time);
                 $usr_msg->merge($this->dto_get_values($val_array, $dto, $usr_msg, $val_per_sec));
                 $this->step_end($dto->value_list()->count(), $val_per_sec);
             }
-            // TODO add json_fields::VALUE_LIST
+            // TODO Prio 0 add json_fields::VALUE_LIST
             if (key_exists(json_fields::FORMULAS, $json_array)) {
                 $frm_array = $json_array[json_fields::FORMULAS];
                 $this->step_start(msg_id::COUNT, formula::class, count($frm_array), $step_time);
                 $usr_msg->merge($this->dto_get_formulas($frm_array, $dto, $usr_msg, $frm_per_sec));
                 $this->step_end($dto->formula_list()->count(), $frm_per_sec);
             }
-            // TODO add json_fields::RESULTS
-            // TODO add json_fields::CALC_VALIDATION
+            // TODO Prio 0 add json_fields::RESULTS
+            // TODO Prio 0 add json_fields::CALC_VALIDATION
             if (key_exists(json_fields::COMPONENTS, $json_array)) {
                 $cmp_array = $json_array[json_fields::COMPONENTS];
                 $this->step_start(msg_id::COUNT, component::class, count($cmp_array), $step_time);

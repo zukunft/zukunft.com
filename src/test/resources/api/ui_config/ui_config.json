@@ -7291,6 +7291,54 @@
         "usage": null,
         "impact": null,
         "id": 39
+      },
+      {
+        "name": "is used by",
+        "code_id": "used_by",
+        "description": "passive form of 'uses' when the dependent phrase is the subject e.g. cent is used by Euro",
+        "plural": "are used by",
+        "reverse": "uses",
+        "rev_plural": "use",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 40
+      },
+      {
+        "name": "can be made of",
+        "code_id": "can_be_made_of",
+        "description": "to specify possible materials or composition options e.g. a porringer can be made of plastic",
+        "plural": "can be made of",
+        "reverse": "can make",
+        "rev_plural": "can make",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 41
+      },
+      {
+        "name": "can be packed in",
+        "code_id": "can_be_packed_in",
+        "description": "to specify possible packaging options e.g. a blueberry can be packed in a plastic porringer",
+        "plural": "can be packed in",
+        "reverse": "can pack",
+        "rev_plural": "can pack",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 42
+      },
+      {
+        "name": "used for",
+        "code_id": "used_for",
+        "description": "to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel)",
+        "plural": "are used for",
+        "reverse": "uses",
+        "rev_plural": "uses",
+        "name_in_formula": null,
+        "usage": null,
+        "impact": null,
+        "id": 43
       }
     ],
     "phrase_types": [

@@ -78,6 +78,7 @@ noun definitions: `docs/llm/architecture.md`.
 - Disambiguate an ambiguous *word* with qualifier triples via the `must be one of` verb — define the word once, reference the triples; display the bare word, qualifier in the tooltip.
 - A triple's `from`/`verb`/`to` key is unique within an import; split a clashing key with an intermediate building-block triple.
 - A triple whose `from`/`to` is a *named* triple must carry its own explicit `name` — but never repeat the auto-generated `<from> <verb> <to>` as the `name` (the importer builds that for you; only set `name` when it differs or would clash).
+- Phrase names start lower-case unless the first token is a proper noun / ticker / acronym; sentence-case caption copies (`"Gross profit"`) split the same concept in two.
 - Import files are self-consistent: every assigned phrase, and every triple `from`/`to`, is defined in the same file (re-declare base words name-only).
 - Assign an import formula to its *input* phrase(s) (`assigned_word` / `assigned`), never to its result.
 - Qualify a value as specifically as the data allows; build qualifiers as triples from single words; omit `"share":"public"` (the default).
