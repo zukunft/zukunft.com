@@ -789,6 +789,7 @@ class import
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $val_per_sec = $cfg->get_by([words::VALUES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $frm_per_sec = $cfg->get_by([words::FORMULAS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $res_per_sec = $cfg->get_by([words::FORMULAS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $msk_per_sec = $cfg->get_by([words::VIEWS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $cmp_per_sec = $cfg->get_by([words::COMPONENTS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $usr_per_sec = $cfg->get_by([words::USERS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
@@ -861,7 +862,12 @@ class import
                 $usr_msg->merge($this->dto_get_formulas($frm_array, $dto, $usr_msg, $frm_per_sec));
                 $this->step_end($dto->formula_list()->count(), $frm_per_sec);
             }
-            // TODO Prio 0 add json_fields::RESULTS
+            if (key_exists(json_fields::RESULTS, $json_array)) {
+                $res_array = $json_array[json_fields::RESULTS];
+                $this->step_start(msg_id::COUNT, result::class, count($res_array), $step_time);
+                $usr_msg->merge($this->dto_get_results($res_array, $dto, $usr_msg, $res_per_sec));
+                $this->step_end($dto->result_list()->count(), $res_per_sec);
+            }
             // TODO Prio 0 add json_fields::CALC_VALIDATION
             if (key_exists(json_fields::COMPONENTS, $json_array)) {
                 $cmp_array = $json_array[json_fields::COMPONENTS];
@@ -1259,6 +1265,32 @@ class import
                 $i++;
             }
             $this->display_progress($i, $per_sec, $frm->dsp_id());
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the pre-calculated results from the json array to the data object
+     * @param array $json_array the result part of the import json
+     * @param data_object $dto the data object that should be filled
+     * @param float $per_sec the expected number of results that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_results(
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
+    ): user_message
+    {
+        $i = 0;
+        foreach ($json_array as $res_json) {
+            $res = new result($this->usr);
+            if ($res->import_mapper($res_json, $usr_msg, $dto)) {
+                $dto->add_result($res);
+                $i++;
+            }
+            $this->display_progress($i, $per_sec, $res->dsp_id());
         }
         return $usr_msg;
     }

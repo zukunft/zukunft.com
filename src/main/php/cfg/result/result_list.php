@@ -1188,6 +1188,20 @@ class result_list extends sandbox_value_list
     }
 
     /**
+     * add a result to the list without checking for duplicates
+     * used by the json import where the result has no db id yet
+     * @param result|null $res_to_add the result object to be added to the list
+     */
+    function add_result_direct(?result $res_to_add): void
+    {
+        if ($res_to_add != null) {
+            $lst = $this->lst();
+            $lst[] = $res_to_add;
+            $this->set_lst($lst);
+        }
+    }
+
+    /**
      * combine two calculation queues
      */
     function merge(result_list $lst_to_merge): result_list

@@ -45,6 +45,8 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_REF . 'ref.php';
@@ -101,6 +103,8 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
@@ -154,6 +158,7 @@ class data_object
     private value_list $val_lst;
     private formula_list $frm_lst;
     private formula_link_list $frm_lnk_lst;
+    private result_list $res_lst;
     private term_list $trm_lst;
     private bool $trm_lst_dirty;
     private view_list $msk_lst;
@@ -197,6 +202,7 @@ class data_object
         $this->val_lst = new value_list($usr);
         $this->frm_lst = new formula_list($usr);
         $this->frm_lnk_lst = new formula_link_list($usr);
+        $this->res_lst = new result_list($usr);
         $this->trm_lst = new term_list($usr);
         $this->trm_lst_dirty = false;
         $this->msk_lst = new view_list($usr);
@@ -398,6 +404,14 @@ class data_object
     function formula_link_list(): formula_link_list
     {
         return $this->frm_lnk_lst;
+    }
+
+    /**
+     * @return result_list with the pre-calculated results of this data object
+     */
+    function result_list(): result_list
+    {
+        return $this->res_lst;
     }
 
     /**
@@ -846,6 +860,16 @@ class data_object
     function add_value(value_base $val): void
     {
         $this->val_lst->add_value_direct($val);
+    }
+
+    /**
+     * add a pre-calculated result to the list
+     * @param result $res a result that has been mapped from the import json
+     * @return void
+     */
+    function add_result(result $res): void
+    {
+        $this->res_lst->add_result_direct($res);
     }
 
     function add_message(msg_id $msg): void

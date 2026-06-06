@@ -399,6 +399,7 @@ class json_fields
     const string EXPRESSION = 'expression';
     const string ASSIGNED_WORD = 'assigned_word';
     const string FORMULAS = 'formulas';
+    const string RESULTS = 'results';
     const string FORMULA_LINKS = 'formula_links';
     // TODO Prio 2 cleanup and use fields with *_id only for API messages and move const to this section
     //             use phrase_type (without id) for im- and export where the name is used
