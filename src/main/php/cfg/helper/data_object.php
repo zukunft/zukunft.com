@@ -159,6 +159,7 @@ class data_object
     private formula_list $frm_lst;
     private formula_link_list $frm_lnk_lst;
     private result_list $res_lst;
+    private result_list $res_chk_lst;
     private term_list $trm_lst;
     private bool $trm_lst_dirty;
     private view_list $msk_lst;
@@ -203,6 +204,7 @@ class data_object
         $this->frm_lst = new formula_list($usr);
         $this->frm_lnk_lst = new formula_link_list($usr);
         $this->res_lst = new result_list($usr);
+        $this->res_chk_lst = new result_list($usr);
         $this->trm_lst = new term_list($usr);
         $this->trm_lst_dirty = false;
         $this->msk_lst = new view_list($usr);
@@ -412,6 +414,14 @@ class data_object
     function result_list(): result_list
     {
         return $this->res_lst;
+    }
+
+    /**
+     * @return result_list with the pre-calculated results of this data object used for the consistency cjhecks
+     */
+    function result_check_list(): result_list
+    {
+        return $this->res_chk_lst;
     }
 
     /**
@@ -872,6 +882,16 @@ class data_object
         $this->res_lst->add_result_direct($res);
     }
 
+    /**
+     * add a pre-calculated result to the list that should also be used for the import consistency check
+     * @param result $res a result that has been mapped from the import json
+     * @return void
+     */
+    function add_calc_validation(result $res): void
+    {
+        $this->res_chk_lst->add_result_direct($res);
+    }
+
     function add_message(msg_id $msg): void
     {
         $this->usr_msg->add_id($msg);
@@ -964,16 +984,7 @@ class data_object
         if ($this->save_triples($usr_msg, $imp, $phr_lst)) {
             $phr_lst = $this->phrase_list();
             foreach ($this->value_list()->lst() as $val) {
-                foreach ($val->phrase_list()->lst() as $phr) {
-                    if ($phr->id() == 0) {
-                        if ($phr->name() == '') {
-                            $usr_msg->add_warning_text('phrase id and name missing in ' . $phr->dsp_id());
-                        } else {
-                            $phr_reloaded = $phr_lst->get_by_name($phr->name());
-                            $this->set_phrase_id($phr, $phr_reloaded, $usr_msg);
-                        }
-                    }
-                }
+                $this->resolve_phrase_list_ids($val->phrase_list(), $phr_lst, $usr_msg);
             }
         }
 
@@ -987,7 +998,9 @@ class data_object
                 $phr = $ref->phrase();
                 if ($phr->id() == 0) {
                     if ($phr->name() == '') {
-                        $usr_msg->add_warning_text('phrase id and name missing in ' . $phr->dsp_id());
+                        $usr_msg->add(msg_id::PHRASE_ID_AND_NAME_MISSING_IN, [
+                            msg_id::VAR_NAME => $phr->dsp_id()
+                        ]);
                     } else {
                         $phr_reloaded = $phr_lst->get_by_name($phr->name());
                         $this->set_phrase_id($phr, $phr_reloaded, $usr_msg);
@@ -1040,6 +1053,13 @@ class data_object
             $this->save_formulas($usr_msg, $imp, $trm_lst);
         } else {
             log_debug('formulas not imported because ' . $usr_msg->all_message_text());
+        }
+
+        // import the pre-calculated results after the formulas so the formula ids are set
+        if ($usr_msg->is_ok()) {
+            $this->save_results($usr_msg, $imp);
+        } else {
+            log_debug('results not imported because ' . $usr_msg->all_message_text());
         }
 
         // import the components before the view because the views use the components
@@ -1269,6 +1289,76 @@ class data_object
     private function save_views(user_message $usr_msg, import $imp): void
     {
         $this->save_sandbox_list($imp, words::VIEWS, $this->view_list(), view::class, $usr_msg);
+    }
+
+    /**
+     * add or update all pre-calculated results to the database
+     * called after save_formulas so each result's formula reference already has its db id
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param import $imp the import object that includes the start time of the import
+     */
+    private function save_results(user_message $usr_msg, import $imp): void
+    {
+        global $cfg;
+
+        $res_per_sec = $cfg->get_by([words::RESULTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+
+        $res_lst = $this->result_list();
+        if (!$res_lst->is_empty()) {
+            $this->set_result_phrase_ids($usr_msg);
+            $res_est = $res_lst->count() / $res_per_sec;
+            $imp->step_start(msg_id::SAVE, result::class, $res_lst->count(), $res_est);
+            $res_lst->save($usr_msg, $imp, $res_per_sec);
+            $imp->step_end($res_lst->count(), $res_per_sec);
+        }
+    }
+
+    /**
+     * resolve the db phrase ids on each result's grp and src_grp phrase list and rebuild
+     * the composite group ids — needed so result::save picks the right prime/main table
+     * variant and the prepared statement name carries the correct "_pN" phrase-count suffix
+     * (without this, a 4-phrase and a 1-phrase result would collide under the same name)
+     *
+     * @param user_message $usr_msg warnings are added if a phrase name is missing from the dto
+     */
+    private function set_result_phrase_ids(user_message $usr_msg): void
+    {
+        $phr_lst = $this->phrase_list();
+        foreach ($this->result_list()->lst() as $res) {
+            $this->resolve_phrase_list_ids($res->grp()->phrase_list(), $phr_lst, $usr_msg);
+            $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
+            if ($res->src_grp !== null) {
+                $this->resolve_phrase_list_ids($res->src_grp->phrase_list(), $phr_lst, $usr_msg);
+                $res->set_src_grp($res->src_grp->phrase_list()->get_grp_id(false));
+            }
+        }
+    }
+
+    /**
+     * fill in any missing phrase id in $target by looking up its name in $resolved
+     *
+     * @param phrase_list $target the phrase list whose entries may still have id 0
+     * @param phrase_list $resolved the dto's merged phrase list (words + triples already saved)
+     * @param user_message $usr_msg warning sink for the unresolvable case
+     */
+    private function resolve_phrase_list_ids(
+        phrase_list  $target,
+        phrase_list  $resolved,
+        user_message $usr_msg
+    ): void
+    {
+        foreach ($target->lst() as $phr) {
+            if ($phr->id() == 0) {
+                if ($phr->name() == '') {
+                    $usr_msg->add(msg_id::PHRASE_ID_AND_NAME_MISSING_IN, [
+                        msg_id::VAR_NAME => $phr->dsp_id()
+                    ]);
+                } else {
+                    $phr_reloaded = $resolved->get_by_name($phr->name());
+                    $this->set_phrase_id($phr, $phr_reloaded, $usr_msg);
+                }
+            }
+        }
     }
 
     /**

@@ -1295,6 +1295,8 @@ enum messages: string
     case DB_PHRASE_MISSING = 'phrase '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is unexpected missing in database during import';
+    case PHRASE_ID_AND_NAME_MISSING_IN = 'phrase id and name missing in '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
     case DB_TERM_MISSING = 'term '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is unexpected missing in database during import';

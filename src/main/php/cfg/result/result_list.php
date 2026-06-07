@@ -51,6 +51,7 @@ include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -84,6 +85,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -1199,6 +1201,67 @@ class result_list extends sandbox_value_list
             $lst[] = $res_to_add;
             $this->set_lst($lst);
         }
+    }
+
+    /**
+     * save all pre-calculated results of this list to the database
+     * the formulas and the phrase groups must already exist in the database
+     * so this function is called after the formula save in data_object::save
+     *
+     * @param user_message $msg the message that should be shown to the user in case something went wrong
+     * @param import $imp the import object that holds the progress display
+     * @param float $est_per_sec the expected number of results that can be saved per second
+     * @return bool true if every result has been saved without error
+     */
+    function save(user_message $msg, import $imp, float $est_per_sec = 0.0): bool
+    {
+        if ($this->is_empty()) {
+            log_info('no results to save');
+        } else {
+            $i = 0;
+            $imp->step_start(msg_id::SAVE, result::class);
+            foreach ($this->lst() as $res) {
+                if ($res->grp()->id() == 0) {
+                    $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
+                }
+                if ($this->can_save_result($res)) {
+                    $res->save($msg);
+                    $i++;
+                }
+                $imp->display_progress($i, $est_per_sec, $res->dsp_id());
+            }
+            $imp->step_end($i);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * true when the result can be saved through the current result::save infrastructure
+     *
+     * result::save writes source_group_id as a bigint column on results_main; that only
+     * works when the source group is "prime" (≤4 phrases, encoded as a 64-bit int). A
+     * 5+ phrase source group encodes as an alpha-num string and would need a separate
+     * group-save step (insert a row in groups_main, then use its bigint id) — that step
+     * does not yet exist in the import path. Until it does, skip such results with a
+     * warning rather than crashing the whole import.
+     *
+     * TODO Prio 0 save non-prime source groups via group_list::save, then drop this guard
+     *
+     * @param result $res the imported result whose save would otherwise hit the schema gap
+     * @return bool true when the result is safe to hand to result::save
+     */
+    private function can_save_result(result $res): bool
+    {
+        $result = true;
+        if ($res->src_grp !== null and !$res->src_grp->is_prime()) {
+            log_warning(
+                'skipping import of result ' . $res->dsp_id()
+                . ' because its source group has more than 4 phrases'
+                . ' and saving non-prime source groups is not yet supported'
+            );
+            $result = false;
+        }
+        return $result;
     }
 
     /**
