@@ -58,10 +58,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_FORMULA . 'formula_map.php';
+include_once paths::MODEL_ELEMENT . 'element_group.php';
+include_once paths::MODEL_FORMULA . 'figure.php';
+include_once paths::MODEL_FORMULA . 'figure_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -77,6 +81,8 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -453,27 +459,348 @@ class formula extends formula_map
      */
 
     /**
-     * create a list of formula results with values instead of terms
+     * load all data needed to calculate the formula numbers into a data object
+     * so that the calculation itself (to_num_new) does not need to retrieve any data
      *
      * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
      * @param user_message $usr_msg to collect the problems and solution for the user to pick
-     * @param term_list|null $trm_lst list of preloaded / cached terms
-     * @param value_list|null $val_lst list of preloaded / cached values
-     * TODO verbs
+     * @param phrase_list|null $pre_phr_lst list of preloaded / cached terms
+     * @return data_object the cache with the terms needed for the calculation
+     */
+    function load_data_for_calc(
+        phrase_list  $phr_lst,
+        user_message $usr_msg,
+        ?phrase_list $pre_phr_lst = null
+    ): data_object
+    {
+        $dto = new data_object($this->get_user());
+
+        // build the reference expression that defines which terms are needed
+        $pre_trm_lst = $pre_phr_lst?->term_list();
+        $exp = new expression($this);
+        $exp->set_ref_text($this->ref_text, $pre_trm_lst);
+        $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
+
+        // reload missing terms from the database (the data retrieval part of to_num)
+        $trm_lst = $this->load_exp_terms($usr_msg, $pre_trm_lst, $exp);
+        $dto->set_term_list($trm_lst);
+
+        return $dto;
+    }
+
+    /**
+     * fill the formula in the reference format with numbers based on the data preloaded by load_data_for_calc;
+     * this is the calculation part of to_num that does not load the terms itself
+     * TODO move the value retrieval (element_group::figures) into load_data_for_calc as well
+     *
+     * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
+     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param data_object $dto the cache filled by load_data_for_calc with the terms for the calculation
      * @return result_list all results of the formula for the given phrase list
      */
     function to_num_new(
         phrase_list  $phr_lst,
         user_message $usr_msg,
-        ?term_list   $trm_lst = null,
-        ?value_list  $val_lst = null
+        data_object  $dto
     ): result_list
     {
-        // create an empty result list that is filled up with the results of the formula calculation
-        $res_lst = new result_list($this->get_user());
+        log_debug('get numbers for ' . $this->dsp_id() . ' and ' . $phr_lst->dsp_id());
+        $lib = new library();
 
-        $exp = $this->expression_new($usr_msg, $trm_lst);
+        // use the terms preloaded by load_data_for_calc
+        $trm_lst = $dto->term_list();
+
+        // create the result list and a master result object to fill with the numbers
+        $res_lst = new result_list($this->get_user());
+        $res_init = $this->create_result($phr_lst);
+
+        // load the formula element groups e.g. "sales differentiator sector" and "Total sales"
+        $exp = $this->expression($trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
+        log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
+
+        // replace each element group symbol with the matching number(s)
+        $all_elm_grp_filled = true;
+        foreach ($elm_grp_lst->lst() as $elm_grp) {
+            if (!$this->fill_element_group($res_lst, $elm_grp, $trm_lst, $phr_lst, $res_init)) {
+                $all_elm_grp_filled = false;
+            }
+        }
+
+        // switch off incomplete results and calculate the final numbers
+        $this->switch_off_incomplete_results($res_lst, $phr_lst, $all_elm_grp_filled);
+        $this->calc_results($res_lst, $phr_lst);
+
         return $res_lst;
+    }
+
+    /**
+     * replace one element group's symbol with the matching figure number(s) in the result list
+     * @param result_list $res_lst the list of results that is updated in place with the filled-in numbers
+     * @param element_group $elm_grp the formula element group whose symbol should be replaced by its figure(s)
+     * @param term_list $trm_lst the preloaded terms used to select the figures for the element group
+     * @param phrase_list $phr_lst the calculation context used to select the values e.g. "ABB"
+     * @param result $res_init the master result used as a placeholder when the result list is still empty
+     * @return bool false if no figure was found for the element group (so a needed value is missing)
+     */
+    function fill_element_group(
+        result_list   $res_lst,
+        element_group $elm_grp,
+        term_list     $trm_lst,
+        phrase_list   $phr_lst,
+        result        $res_init
+    ): bool
+    {
+        $lib = new library();
+        $all_filled = true;
+
+        // get the figures for the element group (a figure is a user value or a calculated result)
+        $elm_grp->phr_lst = clone $phr_lst;
+        $elm_grp->build_symbol();
+        $fig_lst = $elm_grp->figures($trm_lst);
+        log_debug('figures ' . $fig_lst->dsp_id() . ' (' . $lib->dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
+
+        if ($fig_lst->lst() != null) {
+            if (count($fig_lst->lst()) == 1) {
+                $this->fill_results_with_one_figure($res_lst, $fig_lst, $res_init);
+            } elseif (count($fig_lst->lst()) > 1) {
+                $this->fill_results_with_figures($res_lst, $fig_lst, $res_init);
+            } else {
+                log_debug('no figures found for ' . $elm_grp->dsp_id() . ' and ' . $phr_lst->dsp_id());
+                $all_filled = false;
+            }
+        }
+        return $all_filled;
+    }
+
+    /**
+     * fill the single figure into each result of the list
+     * @param result_list $res_lst the list of results that is updated in place with the figure number
+     * @param figure_list $fig_lst the figures of the element group; here it contains exactly one figure
+     * @param result $res_init the master result added as a placeholder when the result list is still empty
+     */
+    function fill_results_with_one_figure(result_list $res_lst, figure_list $fig_lst, result $res_init): void
+    {
+        // if no figure is found, use the master result as a placeholder
+        if ($res_lst->lst() != null) {
+            if (count($res_lst->lst()) == 0) {
+                $res_lst->add_obj($res_init);
+            }
+        } else {
+            $res_lst->add_obj($res_init);
+        }
+        // fill each result created by any previous number filling
+        foreach ($res_lst->lst() as $res) {
+            // fill each result created by any previous number filling
+            if (!$res->val_missing) {
+                if ($fig_lst->fig_missing and $this->need_all_val) {
+                    log_debug('figure missing');
+                    $res->val_missing = True;
+                } else {
+                    $fig = $fig_lst->lst()[0];
+                    $res->num_text = str_replace($fig->get_symbol(), $fig->number(), $res->num_text);
+                    if ($res->last_val_update < $fig->last_update()) {
+                        $res->last_val_update = $fig->last_update();
+                    }
+                    log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
+                }
+            }
+        }
+    }
+
+    /**
+     * replicate the results and fill each with one of the multiple figures
+     * @param result_list $res_lst the list of results that is updated in place and grown by one result per extra figure
+     * @param figure_list $fig_lst the figures of the element group; here it contains more than one figure
+     * @param result $res_init the master result added as a placeholder when the result list is still empty
+     */
+    function fill_results_with_figures(result_list $res_lst, figure_list $fig_lst, result $res_init): void
+    {
+        // create the result object only if at least one figure is found
+        if (count($res_lst->lst()) == 0) {
+            $res_lst->add_obj($res_init);
+        }
+        foreach ($res_lst->lst() as $res) {
+            $res_master = clone $res;
+            $fig_nbr = 1;
+            foreach ($fig_lst->lst() as $fig) {
+                if (!$res->val_missing) {
+                    if ($fig_lst->fig_missing and $this->need_all_val) {
+                        log_debug('figure missing');
+                        $res->val_missing = True;
+                    } else {
+                        if ($fig_nbr == 1) {
+                            $this->fill_first_figure($res_lst, $res, $fig);
+                        } else {
+                            $this->fill_next_figure($res_lst, $res, $res_master, $fig);
+                        }
+                        log_debug('figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
+                        $fig_nbr++;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * fill the first figure into the result, splitting off a standard result if needed
+     * @param result_list $res_lst the list of results; a standard result is added to it when the result is split
+     * @param result $res the result that is updated in place with the figure number (and may lose its standard flag)
+     * @param figure $fig the figure (user value or calculated result) whose number replaces the element symbol
+     */
+    function fill_first_figure(result_list $res_lst, result $res, figure $fig): void
+    {
+        // if the result has been the standard result utils now
+        if ($res->is_std()) {
+            // ... and the value is user-specific
+            if (!$fig->is_std()) {
+                // split the result into a standard
+                // get the standard value
+                // $fig_std = ...;
+                $res_std = clone $res;
+                $res_std->num_text = str_replace($fig->get_symbol(), $fig->number(), $res_std->num_text);
+                if ($res_std->last_val_update < $fig->last_update()) {
+                    $res_std->last_val_update = $fig->last_update();
+                }
+                log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
+                $res_lst->add_obj($res_std);
+                // ... and split into a user-specific part
+                $res->is_std = false;
+            }
+        }
+
+        $res->num_text = str_replace($fig->get_symbol(), $fig->number(), $res->num_text);
+        if ($res->last_val_update < $fig->last_update()) {
+            $res->last_val_update = $fig->last_update();
+        }
+        log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
+    }
+
+    /**
+     * clone the master result and fill it with a following figure, splitting off a standard result if needed
+     * @param result_list $res_lst the list of results that the new (and any split standard) result is added to
+     * @param result $res the previous result whose last value update timestamp is kept in sync with the figure
+     * @param result $res_master the template result that is cloned for the new figure (and may lose its standard flag)
+     * @param figure $fig the figure (user value or calculated result) whose number replaces the element symbol
+     */
+    function fill_next_figure(result_list $res_lst, result $res, result $res_master, figure $fig): void
+    {
+        // if the result has been the standard result utils now
+        if ($res_master->is_std()) {
+            // ... and the value is user-specific
+            if (!$fig->is_std()) {
+                // split the result into a standard
+                // get the standard value
+                // $fig_std = ...;
+                $res_std = clone $res_master;
+                $res_std->num_text = str_replace($fig->get_symbol(), $fig->number(), $res_std->num_text);
+                if ($res_std->last_val_update < $fig->last_update()) {
+                    $res_std->last_val_update = $fig->last_update();
+                }
+                log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
+                $res_lst->add_obj($res_std);
+                // ... and split into a user-specific part
+                $res_master->is_std = false;
+            }
+        }
+
+        // for all following result reuse the first result and fill with the next number
+        $res_new = clone $res_master;
+        $res_new->num_text = str_replace($fig->get_symbol(), $fig->number(), $res_new->num_text);
+        if ($res->last_val_update < $fig->last_update()) {
+            $res->last_val_update = $fig->last_update();
+        }
+        log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
+        $res_lst->add_obj($res_new);
+    }
+
+    /**
+     * switch off the results where a needed value is missing
+     * @param result_list $res_lst the list of results that is marked as value-missing in place when incomplete
+     * @param phrase_list $phr_lst the calculation context, used only for the log messages
+     * @param bool $all_filled true if every element group got a figure; if false and all values are needed the results are switched off
+     */
+    function switch_off_incomplete_results(result_list $res_lst, phrase_list $phr_lst, bool $all_filled): void
+    {
+        if ($this->need_all_val) {
+            log_debug('for ' . $phr_lst->dsp_id() . ' all value are needed');
+            if ($all_filled) {
+                log_debug('for ' . $phr_lst->dsp_id() . ' all value are filled');
+            } else {
+                log_debug('some needed values missing for ' . $phr_lst->dsp_id());
+                foreach ($res_lst->lst() as $res) {
+                    log_debug('some needed values missing for ' . $res->dsp_id() . ' so switch off');
+                    $res->val_missing = True;
+                }
+            }
+        }
+    }
+
+    /**
+     * calculate the final numeric result for each result in the list
+     * @param result_list $res_lst the list of results that is calculated and updated in place
+     * @param phrase_list $phr_lst the calculation context passed on to each single result calculation
+     */
+    function calc_results(result_list $res_lst, phrase_list $phr_lst): void
+    {
+        if ($res_lst->lst() != null) {
+            foreach ($res_lst->lst() as $res) {
+                $this->calc_result($res, $phr_lst);
+            }
+        }
+    }
+
+    /**
+     * calculate the numeric result of a single result if it needs an update
+     * @param result $res the result that is parsed and updated in place with the calculated number
+     * @param phrase_list $phr_lst the calculation context, used only for the log messages
+     */
+    function calc_result(result $res, phrase_list $phr_lst): void
+    {
+        // at least the formula update should be used
+        if ($res->last_val_update < $this->last_update) {
+            $res->last_val_update = $this->last_update;
+        }
+        if ($res->num_text == '') {
+            log_err('num text is empty nothing needs to be done, but actually this should never happen');
+        } else {
+            if ($res->last_val_update > $res->last_update()) {
+                if ($this->result_can_calc($res)) {
+                    log_debug('calculate ' . $res->num_text . ' for ' . $phr_lst->dsp_id());
+                    $calc = new calc_internal();
+                    $res->set_number($calc->parse($res->num_text));
+                    $res->is_updated = true;
+                    log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->number() . ' for ' . $res->grp()->phrase_list()->dsp_id());
+                }
+            }
+        }
+    }
+
+    /**
+     * @param result $res the result whose figures are checked for completeness
+     * @return bool true if the result can be calculated (all needed numbers are available)
+     */
+    function result_can_calc(result $res): bool
+    {
+        $lib = new library();
+        $can_calc = false;
+        if ($this->need_all_val) {
+            log_debug('calculate ' . $this->dsp_id() . ' only if all numbers are given');
+            if ($res->val_missing) {
+                log_debug('got some numbers for ' . $this->dsp_id() . ' and ' . $lib->dsp_array($res->phr_ids()));
+            } else {
+                if ($res->is_std) {
+                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $res->name_linked() . ': ' . $res->num_text);
+                } else {
+                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $res->name_linked() . ': ' . $res->num_text . ' (user-specific)');
+                }
+                $can_calc = true;
+            }
+        } else {
+            log_debug('always calculate ' . $this->dsp_id());
+            $can_calc = true;
+        }
+        return $can_calc;
     }
 
     /**
