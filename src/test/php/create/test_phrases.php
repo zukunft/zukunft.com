@@ -816,8 +816,8 @@ class test_phrases
         $lst_imp->add($t_trp->zh_city_low_impact()->phrase());
         $lst_imp->add($t_trp->zh_canton_low_impact()->phrase());
         $lst_imp->add($t_trp->company_zurich_high_impact()->phrase());
-        $lst->fill_by_id($lst_imp);
-        return $lst;
+        $lst_imp->fill_by_id($lst);
+        return $lst_imp;
     }
 
     /**
