@@ -1095,7 +1095,9 @@ class sandbox_list_named extends sandbox_list
 
         // prepare
         $sc = $db_con->sql_creator();
-        $usr_msg = new user_message();
+        // the list's user is the requester for everything done here; downstream callers like
+        // formula_map::del_links read $usr_msg->usr->id() and would dereference null otherwise
+        $usr_msg = new user_message($this->get_user());
 
         // get the objects that need to be added
         $imp->step_start(msg_id::CHECK, $class, $db_lst->count());

@@ -94,11 +94,8 @@ class import_write_tests
         $this->assert_import_json_named($t, $ts, new word($usr),
             words::TEST_ADD, words::TEST_ADD_COM, test_files::IMPORT_WORDS);
 
-        // TODO Prio 0 activate
-        /*
         $this->assert_import_json_named($t, $ts, new verb(),
-            verbs::TEST_ADD_NAME, verbs::TEST_ADD_COM, test_files::IMPORT_VERBS);
-        */
+            verbs::TEST_ADD_NAME, verbs::TEST_ADD_COM, test_files::IMPORT_VERBS, $t_usr->system_user());
 
 
         $this->assert_import_json_named($t, $ts, new triple($usr),
@@ -172,11 +169,8 @@ class import_write_tests
         */
 
 
-        // TODO Prio 0 activate
-        /*
         $this->assert_import_json_named($t, $ts, new formula($usr),
-            formulas::SYSTEM_TEST_ADD, formulas::SYSTEM_TEST_ADD_COM, test_files::IMPORT_FORMULAS );
-        */
+            formulas::SYSTEM_TEST_ADD, formulas::SYSTEM_TEST_ADD_COM, test_files::IMPORT_FORMULAS);
 
         $this->assert_import_json_named($t, $ts, new component($usr),
             components::TEST_ADD_NAME, components::TEST_ADD_COM, test_files::IMPORT_COMPONENTS);
@@ -220,9 +214,18 @@ class import_write_tests
     ): void
     {
         global $usr;
+        global $sys;
 
         if ($usr_req == null) {
             $usr_req = $usr;
+        }
+
+        // some preserved-name gates (e.g. verb::check_preserved) read $sys->usr_req
+        // directly instead of taking the user as a parameter, so the requested user
+        // is swapped in for the import duration and restored on exit
+        $prev_usr_req = $sys?->usr_req;
+        if ($sys !== null) {
+            $sys->usr_req = $usr_req;
         }
 
         $lib = new library();
@@ -267,6 +270,10 @@ class import_write_tests
         }
         $sbx->load_by_name($add_name);
         $t->assert($test_name, $sbx->id(), 0);
+
+        if ($sys !== null) {
+            $sys->usr_req = $prev_usr_req;
+        }
     }
 
     /**
