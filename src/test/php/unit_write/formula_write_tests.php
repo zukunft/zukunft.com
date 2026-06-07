@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
@@ -264,7 +265,9 @@ class formula_write_tests
             $res = null;
             $result = 'result list is empty';
         }
-        $target = '=(8.505251-8.438822)/8.438822';
+        $target = '=(' . values::CH_INHABITANTS_2020_IN_MIO . '-' .
+            values::CH_INHABITANTS_2019_IN_MIO . ')/' .
+            values::CH_INHABITANTS_2019_IN_MIO;
         $t->assert('formula->to_num "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target);
 
         if ($res_lst->lst() != null) {
@@ -272,6 +275,31 @@ class formula_write_tests
             $result = $res->number();
             $target = results::TV_INCREASE_LONG;
             $t->assert('result->save_if_updated "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target);
+        }
+
+        // the same calculation via the split path: load_data_for_calc fills the cache and to_num_new computes
+        // use a separate message object so the shared $usr_msg (and its user) is not overwritten
+        $usr_msg_calc = new user_message($t->usr1);
+        $dto = $frm->load_data_for_calc($phr_lst, $usr_msg_calc);
+        $res_lst_new = $frm->to_num_new($phr_lst, $usr_msg_calc, $dto);
+        if ($res_lst_new->lst() != null) {
+            $res_new = $res_lst_new->lst()[0];
+            $result = $res_new->num_text;
+        } else {
+            $res_new = null;
+            $result = 'result list is empty';
+        }
+        $target = '=(' . values::CH_INHABITANTS_2020_IN_MIO . '-' .
+            values::CH_INHABITANTS_2019_IN_MIO . ')/' .
+            values::CH_INHABITANTS_2019_IN_MIO;
+        $t->assert('formula->to_num_new "' . $frm->name() . '" for a term list ' . $phr_lst->dsp_id(), $result, $target);
+
+        // to_num_new calculates the same numeric result as to_num
+        if ($res_lst_new->lst() != null) {
+            $res_new->save_if_updated();
+            $result = $res_new->number();
+            $target = results::TV_INCREASE_LONG;
+            $t->assert('result->save_if_updated via to_num_new "' . $frm->name() . '" for a term list ' . $phr_lst->dsp_id(), $result, $target);
         }
 
         $res_lst = $frm->calc($phr_lst);

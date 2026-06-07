@@ -1099,7 +1099,6 @@ class formula extends formula_map
     function calc(phrase_list $phr_lst): ?array
     {
         $result = null;
-        $lib = new library();
 
         // check the parameters
         if (!isset($phr_lst)) {
@@ -1107,131 +1106,166 @@ class formula extends formula_map
         } else {
             log_debug('->calc ' . $this->dsp_id() . ' for ' . $phr_lst->dsp_id());
 
-            // check if an update of the result is needed
-            /*
-      $needs_update = true;
-      if ($this->has_verb ($this->ref_text, $this->get_user()->id)) {
-        $needs_update = true; // this case will be checked later
-      } else {
-        $frm_wrd_ids = $this->wrd_ids($this->ref_text, $this->get_user()->id());
-      } */
-
-            // reload the formula if needed, but this should be done by the calling function, so create an info message
-            if ($this->name() == '' or is_null($this->name_wrd)) {
-                if ($this->id() > 0) {
-                    $this->load_by_id($this->id());
-                    log_info('formula ' . $this->dsp_id() . ' reloaded.', 'formula->calc');
-                } else {
-                    log_warning('formula ' . $this->dsp_id() . ' cannot be reloaded');
-                }
-            }
-
-            // build the formula expression for calculating the result
-            $exp = new expression($this);
-            $exp->set_ref_text($this->ref_text);
-
-            // the phrase left of the equation sign should be added to the result
-            // e.g. percent for the increase formula
+            // data retrieval: reload the formula and calculate the numeric results
+            $this->reload_if_incomplete();
+            $res_add_phr_lst = null;
             $has_result_phrases = false;
-            $res_lst = new result_list($this->get_user());
-            if ($exp->is_valid()) {
-                $res_add_phr_lst = $exp->load_result_phrases();
-                if (isset($res_add_phr_lst)) {
-                    log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
-                    $has_result_phrases = true;
-                }
-                // use only the part right of the equation sign for the result calculation
-                $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
-                log_debug('->calc got result words of ' . $this->ref_text_r);
+            $res_lst = $this->build_result_list($phr_lst, $res_add_phr_lst, $has_result_phrases);
 
-                // get the list of the numeric results
-                // $res_lst is a list of all results saved in the database
-                $res_lst = $this->to_num($phr_lst);
-                if (isset($res_add_phr_lst)) {
-                    log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
-                }
-            }
-
-            // save the numeric results
-            if ($res_lst->lst() != null) {
-                foreach ($res_lst->lst() as $res) {
-                    if ($res->val_missing) {
-                        // check if res needs to be removed from the database
-                        log_debug('some values missing for ' . $res->dsp_id());
-                    } else {
-                        if ($res->is_updated) {
-                            log_debug('formula result ' . $res->dsp_id() . ' is updated');
-
-                            // make common assumptions on the word list
-
-                            // apply general rules to the result words
-                            if (isset($res_add_phr_lst)) {
-
-                                // add the phrases left of the equal sign to the result e.g. percent for the increase formula
-                                log_debug('result words "' . $res_add_phr_lst->dsp_id() . '" defined for ' . $res->grp()->dsp_id());
-                                $res_add_wrd_lst = $res_add_phr_lst->wrd_lst_all();
-
-                                // if the result words contains "percent" remove any measure word from the list, because a relative value is expected without measure
-                                if ($res_add_wrd_lst->has_percent()) {
-                                    log_debug('has percent');
-                                    $res->grp()->phrase_list()->ex_measure();
-                                    log_debug('measure words removed from ' . $res->grp()->phrase_list()->dsp_id());
-                                }
-
-                                // if in the formula is defined, that the result is in percent
-                                // and the values used are in millions, the result is only in percent, but not in millions
-                                // TODO check that all value have the same scaling and adjust the scaling if needed
-                                if ($res_add_wrd_lst->has_percent()) {
-                                    $res->grp()->phrase_list()->ex_scaling();
-                                    log_debug('scaling words removed from ' . $res->grp()->phrase_list()->dsp_id());
-                                    // maybe add the scaling word to the result words to remember based on which words the result has been created,
-                                    // but probably this is not needed, because the source words are also saved
-                                    //$scale_wrd_lst = $res_add_wrd_lst->scaling_lst ();
-                                    //$res->grp()->phrase_list()->merge($scale_wrd_lst->lst);
-                                    //zu_debug(self::class . '->calc -> added the scaling word '.implode(",",$scale_wrd_lst->names()).' to the result words "'.implode(",",$res->grp()->phrase_list()->names()).'"');
-                                }
-
-                                // if the formula is a scaling formula, remove the obsolete scaling word from the source words
-                                if ($res_add_wrd_lst->has_scaling()) {
-                                    $res->grp()->phrase_list()->ex_scaling();
-                                    log_debug('scaling words removed from ' . $res->grp()->phrase_list()->dsp_id());
-                                }
-
-                            }
-
-                            // add the formula result word
-                            // e.g. in the increase formula "percent" should be on the left side of the equation because the result is supposed to be in percent
-                            if (isset($res_add_phr_lst)) {
-                                log_debug('add words ' . $res_add_phr_lst->dsp_id() . ' to the result');
-                                foreach ($res_add_phr_lst->lst() as $frm_result_wrd) {
-                                    $res->grp()->phrase_list()->add($frm_result_wrd);
-                                }
-                                log_debug('added words ' . $res_add_phr_lst->dsp_id() . ' to the result ' . $res->grp()->phrase_list()->dsp_id());
-                            }
-
-                            // add the formula name also to the result phrase e.g. increase
-                            if (is_null($this->name_wrd)) {
-                                $this->reload_wrd();
-                            }
-                            if (is_null($this->name_wrd)) {
-                                log_warning('Cannot load word for formula ' . $this->dsp_id());
-                            } else {
-                                $res->grp()->phrase_list()->add($this->name_wrd->phrase());
-                            }
-
-                            $res = $res->save_if_updated($has_result_phrases);
-
-                        }
-                    }
-                }
-            }
-
+            // data save: apply the result word rules and store the updated results
+            $this->save_calc_results($res_lst, $res_add_phr_lst, $has_result_phrases);
 
             $result = $res_lst->lst();
         }
 
         log_debug('done');
         return $result;
+    }
+
+    /**
+     * data retrieval: reload the formula from the database if its name or name word is not set
+     */
+    function reload_if_incomplete(): void
+    {
+        if ($this->name() == '' or is_null($this->name_wrd)) {
+            if ($this->id() > 0) {
+                $this->load_by_id($this->id());
+                log_info('formula ' . $this->dsp_id() . ' reloaded.', 'formula->calc');
+            } else {
+                log_warning('formula ' . $this->dsp_id() . ' cannot be reloaded');
+            }
+        }
+    }
+
+    /**
+     * data retrieval and calculation: build the expression and get the numeric results via to_num
+     * @param phrase_list $phr_lst the calculation context used to select the values
+     * @param phrase_list|null $res_add_phr_lst set to the phrases left of the equation sign added to the result
+     * @param bool $has_result_phrases set to true if the formula defines phrases to add to the result
+     * @return result_list the numeric results to be saved
+     */
+    function build_result_list(phrase_list $phr_lst, ?phrase_list &$res_add_phr_lst, bool &$has_result_phrases): result_list
+    {
+        $lib = new library();
+
+        // build the formula expression for calculating the result
+        $exp = new expression($this);
+        $exp->set_ref_text($this->ref_text);
+
+        // the phrase left of the equation sign is added to the result e.g. percent for the increase formula
+        $has_result_phrases = false;
+        $res_lst = new result_list($this->get_user());
+        if ($exp->is_valid()) {
+            $res_add_phr_lst = $exp->load_result_phrases();
+            if (isset($res_add_phr_lst)) {
+                log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
+                $has_result_phrases = true;
+            }
+            // use only the part right of the equation sign for the result calculation
+            $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
+            log_debug('->calc got result words of ' . $this->ref_text_r);
+
+            // get the list of the numeric results saved in the database
+            $res_lst = $this->to_num($phr_lst);
+            if (isset($res_add_phr_lst)) {
+                log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
+            }
+        }
+        return $res_lst;
+    }
+
+    /**
+     * data save: store each updated and complete result of the list
+     * @param result_list $res_lst the calculated results to store
+     * @param phrase_list|null $res_add_phr_lst the phrases to add to each result before saving
+     * @param bool $has_result_phrases passed on to result::save_if_updated
+     */
+    function save_calc_results(result_list $res_lst, ?phrase_list $res_add_phr_lst, bool $has_result_phrases): void
+    {
+        if ($res_lst->lst() != null) {
+            foreach ($res_lst->lst() as $res) {
+                if ($res->val_missing) {
+                    // check if res needs to be removed from the database
+                    log_debug('some values missing for ' . $res->dsp_id());
+                } else {
+                    if ($res->is_updated) {
+                        $this->save_calc_result($res, $res_add_phr_lst, $has_result_phrases);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * data save: add the result words to one result and store it
+     * @param result $res the calculated result that is updated and saved
+     * @param phrase_list|null $res_add_phr_lst the phrases to add to the result before saving
+     * @param bool $has_result_phrases passed on to result::save_if_updated
+     */
+    function save_calc_result(result $res, ?phrase_list $res_add_phr_lst, bool $has_result_phrases): void
+    {
+        log_debug('formula result ' . $res->dsp_id() . ' is updated');
+
+        // apply the result word rules and add the result phrases (calculation, no data access)
+        if (isset($res_add_phr_lst)) {
+            $this->apply_result_phrases($res, $res_add_phr_lst);
+        }
+
+        // add the formula name word to the result phrases (data retrieval via reload_wrd)
+        $this->add_formula_name_phrase($res);
+
+        $res->save_if_updated($has_result_phrases);
+    }
+
+    /**
+     * calculation (unit testable): apply the result word rules to a result and add the result phrases;
+     * e.g. for a percent result the measure and scaling words are removed and 'percent' is added
+     * @param result $res the result whose phrase list is normalised and extended in place
+     * @param phrase_list $res_add_phr_lst the phrases left of the equation sign that define the result
+     */
+    function apply_result_phrases(result $res, phrase_list $res_add_phr_lst): void
+    {
+        log_debug('result words "' . $res_add_phr_lst->dsp_id() . '" defined for ' . $res->grp()->dsp_id());
+        $res_add_wrd_lst = $res_add_phr_lst->wrd_lst_all();
+
+        // a percent result is relative, so remove any measure word from the result words
+        if ($res_add_wrd_lst->has_percent()) {
+            $res->grp()->phrase_list()->ex_measure();
+            log_debug('measure words removed from ' . $res->grp()->phrase_list()->dsp_id());
+        }
+        // a percent result is not scaled e.g. not in millions even if the used values are
+        if ($res_add_wrd_lst->has_percent()) {
+            $res->grp()->phrase_list()->ex_scaling();
+            log_debug('scaling words removed from ' . $res->grp()->phrase_list()->dsp_id());
+        }
+        // a scaling formula removes the obsolete scaling word from the source words
+        if ($res_add_wrd_lst->has_scaling()) {
+            $res->grp()->phrase_list()->ex_scaling();
+            log_debug('scaling words removed from ' . $res->grp()->phrase_list()->dsp_id());
+        }
+
+        // add the result phrases to the result group e.g. percent for the increase formula
+        foreach ($res_add_phr_lst->lst() as $frm_result_wrd) {
+            $res->grp()->phrase_list()->add($frm_result_wrd);
+        }
+        log_debug('added words ' . $res_add_phr_lst->dsp_id() . ' to the result ' . $res->grp()->phrase_list()->dsp_id());
+    }
+
+    /**
+     * data retrieval: add the formula name word (reloaded if needed) to the result phrases
+     * @param result $res the result whose phrase list gets the formula name word
+     */
+    function add_formula_name_phrase(result $res): void
+    {
+        // add the formula name also to the result phrase e.g. increase
+        if (is_null($this->name_wrd)) {
+            $this->reload_wrd();
+        }
+        if (is_null($this->name_wrd)) {
+            log_warning('Cannot load word for formula ' . $this->dsp_id());
+        } else {
+            $res->grp()->phrase_list()->add($this->name_wrd->phrase());
+        }
     }
 
     /**

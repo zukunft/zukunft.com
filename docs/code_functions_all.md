@@ -40,8 +40,14 @@
     \-- to_num - section for function to_num not yet defined that it should be calc in /formula/formula.php
     \-- calc_requests - section for function calc_requests not yet defined that it should be calc in /formula/formula.php
     \-- calc - section for function calc not yet defined that it should be calc in /formula/formula.php
-    \-- calc_with - section for function calc_with not yet defined that it should be calculate the formula results based on a given figure list in /formula/formula.php
-    \-- expression_new - section for function expression_new not yet defined that it should be calculate the formula results based on a given figure list in /formula/formula.php
+    \-- reload_if_incomplete - section for function reload_if_incomplete is expected to be related in /formula/formula.php
+    \-- build_result_list - section for function build_result_list not yet defined that it should be calc in /formula/formula.php
+    \-- save_calc_results - section for function save_calc_results is expected to be save in /formula/formula.php
+    \-- save_calc_result - section for function save_calc_result is expected to be save in /formula/formula.php
+    \-- apply_result_phrases - section for function apply_result_phrases not yet defined that it should be calc in /formula/formula.php
+    \-- add_formula_name_phrase - section for function add_formula_name_phrase not yet defined that it should be calc in /formula/formula.php
+    \-- calc_with - section for function calc_with not yet defined that it should be calc in /formula/formula.php
+    \-- expression_new - section for function expression_new not yet defined that it should be calc in /formula/formula.php
     \-- get_res_lst - section for function get_res_lst is expected to be set and get in /formula/formula.php
     \-- term_list - section for function term_list not yet defined that it should be expression in /formula/formula.php
     \-- wrd_ids - section for function wrd_ids not yet defined that it should be expression in /formula/formula.php
@@ -816,7 +822,18 @@
         \-- formula - fill the formula in the reference format with numbers
     \-- calc
         \-- formula - calculate the result for one formula for one user
-\-- calculate the formula results based on a given figure list
+    \-- reload_if_incomplete
+        \-- formula - data retrieval: reload the formula from the database if its name or name word is not set
+    \-- build_result_list
+        \-- formula - data retrieval and calculation: build the expression and get the numeric results via to_num
+    \-- save_calc_results
+        \-- formula - data save: store each updated and complete result of the list
+    \-- save_calc_result
+        \-- formula - data save: add the result words to one result and store it
+    \-- apply_result_phrases
+        \-- formula - calculation (unit testable): apply the result word rules to a result and add the result phrases;
+    \-- add_formula_name_phrase
+        \-- formula - data retrieval: add the formula name word (reloaded if needed) to the result phrases
     \-- calc_with
         \-- formula - calculate the formula results based on a given figure list
     \-- expression_new
