@@ -148,11 +148,10 @@ class expression_write_tests
         $t->assert('element_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // ... and all element groups used in the formula
-        $elm_grp_lst = $exp_sector->element_grp_lst();
+        $elm_grp_lst = $exp_sector->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->name();
         $target = '"country,can be used as a differentiator for,Canton","System Test Word Total"';
-        // TODO Prio 0 activate
-        //$t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
+        $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // test getting the phrases if the formula contains a verb
         // not sure if test is correct!

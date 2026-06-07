@@ -298,6 +298,15 @@ class result extends sandbox_value
             }
         }
 
+        if (key_exists(json_fields::CONTEXT, $in_ex_json)) {
+            $src_phr_lst = new phrase_list($this->get_user());
+            $src_phr_lst->import_mapper($in_ex_json[json_fields::CONTEXT], $msg, $dto);
+            if ($msg->is_ok()) {
+                $src_grp = $src_phr_lst->get_grp_id(false);
+                $this->set_src_grp($src_grp);
+            }
+        }
+
         if (key_exists(json_fields::FORMULA_NAME, $in_ex_json)) {
             $frm_name = $in_ex_json[json_fields::FORMULA_NAME];
             $frm = $frm_lst->get_by_name($frm_name);

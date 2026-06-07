@@ -115,6 +115,20 @@ class import_tests
         $dto = $imp->get_data_object($json_array, $usr_msg);
         $t->assert($test_name, $dto->formula_list()->count(), 4);
 
+        // covers the simple "total = price * quantity" calculation in result_calc_simple.json:
+        // the importer must populate values, the formula and the pre-calculated result
+        $json_str = file_get_contents(test_files::IMPORT_RESULT_CALC . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $test_name = 'JSON import result_calc word count';
+        $t->assert($test_name, $dto->word_list()->count(), 5);
+        $test_name = 'JSON import result_calc value count';
+        $t->assert($test_name, $dto->value_list()->count(), 2);
+        $test_name = 'JSON import result_calc formula count';
+        $t->assert($test_name, $dto->formula_list()->count(), 1);
+        $test_name = 'JSON import result_calc result count';
+        $t->assert($test_name, $dto->result_list()->count(), 1);
+
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(test_files::IMPORT_WARNING);
         $imp = new import(test_paths::IMPORT . 'warning_and_error_test.json');
