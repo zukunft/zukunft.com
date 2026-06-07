@@ -537,6 +537,7 @@ class test_triples extends test_objects
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_city()->phrase());
         $trp->set_description(triples::CITY_ZH_COM);
+        $trp->set_impact(impacts::HTP_ZH_CITY);
         return $trp;
     }
 
@@ -562,6 +563,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_zh()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_canton()->phrase());
+        $trp->set_impact(impacts::HTP_ZH_CANTON);
         return $trp;
     }
 
@@ -587,6 +589,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_zh()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_company()->phrase());
+        $trp->set_impact(impacts::HTP_ZH_COMPANY);
         return $trp;
     }
 

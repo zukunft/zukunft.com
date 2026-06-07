@@ -39,4 +39,9 @@ class impacts
     const float MEDIUM = 123.4;
     const float HIGH = 1234.0;
 
+    // based on src/test/resources/import/zurich_htp_impact.json
+    const float HTP_ZH_CITY = 71152;
+    const float HTP_ZH_CANTON = 32400;
+    const float HTP_ZH_COMPANY = 22500;
+
 }

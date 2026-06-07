@@ -1,0 +1,152 @@
+{
+  "version": "0.0.4",
+  "time": "2026-06-07 10:00:00",
+  "user": "timon",
+  "selection": [
+    "average HTP impact of the city, canton, workplaces and insurance of Zurich"
+  ],
+  "words": [
+    { "name": "City of Zurich", "description": "the municipality of Zurich, the largest city of Switzerland" },
+    { "name": "Canton of Zurich", "description": "the most populous canton of Switzerland" },
+    { "name": "Zurich Insurance", "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich" },
+    { "name": "City of Zurich workplaces", "description": "the City of Zurich seen as an employer location, hosting the jobs within the municipality including commuters" },
+    { "name": "entity", "plural": "entities", "description": "an organisation or administrative body that can influence people" },
+    { "name": "inhabitant", "plural": "inhabitants", "description": "a person who lives in a place" },
+    { "name": "customer", "plural": "customers", "description": "a person served by a commercial entity" },
+    { "name": "employed person", "plural": "employed persons", "description": "a person holding a job located in the place, residents and commuters alike" },
+    { "name": "person influenced", "plural": "persons influenced", "description": "the number of people an entity influences, inhabitants for a region, customers for a company or employed persons for a workplace" },
+    { "name": "happy time point", "plural": "happy time points", "type": "measure", "description": "HTP, the UN DALY index extended to the lowest two levels of the Maslow pyramid" },
+    { "name": "impact factor on HTP", "type": "percent", "description": "the share of one person's happy time points that the entity influences" },
+    { "name": "impact weighted reach", "description": "persons influenced multiplied by the impact factor on HTP, expressed in HTP-units" },
+    { "name": "average impact weighted reach", "description": "the mean impact weighted reach across the listed entities" },
+    { "name": "2025", "type": "time" },
+    { "name": "2024", "type": "time" },
+    { "name": "2023", "type": "time" }
+  ],
+  "verbs": [
+    { "name": "is a", "description": "link a word to its parent type", "reverse": "are" }
+  ],
+  "triples": [
+    { "name": "", "from": "City of Zurich", "verb": "is a", "to": "entity" },
+    { "name": "", "from": "Canton of Zurich", "verb": "is a", "to": "entity" },
+    { "name": "", "from": "Zurich Insurance", "verb": "is a", "to": "entity" },
+    { "name": "", "from": "City of Zurich workplaces", "verb": "is a", "to": "entity" }
+  ],
+  "sources": [
+    { "name": "Statistical Office Switzerland", "url": "https://www.bfs.admin.ch" },
+    { "name": "Canton of Zurich Statistics", "url": "https://www.zh.ch/de/politik-staat/statistik-daten.html" },
+    { "name": "Statistik Stadt Zuerich STATENT", "url": "https://www.stadt-zuerich.ch/de/politik-und-verwaltung/statistik-und-daten/daten/wirtschaft/unternehmen/unternehmen-und-branchen.html" },
+    { "name": "Zurich Insurance Annual Report 2024", "url": "https://www.zurich.com/annual-report-2024" },
+    { "name": "WHO Global Burden of Disease", "url": "https://www.who.int/data/gho" },
+    { "name": "World Happiness Report", "url": "https://worldhappiness.report" }
+  ],
+  "references": [
+    { "phrase": "City of Zurich", "name": "Q72", "type": "wikidata" },
+    { "phrase": "Canton of Zurich", "name": "Q11943", "type": "wikidata" },
+    { "phrase": "Zurich Insurance", "name": "Q680524", "type": "wikidata" }
+  ],
+  "values": [
+    {
+      "words": [ "City of Zurich", "person influenced", "2025" ],
+      "number": "443037",
+      "source": "Statistical Office Switzerland"
+    },
+    {
+      "words": [ "City of Zurich", "impact factor on HTP" ],
+      "number": "0.05",
+      "source": "World Happiness Report"
+    },
+    {
+      "words": [ "Canton of Zurich", "person influenced", "2025" ],
+      "number": "1620020",
+      "source": "Canton of Zurich Statistics"
+    },
+    {
+      "words": [ "Canton of Zurich", "impact factor on HTP" ],
+      "number": "0.02",
+      "source": "World Happiness Report"
+    },
+    {
+      "words": [ "City of Zurich workplaces", "person influenced", "2023" ],
+      "number": "490000",
+      "source": "Statistik Stadt Zuerich STATENT"
+    },
+    {
+      "words": [ "City of Zurich workplaces", "impact factor on HTP" ],
+      "number": "0.10",
+      "source": "World Happiness Report"
+    },
+    {
+      "words": [ "Zurich Insurance", "person influenced", "2024" ],
+      "number": "75000000",
+      "source": "Zurich Insurance Annual Report 2024"
+    },
+    {
+      "words": [ "Zurich Insurance", "impact factor on HTP" ],
+      "number": "0.0003",
+      "source": "World Happiness Report"
+    }
+  ],
+  "value-list": [
+    {
+      "context": [ "person influenced" ],
+      "values": [
+        { "City of Zurich": 443037 },
+        { "Canton of Zurich": 1620020 },
+        { "City of Zurich workplaces": 490000 },
+        { "Zurich Insurance": 75000000 }
+      ]
+    },
+    {
+      "context": [ "impact factor on HTP" ],
+      "source": "World Happiness Report",
+      "values": [
+        { "City of Zurich": 0.05 },
+        { "Canton of Zurich": 0.02 },
+        { "City of Zurich workplaces": 0.10 },
+        { "Zurich Insurance": 0.0003 }
+      ]
+    }
+  ],
+  "formulas": [
+    {
+      "name": "impact weighted reach calculation",
+      "description": "multiply the number of persons influenced by the impact factor on the happy time points",
+      "expression": "\"impact weighted reach\" = \"person influenced\" * \"impact factor on HTP\"",
+      "assigned_word": "impact weighted reach"
+    },
+    {
+      "name": "average impact weighted reach calculation",
+      "description": "mean of the impact weighted reach across the four Zurich entities",
+      "expression": "\"average impact weighted reach\" = sum( \"impact weighted reach\" ) / count( \"entity\" )",
+      "assigned_word": "average impact weighted reach"
+    }
+  ],
+  "results": [
+    {
+      "words": [ "City of Zurich", "impact weighted reach" ],
+      "number": "22152",
+      "source words": [ "City of Zurich", "person influenced", "City of Zurich", "impact factor on HTP" ]
+    },
+    {
+      "words": [ "Canton of Zurich", "impact weighted reach" ],
+      "number": "32400",
+      "source words": [ "Canton of Zurich", "person influenced", "Canton of Zurich", "impact factor on HTP" ]
+    },
+    {
+      "words": [ "City of Zurich workplaces", "impact weighted reach" ],
+      "number": "49000",
+      "source words": [ "City of Zurich workplaces", "person influenced", "City of Zurich workplaces", "impact factor on HTP" ]
+    },
+    {
+      "words": [ "Zurich Insurance", "impact weighted reach" ],
+      "number": "22500",
+      "source words": [ "Zurich Insurance", "person influenced", "Zurich Insurance", "impact factor on HTP" ]
+    },
+    {
+      "words": [ "average impact weighted reach" ],
+      "number": "31513",
+      "source words": [ "City of Zurich", "impact weighted reach", "Canton of Zurich", "impact weighted reach", "City of Zurich workplaces", "impact weighted reach", "Zurich Insurance", "impact weighted reach" ]
+    }
+  ]
+}

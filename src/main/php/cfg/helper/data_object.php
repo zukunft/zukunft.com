@@ -361,6 +361,16 @@ class data_object
     }
 
     /**
+     * set the term list of this data object e.g. with the terms preloaded for a formula calculation
+     * @param term_list $trm_lst the terms that should be cached in this data object
+     */
+    function set_term_list(term_list $trm_lst): void
+    {
+        $this->trm_lst = $trm_lst;
+        $this->trm_lst_dirty = false;
+    }
+
+    /**
      * @return source_list with the sources of this data object
      */
     function source_list(): source_list
@@ -374,6 +384,15 @@ class data_object
     function reference_list(): ref_list
     {
         return $this->ref_lst;
+    }
+
+    /**
+     * set the value list of this data object e.g. with the values preloaded for a formula calculation
+     * @param value_list $val_lst the values that should be cached in this data object
+     */
+    function set_value_list(value_list $val_lst): void
+    {
+        $this->val_lst = $val_lst;
     }
 
     /**

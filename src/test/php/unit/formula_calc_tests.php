@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
@@ -224,6 +225,26 @@ class formula_calc_tests
         $result = $frm->get_ref_text();
         $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . words::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . words::CITY_ID . '})';
         $t->assert($test_name, $result, $target);
+
+
+        $t->subheader($ts . 'to_num_new');
+
+        // result_can_calc is the gate used by to_num_new to decide if a result can be calculated;
+        // when the formula does not require all values it may always be calculated
+        $test_name = 'result_can_calc allows the calculation when not all values are needed';
+        $frm = $t_frm->formula_increase();
+        $frm->need_all_val = false;
+        $res = new result($usr);
+        $t->assert_true($test_name, $frm->result_can_calc($res));
+
+        // ... but it denies the calculation when all values are needed and one is still missing
+        $test_name = 'result_can_calc denies the calculation when a needed value is missing';
+        $frm->need_all_val = true;
+        $res->val_missing = true;
+        $t->assert_false($test_name, $frm->result_can_calc($res));
+
+        // the full to_num_new calculation (load_data_for_calc + filling the figures + parsing the
+        // result) needs the values loaded from the database; see the commented to_num test above
 
     }
 
