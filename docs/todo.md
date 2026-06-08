@@ -7,7 +7,11 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
-    TODO create a unit test for all system views
+    TODO add unit test for all frontend components
+    TODO review the start page and base it purely on database values
+    TODO create a useful default view for each link in the start page
+    TODO create a workflow test for each add, edit or delete view reachable from the start page
+    TODO add data for the next level of the start page so the definition of the problem, that leading and lagging causes, a list of the possible solutions and the ranking of the solution based on risk and reward
     TODO review all system views and make sure that at least all components used in the pages return a reasonable result
     TODO add phrase_id for the additional selection to the component link so that 
          e.g. for the global warming problem the phrases "definition", "size" and "solutions" can be used 
@@ -27,8 +31,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add test to check that all components show the expected html result
     TODO check that all words and triples on of the config file have a const in words and triples
     TODO fix issues in the unit tests for all component types ('Component display test' in src/test/php/unit_ui/base_ui_tests.php)
-    TODO add unit test for all frontend components
     TODO test user activate and password reset
+    TODO add a test that the initial data load does not change any fields to avoid changes test conditions e.g. as it happed for the description of USD 
     TODO create a coded unit test for all possible coding rules e.g. that in frontend only the global vars $ui_sys and $mtr should be used
 
     TODO review the base import files:
@@ -296,6 +300,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add properties to verbs so that the same behavior con be used for several verbs
     TODO use the $load_all parameter for all load functions to include excluded rows for admins
     TODO add a unit and db test
+    TODO review the unit tests of all system views
     TODO check which arrays cam be converted to a class
     TODO adapt the best view editor features from wordpress
     TODO adapt the best user handling features from wordpress

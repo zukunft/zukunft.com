@@ -155,9 +155,10 @@ class system_form extends component
         // category subtitle is created based on verbs listed in verbs::CATEGORY_VERBS
         $category = $this->category_subtitle($dbo, $max);
 
-        $heading = '<' . html_base::H4 . ' ' . html_base::STYLE . '="display: inline;">'
+        $heading = '<' . html_base::H4 . ' ' . html_base::CLASS_HTML . '="' . styles::HEADING_INLINE . '">'
             . $dbo->name() . '</' . html_base::H4 . '>';
-        $content = $heading . $edit_link;
+        // wrap the heading and the edit icon so they are shown on the same line
+        $content = $html->div($heading . $edit_link, styles::HEADING_LINE);
         if ($category !== '') {
             $content .= $html->div('(' . $category . ')', styles::SUBTITLE);
         }
