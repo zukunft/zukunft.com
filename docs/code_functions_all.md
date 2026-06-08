@@ -5739,6 +5739,7 @@
     \-- word - section for function word not yet defined that it should be cast in /word/word.php
     \-- parents - section for function parents is expected to be foaf in /word/word.php
     \-- children - section for function children is expected to be foaf in /word/word.php
+    \-- similar - section for function similar not yet defined that it should be related in /word/word.php
     \-- name_link - section for function name_link not yet defined that it should be base in /word/word.php
     \-- btn_unlink - section for function btn_unlink not yet defined that it should be buttons in /word/word.php
     \-- dsp_type_selector - section for function dsp_type_selector not yet defined that it should be select in /word/word.php

@@ -640,6 +640,51 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "Swiss franc is a currency" used for unit testing word::similar
+     */
+    function swiss_franc_currency(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(2398, words::SWISS_FRANC . ' ' . verbs::IS_NAME . ' ' . words::CURRENCY);
+        $trp->set_from($t_wrd->swiss_franc()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->currency()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Euro is a currency" used for unit testing word::similar
+     */
+    function euro_currency(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(2399, words::EURO . ' ' . verbs::IS_NAME . ' ' . words::CURRENCY);
+        $trp->set_from($t_wrd->euro()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->currency()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "USD is a currency" used for unit testing word::similar
+     */
+    function usd_currency(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::US_DOLLAR_ID, words::US_DOLLAR . ' ' . verbs::IS_NAME . ' ' . words::CURRENCY);
+        $trp->set_from($t_wrd->us_dollar()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->currency()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "Bern (City)" used for unit testing
      */
     function triple_bern(): triple

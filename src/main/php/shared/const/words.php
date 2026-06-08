@@ -378,11 +378,16 @@ class words
     const string CHF = 'CHF';
     const int CHF_ID = 258;
     const string SWISS_FRANC = 'Swiss franc';
-    const int SWISS_FRANC_ID = 2396;
-    const string EUR = 'Euro';
-    const int EUR_ID = 268;
+    const int SWISS_FRANC_ID = 2397;
+    const string EUR = 'EUR';
+    const int EUR_ID = 2427;
+    const string EURO = 'Euro';
+    const int EURO_ID = 267;
     const string USD = 'USD';
     const int USD_ID = 259;
+    const string US_DOLLAR = 'US-Dollar';
+    const int US_DOLLAR_ID = 2426;
+    const int CURRENCY_ID = 2397;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';
@@ -481,10 +486,12 @@ class words
     const string RANK = 'rank';
     const string RANKING = 'ranking';
     const string RISK = 'risk';
+    const string SAME = 'same';
     const string SELECTIONS = 'selections';
     const string STORAGE = 'storage';
     const string SUGGESTED = 'suggested';
     const string TARGET = 'target';
+    const string THRESHOLD = 'threshold';
     const string TOP = 'top';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';

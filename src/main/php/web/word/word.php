@@ -78,6 +78,7 @@ include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -108,6 +109,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -359,7 +361,7 @@ class word extends sandbox_code_id
      */
 
     /**
-     * get the parent phrases of the given phrase
+     * get the parent phrases of the given phrase (foaf_direction::UP)
      * if a phrase list is given get only the parent phrases within the list (no api call)
      * if no phrase list is given get the phrases from the api
      * e.g. for Zurich the list is City and Canton based on a phrase list with City, Canton and country
@@ -370,13 +372,76 @@ class word extends sandbox_code_id
      */
     function parents(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
     {
+        return $this->related($phr_lst, foaf_direction::UP);
+    }
+
+    /**
+     * get all child phrases related to the given word (foaf_direction::DOWN)
+     * behaves like parents() but in the opposite direction
+     * e.g. for city at least Zurich, Bern and Geneva are returned
+     *
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
+     * @param int $levels the number of child levels
+     * @return phrase_list capped by the user-specific frontend config limit
+     */
+    function children(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
+    {
+        return $this->related($phr_lst, foaf_direction::DOWN);
+    }
+
+    /**
+     * get the similar objects of this word i.e. the other phrases that share a parent with this word
+     * via the 'is a' verb e.g. for 'Swiss franc' (which is a 'currency') the similar phrases are the
+     * other children of 'currency' such as 'Euro' and 'US Dollar' (this word itself is excluded)
+     *
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
+     * @return phrase_list the sibling phrases without this word, capped by the user-specific frontend config limit
+     */
+    function similar(?phrase_list $phr_lst = null): phrase_list
+    {
+        if ($phr_lst === null) {
+            $phr_lst = new phrase_list();
+            $phr_lst->load_related($this->phrase(), foaf_direction::UP);
+        }
+        $result = new phrase_list();
+        // for each "this is a <parent>" relation collect the other phrases that are also "a <parent>"
+        // e.g. for "Swiss franc is a currency" collect all currencies: Swiss franc, Euro and US Dollar
+        foreach ($phr_lst->children($this->phrase())->lst() as $is_a_trp) {
+            $vrb = $is_a_trp->get_verb();
+            if ($vrb?->id() == verbs::IS_ID) {
+                foreach ($phr_lst->parents($is_a_trp->get_to(), $vrb)->lst() as $sibling) {
+                    $result->add_phrase($sibling);
+                }
+            }
+        }
+        // remove this word itself so that only the similar phrases remain
+        $self = new phrase_list();
+        $self->add_phrase($this->phrase());
+        return $result->remove($self);
+    }
+
+    /**
+     * get the related phrases of a phrase in the given direction (parents for UP, children for DOWN)
+     * if a phrase list is given filter the related phrases within it (no api call)
+     * otherwise load them from the api, and cap the result by the user-specific frontend config limit
+     *
+     * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
+     * @param foaf_direction $direction foaf_direction::UP for parents, foaf_direction::DOWN for children
+     * @return phrase_list capped by the user-specific frontend config limit
+     */
+    private function related(?phrase_list $phr_lst, foaf_direction $direction): phrase_list
+    {
         if ($phr_lst !== null) {
-            $lst = $phr_lst->parents($this->phrase());
+            if ($direction == foaf_direction::UP) {
+                $lst = $phr_lst->parents($this->phrase());
+            } else {
+                $lst = $phr_lst->children($this->phrase());
+            }
         } else {
             $lst = new phrase_list();
-            $lst->load_related($this->phrase(), foaf_direction::UP);
+            $lst->load_related($this->phrase(), $direction);
         }
-        // limit the number of parents shown to keep the page-title category subtitle readable
+        // limit the number of related phrases shown to keep the page-title category subtitle readable
         global $ui_sys;
         if ($ui_sys?->cfg !== null) {
             $limit = $ui_sys->cfg->get_by(
@@ -389,21 +454,6 @@ class word extends sandbox_code_id
         if ($lst->count() > $limit) {
             $lst->set_lst(array_slice($lst->lst(), 0, $limit));
         }
-        return $lst;
-    }
-
-    /**
-     * get all child phrases related to the given word
-     * e.g. for city at least Zurich, Bern and Geneva are returned
-     *
-     * @param phrase_list|null $phr_lst if the cache list is given only phrase from this list are returned
-     * @param int $levels
-     * @return phrase_list
-     */
-    function children(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
-    {
-        $lst = new phrase_list();
-        $lst->load_related($this->phrase(), foaf_direction::DOWN);
         return $lst;
     }
 

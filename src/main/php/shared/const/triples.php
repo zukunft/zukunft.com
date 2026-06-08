@@ -189,6 +189,8 @@ class triples
     const int COMPANY_ZURICH_ID = 140;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
     const int CHF_SYMBOL_ID = 2898;
+    const int US_DOLLAR_ID = 2864;
+    const int EURO_ID = 122;
     const string COMPANY_VESTAS = "Vestas SA";
     const string COMPANY_ABB = "ABB (company)";
     const string YEAR_2013_FOLLOW = "2014 is follower of 2013";

@@ -7,7 +7,7 @@
   ],
   "words": [
     {
-      "name": "Currency",
+      "name": "currency",
       "type": "measure",
       "refs": [
         {
@@ -150,26 +150,26 @@
     {
       "from": "Euro",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "US dollar",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "Pound sterling",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "Japanese yen",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "name": "Currency denomination",
-      "from": "Currency",
+      "from": "currency",
       "verb": "can use",
       "to": "Denomination",
       "refs": [

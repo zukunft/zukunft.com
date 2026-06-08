@@ -369,6 +369,9 @@ zukunft.com:
         preselect:
           min: "30%"
           tooltip-comment: "used to preselect phrases for the next value: if 30% or more of the phrases of a list are the same, the probability is high that the next phrase is the same"
+        same:
+          threshold: "80%"
+          tooltip-comment: "if the triple weight is above this threshold for the 'is a' or 'is symbol for' verbs the two phrases are handled as if they are the same e.g. for 'CHF' 'EUR', 'USD' are listed for 'similar to' even if the connection is 'two step' via 'Swiss frank' which is a currency"
     year:
       automatic create: 10
       tooltip-comment: "the number of futures years automatically created by the system"
