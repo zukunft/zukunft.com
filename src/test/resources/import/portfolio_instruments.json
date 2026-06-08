@@ -64,13 +64,13 @@
       "description": "of or relating to the buying and selling of securities"
     },
 
-    {"name": "CHF", "type": "measure", "description": "Swiss Franc", "refs": [{"name": "Swiss franc", "type": "wikipedia"}, {"name": "Q25344", "type": "wikidata"}]},
-    {"name": "EUR", "type": "measure", "description": "Euro",        "refs": [{"name": "Euro", "type": "wikipedia"}, {"name": "Q4916", "type": "wikidata"}]},
-    {"name": "USD", "type": "measure", "description": "US Dollar",   "refs": [{"name": "United States dollar", "type": "wikipedia"}, {"name": "Q4917", "type": "wikidata"}]},
-    {"name": "GBP", "type": "measure", "description": "British Pound","refs": [{"name": "Pound sterling", "type": "wikipedia"}, {"name": "Q25224", "type": "wikidata"}]},
-    {"name": "JPY", "type": "measure", "description": "Japanese Yen", "refs": [{"name": "Japanese yen", "type": "wikipedia"}, {"name": "Q8146", "type": "wikidata"}]},
-    {"name": "DKK", "type": "measure", "description": "Danish Krone", "refs": [{"name": "Danish krone", "type": "wikipedia"}, {"name": "Q25417", "type": "wikidata"}]},
-    {"name": "SEK", "type": "measure", "description": "Swedish Krona","refs": [{"name": "Swedish krona", "type": "wikipedia"}, {"name": "Q122922", "type": "wikidata"}]},
+    {"name": "CHF", "refs": [{"name": "Swiss franc", "type": "wikipedia"}, {"name": "Q25344", "type": "wikidata"}]},
+    {"name": "EUR", "refs": [{"name": "Euro", "type": "wikipedia"}, {"name": "Q4916", "type": "wikidata"}]},
+    {"name": "USD", "refs": [{"name": "United States dollar", "type": "wikipedia"}, {"name": "Q4917", "type": "wikidata"}]},
+    {"name": "GBP", "refs": [{"name": "Pound sterling", "type": "wikipedia"}, {"name": "Q25224", "type": "wikidata"}]},
+    {"name": "JPY", "refs": [{"name": "Japanese yen", "type": "wikipedia"}, {"name": "Q8146", "type": "wikidata"}]},
+    {"name": "DKK", "refs": [{"name": "Danish krone", "type": "wikipedia"}, {"name": "Q25417", "type": "wikidata"}]},
+    {"name": "SEK", "refs": [{"name": "Swedish krona", "type": "wikipedia"}, {"name": "Q122922", "type": "wikidata"}]},
 
     {"name": "ABB",    "description": "ABB Ltd (Asea Brown Boveri), Zürich; legacy short reference - the ticker ABBN below is the SIX trading symbol", "refs": [{"name": "ABB", "type": "wikipedia"}, {"name": "Q52825", "type": "wikidata"}]},
     {"name": "Vestas", "description": "Vestas Wind Systems A/S, Denmark; kept from the previous sample for backwards reference",                    "refs": [{"name": "Vestas", "type": "wikipedia"}, {"name": "Q1262032", "type": "wikidata"}]},
