@@ -288,7 +288,8 @@ class triple extends sandbox_code_id
         $vars[json_fields::TO] = $this->get_to()->id();
         $vars[json_fields::WEIGHT] = $this->weight;
         $vars[json_fields::PLURAL] = $this->plural;
-        // usage and impact are not included here because this system value is never updated by the frontend
+        // usage is not included here because this system value is never updated by the frontend
+        $vars[json_fields::IMPACT] = $this->impact;
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
         }

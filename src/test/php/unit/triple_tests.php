@@ -10,8 +10,11 @@ include_once paths::SHARED_CONST . 'words.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -103,7 +106,7 @@ class triple_tests
         $t->assert_reset($trp);
 
         $t->subheader($ts . 'api');
-        $trp = $t_trp->triple();
+        $trp = $t_trp->triple_filled_public();
         $t->assert_api_json($trp);
         $t->assert_api($trp);
 
@@ -144,6 +147,19 @@ class triple_tests
         $t->assert_ex_and_import($t_trp->triple_filled_add_name(), $usr_sys);
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
+
+        // the impact field is part of the triple im- and export
+        // even if the impact is expected to be calculated internal
+        // it is included in the im- and export for an initial value
+        // e.g. if the calculation definition is not yet set 
+        $trp = $t_trp->triple();
+        $trp->set_impact(impacts::HIGH);
+        $json_ex = $trp->export_json([], false);
+        $t->assert($ts . 'export includes the impact', $json_ex[json_fields::IMPACT] ?? null, impacts::HIGH);
+        // re-import the exported json and check that the impact is read back
+        $trp_in = new triple($usr_sys);
+        $trp_in->import_mapper($json_ex, new user_message($usr_sys), new data_object($usr_sys));
+        $t->assert($ts . 'import reads the impact', $trp_in->impact, impacts::HIGH);
 
 
         $test_name = 'check if database would not be updated if only the name is given in import';

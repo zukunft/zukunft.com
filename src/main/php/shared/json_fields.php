@@ -433,10 +433,11 @@ class json_fields
 
     // list of json fields that are used for the api message to the frontend
     // but that are never used for the api message to the backend
+    // impact is not part of the unidirectional fields
+    // because it could potential be overwritten by and admin user
     const array UNIDIRECTIONAL = [
         self::REF_TEXT,
         self::USAGE,
-        self::IMPACT
     ];
 
 }

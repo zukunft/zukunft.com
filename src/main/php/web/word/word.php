@@ -252,6 +252,8 @@ class word extends sandbox_code_id
         if ($this->has_parent()) {
             $vars[json_fields::PARENT] = $this->parent->api_array();
         }
+        // usage is not included here because this system value is never updated by the frontend
+        $vars[json_fields::IMPACT] = $this->impact;
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
         }

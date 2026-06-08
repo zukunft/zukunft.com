@@ -738,9 +738,11 @@ class test_api extends test_base
         // remove the change time
         if ($actual != null) {
             $actual = $this->json_remove_volatile($actual, $ignore_id);
+            $actual = $this->json_remove_fields_only_to_ui($actual);
         }
         if ($expected != null) {
             $expected = $this->json_remove_volatile($expected, $ignore_id);
+            $expected = $this->json_remove_fields_only_to_ui($expected);
         }
 
         if ($expected === null) {

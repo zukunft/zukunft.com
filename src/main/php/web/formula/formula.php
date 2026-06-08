@@ -307,7 +307,8 @@ class formula extends sandbox_code_id
 
         $vars[json_fields::USER_TEXT] = $this->get_usr_text();
         $vars[json_fields::LATEX] = $this->get_latex();
-        // usage and impact are not included here because this system value is never updated by the frontend
+        // usage is not included here because this system value is never updated by the frontend
+        $vars[json_fields::IMPACT] = $this->impact;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

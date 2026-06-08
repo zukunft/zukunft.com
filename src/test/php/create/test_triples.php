@@ -136,6 +136,16 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "mathematical constant" used for unit testing
+     */
+    function triple_impact(): triple
+    {
+        $trp = $this->triple();
+        $trp->impact = impacts::MAX;
+        return $trp;
+    }
+
+    /**
      * @return triple object where the most specific mandatory var is not set which is in case of a word the id and the name of the to phrase
      */
     function triple_incomplete(): triple
@@ -164,7 +174,7 @@ class test_triples extends test_objects
     /**
      * @return triple with all fields set and a reserved test name for testing the db write function
      */
-    function triple_filled(): triple
+    function triple_filled_public(): triple
     {
         global $sys;
         $trp = $this->triple();
@@ -172,10 +182,20 @@ class test_triples extends test_objects
         $trp->weight = 0.5;
         $trp->set_view_id(views::MATH_CONST_ID);
         $trp->usage = triples::SYSTEM_TEST_ADD_USAGE;
-        $trp->impact = triples::SYSTEM_TEST_ADD_IMPACT;
+        $trp->impact = impacts::MAX;
         $trp->exclude();
-        $trp->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
+        return $trp;
+    }
+
+    /**
+     * @return triple with all fields set and a reserved test name for testing the db write function
+     */
+    function triple_filled(): triple
+    {
+        global $sys;
+        $trp = $this->triple_filled_public();
+        $trp->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         return $trp;
     }
 

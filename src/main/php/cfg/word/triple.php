@@ -396,6 +396,10 @@ class triple extends sandbox_link_named
         if (array_key_exists(json_fields::WEIGHT, $api_json)) {
             $this->weight = $api_json[json_fields::WEIGHT];
         }
+        if (array_key_exists(sql_db::FLD_IMPACT, $api_json)) {
+            $this->impact = $api_json[sql_db::FLD_IMPACT];
+        }
+
         // TODO move plural to language forms
         /*
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
@@ -531,6 +535,9 @@ class triple extends sandbox_link_named
 
         if (key_exists(json_fields::WEIGHT, $in_ex_json)) {
             $this->weight = $in_ex_json[json_fields::WEIGHT];
+        }
+        if (key_exists(json_fields::IMPACT, $in_ex_json)) {
+            $this->set_impact($in_ex_json[json_fields::IMPACT]);
         }
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
@@ -812,10 +819,11 @@ class triple extends sandbox_link_named
             }
             $vars[json_fields::REFS] = $ref_lst;
         }
-        // the impact is only included in the export as an indication to validate the consistency
+        // the usage is only included in the export as an indication to validate the consistency
         if ($this->usage != null) {
             $vars[json_fields::USAGE] = $this->usage;
         }
+        // the impact is part of the im- and export so that it round-trips
         if ($this->impact != null) {
             $vars[json_fields::IMPACT] = $this->impact;
         }

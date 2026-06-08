@@ -23,6 +23,7 @@
     "from_id": 2,
     "verb_id": 3,
     "to_id": 1,
+    "impact": 9999999999,
     "class": "triple"
   },
   {

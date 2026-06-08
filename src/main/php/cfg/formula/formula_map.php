@@ -354,6 +354,10 @@ class formula_map extends sandbox_code_id
             }
         }
 
+        if (array_key_exists(sql_db::FLD_IMPACT, $api_json)) {
+            $this->impact = $api_json[sql_db::FLD_IMPACT];
+        }
+
         if (array_key_exists(json_fields::LATEX, $api_json)) {
             $this->latex = $api_json[json_fields::LATEX];
         }
@@ -404,6 +408,10 @@ class formula_map extends sandbox_code_id
             if ($in_ex_json[json_fields::LATEX] <> '') {
                 $this->latex = $in_ex_json[json_fields::LATEX];
             }
+        }
+
+        if (key_exists(json_fields::IMPACT, $in_ex_json)) {
+            $this->impact = $in_ex_json[json_fields::IMPACT];
         }
 
         // TODO Prio 2 allow only one way to assign phrases on import

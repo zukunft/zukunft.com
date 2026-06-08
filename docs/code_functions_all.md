@@ -25,6 +25,7 @@
     \-- assign_phr_ulst - section for function assign_phr_ulst not yet defined that it should be assign in /formula/formula.php
     \-- delete_results - section for function delete_results is expected to be del in /formula/formula.php
     \-- load_data_for_calc - section for function load_data_for_calc is expected to be load in /formula/formula.php
+    \-- calc_num - section for function calc_num not yet defined that it should be calc in /formula/formula.php
     \-- to_num_new - section for function to_num_new not yet defined that it should be calc in /formula/formula.php
     \-- fill_element_group - section for function fill_element_group not yet defined that it should be calc in /formula/formula.php
     \-- fill_results_with_one_figure - section for function fill_results_with_one_figure not yet defined that it should be calc in /formula/formula.php
@@ -37,7 +38,6 @@
     \-- result_can_calc - section for function result_can_calc not yet defined that it should be calc in /formula/formula.php
     \-- load_all_terms - section for function load_all_terms is expected to be load in /formula/formula.php
     \-- load_values - section for function load_values is expected to be load in /formula/formula.php
-    \-- to_num - section for function to_num not yet defined that it should be calc in /formula/formula.php
     \-- calc_requests - section for function calc_requests not yet defined that it should be calc in /formula/formula.php
     \-- calc - section for function calc not yet defined that it should be calc in /formula/formula.php
     \-- reload_if_incomplete - section for function reload_if_incomplete is expected to be related in /formula/formula.php
@@ -792,6 +792,8 @@
 \-- calc
     \-- load_data_for_calc
         \-- formula - load all data needed to calculate the formula numbers into a data object
+    \-- calc_num
+        \-- formula - get the numeric results of the formula via the split path (load_data_for_calc + to_num_new);
     \-- to_num_new
         \-- formula - fill the formula in the reference format with numbers based on the data preloaded by load_data_for_calc;
     \-- fill_element_group
@@ -816,10 +818,8 @@
         \-- formula - load all missing terms from the database
     \-- load_values
         \-- formula - load all values for the formula calculation
-    \-- to_num
-        \-- formula - fill the formula in the reference format with numbers
     \-- calc_requests
-        \-- formula - fill the formula in the reference format with numbers
+        \-- formula - load all values for the formula calculation
     \-- calc
         \-- formula - calculate the result for one formula for one user
     \-- reload_if_incomplete

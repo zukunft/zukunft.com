@@ -257,27 +257,7 @@ class formula_write_tests
         // TODO check why is this word MIO is needed??
         $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2020, words::MIO));
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
-        $res_lst = $frm->to_num($phr_lst);
-        if ($res_lst->lst() != null) {
-            $res = $res_lst->lst()[0];
-            $result = $res->num_text;
-        } else {
-            $res = null;
-            $result = 'result list is empty';
-        }
-        $target = '=(' . values::CH_INHABITANTS_2020_IN_MIO . '-' .
-            values::CH_INHABITANTS_2019_IN_MIO . ')/' .
-            values::CH_INHABITANTS_2019_IN_MIO;
-        $t->assert('formula->to_num "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target);
-
-        if ($res_lst->lst() != null) {
-            $res->save_if_updated();
-            $result = $res->number();
-            $target = results::TV_INCREASE_LONG;
-            $t->assert('result->save_if_updated "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target);
-        }
-
-        // the same calculation via the split path: load_data_for_calc fills the cache and to_num_new computes
+        // calculate one value via the split path: load_data_for_calc fills the cache and to_num_new computes
         // use a separate message object so the shared $usr_msg (and its user) is not overwritten
         $usr_msg_calc = new user_message($t->usr1);
         $dto = $frm->load_data_for_calc($phr_lst, $usr_msg_calc);
