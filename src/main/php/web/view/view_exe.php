@@ -274,7 +274,7 @@ class view_exe extends view_base
         // for the word array build an object
         if ($this->type_id() == 1) {
             $result = $result . '<br><br>';
-            //$result = $result . '<a href="' . api::MAIN_SCRIPT_REL . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+            //$result = $result . '<a href="' . api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::PHRASE . '&'
             // . url_var::ID . '='.implode (",", $word_array).'&type=3">Really?</a>';
             $result = $result . '</h1>';
         }
@@ -527,7 +527,7 @@ class view_exe extends view_base
 
         $dsp_lst = new view_list();
 
-        $call = api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&' . url_var::ID . '=' . $wrd_id;
+        $call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&' . url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
         foreach ($dsp_lst as $dsp) {

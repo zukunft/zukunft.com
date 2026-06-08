@@ -64,6 +64,17 @@ class url_var
 
     // the url entry to select the url format
     // if the next two are not set at least MASK is expected to be set and if the short technical url is used
+    //
+    // MASK ('m') is the ROUTING key: which view should render the current page.
+    // frontend::url_to_html() reads $url_array[url_var::MASK] to dispatch the renderer.
+    // Building a link to a page → use MASK. Posting a form that should land on a given
+    // view → emit MASK as the hidden field. Tests calling url_to_html() set MASK.
+    //
+    // Do NOT confuse with VIEW ('d') below: VIEW is the form-field value of an *object's*
+    // view-id metadata (e.g. a word's default-view setting), not a routing instruction.
+    // A URL built as "?d=<view_id>&id=<obj_id>" will NOT route to <view_id>; the router
+    // sees no MASK and falls back to the start page (see frontend.php:666 + the empty-view
+    // guard at frontend.php:686).
     const string MASK = 'm'; // the internal database id of the view used to format the object
     const string MASK_HUMAN = 'mask_id'; // if *_LONG is given the human-readable url format is used
     const string MASK_POD = 'mask'; // if *_EXCHANGE is given the url that is interchangeable between pods is used thet does not contain pod specific database ids
@@ -92,6 +103,16 @@ class url_var
     const string COMPONENT_TYPE = 'ct';
     const string COMPONENT_LINK_TYPE = 'cy';
     // data fields used for system forms
+    //
+    // VIEW ('d') is an OBJECT-FIELD key: the value of an object's own "default view-id"
+    // metadata field, as carried in a form submission. Examples: a word's default view
+    // (web/word/word.php:179-183), a component-link's view (web/component/component_link.php),
+    // a term-view's view (web/view/term_view.php).
+    //
+    // It is NOT a routing key. To make the current page render via a specific view, use
+    // MASK above instead. Writing "?d=<view_id>" produces a URL that the router cannot
+    // dispatch on, which silently falls back to the start page. If you see "?d=" used to
+    // pick the renderer, that's almost certainly a MASK/VIEW confusion bug.
     const string VIEW = 'd'; // the Display / view id form field value of the object not the view that should be used to show the form to the user
     const string VIEW_LINK = 'dc'; // display connector to link a view to another view
     const string VIEW_PARENT = 'df'; // the "from" display view that should be modified

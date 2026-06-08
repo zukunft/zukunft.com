@@ -96,7 +96,7 @@ function run_system_test(all_tests $t): void
     $usr_test = new user;
     $usr_test->load_by_name(users::SYSTEM_TEST_NAME);
     $usr_dsp = new user_ui($usr_by_id->api_json());
-    $target = '<a href="/http/view.php?d=74&id=' . $usr_test->id() . '">zukunft.com system test</a>';
+    $target = '<a href="/http/view.php?m=74&id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr_dsp->display();
     $t->assert('user->load for id ' . $wrd_company->id(), $result, $target);
 

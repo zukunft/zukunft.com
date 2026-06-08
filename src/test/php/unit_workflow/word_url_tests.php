@@ -33,14 +33,6 @@
 namespace Zukunft\ZukunftCom\test\php\unit_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\test\php\utils\test_base;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -49,6 +41,16 @@ include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\test\php\utils\test_base;
 
 class word_url_tests
 {
@@ -78,21 +80,19 @@ class word_url_tests
 
         $test_name = 'show edit view';
         $url_arr = [];
-        $url_arr[url_var::VIEW] = views::WORD_EDIT_ID;
+        $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::ID] = words::MATH_ID;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        // TODO Prio 0 activate
-        //$t->assert_text_contains($test_name, $result, words::MATH);
+        $t->assert_text_contains($test_name, $result, words::MATH);
 
         $test_name = '... view with execution time measurement';
         $url_arr[url_var::DEBUG] = url_var::DEBUG_EXE_TIME_REPORT;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        // TODO Prio 0 activate
-        //$t->assert_text_contains($test_name, $result, words::MATH);
+        $t->assert_text_contains($test_name, $result, words::MATH);
 
         $test_name = 'add request via url without name should return a missing error message';
         $url_arr = [];
-        $url_arr[url_var::VIEW] = views::WORD_ADD_ID;
+        $url_arr[url_var::MASK] = views::WORD_ADD_ID;
         $url_arr[url_var::ACTION] = url_var::CRUD_CREATE;
         $url_arr[url_var::NAME] = '';
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);

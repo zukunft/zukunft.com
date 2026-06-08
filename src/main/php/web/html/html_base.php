@@ -511,11 +511,11 @@ class html_base
     {
         if ($par == '') {
             return $this->ref(api::MAIN_SCRIPT
-                . '?' . url_var::VIEW . '=' . $msk_id
+                . '?' . url_var::MASK . '=' . $msk_id
                 . '&' . url_var::ID . '=' . $id, $name);
         } else {
             return $this->ref(api::MAIN_SCRIPT
-                . '?' . url_var::VIEW . '=' . $msk_id
+                . '?' . url_var::MASK . '=' . $msk_id
                 . '&' . url_var::ID . '=' . $id
                 . '&' . $par, $name);
         }
