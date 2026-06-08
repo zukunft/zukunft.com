@@ -44,6 +44,14 @@ class styles
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
 
+    // css class wrapping a page-title heading and its action icon so that they
+    // are shown to the user on the same line
+    const string HEADING_LINE = 'heading-line';
+
+    // css class to render a page-title heading inline so that an action icon
+    // (e.g. the rename link) is shown on the same line as the heading text
+    const string HEADING_INLINE = 'heading-inline';
+
     // css class for an icon link inside a heading: body-text size and vertically
     // centred, so the heading stays prominent while the inline action stays unobtrusive
     const string HEADING_ICON_INLINE = 'heading-icon-inline';

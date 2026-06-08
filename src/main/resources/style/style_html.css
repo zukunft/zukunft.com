@@ -215,6 +215,20 @@ body {
     font-size: 0.8rem;
 }
 
+/* render a page-title heading inline so that an action icon (e.g. the rename */
+/* link) is shown to the user on the same line as the heading text */
+.heading-line {
+    display: inline-flex;       /* keep heading text and icon on one line */
+    justify-content: center;    /* center the heading + icon as a group */
+    align-items: baseline;      /* align icon to the heading text baseline */
+    gap: 0.3rem;                /* small space between text and icon */
+}
+
+.heading-inline {
+    display: inline;            /* prevent the h4 from forcing a line break */
+    margin: 0;                  /* remove Bootstrap's default heading margins */
+}
+
 /* icon link inside a heading: body-text size and vertically centred so the */
 /* heading stays prominent while the inline action stays unobtrusive */
 .heading-icon-inline {
