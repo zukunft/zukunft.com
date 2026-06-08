@@ -1,6 +1,6 @@
 {
   "version": "0.0.3",
-  "time": "2026-05-22 09:00:00",
+  "time": "2026-06-05 09:45:00",
   "user": "timon",
   "selection": [
     "chemistry"
@@ -38,62 +38,6 @@
     },
     {
       "name": "Faraday"
-    },
-    {
-      "name": "general chemistry",
-      "description": "the branch of chemistry dealing with matter, atoms, molecules, bonding and chemical reactions",
-      "refs": [
-        {
-          "name": "General chemistry",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q129156415",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "physical chemistry",
-      "description": "the branch of chemistry dealing with energy, equilibrium, kinetics and the physical basis of chemical systems",
-      "refs": [
-        {
-          "name": "Physical chemistry",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11372",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "organic chemistry",
-      "description": "the branch of chemistry dealing with the structure and reactions of carbon-based compounds",
-      "refs": [
-        {
-          "name": "Organic chemistry",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11351",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "analytical chemistry",
-      "description": "the branch of chemistry dealing with the identification and quantification of chemical substances",
-      "refs": [
-        {
-          "name": "Analytical chemistry",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2346",
-          "type": "wikidata"
-        }
-      ]
     },
     {
       "name": "electrochemistry",
@@ -160,34 +104,6 @@
       "description": "a negatively charged ion"
     },
     {
-      "name": "chemical element",
-      "description": "a pure substance consisting of atoms with the same number of protons",
-      "refs": [
-        {
-          "name": "Chemical element",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11344",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "chemical compound",
-      "description": "a substance formed from two or more chemical elements bonded together",
-      "refs": [
-        {
-          "name": "Chemical compound",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11173",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "mixture",
       "description": "a material made of two or more substances that are not chemically bonded",
       "refs": [
@@ -216,118 +132,6 @@
       ]
     },
     {
-      "name": "atomic number",
-      "description": "the number of protons in the nucleus of an atom",
-      "refs": [
-        {
-          "name": "Atomic number",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q23809",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "mass number",
-      "description": "the total number of protons and neutrons in an atomic nucleus",
-      "refs": [
-        {
-          "name": "Mass number",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q101395",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "atomic mass",
-      "description": "the mass of an atom, mostly expressed in unified atomic mass units",
-      "refs": [
-        {
-          "name": "Atomic mass",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q3840065",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "molar mass",
-      "description": "the mass of one mole of a substance",
-      "refs": [
-        {
-          "name": "Molar mass",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q145623",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "molecular mass",
-      "description": "the mass of a molecule relative to the unified atomic mass unit",
-      "refs": [
-        {
-          "name": "Molecular mass",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q182854",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "chemical formula",
-      "description": "notation showing the elements and their proportions in a compound",
-      "refs": [
-        {
-          "name": "Chemical formula",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q83147",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "empirical formula",
-      "description": "the simplest whole-number ratio of atoms in a compound",
-      "refs": [
-        {
-          "name": "Empirical formula",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q272477",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "molecular formula",
-      "description": "the actual number of atoms of each element in a molecule",
-      "refs": [
-        {
-          "name": "Chemical formula",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q83147",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "allotrope",
       "description": "a different structural form of the same chemical element",
       "refs": [
@@ -337,76 +141,6 @@
         },
         {
           "name": "Q81915",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "chemical bond",
-      "description": "a lasting attraction between atoms that forms molecules or compounds",
-      "refs": [
-        {
-          "name": "Chemical bond",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q44424",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "covalent bond",
-      "description": "a chemical bond formed by sharing electron pairs between atoms",
-      "refs": [
-        {
-          "name": "Covalent bond",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q127920",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "ionic bond",
-      "description": "a chemical bond formed by electrostatic attraction between oppositely charged ions",
-      "refs": [
-        {
-          "name": "Ionic bonding",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q62500",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "metallic bond",
-      "description": "a chemical bond formed by the sharing of free electrons among metal cations",
-      "refs": [
-        {
-          "name": "Metallic bonding",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q191390",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "hydrogen bond",
-      "description": "a weak attraction between a hydrogen atom and an electronegative atom",
-      "refs": [
-        {
-          "name": "Hydrogen bond",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q169324",
           "type": "wikidata"
         }
       ]
@@ -440,34 +174,6 @@
       ]
     },
     {
-      "name": "oxidation state",
-      "description": "the hypothetical charge of an atom if all bonds were fully ionic",
-      "refs": [
-        {
-          "name": "Oxidation state",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q484152",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "electron configuration",
-      "description": "the distribution of electrons of an atom in atomic orbitals",
-      "refs": [
-        {
-          "name": "Electron configuration",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q53859",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "orbital",
       "description": "a region around the nucleus where an electron is likely to be found",
       "refs": [
@@ -482,76 +188,6 @@
       ]
     },
     {
-      "name": "valence electron",
-      "description": "an electron in the outermost shell that can take part in bonding",
-      "refs": [
-        {
-          "name": "Valence electron",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q107414",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "periodic table",
-      "description": "the tabular arrangement of the chemical elements by atomic number",
-      "refs": [
-        {
-          "name": "Periodic table",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q10693",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "chemical period",
-      "description": "a horizontal row of the periodic table",
-      "refs": [
-        {
-          "name": "Period (periodic table)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q101843",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "chemical group",
-      "description": "a vertical column of the periodic table",
-      "refs": [
-        {
-          "name": "Group (periodic table)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q83306",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "chemical reaction",
-      "description": "a process that converts reactants into products by rearranging atoms",
-      "refs": [
-        {
-          "name": "Chemical reaction",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q36534",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "reactant",
       "description": "a substance consumed during a chemical reaction",
       "refs": [
@@ -561,90 +197,6 @@
         },
         {
           "name": "Q2356542",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "reaction product",
-      "description": "a substance formed by a chemical reaction",
-      "refs": [
-        {
-          "name": "Product (chemistry)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q542929",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "reaction rate",
-      "description": "the speed at which reactants are converted into products",
-      "refs": [
-        {
-          "name": "Reaction rate",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q3394849",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "rate constant",
-      "description": "the proportionality constant in a reaction rate law",
-      "refs": [
-        {
-          "name": "Reaction rate constant",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q658700",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "activation energy",
-      "description": "the minimum energy required for a chemical reaction to occur",
-      "refs": [
-        {
-          "name": "Activation energy",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q190474",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "chemical equilibrium",
-      "description": "the state where forward and reverse reaction rates are equal",
-      "refs": [
-        {
-          "name": "Chemical equilibrium",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q189520",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "equilibrium constant",
-      "description": "the ratio of product to reactant activities at equilibrium",
-      "refs": [
-        {
-          "name": "Equilibrium constant",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q857809",
           "type": "wikidata"
         }
       ]
@@ -678,34 +230,6 @@
       ]
     },
     {
-      "name": "Gibbs free energy",
-      "description": "the thermodynamic potential that measures usable work at constant temperature and pressure",
-      "refs": [
-        {
-          "name": "Gibbs free energy",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q334631",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "standard enthalpy",
-      "description": "the enthalpy change measured under standard conditions",
-      "refs": [
-        {
-          "name": "Standard enthalpy of reaction",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q911664",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "exothermic",
       "description": "describing a reaction that releases energy as heat",
       "refs": [
@@ -729,20 +253,6 @@
         },
         {
           "name": "Q12571883",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "partial pressure",
-      "description": "the pressure a gas in a mixture would exert if it alone occupied the volume",
-      "refs": [
-        {
-          "name": "Partial pressure",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q27165",
           "type": "wikidata"
         }
       ]
@@ -822,20 +332,6 @@
       ]
     },
     {
-      "name": "mole fraction",
-      "description": "the ratio of the moles of one component to the total moles",
-      "refs": [
-        {
-          "name": "Mole fraction",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q125264",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "dilution",
       "description": "the process of reducing the concentration of a solute",
       "refs": [
@@ -859,20 +355,6 @@
         },
         {
           "name": "Q170731",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "parts per million",
-      "description": "a concentration of one part of solute per million parts of solution",
-      "refs": [
-        {
-          "name": "Parts-per notation",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q27084",
           "type": "wikidata"
         }
       ]
@@ -994,28 +476,6 @@
       ]
     },
     {
-      "name": "acid dissociation constant",
-      "description": "the equilibrium constant for the dissociation of an acid",
-      "refs": [
-        {
-          "name": "Acid dissociation constant",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q325519",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "hydrogen ion concentration",
-      "description": "the molar concentration of hydrogen ions in a solution"
-    },
-    {
-      "name": "hydroxide ion concentration",
-      "description": "the molar concentration of hydroxide ions in a solution"
-    },
-    {
       "name": "oxidation",
       "description": "the loss of electrons by a species during a reaction",
       "refs": [
@@ -1032,20 +492,6 @@
         {
           "name": "Redox",
           "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "redox reaction",
-      "description": "a reaction in which oxidation and reduction occur together",
-      "refs": [
-        {
-          "name": "Redox",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q82682",
-          "type": "wikidata"
         }
       ]
     },
@@ -1106,20 +552,6 @@
       ]
     },
     {
-      "name": "cell potential",
-      "description": "the voltage of an electrochemical cell",
-      "refs": [
-        {
-          "name": "Electrode potential",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11025104",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "hydrocarbon",
       "description": "an organic compound consisting only of hydrogen and carbon",
       "refs": [
@@ -1129,20 +561,6 @@
         },
         {
           "name": "Q43648",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "functional group",
-      "description": "a specific group of atoms responsible for characteristic reactions",
-      "refs": [
-        {
-          "name": "Functional group",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q170409",
           "type": "wikidata"
         }
       ]
@@ -1330,15 +748,911 @@
       ]
     },
     {
-      "name": "Faraday constant",
-      "description": "the electric charge per mole of electrons, about 96485 C/mol"
+      "name": "Gibbs"
     },
     {
-      "name": "standard molar volume",
-      "description": "the volume of one mole of an ideal gas at standard temperature and pressure, about 22.4 litre per mole"
+      "name": "general"
+    },
+    {
+      "name": "physical"
+    },
+    {
+      "name": "organic"
+    },
+    {
+      "name": "analytical"
+    },
+    {
+      "name": "chemical"
+    },
+    {
+      "name": "element"
+    },
+    {
+      "name": "compound"
+    },
+    {
+      "name": "atomic"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "mass"
+    },
+    {
+      "name": "molar"
+    },
+    {
+      "name": "molecular"
+    },
+    {
+      "name": "formula"
+    },
+    {
+      "name": "empirical"
+    },
+    {
+      "name": "bond"
+    },
+    {
+      "name": "covalent"
+    },
+    {
+      "name": "ionic"
+    },
+    {
+      "name": "metallic"
+    },
+    {
+      "name": "hydrogen"
+    },
+    {
+      "name": "state"
+    },
+    {
+      "name": "electron"
+    },
+    {
+      "name": "configuration"
+    },
+    {
+      "name": "periodic"
+    },
+    {
+      "name": "table"
+    },
+    {
+      "name": "period"
+    },
+    {
+      "name": "group"
+    },
+    {
+      "name": "reaction"
+    },
+    {
+      "name": "product"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "constant"
+    },
+    {
+      "name": "activation"
+    },
+    {
+      "name": "energy"
+    },
+    {
+      "name": "equilibrium"
+    },
+    {
+      "name": "free"
+    },
+    {
+      "name": "enthalpy"
+    },
+    {
+      "name": "standard"
+    },
+    {
+      "name": "partial"
+    },
+    {
+      "name": "pressure"
+    },
+    {
+      "name": "mole"
+    },
+    {
+      "name": "fraction"
+    },
+    {
+      "name": "parts"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "dissociation"
+    },
+    {
+      "name": "hydroxide"
+    },
+    {
+      "name": "redox"
+    },
+    {
+      "name": "cell"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "functional"
+    },
+    {
+      "name": "volume"
     }
   ],
   "triples": [
+    {
+      "name": "general chemistry",
+      "description": "the branch of chemistry dealing with matter, atoms, molecules, bonding and chemical reactions",
+      "from": "chemistry",
+      "verb": "kind of",
+      "to": "general",
+      "refs": [
+        {
+          "name": "General chemistry",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q129156415",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "physical chemistry",
+      "description": "the branch of chemistry dealing with energy, equilibrium, kinetics and the physical basis of chemical systems",
+      "from": "chemistry",
+      "verb": "kind of",
+      "to": "physical",
+      "refs": [
+        {
+          "name": "Physical chemistry",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11372",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "organic chemistry",
+      "description": "the branch of chemistry dealing with the structure and reactions of carbon-based compounds",
+      "from": "chemistry",
+      "verb": "kind of",
+      "to": "organic",
+      "refs": [
+        {
+          "name": "Organic chemistry",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11351",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "analytical chemistry",
+      "description": "the branch of chemistry dealing with the identification and quantification of chemical substances",
+      "from": "chemistry",
+      "verb": "kind of",
+      "to": "analytical",
+      "refs": [
+        {
+          "name": "Analytical chemistry",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2346",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chemical element",
+      "description": "a pure substance consisting of atoms with the same number of protons",
+      "from": "element",
+      "verb": "kind of",
+      "to": "chemical",
+      "refs": [
+        {
+          "name": "Chemical element",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11344",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chemical compound",
+      "description": "a substance formed from two or more chemical elements bonded together",
+      "from": "compound",
+      "verb": "kind of",
+      "to": "chemical",
+      "refs": [
+        {
+          "name": "Chemical compound",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11173",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "atomic number",
+      "description": "the number of protons in the nucleus of an atom",
+      "from": "number",
+      "verb": "kind of",
+      "to": "atomic",
+      "refs": [
+        {
+          "name": "Atomic number",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q23809",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mass number",
+      "description": "the total number of protons and neutrons in an atomic nucleus",
+      "from": "number",
+      "verb": "of",
+      "to": "mass",
+      "refs": [
+        {
+          "name": "Mass number",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q101395",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "atomic mass",
+      "description": "the mass of an atom, mostly expressed in unified atomic mass units",
+      "from": "mass",
+      "verb": "kind of",
+      "to": "atomic",
+      "refs": [
+        {
+          "name": "Atomic mass",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3840065",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "molar mass",
+      "description": "the mass of one mole of a substance",
+      "from": "mass",
+      "verb": "kind of",
+      "to": "molar",
+      "refs": [
+        {
+          "name": "Molar mass",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q145623",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "molecular mass",
+      "description": "the mass of a molecule relative to the unified atomic mass unit",
+      "from": "mass",
+      "verb": "kind of",
+      "to": "molecular",
+      "refs": [
+        {
+          "name": "Molecular mass",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q182854",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chemical formula",
+      "description": "notation showing the elements and their proportions in a compound",
+      "from": "formula",
+      "verb": "kind of",
+      "to": "chemical",
+      "refs": [
+        {
+          "name": "Chemical formula",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83147",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "empirical formula",
+      "description": "the simplest whole-number ratio of atoms in a compound",
+      "from": "formula",
+      "verb": "kind of",
+      "to": "empirical",
+      "refs": [
+        {
+          "name": "Empirical formula",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q272477",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "molecular formula",
+      "description": "the actual number of atoms of each element in a molecule",
+      "from": "formula",
+      "verb": "kind of",
+      "to": "molecular",
+      "refs": [
+        {
+          "name": "Chemical formula",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83147",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chemical bond",
+      "description": "a lasting attraction between atoms that forms molecules or compounds",
+      "from": "bond",
+      "verb": "kind of",
+      "to": "chemical",
+      "refs": [
+        {
+          "name": "Chemical bond",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q44424",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "covalent bond",
+      "description": "a chemical bond formed by sharing electron pairs between atoms",
+      "from": "bond",
+      "verb": "kind of",
+      "to": "covalent",
+      "refs": [
+        {
+          "name": "Covalent bond",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q127920",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ionic bond",
+      "description": "a chemical bond formed by electrostatic attraction between oppositely charged ions",
+      "from": "bond",
+      "verb": "kind of",
+      "to": "ionic",
+      "refs": [
+        {
+          "name": "Ionic bonding",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q62500",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "metallic bond",
+      "description": "a chemical bond formed by the sharing of free electrons among metal cations",
+      "from": "bond",
+      "verb": "kind of",
+      "to": "metallic",
+      "refs": [
+        {
+          "name": "Metallic bonding",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q191390",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hydrogen bond",
+      "description": "a weak attraction between a hydrogen atom and an electronegative atom",
+      "from": "bond",
+      "verb": "kind of",
+      "to": "hydrogen",
+      "refs": [
+        {
+          "name": "Hydrogen bond",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q169324",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "oxidation state",
+      "description": "the hypothetical charge of an atom if all bonds were fully ionic",
+      "from": "state",
+      "verb": "of",
+      "to": "oxidation",
+      "refs": [
+        {
+          "name": "Oxidation state",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q484152",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "electron configuration",
+      "description": "the distribution of electrons of an atom in atomic orbitals",
+      "from": "configuration",
+      "verb": "of",
+      "to": "electron",
+      "refs": [
+        {
+          "name": "Electron configuration",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q53859",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "valence electron",
+      "description": "an electron in the outermost shell that can take part in bonding",
+      "from": "electron",
+      "verb": "kind of",
+      "to": "valence",
+      "refs": [
+        {
+          "name": "Valence electron",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q107414",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "periodic table",
+      "description": "the tabular arrangement of the chemical elements by atomic number",
+      "from": "table",
+      "verb": "kind of",
+      "to": "periodic",
+      "refs": [
+        {
+          "name": "Periodic table",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q10693",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chemical period",
+      "description": "a horizontal row of the periodic table",
+      "from": "period",
+      "verb": "kind of",
+      "to": "chemical",
+      "refs": [
+        {
+          "name": "Period (periodic table)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q101843",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chemical group",
+      "description": "a vertical column of the periodic table",
+      "from": "group",
+      "verb": "kind of",
+      "to": "chemical",
+      "refs": [
+        {
+          "name": "Group (periodic table)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83306",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chemical reaction",
+      "description": "a process that converts reactants into products by rearranging atoms",
+      "from": "reaction",
+      "verb": "kind of",
+      "to": "chemical",
+      "refs": [
+        {
+          "name": "Chemical reaction",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q36534",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reaction product",
+      "description": "a substance formed by a chemical reaction",
+      "from": "product",
+      "verb": "of",
+      "to": "reaction",
+      "refs": [
+        {
+          "name": "Product (chemistry)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q542929",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reaction rate",
+      "description": "the speed at which reactants are converted into products",
+      "from": "rate",
+      "verb": "of",
+      "to": "reaction",
+      "refs": [
+        {
+          "name": "Reaction rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3394849",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "rate constant",
+      "description": "the proportionality constant in a reaction rate law",
+      "from": "constant",
+      "verb": "of",
+      "to": "rate",
+      "refs": [
+        {
+          "name": "Reaction rate constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q658700",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "activation energy",
+      "description": "the minimum energy required for a chemical reaction to occur",
+      "from": "energy",
+      "verb": "of",
+      "to": "activation",
+      "refs": [
+        {
+          "name": "Activation energy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190474",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chemical equilibrium",
+      "description": "the state where forward and reverse reaction rates are equal",
+      "from": "equilibrium",
+      "verb": "kind of",
+      "to": "chemical",
+      "refs": [
+        {
+          "name": "Chemical equilibrium",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189520",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "equilibrium constant",
+      "description": "the ratio of product to reactant activities at equilibrium",
+      "from": "constant",
+      "verb": "of",
+      "to": "equilibrium",
+      "refs": [
+        {
+          "name": "Equilibrium constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q857809",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "free energy",
+      "from": "energy",
+      "verb": "kind of",
+      "to": "free"
+    },
+    {
+      "name": "Gibbs free energy",
+      "description": "the thermodynamic potential that measures usable work at constant temperature and pressure",
+      "from": "free energy",
+      "verb": "of",
+      "to": "Gibbs",
+      "refs": [
+        {
+          "name": "Gibbs free energy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q334631",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "standard enthalpy",
+      "description": "the enthalpy change measured under standard conditions",
+      "from": "enthalpy",
+      "verb": "kind of",
+      "to": "standard",
+      "refs": [
+        {
+          "name": "Standard enthalpy of reaction",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q911664",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "partial pressure",
+      "description": "the pressure a gas in a mixture would exert if it alone occupied the volume",
+      "from": "pressure",
+      "verb": "kind of",
+      "to": "partial",
+      "refs": [
+        {
+          "name": "Partial pressure",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q27165",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mole fraction",
+      "description": "the ratio of the moles of one component to the total moles",
+      "from": "fraction",
+      "verb": "of",
+      "to": "mole",
+      "refs": [
+        {
+          "name": "Mole fraction",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q125264",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "description": "a concentration of one part of solute per million parts of solution",
+      "from": "parts",
+      "verb": "per",
+      "to": "million",
+      "refs": [
+        {
+          "name": "Parts-per notation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q27084",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "acid dissociation",
+      "from": "dissociation",
+      "verb": "of",
+      "to": "acid"
+    },
+    {
+      "name": "acid dissociation constant",
+      "description": "the equilibrium constant for the dissociation of an acid",
+      "from": "constant",
+      "verb": "of",
+      "to": "acid dissociation",
+      "refs": [
+        {
+          "name": "Acid dissociation constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q325519",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hydrogen ion",
+      "from": "ion",
+      "verb": "of",
+      "to": "hydrogen"
+    },
+    {
+      "name": "hydrogen ion concentration",
+      "description": "the molar concentration of hydrogen ions in a solution",
+      "from": "concentration",
+      "verb": "of",
+      "to": "hydrogen ion"
+    },
+    {
+      "name": "hydroxide ion",
+      "from": "ion",
+      "verb": "of",
+      "to": "hydroxide"
+    },
+    {
+      "name": "hydroxide ion concentration",
+      "description": "the molar concentration of hydroxide ions in a solution",
+      "from": "concentration",
+      "verb": "of",
+      "to": "hydroxide ion"
+    },
+    {
+      "name": "redox reaction",
+      "description": "a reaction in which oxidation and reduction occur together",
+      "from": "reaction",
+      "verb": "kind of",
+      "to": "redox",
+      "refs": [
+        {
+          "name": "Redox",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q82682",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cell potential",
+      "description": "the voltage of an electrochemical cell",
+      "from": "potential",
+      "verb": "of",
+      "to": "cell",
+      "refs": [
+        {
+          "name": "Electrode potential",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11025104",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "functional group",
+      "description": "a specific group of atoms responsible for characteristic reactions",
+      "from": "group",
+      "verb": "kind of",
+      "to": "functional",
+      "refs": [
+        {
+          "name": "Functional group",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170409",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Faraday constant",
+      "description": "the electric charge per mole of electrons, about 96485 C/mol",
+      "from": "constant",
+      "verb": "of",
+      "to": "Faraday"
+    },
+    {
+      "name": "molar volume",
+      "from": "volume",
+      "verb": "kind of",
+      "to": "molar"
+    },
+    {
+      "name": "standard molar volume",
+      "description": "the volume of one mole of an ideal gas at standard temperature and pressure, about 22.4 litre per mole",
+      "from": "molar volume",
+      "verb": "kind of",
+      "to": "standard"
+    },
     {
       "from": "chemistry",
       "verb": "is part of",
@@ -1806,7 +2120,6 @@
       ]
     },
     {
-      "name": "Avogadro's law is part of physical chemistry",
       "from": "Avogadro's law",
       "verb": "is part of",
       "to": "physical chemistry"
@@ -1828,7 +2141,6 @@
       ]
     },
     {
-      "name": "Dalton's law is part of physical chemistry",
       "from": "Dalton's law",
       "verb": "is part of",
       "to": "physical chemistry"
@@ -1850,7 +2162,6 @@
       ]
     },
     {
-      "name": "Boyle's law is part of physical chemistry",
       "from": "Boyle's law",
       "verb": "is part of",
       "to": "physical chemistry"
@@ -1872,7 +2183,6 @@
       ]
     },
     {
-      "name": "Charles's law is part of physical chemistry",
       "from": "Charles's law",
       "verb": "is part of",
       "to": "physical chemistry"
@@ -1894,7 +2204,6 @@
       ]
     },
     {
-      "name": "Hess's law is part of physical chemistry",
       "from": "Hess's law",
       "verb": "is part of",
       "to": "physical chemistry"
@@ -1916,7 +2225,6 @@
       ]
     },
     {
-      "name": "Le Chatelier's principle is part of physical chemistry",
       "from": "Le Chatelier's principle",
       "verb": "is part of",
       "to": "physical chemistry"
@@ -1938,7 +2246,6 @@
       ]
     },
     {
-      "name": "Arrhenius equation is part of physical chemistry",
       "from": "Arrhenius equation",
       "verb": "is part of",
       "to": "physical chemistry"
@@ -1960,7 +2267,6 @@
       ]
     },
     {
-      "name": "Nernst equation is part of electrochemistry",
       "from": "Nernst equation",
       "verb": "is part of",
       "to": "electrochemistry"
@@ -1982,7 +2288,6 @@
       ]
     },
     {
-      "name": "Raoult's law is part of physical chemistry",
       "from": "Raoult's law",
       "verb": "is part of",
       "to": "physical chemistry"

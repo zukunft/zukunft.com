@@ -95,7 +95,7 @@ class phrase_list_read_tests
         $switzerland = new phrase($t->usr1);
         $switzerland->load_by_name(words::CH);
         $lst->load_like('S');
-        $t->assert_contains($test_name, $lst->names(), $switzerland->name());
+        $t->assert_contains($test_name, $lst->names(), words::CH);
 
 
         $t->subheader($ts . 'get related');
@@ -105,13 +105,13 @@ class phrase_list_read_tests
         $country = new phrase($t->usr1);
         $country->load_by_name(words::COUNTRY);
         $country_lst = $country->direct_children();
-        $t->assert_contains($test_name, $country_lst->names(), $switzerland->name());
+        $t->assert_contains($test_name, $country_lst->names(), words::CH);
         $test_name = 'Zurich is a country (even if it is part of a country)';
         $zurich = new phrase($t->usr1);
         $zurich->load_by_name(words::ZH);
-        $t->assert_contains_not($test_name, $country_lst->names(), $zurich->name());
+        $t->assert_contains_not($test_name, $country_lst->names(), words::ZH);
         $test_name = 'The word country is not part of the country list';
-        $t->assert_contains_not($test_name, $country_lst->names(), $country->name());
+        $t->assert_contains_not($test_name, $country_lst->names(), words::COUNTRY);
 
         // all children
         $test_name = 'The default number of forecast years is a system configuration parameter';

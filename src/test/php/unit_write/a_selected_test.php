@@ -59,6 +59,7 @@ use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\formula_calc_tests;
+use Zukunft\ZukunftCom\test\php\unit\import_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\value_read_tests;
@@ -106,7 +107,7 @@ class a_selected_test extends test_cleanup
 
         // run the selected unit tests
         //new system_tests()->run($this);
-        //new import_tests()->run($this);
+        new import_tests()->run($this);
         //new formula_link_tests()->run($this);
         //new formula_calc_tests()->run($this);
         //new api_tests()->run($this);
@@ -159,7 +160,7 @@ class a_selected_test extends test_cleanup
             global $sys;
             $ui = new frontend('api based ui tests');
             $ui->load_cache();
-            new type_lists_ui_tests()->run($this, $ui);
+            //new type_lists_ui_tests()->run($this, $ui);
 
             // check and update the fixed csv files
             // e.g. to have an indication which words might be missing due to the code changes
@@ -189,7 +190,7 @@ class a_selected_test extends test_cleanup
             //new import_write_tests()->run($t);
             $imf = new import_file();
             $ta = new all_unit_write_tests();
-            $ta->import_test_files($usr);
+            //$ta->import_test_files($usr);
             //$imf->json_file(files::MESSAGE_PATH . files::TIME_FILE, $usr, false);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
@@ -270,14 +271,14 @@ class a_selected_test extends test_cleanup
             //new ref_write_tests()->run($this);
             //new value_write_tests()->run($this);
             //new value_list_write_tests()->run($t);
-            //new expression_write_tests()->run($this);
-            new element_write_tests()->run($this);
-            new element_write_tests()->run_list($this);
-            new element_group_write_tests()->run($this);
-            new formula_write_tests()->run($this);
+            new expression_write_tests()->run($this);
+            //new element_write_tests()->run($this);
+            //new element_write_tests()->run_list($this);
+            //new element_group_write_tests()->run($this);
+            //new formula_write_tests()->run($this);
             //new formula_write_tests()->run_list($this);
-            new formula_link_write_tests()->run($this);
-            new formula_link_write_tests()->run_list($this);
+            //new formula_link_write_tests()->run($this);
+            //new formula_link_write_tests()->run_list($this);
             //new formula_trigger_tests()->run($t);
             //new result_write_tests()->run($t);
             //new result_write_tests()->run_list($t);

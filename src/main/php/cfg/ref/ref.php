@@ -752,9 +752,9 @@ class ref extends sandbox_link
     function get_key(): string
     {
         return
-            $this->escape_key_part($this->phrase_name()) .
+            $this->escape_key_part($this->phrase_name() ?? '') .
             $this->escape_key_part($this->type_name()) .
-            $this->escape_key_part($this->get_external_key());
+            $this->escape_key_part($this->get_external_key() ?? '');
     }
 
     /**

@@ -33,6 +33,7 @@ detail file. Order is by how often they fire, not importance.
 ### Structure & style
 - One `return` per function, at the end, into a named variable; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
+- Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
@@ -78,6 +79,7 @@ noun definitions: `docs/llm/architecture.md`.
 - Disambiguate an ambiguous *word* with qualifier triples via the `must be one of` verb — define the word once, reference the triples; display the bare word, qualifier in the tooltip.
 - A triple's `from`/`verb`/`to` key is unique within an import; split a clashing key with an intermediate building-block triple.
 - A triple whose `from`/`to` is a *named* triple must carry its own explicit `name` — but never repeat the auto-generated `<from> <verb> <to>` as the `name` (the importer builds that for you; only set `name` when it differs or would clash).
+- Phrase names start lower-case unless the first token is a proper noun / ticker / acronym; sentence-case caption copies (`"Gross profit"`) split the same concept in two.
 - Import files are self-consistent: every assigned phrase, and every triple `from`/`to`, is defined in the same file (re-declare base words name-only).
 - Assign an import formula to its *input* phrase(s) (`assigned_word` / `assigned`), never to its result.
 - Qualify a value as specifically as the data allows; build qualifiers as triples from single words; omit `"share":"public"` (the default).

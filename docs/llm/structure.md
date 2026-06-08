@@ -61,3 +61,30 @@ if (property_exists($dbo, 'phrases_related') && $dbo->phrases_related !== null) 
 }
 return $result;
 ```
+
+## Keep a function shorter than a screen page
+
+A function body should fit on **one screen page** (~50 lines) whenever possible —
+short enough that a reader sees the whole control flow without scrolling. When a
+function grows past that, extract a private helper named after *what* the block
+does (`save_results`, `save_components`, `check_formula_name_collision`) so the
+host function reads as a sequence of named steps.
+
+The orchestrator function then stays a flat list of step calls — each step's
+detail lives one click away in its own helper. The smell to act on isn't a hard
+line count; it's "I have to scroll to see what this function does."
+
+- **Right** — `data_object::save()` is a sequence of `save_words(...)`,
+  `save_triples(...)`, `save_sources(...)`, `save_formulas(...)`,
+  `save_results(...)`, `save_components(...)`, `save_views(...)`. Each helper
+  owns one concern: its own config lookup, its own emptiness check, its own
+  `step_start` / `step_end` framing. Adding a new save step is one new helper +
+  one new line in the orchestrator.
+- **Wrong** — inlining each save block (config-load + emptiness check +
+  step_start + the save call + step_end + the else-log line) directly inside
+  `save()`, so every new object type adds ~8 more lines to a function that is
+  already several screens long.
+
+This rule reinforces the DRY rules in `docs/llm/dry.md` — when two siblings'
+save blocks differ only in the object type, the difference belongs in a helper
+parameter, not in two copy-pasted blocks.

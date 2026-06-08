@@ -41,6 +41,12 @@ A proper issue ticket should be created for these TODOs notes:
          after data import check that the result values can be reproduced
 
     TODO Release 0.0.4
+    TODO fix bug that the same triple with another name is not detected as similar triple
+         steps to reproduce:
+         1. create a triple "gross profit" with a json import file
+         2. create a triple "Gross profit" based on the same words with another json import file
+         3. the result will be an error message like this: RROR:  duplicate key value violates unique constraint "triples_unique_idx" DETAIL:  Key (from_phrase_id, verb_id, to_phrase_id)=(1071, 36, 938) ('gross profit') already exists.
+         4. add import test cases for src/test/resources/import/import_test_edge_cases/fixed_generated_name.json
     TODO use the name "nud" (New User Default) for the default data that should be used if the user has not done an overwrite
     TODO use the name "psv" (Public Standard Value) for values and results that are no read and write restrictions 
     TODO fix all prio 0 TODO including unit tests

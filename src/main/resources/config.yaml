@@ -91,6 +91,9 @@ zukunft.com:
               formulas:
                 sys-conf-value: 760
                 tooltip-comment: "the estimated number of formulas that can be loaded per second"
+              results:
+                sys-conf-value: 755
+                tooltip-comment: "the estimated number of pre-calculated results that can be loaded per second"
               views:
                 sys-conf-value: 750
                 tooltip-comment: "the estimated number of views that can be loaded per second"
@@ -119,6 +122,9 @@ zukunft.com:
               formulas:
                 sys-conf-value: 150
                 tooltip-comment: "the estimated number of formulas that can be created per second"
+              results:
+                sys-conf-value: 140
+                tooltip-comment: "the estimated number of pre-calculated results that can be created per second"
               views:
                 sys-conf-value: 250
                 tooltip-comment: "the estimated number of views that can be created per second"
@@ -147,6 +153,9 @@ zukunft.com:
               formulas:
                 sys-conf-value: 540
                 tooltip-comment: "the estimated number of formulas that can be updated per second"
+              results:
+                sys-conf-value: 535
+                tooltip-comment: "the estimated number of pre-calculated results that can be updated per second"
               views:
                 sys-conf-value: 530
                 tooltip-comment: "the estimated number of views that can be updated per second"
@@ -175,6 +184,9 @@ zukunft.com:
               formulas:
                 sys-conf-value: 50
                 tooltip-comment: "the estimated number of formulas that can be added or updated in the database per second"
+              results:
+                sys-conf-value: 45
+                tooltip-comment: "the estimated number of pre-calculated results that can be added or updated in the database per second"
               views:
                 sys-conf-value: 75
                 tooltip-comment: "the estimated number of views that can be added or updated in the database per second"

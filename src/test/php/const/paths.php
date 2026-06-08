@@ -81,6 +81,8 @@ class paths
     const string IMPORT = self::RESOURCE . 'import' . DIRECTORY_SEPARATOR;
     const string IMPORT_UNIT = self::IMPORT . 'unit_tests' . DIRECTORY_SEPARATOR;
     const string IMPORT_WIKIPEDIA = self::IMPORT . 'wikipedia' . DIRECTORY_SEPARATOR;
+    const string IMPORT_XBRL = self::IMPORT . 'xbrl' . DIRECTORY_SEPARATOR;
+    const string IMPORT_XBRL_ZIP = self::IMPORT_XBRL . 'zip' . DIRECTORY_SEPARATOR;
     const string UNIT_RES = self::RESOURCE . 'unit' . DIRECTORY_SEPARATOR;
     const string SYSTEM = self::UNIT_RES . 'system' . DIRECTORY_SEPARATOR;
     const string SANDBOX = self::UNIT_RES . 'sandbox' . DIRECTORY_SEPARATOR;

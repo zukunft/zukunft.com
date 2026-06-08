@@ -740,6 +740,14 @@ class formula_map extends sandbox_code_id
         ?formula_list $frm_lst = null
     ): term_list
     {
+        // a partial-update import (e.g. formulas_update.json carrying only name + description)
+        // leaves usr_text and ref_text empty after import_mapper's reset; with no expression
+        // there are no terms to look up, and trying would add a spurious EXPRESSION_EMPTY
+        // error before the save loop has a chance to fill the formula from the DB
+        if (($this->usr_text === null || $this->usr_text === '')
+            && ($this->ref_text === null || $this->ref_text === '')) {
+            return $trm_lst ?? new term_list($this->get_user());
+        }
         $exp = $this->expression($trm_lst);
         // TODO Prio 2 try to avoid reloading of the terms
         $trm_lst = $this->load_terms($usr_msg, $trm_lst, $exp);
@@ -1615,6 +1623,14 @@ class formula_map extends sandbox_code_id
      */
     function element_refresh(user_message $usr_msg, ?term_list $trm_lst = null): bool
     {
+        // skip refresh when the imported formula has no expression (partial update);
+        // the existing element rows in the database remain valid because the formula's
+        // expression in the database has not changed
+        if (($this->usr_text === null || $this->usr_text === '')
+            && ($this->ref_text === null || $this->ref_text === '')) {
+            return true;
+        }
+
         $imp = new import();
 
         $frm_usr_msg = $usr_msg->clone_reset();

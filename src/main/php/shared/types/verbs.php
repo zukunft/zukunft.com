@@ -199,6 +199,22 @@ class verbs
     const string INFLUENCE = "influence";
     const string INFLUENCE_NAME = "influence";
     const int INFLUENCE_ID = 17;
+    const string USED_BY = "used_by"; // passive form of 'uses' when the dependent phrase is the subject e.g. cent is used by Euro
+    const string USED_BY_NAME = "is used by";
+    const int USED_BY_ID = 40;
+    const string USED_BY_COM = "passive form of 'uses' when the dependent phrase is the subject e.g. cent is used by Euro";
+    const string CAN_BE_MADE_OF = "can_be_made_of"; // to specify possible materials or composition options e.g. a porringer can be made of plastic
+    const string CAN_BE_MADE_OF_NAME = "can be made of";
+    const int CAN_BE_MADE_OF_ID = 41;
+    const string CAN_BE_MADE_OF_COM = "to specify possible materials or composition options e.g. a porringer can be made of plastic";
+    const string CAN_BE_PACKED_IN = "can_be_packed_in"; // to specify possible packaging options e.g. a blueberry can be packed in a plastic porringer
+    const string CAN_BE_PACKED_IN_NAME = "can be packed in";
+    const int CAN_BE_PACKED_IN_ID = 42;
+    const string CAN_BE_PACKED_IN_COM = "to specify possible packaging options e.g. a blueberry can be packed in a plastic porringer";
+    const string USED_FOR = "used_for"; // to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel)
+    const string USED_FOR_NAME = "used for";
+    const int USED_FOR_ID = 43;
+    const string USED_FOR_COM = "to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel)";
 
     // persevered verb names for unit and integration tests based on the database
     const string TEST_ADD_NAME = "System Test Verb";

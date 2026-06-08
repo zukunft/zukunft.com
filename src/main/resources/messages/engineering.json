@@ -1,6 +1,6 @@
 {
   "version": "0.0.3",
-  "time": "2026-05-22 10:00:00",
+  "time": "2026-06-05 12:00:00",
   "user": "timon",
   "selection": [
     "engineering"
@@ -23,104 +23,6 @@
     },
     {
       "name": "science"
-    },
-    {
-      "name": "mechanical engineering",
-      "description": "the branch of engineering dealing with the design and analysis of mechanical systems, forces and motion",
-      "refs": [
-        {
-          "name": "Mechanical engineering",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q101333",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "electrical engineering",
-      "description": "the branch of engineering dealing with the study and application of electricity, electronics and electromagnetism",
-      "refs": [
-        {
-          "name": "Electrical engineering",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q43035",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "civil engineering",
-      "description": "the branch of engineering dealing with the design and construction of structures and infrastructure",
-      "refs": [
-        {
-          "name": "Civil engineering",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q77590",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "chemical engineering",
-      "description": "the branch of engineering dealing with the application of chemistry and physics to industrial processes",
-      "refs": [
-        {
-          "name": "Chemical engineering",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q83588",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "materials engineering",
-      "description": "the branch of engineering dealing with the properties, processing and selection of materials",
-      "refs": [
-        {
-          "name": "Materials science",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q228736",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "control engineering",
-      "description": "the branch of engineering dealing with the design of systems that regulate the behaviour of other systems",
-      "refs": [
-        {
-          "name": "Control engineering",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q4917288",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "mechanical stress",
-      "description": "the internal force per unit area within a deformable body",
-      "refs": [
-        {
-          "name": "Stress (mechanics)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q206175",
-          "type": "wikidata"
-        }
-      ]
     },
     {
       "name": "strain",
@@ -160,62 +62,6 @@
         },
         {
           "name": "Q472074",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "yield strength",
-      "description": "the stress at which a material begins to deform plastically",
-      "refs": [
-        {
-          "name": "Yield (engineering)",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q899301",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "tensile strength",
-      "description": "the maximum tensile stress a material can withstand",
-      "refs": [
-        {
-          "name": "Ultimate tensile strength",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q76005",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "ultimate strength",
-      "description": "the maximum stress a material can withstand before failure",
-      "refs": [
-        {
-          "name": "Ultimate tensile strength",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q76005",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "shear stress",
-      "description": "the stress component parallel to a material cross section",
-      "refs": [
-        {
-          "name": "Shear stress",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q657936",
           "type": "wikidata"
         }
       ]
@@ -300,62 +146,6 @@
         },
         {
           "name": "Q507234",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "Young's modulus",
-      "description": "the ratio of tensile stress to tensile strain of a material",
-      "refs": [
-        {
-          "name": "Young's modulus",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2091584",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "shear modulus",
-      "description": "the ratio of shear stress to shear strain",
-      "refs": [
-        {
-          "name": "Shear modulus",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q461466",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "Poisson's ratio",
-      "description": "the ratio of transverse to axial strain",
-      "refs": [
-        {
-          "name": "Poisson's ratio",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q190453",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "factor of safety",
-      "description": "the ratio of a material strength to the expected load",
-      "refs": [
-        {
-          "name": "Factor of safety",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2034862",
           "type": "wikidata"
         }
       ]
@@ -613,34 +403,6 @@
       ]
     },
     {
-      "name": "alternating current",
-      "description": "an electric current that periodically reverses direction",
-      "refs": [
-        {
-          "name": "Alternating current",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q124164",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "direct current",
-      "description": "an electric current that flows in one direction",
-      "refs": [
-        {
-          "name": "Direct current",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q159241",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "amplifier",
       "description": "a device that increases the power of a signal",
       "refs": [
@@ -650,20 +412,6 @@
         },
         {
           "name": "Q211554",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "power factor",
-      "description": "the ratio of real power to apparent power in a circuit",
-      "refs": [
-        {
-          "name": "Power factor",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q750454",
           "type": "wikidata"
         }
       ]
@@ -711,20 +459,6 @@
       ]
     },
     {
-      "name": "structural load",
-      "description": "a force or other action applied to a structure",
-      "refs": [
-        {
-          "name": "Structural load",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7964839",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "span",
       "description": "the distance between two structural supports",
       "refs": [
@@ -767,20 +501,6 @@
       ]
     },
     {
-      "name": "reinforced concrete",
-      "description": "concrete with embedded steel to resist tension",
-      "refs": [
-        {
-          "name": "Reinforced concrete",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q184190",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "deflection",
       "description": "the displacement of a structural element under load",
       "refs": [
@@ -804,34 +524,6 @@
         },
         {
           "name": "Q17227",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "bending moment",
-      "description": "the internal moment that causes a beam to bend",
-      "refs": [
-        {
-          "name": "Bending moment",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q857244",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "shear force",
-      "description": "the internal force acting parallel to a cross section",
-      "refs": [
-        {
-          "name": "Shear force",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7492174",
           "type": "wikidata"
         }
       ]
@@ -865,48 +557,6 @@
       ]
     },
     {
-      "name": "heat exchanger",
-      "description": "a device that transfers heat between fluids",
-      "refs": [
-        {
-          "name": "Heat exchanger",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q189124",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "fluid flow",
-      "description": "the movement of a liquid or gas",
-      "refs": [
-        {
-          "name": "Fluid dynamics",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q216320",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "Reynolds number",
-      "description": "a dimensionless number that predicts flow patterns",
-      "refs": [
-        {
-          "name": "Reynolds number",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q178932",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "viscosity",
       "description": "a measure of a fluid resistance to flow",
       "refs": [
@@ -916,34 +566,6 @@
         },
         {
           "name": "Q128709",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "laminar flow",
-      "description": "smooth fluid flow in parallel layers",
-      "refs": [
-        {
-          "name": "Laminar flow",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q189452",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "turbulent flow",
-      "description": "chaotic fluid flow with mixing and eddies",
-      "refs": [
-        {
-          "name": "Turbulence",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q190132",
           "type": "wikidata"
         }
       ]
@@ -977,20 +599,6 @@
       ]
     },
     {
-      "name": "flow rate",
-      "description": "the volume of fluid that passes per unit time",
-      "refs": [
-        {
-          "name": "Volumetric flow rate",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1134348",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "alloy",
       "description": "a mixture of a metal with other elements",
       "refs": [
@@ -1000,20 +608,6 @@
         },
         {
           "name": "Q37756",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "composite material",
-      "description": "a material made from two or more constituent materials",
-      "refs": [
-        {
-          "name": "Composite material",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q181790",
           "type": "wikidata"
         }
       ]
@@ -1061,20 +655,6 @@
       ]
     },
     {
-      "name": "crystal structure",
-      "description": "the ordered arrangement of atoms in a crystalline material",
-      "refs": [
-        {
-          "name": "Crystal structure",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q895901",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "fracture",
       "description": "the separation of a material into pieces under stress",
       "refs": [
@@ -1117,34 +697,6 @@
       ]
     },
     {
-      "name": "control system",
-      "description": "a system that manages the behaviour of other systems",
-      "refs": [
-        {
-          "name": "Control system",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q959968",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "transfer function",
-      "description": "the ratio of output to input of a system in the frequency domain",
-      "refs": [
-        {
-          "name": "Transfer function",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q334269",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "gain",
       "description": "the ratio of output to input of a system or amplifier",
       "refs": [
@@ -1182,20 +734,6 @@
         },
         {
           "name": "Q423488",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "PID controller",
-      "description": "a control loop using proportional, integral and derivative terms",
-      "refs": [
-        {
-          "name": "PID controller",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q716829",
           "type": "wikidata"
         }
       ]
@@ -1257,15 +795,728 @@
       ]
     },
     {
-      "name": "standard gravity",
-      "description": "the standard acceleration due to gravity at the Earth surface, 9.80665 metre per second squared"
+      "name": "mechanical"
     },
     {
-      "name": "standard atmosphere",
-      "description": "the standard reference air pressure, 101325 pascal"
+      "name": "electrical"
+    },
+    {
+      "name": "civil"
+    },
+    {
+      "name": "chemical"
+    },
+    {
+      "name": "materials"
+    },
+    {
+      "name": "control"
+    },
+    {
+      "name": "stress"
+    },
+    {
+      "name": "yield"
+    },
+    {
+      "name": "strength"
+    },
+    {
+      "name": "tensile"
+    },
+    {
+      "name": "ultimate"
+    },
+    {
+      "name": "shear"
+    },
+    {
+      "name": "modulus"
+    },
+    {
+      "name": "Young's"
+    },
+    {
+      "name": "Poisson's"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "safety"
+    },
+    {
+      "name": "current"
+    },
+    {
+      "name": "alternating"
+    },
+    {
+      "name": "direct"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "structural"
+    },
+    {
+      "name": "load"
+    },
+    {
+      "name": "reinforced"
+    },
+    {
+      "name": "bending"
+    },
+    {
+      "name": "moment"
+    },
+    {
+      "name": "force"
+    },
+    {
+      "name": "heat"
+    },
+    {
+      "name": "exchanger"
+    },
+    {
+      "name": "fluid"
+    },
+    {
+      "name": "flow"
+    },
+    {
+      "name": "Reynolds"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "laminar"
+    },
+    {
+      "name": "turbulent"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "composite"
+    },
+    {
+      "name": "material"
+    },
+    {
+      "name": "crystal"
+    },
+    {
+      "name": "structure"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "transfer"
+    },
+    {
+      "name": "function"
+    },
+    {
+      "name": "PID"
+    },
+    {
+      "name": "controller"
+    },
+    {
+      "name": "standard"
+    },
+    {
+      "name": "gravity"
+    },
+    {
+      "name": "atmosphere"
     }
   ],
   "triples": [
+    {
+      "name": "mechanical engineering",
+      "description": "the branch of engineering dealing with the design and analysis of mechanical systems, forces and motion",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "mechanical",
+      "refs": [
+        {
+          "name": "Mechanical engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q101333",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "electrical engineering",
+      "description": "the branch of engineering dealing with the study and application of electricity, electronics and electromagnetism",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "electrical",
+      "refs": [
+        {
+          "name": "Electrical engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43035",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "civil engineering",
+      "description": "the branch of engineering dealing with the design and construction of structures and infrastructure",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "civil",
+      "refs": [
+        {
+          "name": "Civil engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q77590",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chemical engineering",
+      "description": "the branch of engineering dealing with the application of chemistry and physics to industrial processes",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "chemical",
+      "refs": [
+        {
+          "name": "Chemical engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83588",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "materials engineering",
+      "description": "the branch of engineering dealing with the properties, processing and selection of materials",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "materials",
+      "refs": [
+        {
+          "name": "Materials science",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q228736",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "control engineering",
+      "description": "the branch of engineering dealing with the design of systems that regulate the behaviour of other systems",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "control",
+      "refs": [
+        {
+          "name": "Control engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4917288",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mechanical stress",
+      "description": "the internal force per unit area within a deformable body",
+      "from": "stress",
+      "verb": "kind of",
+      "to": "mechanical",
+      "refs": [
+        {
+          "name": "Stress (mechanics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q206175",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "yield strength",
+      "description": "the stress at which a material begins to deform plastically",
+      "from": "strength",
+      "verb": "kind of",
+      "to": "yield",
+      "refs": [
+        {
+          "name": "Yield (engineering)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q899301",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "tensile strength",
+      "description": "the maximum tensile stress a material can withstand",
+      "from": "strength",
+      "verb": "kind of",
+      "to": "tensile",
+      "refs": [
+        {
+          "name": "Ultimate tensile strength",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q76005",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ultimate strength",
+      "description": "the maximum stress a material can withstand before failure",
+      "from": "strength",
+      "verb": "kind of",
+      "to": "ultimate",
+      "refs": [
+        {
+          "name": "Ultimate tensile strength",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q76005",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "shear stress",
+      "description": "the stress component parallel to a material cross section",
+      "from": "stress",
+      "verb": "kind of",
+      "to": "shear",
+      "refs": [
+        {
+          "name": "Shear stress",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q657936",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Young's modulus",
+      "description": "the ratio of tensile stress to tensile strain of a material",
+      "from": "modulus",
+      "verb": "of",
+      "to": "Young's",
+      "refs": [
+        {
+          "name": "Young's modulus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2091584",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "shear modulus",
+      "description": "the ratio of shear stress to shear strain",
+      "from": "modulus",
+      "verb": "kind of",
+      "to": "shear",
+      "refs": [
+        {
+          "name": "Shear modulus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q461466",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Poisson's ratio",
+      "description": "the ratio of transverse to axial strain",
+      "from": "ratio",
+      "verb": "of",
+      "to": "Poisson's",
+      "refs": [
+        {
+          "name": "Poisson's ratio",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190453",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "description": "the ratio of a material strength to the expected load",
+      "from": "factor",
+      "verb": "of",
+      "to": "safety",
+      "refs": [
+        {
+          "name": "Factor of safety",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2034862",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "alternating current",
+      "description": "an electric current that periodically reverses direction",
+      "from": "current",
+      "verb": "kind of",
+      "to": "alternating",
+      "refs": [
+        {
+          "name": "Alternating current",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q124164",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "direct current",
+      "description": "an electric current that flows in one direction",
+      "from": "current",
+      "verb": "kind of",
+      "to": "direct",
+      "refs": [
+        {
+          "name": "Direct current",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q159241",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "power factor",
+      "description": "the ratio of real power to apparent power in a circuit",
+      "from": "factor",
+      "verb": "of",
+      "to": "power",
+      "refs": [
+        {
+          "name": "Power factor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q750454",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "structural load",
+      "description": "a force or other action applied to a structure",
+      "from": "load",
+      "verb": "kind of",
+      "to": "structural",
+      "refs": [
+        {
+          "name": "Structural load",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7964839",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reinforced concrete",
+      "description": "concrete with embedded steel to resist tension",
+      "from": "concrete",
+      "verb": "kind of",
+      "to": "reinforced",
+      "refs": [
+        {
+          "name": "Reinforced concrete",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q184190",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "bending moment",
+      "description": "the internal moment that causes a beam to bend",
+      "from": "moment",
+      "verb": "of",
+      "to": "bending",
+      "refs": [
+        {
+          "name": "Bending moment",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q857244",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "shear force",
+      "description": "the internal force acting parallel to a cross section",
+      "from": "force",
+      "verb": "kind of",
+      "to": "shear",
+      "refs": [
+        {
+          "name": "Shear force",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7492174",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "heat exchanger",
+      "description": "a device that transfers heat between fluids",
+      "from": "exchanger",
+      "verb": "of",
+      "to": "heat",
+      "refs": [
+        {
+          "name": "Heat exchanger",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189124",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fluid flow",
+      "description": "the movement of a liquid or gas",
+      "from": "flow",
+      "verb": "of",
+      "to": "fluid",
+      "refs": [
+        {
+          "name": "Fluid dynamics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q216320",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Reynolds number",
+      "description": "a dimensionless number that predicts flow patterns",
+      "from": "number",
+      "verb": "of",
+      "to": "Reynolds",
+      "refs": [
+        {
+          "name": "Reynolds number",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q178932",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "laminar flow",
+      "description": "smooth fluid flow in parallel layers",
+      "from": "flow",
+      "verb": "kind of",
+      "to": "laminar",
+      "refs": [
+        {
+          "name": "Laminar flow",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189452",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "turbulent flow",
+      "description": "chaotic fluid flow with mixing and eddies",
+      "from": "flow",
+      "verb": "kind of",
+      "to": "turbulent",
+      "refs": [
+        {
+          "name": "Turbulence",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190132",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "flow rate",
+      "description": "the volume of fluid that passes per unit time",
+      "from": "rate",
+      "verb": "of",
+      "to": "flow",
+      "refs": [
+        {
+          "name": "Volumetric flow rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1134348",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "composite material",
+      "description": "a material made from two or more constituent materials",
+      "from": "material",
+      "verb": "kind of",
+      "to": "composite",
+      "refs": [
+        {
+          "name": "Composite material",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q181790",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "crystal structure",
+      "description": "the ordered arrangement of atoms in a crystalline material",
+      "from": "structure",
+      "verb": "of",
+      "to": "crystal",
+      "refs": [
+        {
+          "name": "Crystal structure",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q895901",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "control system",
+      "description": "a system that manages the behaviour of other systems",
+      "from": "system",
+      "verb": "of",
+      "to": "control",
+      "refs": [
+        {
+          "name": "Control system",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q959968",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "transfer function",
+      "description": "the ratio of output to input of a system in the frequency domain",
+      "from": "function",
+      "verb": "of",
+      "to": "transfer",
+      "refs": [
+        {
+          "name": "Transfer function",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q334269",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "PID controller",
+      "description": "a control loop using proportional, integral and derivative terms",
+      "from": "controller",
+      "verb": "kind of",
+      "to": "PID",
+      "refs": [
+        {
+          "name": "PID controller",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q716829",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "standard gravity",
+      "description": "the standard acceleration due to gravity at the Earth surface, 9.80665 metre per second squared",
+      "from": "gravity",
+      "verb": "kind of",
+      "to": "standard"
+    },
+    {
+      "name": "standard atmosphere",
+      "description": "the standard reference air pressure, 101325 pascal",
+      "from": "atmosphere",
+      "verb": "kind of",
+      "to": "standard"
+    },
     {
       "from": "engineering",
       "verb": "is part of",

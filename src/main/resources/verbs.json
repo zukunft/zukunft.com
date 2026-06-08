@@ -312,6 +312,38 @@
       "name_plural_reverse": "",
       "name_plural": "must be one of",
       "name_reverse": ""
+    },
+    {
+      "name": "is used by",
+      "code_id": "used_by",
+      "description": "passive form of 'uses' when the dependent phrase is the subject e.g. cent is used by Euro",
+      "name_plural_reverse": "use",
+      "name_plural": "are used by",
+      "name_reverse": "uses"
+    },
+    {
+      "name": "can be made of",
+      "code_id": "can_be_made_of",
+      "description": "to specify possible materials or composition options e.g. a porringer can be made of plastic",
+      "name_plural_reverse": "can make",
+      "name_plural": "can be made of",
+      "name_reverse": "can make"
+    },
+    {
+      "name": "can be packed in",
+      "code_id": "can_be_packed_in",
+      "description": "to specify possible packaging options e.g. a blueberry can be packed in a plastic porringer",
+      "name_plural_reverse": "can pack",
+      "name_plural": "can be packed in",
+      "name_reverse": "can pack"
+    },
+    {
+      "name": "used for",
+      "code_id": "used_for",
+      "description": "to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel)",
+      "name_plural_reverse": "uses",
+      "name_plural": "are used for",
+      "name_reverse": "uses"
     }
   ]
 }

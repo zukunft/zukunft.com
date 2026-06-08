@@ -139,6 +139,39 @@ and `value.source`. When you notice a trailing-space name in an existing file,
 fix it everywhere in that file — partial trims create the same split-identity
 problem.
 
+### Lower-case the first letter unless the name needs a capital
+
+A phrase `name` (word *or* triple) starts with a **lower-case letter** unless the
+first token is a real proper noun (a person, place, organisation, ticker, ISO
+code, etc.) or an established acronym/initialism. Sentence-case
+capitalisation copied from a source document (a financial-statement caption, a
+table header, a column title) is **wrong** — the import treats `"Gross profit"`
+and `"gross profit"` as two distinct phrases (names are matched byte-for-byte;
+see the trim rule above), so a mid-file mix silently splits the same concept in
+two.
+
+- **Wrong** — sentence-case copied from the source caption:
+
+```json
+{ "name": "Gross profit", "from": "profit", "verb": "kind of", "to": "gross" },
+{ "name": "Total revenues", "from": "revenues", "verb": "kind of", "to": "total" }
+```
+
+- **Right** — lower-case first letter; proper nouns / tickers keep their case:
+
+```json
+{ "name": "gross profit", "from": "profit", "verb": "kind of", "to": "gross" },
+{ "name": "total revenues", "from": "revenues", "verb": "kind of", "to": "total" },
+{ "name": "net income attributable to ABB",
+  "from": "net income", "verb": "of", "to": "ABB" }
+```
+
+Apply the same lower-case-first to every place the name appears: word/triple/
+source `name`, triple `from`/`to`, formula `assigned`/`assigned_word`, value
+`words[]` entries, and `value.source`. When you notice a stray-capital name in
+an existing file, fix it everywhere in that file — a partial rename creates the
+same split-identity problem as a partial trim.
+
 ### Intentional symbol / abbreviation aliasing
 
 A short symbol may alias several phrases on purpose. `m` is the symbol for the

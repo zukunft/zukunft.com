@@ -37,13 +37,17 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
+include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::SHARED . 'library.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -111,6 +115,20 @@ class import_tests
         $dto = $imp->get_data_object($json_array, $usr_msg);
         $t->assert($test_name, $dto->formula_list()->count(), 4);
 
+        // covers the simple "total = price * quantity" calculation in result_calc_simple.json:
+        // the importer must populate values, the formula and the pre-calculated result
+        $json_str = file_get_contents(test_files::IMPORT_RESULT_CALC . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $test_name = 'JSON import result_calc word count';
+        $t->assert($test_name, $dto->word_list()->count(), 5);
+        $test_name = 'JSON import result_calc value count';
+        $t->assert($test_name, $dto->value_list()->count(), 2);
+        $test_name = 'JSON import result_calc formula count';
+        $t->assert($test_name, $dto->formula_list()->count(), 1);
+        $test_name = 'JSON import result_calc result count';
+        $t->assert($test_name, $dto->result_list()->count(), 1);
+
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(test_files::IMPORT_WARNING);
         $imp = new import(test_paths::IMPORT . 'warning_and_error_test.json');
@@ -164,6 +182,37 @@ class import_tests
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);
         $t->assert_json($test_name, $result, $target);
+
+        // XBRL fileset unpacker (first step of import_convert_xbrl)
+        $lib = new library();
+        $test_name = 'XBRL zip unpacker creates a unique extraction folder';
+        $conv_xbrl = new import_convert_xbrl;
+        $folder = $conv_xbrl->unzip(
+            test_files::IMPORT_XBRL_ABB_2013_ZIP,
+            test_paths::IMPORT_XBRL,
+            'unit_test'
+        );
+        $t->assert($test_name, is_dir($folder), true);
+
+        $test_name = 'XBRL zip unpacker extracts at least one file';
+        $extracted = array_diff(scandir($folder), ['.', '..']);
+        $t->assert($test_name, count($extracted) > 0, true);
+
+        // cleanup so the test stays repeatable without leaving the working tree dirty
+        $lib->dir_remove($folder);
+
+        $test_name = 'XBRL zip unpacker rejects a missing input file';
+        $caught = false;
+        try {
+            $conv_xbrl->unzip(
+                test_paths::IMPORT_XBRL_ZIP . 'does_not_exist' . test_files::ZIP,
+                test_paths::IMPORT_XBRL,
+                'unit_test'
+            );
+        } catch (\RuntimeException $e) {
+            $caught = true;
+        }
+        $t->assert($test_name, $caught, true);
 
     }
 

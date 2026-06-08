@@ -111,6 +111,7 @@ class words
     const string REFERENCES = 'references';
     const string VALUES = 'values';
     const string FORMULAS = 'formulas';
+    const string RESULTS = 'results';
     const string ELEMENTS = 'elements';
     const string VIEWS = 'views';
     const string COMPONENTS = 'components';
@@ -377,7 +378,7 @@ class words
     const string CHF = 'CHF';
     const int CHF_ID = 258;
     const string SWISS_FRANC = 'Swiss franc';
-    const int SWISS_FRANC_ID = 2465;
+    const int SWISS_FRANC_ID = 2396;
     const string EUR = 'Euro';
     const int EUR_ID = 268;
     const string USD = 'USD';
