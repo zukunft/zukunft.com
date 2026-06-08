@@ -184,7 +184,7 @@ class button
         }
         $this->title = 'back';
         if (is_numeric($back)) {
-            $this->call = api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE
+            $this->call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE
                 . '&' .url_var::ID . '=' . $back;
         } else {
             $this->call = $back;

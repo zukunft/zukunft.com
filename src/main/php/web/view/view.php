@@ -585,7 +585,7 @@ class view extends view_exe
 
         $dsp_lst = new view_list();
 
-        $call = api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
+        $call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
         foreach ($dsp_lst as $dsp) {

@@ -453,7 +453,7 @@ class phrase extends combine_named
      */
     function dsp_link_style($style): string
     {
-        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
             . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description, $style);
     }
 
@@ -470,13 +470,13 @@ class phrase extends combine_named
      */
     function display_linked(): string
     {
-        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
             . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description);
     }
 
     function name_linked(): string
     {
-        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::VIEW . '=' . views::PHRASE . '&'
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
             . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description);
     }
 
