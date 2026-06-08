@@ -872,6 +872,13 @@ class test_words extends test_objects
         return new word_ui($wrd->api_json());
     }
 
+    function euro(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::EURO_ID, words::EURO);
+        return $wrd;
+    }
+
     function word_eur(): word
     {
         $wrd = new word($this->env->usr1);
@@ -879,10 +886,28 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    function us_dollar(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::US_DOLLAR_ID, words::US_DOLLAR);
+        return $wrd;
+    }
+
     function word_usd(): word
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::USD_ID, words::USD);
+        return $wrd;
+    }
+
+    /**
+     * @return word the "currency" word, the common parent of "Swiss franc", "Euro" and "US Dollar"
+     *              used to test word::similar
+     */
+    function currency(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::CURRENCY_ID, words::CURRENCY);
         return $wrd;
     }
 

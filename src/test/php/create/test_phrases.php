@@ -857,6 +857,35 @@ class test_phrases
     }
 
     /**
+     * a list of currencies and their common parent "currency" linked via the "is a" verb
+     * e.g. to test word::similar where the similar words of "Swiss franc" are "Euro" and "US Dollar"
+     *
+     * @return phrase_list with the currency words and the "is a currency" triples
+     */
+    function list_currency(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->currency()->phrase());
+        $lst->add($t_wrd->swiss_franc()->phrase());
+        $lst->add($t_trp->swiss_franc_currency()->phrase());
+        $lst->add($t_wrd->euro()->phrase());
+        $lst->add($t_trp->euro_currency()->phrase());
+        $lst->add($t_wrd->us_dollar()->phrase());
+        $lst->add($t_trp->usd_currency()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend list of currency related phrases for the word::similar test
+     */
+    function list_currency_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_currency());
+    }
+
+    /**
      * the frontend list of city and canton related phrases
      * e.g. to test the subtitle for the city zurich in a different order
      *

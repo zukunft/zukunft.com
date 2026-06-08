@@ -553,7 +553,7 @@
         }
       ],
       "assigned": [
-        "Currency"
+        "currency"
       ]
     }
   ]

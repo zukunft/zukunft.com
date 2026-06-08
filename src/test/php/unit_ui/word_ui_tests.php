@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -63,6 +64,7 @@ class word_ui_tests
         $wrd_pi = new word($t_wrd->word_pi()->api_json());
         $wrd_zh = new word($t_wrd->word_zh()->api_json());
         $wrd_city = new word($t_wrd->word_city()->api_json());
+        $wrd_chf = $t_wrd->swiss_franc_ui();
         $test_page = $html->text_h1('Word display test');
         $test_page .= $html->text_h2('names');
         $test_page .= 'with tooltip: ' . $wrd->name_tip() . '<br>';
@@ -89,11 +91,22 @@ class word_ui_tests
             . $wrd_zh->parents($t_phr->list_zh_ui())->name_link_list() . '<br>';
         $test_page .= 'two levels up: '
             . $wrd_zh->parents(null, 2)->name_link_list() . '<br>';
-        // TODO Prio 1 activate based on test resources
-        //$test_page .= $html->text_h2('children of ' . $wrd_city->name());
-        //$test_page .= $wrd_city->children()->name_link_list() . '<br>';
+        $test_page .= $html->text_h2('children of ' . $wrd_city->name());
+        $test_page .= $wrd_city->children($t_phr->list_zh_ui())->name_link_list() . '<br>';
+        $test_page .= $html->text_h2('similar to ' . $wrd_chf->name());
+        $test_page .= $wrd_chf->similar($t_phr->list_currency_ui())->name_link_list() . '<br>';
         $test_page .= $t->dsp_title_named_edit($wrd);
         $t->html_page_test($test_page, 'word html components', 'word', $t);
+
+        // the similar words of a word are the other words linked to the same parent via the 'is a' verb
+        // e.g. "Swiss franc" is a "currency" and the other currencies are "Euro" and "US Dollar" (USD)
+        $test_name = 'word->similar for ' . words::SWISS_FRANC;
+        $similar = $t_wrd->swiss_franc_ui()->similar($t_phr->list_currency_ui());
+        $names = $similar->names();
+        sort($names);
+        $result = implode(',', $names);
+        $target = words::EURO . ',' . words::US_DOLLAR;
+        $t->assert($test_name, $result, $target);
 
     }
 

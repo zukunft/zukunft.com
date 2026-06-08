@@ -8,6 +8,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
     TODO add unit test for all frontend components
+    TODO review the CHF page
+         add the values with the highest im
     TODO review the start page and base it purely on database values
     TODO create a useful default view for each link in the start page
     TODO create a workflow test for each add, edit or delete view reachable from the start page

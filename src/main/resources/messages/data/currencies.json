@@ -8,7 +8,7 @@
   ],
   "words": [
     {
-      "name": "Currency",
+      "name": "currency",
       "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",
       "protection": "admin_protection",
       "refs": [
@@ -1347,19 +1347,19 @@
       "description": "Daily turnover ranking gives the most immediate view of currency relevance but is more volatile than longer-term rankings."
     },
     {
-      "from": "Currency",
+      "from": "currency",
       "verb": "has a",
       "to": "primary ranked by yearly turnover",
       "description": "Every currency in this dataset is primarily ordered by its yearly turnover, the default ranking criterion."
     },
     {
-      "from": "Currency",
+      "from": "currency",
       "verb": "can have",
       "to": "ranked by weekly turnover",
       "description": "Currencies may also be ranked by weekly turnover where a shorter-term view is needed."
     },
     {
-      "from": "Currency",
+      "from": "currency",
       "verb": "can have",
       "to": "ranked by daily turnover",
       "description": "Currencies may also be ranked by daily turnover, the most volatile of the supported ranking criteria."
@@ -1468,21 +1468,21 @@
     },
     {
       "name": "source currency",
-      "from": "Currency",
+      "from": "currency",
       "verb": "can be",
       "to": "source",
       "description": "The currency from which an amount is converted in a currency-conversion operation."
     },
     {
       "name": "target currency",
-      "from": "Currency",
+      "from": "currency",
       "verb": "can be",
       "to": "target",
       "description": "The currency into which an amount is converted in a currency-conversion operation."
     },
     {
       "name": "currency conversion",
-      "from": "Currency",
+      "from": "currency",
       "verb": "can have",
       "to": "conversion",
       "description": "The process of changing an amount of money from one currency into the equivalent amount in another currency at the prevailing exchange rate.",
@@ -1616,7 +1616,7 @@
     {
       "from": "US-Dollar",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "USD",
@@ -1641,7 +1641,7 @@
     {
       "from": "Euro",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "EUR",
@@ -1666,7 +1666,7 @@
     {
       "from": "Japanese yen",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "JPY",
@@ -1691,7 +1691,7 @@
     {
       "from": "Sterling",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "GBP",
@@ -1716,7 +1716,7 @@
     {
       "from": "Renminbi",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "CNY",
@@ -1741,7 +1741,7 @@
     {
       "from": "Australian dollar",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "AUD",
@@ -1766,7 +1766,7 @@
     {
       "from": "Canadian dollar",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "CAD",
@@ -1791,7 +1791,7 @@
     {
       "from": "Swiss franc",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "CHF",
@@ -1811,7 +1811,7 @@
     {
       "from": "Hong Kong dollar",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "HKD",
@@ -1836,7 +1836,7 @@
     {
       "from": "Singapore dollar",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "SGD",
@@ -1861,7 +1861,7 @@
     {
       "from": "Swedish krona",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "SEK",
@@ -1886,7 +1886,7 @@
     {
       "from": "South Korean won",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "KRW",
@@ -1911,7 +1911,7 @@
     {
       "from": "Norwegian krone",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "NOK",
@@ -1931,7 +1931,7 @@
     {
       "from": "New Zealand dollar",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "NZD",
@@ -1956,7 +1956,7 @@
     {
       "from": "Indian rupee",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "INR",
@@ -1981,7 +1981,7 @@
     {
       "from": "Mexican peso",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "MXN",
@@ -2006,7 +2006,7 @@
     {
       "from": "New Taiwan dollar",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "TWD",
@@ -2031,7 +2031,7 @@
     {
       "from": "South African rand",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "ZAR",
@@ -2056,7 +2056,7 @@
     {
       "from": "Brazilian real",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "BRL",
@@ -2081,7 +2081,7 @@
     {
       "from": "Danish krone",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "DKK",
@@ -2101,7 +2101,7 @@
     {
       "from": "Polish złoty",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "PLN",
@@ -2126,7 +2126,7 @@
     {
       "from": "Thai baht",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "THB",
@@ -2151,7 +2151,7 @@
     {
       "from": "Israeli new shekel",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "ILS",
@@ -2176,7 +2176,7 @@
     {
       "from": "Indonesian rupiah",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "IDR",
@@ -2201,7 +2201,7 @@
     {
       "from": "Czech koruna",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "CZK",
@@ -2226,7 +2226,7 @@
     {
       "from": "UAE dirham",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "AED",
@@ -2251,7 +2251,7 @@
     {
       "from": "Turkish lira",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "TRY",
@@ -2276,7 +2276,7 @@
     {
       "from": "Hungarian forint",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "HUF",
@@ -2301,7 +2301,7 @@
     {
       "from": "Chilean peso",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "CLP",
@@ -2326,7 +2326,7 @@
     {
       "from": "Saudi riyal",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "SAR",
@@ -2351,7 +2351,7 @@
     {
       "from": "Philippine peso",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "PHP",
@@ -2376,7 +2376,7 @@
     {
       "from": "Malaysian ringgit",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "MYR",
@@ -2401,7 +2401,7 @@
     {
       "from": "Colombian peso",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "COP",
@@ -2426,7 +2426,7 @@
     {
       "from": "Russian ruble",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "RUB",
@@ -2451,7 +2451,7 @@
     {
       "from": "Romanian leu",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "RON",
@@ -2476,7 +2476,7 @@
     {
       "from": "Peruvian sol",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "PEN",
@@ -2501,7 +2501,7 @@
     {
       "from": "Bahraini dinar",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "BHD",
@@ -2526,7 +2526,7 @@
     {
       "from": "Bulgarian lev",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "BGN",
@@ -2546,7 +2546,7 @@
     {
       "from": "Argentine peso",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "ARS",
@@ -2571,12 +2571,12 @@
     {
       "from": "Other",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "Total [lower-alpha 2]",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "Total [lower-alpha 2]",

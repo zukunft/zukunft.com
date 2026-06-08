@@ -62,7 +62,7 @@
       "name": "Cooperative"
     },
     {
-      "name": "Currency"
+      "name": "currency"
     },
     {
       "name": "billion"
@@ -425,22 +425,22 @@
       "to": "Cooperative"
     },
     {
-      "name": "CHF (Currency)",
+      "name": "CHF (currency)",
       "from": "CHF",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
-      "name": "EUR (Currency)",
+      "name": "EUR (currency)",
       "from": "EUR",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
-      "name": "USD (Currency)",
+      "name": "USD (currency)",
       "from": "USD",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "name": "billion (scaling)",
