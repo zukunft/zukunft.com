@@ -72,7 +72,7 @@ class test_terms
     function term_triple(): term
     {
         $t_trp = new test_triples($this->env);
-        return $t_trp->triple()->term();
+        return $t_trp->triple_impact()->term();
     }
 
     function term_triple_pi(): term

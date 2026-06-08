@@ -489,6 +489,21 @@ class formula extends formula_map
     }
 
     /**
+     * get the numeric results of the formula via the split path (load_data_for_calc + to_num_new);
+     * this is the data retrieval and calculation replacement for to_num
+     *
+     * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
+     * @param phrase_list|null $pre_phr_lst list of preloaded / cached terms
+     * @return result_list all results of the formula for the given phrase list
+     */
+    function calc_num(phrase_list $phr_lst, ?phrase_list $pre_phr_lst = null): result_list
+    {
+        $usr_msg = new user_message($this->get_user());
+        $dto = $this->load_data_for_calc($phr_lst, $usr_msg, $pre_phr_lst);
+        return $this->to_num_new($phr_lst, $usr_msg, $dto);
+    }
+
+    /**
      * fill the formula in the reference format with numbers based on the data preloaded by load_data_for_calc;
      * this is the calculation part of to_num that does not load the terms itself
      * TODO move the value retrieval (element_group::figures) into load_data_for_calc as well
@@ -842,233 +857,6 @@ class formula extends formula_map
         return $val_lst;
     }
 
-    /**
-     * fill the formula in the reference format with numbers
-     * TODO review by splitting it up
-     *
-     * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
-     * @param phrase_list|null $pre_phr_lst list of preloaded / cached terms
-     * TODO verbs
-     * @return result_list all results of the formula for the given phrase list
-     */
-    function to_num(phrase_list $phr_lst, ?phrase_list $pre_phr_lst = null): result_list
-    {
-        log_debug('get numbers for ' . $this->dsp_id() . ' and ' . $phr_lst->dsp_id());
-        $lib = new library();
-        $usr_msg = new user_message();
-
-        // check
-        $pre_trm_lst = $pre_phr_lst?->term_list();
-        $exp = new expression($this);
-        $exp->set_ref_text($this->ref_text, $pre_trm_lst);
-        $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
-
-        // reload missing terms from the database
-        $trm_lst = $this->load_exp_terms($usr_msg, $pre_trm_lst, $exp);
-
-        // create the result list
-        $res_lst = new result_list($this->get_user());
-
-        // create a master result object to only need to fill it with the numbers in the code below
-        $res_init = $this->create_result($phr_lst); // maybe move the constructor of result_list?
-
-        // load the formula element groups; similar parts is used in the explain method in result
-        // e.g. for "sales differentiator sector / Total sales" the element groups are
-        //      "sales differentiator sector" and "Total sales" where
-        //      the element group "sales differentiator sector" has the elements: "sales" (of type word), "differentiator" (verb), "sector" (word)
-        $exp = $this->expression($trm_lst);
-        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
-        log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
-
-        // to check if all needed values are given
-        $all_elm_grp_filled = true;
-
-        // loop over the element groups and replace the symbol with a number
-        // TODO move to an element_exe class
-        foreach ($elm_grp_lst->lst() as $elm_grp) {
-
-            // get the figures based on the context e.g. the formula element "Share Price" for the context "ABB" can be 23.11
-            // a figure is either the user edited value or a calculated formula result
-            $elm_grp->phr_lst = clone $phr_lst;
-            $elm_grp->build_symbol();
-            $fig_lst = $elm_grp->figures($trm_lst);
-            log_debug('figures ');
-            log_debug('figures ' . $fig_lst->dsp_id() . ' (' . $lib->dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
-
-            // fill the figure into the formula text and create as much value and results as needed
-            if ($fig_lst->lst() != null) {
-                if (count($fig_lst->lst()) == 1) {
-                    // if no figure is found, use the master result as a placeholder
-                    if ($res_lst->lst() != null) {
-                        if (count($res_lst->lst()) == 0) {
-                            $res_lst->add_obj($res_init);
-                        }
-                    } else {
-                        $res_lst->add_obj($res_init);
-                    }
-                    // fill each result created by any previous number filling
-                    foreach ($res_lst->lst() as $res) {
-                        // fill each result created by any previous number filling
-                        if (!$res->val_missing) {
-                            if ($fig_lst->fig_missing and $this->need_all_val) {
-                                log_debug('figure missing');
-                                $res->val_missing = True;
-                            } else {
-                                $fig = $fig_lst->lst()[0];
-                                $res->num_text = str_replace($fig->get_symbol(), $fig->number(), $res->num_text);
-                                if ($res->last_val_update < $fig->last_update()) {
-                                    $res->last_val_update = $fig->last_update();
-                                }
-                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
-                            }
-                        }
-                    }
-                } elseif (count($fig_lst->lst()) > 1) {
-                    // create the formula result object only if at least one figure if found
-                    if (count($res_lst->lst()) == 0) {
-                        $res_lst->add_obj($res_init);
-                    }
-                    // if there is more than one number to fill, replicate each previous result, so in fact it multiplies the number of results
-                    foreach ($res_lst->lst() as $res) {
-                        $res_master = clone $res;
-                        $fig_nbr = 1;
-                        foreach ($fig_lst->lst() as $fig) {
-                            if (!$res->val_missing) {
-                                if ($fig_lst->fig_missing and $this->need_all_val) {
-                                    log_debug('figure missing');
-                                    $res->val_missing = True;
-                                } else {
-                                    // for the first previous result, just fill in the first number
-                                    if ($fig_nbr == 1) {
-
-                                        // if the result has been the standard result utils now
-                                        if ($res->is_std()) {
-                                            // ... and the value is user-specific
-                                            if (!$fig->is_std()) {
-                                                // split the result into a standard
-                                                // get the standard value
-                                                // $fig_std = ...;
-                                                $res_std = clone $res;
-                                                $res_std->num_text = str_replace($fig->get_symbol(), $fig->number(), $res_std->num_text);
-                                                if ($res_std->last_val_update < $fig->last_update()) {
-                                                    $res_std->last_val_update = $fig->last_update();
-                                                }
-                                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
-                                                $res_lst->add_obj($res_std);
-                                                // ... and split into a user-specific part
-                                                $res->is_std = false;
-                                            }
-                                        }
-
-                                        $res->num_text = str_replace($fig->get_symbol(), $fig->number(), $res->num_text);
-                                        if ($res->last_val_update < $fig->last_update()) {
-                                            $res->last_val_update = $fig->last_update();
-                                        }
-                                        log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
-                                    } else {
-                                        // if the result has been the standard result utils now
-                                        if ($res_master->is_std()) {
-                                            // ... and the value is user-specific
-                                            if (!$fig->is_std()) {
-                                                // split the result into a standard
-                                                // get the standard value
-                                                // $fig_std = ...;
-                                                $res_std = clone $res_master;
-                                                $res_std->num_text = str_replace($fig->get_symbol(), $fig->number(), $res_std->num_text);
-                                                if ($res_std->last_val_update < $fig->last_update()) {
-                                                    $res_std->last_val_update = $fig->last_update();
-                                                }
-                                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
-                                                $res_lst->add_obj($res_std);
-                                                // ... and split into a user-specific part
-                                                $res_master->is_std = false;
-                                            }
-                                        }
-
-                                        // for all following result reuse the first result and fill with the next number
-                                        $res_new = clone $res_master;
-                                        $res_new->num_text = str_replace($fig->get_symbol(), $fig->number(), $res_new->num_text);
-                                        if ($res->last_val_update < $fig->last_update()) {
-                                            $res->last_val_update = $fig->last_update();
-                                        }
-                                        log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
-                                        $res_lst->add_obj($res_new);
-                                    }
-                                    log_debug('figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
-                                    $fig_nbr++;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    // if not figure found remember to switch off the result if needed
-                    log_debug('no figures found for ' . $elm_grp->dsp_id() . ' and ' . $phr_lst->dsp_id());
-                    $all_elm_grp_filled = false;
-                }
-            }
-        }
-
-        // if some values are not filled and all are needed, switch off the incomplete formula results
-        if ($this->need_all_val) {
-            log_debug('for ' . $phr_lst->dsp_id() . ' all value are needed');
-            if ($all_elm_grp_filled) {
-                log_debug('for ' . $phr_lst->dsp_id() . ' all value are filled');
-            } else {
-                log_debug('some needed values missing for ' . $phr_lst->dsp_id());
-                foreach ($res_lst->lst() as $res) {
-                    log_debug('some needed values missing for ' . $res->dsp_id() . ' so switch off');
-                    $res->val_missing = True;
-                }
-            }
-        }
-
-        // calculate the final numeric results
-        // TODO move to a result_list_exe class
-        $lib = new library();
-        if ($res_lst->lst() != null) {
-            foreach ($res_lst->lst() as $res) {
-                // at least the formula update should be used
-                if ($res->last_val_update < $this->last_update) {
-                    $res->last_val_update = $this->last_update;
-                }
-                // calculate only if any parameter has been updated since last calculation
-                if ($res->num_text == '') {
-                    log_err('num text is empty nothing needs to be done, but actually this should never happen');
-                } else {
-                    if ($res->last_val_update > $res->last_update()) {
-                        // check if all needed value exist
-                        $can_calc = false;
-                        if ($this->need_all_val) {
-                            log_debug('calculate ' . $this->dsp_id() . ' only if all numbers are given');
-                            if ($res->val_missing) {
-                                log_debug('got some numbers for ' . $this->dsp_id() . ' and ' . $lib->dsp_array($res->phr_ids()));
-                            } else {
-                                if ($res->is_std) {
-                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $res->name_linked() . ': ' . $res->num_text);
-                                } else {
-                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $res->name_linked() . ': ' . $res->num_text . ' (user-specific)');
-                                }
-                                $can_calc = true;
-                            }
-                        } else {
-                            log_debug('always calculate ' . $this->dsp_id());
-                            $can_calc = true;
-                        }
-                        if ($can_calc) {
-                            log_debug('calculate ' . $res->num_text . ' for ' . $phr_lst->dsp_id());
-                            $calc = new calc_internal();
-                            $res->set_number($calc->parse($res->num_text));
-                            $res->is_updated = true;
-                            log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->number() . ' for ' . $res->grp()->phrase_list()->dsp_id());
-                        }
-                    }
-                }
-            }
-        }
-
-        return $res_lst;
-    }
-
     // create the calculation request for one formula and one usr
     /*
     function calc_requests($phr_lst) {
@@ -1166,7 +954,7 @@ class formula extends formula_map
             log_debug('->calc got result words of ' . $this->ref_text_r);
 
             // get the list of the numeric results saved in the database
-            $res_lst = $this->to_num($phr_lst);
+            $res_lst = $this->calc_num($phr_lst);
             if (isset($res_add_phr_lst)) {
                 log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
             }

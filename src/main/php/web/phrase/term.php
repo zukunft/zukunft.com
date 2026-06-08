@@ -380,6 +380,9 @@ class term extends combine_named
             if ($this->obj()?->protection_id() != null) {
                 $vars[json_fields::PROTECTION] = $this->obj()?->protection_id();
             }
+            if ($this->obj()?->impact != null) {
+                $vars[json_fields::IMPACT] = $this->obj()?->impact;
+            }
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

@@ -338,6 +338,10 @@ class word extends sandbox_code_id
             }
         }
 
+        if (array_key_exists(sql_db::FLD_IMPACT, $api_json)) {
+            $this->impact = $api_json[sql_db::FLD_IMPACT];
+        }
+
         if (array_key_exists(json_fields::VIEW, $api_json)) {
             $msk = new view($this->get_user());
             $id = $api_json[json_fields::VIEW];
@@ -380,6 +384,9 @@ class word extends sandbox_code_id
             if ($in_ex_json[json_fields::PLURAL] <> '') {
                 $this->plural = $in_ex_json[json_fields::PLURAL];
             }
+        }
+        if (key_exists(json_fields::IMPACT, $in_ex_json)) {
+            $this->impact = $in_ex_json[json_fields::IMPACT];
         }
 
         // remember the references
@@ -554,6 +561,10 @@ class word extends sandbox_code_id
                 $ref_lst[] = $ref->export_json([]);
             }
             $vars[json_fields::REFS] = $ref_lst;
+        }
+        // the impact is part of the im- and export so that it round-trips
+        if ($this->impact != null) {
+            $vars[json_fields::IMPACT] = $this->impact;
         }
 
         return $vars;

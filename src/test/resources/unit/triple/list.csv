@@ -1,5 +1,5 @@
 triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,name_generated,description,weight,triple_condition_id,phrase_type_id,view_id,usage,impact,inactive,code_id,excluded,share_type_id,protect_id
-1,2,3,1,1,mathematical constant,,,A mathematical constant that never changes e.g. Pi,,,17,,,,,,,,3
+1,2,3,1,1,mathematical constant,,,A mathematical constant that never changes e.g. Pi,,,17,,,9999999999,,,,,3
 2,17,2,-1,1,Pi (math),,,ratio of the circumference of a circle to its diameter,,,22,,,,,,,,
 3,18,2,-1,1,𝑒 (math),,,Is the limit of (1 + 1/n)^n as n approaches infinity,,,22,,,,,,,,
 4,5,18,17,1,π (unit symbol),,,,,,22,,,,,,,,
@@ -96,8 +96,8 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 95,163,29,160,1,b is symbol for billion,,,,,,,,,,,,,,
 96,206,20,195,1,global problem,,,,,,,,,,,,,,
 97,22,1,188,1,system configuration,,,,,,,,,,,,,1,3
-98,214,2,189,1,Zurich (City),,,,,,,,,,,,,,
-99,214,2,187,1,Zurich (Canton),,,,,,,,,,,,,,
+98,214,2,189,1,Zurich (City),,,,,,,,,71152,,,,,
+99,214,2,187,1,Zurich (Canton),,,,,,,,,32400,,,,,
 100,186,2,189,1,Bern (City),,,,,,,,,,,,,,
 101,193,2,189,1,Geneva (City),,,,,,,,,,,,,,
 102,223,2,221,1,warmer (warm),,,,,,,,,,,,,,

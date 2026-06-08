@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\shared\const;
 class impacts
 {
 
+    const float MAX = 9999999999;
     const float LOW = 12.34;
     const float MEDIUM = 123.4;
     const float HIGH = 1234.0;
