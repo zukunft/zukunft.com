@@ -243,10 +243,10 @@ class sandbox extends db_object
         global $ui_sys;
         $used_share_id = $this->share_id;
         if ($used_share_id == null) {
-            $used_share_id = $typ_lst->html_share_types->default_id();
+            $used_share_id = $typ_lst->shr_typ->default_id();
         }
         if ($ui_sys->usr === $this->owner or $this->owner == null) {
-            return $typ_lst->html_share_types->selector($form, $used_share_id);
+            return $typ_lst->shr_typ->selector($form, $used_share_id);
         } else {
             return '';
         }
@@ -262,10 +262,10 @@ class sandbox extends db_object
         global $ui_sys;
         $used_protection_id = $this->protection_id;
         if ($used_protection_id == null) {
-            $used_protection_id = $typ_lst->html_protection_types->default_id();
+            $used_protection_id = $typ_lst->ptc_typ->default_id();
         }
         if ($ui_sys->usr === $this->owner or $this->owner == null) {
-            return $typ_lst->html_protection_types->selector($form, $used_protection_id);
+            return $typ_lst->ptc_typ->selector($form, $used_protection_id);
         } else {
             return '';
         }
@@ -298,8 +298,8 @@ class sandbox extends db_object
      */
     public function component_link_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        if ($typ_lst->html_component_link_types != null) {
-            return $typ_lst->html_component_link_types->selector($form);
+        if ($typ_lst->cmp_lnk_typ != null) {
+            return $typ_lst->cmp_lnk_typ->selector($form);
         } else {
             return 'no component types yet defined';
         }

@@ -391,7 +391,7 @@ class view extends view_exe
 
         // use the default settings if needed
         if ($this->type_id() <= 0) {
-            $this->set_type_id($ui_sys->typ_lst_cache->html_view_types->id(view_types::DEFAULT));
+            $this->set_type_id($ui_sys->typ_lst_cache->msk_typ->id(view_types::DEFAULT));
         }
 
         // the header to add or change a view
@@ -475,7 +475,7 @@ class view extends view_exe
     {
         //$sel->bs_class = $class;
         //$sel->attribute = $attribute;
-        return $typ_lst->html_view_types->selector($form);
+        return $typ_lst->msk_typ->selector($form);
     }
 
     /**

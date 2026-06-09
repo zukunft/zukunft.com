@@ -321,7 +321,7 @@ class phrase extends combine_named
         $result = false;
         $typ_id = $this->type_id();
         if ($typ_id != null) {
-            $typ = $ui_sys?->typ_lst_cache?->html_phrase_types?->get($this->type_id());
+            $typ = $ui_sys?->typ_lst_cache?->phr_typ?->get($this->type_id());
             if ($typ != null) {
                 $typ_phr_lst = $typ->type_phrases();
                 foreach ($typ_phr_lst->lst() as $typ_phr) {
@@ -413,8 +413,8 @@ class phrase extends combine_named
     {
         $result = new phrase_list();
         if ($phr_lst_cac != null) {
-            $result->merge($phr_lst_cac->parents($this, $typ_lst->html_verbs->get_by_code_id(verbs::IS)));
-            $result->merge($phr_lst_cac->parents($this, $typ_lst->html_verbs->get_by_code_id(verbs::CAN_BE)));
+            $result->merge($phr_lst_cac->parents($this, $typ_lst->vrb->get_by_code_id(verbs::IS)));
+            $result->merge($phr_lst_cac->parents($this, $typ_lst->vrb->get_by_code_id(verbs::CAN_BE)));
         }
         return $result;
     }

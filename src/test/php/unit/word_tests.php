@@ -295,9 +295,9 @@ class word_tests
         $t->subheader($ts . 'class to type list');
 
         $test_name = 'word returns the phrase type list';
-        $t->assert_true($test_name, $cfg->class_to_type_list(word_ui::class) === $cfg->html_phrase_types);
+        $t->assert_true($test_name, $cfg->class_to_type_list(word_ui::class) === $cfg->phr_typ);
         $test_name = 'formula returns the formula type list';
-        $t->assert_true($test_name, $cfg->class_to_type_list(formula::class) === $cfg->html_formula_types);
+        $t->assert_true($test_name, $cfg->class_to_type_list(formula::class) === $cfg->frm_typ);
         // a class without a type list returns null and logs an error on purpose;
         $test_name = 'type_lists->class_to_type_list returns null for a class without a type list';
         $t->assert_true($test_name, $cfg->class_to_type_list('class_without_a_type_list') === null);
@@ -307,7 +307,7 @@ class word_tests
 
         $test_name = 'shows the non-default type';
         $measure_word = new word_ui($t_wrd->hz()->api_json());
-        $type_name = $cfg->html_phrase_types->name($measure_word->type_id());
+        $type_name = $cfg->phr_typ->name($measure_word->type_id());
         $t->assert_text_contains($test_name, $t->dsp_title_named_edit($measure_word), $type_name);
         $test_name = '.. but the type name of a measure word is not shown for an unrelated word';
         $t->assert_text_not_contains($test_name, $t->dsp_title_named_edit($wrd), $type_name);

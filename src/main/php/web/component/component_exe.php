@@ -291,7 +291,7 @@ class component_exe extends component
             component_types::SYSTEM_ADMIN_ERRORS_UNASSIGNED => $page->admin_errors_unassigned(),
             component_types::SYSTEM_ADMIN_ERRORS_DELAYED_FIX => $page->admin_errors_delayed_fix(),
             component_types::SYSTEM_ADMIN_JOBS_DELAYED => $page->admin_jobs_delayed(),
-            component_types::SELECT_LIST => $select->list_select($dbo, $cfg->typ_lst_cache->html_languages, $form_name),
+            component_types::SELECT_LIST => $select->list_select($dbo, $cfg->typ_lst_cache->lan, $form_name),
             component_types::EXPRESSION => $base->expression($dbo),
 
             // buttons

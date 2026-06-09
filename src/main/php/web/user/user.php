@@ -410,7 +410,7 @@ class user extends db_object
         if ($this->profile_id <= 0) {
             return true;
         }
-        return $this->profile_id == $ui_sys->typ_lst_cache->html_user_profiles->id(user_profiles::IP_ONLY);
+        return $this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY);
     }
 
     /**
@@ -423,7 +423,7 @@ class user extends db_object
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $ui_sys->typ_lst_cache->html_user_profiles->id(user_profiles::ADMIN)) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::ADMIN)) {
                 $result = true;
             }
         }
@@ -440,8 +440,8 @@ class user extends db_object
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $ui_sys->typ_lst_cache->html_user_profiles->id(user_profiles::TEST)
-                or $this->profile_id == $ui_sys->typ_lst_cache->html_user_profiles->id(user_profiles::SYSTEM)) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::TEST)
+                or $this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
         }
@@ -455,7 +455,7 @@ class user extends db_object
     {
         global $ui_sys;
         if ($this->profile_id > 0) {
-            return $ui_sys->typ_lst_cache->html_user_profiles->name($this->profile_id);
+            return $ui_sys->typ_lst_cache->usr_pro->name($this->profile_id);
         } else {
             return null;
         }
@@ -479,7 +479,7 @@ class user extends db_object
             user_profiles::SYSTEM,
         ];
         foreach ($elevated as $prf) {
-            if ($this->profile_id == $ui_sys->typ_lst_cache->html_user_profiles->id($prf)) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id($prf)) {
                 return $this->profile_name();
             }
         }

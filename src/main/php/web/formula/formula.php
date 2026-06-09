@@ -397,7 +397,7 @@ class formula extends sandbox_code_id
      */
     function dsp_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        return $typ_lst->html_formula_types->selector($form);
+        return $typ_lst->frm_typ->selector($form);
     }
 
     /**
@@ -409,9 +409,9 @@ class formula extends sandbox_code_id
     {
         $used_formula_type_id = $this->type_id();
         if ($used_formula_type_id == null) {
-            $used_formula_type_id = $typ_lst->html_formula_types->default_id();
+            $used_formula_type_id = $typ_lst->frm_typ->default_id();
         }
-        return $typ_lst->html_formula_types->selector($form, $used_formula_type_id);
+        return $typ_lst->frm_typ->selector($form, $used_formula_type_id);
     }
 
 
@@ -573,7 +573,7 @@ class formula extends sandbox_code_id
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_8);
-        $result .= $this->dsp_type_selector($form_name, $ui_sys?->typ_lst_cache->html_formula_types);
+        $result .= $this->dsp_type_selector($form_name, $ui_sys?->typ_lst_cache->frm_typ);
         $result .= '</div>';
         $result .= $html->form_field(
             url_var::DESCRIPTION,

@@ -391,7 +391,7 @@ class triple extends sandbox_code_id
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($ui_sys->typ_lst_cache->html_phrase_types->id($code_id));
+            $this->set_type_id($ui_sys->typ_lst_cache->phr_typ->id($code_id));
         }
     }
 
@@ -405,7 +405,7 @@ class triple extends sandbox_code_id
         if ($this->type_id() == null) {
             return null;
         } else {
-            return $ui_sys->typ_lst_cache->html_phrase_types->get($this->type_id());
+            return $ui_sys->typ_lst_cache->phr_typ->get($this->type_id());
         }
     }
 
@@ -529,9 +529,9 @@ class triple extends sandbox_code_id
     {
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
-            $used_phrase_id = $typ_lst->html_phrase_types->default_id();
+            $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
-        return $typ_lst->html_phrase_types->selector($form, $used_phrase_id);
+        return $typ_lst->phr_typ->selector($form, $used_phrase_id);
     }
 
     /**
@@ -576,7 +576,7 @@ class triple extends sandbox_code_id
         } else {
             $id = 0;
         }
-        return $typ_lst->html_verbs->selector($form, $id, url_var::VERB, $style);
+        return $typ_lst->vrb->selector($form, $id, url_var::VERB, $style);
     }
 
 

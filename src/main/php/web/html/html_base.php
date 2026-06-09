@@ -326,7 +326,7 @@ class html_base
     {
         global $ui_sys;
 
-        $lan_lst = $ui_sys?->typ_lst_cache?->html_languages ?? new language_list();
+        $lan_lst = $ui_sys?->typ_lst_cache?->lan ?? new language_list();
         $html = new html_base();
         $url = $html->url_new($msk_id);
         $lan_txt = $lan_lst->select_list_item($url);
@@ -1778,7 +1778,7 @@ class html_base
         global $ui_sys;
         $result = '';
         if ($style_id != null) {
-            $result = $ui_sys?->typ_lst_cache?->html_view_styles?->get_code_id($style_id) ?? '';
+            $result = $ui_sys?->typ_lst_cache?->msk_sty?->get_code_id($style_id) ?? '';
         }
         return $result;
     }

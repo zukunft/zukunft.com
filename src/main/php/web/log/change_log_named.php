@@ -241,7 +241,7 @@ class change_log_named extends change_log
     private function action_code_id(): string
     {
         global $ui_sys;
-        $action = $ui_sys->typ_lst_cache->html_change_action_list->get($this->action_id);
+        $action = $ui_sys->typ_lst_cache->cng_act->get($this->action_id);
         return $action->code_id;
     }
 
@@ -251,7 +251,7 @@ class change_log_named extends change_log
     private function action_name(): string
     {
         global $ui_sys;
-        $action = $ui_sys->typ_lst_cache->html_change_action_list->get_by_id($this->action_id);
+        $action = $ui_sys->typ_lst_cache->cng_act->get_by_id($this->action_id);
         return $action->name;
     }
 
@@ -261,7 +261,7 @@ class change_log_named extends change_log
     private function field_code_id(): string
     {
         global $ui_sys;
-        $field = $ui_sys->typ_lst_cache->html_change_field_list->get($this->field_id);
+        $field = $ui_sys->typ_lst_cache->cng_fld->get($this->field_id);
         return $field->code_id;
     }
 
@@ -271,7 +271,7 @@ class change_log_named extends change_log
     private function field_description(): string
     {
         global $ui_sys;
-        $field = $ui_sys->typ_lst_cache->html_change_field_list->get($this->field_id);
+        $field = $ui_sys->typ_lst_cache->cng_fld->get($this->field_id);
         return $field->description;
     }
 
@@ -281,7 +281,7 @@ class change_log_named extends change_log
     private function table_name(): string
     {
         global $ui_sys;
-        $table = $ui_sys->typ_lst_cache->html_change_table_list->get($this->table_id);
+        $table = $ui_sys->typ_lst_cache->cng_tbl->get($this->table_id);
         return $table->name;
     }
 

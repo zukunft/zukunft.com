@@ -234,7 +234,7 @@ class view_base extends sandbox_code_id
     function type_code_id(): ?string
     {
         global $ui_sys;
-        $msk_typ_lst = $ui_sys->typ_lst_cache->html_view_types;
+        $msk_typ_lst = $ui_sys->typ_lst_cache->msk_typ;
         $id = $this->type_id();
         if ($id != null) {
             return $msk_typ_lst->get($this->type_id())?->get_code_id();
@@ -298,18 +298,18 @@ class view_base extends sandbox_code_id
     {
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
-            $used_type_id = $typ_lst->html_view_types->default_id();
+            $used_type_id = $typ_lst->msk_typ->default_id();
         }
-        return $typ_lst->html_view_types->selector($form, $used_type_id);
+        return $typ_lst->msk_typ->selector($form, $used_type_id);
     }
 
     public function style_selector(string $form, ?type_lists $typ_lst): string
     {
         $used_style_id = $this->get_style_id();
         if ($used_style_id == null) {
-            $used_style_id = $typ_lst->html_view_styles->default_id();
+            $used_style_id = $typ_lst->msk_sty->default_id();
         }
-        return $typ_lst->html_view_styles->selector($form, $used_style_id);
+        return $typ_lst->msk_sty->selector($form, $used_style_id);
     }
 
     function log_err(string $msg): void

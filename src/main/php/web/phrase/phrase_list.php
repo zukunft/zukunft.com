@@ -269,7 +269,7 @@ class phrase_list extends sandbox_list_named
 
         $result = '';
 
-        $vrb_cac = $ui_sys->typ_lst_cache->html_verbs ?? null;
+        $vrb_cac = $ui_sys->typ_lst_cache->vrb ?? null;
 
         if ($this->is_empty()) {
             log_debug('list of related phrase is empty for ' . $phr->dsp_id());

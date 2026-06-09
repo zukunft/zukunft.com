@@ -140,7 +140,7 @@ class horizontal_ui_tests
         $t->subheader($ts . 'component types');
         $html = new html_base();
         $test_page = $html->text_h1('Component display test');
-        foreach ($ui->dto->typ_lst_cache->html_component_types->lst() as $typ) {
+        foreach ($ui->dto->typ_lst_cache->cmp_typ->lst() as $typ) {
             $test_page .= '<br><br>' . $html->dsp_text_h2($typ->name . ' (' . $typ->code_id . ')') . '<br><br><br>';
             $obj = $t_map->component_type_to_object($typ);
             if ($obj !== null) {

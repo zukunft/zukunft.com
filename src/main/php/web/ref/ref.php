@@ -302,7 +302,7 @@ class ref extends sandbox
     function type_name(): string
     {
         global $ui_sys;
-        return $ui_sys->typ_lst_cache->html_ref_types->name($this->predicate_id());
+        return $ui_sys->typ_lst_cache->ref_typ->name($this->predicate_id());
     }
 
     /**
@@ -311,7 +311,7 @@ class ref extends sandbox
     function type_url(): string
     {
         global $ui_sys;
-        $ref_typ_lst = $ui_sys->typ_lst_cache->html_ref_types;
+        $ref_typ_lst = $ui_sys->typ_lst_cache->ref_typ;
         return $ref_typ_lst->url($this->predicate_id());
     }
 
@@ -473,9 +473,9 @@ class ref extends sandbox
     {
         $used_ref_type_id = $this->predicate_id();
         if ($used_ref_type_id == null) {
-            $used_ref_type_id = $typ_lst->html_ref_types->default_id();
+            $used_ref_type_id = $typ_lst->ref_typ->default_id();
         }
-        return $typ_lst->html_ref_types->selector($form, $used_ref_type_id);
+        return $typ_lst->ref_typ->selector($form, $used_ref_type_id);
     }
 
     /**

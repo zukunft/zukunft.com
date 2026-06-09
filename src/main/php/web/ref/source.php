@@ -222,9 +222,9 @@ class source extends sandbox_code_id
     {
         $used_source_type_id = $this->type_id();
         if ($used_source_type_id == null) {
-            $used_source_type_id = $typ_lst->html_source_types->default_id();
+            $used_source_type_id = $typ_lst->src_typ->default_id();
         }
-        return $typ_lst->html_source_types->selector($form, $used_source_type_id);
+        return $typ_lst->src_typ->selector($form, $used_source_type_id);
     }
 
     /**

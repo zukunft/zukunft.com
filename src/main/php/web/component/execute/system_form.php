@@ -235,7 +235,7 @@ class system_form extends component
     private function share_subtitle(sandbox|db_object $dbo): string
     {
         global $ui_sys;
-        return $this->type_link($ui_sys?->typ_lst_cache?->html_share_types, $dbo->share_id());
+        return $this->type_link($ui_sys?->typ_lst_cache?->shr_typ, $dbo->share_id());
     }
 
     /**
@@ -247,7 +247,7 @@ class system_form extends component
     private function protection_subtitle(sandbox|db_object $dbo): string
     {
         global $ui_sys;
-        return $this->type_link($ui_sys?->typ_lst_cache?->html_protection_types, $dbo->protection_id());
+        return $this->type_link($ui_sys?->typ_lst_cache?->ptc_typ, $dbo->protection_id());
     }
 
     /**
@@ -424,7 +424,7 @@ class system_form extends component
         $result = '';
         $type_id = $dbo->type_id();
         if ($type_id !== null) {
-            $result = $ui_sys->typ_lst_cache->html_phrase_types->name($type_id);
+            $result = $ui_sys->typ_lst_cache->phr_typ->name($type_id);
         }
         return $result;
     }

@@ -387,7 +387,7 @@ class sys_log extends log
     private function status_text(): string
     {
         global $ui_sys;
-        return $ui_sys->typ_lst_cache->html_sys_log_statuum->name($this->status());
+        return $ui_sys->typ_lst_cache->sys_log_sta->name($this->status());
     }
 
 }
