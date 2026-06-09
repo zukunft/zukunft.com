@@ -80,6 +80,7 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
@@ -160,6 +161,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -481,7 +483,7 @@ class word extends sandbox_code_id
      * @param int $per_verb_limit upper bound on triples kept per verb; the loader keeps one
      *                            extra row so the caller can detect overflow without a count
      */
-    function load_phrases_related(int $per_verb_limit = def::LIMIT_RELATED_PER_VERB): void
+    function load_phrases_related(int $per_verb_limit = def_shared::LIMIT_RELATED_PER_VERB): void
     {
         $trp_lst = new triple_list($this->get_user());
         $trp_lst->load_by_phr($this->phrase(), null, foaf_direction::BOTH);

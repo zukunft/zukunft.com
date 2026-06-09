@@ -313,6 +313,15 @@ class ref extends sandbox
         return $ref_typ_lst->url($this->predicate_id());
     }
 
+    /**
+     * TODO Prio 2 either this or predicate_id should be deprecated
+     * @return int|null the database id of the type
+     */
+    function type_id(): ?int
+    {
+        return $this->predicate_id;
+    }
+
     function used_url(): string
     {
         if ($this->url() != null) {

@@ -282,6 +282,22 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word_ui "Zurich" with related phrases, a non-default type, share and protection
+     *                 to test the full page-title subtitle (category, type, share and protection)
+     */
+    function zh_full_ui(): word_ui
+    {
+        global $ui_sys;
+        $t_phr = new test_phrases($this->env);
+        $wrd = $this->zh_ui();
+        $wrd->phr_lst = $t_phr->list_zh_ui();
+        $wrd->set_type(phrase_types::MEASURE);
+        $wrd->share_id = $ui_sys?->typ_lst_cache?->html_share_types?->id(share_types::PERSONAL);
+        $wrd->protection_id = $ui_sys?->typ_lst_cache?->html_protection_types?->id(protection_types::ADMIN);
+        return $wrd;
+    }
+
+    /**
      * @return word "constant" to create the main triple for unit testing
      */
     function word_const(): word

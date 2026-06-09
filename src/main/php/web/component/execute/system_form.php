@@ -38,23 +38,25 @@
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
-include_once paths::MODEL_CONST . 'def.php';
+include_once html_paths::CONST . 'icons.php';
+include_once html_paths::CONST . 'def.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'view_style_list.php';
@@ -65,8 +67,8 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
-include_once html_paths::CONST . 'icons.php';
 include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -84,8 +86,10 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\system\language;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
@@ -98,7 +102,8 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
-use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\web\const\def as def_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -148,22 +153,31 @@ class system_form extends component
     {
         $html = new html_base();
 
-        $result = '';
-
-        $edit_link = $this->edit_link($dbo);
+        $lnk = $this->edit_link($dbo);
 
         // category subtitle is created based on verbs listed in verbs::CATEGORY_VERBS
-        $category = $this->category_subtitle($dbo, $max);
+        $cat = $this->category_subtitle($dbo, $max);
+
+        // type subtitle with a link to the type page if the object has a non-default type
+        $typ = $this->type_subtitle($dbo);
+        $cat_typ = $html->concat_category_text($cat, $typ);
+
+        // share and protection subtitle if not default
+        $shr = $this->share_subtitle($dbo);
+        $ptc = $this->protection_subtitle($dbo);
+        $shr_ptc = $html->concat_entry_text($shr, $ptc);
+
+        $sub_txt = $html->concat_category_text($cat_typ, $shr_ptc);
 
         $heading = '<' . html_base::H4 . ' ' . html_base::CLASS_HTML . '="' . styles::HEADING_INLINE . '">'
             . $dbo->name() . '</' . html_base::H4 . '>';
-        // wrap the heading and the edit icon so they are shown on the same line
-        $content = $html->div($heading . $edit_link, styles::HEADING_LINE);
-        if ($category !== '') {
-            $content .= $html->div('(' . $category . ')', styles::SUBTITLE);
+        $txt = $html->div($heading . $lnk, styles::HEADING_LINE);
+
+        if ($sub_txt !== '') {
+            $txt .= $html->div('(' . $sub_txt . ')', styles::SUBTITLE);
         }
-        $result = $html->row_start() . $content . $html->row_end();
-        return $result;
+
+        return $html->row_start() . $txt . $html->row_end();
     }
 
     /**
@@ -187,6 +201,71 @@ class system_form extends component
         } else {
             $lib = new library();
             log_warning('category_subtitle not yet defined for ' . $lib->class_to_name($dbo::class));
+        }
+        return $result;
+    }
+
+    /**
+     * type subtitle for an object with a non-default type e.g. "measure" for a measure word
+     * the type name is a link to the type page that shows the other phrases of the same type
+     * and the fixed code rules linked to this type
+     *
+     * @param word|db_object $dbo the object whose name is shown as the page title
+     * @return string the html link to the type page or '' if the object has the default type
+     */
+    private function type_subtitle(word|db_object $dbo): string
+    {
+        global $ui_sys;
+        if (in_array($dbo::class, def_ui::TYPE_CLASSES)) {
+            // the type name links to the type page that lists the other phrases of this type
+            // and the fixed code rules linked to this phrase type
+            // TODO Prio 3 point this to the dedicated phrase type page once it exists
+            return $this->type_link($ui_sys?->typ_lst_cache?->class_to_type_list($dbo::class), $dbo->type_id());
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * share subtitle for a sandbox object with a non-default share type e.g. "personal"
+     *
+     * @param sandbox|db_object $dbo the object whose name is shown as the page title
+     * @return string the html link to the share type or '' if the object has the default share type
+     */
+    private function share_subtitle(sandbox|db_object $dbo): string
+    {
+        global $ui_sys;
+        return $this->type_link($ui_sys?->typ_lst_cache?->html_share_types, $dbo->share_id());
+    }
+
+    /**
+     * protection subtitle for a sandbox object with a non-default protection type e.g. "admin protection"
+     *
+     * @param sandbox|db_object $dbo the object whose name is shown as the page title
+     * @return string the html link to the protection type or '' if the object has the default protection type
+     */
+    private function protection_subtitle(sandbox|db_object $dbo): string
+    {
+        global $ui_sys;
+        return $this->type_link($ui_sys?->typ_lst_cache?->html_protection_types, $dbo->protection_id());
+    }
+
+    /**
+     * the link to a type page if the given type is set and is not the default type of the list
+     * common part of type_subtitle, share_subtitle and protection_subtitle
+     *
+     * @param type_list|null $typ_lst the cached type list e.g. the phrase, share or protection types
+     * @param int|null $type_id the type id of the object e.g. its type, share or protection id
+     * @return string the html link to the type or '' if the type is missing or the default type
+     */
+    private function type_link(?type_list $typ_lst, ?int $type_id): string
+    {
+        $result = '';
+        if ($typ_lst !== null and $type_id !== null and $type_id != $typ_lst->default_id()) {
+            $typ = $typ_lst->get($type_id);
+            if ($typ !== null) {
+                $result = $typ->name_link();
+            }
         }
         return $result;
     }

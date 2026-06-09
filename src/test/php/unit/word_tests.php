@@ -33,6 +33,9 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -50,6 +53,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -68,7 +74,7 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 class word_tests
 {
 
-    function run(test_cleanup $t): void
+    function run(test_cleanup $t, type_lists $cfg): void
     {
 
         global $sys;
@@ -79,6 +85,8 @@ class word_tests
         $sc = new sql_creator();
         $t_wrd = new test_words($t);
         $t_phr = new test_phrases($t);
+        $lib = new library();
+        $sfm = new system_form();
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
 
@@ -283,7 +291,46 @@ class word_tests
         $txt = $form->title_named($wrd);
         $t->assert_text_not_contains($test_name, $txt, words::CHF);
 
+
+        $t->subheader($ts . 'class to type list');
+
+        $test_name = 'word returns the phrase type list';
+        $t->assert_true($test_name, $cfg->class_to_type_list(word_ui::class) === $cfg->html_phrase_types);
+        $test_name = 'formula returns the formula type list';
+        $t->assert_true($test_name, $cfg->class_to_type_list(formula::class) === $cfg->html_formula_types);
+        // a class without a type list returns null and logs an error on purpose;
+        $test_name = 'type_lists->class_to_type_list returns null for a class without a type list';
+        $t->assert_true($test_name, $cfg->class_to_type_list('class_without_a_type_list') === null);
+
+
+        $t->subheader($ts . 'title with subtitle');
+
+        $test_name = 'shows the non-default type';
+        $measure_word = new word_ui($t_wrd->hz()->api_json());
+        $type_name = $cfg->html_phrase_types->name($measure_word->type_id());
+        $t->assert_text_contains($test_name, $t->dsp_title_named_edit($measure_word), $type_name);
+        $test_name = '.. but the type name of a measure word is not shown for an unrelated word';
+        $t->assert_text_not_contains($test_name, $t->dsp_title_named_edit($wrd), $type_name);
+        $test_name = 'shows the object name';
+        $title = $t->dsp_title_named_edit($wrd);
+        $t->assert_text_contains($test_name, $title, $wrd->name());
+        $test_name = 'wraps the heading in the heading-line div';
+        $t->assert_text_contains($test_name, $title, styles::HEADING_LINE);
+        $test_name = 'adds a rename edit link';
+        $t->assert_text_contains($test_name, $title, icons::EDIT);
+        $test_name = 'wraps a non-default type in a subtitle';
+        $t->assert_text_contains($test_name, $t->dsp_title_named_edit($measure_word), styles::SUBTITLE);
+        $test_name = 'all optional subtiles';
+        $title = $sfm->title_named($t_wrd->zh_full_ui());
+        $target = words::ZH . ' <' . icons::EDIT
+            . '> (' . verbs::IS_NAME . ' ' . words::CITY . ', ' . words::CANTON . ', ... / '
+            . phrase_types::MEASURE_NAME . ' / '
+            . share_types::PERSONAL_NAME . ', ' . protection_types::ADMIN_NAME . ')';
+        $t->assert($test_name, $lib->html_to_text($title), $target);
+
+
         $t->subheader($ts . 'im- and export');
+
         // TODO check that all objects have a im and export test
         $t->assert_ex_and_import($t_wrd->word(), $usr_sys);
         $t->assert_ex_and_import($t_wrd->word_filled(), $usr_sys);

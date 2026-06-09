@@ -4652,9 +4652,9 @@ class test_base
     function dsp_title_named_edit(db_object $dbo): string
     {
         $html = new html_base();
-        $frm = new system_form();
+        $sfm = new system_form();
         return $html->text_h2('title named with edit link')
-            . $frm->title_named($dbo);
+            . $sfm->title_named($dbo);
     }
 
     function class_without_namespace(string $class_name_with_namespace): string

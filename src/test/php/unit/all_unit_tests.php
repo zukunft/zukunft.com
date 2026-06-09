@@ -38,6 +38,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -78,7 +79,7 @@ class all_unit_tests extends test_cleanup
     /**
      * run all unit test in a useful order
      */
-    function run_unit(): void
+    function run_unit(frontend $ui): void
     {
         // start the test section (ts)
         $ts = 'unit ';
@@ -135,7 +136,7 @@ class all_unit_tests extends test_cleanup
         new horizontal_tests()->run($this);
         new permission_tests()->run($this);
         new system_view_ui_tests()->run($this);
-        new word_tests()->run($this);
+        new word_tests()->run($this, $ui->dto->typ_lst_cache);
         new word_list_tests()->run($this);
         new verb_tests()->run($this);
         new triple_tests()->run($this);

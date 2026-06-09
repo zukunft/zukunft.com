@@ -183,6 +183,8 @@ class words
     const string COUNT = 'count';
     const string EXPECTED = 'expected';
     const string ENTRY = 'entry';
+    const string SEPARATOR = 'separator';
+    const string CATEGORY = 'category';
     const string PRESELECT = 'preselect';
     const string FUTURE = 'future';
     const string COLUMNS = 'columns';
@@ -378,7 +380,7 @@ class words
     const string CHF = 'CHF';
     const int CHF_ID = 258;
     const string SWISS_FRANC = 'Swiss franc';
-    const int SWISS_FRANC_ID = 2397;
+    const int SWISS_FRANC_ID = 2399;
     const string EUR = 'EUR';
     const int EUR_ID = 2427;
     const string EURO = 'Euro';

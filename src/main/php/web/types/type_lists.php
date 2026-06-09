@@ -37,8 +37,14 @@
 namespace Zukunft\ZukunftCom\main\php\web\types;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\def;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+//include_once html_paths::COMPONENT . 'component.php';
+//include_once html_paths::CONST . 'def.php';
+//include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::REF . 'ref.php';
+//include_once html_paths::REF . 'source.php';
 include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'type_list.php';
@@ -68,17 +74,23 @@ include_once html_paths::TYPES . 'position_type_list.php';
 //include_once html_paths::VERB . 'verb.php';
 //include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view_list.php';
+//include_once html_paths::WORD . 'triple.php';
 //include_once html_paths::WORD . 'word.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -131,6 +143,47 @@ class type_lists
         if ($api_json != null) {
             $this->set_from_json($api_json);
         }
+    }
+
+
+    /*
+     * type list by class
+     */
+
+    /**
+     * get the type list related to a given object class
+     * similar to cfg type_list::class_to_type_object but returning the cached frontend type list
+     * e.g. the phrase type list for a word or triple
+     *
+     * @param string $class the class name of the object whose type list is requested e.g. word::class
+     * @return type_list|null the matching type list or null with an error if the object has no type list
+     */
+    function class_to_type_list(string $class): ?type_list
+    {
+        if (in_array($class, def::TYPE_CLASSES)) {
+            return match ($class) {
+                word_ui::class, triple::class => $this->html_phrase_types,
+                source::class => $this->html_source_types,
+                ref::class => $this->html_ref_types,
+                formula::class => $this->html_formula_types,
+                view::class => $this->html_view_types,
+                component::class => $this->html_component_types,
+                default => $this->no_type_list($class),
+            };
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * log an error that the given object class does not have a type list and return null
+     * @param string $class the class name of the object that does not have a type list
+     * @return type_list|null always null
+     */
+    private function no_type_list(string $class): ?type_list
+    {
+        log_err('no type list defined for the class ' . $class);
+        return null;
     }
 
 

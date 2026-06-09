@@ -66,6 +66,13 @@ method doesn't exist yet, add it to the appropriate `test_*.php` in
 `src/test/php/create/` before writing the test. `test_mappers.php` coordinates
 factory calls when a test resolves a class name to a test object at runtime.
 
+**Don't-repeat-yourself applies here too.** A multi-step object setup belongs in
+one named factory method, not written inline in a test (and never copied into a
+second test). If building the test object takes more than a line, it is a
+factory method waiting to be named — e.g. a Zurich word with related phrases, a
+non-default type, share and protection is `test_words::zh_full_ui()`, not five
+set-up lines in the test.
+
 ### Populated list / collection fixtures come from a factory too
 
 A test that builds a populated list inline —
@@ -203,6 +210,25 @@ $chf_sym = $t_wrd->word_chf_dsp();
 $chf_sym->phrases_related = $t_phr->list_chf_symbol_ui();
 $title_sym = $form->title_of_named_with_edit_link($chf_sym);
 $t->assert_text_contains($test_name, $title_sym, verbs::SYMBOL_NAME);
+```
+
+### Keep `$test_name` short but unique — don't repeat the subheader
+
+The `$test_name` only has to make the assertion **uniquely identifiable within
+its block**. Keep it short and do **not** repeat context that the enclosing
+`$t->subheader(...)` (or `$t->name`) already shows — the failure output prints
+the subheader above the test name, so repeating the function or topic is noise.
+
+```php
+// Right — the subheader already says "title_named", so the name just adds the case
+$t->subheader($ts . 'title_named');
+$test_name = 'shows the object name';
+$t->assert_text_contains($test_name, $title, $wrd->name());
+$test_name = 'wraps the heading in the heading-line div';
+$t->assert_text_contains($test_name, $title, styles::HEADING_LINE);
+
+// Wrong — repeats "system_form->title_named" that the subheader already shows
+$test_name = 'system_form->title_named shows the object name';
 ```
 
 ### Pass only `$test_name` — don't re-concatenate `$t->name`

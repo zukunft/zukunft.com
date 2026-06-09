@@ -10,6 +10,17 @@ build personal OLAP cubes from words, triples, formulas, and values
 ("calculating with words"). Architecture, source layout, and domain
 terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar code.
 
+## The most relevant rule of all
+
+> Il semble que la perfection soit atteinte non quand il n'y a plus rien à ajouter,
+> mais quand il n'y a plus rien à retrancher.
+> — Antoine de Saint-Exupéry
+
+Perfection is reached not when there is nothing left to add, but when there is
+nothing left to remove. Prefer the smallest change that does the job: fewer
+lines, fewer functions, fewer assertions, fewer parameters. When in doubt, leave
+it out — every rule below is subordinate to this one.
+
 ## Build / test / commit
 
 ```bash
@@ -97,6 +108,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Factory method names don't repeat the class's object word (`test_phrases::list_chf_symbol_ui`, not `phrase_list_...`).
 - Named test objects use only `RESERVED_NAMES` consts; DB ids in tests are `*_ID` consts; add the const + reserved entry before writing the test if none fits.
 - `$test_name` is a named variable declared first (top of the block), reused before each later assertion.
+- Keep `$test_name` short but unique; don't repeat context the enclosing `$t->subheader(...)` (or `$t->name`) already shows.
 - Pass only `$test_name` to `$t->assert*()`; let the helper prepend `$t->name` — don't concatenate it.
 - Use the specific `assert_*` variant (`assert_text_contains`, ...), not a generic `assert_true(str_contains(...))`.
 - `$t->subheader(...)` labels are as short as possible while staying unique.
