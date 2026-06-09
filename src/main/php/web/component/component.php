@@ -5,6 +5,8 @@
     web/component/component.php - function to add, change or delete a view component
     ---------------------------
 
+    $cmp is the suggested var name
+
     to create the HTML code to display a component
 
     The main sections of this object are
@@ -267,9 +269,9 @@ class component extends sandbox_code_id
     {
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
-            $used_type_id = $typ_lst->html_component_types->default_id();
+            $used_type_id = $typ_lst->cmp_typ->default_id();
         }
-        return $typ_lst->html_component_types->selector($form, $used_type_id);
+        return $typ_lst->cmp_typ->selector($form, $used_type_id);
     }
 
 
@@ -287,8 +289,8 @@ class component extends sandbox_code_id
     {
 
         $type_code_id = '';
-        if ($typ_lst?->html_component_types == null) {
-            $this->log_err('html_component_types are empty');
+        if ($typ_lst?->cmp_typ == null) {
+            $this->log_err('cmp_typ are empty');
         } else {
             if ($this->type_id() == null) {
                 $err_msg = 'Component type not set in ' . $this->dsp_id();
@@ -296,7 +298,7 @@ class component extends sandbox_code_id
             } else {
                 $err_msg = 'Component type code id for ' . $this->dsp_id()
                     . ' and type id ' . $this->type_id() . ' missing';
-                $type_code_id = $typ_lst->html_component_types->get_code_id($this->type_id());
+                $type_code_id = $typ_lst->cmp_typ->get_code_id($this->type_id());
                 if ($type_code_id == '') {
                     $this->log_err($err_msg);
                 }
@@ -309,14 +311,14 @@ class component extends sandbox_code_id
     function pos_type_code_id(?type_lists $typ_lst): string
     {
         $pos_type_code_id = '';
-        if ($typ_lst?->html_position_types == null) {
-            $this->log_err('html_position_types are empty');
+        if ($typ_lst?->pos_typ == null) {
+            $this->log_err('pos_typ are empty');
         } else {
             $err_msg = 'Position type code id for ' . $this->dsp_id() . ' missing';
             if ($this->pos_type_id == null) {
                 $this->log_err($err_msg);
             } else {
-                $pos_type_code_id = $typ_lst->html_position_types->get_code_id($this->pos_type_id);
+                $pos_type_code_id = $typ_lst->pos_typ->get_code_id($this->pos_type_id);
                 if ($pos_type_code_id == '') {
                     $this->log_err($err_msg);
                 }
@@ -334,11 +336,11 @@ class component extends sandbox_code_id
     function style_text(?type_lists $typ_lst): string
     {
         $style_name = '';
-        if ($typ_lst->html_view_styles == null) {
-            $this->log_err('html_view_styles are empty');
+        if ($typ_lst->msk_sty == null) {
+            $this->log_err('msk_sty are empty');
         } else {
             if ($this->style_id != null) {
-                $style_name = $typ_lst->html_view_styles->name($this->style_id);
+                $style_name = $typ_lst->msk_sty->name($this->style_id);
             }
         }
         return $style_name;
@@ -352,11 +354,11 @@ class component extends sandbox_code_id
     function style_code_id(?type_lists $typ_lst): string
     {
         $style_name = '';
-        if ($typ_lst?->html_view_styles == null) {
-            $this->log_err('html_view_styles are empty');
+        if ($typ_lst?->msk_sty == null) {
+            $this->log_err('msk_sty are empty');
         } else {
             if ($this->style_id != null) {
-                $style_name = $typ_lst->html_view_styles->get_code_id($this->style_id);
+                $style_name = $typ_lst->msk_sty->get_code_id($this->style_id);
             }
         }
         return $style_name;
@@ -445,9 +447,9 @@ class component extends sandbox_code_id
     {
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
-            $used_type_id = $typ_lst->html_component_types->default_id();
+            $used_type_id = $typ_lst->cmp_typ->default_id();
         }
-        return $typ_lst->html_component_types->selector($form, $used_type_id);
+        return $typ_lst->cmp_typ->selector($form, $used_type_id);
     }
 
     /**
@@ -460,9 +462,9 @@ class component extends sandbox_code_id
     {
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
-            $used_type_id = $typ_lst->html_view_styles->default_id();
+            $used_type_id = $typ_lst->msk_sty->default_id();
         }
-        return $typ_lst->html_view_styles->selector($form, $used_type_id);
+        return $typ_lst->msk_sty->selector($form, $used_type_id);
     }
 
 
@@ -477,7 +479,7 @@ class component extends sandbox_code_id
      */
     private function dsp_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        return $typ_lst->html_component_types->selector($form);
+        return $typ_lst->cmp_typ->selector($form);
     }
 
 
@@ -686,7 +688,7 @@ class component extends sandbox_code_id
     {
         global $ui_sys;
         $base = new ui_base();
-        return match ($ui_sys->typ_lst_cache->html_component_types->get_code_id($this->type_id())) {
+        return match ($ui_sys->typ_lst_cache->cmp_typ->get_code_id($this->type_id())) {
             component_types::TEXT => $this->text(),
             component_types::PHRASE_NAME => $this->word_name($phr),
             component_types::VALUES_RELATED => $base->table($dbo, $cfg),
@@ -708,7 +710,7 @@ class component extends sandbox_code_id
     function word_name(phrase $phr): string
     {
         global $ui_sys;
-        if ($ui_sys->typ_lst_cache->html_component_types->get_code_id($this->type_id()) == component_types::PHRASE_NAME) {
+        if ($ui_sys->typ_lst_cache->cmp_typ->get_code_id($this->type_id()) == component_types::PHRASE_NAME) {
             return $phr->name();
         } else {
             return 'Missing component type';

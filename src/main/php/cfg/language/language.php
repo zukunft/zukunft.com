@@ -5,6 +5,8 @@
     model/language/language.php - to define a language for the user interface
     ---------------------------
 
+    $lan is the suggested var name
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

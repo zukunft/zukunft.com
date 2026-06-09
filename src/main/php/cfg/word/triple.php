@@ -5,6 +5,8 @@
     model/word/triple.php - the object that links two words (an RDF triple)
     ---------------------
 
+    $trp is the suggested var name
+
     A link can also be used in replacement for a word
     e.g. "Zurich (company)" where the link "Zurich is a company" is used
 

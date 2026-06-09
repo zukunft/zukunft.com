@@ -445,6 +445,39 @@ class library
     }
 
     /**
+     * convert an HTML fragment to the plain text a user would see in the browser
+     * so the result of a *_ui display function can be checked or logged in one line
+     * e.g. the page title html of "Zurich" becomes
+     * 'Zurich <fas fa-edit> (is a City, Canton, ... / measure) (personal, admin protection)'
+     * an icon is kept as a readable placeholder of its css class (e.g.
+     * '<i class="fas fa-edit"></i>' -> '<fas fa-edit>'); every other tag is removed
+     * and its text kept; a block tag (e.g. div, h4) becomes a single space so the
+     * blocks stay separated, an inline tag (e.g. a, span) is dropped without a space
+     *
+     * @param string $html_string the HTML fragment e.g. the result of a *_ui display function
+     * @return string the user-visible text with icons shown as '<css class>' placeholders
+     */
+    function html_to_text(string $html_string): string
+    {
+        // keep an icon as an encoded placeholder of its css class so the next
+        // tag removal does not drop it e.g. '<i class="fas fa-edit">' -> '<fas fa-edit>'
+        $result = preg_replace(
+            '/<i\b[^>]*\bclass="([^"]*)"[^>]*>\s*<\/i>/i',
+            '&lt;$1&gt;',
+            $html_string
+        );
+        // a block tag separates its content, so replace its boundary with a space
+        $block_tags = 'div|h[1-6]|p|ul|ol|li|table|thead|tbody|tr|td|th|header|footer|section|br|hr';
+        $result = preg_replace('/<\/?(?:' . $block_tags . ')\b[^>]*>/i', ' ', $result);
+        // an inline tag (e.g. the link around a related phrase) is dropped without a space
+        $result = strip_tags($result);
+        // turn entities (incl. the encoded icon placeholder) into their characters
+        $result = html_entity_decode($result, ENT_QUOTES | ENT_HTML5);
+        // collapse the spaces left by the removed block tags to a single space
+        return $this->trim($result);
+    }
+
+    /**
      * replace volatile attribute values in HTML with fixed placeholders so snapshot tests stay stable
      * volatile values are attributes whose value changes on every request e.g. CSRF session tokens
      *
@@ -1704,6 +1737,7 @@ class library
         $header_line = '';
         $path = '';
         $description = '';
+        $var_name = '';
         foreach ($lines as $line) {
             if ($header_line == '') {
                 if (str_contains($line, '.php - ')) {
@@ -1711,6 +1745,10 @@ class library
                     $path = trim($this->str_left_of($header_line, '.php - '));
                     $description = $this->str_right_of($header_line, '.php - ');
                 }
+            }
+            // pick up the suggested var name from the first comment block e.g. '$wrd'
+            if ($var_name == '' and str_contains($line, 'is the suggested var name')) {
+                $var_name = trim($this->str_left_of($line, 'is the suggested var name'));
             }
             if (str_starts_with($line, 'class')) {
                 $class = trim($this->str_between($line, 'class', 'extends'));
@@ -1741,7 +1779,12 @@ class library
                     }
                 }
                 if ($class != '') {
-                    $result[$class] = [$parent, $path, $description];
+                    // prefix the description with the suggested var name if the class declares one
+                    $class_desc = $description;
+                    if ($var_name != '') {
+                        $class_desc = $var_name . ' - ' . $description;
+                    }
+                    $result[$class] = [$parent, $path, $class_desc];
                 }
             }
         }

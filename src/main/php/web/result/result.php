@@ -5,6 +5,8 @@
     web/result/result.php - the display extension of the api result object
     ---------------------
 
+    $res is the suggested var name
+
     to create the HTML code to display a formula
 
 

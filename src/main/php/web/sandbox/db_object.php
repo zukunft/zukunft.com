@@ -567,10 +567,10 @@ class db_object extends TextIdObject
      */
     function add_via_api(user $usr, user_message $usr_msg): user_message
     {
-        $map_obj = new MapObject();
-        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
-        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
+        $map = new MapObject();
+        $usr_msg_db = $map->convertMsgToDb($usr_msg);
+        $db_usr = $map->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
         $add_result = $db_obj->save($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
@@ -580,7 +580,7 @@ class db_object extends TextIdObject
             $usr_msg->add_message_text($msg);
         }
         */
-        return $map_obj->convertMsgToUi($usr_msg_db);
+        return $map->convertMsgToUi($usr_msg_db);
     }
 
     /**
@@ -592,10 +592,10 @@ class db_object extends TextIdObject
      */
     function update(user $usr, user_message $usr_msg): user_message
     {
-        $map_obj = new MapObject();
-        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
-        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
+        $map = new MapObject();
+        $usr_msg_db = $map->convertMsgToDb($usr_msg);
+        $db_usr = $map->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
         $upd_result = $db_obj->save($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
@@ -605,7 +605,7 @@ class db_object extends TextIdObject
             $usr_msg->add_message_text($msg);
         }
         */
-        return $map_obj->convertMsgToUi($usr_msg_db);
+        return $map->convertMsgToUi($usr_msg_db);
     }
 
     /**
@@ -617,10 +617,10 @@ class db_object extends TextIdObject
      */
     function del(user $usr, user_message $usr_msg): user_message
     {
-        $map_obj = new MapObject();
-        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
-        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
+        $map = new MapObject();
+        $usr_msg_db = $map->convertMsgToDb($usr_msg);
+        $db_usr = $map->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
         $del_result = $db_obj->del($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
@@ -630,7 +630,7 @@ class db_object extends TextIdObject
             $usr_msg->add_message_text($msg);
         }
         */
-        return $map_obj->convertMsgToUi($usr_msg_db);
+        return $map->convertMsgToUi($usr_msg_db);
     }
 
 

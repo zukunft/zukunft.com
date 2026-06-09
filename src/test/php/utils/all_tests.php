@@ -183,6 +183,9 @@ class all_tests extends all_unit_write_tests
         // start the test section (ts)
         $ts = 'Start of all zukunft.com tests ';
         $this->header($ts);
+        $this->set_users();
+        $ui = new frontend('all tests');
+        $ui->load_dummy_cache_from_test_resources($this->usr1);
 
         // if requested only run some selected tests
         if (QUICK_TEST_ONLY) {
@@ -192,7 +195,7 @@ class all_tests extends all_unit_write_tests
             // ... otherwise run the test starting with internal unit test
 
             // first run the unit tests without database connection
-            $this->run_unit();
+            $this->run_unit($ui);
 
             // run the database read tests also to check if the test results are influenced by any leftovers
             if ($sys->errors <= ERROR_LIMIT) {

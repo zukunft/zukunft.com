@@ -5,6 +5,7 @@
     web/view/view_relation.php - create HTML code to display a n:m link between two views
     --------------------------
 
+    $mrl is the suggested var name
 
     This file is part of zukunft.com - calc with words
 
@@ -272,7 +273,7 @@ class view_relation extends sandbox_link
         global $ui_sys;
         $result = null;
         if ($this->predicate_id != null) {
-            $result = $ui_sys->typ_lst_cache->html_view_relation_types->get($this->predicate_id);
+            $result = $ui_sys->typ_lst_cache->mrl_typ->get($this->predicate_id);
         }
         return $result;
     }
@@ -284,7 +285,7 @@ class view_relation extends sandbox_link
      */
     public function view_relation_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        return $typ_lst->html_view_relation_types->selector($form, $this->predicate_id);
+        return $typ_lst->mrl_typ->selector($form, $this->predicate_id);
     }
 
 }

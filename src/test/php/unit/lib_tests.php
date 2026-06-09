@@ -116,6 +116,24 @@ class lib_tests
         $result = $lib->trim_html($text);
         $t->assert("trim_html space after tag", $result, $target);
 
+        // convert an HTML page title to the text the user would see, keeping the
+        // font awesome edit icon as a readable '<fas fa-edit>' placeholder
+        $test_name = 'html_to_text';
+        $text = '<div class="heading-line"><h4 class="heading-inline">Zurich</h4>'
+            . '<a href="#"><i class="fas fa-edit"></i></a></div>'
+            . '<div class="subtitle">(is a City, Canton, ...) / measure</div>'
+            . '<div class="subtitle">(personal, admin protection)</div>';
+        $target = 'Zurich <fas fa-edit> (is a City, Canton, ...) / measure (personal, admin protection)';
+        $result = $lib->html_to_text($text);
+        $t->assert($test_name, $result, $target);
+
+        // text without any tags is returned unchanged apart from collapsed spaces
+        $test_name = 'html_to_text without tags';
+        $text = '  no  tags  here  ';
+        $target = 'no tags here';
+        $result = $lib->html_to_text($text);
+        $t->assert($test_name, $result, $target);
+
         // replace volatile CSRF token with a fixed dummy value for snapshot tests
         $token = test_const::DUMMY_SESSION_TOKEN;
         $live_token = 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2';

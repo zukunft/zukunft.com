@@ -5,6 +5,8 @@
     model/system/job.php - object to combine all parameters for one calculation or cleanup request
     --------------------
 
+    $job is the suggested var name
+
     This may lead to several results,
 
     This file is part of zukunft.com - calc with words

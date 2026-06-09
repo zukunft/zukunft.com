@@ -5,6 +5,8 @@
     web/word/word.php - create HTML code to display a words based on the api json message
     -----------------
 
+    $wrd is the suggested var name
+
     The main sections of this object are
     - object vars:       the variables of this word object
     - set and get:       to capsule the vars from unexpected changes
@@ -301,7 +303,7 @@ class word extends sandbox_code_id
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($ui_sys->typ_lst_cache->html_phrase_types->id($code_id));
+            $this->set_type_id($ui_sys->typ_lst_cache->phr_typ->id($code_id));
         }
     }
 
@@ -506,8 +508,8 @@ class word extends sandbox_code_id
     {
         global $ui_sys;
         $result = '';
-        if ($ui_sys->typ_lst_cache->html_phrase_types->get_code_id($this->type_id()) == phrase_types::FORMULA_LINK) {
-            $result .= ' type: ' . $ui_sys->typ_lst_cache->html_phrase_types->name($this->type_id());
+        if ($ui_sys->typ_lst_cache->phr_typ->get_code_id($this->type_id()) == phrase_types::FORMULA_LINK) {
+            $result .= ' type: ' . $ui_sys->typ_lst_cache->phr_typ->name($this->type_id());
         } else {
             $result .= $this->phrase_type_selector($form, $typ_lst);
         }
@@ -525,9 +527,9 @@ class word extends sandbox_code_id
     {
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
-            $used_phrase_id = $typ_lst->html_phrase_types->default_id();
+            $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
-        return $typ_lst->html_phrase_types->selector($form, $used_phrase_id);
+        return $typ_lst->phr_typ->selector($form, $used_phrase_id);
     }
 
 
@@ -625,7 +627,7 @@ class word extends sandbox_code_id
         global $ui_sys;
         $result = false;
         if ($this->type_id() != Null) {
-            if ($this->type_id() == $ui_sys->typ_lst_cache->html_phrase_types->id($type)) {
+            if ($this->type_id() == $ui_sys->typ_lst_cache->phr_typ->id($type)) {
                 $result = true;
             }
         }
@@ -867,7 +869,7 @@ class word extends sandbox_code_id
         global $ui_sys;
         $usr = $ui_sys->usr;
         // TODO add $id to the parameters
-        $result = $typ_lst->html_verbs->selector($form);
+        $result = $typ_lst->vrb->selector($form);
 
         if ($usr->is_admin()) {
             // admin users should always have the possibility to create a new link type

@@ -5,6 +5,8 @@
     web/ref/ref.php - the extension of the reference API objects to create ref base html code
     ---------------
 
+    $ref is the suggested var name
+
     extends db_object because this is the only display object that does not have an explicit name but has a type
 
 
@@ -300,7 +302,7 @@ class ref extends sandbox
     function type_name(): string
     {
         global $ui_sys;
-        return $ui_sys->typ_lst_cache->html_ref_types->name($this->predicate_id());
+        return $ui_sys->typ_lst_cache->ref_typ->name($this->predicate_id());
     }
 
     /**
@@ -309,8 +311,17 @@ class ref extends sandbox
     function type_url(): string
     {
         global $ui_sys;
-        $ref_typ_lst = $ui_sys->typ_lst_cache->html_ref_types;
+        $ref_typ_lst = $ui_sys->typ_lst_cache->ref_typ;
         return $ref_typ_lst->url($this->predicate_id());
+    }
+
+    /**
+     * TODO Prio 2 either this or predicate_id should be deprecated
+     * @return int|null the database id of the type
+     */
+    function type_id(): ?int
+    {
+        return $this->predicate_id;
     }
 
     function used_url(): string
@@ -462,9 +473,9 @@ class ref extends sandbox
     {
         $used_ref_type_id = $this->predicate_id();
         if ($used_ref_type_id == null) {
-            $used_ref_type_id = $typ_lst->html_ref_types->default_id();
+            $used_ref_type_id = $typ_lst->ref_typ->default_id();
         }
-        return $typ_lst->html_ref_types->selector($form, $used_ref_type_id);
+        return $typ_lst->ref_typ->selector($form, $used_ref_type_id);
     }
 
     /**

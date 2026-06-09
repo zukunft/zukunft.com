@@ -5,6 +5,8 @@
     web/verb/verb.php - the display extension of the api verb object
     -----------------
 
+    $vrb is the suggested var name
+
     The main sections of this object are
     - object vars:       the variables of this word object
     - set and get:       to capsule the vars from unexpected changes

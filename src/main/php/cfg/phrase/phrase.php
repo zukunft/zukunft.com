@@ -5,6 +5,8 @@
     model/phrase/phrase.php - either a word or a triple
     ---------------------
 
+    $phr is the suggested var name
+
     this object is not stored in the database in a separate table
     e.g. to build a selector the entries are caught either from the words or triples table
 

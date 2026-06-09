@@ -46,6 +46,7 @@ include_once html_paths::TYPES . 'language_list.php';
 //include_once paths::SHARED_CONST . 'files.php';
 //include_once paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once paths::SHARED_CONST . 'views.php';
+//include_once paths::SHARED_CONST . 'words.php';
 //include_once paths::SHARED_ENUM . 'languages.php';
 //include_once paths::SHARED_ENUM . 'messages.php';
 //include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -324,7 +326,7 @@ class html_base
     {
         global $ui_sys;
 
-        $lan_lst = $ui_sys?->typ_lst_cache?->html_languages ?? new language_list();
+        $lan_lst = $ui_sys?->typ_lst_cache?->lan ?? new language_list();
         $html = new html_base();
         $url = $html->url_new($msk_id);
         $lan_txt = $lan_lst->select_list_item($url);
@@ -1776,7 +1778,7 @@ class html_base
         global $ui_sys;
         $result = '';
         if ($style_id != null) {
-            $result = $ui_sys?->typ_lst_cache?->html_view_styles?->get_code_id($style_id) ?? '';
+            $result = $ui_sys?->typ_lst_cache?->msk_sty?->get_code_id($style_id) ?? '';
         }
         return $result;
     }
@@ -2003,6 +2005,57 @@ class html_base
             $style = ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
         return '<' . self::DIV . $style . '>' . $txt . '</' . self::DIV . '>';
+    }
+
+    /**
+     * concatenate two text snippets with the given separator if both are set
+     *
+     * @param string $left the first text snippet e.g. the category or the share
+     * @param string $right the second text snippet e.g. the type or the protection
+     * @param string $separator the separator shown between the two snippets if both are set
+     * @return string "$left$separator$right" or just the set snippet or '' if both are empty
+     */
+    function concat_text(string $left, string $right, string $separator): string
+    {
+        $result = $left;
+        if ($left !== '' and $right !== '') {
+            $result .= $separator . $right;
+        } elseif ($right !== '') {
+            $result = $right;
+        }
+        return $result;
+    }
+
+    /**
+     * concatenate two text snippets with the configured list entry separator e.g. ", "
+     *
+     * @param string $left the first text snippet
+     * @param string $right the second text snippet
+     * @return string the two snippets joined by the entry separator
+     */
+    function concat_entry_text(string $left, string $right): string
+    {
+        global $ui_sys;
+        $separator = $ui_sys?->cfg?->get_by(
+            [words::ENTRY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
+        ) ?? def::FALLBACK_ENTRY_SEPARATOR;
+        return $this->concat_text($left, $right, $separator);
+    }
+
+    /**
+     * concatenate two text snippets with the configured list category separator e.g. " / "
+     *
+     * @param string $left the first text snippet
+     * @param string $right the second text snippet
+     * @return string the two snippets joined by the category separator
+     */
+    function concat_category_text(string $left, string $right): string
+    {
+        global $ui_sys;
+        $separator = $ui_sys?->cfg?->get_by(
+            [words::CATEGORY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
+        ) ?? def::FALLBACK_CATEGORY_SEPARATOR;
+        return $this->concat_text($left, $right, $separator);
     }
 
     /**

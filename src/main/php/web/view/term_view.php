@@ -208,14 +208,14 @@ class term_view extends sandbox_link
     {
         $used_id = $this->predicate_id;
         if ($used_id == null) {
-            $used_id = $typ_lst->html_view_link_types->default_id();
+            $used_id = $typ_lst->msk_lnk_typ->default_id();
         }
-        return $typ_lst->html_view_link_types->selector($form, $used_id);
+        return $typ_lst->msk_lnk_typ->selector($form, $used_id);
     }
 
     /**
      * create the html code to select the view style
-     * overrides db_object::style_selector; reuses the shared html_view_styles cache
+     * overrides db_object::style_selector; reuses the shared msk_sty cache
      * term_view itself has no style_id, so the default style is preselected
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the preloaded view styles
@@ -223,8 +223,8 @@ class term_view extends sandbox_link
      */
     public function style_selector(string $form, ?type_lists $typ_lst): string
     {
-        $used_id = $typ_lst->html_view_styles->default_id();
-        return $typ_lst->html_view_styles->selector($form, $used_id);
+        $used_id = $typ_lst->msk_sty->default_id();
+        return $typ_lst->msk_sty->selector($form, $used_id);
     }
 
 

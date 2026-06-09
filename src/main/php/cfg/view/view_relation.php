@@ -5,6 +5,8 @@
     model/view/view_relation.php - to define the relation between two views e.g. to have a parent view where the child view have additional components
     ----------------------------
 
+    $mrl is the suggested var name
+
     the view relation defines how two views are connected whereas
     the view link defines how a term is connected to a view
     both are n:m relations

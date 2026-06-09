@@ -36,6 +36,8 @@ include_once 'test_const.php';
 
 // load the main test class to get the test environment
 include_once TEST_PHP_PATH . 'test_app.php';
+
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\test\php\test_app;
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -72,10 +74,13 @@ if ($db_con->is_open()) {
 
             // init tests
             $t = new all_tests();
+            $t->set_users();
             $t->header('Start zukunft.com unit tests');
+            $ui = new frontend('unit tests');
+            $ui->load_dummy_cache_from_test_resources($t->usr1);
 
             // run a list of selected tests
-            $t->run_unit();
+            $t->run_unit($ui);
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

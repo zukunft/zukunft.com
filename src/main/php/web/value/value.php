@@ -5,6 +5,8 @@
     web/value/value.php - create the html code to show a value to the user
     -------------------
 
+    $val is the suggested var name
+
     to create the HTML code to show a value to the user
     and allow changing the value
 

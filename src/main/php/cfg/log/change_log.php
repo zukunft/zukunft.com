@@ -5,6 +5,8 @@
     model/log/change_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
     ------------------------
 
+    $cng is the suggested var name
+
     for reading the user changes from the database and forwarding them to
     the API and frontend model/log/changeLog* should be used
 

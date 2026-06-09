@@ -43,6 +43,7 @@ include_once 'test_const.php';
 include_once TEST_PHP_PATH . 'test_app.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\test\php\test_app;
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -82,13 +83,16 @@ if ($db_con->is_open()) {
             // init tests
             $errors = 0;
             $t = new all_tests();
+            $t->set_users();
             $t->header('drop and recreate zukunft.com database');
+            $ui = new frontend('reset db');
+            $ui->load_dummy_cache_from_test_resources($t->usr1);
 
             if (getenv(ENVIRONMENT) == ENV_DEV) {
 
                 // run the unit tests and reset the database
                 $t = new all_tests();
-                $t->run_unit();
+                $t->run_unit($ui);
                 $t->run_db_recreate();
 
                 // create the test dataset to check the basic write functions

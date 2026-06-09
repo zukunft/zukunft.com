@@ -42,6 +42,7 @@ class protection_types
     const string USER = "user_protection";
     const string ADMIN = "admin_protection";
     const int ADMIN_ID = 3;
+    const string ADMIN_NAME = 'admin';
     // TODO Prio 2 add a test case to force the usage of the parent protection type
     const string NO_CHANGE = "no_change";
 

@@ -5,6 +5,8 @@
     model/component/component.php - a single display object like a headline or a table
     ---------------------------
 
+    $cmp is the suggested var name
+
     The main sections of this object are
     - db const:          const for the database link
     - object vars:       the variables of this component object

@@ -275,9 +275,9 @@ class formula_link extends sandbox_link
     {
         $used_id = $this->predicate_id;
         if ($used_id == null) {
-            $used_id = $typ_lst->html_formula_link_types->default_id();
+            $used_id = $typ_lst->frm_lnk_typ->default_id();
         }
-        return $typ_lst->html_formula_link_types->selector($form, $used_id);
+        return $typ_lst->frm_lnk_typ->selector($form, $used_id);
     }
 
 

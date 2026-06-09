@@ -5,6 +5,8 @@
     web/element/element.php - either a word, triple, verb or formula with a link to a formula
     -----------------------
 
+    $elm is the suggested var name
+
     formula elements are terms or expression operators such as add or brackets
     the element is not a simple combine object because it also includes the link to the formula
 

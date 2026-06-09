@@ -376,7 +376,7 @@ class ui_list extends ui_base
         global $ui_sys;
         $style_txt = '';
         if ($style_id != null) {
-            $style_txt = $ui_sys->typ_lst_cache->html_view_styles->get_code_id($style_id);
+            $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
         return $val_lst->list($phr_lst, '', $style_txt);
     }
@@ -399,7 +399,7 @@ class ui_list extends ui_base
         global $ui_sys;
         $style_txt = '';
         if ($style_id != null) {
-            $style_txt = $ui_sys->typ_lst_cache->html_view_styles->get_code_id($style_id);
+            $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
         return $val_lst->list_unit();
     }
@@ -424,7 +424,7 @@ class ui_list extends ui_base
         global $ui_sys;
         $style_txt = '';
         if ($style_id != null) {
-            $style_txt = $ui_sys->typ_lst_cache->html_view_styles->get_code_id($style_id);
+            $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
         return $res_lst->list($phr_lst, '', $style_txt);
     }

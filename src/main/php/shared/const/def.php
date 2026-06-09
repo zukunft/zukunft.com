@@ -43,6 +43,15 @@ class def
     // configuration values used as fallback if the value is missing in the system configuration
     const int FALLBACK_DB_PAGE_ROWS = 20; // the number of database rows that should be loaded at once
     const int FALLBACK_PHRASES_RELATED = 7; // the number of related phrases to show if nothing else is defined in the user or system configuration
+    // fallback for the per-verb limit of related phrases shown in the page title (Zurich -> City, Canton, ...);
+    // overridden by config.yaml entry frontend.lists.limit.related per verb once the $cfg accessor is wired
+    const int LIMIT_RELATED_PER_VERB = 2;
+    // fallback separator between the category and the type subtitle in a page title;
+    // overridden by config.yaml entry frontend.lists.separator.category
+    const string FALLBACK_CATEGORY_SEPARATOR = ' / ';
+    // fallback separator between list entries e.g. the share and protection subtitle in a page title;
+    // overridden by config.yaml entry frontend.lists.separator.entry
+    const string FALLBACK_ENTRY_SEPARATOR = ', ';
     const string ENCODING = 'utf-8'; // the default encoding for the backend
     const string FILE_PHP = '.php'; // the file extension for the code scripts
 

@@ -152,16 +152,30 @@ Each main object file follows this section order:
 
 ## Naming conventions
 
-Short variable prefixes (see also `docs/code_guidelines.md`):
+Short variable prefixes (see also `docs/code_guidelines.md`). The canonical,
+complete registry of these names is the property list in
+`cfg/helper/type_lists.php` — when you add a preloaded type there, add its
+abbreviation here too, and reuse an existing one rather than inventing a new
+spelling for the same object.
+
+Core objects:
 - `wrd` word, `val` value, `frm` formula, `vrb` verb, `trp` triple
 - `phr` phrase, `grp` group, `trm` term, `res` result, `src` source, `ref` reference
 - `msk`/`cmp` view/component, `usr` user, `sc` sql_creator, `cac` cache
-- `lst` list, `typ` type, `lnk` link, `elm` element
+- `shr` share, `ptc` protection, `lan` language, `job` job
+- `sty` style, `pos` position, `mrl` view relation, `elm` element
+- `cng` change (change log), `sys` system
+
+Combinable parts (suffixes / second components):
+- `lst` list, `typ` type, `lnk` link, `sta` status, `lvl` level
+- `act` action, `tbl` table, `fld` field, `fnc` function
+- `pro` profile, `for` form
 
 Variable names should be one of these 3-letter abbreviations or a combination —
 never the spelled-out object name. Combine by joining parts: `$t_wrd` (test +
-word factory), `$frm_lnk` (formula + link), `$phr_lst` (phrase + list). Only
-`$i` is allowed as a single-character name, for loops.
+word factory), `$frm_lnk` (formula + link), `$phr_lst` (phrase + list),
+`$shr_typ` (share + type), `$ptc_typ` (protection + type). Only `$i` is allowed
+as a single-character name, for loops.
 
 Object file suffixes:
 - `*_db.php` — DB field constants for an object

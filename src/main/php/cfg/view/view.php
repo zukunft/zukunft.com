@@ -5,6 +5,8 @@
     model/view/view.php - the main display object
     -------------------
 
+    $msk is the suggested var name
+
     The main sections of this object are
     - db const:          const for the database link
     - object vars:       the variables of this word object

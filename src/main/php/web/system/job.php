@@ -5,6 +5,8 @@
     web/system/job.php - the extension of the batch task API objects to create job base html code
     ------------------
 
+    $job is the suggested var name
+
     This file is part of the frontend of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

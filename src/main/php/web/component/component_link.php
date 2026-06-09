@@ -248,7 +248,7 @@ class component_link extends sandbox_link
 
     /**
      * create the html code to select the component style
-     * overrides db_object::component_style_selector; reuses the shared html_view_styles cache
+     * overrides db_object::component_style_selector; reuses the shared msk_sty cache
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the preloaded view styles
      * @return string the html code to select the component style
@@ -257,9 +257,9 @@ class component_link extends sandbox_link
     {
         $used_id = $this->style_id;
         if ($used_id == null) {
-            $used_id = $typ_lst->html_view_styles->default_id();
+            $used_id = $typ_lst->msk_sty->default_id();
         }
-        return $typ_lst->html_view_styles->selector($form, $used_id);
+        return $typ_lst->msk_sty->selector($form, $used_id);
     }
 
 

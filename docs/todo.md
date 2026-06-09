@@ -57,6 +57,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO use the name "psv" (Public Standard Value) for values and results that are no read and write restrictions 
     TODO fix all prio 0 TODO including unit tests
     TODO use the url_var class const for all url vars
+    TODO check that the user changeable config parameters 'lists.separator.entry' and 'lists.separator.caterory' are use for all one line lists shown the the user
     TODO check that the api, url and import mapper just map the fields
          and the permission check of critical fields is done before the database save
     TODO make sure the the save function always includes all fields e.g. if by the user the activation_timeout is included
