@@ -5,6 +5,7 @@
     web/view/view_relation.php - create HTML code to display a n:m link between two views
     --------------------------
 
+    $mrl is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

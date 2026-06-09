@@ -5,6 +5,8 @@
     web/word/word.php - create HTML code to display a words based on the api json message
     -----------------
 
+    $wrd is the suggested var name
+
     The main sections of this object are
     - object vars:       the variables of this word object
     - set and get:       to capsule the vars from unexpected changes

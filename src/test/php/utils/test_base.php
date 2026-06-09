@@ -1058,8 +1058,8 @@ class test_base
             $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         }
         if ($cfg->usr->id() == 0) {
-            $ui_map = new MapObject();
-            $cfg->usr = $ui_map->convertToUi($usr, $usr_msg_ui);
+            $map_ui = new MapObject();
+            $cfg->usr = $map_ui->convertToUi($usr, $usr_msg_ui);
         }
         $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
 

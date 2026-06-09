@@ -5,6 +5,7 @@
     web/phrase/phrase.php - to create the html code to display a word or triple
     ---------------------
 
+    $phr is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

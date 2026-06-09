@@ -5,6 +5,8 @@
     web/word/triple.php - create the HTML code to display a triple (two linked words or triples)
     -------------------
 
+    $trp is the suggested var name
+
     The main sections of this object are
     - object vars:       the variables of this triple object
     - api:               set the object vars based on the api json message and create a json for the backend

@@ -5,6 +5,8 @@
     web/system/language.php - the extension of the language API objects to create language base html code
     -----------------------
 
+    $lan is the suggested var name
+
     The main sections of this object are
     - object vars:       the variables of this word object
     - api:               set the object vars based on the api json message and create a json for the backend

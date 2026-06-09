@@ -5,6 +5,8 @@
     web/formula/formula.php - the display extension of the api formula object
     -----------------------
 
+    $frm is the suggested var name
+
     to create the HTML code to display a formula
 
     The main sections of this object are

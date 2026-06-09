@@ -5,6 +5,8 @@
     web/component/component.php - function to add, change or delete a view component
     ---------------------------
 
+    $cmp is the suggested var name
+
     to create the HTML code to display a component
 
     The main sections of this object are

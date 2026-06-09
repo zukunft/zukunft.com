@@ -5,6 +5,8 @@
     model/word/word.php - the main word object
     -----------------
 
+    $wrd is the suggested var name
+
     TODO move plural to a linked word?
 
     TODO check if all objects follow these rules

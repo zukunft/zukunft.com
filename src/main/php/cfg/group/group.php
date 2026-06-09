@@ -5,6 +5,8 @@
     model/group/group.php - a combination of a word list and a triple_list
     ---------------------
 
+    $grp is the suggested var name
+
     the prime group is designed to be useful for normal values e.g. the number of inhabitants in Zurich 2023
     the index group is designed to be useful for structured values e.g.
     the index big group is designed to be useful for highly structured values e.g. the ISIN as a 48-bit value with up to 65k fields (because each field can be a triple a multi dimensional tables can be store with index big)

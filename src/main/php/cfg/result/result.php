@@ -5,6 +5,8 @@
     model/result/result.php - the calculated numeric result of a formula
     -----------------------
 
+    $res is the suggested var name
+
     TODO: add these function
     TODO rename to result
     TODO create a separate table for the time series results

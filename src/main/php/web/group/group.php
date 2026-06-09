@@ -5,6 +5,8 @@
     web/group/group.php - the extension of the phrase group api object to create the HTML code to display a word or triple
     -------------------
 
+    $grp is the suggested var name
+
     mainly links to the word and triple display functions
 
     The main sections of this object are

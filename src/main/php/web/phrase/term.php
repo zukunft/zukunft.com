@@ -5,6 +5,7 @@
     web/phrase/term.php - to create the html code to display a word, triple, verb or formula
     --------------------
 
+    $trm is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

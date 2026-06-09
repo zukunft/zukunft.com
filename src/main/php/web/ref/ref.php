@@ -5,6 +5,8 @@
     web/ref/ref.php - the extension of the reference API objects to create ref base html code
     ---------------
 
+    $ref is the suggested var name
+
     extends db_object because this is the only display object that does not have an explicit name but has a type
 
 

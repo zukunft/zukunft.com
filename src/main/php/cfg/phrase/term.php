@@ -5,6 +5,8 @@
     model/phrase/term.php - either a word, verb, triple or formula
     -------------------
 
+    $trm is the suggested var name
+
     TODO: load formula word
         check triple
 

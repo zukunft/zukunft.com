@@ -5,6 +5,8 @@
     model/verb/verb.php - predicate object to link two words
     -------------------
 
+    $vrb is the suggested var name
+
     TODO maybe move the reverse to a linked predicate
 
 

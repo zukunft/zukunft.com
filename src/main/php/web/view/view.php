@@ -5,6 +5,8 @@
     web/view/view.php - the main frontend object to create the html code
     -----------------
 
+    $msk is the suggested var name
+
     add the function to create a navigation bar to the html frontend view object
 
     The main sections of this object are

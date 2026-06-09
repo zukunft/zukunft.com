@@ -77,11 +77,11 @@ class horizontal_ui_tests
 
         // init
         $lib = new library();
-        $map_obj = new MapObject();
+        $map = new MapObject();
         $t_map = new test_mappers($t);
         $usr_msg_ui = new user_message_ui();
         $usr_msg = new user_message($t->usr1);
-        $msg_ui = $map_obj->convertMsgToUi($usr_msg);
+        $msg_ui = $map->convertMsgToUi($usr_msg);
         $url_test = new test_mappers($t);
         $url_map = new url_mapper();
 

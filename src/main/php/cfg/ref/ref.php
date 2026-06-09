@@ -5,6 +5,8 @@
     model/ref/ref.php - a link between a phrase and another system such as wikidata
     -----------------
 
+    $ref is the suggested var name
+
     The reference is a concrete link between one phrase and an object in an external system
     the external system is defined by the reference type
 

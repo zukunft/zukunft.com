@@ -1737,6 +1737,7 @@ class library
         $header_line = '';
         $path = '';
         $description = '';
+        $var_name = '';
         foreach ($lines as $line) {
             if ($header_line == '') {
                 if (str_contains($line, '.php - ')) {
@@ -1744,6 +1745,10 @@ class library
                     $path = trim($this->str_left_of($header_line, '.php - '));
                     $description = $this->str_right_of($header_line, '.php - ');
                 }
+            }
+            // pick up the suggested var name from the first comment block e.g. '$wrd'
+            if ($var_name == '' and str_contains($line, 'is the suggested var name')) {
+                $var_name = trim($this->str_left_of($line, 'is the suggested var name'));
             }
             if (str_starts_with($line, 'class')) {
                 $class = trim($this->str_between($line, 'class', 'extends'));
@@ -1774,7 +1779,12 @@ class library
                     }
                 }
                 if ($class != '') {
-                    $result[$class] = [$parent, $path, $description];
+                    // prefix the description with the suggested var name if the class declares one
+                    $class_desc = $description;
+                    if ($var_name != '') {
+                        $class_desc = $var_name . ' - ' . $description;
+                    }
+                    $result[$class] = [$parent, $path, $class_desc];
                 }
             }
         }

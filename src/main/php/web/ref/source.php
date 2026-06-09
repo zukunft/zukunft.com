@@ -5,6 +5,8 @@
     web/ref/source.php - the extension of the source API objects to create source base html code
     ------------------
 
+    $src is the suggested var name
+
     The main sections of this object are
     - object vars:       the variables of this word object
     - set and get:       to capsule the vars from unexpected changes

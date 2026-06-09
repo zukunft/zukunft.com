@@ -125,14 +125,14 @@ class system_view_ui_tests
         $tl = new test_lib();
         $t_usr = new test_users($t);
         $t_map = new test_mappers($t);
-        $msp_ui = new MapObject();
+        $map_ui = new MapObject();
 
         // start the test section (ts)
         $ts = 'unit ui system views ';
         $t->header($ts);
         $t->usr1 = $t_usr->user_sys_test();
         $usr_msg = new user_message();
-        $usr_ui = $msp_ui->convertToUi($t->usr1, $usr_msg);
+        $usr_ui = $map_ui->convertToUi($t->usr1, $usr_msg);
         $usr_msg->usr = $usr_ui;
 
 

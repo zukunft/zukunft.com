@@ -5,6 +5,8 @@
     model/user/user.php - a person who uses zukunft.com
     -------------------
 
+    $usr is the suggested var name
+
     TODO make sure that no right gain is possible
     TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
     TODO log the access attempts to objects with a restricted access

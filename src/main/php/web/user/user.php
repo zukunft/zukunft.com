@@ -5,6 +5,8 @@
     web/user/user.php - functions to create the HTML code to display the user setup and log information
     -----------------
 
+    $usr is the suggested var name
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
