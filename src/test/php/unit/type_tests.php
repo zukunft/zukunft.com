@@ -173,19 +173,19 @@ class type_tests
         $t->assert_sql_index_create($style);
 
         $t->subheader($ts . 'view term link type sql setup');
-        $dsp_lnk_typ = new view_link_type('');
-        $t->assert_sql_table_create($dsp_lnk_typ);
-        $t->assert_sql_index_create($dsp_lnk_typ);
+        $lnk_typ_ui = new view_link_type('');
+        $t->assert_sql_table_create($lnk_typ_ui);
+        $t->assert_sql_index_create($lnk_typ_ui);
 
         $t->subheader($ts . 'view relation type sql setup');
-        $dsp_lnk_typ = new view_relation_type('');
-        $t->assert_sql_table_create($dsp_lnk_typ);
-        $t->assert_sql_index_create($dsp_lnk_typ);
+        $lnk_typ_ui = new view_relation_type('');
+        $t->assert_sql_table_create($lnk_typ_ui);
+        $t->assert_sql_index_create($lnk_typ_ui);
 
         $t->subheader($ts . 'component link type sql setup');
-        $dsp_lnk_typ = new component_link_type('');
-        $t->assert_sql_table_create($dsp_lnk_typ);
-        $t->assert_sql_index_create($dsp_lnk_typ);
+        $lnk_typ_ui = new component_link_type('');
+        $t->assert_sql_table_create($lnk_typ_ui);
+        $t->assert_sql_index_create($lnk_typ_ui);
 
         $t->subheader($ts . 'sql write insert of base change log types without log e.g. for system setup');
         $typ = $t_typ->change_action();

@@ -422,9 +422,9 @@ class view extends sandbox_code_id
 
                 if ($msg->is_ok()) {
                     // TODO save also the components
-                    //$dsp_lnk = new component_link();
+                    //$cmp_lnk_ui = new component_link();
                     // TODO save also the links
-                    //$dsp_lnk = new component_link();
+                    //$cmp_lnk_ui = new component_link();
                     log_debug($this->dsp_id());
                 }
             }

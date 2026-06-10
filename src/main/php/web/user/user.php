@@ -717,8 +717,8 @@ class user extends db_object
      */
     function dsp_changes(int $size, int $page, ?back_trace $back = null): string
     {
-        $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(user::class, $this->id(), $size, $page, '', $back);
+        $log_ui = new user_log_display();
+        return $log_ui->dsp_hist(user::class, $this->id(), $size, $page, '', $back);
     }
 
     // display the error that are related to the user, so that he can track when they are closed
@@ -735,8 +735,8 @@ class user extends db_object
         //$err_lst->dsp_type = $dsp_type;
         //$err_lst->back = $back;
         if ($err_lst->load()) {
-            $err_lst_dsp = new sys_log_list($err_lst->api_json());
-            $result = $err_lst_dsp->get_html();
+            $err_lst_ui = new sys_log_list($err_lst->api_json());
+            $result = $err_lst_ui->get_html();
         }
 
         log_debug('done');

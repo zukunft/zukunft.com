@@ -132,14 +132,14 @@ if ($usr->id() > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // display the add view again
-        $msk_dsp = new view_ui($msk->api_json());
+        $msk_ui = new view_ui($msk->api_json());
         $dto = new data_object();
-        $result .= $msk_dsp->dsp_navbar($dto, $back);
+        $result .= $msk_ui->dsp_navbar($dto, $back);
         $result .= $html->dsp_err($usr_msg->all_message_text());
 
         // display the add source view
-        $scr_dsp = new source_ui($src->api_json());
-        //$result .= $scr_dsp->dsp_edit($back);
+        $scr_ui = new source_ui($src->api_json());
+        //$result .= $scr_ui->dsp_edit($back);
     }
 }
 

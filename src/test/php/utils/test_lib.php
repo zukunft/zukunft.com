@@ -187,8 +187,8 @@ class test_lib
 
         $dto_ui = new data_object_ui();
         $dto_ui->usr = $this->cast_user($usr);
-        $dto_base_dsp = new data_object_ui();
-        $dto_base_dsp->usr = $this->cast_user($usr);
+        $dto_base_ui = new data_object_ui();
+        $dto_base_ui->usr = $this->cast_user($usr);
 
         // load type lists from resource json file
         $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
@@ -213,12 +213,12 @@ class test_lib
         $json_array = json_decode($json_str, true);
         $usr_msg = new backend_user_message($usr);
         $dto_base = $imp->get_data_object($json_array, $usr_msg, $size);
-        $dto_base_dsp->set_view_list($this->cast_view_list($dto_base->view_list()));
+        $dto_base_ui->set_view_list($this->cast_view_list($dto_base->view_list()));
         // add the view id because the import does not include the database id
-        $dto_base_dsp->add_id_to_views();
+        $dto_base_ui->add_id_to_views();
         // add the components to the views
-        //$dto_base_dsp->add_components_to_views();
-        $dto_ui->merge_view_list($dto_base_dsp->view_list());
+        //$dto_base_ui->add_components_to_views();
+        $dto_ui->merge_view_list($dto_base_ui->view_list());
 
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
         $t_wrd = new test_words($t);

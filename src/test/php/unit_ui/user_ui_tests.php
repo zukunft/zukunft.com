@@ -48,13 +48,13 @@ class user_ui_tests
         $ts = 'unit ui html user ';
         $t->header($ts);
 
-        $usr_dsp = new user_ui();
-        $usr_dsp->id = 1;
-        $usr_dsp->name = 'zukunft.com';
-        $usr_dsp->email = 'heang@zukunft.com';
-        $usr_dsp->first_name = 'Heang';
-        $usr_dsp->last_name = 'Lor';
-        $test_page = $usr_dsp->form_edit(1) . '<br>';
+        $usr_ui = new user_ui();
+        $usr_ui->id = 1;
+        $usr_ui->name = 'zukunft.com';
+        $usr_ui->email = 'heang@zukunft.com';
+        $usr_ui->first_name = 'Heang';
+        $usr_ui->last_name = 'Lor';
+        $test_page = $usr_ui->form_edit(1) . '<br>';
         $t->html_page_test($test_page, 'user', 'user', $t);
     }
 

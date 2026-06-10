@@ -327,9 +327,9 @@ class result_list extends sandbox_list_value
                     log_debug("add time " . $res->time_phr->name() . ".");
                     $phr_lst->add($res->time_phr);
                 }
-                $phr_lst_dsp = new phrase_list($phr_lst->api_json());
+                $phr_lst_ui = new phrase_list($phr_lst->api_json());
                 $result .= '</tr><tr>';
-                $result .= '<td>' . $phr_lst_dsp->name_link() . '</td>';
+                $result .= '<td>' . $phr_lst_ui->name_link() . '</td>';
                 $result .= '<td>' . $res->display_linked($back) . '</td>';
                 $result .= '</tr>';
             }

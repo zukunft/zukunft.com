@@ -88,9 +88,9 @@ if ($session_usr->id > 0) {
     $msk->id = $sys->msk_cac->id(views::FORMULA_TEST);
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the page (or phrase id) from which formula testing has been called
-    $msk_dsp = new view_ui($msk->api_json());
+    $msk_ui = new view_ui($msk->api_json());
     $dto = new data_object();
-    echo $msk_dsp->dsp_navbar($dto, $back);
+    echo $msk_ui->dsp_navbar($dto, $back);
 
     // get all parameters
     $frm_id = $_GET[url_var::ID];

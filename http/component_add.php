@@ -156,8 +156,8 @@ if ($usr->id > 0) {
         }
 
         // show the word and its relations, so that the user can change it
-        $cmp_dsp = new component_ui($cmp->api_json());
-        $result .= $cmp_dsp->dsp_add($add_link, $wrd, $back);
+        $cmp_ui = new component_ui($cmp->api_json());
+        $result .= $cmp_ui->dsp_add($add_link, $wrd, $back);
     }
 }
 

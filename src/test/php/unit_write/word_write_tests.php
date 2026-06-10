@@ -506,8 +506,8 @@ class word_write_tests
         // display
         $back = 1;
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&id=' . $wrd_read->id() . '&back=1" title="' . words::MATH_COM . '">' . words::MATH . '</a>';
-        $wrd_read_dsp = new word_ui($wrd_read->api_json());
-        $result = $wrd_read_dsp->name_link($back);
+        $wrd_read_ui = new word_ui($wrd_read->api_json());
+        $result = $wrd_read_ui->name_link($back);
         $t->assert('word->display "' . words::MATH . '"', $result, $target);
 
         // check if user 2 can exclude a word without influencing user 1

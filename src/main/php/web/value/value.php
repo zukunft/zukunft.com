@@ -652,15 +652,15 @@ class value extends sandbox_value
         log_debug("value->dsp_hist for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->obj = $this;
-        $log_dsp->type = \Zukunft\ZukunftCom\main\php\cfg\value\value::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        //$result .= $log_dsp->dsp_hist_old();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->obj = $this;
+        $log_ui->type = \Zukunft\ZukunftCom\main\php\cfg\value\value::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        //$result .= $log_ui->dsp_hist_old();
 
         log_debug("done");
         return $result;
@@ -672,14 +672,14 @@ class value extends sandbox_value
         log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = value::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        //$result .= $log_dsp->dsp_hist_links();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->type = value::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        //$result .= $log_ui->dsp_hist_links();
 
         log_debug("done");
         return $result;
@@ -1050,9 +1050,9 @@ class value extends sandbox_value
         log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
-            $scr_dsp = new source($src->api_json());
+            $scr_ui = new source($src->api_json());
             // TODO Prio 0 add the source selector to the value mask
-            //$result .= $scr_dsp->dsp_select($script, $back);
+            //$result .= $scr_ui->dsp_select($script, $back);
             $result .= '<br><br>';
         }
 

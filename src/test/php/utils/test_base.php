@@ -4675,8 +4675,8 @@ class test_base
         }
         $log = new change($this->usr1);
         $log->load_by_user($this->usr1);
-        $log_dsp = new change_log_ui($log->api_json());
-        return $log_dsp->dsp(true);
+        $log_ui = new change_log_ui($log->api_json());
+        return $log_ui->dsp(true);
     }
 
     /**
@@ -4705,8 +4705,8 @@ class test_base
             $log = $sbx->log_object();
         }
         $log->load_by_field_row($sbx::class, $fld, $id, $usr_only);
-        $log_dsp = new change_log_ui($log->api_json());
-        return $log_dsp->dsp($ex_time);
+        $log_ui = new change_log_ui($log->api_json());
+        return $log_ui->dsp($ex_time);
     }
 
 

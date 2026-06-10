@@ -121,8 +121,8 @@ if ($usr->id() > 0) {
         }
 
         // show the header (in view edit views the view cannot be changed)
-        $msk_dsp = new view_ui($msk->api_json());
-        $result .= $msk_dsp->dsp_navbar_no_view($wrd->id());
+        $msk_ui = new view_ui($msk->api_json());
+        $result .= $msk_ui->dsp_navbar_no_view($wrd->id());
         $result .= $html->dsp_err($usr_msg->all_message_text());
 
         // show the form to create a new view

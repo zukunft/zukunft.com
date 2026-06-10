@@ -104,8 +104,8 @@ class formula_link_write_tests
         // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
         if ($frm_lnk2->formula() != null) {
             if ($frm_lnk2->formula()::class == formula::class) {
-                $fop_dsp = new formula_ui($frm_lnk2->formula()->api_json());
-                $result = $fop_dsp->name();
+                $fop_ui = new formula_ui($frm_lnk2->formula()->api_json());
+                $result = $fop_ui->name();
             } else {
                 log_err('unexpected class in formula link test');
             }

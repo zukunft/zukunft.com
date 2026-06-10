@@ -175,8 +175,8 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // in view edit views the view cannot be changed
-            $msk_dsp = new view_ui($msk->api_json());
-            $result .= $msk_dsp->dsp_navbar_no_view($back);
+            $msk_ui = new view_ui($msk->api_json());
+            $result .= $msk_ui->dsp_navbar_no_view($back);
             $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // get parameters that change only dsp_edit

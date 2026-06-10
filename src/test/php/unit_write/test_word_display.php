@@ -73,9 +73,9 @@ function run_word_display_test(all_tests $t): void
     $target = words::COMPANY;
     // get the link types related to the word
     $link_types = $wrd_ZH->link_types($direction);
-    $link_types_dsp = new verb_list_ui($link_types->api_json());
-    $wrd_ZH_dsp = new word_ui($wrd_ZH->api_json());
-    $result = $wrd_ZH_dsp->dsp_graph($direction, $link_types_dsp, 0);
+    $link_types_ui = new verb_list_ui($link_types->api_json());
+    $wrd_ZH_ui = new word_ui($wrd_ZH->api_json());
+    $result = $wrd_ZH_ui->dsp_graph($direction, $link_types_ui, 0);
     // TODO Prio 1 activate
     //$t->dsp_contains('word_dsp->dsp_graph ' . $direction->value . ' for ' . $wrd_ZH->name(), $target, $result);
 
@@ -85,9 +85,9 @@ function run_word_display_test(all_tests $t): void
     $direction = foaf_direction::DOWN;
     $target = 'ZU';
     $link_types = $wrd_ZH->link_types($direction);
-    $wrd_ZH_dsp = new word_ui($wrd_ZH->api_json());
-    $link_types_dsp = new verb_list_ui($link_types->api_json());
-    $result = $wrd_ZH_dsp->dsp_graph($direction, $link_types_dsp, 0);
+    $wrd_ZH_ui = new word_ui($wrd_ZH->api_json());
+    $link_types_ui = new verb_list_ui($link_types->api_json());
+    $result = $wrd_ZH_ui->dsp_graph($direction, $link_types_ui, 0);
     $t->assert_text_contains('word_dsp->dsp_graph check if acronym ZU is found for Zurich', $result, $target);
 
     // ... and the graph display for 2019
@@ -99,9 +99,9 @@ function run_word_display_test(all_tests $t): void
     $lnk_20_to_21 = $t_db->load_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
     $target_part_is_followed = verbs::FOLLOWER_OF;
     $link_types = $wrd_2020->link_types($direction);
-    $wrd_2020_dsp = new word_ui($wrd_2020->api_json());
-    $link_types_dsp = new verb_list_ui($link_types->api_json());
-    $result = $wrd_2020_dsp->dsp_graph($direction, $link_types_dsp, 0);
+    $wrd_2020_ui = new word_ui($wrd_2020->api_json());
+    $link_types_ui = new verb_list_ui($link_types->api_json());
+    $result = $wrd_2020_ui->dsp_graph($direction, $link_types_ui, 0);
     $result = $lib->trim_html($result);
     $target = $lib->trim_html($target);
     // TODO Prio 2 activate
@@ -121,9 +121,9 @@ function run_word_display_test(all_tests $t): void
     $lnk_20_is_year = $t_db->load_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
     $lnk_19_to_20 = $t_db->load_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
     $link_types = $wrd_2020->link_types($direction);
-    $wrd_2020_dsp = new word_ui($wrd_2020->api_json());
-    $link_types_dsp = new verb_list_ui($link_types->api_json());
-    $result = $wrd_2020_dsp->dsp_graph($direction, $link_types_dsp, 0);
+    $wrd_2020_ui = new word_ui($wrd_2020->api_json());
+    $link_types_ui = new verb_list_ui($link_types->api_json());
+    $result = $wrd_2020_ui->dsp_graph($direction, $link_types_ui, 0);
     $result = $lib->trim_html($result);
     // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has year id', $result, $wrd_year->id());

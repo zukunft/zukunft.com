@@ -129,10 +129,10 @@ class element_group_write_tests
 
             // test if the values for an element group are displayed correctly
             $api_json = $elm_grp->api_json();
-            $elm_grp_dsp = new element_group($api_json);
+            $elm_grp_ui = new element_group($api_json);
             // TODO Prio 1 activate
             /*
-            $result = $elm_grp_dsp->dsp_values();
+            $result = $elm_grp_ui->dsp_values();
             $fig_lst = $elm_grp->figures();
             $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
             $t->assert('element_group->dsp_values', $result, $target);
@@ -185,8 +185,8 @@ class element_group_write_tests
             $target = ' 8.505251 {f18}'  . words::YEAR_2020 . ','  . words::INHABITANTS . ','  . words::MIO . ','  . words::CH . '  (58266170593050764)';
             $t->assert('figure_list->dsp_id', $result, $target);
 
-            $fig_lst_dsp = new figure_list($fig_lst->api_json());
-            $result = $fig_lst_dsp->display();
+            $fig_lst_ui = new figure_list($fig_lst->api_json());
+            $result = $fig_lst_ui->display();
             $target = "8.51 ";
             // TODO Prio 0 activate
             //$t->assert('figure_list->display', $result, $target);

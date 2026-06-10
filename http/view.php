@@ -100,8 +100,8 @@ if ($db_con->is_open()) {
         // TODO Prio o move loading of user data to frontend e.g. to skip it for the login page
         $usr->load_usr_data();
 
-        $usr_dsp = new user_ui();
-        $usr_dsp->set_from_json($usr->api_json(), $msg);
+        $usr_ui = new user_ui();
+        $usr_ui->set_from_json($usr->api_json(), $msg);
 
         $ui = new frontend('view');
         $ui->load_cache();
@@ -120,12 +120,12 @@ if ($db_con->is_open()) {
         $is_post_action = isset($url_array[url_var::POST_SUBMIT]);
         $is_get_action = in_array($url_array[url_var::MASK] ?? 0, views::GET_ACTION_IDS);
         if ($is_post_action || $is_get_action) {
-            $url_array = $ui->url_to_action($url_array, $usr, $usr_dsp, $msg, $ui->dto);
+            $url_array = $ui->url_to_action($url_array, $usr, $usr_ui, $msg, $ui->dto);
         }
 
         // show the result to the user
         $sys->times->switch(system_time_type::URL_TO_HTML);
-        $web_txt .= $ui->url_to_html($url_array, $usr_dsp, $msg, $ui->dto);
+        $web_txt .= $ui->url_to_html($url_array, $usr_ui, $msg, $ui->dto);
         $sys->times->switch(system_time_type::CLOSE);
     }
 

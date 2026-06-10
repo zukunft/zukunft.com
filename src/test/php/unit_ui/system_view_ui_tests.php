@@ -142,7 +142,7 @@ class system_view_ui_tests
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($t->usr1);
-        $usr_dsp = $tl->cast_user($t->usr1);
+        $usr_sys_ui = $tl->cast_user($t->usr1);
 
         // test the notification component standalone
         $t->subheader($ts . 'notification');
@@ -182,7 +182,7 @@ class system_view_ui_tests
             $back_id_key => '123',
         ];
         $fail_msg = new user_message();
-        $result_url = $ui->url_to_action($url_with_back, $t->usr1, $usr_dsp, $fail_msg, $ui->dto, false);
+        $result_url = $ui->url_to_action($url_with_back, $t->usr1, $usr_sys_ui, $fail_msg, $ui->dto, false);
 
         $test_name = 'failed login preserves back mask param in returned url';
         $t->assert($test_name, $result_url[$back_mask_key] ?? '', views::WORD_ID);
@@ -292,13 +292,13 @@ class system_view_ui_tests
         $url = 'http://localhost/http/view.php';
         $url_part = parse_url($url);
         parse_str($url_part["query"], $url_array);
-        $html = $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
+        $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto);
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'start_page';
         $t->assert_html_page($test_name, $html, $file_path);
         */
 
         // loop over the system views
-        $this->assert_views_by_id($t, $t_map, $ui, $usr_dsp, $usr_msg, $lib);
+        $this->assert_views_by_id($t, $t_map, $ui, $usr_sys_ui, $usr_msg, $lib);
 
     }
 
@@ -307,7 +307,7 @@ class system_view_ui_tests
      * @param test_cleanup $t test runner for assertions and user fixtures
      * @param test_mappers $t_map builds filled test URLs per class and action
      * @param frontend $ui renders HTML from a URL array
-     * @param user_ui $usr_dsp logged-in user used for views that require a session
+     * @param user_ui $usr_sys_ui logged-in user used for views that require a session
      * @param user_message $usr_msg collects any messages produced during rendering
      * @param library $lib converts class names to file-path segments
      */
@@ -315,7 +315,7 @@ class system_view_ui_tests
         test_cleanup $t,
         test_mappers $t_map,
         frontend     $ui,
-        user_ui      $usr_dsp,
+        user_ui      $usr_sys_ui,
         user_message $usr_msg,
         library      $lib
     ): void
@@ -334,7 +334,7 @@ class system_view_ui_tests
                 $url_part = parse_url($url);
                 parse_str($url_part["query"], $url_array);
                 if (in_array($id, views::TEST_LOGIN_VIEW_IDS)) {
-                    $html = $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
+                    $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto);
                 } else {
                     $html = $ui->url_to_html($url_array, null, $usr_msg, $ui->dto);
                 }

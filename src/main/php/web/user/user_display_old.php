@@ -113,8 +113,8 @@ class user_display_old extends user
         //$err_lst->dsp_type = $dsp_type;
         //$err_lst->back = $back;
         if ($err_lst->load()) {
-            $err_lst_dsp = new sys_log_list($err_lst->api_json());
-            $result = $err_lst_dsp->get_html();
+            $err_lst_ui = new sys_log_list($err_lst->api_json());
+            $result = $err_lst_ui->get_html();
         }
 
         log_debug('done');
@@ -459,8 +459,8 @@ class user_display_old extends user
                 } else {
 
                     // prepare the row formula_links
-                    $frm_dsp = new formula($frm_usr->formula()->api_json());
-                    $sandbox_item_name = $frm_dsp->name_linked($back);
+                    $frm_ui = new formula($frm_usr->formula()->api_json());
+                    $sandbox_item_name = $frm_ui->name_linked($back);
                     //$sandbox_item_name = $frm_usr->name_linked($back);
 
                     // format the user formula_link
@@ -508,8 +508,8 @@ class user_display_old extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $to_dsp = new phrase($frm_lnk_other->tob()->api_json());
-                        $sandbox_other .= $to_dsp->name_linked();
+                        $to_ui = new phrase($frm_lnk_other->tob()->api_json());
+                        $sandbox_other .= $to_ui->name_linked();
                     }
                     $sandbox_other = $html->ref('/http/user_formula_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
@@ -632,8 +632,8 @@ class user_display_old extends user
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (!$val_usr->grp->phrase_list()->is_empty()) {
-                        $phr_lst_dsp = new phrase_list($val_usr->grp->phrase_list()->api_json());
-                        $sandbox_item_name = $phr_lst_dsp->name_linked();
+                        $phr_lst_ui = new phrase_list($val_usr->grp->phrase_list()->api_json());
+                        $sandbox_item_name = $phr_lst_ui->name_linked();
                     }
 
                     // format the user value
@@ -1169,20 +1169,20 @@ class user_display_old extends user
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
                     $sbx_lst_other = $db_con->get_old($sql_other);
-                    foreach ($sbx_lst_other as $dsp_lnk_other_row) {
+                    foreach ($sbx_lst_other as $lnk_other_row_ui) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($dsp_lnk_other_row[user_db::FLD_ID]);
+                        $usr_other->load_by_id($lnk_other_row_ui[user_db::FLD_ID]);
 
                         // to review: load all user component_links with one query
-                        $dsp_lnk_other = clone $usr_ui;
-                        $dsp_lnk_other->set_user($usr_other);
-                        $dsp_lnk_other->order_nbr = $dsp_lnk_other_row['order_nbr'];
-                        $dsp_lnk_other->position_type = $dsp_lnk_other_row['position_type'];
-                        $dsp_lnk_other->set_excluded($dsp_lnk_other_row[sql_db::FLD_EXCLUDED]);
+                        $lnk_other_ui = clone $usr_ui;
+                        $lnk_other_ui->set_user($usr_other);
+                        $lnk_other_ui->order_nbr = $lnk_other_row_ui['order_nbr'];
+                        $lnk_other_ui->position_type = $lnk_other_row_ui['position_type'];
+                        $lnk_other_ui->set_excluded($lnk_other_row_ui[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $dsp_lnk_other->name();
+                        $sandbox_other .= $lnk_other_ui->name();
                     }
                     $sandbox_other = $html->ref('/http/user_component_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 

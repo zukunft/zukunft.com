@@ -121,15 +121,15 @@ class phrase extends combine_named
     {
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-                $wrd_dsp = new word();
-                $wrd_dsp->api_mapper($json_array, $usr_msg);
-                $this->set_obj($wrd_dsp);
+                $wrd_ui = new word();
+                $wrd_ui->api_mapper($json_array, $usr_msg);
+                $this->set_obj($wrd_ui);
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-                $trp_dsp = new triple();
-                $trp_dsp->api_mapper($json_array, $usr_msg);
-                $this->set_obj($trp_dsp);
+                $trp_ui = new triple();
+                $trp_ui->api_mapper($json_array, $usr_msg);
+                $this->set_obj($trp_ui);
                 // switch the phrase id to the object id
-                $this->set_id($trp_dsp->id());
+                $this->set_id($trp_ui->id());
             } else {
                 $usr_msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a phrase');
             }

@@ -66,7 +66,7 @@ class value_list_ui_tests
         // create a test set of phrase groups
         $phr_lst_context = new phrase_list($usr);
         $phr_lst_context->add($phr_inhabitant);
-        $phr_lst_context_dsp = new phrase_list_ui($phr_lst_context->api_json());
+        $phr_lst_context_ui = new phrase_list_ui($phr_lst_context->api_json());
 
         // create the value list and the table to display the results
         // TODO move the measure phrase behind the number e.g. speed of light 299'792'458 m/s instead of speed of light m/s 299'792'458
@@ -84,14 +84,14 @@ class value_list_ui_tests
         // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 
         $test_page = $html->text_h2('Value list display test');
-        $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($phr_lst_context_dsp) . '<br>';
-        $test_page .= 'as long list: ' . $html->lf() .  $t_val->list_all_ui()->list($phr_lst_context_dsp) . '<br>';
-        $test_page .= 'as long list with small page: ' . $html->lf() .  $t_val->list_all_ui()->list($phr_lst_context_dsp, '', '', 4) . '<br><br>';
+        $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($phr_lst_context_ui) . '<br>';
+        $test_page .= 'as long list: ' . $html->lf() .  $t_val->list_all_ui()->list($phr_lst_context_ui) . '<br>';
+        $test_page .= 'as long list with small page: ' . $html->lf() .  $t_val->list_all_ui()->list($phr_lst_context_ui, '', '', 4) . '<br><br>';
         $test_page .= 'with units: ' . $html->lf() .  $t_val->list_all_ui()->list_unit(7) . '<br><br>';
         $test_page .= 'as table without context: ' . $lst_zh_ui->table() . '<br>';
         // create the same table as above, but within a context
-        $header_html = $phr_lst_context_dsp->headline();
-        $table_html = $lst_zh_ui->table($phr_lst_context_dsp);
+        $header_html = $phr_lst_context_ui->headline();
+        $table_html = $lst_zh_ui->table($phr_lst_context_ui);
         $test_page .= 'as table with context: ' . $header_html . $table_html . '<br>';
         $t->html_page_test($test_page, 'value_list', 'value_list', $t);
 

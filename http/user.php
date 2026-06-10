@@ -160,9 +160,9 @@ if ($usr->id > 0) {
         $cmp_lnk->del_usr_cfg($usr_msg);
     }
 
-    $msk_dsp = new view_ui($msk->api_json());
+    $msk_ui = new view_ui($msk->api_json());
     $dto = new data_object();
-    $result .= $msk_dsp->dsp_navbar($dto, $back);
+    $result .= $msk_ui->dsp_navbar($dto, $back);
     $result .= $usr_ui->form_edit($back);
 
     // allow to import data

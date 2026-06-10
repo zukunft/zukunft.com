@@ -86,8 +86,8 @@ class value_list_tests
         $t->subheader($ts . 'api value list');
         $test_name = 'test the api_json';
         $api_json = $t_val->value_list()->api_json();
-        $val_lst_dsp = new value_list_ui($api_json);
-        $t->assert_json_string($test_name, $val_lst_dsp->api_json(), $api_json);
+        $val_lst_ui = new value_list_ui($api_json);
+        $t->assert_json_string($test_name, $val_lst_ui->api_json(), $api_json);
 
         $t->subheader($ts . 'sql creation value list');
         $test_names = 'sql to load a list of value by ... ';

@@ -1419,8 +1419,8 @@ class word_list extends sandbox_list_named
         log_debug();
 
         foreach ($this->lst() as $wrd) {
-            // $wrd_dsp = $wrd->dsp_obj();
-            // TODO review $view = $wrd_dsp->get_view();
+            // $wrd_ui = $wrd->dsp_obj();
+            // TODO review $view = $wrd_ui->get_view();
             $view = $wrd->get_view();
             if (isset($view)) {
                 $is_in_list = false;
