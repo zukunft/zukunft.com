@@ -58,6 +58,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -81,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 
 class component_exe extends component
@@ -141,6 +143,12 @@ class component_exe extends component
         if ($cfg != null) {
             if ($cfg->has_changes()) {
                 $log_lst = $cfg->change_log();
+            }
+        }
+        $err_lst = new sys_log_list();
+        if ($cfg != null) {
+            if ($cfg->has_sys_log()) {
+                $err_lst = $cfg->sys_log_list();
             }
         }
 
@@ -401,6 +409,7 @@ class component_exe extends component
             component_types::PHRASES_RELATED => $list->phrases_related($dbo, $cfg),
             component_types::BUTTON_REQUEST => $form->button_request(),
             component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst),
+            component_types::USER_SYSTEM_ERRORS => $log->user_system_errors($err_lst, $this->ui_msg_code_id),
 
             // view relation only -
             component_types::SYSTEM_FIELD_PARENT_VIEW => $form->show_parent_view($dbo),

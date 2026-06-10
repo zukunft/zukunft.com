@@ -380,7 +380,7 @@ class words
     const string CHF = 'CHF';
     const int CHF_ID = 258;
     const string SWISS_FRANC = 'Swiss franc';
-    const int SWISS_FRANC_ID = 2399;
+    const int SWISS_FRANC_ID = 2400;
     const string SWISS_FRANC_COM = 'The currency of Switzerland and Liechtenstein.';
     const string EUR = 'EUR';
     const int EUR_ID = 2427;

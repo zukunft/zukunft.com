@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::REF . 'source_list.php';
 //include_once html_paths::REF . 'ref_list.php';
 //include_once html_paths::RESULT . 'result_list.php';
+//include_once html_paths::SYSTEM . 'sys_log_list.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value_list.php';
@@ -64,6 +65,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -189,6 +191,9 @@ class data_object
 
     public change_log_list $chg_log;
 
+    // the open system errors related to the session user
+    public sys_log_list $sys_log;
+
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
     // set to false if the api should not be used to reload missing data e.g. for unit tests
@@ -237,6 +242,7 @@ class data_object
         $this->msk_lst = new view_list();
         $this->cmp_lst = new component_list();
         $this->chg_log = new change_log_list();
+        $this->sys_log = new sys_log_list();
         $this->online = true;
     }
 
@@ -522,6 +528,22 @@ class data_object
     function change_log(): change_log_list
     {
         return $this->chg_log;
+    }
+
+    /**
+     * @return bool true if this context object contains at least one system log entry
+     */
+    function has_sys_log(): bool
+    {
+        return !$this->sys_log->is_empty();
+    }
+
+    /**
+     * @return sys_log_list the cache of the open system errors related to the session user
+     */
+    function sys_log_list(): sys_log_list
+    {
+        return $this->sys_log;
     }
 
 

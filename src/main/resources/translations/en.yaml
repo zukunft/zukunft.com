@@ -100,6 +100,8 @@ messages:
   error_update_program_issues: "Program issues that other users have found, that have not yet been solved."
   error_update_no_open: "There are no open errors left."
   error_update_permission_denied: "You are not permitted to update the error status. If you want the permission, please request it at admin@zukunft.com."
+  user_system_errors: "Open issues related to you"
+  user_system_errors_none: "No open issue is related to you."
   system_title_error_log: "Error log"
   system_title_error_update: "Error update"
   system_title_search: "search"

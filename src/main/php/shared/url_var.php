@@ -139,6 +139,8 @@ class url_var
     const string GROUP_NAME = 'gn'; // TODO maybe it is possible to use NAME
     const string LOG = 'h'; // h for history of the object
     const string LOG_STATUS = 'ha'; // the stAtus of a system log entry
+    const string LOG_PAGE = 'hb'; // the page Block of the system log list to show
+    const string LOG_SIZE = 'he'; // the number of system log Entries per page
     const string LOG_CLASS = 'hc'; // the object / class name used to filter the change log
     const string LOG_LINK = 'hl'; // history of a link object
     const string LOG_FIELD = 'hf'; // the field of the change log entry used to filter the log
@@ -420,6 +422,8 @@ class url_var
     // log
     const string LOG_HUMAN = 'log_id'; // the id of a change log entry
     const string LOG_STATUS_HUMAN = 'log_status'; // the stAtus of a system log entry
+    const string LOG_PAGE_HUMAN = 'log_page'; // the page of the system log list to show
+    const string LOG_SIZE_HUMAN = 'log_size'; // the number of system log entries per page
     const string LOG_CLASS_HUMAN = 'class'; // the short name of the object class name e.g. word instead of cfg/word
     const string LOG_FIELD_HUMAN = 'log_field'; // the name of the field to filter the changes which might be more than one database field
     const string LOG_LINK_HUMAN = 'log_link_id'; // the id of a log entry of a link change
@@ -632,6 +636,8 @@ class url_var
         // log
         [self::LOG_HUMAN, self::LOG],
         [self::LOG_STATUS_HUMAN, self::LOG_STATUS],
+        [self::LOG_PAGE_HUMAN, self::LOG_PAGE],
+        [self::LOG_SIZE_HUMAN, self::LOG_SIZE],
         [self::LOG_CLASS_HUMAN, self::LOG_CLASS],
         [self::LOG_FIELD_HUMAN, self::LOG_FIELD],
         [self::LOG_LINK_HUMAN, self::LOG_LINK],

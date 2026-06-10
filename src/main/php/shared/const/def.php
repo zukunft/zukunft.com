@@ -43,6 +43,9 @@ class def
     // configuration values used as fallback if the value is missing in the system configuration
     const int FALLBACK_DB_PAGE_ROWS = 20; // the number of database rows that should be loaded at once
     const int FALLBACK_PHRASES_RELATED = 7; // the number of related phrases to show if nothing else is defined in the user or system configuration
+    // fallback for the number of open system errors shown to the user;
+    // overridden by config.yaml entry frontend.lists.limit.system errors
+    const int FALLBACK_USER_ERRORS = 10;
     // fallback for the per-verb limit of related phrases shown in the page title (Zurich -> City, Canton, ...);
     // overridden by config.yaml entry frontend.lists.limit.related per verb once the $cfg accessor is wired
     const int LIMIT_RELATED_PER_VERB = 2;

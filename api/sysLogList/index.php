@@ -34,13 +34,22 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
+// read the request parameters once at the top of the entry-point script
+$dsp_type = $_GET[url_var::LOG_STATUS] ?? sys_log_list::DSP_ALL;
+$page = (int)($_GET[url_var::LOG_PAGE] ?? 0);
+$size = (int)($_GET[url_var::LOG_SIZE] ?? shared_config::ROW_LIMIT);
 
 // open database
 $app = new application();
@@ -59,9 +68,9 @@ if ($db_con->is_open()) {
 
         $lst = new sys_log_list();
         $lst->set_user($usr);
-        $lst->dsp_type = sys_log_list::DSP_ALL;
-        $lst->page = 0;
-        $lst->size = 20;
+        $lst->dsp_type = $dsp_type;
+        $lst->page = $page;
+        $lst->size = $size;
         $lst->load_all();
         $result = $lst->api_json([api_types::HEADER], $usr);
     }

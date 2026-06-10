@@ -501,6 +501,10 @@ class component_types
     const string SYSTEM_CHANGE_LOG = "change_log";
     const int SYSTEM_CHANGE_LOG_ID = 45;
 
+    const string USER_SYSTEM_ERRORS = "user_system_errors";
+    const int USER_SYSTEM_ERRORS_ID = 193;
+    const string USER_SYSTEM_ERRORS_COM = "show the most relevant open system errors linked to the user";
+
     // show all word that this words is based on
     const string WORDS_UP = "word_list_up";
     // show all words that are based on the given start word
@@ -876,7 +880,8 @@ class component_types
         [self::XML_EXPORT, self::XML_EXPORT_ID],
         [self::CSV_EXPORT, self::CSV_EXPORT_ID],
         [self::ODS_EXPORT, self::ODS_EXPORT_ID],
-        [self::SYSTEM_CHANGE_LOG, self::SYSTEM_CHANGE_LOG_ID]
+        [self::SYSTEM_CHANGE_LOG, self::SYSTEM_CHANGE_LOG_ID],
+        [self::USER_SYSTEM_ERRORS, self::USER_SYSTEM_ERRORS_ID]
     );
 
 }
