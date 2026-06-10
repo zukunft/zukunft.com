@@ -106,6 +106,8 @@ class test_objects
                 }
             } elseif ($obj::class == ref::class) {
                 $this->env->write_named_cleanup($obj, $obj_name);
+            } elseif ($obj instanceof type_object) {
+                $this->env->write_named_cleanup($obj, $obj_name);
             } else {
                 log_err('no cleanup for ' . $class);
             }

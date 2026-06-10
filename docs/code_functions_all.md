@@ -1168,6 +1168,7 @@
     \-- truncate_table_all - section for function truncate_table_all not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- truncate_table - section for function truncate_table not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- drop_table - section for function drop_table not yet defined that it should be private supporting functions in /db/sql_db.php
+    \-- drop_view - section for function drop_view not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- reset_seq_all - section for function reset_seq_all not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- reset_seq - section for function reset_seq not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- load_user_profiles - section for function load_user_profiles is expected to be load in /db/sql_db.php

@@ -239,6 +239,12 @@
         "code_id": "cfg\/helper\/config_numbers",
         "description": "loader for the system and user configuration",
         "id": 8
+      },
+      {
+        "name": "System test function name",
+        "code_id": "sys_log_write_tests",
+        "description": "System test function description",
+        "id": 9
       }
     ],
     "sys_log_levels": [
@@ -6381,6 +6387,12 @@
         "code_id": "11latex",
         "description": "",
         "id": 887
+      },
+      {
+        "name": "114action",
+        "code_id": "114action",
+        "description": "",
+        "id": 888
       }
     ],
     "db_cache_types": [
@@ -6675,7 +6687,6 @@
         "description": "the system language, so each word must be unique for all users in this language",
         "wiki_code": "en",
         "local_name": "English",
-        "usage": 2000000000,
         "wikimedia_code": "en"
       },
       {
@@ -6685,7 +6696,6 @@
         "description": "the users can use this (and the other) languages to create its own namespace. So one user may use \"Zurich\" in US English for \"Kanton Zurich\" and another user may use \"Zurich\" in UK English for \"Zurich AG\".",
         "wiki_code": "en",
         "local_name": "US English",
-        "usage": 350000000,
         "wikimedia_code": "en"
       },
       {
@@ -6695,7 +6705,6 @@
         "description": "a translation to standard German",
         "wiki_code": "de",
         "local_name": "Deutsch",
-        "usage": 120000000,
         "wikimedia_code": "de"
       },
       {
@@ -6705,7 +6714,6 @@
         "description": "Le fran\u00e7ais est une langue indo-europ\u00e9enne de la famille des langues romanes dont les locuteurs sont appel\u00e9s francophones",
         "wiki_code": "fr",
         "local_name": "Fran\u00e7ais",
-        "usage": 320000000,
         "wikimedia_code": "fr"
       },
       {
@@ -6715,7 +6723,6 @@
         "description": "El espa\u00f1ol o castellano es una lengua romance procedente del lat\u00edn hablado, perteneciente a la familia de lenguas indoeuropeas",
         "wiki_code": "es",
         "local_name": "Espa\u00f1ol",
-        "usage": 500000000,
         "wikimedia_code": "es"
       },
       {
@@ -6725,7 +6732,6 @@
         "description": "\u6f22\u8a9e\u53c8\u7a31\u4e2d\u6587 \u662f\u6e90\u81ea\u4e1c\u4e9a\u7684\u4e00\u7c7b\u5206\u6790\u8bed\uff0c\u4e3a\u6c49\u6c11\u65cf\u7684\u6bcd\u8bed",
         "wiki_code": "zh",
         "local_name": "\u6f22\u8a9e",
-        "usage": 1300000000,
         "wikimedia_code": "zh"
       },
       {
@@ -6735,7 +6741,6 @@
         "description": "\u0671\u0644\u0644\u064f\u0651\u063a\u064e\u0629\u064f \u0671\u0644\u0652\u0639\u064e\u0631\u064e\u0628\u0650\u064a\u064e\u0651\u0629 \u0647\u064a \u0623\u0643\u062b\u0631 \u0627\u0644\u0644\u063a\u0627\u062a \u0627\u0644\u0633\u0627\u0645\u064a\u0629 \u062a\u062d\u062f\u062b\u064b\u0627\u060c \u0648\u0625\u062d\u062f\u0649 \u0623\u0643\u062b\u0631 \u0627\u0644\u0644\u063a\u0627\u062a \u0627\u0646\u062a\u0634\u0627\u0631\u0627\u064b \u0641\u064a \u0627\u0644\u0639\u0627\u0644\u0645\u060c \u064a\u062a\u062d\u062f\u062b\u0647\u0627 \u0623\u0643\u062b\u0631 \u0645\u0646 467 \u0645\u0644\u064a\u0648\u0646 \u0646\u0633\u0645\u0629.",
         "wiki_code": "ar",
         "local_name": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
-        "usage": 380000000,
         "wikimedia_code": "ar"
       }
     ],
@@ -6832,7 +6837,6 @@
         "reverse": null,
         "rev_plural": null,
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 1
       },
@@ -6844,7 +6848,6 @@
         "reverse": "are",
         "rev_plural": "are",
         "name_in_formula": "of all",
-        "usage": null,
         "impact": null,
         "id": 2
       },
@@ -6856,7 +6859,6 @@
         "reverse": "contains",
         "rev_plural": "contains",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 3
       },
@@ -6868,7 +6870,6 @@
         "reverse": "contains",
         "rev_plural": "contains",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 4
       },
@@ -6880,7 +6881,6 @@
         "reverse": "of",
         "rev_plural": "of",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 5
       },
@@ -6892,7 +6892,6 @@
         "reverse": "",
         "rev_plural": "",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 6
       },
@@ -6904,7 +6903,6 @@
         "reverse": "is used for",
         "rev_plural": "is used for",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 7
       },
@@ -6916,7 +6914,6 @@
         "reverse": "has the default time jump",
         "rev_plural": "have the default time jump",
         "name_in_formula": "time jump",
-        "usage": null,
         "impact": null,
         "id": 8
       },
@@ -6928,7 +6925,6 @@
         "reverse": null,
         "rev_plural": null,
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 9
       },
@@ -6940,7 +6936,6 @@
         "reverse": null,
         "rev_plural": null,
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 10
       },
@@ -6952,7 +6947,6 @@
         "reverse": "is followed by",
         "rev_plural": "is followed by",
         "name_in_formula": "follower",
-        "usage": null,
         "impact": null,
         "id": 11
       },
@@ -6964,7 +6958,6 @@
         "reverse": "is used by",
         "rev_plural": "are used by",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 12
       },
@@ -6976,7 +6969,6 @@
         "reverse": "is issued by",
         "rev_plural": "are issued by",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 13
       },
@@ -6988,7 +6980,6 @@
         "reverse": "has the measure type",
         "rev_plural": "have the measure type",
         "name_in_formula": "measure type",
-        "usage": null,
         "impact": null,
         "id": 14
       },
@@ -7000,7 +6991,6 @@
         "reverse": "is an acronym of",
         "rev_plural": "are an acronyms of",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 15
       },
@@ -7012,7 +7002,6 @@
         "reverse": "can be differentiated by",
         "rev_plural": "can be differentiated by",
         "name_in_formula": "differentiator",
-        "usage": null,
         "impact": null,
         "id": 16
       },
@@ -7024,7 +7013,6 @@
         "reverse": "is influenced by",
         "rev_plural": "is influenced by",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 17
       },
@@ -7036,7 +7024,6 @@
         "reverse": "is alias of",
         "rev_plural": "is alias of",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 18
       },
@@ -7048,7 +7035,6 @@
         "reverse": null,
         "rev_plural": null,
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 19
       },
@@ -7060,7 +7046,6 @@
         "reverse": "can be",
         "rev_plural": "can be",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 20
       },
@@ -7072,7 +7057,6 @@
         "reverse": null,
         "rev_plural": null,
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 21
       },
@@ -7084,7 +7068,6 @@
         "reverse": "can be caused by",
         "rev_plural": "can be caused by",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 22
       },
@@ -7096,7 +7079,6 @@
         "reverse": null,
         "rev_plural": null,
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 23
       },
@@ -7108,7 +7090,6 @@
         "reverse": "can be used by",
         "rev_plural": "can be used by",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 24
       },
@@ -7120,7 +7101,6 @@
         "reverse": "is scaling for",
         "rev_plural": "are scaling for",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 25
       },
@@ -7132,7 +7112,6 @@
         "reverse": "",
         "rev_plural": "",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 26
       },
@@ -7144,7 +7123,6 @@
         "reverse": "times",
         "rev_plural": "times",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 27
       },
@@ -7156,7 +7134,6 @@
         "reverse": "is grouped by",
         "rev_plural": "are grouped by",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 28
       },
@@ -7168,7 +7145,6 @@
         "reverse": "can have symbol",
         "rev_plural": "can have symbols",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 29
       },
@@ -7180,7 +7156,6 @@
         "reverse": "and",
         "rev_plural": "and",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 30
       },
@@ -7192,7 +7167,6 @@
         "reverse": "distribute to",
         "rev_plural": "distribute to",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 31
       },
@@ -7204,7 +7178,6 @@
         "reverse": "",
         "rev_plural": "",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 32
       },
@@ -7216,7 +7189,6 @@
         "reverse": "",
         "rev_plural": "",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 33
       },
@@ -7228,7 +7200,6 @@
         "reverse": "is sort phrases for",
         "rev_plural": "are sort phrases for",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 34
       },
@@ -7240,7 +7211,6 @@
         "reverse": "",
         "rev_plural": "",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 35
       },
@@ -7252,7 +7222,6 @@
         "reverse": "has the kind",
         "rev_plural": "have the kinds",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 36
       },
@@ -7264,7 +7233,6 @@
         "reverse": "is named",
         "rev_plural": "are named",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 37
       },
@@ -7276,7 +7244,6 @@
         "reverse": "",
         "rev_plural": "",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 38
       },
@@ -7288,7 +7255,6 @@
         "reverse": "",
         "rev_plural": "",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 39
       },
@@ -7300,7 +7266,6 @@
         "reverse": "uses",
         "rev_plural": "use",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 40
       },
@@ -7312,7 +7277,6 @@
         "reverse": "can make",
         "rev_plural": "can make",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 41
       },
@@ -7324,7 +7288,6 @@
         "reverse": "can pack",
         "rev_plural": "can pack",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 42
       },
@@ -7336,7 +7299,6 @@
         "reverse": "uses",
         "rev_plural": "uses",
         "name_in_formula": null,
-        "usage": null,
         "impact": null,
         "id": 43
       }
