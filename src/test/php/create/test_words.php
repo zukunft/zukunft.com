@@ -873,6 +873,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::SWISS_FRANC_ID, words::SWISS_FRANC);
+        $wrd->description = words::SWISS_FRANC_COM;
         return $wrd;
     }
 
