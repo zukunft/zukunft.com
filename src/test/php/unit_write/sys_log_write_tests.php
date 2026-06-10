@@ -45,6 +45,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -88,11 +89,11 @@ class sys_log_write_tests
 
         $t->subheader($ts . 'functions / program parts');
         $test_name = 'add function ' . sys_log_functions::TEST_NAME . ' via sql function';
-        $sys_log = new sys_log_function();
-        $t->assert_insert($test_name, $sys_log);
+        $sys_log = new sys_log_function('sys_log_write_tests', sys_log_functions::TEST_NAME);
+        $t->assert_insert($test_name, $sys_log, $usr_msg);
         $test_name = 'update description of function ' . sys_log_functions::TEST_NAME;
         $sys_log->description = sys_log_functions::TEST_COM;
-        $t->assert_update($test_name, $sys_log);
+        $t->assert_update($test_name, $sys_log, $usr_msg, [sql_type::LOG]);
 
 
         // cleanup - fallback delete

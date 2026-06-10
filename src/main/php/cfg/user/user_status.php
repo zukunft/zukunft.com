@@ -53,6 +53,7 @@ class user_status extends type_object
 
     // comments used for the database creation
     const string TBL_COMMENT = 'to reduce short-term the internal permissions for a user without changing the profile';
+    const string FLD_ID = 'user_status_id'; // name of the id field as const for other const
     const string FLD_NAME = 'user_status_name';
 
     // field lists for the table creation to use status_name instead of type_name because type_name may not be a unique name

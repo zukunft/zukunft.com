@@ -118,6 +118,42 @@ names (never DB IDs) for portability between pods.
 
 **Namespace**: `Zukunft\ZukunftCom\` (PSR-4, maps to `src/`).
 
+**Change log — special case for `sys_log`**: Every other sandbox object writes
+its insert *and* every later change to the change log (`sql_type::LOG`). A
+`sys_log` row is the exception in both directions:
+
+- **Insert is never logged.** A new `sys_log` row is the change record itself
+  (an error/warning the system just noticed). Writing a "we wrote a sys_log
+  row" entry into the change log would log the log — noise that buries the
+  signal and inflates the change table without telling anyone anything new.
+- **Every update is logged.** Once a `sys_log` row exists, a status change
+  (e.g. an operator marks it `closed`) is a *human-meaningful* state change
+  that needs the same audit trail as any other domain edit — who changed it,
+  when, and what the previous value was — so investigations later can
+  reconstruct the operator's action.
+
+`sys_log::save()` encodes this by branching on `has_db_id()`: it tags the
+insert path with `sql_type::NO_LOG` and the update path with `sql_type::LOG`.
+The short-circuit `sys_log::insert()` entry point (used by the in-process
+error logger at `cfg/log_text/text_log_functions.php`) calls `sql_insert(...)`
+with the empty `sql_type_list` default, which `do_log()` reports as `false` —
+same effective semantics. Don't add a `sql_type::LOG` flag at either insert
+site, and don't drop the `LOG` flag from `save()`'s update branch.
+
+**Change log field registry**: a logged write (`sql_type::LOG`) can only
+reference fields that are registered in
+`src/main/resources/db_code_links/change_fields.csv`, keyed by the table id
+from `change_tables.csv`. When a logged insert or update fails for a single
+field — e.g. `log_err` reports `Cannot add field name "<field>" for table id
+<n>` (raised in `cfg/log/change_log.php`), or the code-link load of a type
+table breaks on an extra column — check first that the field has a
+`change_field_id,<field>,<table_id>` row in `change_fields.csv` and add it
+with the next free id if missing. Example: logged writes of
+`sys_log_statuum.action` only worked after adding `888,action,114`
+(114 = `sys_log_statuum` in `change_tables.csv`). The same applies whenever a
+new loggable column is added to any table: register it in `change_fields.csv`
+in the same change.
+
 ## Standard object sections (in file order)
 
 Each main object file follows this section order:

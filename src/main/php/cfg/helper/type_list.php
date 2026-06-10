@@ -735,6 +735,9 @@ class type_list extends ListOfIdNamedCodeObjects
                         if (in_array(change_field::FLD_TABLE, $col_names)) {
                             $table_col = array_search(change_field::FLD_TABLE, $col_names);
                         }
+                        if (in_array(sys_log_status::FLD_ACTION, $col_names)) {
+                            $action_col = array_search(sys_log_status::FLD_ACTION, $col_names);
+                        }
                         if (in_array(json_fields::DESCRIPTION, $col_names)) {
                             $desc_col = array_search(json_fields::DESCRIPTION, $col_names);
                         }
@@ -744,6 +747,9 @@ class type_list extends ListOfIdNamedCodeObjects
                             $typ_obj->wiki_code = $data[$wiki_code_col];
                             $typ_obj->local_name = $data[$local_name_col];
                             $typ_obj->usage = $data[$usage_col];
+                        } elseif ($list::class == sys_log_statuum::class) {
+                            $typ_obj = new sys_log_status();
+                            $typ_obj->action = $data[$action_col];
                         } else {
                             if ($table_col > 0) {
                                 $typ_obj = new type_object($data[$table_col] . $data[$name_col]);

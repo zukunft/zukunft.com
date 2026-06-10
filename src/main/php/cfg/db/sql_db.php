@@ -160,6 +160,7 @@ include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
@@ -285,6 +286,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
@@ -1171,6 +1173,17 @@ class sql_db
 
         $usr_msg = new user_message();
 
+        // remove all tables and views remaining from an outdated or incomplete setup
+        // to avoid conflicts with the index and constraint creation of the setup script
+        // dropping the remaining tables never causes a loss of user data
+        // because this function is only called if the config table is missing
+        // and without the config table the database is unusable anyway
+        $dropped_objects = $this->reset_db_core();
+        if ($dropped_objects > 0) {
+            $log_txt->echo_text_log('Removed ' . $dropped_objects
+                . ' tables and views of an outdated or incomplete database setup');
+        }
+
         // create the tables, db indexes and foreign keys
         $sql = $this->sql_to_create_database_structure();
         try {
@@ -1293,27 +1306,47 @@ class sql_db
 
     /**
      * force to drop any remaining tables of the database
-     * only used for testing to reset the db after a broken db update script
+     * used to clean up before a setup and for testing to reset the db after a broken db update script
      * TODO remove or deactivate this before prod deployment
      *
-     * @return void
+     * @return int the number of dropped tables
      */
-    function reset_db_core(): void
+    function reset_db_core(): int
     {
-        // run reset the main database tables
+        $dropped_objects = 0;
         $usr_msg = new user_message();
+
+        // drop the views first because they can only be dropped with a drop view statement
         $sql = sql::SELECT
-            . " table_name FROM information_schema.tables WHERE table_schema = 'public';";
+            . " table_name FROM information_schema.views WHERE table_schema = 'public';";
+        $view_lst = $this->fetch_all($sql, $usr_msg);
+        if ($view_lst !== false) {
+            foreach ($view_lst as $view) {
+                $view_name = $view[0];
+                $this->drop_view($view_name);
+                $dropped_objects++;
+            }
+        }
+
+        // run reset the main database tables
+        $sql = sql::SELECT
+            . " table_name FROM information_schema.tables"
+            . " WHERE table_schema = 'public' AND table_type = 'BASE TABLE';";
         $tbl_lst = $this->fetch_all($sql, $usr_msg);
-        foreach ($tbl_lst as $tbl) {
-            $tbl_name = $tbl[0];
-            $this->drop_table($tbl_name);
+        if ($tbl_lst !== false) {
+            foreach ($tbl_lst as $tbl) {
+                $tbl_name = $tbl[0];
+                $this->drop_table($tbl_name);
+                $dropped_objects++;
+            }
         }
 
         // load the core db rows to have at least the profile id of the system user
         // TODO Prio 2 check if this is called at the correct step
         //$this->db_fill_code_links();
         //$this->db_check_missing_owner();
+
+        return $dropped_objects;
     }
 
     /**
@@ -1533,8 +1566,12 @@ class sql_db
                                 $update_col_values[] = trim($data[$i]);
                                 $add_row[$col_names[$i]] = trim($data[$i]);
                             }
-                            $typ_obj->row_mapper_typ_obj($add_row, $class);
-                            $typ_obj->db_add($msg, $this, $sc_par_lst);
+                            if ($typ_obj->row_mapper_typ_obj($add_row, $class)) {
+                                $typ_obj->db_add($msg, $this, $sc_par_lst);
+                            } else {
+                                log_err('csv code link row ' . $row . ' of ' . $table_name
+                                    . ' does not match the id field of ' . $class);
+                            }
                         } else {
                             // build a db_row array from the csv line to use the row_mapper
                             $upd_row = [];
@@ -2493,6 +2530,7 @@ class sql_db
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
             and $class != user_profile::class
             and $class != user_status::class
+            and $class != user_statuum::class
             and $class != user_type::class
             and $class != user_official_type::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
@@ -2501,6 +2539,12 @@ class sql_db
         // exceptions for nice english
         if ($result == 'sys_log_statuss_id') {
             $result = 'sys_log_status_id';
+        }
+        if ($result == 'sys_log_statuum_id') {
+            $result = 'sys_log_status_id';
+        }
+        if ($result == 'user_statuum_id') {
+            $result = 'user_status_id';
         }
         if ($result == 'blocked_ip_id') {
             $result = 'ip_range_id';
@@ -5620,6 +5664,23 @@ class sql_db
             } catch (Exception $e) {
                 //log_info('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
             }
+        }
+        $sys->times->switch();
+    }
+
+    function drop_view(string $view_name): void
+    {
+        global $sys;
+
+        $sys->times->switch(system_time_type::DB_WRITE);
+
+        $sys->log_txt->echo_log('DROP VIEW ' . $view_name);
+        // "if exists" because the view may have been removed already by the cascade of a previous drop
+        $sql = 'drop view if exists ' . $view_name . ' cascade;';
+        try {
+            $this->exe($sql);
+        } catch (Exception $e) {
+            //log_info('Cannot drop view ' . $view_name . ' with "' . $sql . '" because: ' . $e->getMessage());
         }
         $sys->times->switch();
     }

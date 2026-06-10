@@ -126,8 +126,7 @@ class word_url_tests
         $url_arr[url_var::MASK] = views::WORD_FIND_ID;
         $url_arr[url_var::PATTERN_HUMAN] = 'def';
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        // TODO Prio 0 activate
-        //$t->assert_text_contains($test_name, $result, 'def');
+        $t->assert_text_contains($test_name, $result, 'def');
 
 
         $t->subheader($ts . 'cleanup');
