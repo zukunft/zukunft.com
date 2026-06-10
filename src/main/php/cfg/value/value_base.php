@@ -94,6 +94,7 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::MODEL_FORMULA . 'figure.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
@@ -198,6 +199,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
@@ -1244,21 +1246,82 @@ class value_base extends sandbox_value
     }
 
     /**
-     * TODO Prio 0 review
      * scale a value towards the target scaling
+     * e.g. scale the inhabitants of Switzerland from millions to one
      *
-     * @param phrase_list $phr_lst list of phrases that defines the target scaling
+     * @param phrase_list $phr_lst list of phrases that defines the target scaling e.g. "one"
      * @param user_message $usr_msg to collect the problems and the suggested solutions for the user to select
      * @param term_list $trm_lst cache of the terms that are used to scale the value towards the target phrases
-     * @return float|null
+     * @return float|null the scaled number or the unscaled number if scaling is not possible
      */
     function scale_new(phrase_list $phr_lst, user_message $usr_msg, term_list $trm_lst): ?float
     {
+        $lib = new library();
+
         // fallback value
         $result = $this->get_value();
 
+        // get the scaling phrase of this value e.g. "million"
+        // and the scaling phrase of the target phrase list e.g. "one"
+        $src_scale_lst = $this->phrase_list()->scaling_lst();
+        $trg_scale_lst = $phr_lst->scaling_lst();
 
+        if ($src_scale_lst->is_empty()) {
+            $usr_msg->add(msg_id::SCALING_WORD_MISSING, [
+                msg_id::VAR_WORD_NAME => $this->phrase_list()->dsp_name()
+            ]);
+        } elseif ($trg_scale_lst->is_empty()) {
+            $usr_msg->add(msg_id::SCALING_WORD_MISSING, [
+                msg_id::VAR_WORD_NAME => $phr_lst->dsp_name()
+            ]);
+        } else {
+            // use the first scaling phrase of each list
+            // because more than one scaling phrase per list is not yet supported
+            $src_phr = $src_scale_lst->lst()[0];
+            $trg_phr = $trg_scale_lst->lst()[0];
+            $frm = $this->scaling_formula($src_phr, $trg_phr, $trm_lst);
+            if ($frm == null) {
+                log_warning('no scaling formula found to convert "' . $src_phr->name()
+                    . '" to "' . $trg_phr->name() . '"', 'value->scale_new');
+            } else {
+                // replace the scaling word in the formula with the value and calculate the result
+                $r_part = $lib->str_right_of($frm->ref_text, chars::CHAR_CALC);
+                $wrd_symbol = chars::WORD_START . $src_phr->id() . chars::WORD_END;
+                $r_part = str_replace($wrd_symbol, $this->get_value(), $r_part);
+                $calc = new calc_internal();
+                $result = $calc->parse($r_part);
+            }
+        }
         return $result;
+    }
+
+    /**
+     * get the formula that scales the source to the target phrase e.g. from "million" to "one"
+     *
+     * @param phrase $src_phr the scaling phrase of this value e.g. "million"
+     * @param phrase $trg_phr the requested target scaling phrase e.g. "one"
+     * @param term_list $trm_lst cache of the terms that should contain the scaling formula
+     * @return formula|null the formula that scales the source to the target phrase or null if no formula is found
+     */
+    private function scaling_formula(phrase $src_phr, phrase $trg_phr, term_list $trm_lst): ?formula
+    {
+        $frm_found = null;
+        foreach ($trm_lst->lst() as $trm) {
+            if ($frm_found == null and $trm->is_formula()) {
+                $frm = $trm->obj();
+                if ($frm->ref_text != null and $frm->ref_text != '') {
+                    $exp = new expression($frm);
+                    $exp->set_ref_text($frm->ref_text, $trm_lst);
+                    $res_ids = $exp->phr_id_lst($exp->res_part());
+                    $src_ids = $exp->phr_id_lst($exp->r_part());
+                    if (in_array($trg_phr->id(), $res_ids->lst ?? [])
+                        and in_array($src_phr->id(), $src_ids->lst ?? [])) {
+                        $frm_found = $frm;
+                    }
+                }
+            }
+        }
+        return $frm_found;
     }
 
 

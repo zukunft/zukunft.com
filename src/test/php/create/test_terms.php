@@ -225,6 +225,17 @@ class test_terms
     }
 
     /**
+     * @return term_list a term list with the scaling terms and the million scaling formula
+     */
+    function term_list_scale_mio(): term_list
+    {
+        $t_frm = new test_formulas($this->env);
+        $lst = $this->term_list_scale();
+        $lst->add($t_frm->formula_scale_mio()->term());
+        return $lst;
+    }
+
+    /**
      * create a huge list of terms for speed testing
      * TODO review
      * @returns term_list a dummy term list for unit tests

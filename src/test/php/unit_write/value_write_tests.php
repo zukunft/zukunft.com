@@ -199,15 +199,16 @@ class value_write_tests
         $t->assert(', value->val_formatted for ' . $pct_val->dsp_id(), $result, $target);
 
         // test the scaling of a value
-        // TODO Prio c create a unit working test and two fail unit tests where either words::MIO and words::ONE is not a scaling word; in these cases in should be shown to the user that one of which words needs to be of type scaling
+        // the scaling itself and the user messages for missing scaling types
+        // are covered by the unit tests in value_tests "scaling"
         $phr_lst = $t_db->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
         $dest_phr_lst = new phrase_list($t->usr1);
         $dest_phr_lst->load_by_names(array(words::INHABITANTS, words::ONE));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
-        //$result = $mio_val->scale($dest_phr_lst);
-        //$target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
-        //$t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
+        $result = $mio_val->scale($dest_phr_lst);
+        $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
+        $t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the figure object creation
         $phr_lst = $t_db->load_phrase_list(array(words::CANTON, words::ZH, words::INHABITANTS, words::MIO, words::YEAR_2020));

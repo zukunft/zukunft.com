@@ -446,6 +446,9 @@ enum messages: string
         . '" is missing';
     case VALUE_ID_MISSING = 'to add a value to the database at least one word must specify the value "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END;
+    case SCALING_WORD_MISSING = 'to scale a value one word of '
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . ' needs to be of type scaling';
     case USER_MISSING = 'user in "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" missing';

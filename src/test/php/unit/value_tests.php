@@ -108,6 +108,37 @@ class value_tests
         $val = new value_obj()->get($usr, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
 
+        $t->subheader($ts . 'scaling');
+        $test_name = 'scale the Swiss inhabitants from millions to one';
+        $usr_msg = new user_message();
+        $val = $t_val->value_ch();
+        $trm_lst_scale = $t_trm->term_list_scale_mio();
+        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $usr_msg, $trm_lst_scale);
+        $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO * 1000000);
+        $test_name = '... and the scaling reports no problem';
+        $t->assert_true($test_name, $usr_msg->is_ok());
+
+        $test_name = 'if "mio" of the value is not a scaling word ask the user to set the type';
+        $usr_msg = new user_message();
+        $val = $t_val->value_ch_unscaled();
+        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $usr_msg, $trm_lst_scale);
+        $target = 'to scale a value one word of ' . $val->phrase_list()->dsp_name()
+            . ' needs to be of type scaling';
+        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $test_name = '... and the unscaled number is returned as fallback';
+        $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
+
+        $test_name = 'if "one" of the target list is not a scaling word ask the user to set the type';
+        $usr_msg = new user_message();
+        $val = $t_val->value_ch();
+        $trg_phr_lst = $t_phr->inhabitant_one_unscaled_phrase_list();
+        $result = $val->scale_new($trg_phr_lst, $usr_msg, $trm_lst_scale);
+        $target = 'to scale a value one word of ' . $trg_phr_lst->dsp_name()
+            . ' needs to be of type scaling';
+        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $test_name = '... and the unscaled number is returned as fallback';
+        $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
+
         $t->subheader($ts . 'sql setup');
         $val = $t_val->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
         $t->assert_sql_table_create($val);

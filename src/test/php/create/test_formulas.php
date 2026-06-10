@@ -132,6 +132,18 @@ class test_formulas extends test_objects
     }
 
     /**
+     * @return formula to scale a value from millions to one e.g. for the scaling tests
+     */
+    function formula_scale_mio(): formula
+    {
+        $frm = new formula($this->env->usr1);
+        $frm->set(formulas::SCALE_MIO_ID, formulas::SCALE_MIO);
+        $frm->ref_text = formulas::SCALE_MIO_DB;
+        $frm->set_type(formula_type::CALC, $this->env->usr1);
+        return $frm;
+    }
+
+    /**
      * @return formula with only the name set to test reserving the name
      */
     function formula_name_only(): formula

@@ -304,6 +304,17 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value with the inhabitants of Switzerland
+     *               but with "mio" missing the scaling type to test the scaling type check
+     */
+    function value_ch_unscaled(): value
+    {
+        $t_phr = new test_phrases($this->env);
+        $grp = $t_phr->ch_inhabitants_in_mio_2019_unscaled()->get_grp_id(false);
+        return new value($this->env->usr1, values::CH_INHABITANTS_2019_IN_MIO, $grp);
+    }
+
+    /**
      * @return value_list with only a few values for first basic tests
      */
     function value_list_short(): value_list
