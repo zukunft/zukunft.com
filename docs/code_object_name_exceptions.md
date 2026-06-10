@@ -218,7 +218,7 @@ unit_env: $u_env
 url_mapper: $url_map
 user_list: $result, $system_users, $test_usr_list, $usr_lst
 user_log_display: $log, $log_ui
-user_message: $activate_msg, $db_msg, $dsp_activate_msg, $dsp_login_msg, $dsp_logoff_msg, $dsp_msg, $dsp_reset_msg, $dsp_signup_msg, $err_msg, $fail_msg, $fld_msg, $frm_usr_msg, $import_result, $ins_usr_msg, $login_msg, $logoff_msg, $logout_msg, $lst_usr_msg, $msg, $msg_2, $msg_sys, $ref_usr_msg, $reset_msg, $result, $save_msg, $signup_msg, $sim_msg, $sim_name_msg, $tbl_msg, $trm_usr_msg, $ui_msg, $upd_usr_msg, $usr_msg, $usr_msg2, $usr_msg_calc, $usr_msg_del, $usr_msg_ui
+user_message: $activate_msg, $db_msg, $err_msg, $fail_msg, $fld_msg, $frm_usr_msg, $import_result, $ins_usr_msg, $login_msg, $logoff_msg, $logout_msg, $lst_usr_msg, $msg, $msg_2, $msg_activate_ui, $msg_login_ui, $msg_logoff_ui, $msg_reset_ui, $msg_signup_ui, $msg_sys, $msg_ui, $ref_usr_msg, $reset_msg, $result, $save_msg, $signup_msg, $sim_msg, $sim_name_msg, $tbl_msg, $trm_usr_msg, $ui_msg, $upd_usr_msg, $usr_msg, $usr_msg2, $usr_msg_calc, $usr_msg_del, $usr_msg_ui
 user_official_type: $usr_idt
 user_profile: $usr_prf
 user_status: $usr_sta
@@ -233,12 +233,12 @@ value_ts_data: $ts
 value_type_list: $val_typ_lst
 verb_list: $link_types_ui, $lst, $vrb_lst, $vrb_lst_ui
 view_link_type: $lnk_typ_ui
-view_list: $dsp_lst, $dsp_to_validate, $lst, $msk_lst, $views, $wrd_lst
+view_list: $dsp_to_validate, $lst, $msk_lst, $views, $wrd_lst
 view_relation_list: $mrl_lst
 view_relation_type: $lnk_typ_ui
 view_style: $style
-view_sys_list: $lst, $sys_dsp_lst, $sys_msk_cac
-view_type: $dsp_typ
+view_sys_list: $lst, $sys_msk_cac, $sys_msk_lst
+view_type: $msk_typ
 views: $msk_c, $views
 word_dsp: $wrd, $wrd_pi
 word_list: $added_wrd_lst, $additional_added, $common_phr_lst, $common_phr_lst_new, $del_wrd_lst, $dest_wrd_lst, $lst, $lst_long, $parents, $phr_lst, $result, $sector_lst, $time_lst, $wrd_lst, $wrd_lst2, $wrd_lst_filter, $wrd_lst_percent, $wrd_lst_scale, $wrd_lst_time

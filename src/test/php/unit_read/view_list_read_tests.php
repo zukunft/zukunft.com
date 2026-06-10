@@ -57,16 +57,16 @@ class view_list_read_tests
         // test loading view names
         $test_name = 'loading view names with pattern return the expected view';
         $pattern = substr(views::TEST_ALL_NAME, 0, -1);
-        $dsp_lst = new view_list($t->usr1);
-        $dsp_lst->load_names($pattern);
-        $t->assert_contains($test_name, $dsp_lst->names(), views::TEST_ALL_NAME);
+        $msk_lst = new view_list($t->usr1);
+        $msk_lst->load_names($pattern);
+        $t->assert_contains($test_name, $msk_lst->names(), views::TEST_ALL_NAME);
         // TODO do not exclude all system views
         //      e.g. allow the user to select the system default view Word aka TN_READ
         //      but do not allow to select system forms aka TN_FORM
         $test_name = 'system view are not included in the normal view list';
-        $dsp_lst = new view_list($t->usr1);
-        $dsp_lst->load_names(views::TEST_FORM_NAME);
-        $t->assert_contains_not($test_name, $dsp_lst->names(), views::TEST_FORM_NAME);
+        $msk_lst = new view_list($t->usr1);
+        $msk_lst->load_names(views::TEST_FORM_NAME);
+        $t->assert_contains_not($test_name, $msk_lst->names(), views::TEST_FORM_NAME);
 
 
         $test_name = 'loading by view list by component id ';

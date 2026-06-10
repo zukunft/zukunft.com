@@ -315,10 +315,10 @@ class view_list extends ListBase
 
         //$db_con = New mysql;
         $db_con->usr_id = $this->user()->id();
-        $dsp_lst = $db_con->get_old($sql);
-        foreach ($dsp_lst as $dsp) {
-            $view_id = $dsp['id'];
-            $view_name = $dsp['name'];
+        $msk_lst = $db_con->get_old($sql);
+        foreach ($msk_lst as $msk) {
+            $view_id = $msk['id'];
+            $view_name = $msk['name'];
             if ($view_id == $this->id()) {
                 $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
             } else {

@@ -585,14 +585,14 @@ class view extends view_exe
         $result = '';
         $html = new html_base();
 
-        $dsp_lst = new view_list();
+        $msk_lst = new view_list();
 
         $call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
-        foreach ($dsp_lst as $dsp) {
-            $view_id = $dsp->id();;
-            $view_name = $dsp->name();
+        foreach ($msk_lst as $msk) {
+            $view_id = $msk->id();;
+            $view_name = $msk->name();
             if ($view_id == $this->id()) {
                 $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
             } else {

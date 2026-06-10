@@ -163,9 +163,9 @@ class type_tests
         $t->assert_sql_index_create($frm_typ);
 
         $t->subheader($ts . 'view type sql setup');
-        $dsp_typ = new view_type('');
-        $t->assert_sql_table_create($dsp_typ);
-        $t->assert_sql_index_create($dsp_typ);
+        $msk_typ = new view_type('');
+        $t->assert_sql_table_create($msk_typ);
+        $t->assert_sql_index_create($msk_typ);
 
         $t->subheader($ts . 'view style sql setup');
         $style = new view_style('');
