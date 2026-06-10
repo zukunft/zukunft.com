@@ -164,13 +164,10 @@ class system_views_read_tests
             api::SCRIPT_PATH_NAME . 'privacy_policy.html',
             'Swiss purpose of data protection',
             ', frontend privacy_policy.php contains at least');
-        // TODO Prio 0 activate
-        /*
         $is_connected = $t->dsp_web_test(
             api::SCRIPT_PATH_NAME . 'view.php?m=66&id=1',
             'not permitted',
             ', frontend view.php?m=error_update contains at least', $is_connected);
-        */
         // the former find.php has been replaced by the word find view (m=67)
         $t->dsp_web_test(
             api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID

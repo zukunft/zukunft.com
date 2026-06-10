@@ -102,19 +102,18 @@ class word_url_tests
         $test_name = '... with name ask the user to confirm adding the word';
         $url_arr[url_var::NAME] = words::TEST_ADD;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        // TODO Prio 0 activate
+        // TODO Prio 0 activate once url_to_html routes a create request to the views::CONFIRM_ADD mask
         //$t->assert_text_contains($test_name, $result, $mtr->get(msg_id::FORM_TITLE_CONFIRM_ADD->text()));
 
         $test_name = '... if confirmed the word is added';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        // TODO Prio 0 activate
-        //$t->assert_text_contains($test_name, $result, words::TEST_ADD);
+        $t->assert_text_contains($test_name, $result, words::TEST_ADD);
 
         $test_name = '... so it can be deleted';
         $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        // TODO Prio 0 activate
+        // TODO Prio 0 activate once url_to_html handles url_var::CRUD_DELETE like the create action
         //$t->assert_text_contains($test_name, $result, words::TEST_ADD);
 
 

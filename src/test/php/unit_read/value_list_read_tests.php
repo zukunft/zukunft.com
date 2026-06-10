@@ -102,8 +102,7 @@ class value_list_read_tests
         // TODO check why not all years are loaded
         //$target = values::TV_CH_INHABITANTS_2019_IN_MIO;
         $target = values::CH_INHABITANTS_2020_IN_MIO;
-        // TODO Prio 0 activate
-        //$t->assert_text_contains($test_name, $result, $target);
+        $t->assert_text_contains($test_name, $result, $target);
 
         // load values related to any phrase of a list
         $test_name = 'Load the list of math const';

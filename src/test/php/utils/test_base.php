@@ -4216,7 +4216,7 @@ class test_base
             $lib = new library();
             $result = $lib->diff_msg($id_lst, $db_lst);
             if ($result != '') {
-                log_warning($test_name . 'diff is:' . $result);
+                log_err($test_name . 'diff is:' . $result);
             }
         }
 
