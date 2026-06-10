@@ -5,6 +5,8 @@
     model/log/change.php - for logging changes in named objects such as words and formulas
     ------------------
 
+    $log is the suggested var name
+
     The main sections of this object are
     - db const:          const for the database link
     - object vars:       the variables of this change log object

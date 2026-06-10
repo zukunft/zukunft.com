@@ -5,6 +5,8 @@
     shared/library.php - some useful function e.g. for string handling
     ------------------
 
+    $lib is the suggested var name
+
     TODO Prio 2 move the functions that use project objects to object_mapper class
 
 

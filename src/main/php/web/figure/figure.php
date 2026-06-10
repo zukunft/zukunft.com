@@ -5,6 +5,7 @@
     web/figure/figure.php - to create the html code to display a value or result
     ---------------------
 
+    $fig is the suggested var name
 
     This file is part of zukunft.com - calc with words
 
@@ -79,9 +80,9 @@ class figure extends combine_named
         $usr_msg = new user_message();
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_RESULT) {
-                $res_dsp = new result();
-                $res_dsp->api_mapper($json_array, $usr_msg);
-                $this->set_obj($res_dsp);
+                $res_ui = new result();
+                $res_ui->api_mapper($json_array, $usr_msg);
+                $this->set_obj($res_ui);
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VALUE) {
                 $val = new value();
                 $val->api_mapper($json_array, $usr_msg);

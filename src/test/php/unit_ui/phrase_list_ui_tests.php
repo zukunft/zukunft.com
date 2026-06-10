@@ -71,12 +71,12 @@ class phrase_list_ui_tests
         $phr_city = $t_trp->zh_city()->phrase();
         $phr_canton = $t_trp->zh_canton()->phrase();
         $phr_ch = $t_wrd->word_ch()->phrase();
-        $phr_city_dsp = new phrase($phr_city->api_json());
-        $phr_canton_dsp = new phrase($phr_canton->api_json());
-        $phr_ch_dsp = new phrase($phr_ch->api_json());
-        $lst->add_phrase($phr_city_dsp);
-        $lst->add_phrase($phr_canton_dsp);
-        $lst->add_phrase($phr_ch_dsp);
+        $phr_city_ui = new phrase($phr_city->api_json());
+        $phr_canton_ui = new phrase($phr_canton->api_json());
+        $phr_ch_ui = new phrase($phr_ch->api_json());
+        $lst->add_phrase($phr_city_ui);
+        $lst->add_phrase($phr_canton_ui);
+        $lst->add_phrase($phr_ch_ui);
 
         // test the phrase list display functions
         $test_page = $html->text_h2('phrase list display test');
@@ -112,8 +112,8 @@ class phrase_list_ui_tests
         $trp_ins = new triple($usr);
         $trp_ins->load_by_name(triples::COMPANY_ZURICH, triple::class);
         $phr = $wrd->phrase();
-        $phr_dsp = new phrase_dsp($phr->api_json());
-        $result = $phr->dsp_selector($phr_dsp, $form_name, $pos, '', $back);
+        $phr_ui = new phrase_dsp($phr->api_json());
+        $result = $phr->dsp_selector($phr_ui, $form_name, $pos, '', $back);
         $target = $trp_ins->name();
         $t->dsp_contains(', phrase->dsp_selector of type ' . words::COMPANY . ' is : ' .
             $result . ' which contains ' . triples::COMPANY_ZURICH,

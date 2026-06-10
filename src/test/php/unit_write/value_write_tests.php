@@ -216,8 +216,8 @@ class value_write_tests
         $mio_val_dsp = new value_ui();
         $mio_val_dsp->set_from_json($mio_val->api_json([api_types::INCL_PHRASES]), $usr_msg_ui);
         $fig = $mio_val->figure();
-        $fig_dsp = $tl->ui_obj($fig, new figure_ui());
-        $result = $fig_dsp->display_linked('1');
+        $fig_ui = $tl->ui_obj($fig, new figure_ui());
+        $result = $fig_ui->display_linked('1');
         $target = '<a href="/http/result_edit.php?id=' . $mio_val_dsp->id() . '&back=1">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 

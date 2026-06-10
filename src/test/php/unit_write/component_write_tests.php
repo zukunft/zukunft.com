@@ -230,7 +230,7 @@ class component_write_tests
         $result = $cmp_usr2_reloaded->description;
         $target = 'Just added for testing the user sandbox';
         $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
-        //$result = $dsp_usr2_reloaded->type_id;
+        //$result = $usr_ui2_reloaded->type_id;
         //$target = cl(SQL_VIEW_TYPE_WORD_NAME);
         //$t->assert('component->load type_id for "'.component::TEST_NAME_RENAMED.'"', $result, $target);
 

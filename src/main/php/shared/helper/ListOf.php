@@ -5,6 +5,7 @@
     shared/helper/ListOf.php - a list of specific objects until php allows specific arrays
     ------------------------
 
+    $lst is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

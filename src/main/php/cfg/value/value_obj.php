@@ -5,6 +5,7 @@
     model/value/value_obj.php - just to select the best fitting class for a value
     -------------------------
 
+    $val is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

@@ -5,6 +5,7 @@
     model/user/user_profile_list.php - a list of possible user profiles with the database id
     --------------------------------
 
+    $usr_pro_lst is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

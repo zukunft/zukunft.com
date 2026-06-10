@@ -5,6 +5,8 @@
     model/application.php - the main backend application object to start and stop the $app
     ---------------------
 
+    $app is the suggested var name
+
     reads the backend environment vars,
     opens and closes the database connection
     and reads the system configuration from the database

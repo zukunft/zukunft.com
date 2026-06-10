@@ -155,12 +155,12 @@ class element_group_write_tests
 
                 if (isset($fig)) {
                     $t_api = new test_api();
-                    $fig_dsp = $tl->ui_obj($fig, new figure_ui());
-                    $result = $fig_dsp->display();
+                    $fig_ui = $tl->ui_obj($fig, new figure_ui());
+                    $result = $fig_ui->display();
                     $target = "8.51";
                     $t->assert('figure->display', $result, $target);
 
-                    $result = $fig_dsp->display_linked();
+                    $result = $fig_ui->display_linked();
                     //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
                     $target = '<a href="/http/result_edit.php?id=' . $fig->id() . '">8.51</a>';
                     $t->assert('figure->display_linked', $result, $target);

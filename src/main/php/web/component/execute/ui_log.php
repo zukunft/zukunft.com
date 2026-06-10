@@ -5,6 +5,7 @@
     web/component/execute/ui_log.php - html user interface components for change log
     ---------------------------------
 
+    $log is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

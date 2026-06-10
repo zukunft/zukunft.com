@@ -86,7 +86,10 @@ class coding_rule_tests
         $test_name = 'check that the docs with all objects is updated';
         $md_txt = $this->php_class_tree();
         $doc_txt = file_get_contents(test_files::DOCS_OBJECTS);
-        $t->assert($test_name, $md_txt, $doc_txt);
+        $obj_upd = $t->assert($test_name, $md_txt, $doc_txt);
+        if (!$obj_upd and test_files::AUTO_UPDATE_TEST_FILES) {
+            $t->update_path_file(test_files::DOCS_OBJECTS, $md_txt);
+        }
 
         $test_name = 'check that the docs with all function is updated';
         $md_txt = $this->php_function_tree();

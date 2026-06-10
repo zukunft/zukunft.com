@@ -5,6 +5,7 @@
     web/types/view_link_type_list.php - the preloaded data of view link types used for the html frontend
     ---------------------------------
 
+    $msk_lnk_typ_lst is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

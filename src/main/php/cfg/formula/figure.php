@@ -5,6 +5,8 @@
     model/formula/figure.php - combine object for value and result
     ------------------------
 
+    $fig is the suggested var name
+
     either a value of a formula result object or a value if a user has overwritten a formula result
 
     The main sections of this object are
