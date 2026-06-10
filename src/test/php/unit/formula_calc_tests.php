@@ -119,9 +119,9 @@ class formula_calc_tests
 
         $test_name = 'formula increase; test the display name that can be used for user debugging';
         $frm_html = new formula_ui($frm->api_json());
-        $trm_lst_dsp = new term_list_ui($trm_lst->api_json());
+        $trm_lst_ui = new term_list_ui($trm_lst->api_json());
         $back = 0;
-        $result = $frm_html->dsp_text($back, $trm_lst_dsp);
+        $result = $frm_html->dsp_text($back, $trm_lst_ui);
         $target = '"' . words::PERCENT
             . '" = ( <a href="/http/formula_edit.php?id='
             . $frm_this->id() . '&back=0">'
@@ -139,8 +139,8 @@ class formula_calc_tests
         if (count($elm_grp_lst->lst()) > 0) {
             // get "this" from the formula element group list
             $elm_grp = $elm_grp_lst->lst()[0];
-            $elm_grp_dsp = new element_group_ui($elm_grp->api_json());
-            $result = $elm_grp_dsp->dsp_names();
+            $elm_grp_ui = new element_group_ui($elm_grp->api_json());
+            $result = $elm_grp_ui->dsp_names();
             $target = '<a href="/http/formula_edit.php?id='
                 . $frm_this->id() . '">'
                 . words::THIS_NAME . '</a>';
@@ -154,9 +154,9 @@ class formula_calc_tests
 
             $test_name = 'formula increase; test if the values for an element group are displayed correctly';
             $frm_html = new formula_dsp($frm->api_json());
-            $trm_lst_dsp = new term_list_dsp($trm_lst->api_json());
+            $trm_lst_ui = new term_list_dsp($trm_lst->api_json());
             $back = 0;
-            $result = $frm_html->dsp_text($back, $trm_lst_dsp);
+            $result = $frm_html->dsp_text($back, $trm_lst_ui);
             $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
             $t->assert($test_name, $result, $target);
         }

@@ -49,7 +49,7 @@ class sys_log_ui_tests
 
         $sys_usr = new user;
         $sys_usr->load_by_id(users::SYSTEM_ID);
-        $sys_usr_dsp = new user_ui($sys_usr->api_json());
+        $sys_usr_ui = new user_ui($sys_usr->api_json());
 
         // start the test section (ts)
         $ts = 'unit ui html system log ';
@@ -61,7 +61,7 @@ class sys_log_ui_tests
         $test_page .= 'user view of a table with system log entries<br>';
         $test_page .= $log_lst->display() . '<br>';
         $test_page .= 'admin view of a table with system log entries<br>';
-        $test_page .= $log_lst->display_admin($sys_usr_dsp) . '<br>';
+        $test_page .= $log_lst->display_admin($sys_usr_ui) . '<br>';
 
         $t->html_page_test($test_page, 'sys_log', 'sys_log', $t);
     }

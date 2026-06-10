@@ -88,9 +88,9 @@ if ($session_usr->id > 0) {
     $msk->id = $sys->msk_cac->id(views::FORMULA_TEST);
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the page (or phrase id) from which formula testing has been called
-    $msk_dsp = new view_ui($msk->api_json());
+    $msk_ui = new view_ui($msk->api_json());
     $dto = new data_object();
-    echo $msk_dsp->dsp_navbar($dto, $back);
+    echo $msk_ui->dsp_navbar($dto, $back);
 
     // get all parameters
     $frm_id = $_GET[url_var::ID];
@@ -136,16 +136,16 @@ if ($session_usr->id > 0) {
 
         // if only one result is selected, display the selected result words
         $phr_lst = new phrase_list($usr);
-        $dsp_lst = "";
+        $msk_lst = "";
         if ($phr_ids_txt <> "") {
             $phr_ids = explode(",", $phr_ids_txt);
             $phr_ids = $lib->ids_not_empty($phr_ids);
             if (!empty($phr_ids)) {
                 $phr_lst->load_names_by_ids(new phr_ids($phr_ids));
-                $dsp_lst = "for " . $phr_lst->name_linked() . " ";
+                $msk_lst = "for " . $phr_lst->name_linked() . " ";
             }
         }
-        $html->dsp_text_h2('Calculate the ' . $frm1->name_linked($back) . ' ' . $dsp_lst);
+        $html->dsp_text_h2('Calculate the ' . $frm1->name_linked($back) . ' ' . $msk_lst);
         echo '<br>';
 
         // if a single calculation is selected by the user, show only this

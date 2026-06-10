@@ -86,7 +86,10 @@ class coding_rule_tests
         $test_name = 'check that the docs with all objects is updated';
         $md_txt = $this->php_class_tree();
         $doc_txt = file_get_contents(test_files::DOCS_OBJECTS);
-        $t->assert($test_name, $md_txt, $doc_txt);
+        $obj_upd = $t->assert($test_name, $md_txt, $doc_txt);
+        if (!$obj_upd and test_files::AUTO_UPDATE_TEST_FILES) {
+            $t->update_path_file(test_files::DOCS_OBJECTS, $md_txt);
+        }
 
         $test_name = 'check that the docs with all function is updated';
         $md_txt = $this->php_function_tree();
@@ -108,6 +111,9 @@ class coding_rule_tests
 
         $t->subheader($ts . 'frontend globals');
         $this->php_web_only_allowed_globals_tests($t);
+
+        $t->subheader($ts . 'frontend config cache');
+        $this->php_web_config_from_cache_tests($t);
 
         $t->subheader($ts . 'backend globals');
         $this->php_cfg_only_allowed_globals_tests($t);
@@ -553,6 +559,41 @@ class coding_rule_tests
             'web/ must declare only $ui_sys and $mtr as globals',
             ['frontend.php']
         );
+    }
+
+    /**
+     * check that no file in src/main/php/web/** creates its own config object:
+     * frontend config values always come from the request cache $ui_sys->cfg,
+     * which http/view.php fills once at request start (and test_lib::ui_test_cache
+     * for unit tests); a freshly created config is empty, so get_by() would
+     * silently return the fallback instead of the user setting
+     *
+     * each violation produces one failing assertion identifying the file and line;
+     * a clean tree produces no assertions
+     *
+     * positive (test fires when it should): a line like "$cfg = new config();"
+     *     inside web/ flags the rule violation
+     * negative (test tolerates good code): "$cfg = $ui_sys->cfg;" in web/ passes
+     *     without an assertion
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_web_config_from_cache_tests(test_cleanup $t): void
+    {
+        $lib = new library();
+        $file_array = $lib->dir_to_array(paths::WEB);
+        $code_files = $lib->array_to_path($file_array);
+        foreach ($code_files as $code_file) {
+            $ctrl_code = file(paths::WEB . $code_file);
+            foreach ($ctrl_code as $line_idx => $line) {
+                if (str_contains($line, 'new config(')) {
+                    $test_name = 'web/ must read the user config from $ui_sys->cfg'
+                        . ' but found new config() in ' . $code_file . ':' . ($line_idx + 1);
+                    $t->assert($test_name, '', $line);
+                }
+            }
+        }
     }
 
     /**

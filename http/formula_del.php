@@ -93,9 +93,9 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
 
             if ($frm->is_used()) {
                 $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno("Exclude \"" . $frm->name() . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);

@@ -110,8 +110,8 @@ class element_write_tests
                 }
                 $t->assert('element->dsp_id', $result, $target);
 
-                $elm_dsp = new element($elm->api_json());
-                $result = $elm_dsp->link($back);
+                $elm_ui = new element($elm->api_json());
+                $result = $elm_ui->link($back);
                 $url = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
                 if ($pos == 0) {
                     $target = $url . $wrd_country->id . '&back=0" title="country">country</a>';

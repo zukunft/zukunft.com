@@ -5,6 +5,8 @@
     web/frontend.php - the main html frontend application
     ----------------
 
+    $ui is the suggested var name
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -889,9 +891,9 @@ class frontend
                 $usr_backend = $db_usr;
                 $usr_ui->set_from_json($db_usr->api_json(), $usr_msg);
             } else {
-                $dsp_login_msg = new user_message();
-                $dsp_login_msg->api_mapper($login_msg->api_array());
-                $usr_msg->merge($dsp_login_msg);
+                $msg_login_ui = new user_message();
+                $msg_login_ui->api_mapper($login_msg->api_array());
+                $usr_msg->merge($msg_login_ui);
             }
         }
 
@@ -983,9 +985,9 @@ class frontend
                         $signup_msg->add(msg_id::SIGNUP_ERR_FAILED, []);
                     }
                 }
-                $dsp_signup_msg = new user_message();
-                $dsp_signup_msg->api_mapper($signup_msg->api_array());
-                $usr_msg->merge($dsp_signup_msg);
+                $msg_signup_ui = new user_message();
+                $msg_signup_ui->api_mapper($signup_msg->api_array());
+                $usr_msg->merge($msg_signup_ui);
             }
         }
 
@@ -1073,9 +1075,9 @@ class frontend
                                 $activate_msg->add_message_text($mtr->txt(msg_id::ACTIVATE_ERR_FAILED));
                             }
                         }
-                        $dsp_activate_msg = new user_message();
-                        $dsp_activate_msg->api_mapper($activate_msg->api_array());
-                        $usr_msg->merge($dsp_activate_msg);
+                        $msg_activate_ui = new user_message();
+                        $msg_activate_ui->api_mapper($activate_msg->api_array());
+                        $usr_msg->merge($msg_activate_ui);
                     }
                 } else {
                     if ($db_key !== '') {
@@ -1121,9 +1123,9 @@ class frontend
                 $logoff_msg->usr = $usr_backend;
                 $usr_backend->last_logoff = new DateTime();
                 $usr_backend->save($logoff_msg);
-                $dsp_logoff_msg = new user_message();
-                $dsp_logoff_msg->api_mapper($logoff_msg->api_array());
-                $usr_msg->merge($dsp_logoff_msg);
+                $msg_logoff_ui = new user_message();
+                $msg_logoff_ui->api_mapper($logoff_msg->api_array());
+                $usr_msg->merge($msg_logoff_ui);
             }
             if (isset($_SESSION)) {
                 $_SESSION = [];
@@ -1194,9 +1196,9 @@ class frontend
                     $db_usr->activation_timeout = $timeout;
                     $reset_msg = new backend_user_message();
                     $db_usr->save($reset_msg);
-                    $dsp_reset_msg = new user_message();
-                    $dsp_reset_msg->api_mapper($reset_msg->api_array());
-                    $usr_msg->merge($dsp_reset_msg);
+                    $msg_reset_ui = new user_message();
+                    $msg_reset_ui->api_mapper($reset_msg->api_array());
+                    $usr_msg->merge($msg_reset_ui);
 
                     if ($usr_msg->is_ok()) {
                         $activate_url = POD_NAME . api::LOGIN_ACTIVATE_FORWARD
@@ -1256,9 +1258,9 @@ class frontend
                 $err_entry->status_id = $status_id;
                 $save_msg = new backend_user_message();
                 $err_entry->save($save_msg);
-                $dsp_msg = new user_message();
-                $dsp_msg->api_mapper($save_msg->api_array());
-                $usr_msg->merge($dsp_msg);
+                $msg_ui = new user_message();
+                $msg_ui->api_mapper($save_msg->api_array());
+                $usr_msg->merge($msg_ui);
             }
         }
         $next_url = $url_array;

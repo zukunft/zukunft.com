@@ -67,10 +67,10 @@ class term_view_tests
         $t->header($ts);
 
         $t->subheader($ts . 'term_view sql setup');
-        $dsp_trm_lnk = new term_view($usr);
-        $t->assert_sql_table_create($dsp_trm_lnk);
-        $t->assert_sql_index_create($dsp_trm_lnk);
-        $t->assert_sql_foreign_key_create($dsp_trm_lnk);
+        $trm_lnk_ui = new term_view($usr);
+        $t->assert_sql_table_create($trm_lnk_ui);
+        $t->assert_sql_index_create($trm_lnk_ui);
+        $t->assert_sql_foreign_key_create($trm_lnk_ui);
 
         $t->subheader($ts . 'term_view sql read');
         $lnk = new term_view($usr);

@@ -129,9 +129,9 @@ class graph_tests
         $zh_types = $trp_lst->phrase_parts();
         // create the HTML code to display the type names
         $api_json = json_decode($zh_types->api_json(), true);
-        $dsp_trp_list = new triple_list_ui();
-        $dsp_trp_list->api_mapper($api_json, $usr_msg);
-        $result = $dsp_trp_list->tbl($back);
+        $trp_lst_ui = new triple_list_ui();
+        $trp_lst_ui->api_mapper($api_json, $usr_msg);
+        $result = $trp_lst_ui->tbl($back);
         $t->assert_text_contains($test_name . words::CITY, $result, words::COMPANY);
         $t->assert_text_contains($test_name . words::CANTON, $result, words::COMPANY);
         $t->assert_text_contains($test_name . words::COMPANY, $result, words::COMPANY);

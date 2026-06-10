@@ -132,7 +132,7 @@ class base_ui_tests
         */
 
         // ... and check if the prepared sql name is unique
-        //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
+        //$t->assert_sql_name_unique($log_ui->dsp_hist_links_sql($db_con, true));
 
         // button add
         $url = $html->url(views::WORD_ADD);
@@ -159,24 +159,24 @@ class base_ui_tests
         $val_city = new value($t->usr1);
         $val_city->set_grp($grp_city);
         $val_city->set_number(values::CITY_ZH_INHABITANTS_2019);
-        $val_city_dsp = new value_ui($val_city->api_json([api_types::INCL_PHRASES]));
-        $val_city_html = $val_city_dsp->name_link();
+        $val_city_ui = new value_ui($val_city->api_json([api_types::INCL_PHRASES]));
+        $val_city_html = $val_city_ui->name_link();
         $t->assert_text_contains('', $val_city_html, words::CITY);
 
         // create the value for the inhabitants of the city of zurich
         $val_canton = new value($t->usr1);
         $val_canton->set_grp($grp_canton);
         $val_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
-        $val_canton_dsp = new value_ui($val_canton->api_json([api_types::INCL_PHRASES]));
-        $val_canton_html = $val_canton_dsp->name_link();
+        $val_canton_ui = new value_ui($val_canton->api_json([api_types::INCL_PHRASES]));
+        $val_canton_html = $val_canton_ui->name_link();
         $t->assert_text_contains('', $val_canton_html, words::CANTON);
 
         // create the value for the inhabitants of Switzerland
         $val_ch = new value($t->usr1);
         $val_ch->set_grp($grp_ch);
         $val_ch->set_number(values::CH_INHABITANTS_2019_IN_MIO);
-        $val_ch_dsp = new value_ui($val_ch->api_json([api_types::INCL_PHRASES]));
-        $val_ch_html = $val_ch_dsp->name_link();
+        $val_ch_ui = new value_ui($val_ch->api_json([api_types::INCL_PHRASES]));
+        $val_ch_html = $val_ch_ui->name_link();
         $t->assert_text_contains('', $val_ch_html, round(values::CH_INHABITANTS_2019_IN_MIO, 2));
 
         // create the formula result for the inhabitants of the city of zurich
@@ -184,16 +184,16 @@ class base_ui_tests
         $res_city->set_grp($grp_city_pct);
         $ch_val_scaled = values::CH_INHABITANTS_2019_IN_MIO * 1000000;
         $res_city->set_number(values::CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
-        $res_city_dsp = new value_ui($res_city->api_json([api_types::INCL_PHRASES]));
-        $res_city_html = $res_city_dsp->name_link();
+        $res_city_ui = new value_ui($res_city->api_json([api_types::INCL_PHRASES]));
+        $res_city_html = $res_city_ui->name_link();
         $t->assert_text_contains('', $res_city_html, words::CITY);
 
         // create the formula result for the inhabitants of the canton of zurich
         $res_canton = new result($t->usr1);
         $res_canton->set_grp($grp_canton_pct);
         $res_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO);
-        $res_canton_dsp = new value_ui($res_canton->api_json([api_types::INCL_PHRASES]));
-        $res_canton_html = $res_canton_dsp->value_edit('');
+        $res_canton_ui = new value_ui($res_canton->api_json([api_types::INCL_PHRASES]));
+        $res_canton_html = $res_canton_ui->value_edit('');
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2) . '%';
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
 
@@ -204,8 +204,8 @@ class base_ui_tests
         $t->html_page_test($res_lst->table(), '', 'table_result', $t);
 
         // create the same table as above, but within a context
-        $phr_lst_context_dsp = new phrase_list_ui($phr_lst_context->api_json([api_types::INCL_PHRASES]));
-        $t->html_page_test($res_lst->table($phr_lst_context_dsp), '', 'table_result_context', $t);
+        $phr_lst_context_ui = new phrase_list_ui($phr_lst_context->api_json([api_types::INCL_PHRASES]));
+        $t->html_page_test($res_lst->table($phr_lst_context_ui), '', 'table_result_context', $t);
 
 
         $t->subheader($ts . 'unit html view component tests');
@@ -213,8 +213,8 @@ class base_ui_tests
         $cmp = new component($t->usr1);
         $cmp->set(components::WORD_ID, components::TEST_ADD_NAME);
         $cmp->set_type(comp_type_shared::TEXT, $t->usr1);
-        $cmp_dsp = new component_ui($cmp->api_json());
-        $t->html_page_test($cmp_dsp->html(), '', 'component_text', $t);
+        $cmp_ui = new component_ui($cmp->api_json());
+        $t->html_page_test($cmp_ui->html(), '', 'component_text', $t);
 
 
         $t->subheader($ts . 'list');
@@ -227,9 +227,9 @@ class base_ui_tests
         $lst->add_verb(new verb(1, verbs::IS));
         $lst->add_verb(new verb(2, verbs::PART_NAME));
         // TODO use set_from_json to set the display object
-        $vrb_lst_dsp = new verb_list_ui();
-        $vrb_lst_dsp->set_from_json_array($lst->api_json_array());
-        $t->html_page_test($vrb_lst_dsp->list(verb_ui::class, 'Verbs'), '', 'list_verbs', $t);
+        $vrb_lst_ui = new verb_list_ui();
+        $vrb_lst_ui->set_from_json_array($lst->api_json_array());
+        $t->html_page_test($vrb_lst_ui->list(verb_ui::class, 'Verbs'), '', 'list_verbs', $t);
 
         $test_name = 'sort a named list by the name';
         $lst = $t_phr->phrase_list_zh_mio();
@@ -274,8 +274,8 @@ class base_ui_tests
         $cmp->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $cmp->id = 1;
         $cmp->set_name(views::NESN_2016_FS_NAME);
-        $cmp_dsp = new component_ui($cmp->api_json());
-        $result = $cmp_dsp->html();
+        $cmp_ui = new component_ui($cmp->api_json());
+        $result = $cmp_ui->html();
         $target = views::NESN_2016_FS_NAME;
         $t->assert('component_dsp->text', $result, $target);
 

@@ -58,8 +58,8 @@ class hist_log
                 $wrd->load_by_id($wrd->id());
             }
 
-            $wrd_dsp = new word($wrd->api_json());
-            $changes = $wrd_dsp->dsp_hist(1, 20, '', $back);
+            $wrd_ui = new word($wrd->api_json());
+            $changes = $wrd_ui->dsp_hist(1, 20, '', $back);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest view changes related to this word", "change_hist");
                 $result .= $changes;

@@ -113,15 +113,15 @@ if ($usr->id() > 0) {
         // if nothing yet done display the edit view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // show the word and its relations, so that the user can change it
-            $wrd_dsp = new word_ui();
-            $wrd_dsp->set_from_json($wrd->api_json());
-            $result .= $wrd_dsp->dsp_edit($back);
+            $wrd_ui = new word_ui();
+            $wrd_ui->set_from_json($wrd->api_json());
+            $result .= $wrd_ui->dsp_edit($back);
         }
     }
 }

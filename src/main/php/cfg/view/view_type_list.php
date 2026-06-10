@@ -5,6 +5,7 @@
     model/view/view_type_list.php - to link coded functionality to a view
     -----------------------------
 
+    $msk_typ_lst is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

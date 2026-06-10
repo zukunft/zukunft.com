@@ -67,19 +67,19 @@ class change_log_ui_tests
 
         $test_page .= '<br>changes as a text<br>';
         $chg = $t_log->log_word_add();
-        $chg_dsp = new change_log_named($chg->api_json());
-        $test_page .= $chg_dsp->dsp() .  '<br>';
+        $chg_ui = new change_log_named($chg->api_json());
+        $test_page .= $chg_ui->dsp() .  '<br>';
 
 
         $test_page .= '<br>simple list of changes of a word<br>';
         $log_lst = $t_log->log_list_named();
-        $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
-        $test_page .= $log_dsp->tbl($back);
+        $log_ui = new change_log_list($log_lst->api_json($api_typ_lst));
+        $test_page .= $log_ui->tbl($back);
 
         $test_page .= '<br>condensed list of changes of a word<br>';
         $log_lst = $t_log->log_list_named();
-        $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
-        $test_page .= $log_dsp->tbl($back, true, true);
+        $log_ui = new change_log_list($log_lst->api_json($api_typ_lst));
+        $test_page .= $log_ui->tbl($back, true, true);
 
         $t->html_page_test($test_page, 'change_log', 'change_log', $t);
     }

@@ -5,6 +5,8 @@
     model/helper/system_object.php - a header object for the system data cache and execution time tracking
     ------------------------------
 
+    $sys is the suggested var name
+
     the suggested var name in the backend is global $sys
     this object contains objects and vars from the database that are often used
     and thet are user independent

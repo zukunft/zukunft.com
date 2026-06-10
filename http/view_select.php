@@ -70,8 +70,8 @@ if ($usr->id() > 0) {
     //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the original calling page that should be shown after the change if finished
-    $msk_dsp = new view_ui($msk->api_json());
-    $result .= $msk_dsp->dsp_navbar_no_view($back);
+    $msk_ui = new view_ui($msk->api_json());
+    $result .= $msk_ui->dsp_navbar_no_view($back);
     $view_id = 0;
     $word_id = $back;
 

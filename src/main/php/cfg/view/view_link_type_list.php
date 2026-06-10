@@ -5,6 +5,7 @@
     model/view/view_link_type_list.php - to defined how a term is linked to a view
     ----------------------------------
 
+    $msk_lnk_typ_lst is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

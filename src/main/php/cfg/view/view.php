@@ -422,9 +422,9 @@ class view extends sandbox_code_id
 
                 if ($msg->is_ok()) {
                     // TODO save also the components
-                    //$dsp_lnk = new component_link();
+                    //$cmp_lnk_ui = new component_link();
                     // TODO save also the links
-                    //$dsp_lnk = new component_link();
+                    //$cmp_lnk_ui = new component_link();
                     log_debug($this->dsp_id());
                 }
             }
@@ -1010,13 +1010,13 @@ class view extends sandbox_code_id
     /**
      * true if the view is part of the view element list
      */
-    function is_in_list($dsp_lst): bool
+    function is_in_list($msk_lst): bool
     {
         $result = false;
 
-        foreach ($dsp_lst as $dsp_id) {
-            log_debug($dsp_id . ' = ' . $this->id() . '?');
-            if ($dsp_id == $this->id()) {
+        foreach ($msk_lst as $msk_id) {
+            log_debug($msk_id . ' = ' . $this->id() . '?');
+            if ($msk_id == $this->id()) {
                 $result = true;
             }
         }

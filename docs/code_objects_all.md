@@ -5,7 +5,7 @@
 the object structure is:
 
 ```
-├── application - the main backend application object to start and stop the $app
+├── application - $app - the main backend application object to start and stop the $app
 ├── component_db - a single display object like a headline or a table
 ├── position - the position of a data_object within a sheet
 ├── position_list - a list of positions of a data object within a sheet
@@ -19,7 +19,7 @@ the object structure is:
 ├── sql_field - to combine a sql field name with a value and a sql column type
 ├── sql_field_list - a list of sql parameter fields
 ├── sql_par - combine the query name, the sql statement and the parameters in one object
-├── sql_par_field - combine a sql parameter field name with the value and the parameter type
+├── sql_par_field - $fld - combine a sql parameter field name with the value and the parameter type
 ├── sql_par_field_list - a list of sql parameter fields
 ├── sql_par_list - a list of sql parameters and calls
 ├── sql_pg - Postgres SQL elements and const used
@@ -43,11 +43,11 @@ the object structure is:
 ├── db_object_no_id
 │   └── value_ts_data - for a single time series value data entry
 ├── id_list - a base object for a list of database IDs
-├── object_mapper - a library class to collect the backend object mappings
-├── system_object - a header object for the system data cache and execution time tracking
+├── object_mapper - $map - a library class to collect the backend object mappings
+├── system_object - $sys - a header object for the system data cache and execution time tracking
 ├── type_lists - helper class to combine all preloaded types in one class for the API
 ├── convert_wikipedia_table - convert a wikipedia table to a
-├── import - import data - take a object from a json, yaml or XML message and trigger the object saves
+├── import - $imp - import data - take a object from a json, yaml or XML message and trigger the object saves
 ├── import_convert_xbrl - convert an XBRL fileset to a zukunft.com import
 ├── import_file - IMPORT a json in the zukunft.com exchange format
 ├── change_table_field - helper class to create the database view with the log table and field name
@@ -67,7 +67,7 @@ the object structure is:
 ├── system_time_list - a list of system error objects
 ├── user_list - a list of users
 ├── value_db - the database const for value tables
-├── value_obj - just to select the best fitting class for a value
+├── value_obj - $val - just to select the best fitting class for a value
 ├── verb_db - the database const for predicate/verb tables
 ├── view_db - the database const for view tables
 ├── view_relation_db - the database const for view relation tables
@@ -94,13 +94,13 @@ the object structure is:
 ├── wordsShared - predefined words used in the backend and frontend as code id
 ├── CombineObjectShared
 │   ├── combine_object
-│   │   ├── figure - combine object for value and result
+│   │   ├── figure - $fig - combine object for value and result
 │   │   └── combine_named
 │   │       ├── phrase - $phr - either a word or a triple
 │   │       └── term - $trm - either a word, verb, triple or formula
 │   └── combine_objectUi
 │       └── combine_namedUi
-│           ├── figureUi - to create the html code to display a value or result
+│           ├── figureUi - $fig - to create the html code to display a value or result
 │           ├── phraseUi - $phr - to create the html code to display a word or triple
 │           └── termUi - $trm - to create the html code to display a word, triple, verb or formula
 ├── ConfigShared - const fallback configuration settings
@@ -168,7 +168,7 @@ the object structure is:
 │           │   ├── language_form - to define a language form e.g. plural
 │           │   ├── change_action - the change type done by a user
 │           │   ├── change_field - the field where a user has done a change including deprecated field names
-│           │   ├── change_table - the table where a user has done a change including deprecated table names
+│           │   ├── change_table - $tbl - the table where a user has done a change including deprecated table names
 │           │   ├── phrase_table_status - the status of a phrase table
 │           │   ├── phrase_type - the phrase type object for the frontend API
 │           │   ├── ref_type - the base object for links between a phrase and another system such as wikidata
@@ -177,7 +177,7 @@ the object structure is:
 │           │   ├── share_type - to define if an object can be shared between the users
 │           │   ├── job_status - predefined status of batch task as a database table e.g. so that admin can change the description
 │           │   ├── job_type - a predefined batch task that can be triggered by a user action or a scheduler
-│           │   ├── pod - the technical details of the mash network pods
+│           │   ├── pod - $pod - the technical details of the mash network pods
 │           │   ├── pod_status - the status of a pod
 │           │   ├── pod_type - to assign predefined code to a some pods
 │           │   ├── sys_log_function - to group the system log entries by function
@@ -195,8 +195,8 @@ the object structure is:
 │           ├── phrase_table - remember which phrases are stored in which table and pod
 │           ├── ip_range - a base object for a list of database IDs
 │           ├── job_time - to scheduled a job with predefined parameters
-│           ├── session - to control the user frontend sessions
-│           ├── sys_log - object to handle a system errors
+│           ├── session - $ses - to control the user frontend sessions
+│           ├── sys_log - $slg - object to handle a system errors
 │           ├── system_time - object to log and optimize the execution times of the system
 │           └── user_db - a person who uses zukunft.com
 ├── ListOfShared
@@ -228,7 +228,7 @@ the object structure is:
 │       │   │   │   └── sandbox_value_list
 │       │   │   │       ├── result_list - a list of formula results
 │       │   │   │       └── value_list
-│       │   │   │           └── config_numbers - additional behavior for the system and user config graph value tree
+│       │   │   │           └── config_numbers - $cfg - additional behavior for the system and user config graph value tree
 │       │   │   ├── ip_range_list - a list of internet protocol address ranges
 │       │   │   └── job_list - a list of calculation request
 │       │   └── sys_log_list - a list of system error objects
@@ -253,21 +253,21 @@ the object structure is:
 │       │           ├── ref_list - al list of ref objects
 │       │           ├── ref_type_list - to link coded functionality to a reference
 │       │           ├── source_type_list - to link coded functionality to a source
-│       │           ├── protection_type_list - a database based enum list for the data protection types
+│       │           ├── protection_type_list - $ptc_typ - a database based enum list for the data protection types
 │       │           ├── share_type_list - a database based enum list for the data share types
 │       │           ├── job_status_list - list of predefined system batch jobs
 │       │           ├── job_type_list - list of predefined system batch jobs
 │       │           ├── sys_log_function_list - to group the system log entries by function
 │       │           ├── sys_log_level_list - list of the system log types
 │       │           ├── sys_log_status_list - list of the system log statuum
-│       │           ├── user_profile_list - a list of possible user profiles with the database id
-│       │           ├── user_status_list - a list of possible user statuum with the database id
-│       │           ├── user_type_list - a list of possible user types with the database id
+│       │           ├── user_profile_list - $usr_pro_lst - a list of possible user profiles with the database id
+│       │           ├── user_status_list - $usr_sta_lst - a list of possible user statuum with the database id
+│       │           ├── user_type_list - $usr_typ_lst - a list of possible user types with the database id
 │       │           ├── verb_list - al list of verb objects
-│       │           ├── view_link_type_list - to defined how a term is linked to a view
+│       │           ├── view_link_type_list - $msk_lnk_typ_lst - to defined how a term is linked to a view
 │       │           ├── view_relation_type_list - to defined how a term is related to a view
 │       │           ├── view_sys_list - list of predefined system views
-│       │           └── view_type_list - to link coded functionality to a view
+│       │           └── view_type_list - $msk_typ_lst - to link coded functionality to a view
 │       └── ListBaseUi
 │           ├── element_groupUi - a group of formula elements that, in combination, return a value or a list of values
 │           ├── element_listUi - a list of formula elements to place the name function
@@ -344,10 +344,10 @@ the object structure is:
 │       ├── jobUi - $job - the extension of the batch task API objects to create job base html code
 │       └── userUi
 │           └── user_display_oldUi - to display the user-specific settings
-├── TranslatorShared - translates a message for the user into the user language
+├── TranslatorShared - $mtr - translates a message for the user into the user language
 ├── WorkflowShared - $wrk - defines which view to show next
 ├── json_fieldsShared - list of json field names used for the api and im- and export
-├── libraryShared - some useful function e.g. for string handling
+├── libraryShared - $lib - some useful function e.g. for string handling
 ├── api_type_listShared - a list of parameters to configure the api message
 ├── component_link_typesShared - db based ENUM of the component link types
 ├── component_typesShared - db based ENUM of the component types
@@ -376,28 +376,28 @@ the object structure is:
 │   └── ui_previewUi - the html user interface components to preview object changes
 ├── ui_foafUi - html user interface components to show related objects as a tree
 ├── ui_linkUi - html user interface components to link and unlink objects
-├── ui_logUi - html user interface components for change log
+├── ui_logUi - $log - html user interface components for change log
 ├── ui_rankUi - html user interface components for ranking objects
 ├── ui_selectUi - html interface components to select an object
 ├── position_listUi - a list of positions of a data object within a sheet
 ├── defUi - general frontend definitions
 ├── iconsUi - the css class strings of the icons used in the frontend
 ├── pathsUi - set the path const for the frontend php scripts
-├── frontendUi - the main html frontend application
+├── frontendUi - $ui - the main html frontend application
 ├── data_objectUi - frontend cache object
 ├── url_mapperUi - create human-readable or pod exchangeable urls
 ├── hist_logUi - display the past changes of an object
-├── buttonUi - create the html code to display a button to the user
+├── buttonUi - $btn - create the html code to display a button to the user
 ├── html_baseUi
 │   └── display_listUi - to display a list that can be sorted
 ├── html_namesUi - HTML language const used for the html zukunft.com frontend
-├── html_selectorUi - to select a word (or formula or verb)
+├── html_selectorUi - $sel - to select a word (or formula or verb)
 ├── list_sortUi - create the html code to display a sortable list
 ├── rest_callUi - functions used by the frontend to call the backend api of zukunft.com
 ├── scopesUi - scope constants used for html frontend
 ├── sheetUi - create the html code to display a spreadsheet
 ├── stylesUi - css class constants used for html frontend
-├── tableUi - create the html code to display a spreadsheet
+├── tableUi - $tbl - create the html code to display a spreadsheet
 ├── user_log_displayUi - a combined object to display single value changes or changes of links by the user
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
 ├── back_traceUi - list of links that the user has called in the past
@@ -422,11 +422,11 @@ the object structure is:
 │   ├── sys_log_status_listUi - the preloaded system log actions used for the html frontend
 │   ├── user_profileUi - the preloaded user profiles used for the html frontend
 │   ├── verbsUi - the preloaded data verbs used for the html frontend
-│   ├── view_link_type_listUi - the preloaded data of view link types used for the html frontend
+│   ├── view_link_type_listUi - $msk_lnk_typ_lst - the preloaded data of view link types used for the html frontend
 │   ├── view_relation_type_listUi - the preloaded data of view relation types used for the html frontend
 │   ├── view_style_listUi - the preloaded view styles used for the html frontend
-│   ├── view_type_listUi - the preloaded data view types used for the html frontend
-│   ├── user_type_listUi - the display extension of the user-specific api type list object
+│   ├── view_type_listUi - $msk_typ_lst - the preloaded data view types used for the html frontend
+│   ├── user_type_listUi - $usr_typ_lst - the display extension of the user-specific api type list object
 │   └── verb_listUi - al list of verb objects
 ├── type_listsUi - parent object for all preloaded types used in the html frontend
 └── type_objectUi

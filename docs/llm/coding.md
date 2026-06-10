@@ -73,6 +73,7 @@ detail file. Order is by how often they fire, not importance.
 ### Frontend (`web/`)
 - `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/frontend.md`
 - Any function returning/operating on a frontend object ends in `_ui` (`_dsp` is the display-class suffix only). → `docs/llm/frontend.md`
+- Frontend config values always come from the request cache `$ui_sys->cfg`; never `new config()` in `web/`. → `docs/llm/frontend.md`
 
 ### Unit-testability
 - No PHP superglobals inside functions (`$_GET/$_POST/$_SESSION/$_SERVER/...`); the allowed fixed globals are the only exception. → `docs/llm/state-and-messages.md`

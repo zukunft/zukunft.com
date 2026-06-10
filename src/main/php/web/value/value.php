@@ -49,7 +49,6 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::FIGURE . 'figure.php';
-include_once html_paths::HELPER . 'config.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -68,7 +67,6 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\group\group;
-use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
@@ -442,9 +440,9 @@ class value extends sandbox_value
      */
     function val_formatted(): string
     {
+        global $ui_sys;
+        $cfg = $ui_sys->cfg;
         $result = '';
-
-        $cfg = new config();
 
         if (!is_null($this->number())) {
             // load the list of phrases if needed
@@ -652,15 +650,15 @@ class value extends sandbox_value
         log_debug("value->dsp_hist for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->obj = $this;
-        $log_dsp->type = \Zukunft\ZukunftCom\main\php\cfg\value\value::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        //$result .= $log_dsp->dsp_hist_old();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->obj = $this;
+        $log_ui->type = \Zukunft\ZukunftCom\main\php\cfg\value\value::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        //$result .= $log_ui->dsp_hist_old();
 
         log_debug("done");
         return $result;
@@ -672,14 +670,14 @@ class value extends sandbox_value
         log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = value::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        //$result .= $log_dsp->dsp_hist_links();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->type = value::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        //$result .= $log_ui->dsp_hist_links();
 
         log_debug("done");
         return $result;
@@ -1050,9 +1048,9 @@ class value extends sandbox_value
         log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
-            $scr_dsp = new source($src->api_json());
+            $scr_ui = new source($src->api_json());
             // TODO Prio 0 add the source selector to the value mask
-            //$result .= $scr_dsp->dsp_select($script, $back);
+            //$result .= $scr_ui->dsp_select($script, $back);
             $result .= '<br><br>';
         }
 

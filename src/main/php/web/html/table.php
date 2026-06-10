@@ -5,6 +5,7 @@
     web/html/table.php - create the html code to display a spreadsheet
     ------------------
 
+    $tbl is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

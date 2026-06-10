@@ -92,9 +92,9 @@ if ($usr->id > 0) {
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();
-        $msk_dsp = new view_ui($msk->api_json());
+        $msk_ui = new view_ui($msk->api_json());
         $dto = new data_object();
-        $result .= $msk_dsp->dsp_navbar($dto, $back);
+        $result .= $msk_ui->dsp_navbar($dto, $back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
         $result .= err_dsp($err_id, $usr->id);
     }

@@ -55,18 +55,18 @@ class xml extends user_service
      * create a xml for export based on a given phrase list
      *
      * @param phrase_list $phr_lst the phrases that are used to select the export
-     * @param user|null $dsp_usr if the requesting user is privileged the view of the user that should be exported
-     * @return string the xml with the words, values, formulas, results and views from the $dsp_usr point of view
+     * @param user|null $usr_ui if the requesting user is privileged the view of the user that should be exported
+     * @return string the xml with the words, values, formulas, results and views from the $usr_ui point of view
      */
-    function export_by_phrase_list(phrase_list $phr_lst, ?user $dsp_usr = null): string
+    function export_by_phrase_list(phrase_list $phr_lst, ?user $usr_ui = null): string
     {
         log_debug();
         $result = '';
 
         // set the user sandbox that should be used for the data selection
         $usr = $this->get_user();
-        if ($dsp_usr != null) {
-            $usr = $dsp_usr;
+        if ($usr_ui != null) {
+            $usr = $usr_ui;
         }
 
         // get the export object

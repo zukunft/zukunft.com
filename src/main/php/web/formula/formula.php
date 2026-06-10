@@ -494,8 +494,8 @@ class formula extends sandbox_code_id
         ?back_trace $back = null
     ): string
     {
-        $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(formula::class, $this->id(), $size, $page, $call, $back);
+        $log_ui = new user_log_display();
+        return $log_ui->dsp_hist(formula::class, $this->id(), $size, $page, $call, $back);
     }
 
     // display the history of a formula
@@ -519,8 +519,8 @@ class formula extends sandbox_code_id
         log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = $this->dsp_hist_log($page, $size, $call, $back);
-        $result .= $log_dsp->dsp_hist_links();
+        $log_ui = $this->dsp_hist_log($page, $size, $call, $back);
+        $result .= $log_ui->dsp_hist_links();
 
         log_debug("done");
         return $result;

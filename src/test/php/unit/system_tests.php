@@ -455,19 +455,19 @@ class system_tests
         $t_sys = new test_sys_log($t);
         $log = $t_sys->sys_log();
         $api_msg = $log->api_json();
-        $log_dsp = new sys_log_ui($api_msg);
-        $created = $log_dsp->api_json();
+        $log_ui = new sys_log_ui($api_msg);
+        $created = $log_ui->api_json();
         $expected = file_get_contents(test_files::SYS_LOG);
         $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG . ')', $lib->trim_json($created), $lib->trim_json($expected));
 
         // html code for the system log entry for normal users
-        $created = $log_dsp->display();
+        $created = $log_ui->display();
         $expected = file_get_contents(test_files::SYS_LOG_HTML);
         $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG_HTML . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
         // ... and the same for admin users
-        $usr_sys_dsp = new user($usr_sys->api_json());
-        $created = $log_dsp->display_admin($usr_sys_dsp);
+        $usr_sys_ui = new user($usr_sys->api_json());
+        $created = $log_ui->display_admin($usr_sys_ui);
         $expected = file_get_contents(test_files::SYS_LOG_ADMIN);
         $t->assert('sys_log_dsp->get_json (file ' . test_files::SYS_LOG_ADMIN . ')', $lib->trim_html($created), $lib->trim_html($expected));
 
@@ -478,15 +478,15 @@ class system_tests
         $log_lst->add($log);
         $log_lst->add($log2);
 
-        $log_lst_dsp = new sys_log_list_ui($log_lst->api_json());
-        $usr1_dsp = new user($t->usr1->api_json());
-        $created = $log_lst_dsp->api_json([api_types::HEADER], $usr1_dsp);
+        $log_lst_ui = new sys_log_list_ui($log_lst->api_json());
+        $usr1_ui = new user($t->usr1->api_json());
+        $created = $log_lst_ui->api_json([api_types::HEADER], $usr1_ui);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_TEST);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json (file ' . test_files::SYS_LOG_LIST_TEST . ')', $lib->trim_json($created), $lib->trim_json($expected));
 
         $filepath = test_files::SYS_LOG_LIST_HTML;
-        $created = $log_lst_dsp->get_html($usr1_dsp);
+        $created = $log_lst_ui->get_html($usr1_ui);
         $expected = file_get_contents($filepath);
         $result = $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_HTML . ')', $lib->trim_html($created), $lib->trim_html($expected));
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
@@ -494,7 +494,7 @@ class system_tests
         }
 
         $filepath = test_files::SYS_LOG_LIST_PAGE;
-        $created = $log_lst_dsp->get_html_page($usr1_dsp);
+        $created = $log_lst_ui->get_html_page($usr1_ui);
         $expected = file_get_contents($filepath);
         $result = $t->assert('sys_log_list_dsp->display (file ' . test_files::SYS_LOG_LIST_PAGE . ')', $lib->trim_html($created), $lib->trim_html($expected));
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {

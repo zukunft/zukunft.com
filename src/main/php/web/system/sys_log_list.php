@@ -231,12 +231,12 @@ class sys_log_list
         if (count($this->lst) > 0) {
             // prepare to show a system log entry
             $row_nbr = 0;
-            foreach ($this->lst as $log_dsp) {
+            foreach ($this->lst as $log_ui) {
                 $row_nbr++;
                 if ($row_nbr == 1) {
                     $rows .= $this->headline_html();
                 }
-                $rows .= $log_dsp->get_html($usr, $back);
+                $rows .= $log_ui->get_html($usr, $back);
             }
             $result = $html->tbl($rows);
         }

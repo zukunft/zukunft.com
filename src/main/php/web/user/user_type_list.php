@@ -5,6 +5,8 @@
     web/user/user_type_list.php - the display extension of the user-specific api type list object
     ---------------------------
 
+    $usr_typ_lst is the suggested var name
+
     to create the HTML code to display a list of object types
 
 

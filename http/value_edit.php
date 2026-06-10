@@ -138,9 +138,9 @@ if ($usr->id() > 0) {
         // if nothing yet done display the edit view (and any message on the top)
         if ($result == '') {
             // show the value and the linked words to edit the value (again after removing or adding a word)
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($usr_msg->all_message_text());
 
             $result .= $val->dsp_edit($type_ids, $back);

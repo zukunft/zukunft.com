@@ -60,6 +60,20 @@ class result_ui_tests
         $test_page .= 'with link: ' . $res->display_linked() . '<br>';
         $test_page .= $t->dsp_title_named_edit($res);
         $t->html_page_test($test_page, 'result', 'result', $t);
+
+        $t->subheader($ts . 'format');
+
+        $test_name = 'big numbers use the user config thousand separator';
+        $t->assert($test_name, $res->val_formatted(), "123'456");
+
+        $test_name = 'percent values use the user config percent decimals';
+        $api_json = $t_res->result_pct()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
+        $res = new result($api_json);
+        $t->assert($test_name, $res->val_formatted(), '1.23%');
+
+        $test_name = 'a missing number returns an empty text';
+        $res = new result();
+        $t->assert($test_name, $res->val_formatted(), '');
     }
 
 }

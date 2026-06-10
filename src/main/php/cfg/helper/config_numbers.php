@@ -5,6 +5,7 @@
     model/helper/config_numbers.php - additional behavior for the system and user config graph value tree
     -----------------------------
 
+    $cfg is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

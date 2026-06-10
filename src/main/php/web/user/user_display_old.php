@@ -113,8 +113,8 @@ class user_display_old extends user
         //$err_lst->dsp_type = $dsp_type;
         //$err_lst->back = $back;
         if ($err_lst->load()) {
-            $err_lst_dsp = new sys_log_list($err_lst->api_json());
-            $result = $err_lst_dsp->get_html();
+            $err_lst_ui = new sys_log_list($err_lst->api_json());
+            $result = $err_lst_ui->get_html();
         }
 
         log_debug('done');
@@ -459,16 +459,16 @@ class user_display_old extends user
                 } else {
 
                     // prepare the row formula_links
-                    $frm_dsp = new formula($frm_usr->formula()->api_json());
-                    $sandbox_item_name = $frm_dsp->name_linked($back);
+                    $frm_ui = new formula($frm_usr->formula()->api_json());
+                    $sandbox_item_name = $frm_ui->name_linked($back);
                     //$sandbox_item_name = $frm_usr->name_linked($back);
 
                     // format the user formula_link
                     if ($frm_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $phr_dsp = new phrase($frm_usr->phrase()->api_json());
-                        $sandbox_usr_txt = $phr_dsp->name_linked();
+                        $phr_ui = new phrase($frm_usr->phrase()->api_json());
+                        $sandbox_usr_txt = $phr_ui->name_linked();
                         //$sandbox_usr_txt = $frm_usr->link_name;
                     }
 
@@ -476,8 +476,8 @@ class user_display_old extends user
                     if ($frm_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $phr_dsp = new phrase($frm_usr->phrase()->api_json());
-                        $sandbox_std_txt = $phr_dsp->name_linked();
+                        $phr_ui = new phrase($frm_usr->phrase()->api_json());
+                        $sandbox_std_txt = $phr_ui->name_linked();
                         //$sandbox_std_txt = $frm_std->link_name;
                     }
 
@@ -508,8 +508,8 @@ class user_display_old extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $to_dsp = new phrase($frm_lnk_other->tob()->api_json());
-                        $sandbox_other .= $to_dsp->name_linked();
+                        $to_ui = new phrase($frm_lnk_other->tob()->api_json());
+                        $sandbox_other .= $to_ui->name_linked();
                     }
                     $sandbox_other = $html->ref('/http/user_formula_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
@@ -632,8 +632,8 @@ class user_display_old extends user
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (!$val_usr->grp->phrase_list()->is_empty()) {
-                        $phr_lst_dsp = new phrase_list($val_usr->grp->phrase_list()->api_json());
-                        $sandbox_item_name = $phr_lst_dsp->name_linked();
+                        $phr_lst_ui = new phrase_list($val_usr->grp->phrase_list()->api_json());
+                        $sandbox_item_name = $phr_lst_ui->name_linked();
                     }
 
                     // format the user value
@@ -775,19 +775,19 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the view objects with the minimal parameter needed
-                $dsp_usr = new view_ui($this);
-                $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->set_name($sbx_row['usr_name']);
-                $dsp_usr->description = $sbx_row['usr_description'];
-                $dsp_usr->set_type_id($sbx_row['usr_type']);
-                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
-                $dsp_usr->set_user($this);
+                $usr_ui = new view_ui($this);
+                $usr_ui->set_id($sbx_row['id']);
+                $usr_ui->set_name($sbx_row['usr_name']);
+                $usr_ui->description = $sbx_row['usr_description'];
+                $usr_ui->set_type_id($sbx_row['usr_type']);
+                $usr_ui->set_excluded($sbx_row['usr_excluded']);
+                $usr_ui->set_user($this);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->load_by_id($sbx_row['owner_id']);
 
-                $dsp_std = clone $dsp_usr;
+                $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->description = $sbx_row['std_description'];
@@ -795,20 +795,20 @@ class user_display_old extends user
                 $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->set_name($dsp_std->name())
-                    and $dsp_usr->description == $dsp_std->description
-                    and $dsp_usr->type_id() == $dsp_std->type_id()
-                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
-                    $dsp_usr->del_usr_cfg();
+                if ($usr_ui->set_name($dsp_std->name())
+                    and $usr_ui->description == $dsp_std->description
+                    and $usr_ui->type_id() == $dsp_std->type_id()
+                    and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
+                    $usr_ui->del_usr_cfg();
                 } else {
 
                     // format the user view
-                    if ($dsp_usr->is_excluded()) {
+                    if ($usr_ui->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->name();
+                        $sandbox_usr_txt = $usr_ui->name();
                     }
-                    $sandbox_usr_txt = $html->ref('/http/view_edit.php?id=' . $dsp_usr->id() . '&back=' . $back, $sandbox_usr_txt);
+                    $sandbox_usr_txt = $html->ref('/http/view_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard view
                     if ($dsp_std->is_excluded()) {
@@ -838,7 +838,7 @@ class user_display_old extends user
                         $usr_other->load_by_id($dsp_other_row[user_db::FLD_ID]);
 
                         // to review: load all user views with one query
-                        $dsp_other = clone $dsp_usr;
+                        $dsp_other = clone $usr_ui;
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row[view_db::FLD_NAME]);
                         $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
@@ -942,18 +942,18 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the component object with the minimal parameter needed
-                $dsp_usr = new component($this);
-                $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->set_name($sbx_row['usr_name']);
-                $dsp_usr->description = $sbx_row['usr_comment'];
-                $dsp_usr->type_id = $sbx_row['usr_type'];
-                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
+                $usr_ui = new component($this);
+                $usr_ui->set_id($sbx_row['id']);
+                $usr_ui->set_name($sbx_row['usr_name']);
+                $usr_ui->description = $sbx_row['usr_comment'];
+                $usr_ui->type_id = $sbx_row['usr_type'];
+                $usr_ui->set_excluded($sbx_row['usr_excluded']);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->load_by_id($sbx_row['owner_id']);
 
-                $dsp_std = clone $dsp_usr;
+                $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->description = $sbx_row['std_comment'];
@@ -961,20 +961,20 @@ class user_display_old extends user
                 $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->name() == $dsp_std->name()
-                    and $dsp_usr->description == $dsp_std->description
-                    and $dsp_usr->type_id == $dsp_std->type_id
-                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
-                    $dsp_usr->del_usr_cfg();
+                if ($usr_ui->name() == $dsp_std->name()
+                    and $usr_ui->description == $dsp_std->description
+                    and $usr_ui->type_id == $dsp_std->type_id
+                    and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
+                    $usr_ui->del_usr_cfg();
                 } else {
 
                     // format the user component
-                    if ($dsp_usr->is_excluded()) {
+                    if ($usr_ui->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->name();
+                        $sandbox_usr_txt = $usr_ui->name();
                     }
-                    $sandbox_usr_txt = $html->ref('/http/component_edit.php?id=' . $dsp_usr->id() . '&back=' . $back, $sandbox_usr_txt);
+                    $sandbox_usr_txt = $html->ref('/http/component_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard component
                     if ($dsp_std->is_excluded()) {
@@ -1004,7 +1004,7 @@ class user_display_old extends user
                         $usr_other->load_by_id($cmp_other_row[user_db::FLD_ID]);
 
                         // to review: load all user components with one query
-                        $cmp_other = clone $dsp_usr;
+                        $cmp_other = clone $usr_ui;
                         $cmp_other->set_user($usr_other);
                         $cmp_other->set_name($cmp_other_row[component::FLD_NAME]);
                         $cmp_other->description = $cmp_other_row[sql_db::FLD_DESCRIPTION];
@@ -1111,40 +1111,40 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the component_link objects with the minimal parameter needed
-                $dsp_usr = new component_link($this);
-                $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->view()->set_id($sbx_row[view_db::FLD_ID]);
-                $dsp_usr->get_component()->set_id($sbx_row[component::FLD_ID]);
-                $dsp_usr->order_nbr = $sbx_row['usr_order'];
-                $dsp_usr->position_type = $sbx_row['usr_type'];
-                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
-                $dsp_usr->load_objects();
+                $usr_ui = new component_link($this);
+                $usr_ui->set_id($sbx_row['id']);
+                $usr_ui->view()->set_id($sbx_row[view_db::FLD_ID]);
+                $usr_ui->get_component()->set_id($sbx_row[component::FLD_ID]);
+                $usr_ui->order_nbr = $sbx_row['usr_order'];
+                $usr_ui->position_type = $sbx_row['usr_type'];
+                $usr_ui->set_excluded($sbx_row['usr_excluded']);
+                $usr_ui->load_objects();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->load_by_id($sbx_row['owner_id']);
 
-                $dsp_std = clone $dsp_usr;
+                $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->order_nbr = $sbx_row['std_order'];
                 $dsp_std->position_type = $sbx_row['std_type'];
                 $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->order_nbr == $dsp_std->order_nbr
-                    and $dsp_usr->position_type == $dsp_std->position_type
-                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
-                    $dsp_usr->del_usr_cfg();
+                if ($usr_ui->order_nbr == $dsp_std->order_nbr
+                    and $usr_ui->position_type == $dsp_std->position_type
+                    and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
+                    $usr_ui->del_usr_cfg();
                 } else {
 
                     // prepare the row component_links
-                    $sandbox_item_name = $dsp_usr->name_linked($back);
+                    $sandbox_item_name = $usr_ui->name_linked($back);
 
                     // format the user component_link
-                    if ($dsp_usr->is_excluded()) {
+                    if ($usr_ui->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->order_nbr;
+                        $sandbox_usr_txt = $usr_ui->order_nbr;
                     }
 
                     // format the standard component_link
@@ -1169,20 +1169,20 @@ class user_display_old extends user
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
                     $sbx_lst_other = $db_con->get_old($sql_other);
-                    foreach ($sbx_lst_other as $dsp_lnk_other_row) {
+                    foreach ($sbx_lst_other as $lnk_other_row_ui) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($dsp_lnk_other_row[user_db::FLD_ID]);
+                        $usr_other->load_by_id($lnk_other_row_ui[user_db::FLD_ID]);
 
                         // to review: load all user component_links with one query
-                        $dsp_lnk_other = clone $dsp_usr;
-                        $dsp_lnk_other->set_user($usr_other);
-                        $dsp_lnk_other->order_nbr = $dsp_lnk_other_row['order_nbr'];
-                        $dsp_lnk_other->position_type = $dsp_lnk_other_row['position_type'];
-                        $dsp_lnk_other->set_excluded($dsp_lnk_other_row[sql_db::FLD_EXCLUDED]);
+                        $lnk_other_ui = clone $usr_ui;
+                        $lnk_other_ui->set_user($usr_other);
+                        $lnk_other_ui->order_nbr = $lnk_other_row_ui['order_nbr'];
+                        $lnk_other_ui->position_type = $lnk_other_row_ui['position_type'];
+                        $lnk_other_ui->set_excluded($lnk_other_row_ui[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $dsp_lnk_other->name();
+                        $sandbox_other .= $lnk_other_ui->name();
                     }
                     $sandbox_other = $html->ref('/http/user_component_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
@@ -1287,19 +1287,19 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the source objects with the minimal parameter needed
-                $dsp_usr = new source($usr);
-                $dsp_usr->id = $sbx_row['id'];
-                $dsp_usr->set_name($sbx_row['usr_name']);
-                $dsp_usr->url = $sbx_row['usr_url'];
-                $dsp_usr->description = $sbx_row['usr_comment'];
-                $dsp_usr->type_id = $sbx_row['usr_type'];
-                $dsp_usr->excluded = $sbx_row['usr_excluded'];
+                $usr_ui = new source($usr);
+                $usr_ui->id = $sbx_row['id'];
+                $usr_ui->set_name($sbx_row['usr_name']);
+                $usr_ui->url = $sbx_row['usr_url'];
+                $usr_ui->description = $sbx_row['usr_comment'];
+                $usr_ui->type_id = $sbx_row['usr_type'];
+                $usr_ui->excluded = $sbx_row['usr_excluded'];
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->load_by_id($sbx_row['owner_id']);
 
-                $dsp_std = clone $dsp_usr;
+                $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->url = $sbx_row['std_url'];
@@ -1308,23 +1308,23 @@ class user_display_old extends user
                 $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->name() == $dsp_std->name()
-                    and $dsp_usr->url == $dsp_std->url
-                    and $dsp_usr->description == $dsp_std->description
-                    and $dsp_usr->type_id == $dsp_std->type_id
-                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
+                if ($usr_ui->name() == $dsp_std->name()
+                    and $usr_ui->url == $dsp_std->url
+                    and $usr_ui->description == $dsp_std->description
+                    and $usr_ui->type_id == $dsp_std->type_id
+                    and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
                     // TODO: add user config also to source?
-                    //$dsp_usr->del_usr_cfg();
-                    $dsp_usr->del($usr_msg);
+                    //$usr_ui->del_usr_cfg();
+                    $usr_ui->del($usr_msg);
                 } else {
 
                     // format the user source
-                    if ($dsp_usr->is_excluded()) {
+                    if ($usr_ui->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->name();
+                        $sandbox_usr_txt = $usr_ui->name();
                     }
-                    $sandbox_usr_txt = $html->ref('/http/source_edit.php?id=' . $dsp_usr->id() . '&back=' . $back, $sandbox_usr_txt);
+                    $sandbox_usr_txt = $html->ref('/http/source_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard source
                     if ($dsp_std->is_excluded()) {
@@ -1355,7 +1355,7 @@ class user_display_old extends user
                         $usr_other->load_by_id($dsp_other_row[user_db::FLD_ID]);
 
                         // to review: load all user sources with one query
-                        $dsp_other = clone $dsp_usr;
+                        $dsp_other = clone $usr_ui;
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row['source_name']);
                         $dsp_other->url = $dsp_other_row[source_db::FLD_URL];

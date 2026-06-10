@@ -95,11 +95,11 @@ if ($usr->id > 0) {
         // ---------------------------------------
 
         $html = new html_base();
-        $msk_dsp = new view_ui($msk->api_json());
+        $msk_ui = new view_ui($msk->api_json());
         // the word id from which this value change has been called (maybe later any page)
         $lib = new library();
         $back = $lib->filter_var($_GET[url_var::BACK]);
-        $html->echo($msk_dsp->dsp_navbar($dto, $back));
+        $html->echo($msk_ui->dsp_navbar($dto, $back));
 
         $html->echo("loading of base configuration started<br>");
 

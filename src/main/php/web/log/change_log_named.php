@@ -39,7 +39,6 @@ include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::LOG . 'change_log.php';
-//include_once html_paths::HELPER . 'config.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -50,7 +49,6 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
-use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
@@ -123,6 +121,7 @@ class change_log_named extends change_log
      */
     function tr(back_trace $back, bool $condensed = false, bool $user_changes = false): string
     {
+        global $ui_sys;
         $html = new html_base();
 
         $html_text = '';
@@ -179,8 +178,7 @@ class change_log_named extends change_log
         }
         */
 
-        $usr_cfg = new config();
-        $time_text = date_format($this->change_time, $usr_cfg->date_time_format());
+        $time_text = date_format($this->change_time, $ui_sys->cfg->date_time_format());
         if (!$user_changes) {
             $time_text .= ' by ' . $this->usr->name;
         }
@@ -291,12 +289,12 @@ class change_log_named extends change_log
      */
     public function dsp(bool $ex_time = false): string
     {
+        global $ui_sys;
         global $mtr;
         $result = '';
-        $usr_cfg = new config();
 
         if (!$ex_time) {
-            $result .= date_format($this->change_time, $usr_cfg->date_time_format()) . ' ';
+            $result .= date_format($this->change_time, $ui_sys->cfg->date_time_format()) . ' ';
         }
         if ($this->usr != null) {
             if ($this->usr->name() <> '') {

@@ -5,6 +5,7 @@
     shared/helper/Message.php - a base message object to collect exception messages
     -------------------------
 
+    $msg is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

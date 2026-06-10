@@ -5,6 +5,8 @@
     web/html/button.php - create the html code to display a button to the user
     ------------------
 
+    $btn is the suggested var name
+
     mainly used to have a common user interface
 
 

@@ -5,6 +5,8 @@
     model/import/import.php - import data - take a object from a json, yaml or XML message and trigger the object saves
     -----------------------
 
+    $imp is the suggested var name
+
     if the user is an admin the import can force to set the standard
 
     TODO

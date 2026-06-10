@@ -118,8 +118,8 @@ class formula_trigger_tests
         if ($res_lst != null) {
             if (count($res_lst) > 0) {
                 $res = $res_lst[0];
-                $res_dsp = new result($res->api_json([api_types::INCL_PHRASES]));
-                $result = trim($res_dsp->val_formatted());
+                $res_ui = new result($res->api_json([api_types::INCL_PHRASES]));
+                $result = trim($res_ui->val_formatted());
             } else {
                 $result = '';
             }

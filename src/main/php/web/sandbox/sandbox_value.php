@@ -313,17 +313,17 @@ class sandbox_value extends sandbox
     function val_formatted(): string
     {
         global $ui_sys;
-        $usr = $ui_sys->usr;
+        $cfg = $ui_sys->cfg;
         $result = '';
 
         // TODO check that the phrases are set
 
         if (!$this->is_null()) {
             if ($this->is_percent()) {
-                $result = round($this->number() * 100, $usr->percent_decimals) . "%";
+                $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
             } else {
                 if ($this->number() >= 1000 or $this->number() <= -1000) {
-                    $result .= number_format($this->number(), 0, $usr->dec_point, $usr->thousand_sep);
+                    $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
                 } else {
                     $result = round($this->number(), 2);
                 }

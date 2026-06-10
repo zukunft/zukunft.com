@@ -67,15 +67,15 @@ class start_ui_tests
         $imp = new import();
         $dto = $imp->get_data_object($json_array, $t->usr1);
         */
-        $dto_dsp = new data_object();
-        $dto_dsp->set_offline();
-        $dto_dsp->add_phrases($t_phr->phrase_list_start_view_ui());
+        $dto_ui = new data_object();
+        $dto_ui->set_offline();
+        $dto_ui->add_phrases($t_phr->phrase_list_start_view_ui());
 
         $msk = new list_sort();
         $phr = $t_trp->global_problem()->phrase();
-        $phr_dsp = new phrase($phr->api_json());
+        $phr_ui = new phrase($phr->api_json());
         $test_page = $html->text_h2('start page display test');
-        $test_page .= $msk->list_sort($phr_dsp, $dto_dsp);
+        $test_page .= $msk->list_sort($phr_ui, $dto_ui);
         $t->html_page_test($test_page, 'start page', 'start_page', $t);
     }
 

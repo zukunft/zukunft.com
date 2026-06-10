@@ -66,10 +66,10 @@ class triple_list_ui_tests
         $lst = new triple_list();
         $phr_city = $t_trp->zh_city();
         $phr_canton = $t_trp->zh_canton();
-        $phr_city_dsp = new triple($phr_city->api_json());
-        $phr_canton_dsp = new triple($phr_canton->api_json());
-        $lst->add($phr_city_dsp);
-        $lst->add($phr_canton_dsp);
+        $phr_city_ui = new triple($phr_city->api_json());
+        $phr_canton_ui = new triple($phr_canton->api_json());
+        $lst->add($phr_city_ui);
+        $lst->add($phr_canton_ui);
 
         // test the triple list display functions
         $form = 'formula_list_ui_test';

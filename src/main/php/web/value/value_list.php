@@ -950,8 +950,8 @@ class value_list extends ListBase
         if ($common_phr_lst->is_valid()) {
             if (!empty($common_phr_lst->lst())) {
                 $common_phr_lst->add($this->phr);
-                $phr_lst_dsp = new phrase_list($common_phr_lst->api_json());
-                $result .= $phr_lst_dsp->btn_add_value($back);
+                $phr_lst_ui = new phrase_list($common_phr_lst->api_json());
+                $result .= $phr_lst_ui->btn_add_value($back);
             }
         }
 

@@ -5,6 +5,8 @@
     web/html/html_selector.php - to select a word (or formula or verb)
     --------------------------
 
+    $sel is the suggested var name
+
     this should be as easy as possible that's why it got its own class
 
     This file is part of zukunft.com - calc with words

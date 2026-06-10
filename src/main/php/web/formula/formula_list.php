@@ -191,25 +191,25 @@ class formula_list extends ListBase
                     // formatting should be moved
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($back));
-                    $frm_dsp = $frm->dsp_obj_old();
+                    $frm_ui = $frm->dsp_obj_old();
                     $frm_html = new formula($frm->api_json());
                     $result = '';
                     if ($frm->name_wrd != null) {
-                        $result = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $back);
+                        $result = $frm_ui->dsp_result($frm->name_wrd->phrase(), $back);
                     }
                     // if the result is empty use the id to be able to select the formula
                     if ($result == '') {
-                        $result .= $frm_dsp->id();
+                        $result .= $frm_ui->id();
                     } else {
                         $result .= ' value ' . $result;
                     }
                     $result .= ' ' . $frm_html->edit_link($back);
                     if ($type == 'short') {
-                        $result .= ' ' . $frm_dsp->btn_del($back);
+                        $result .= ' ' . $frm_ui->btn_del($back);
                         $result .= ', ';
                     } else {
-                        $result .= ' (' . $frm_dsp->dsp_text($back) . ')';
-                        $result .= ' ' . $frm_dsp->btn_del($back);
+                        $result .= ' (' . $frm_ui->dsp_text($back) . ')';
+                        $result .= ' ' . $frm_ui->btn_del($back);
                         $result .= ' <br> ';
                     }
                 }

@@ -343,8 +343,8 @@ class formula_write_tests
         // ... in HTML format
         // TODO test without preloaded term list
         $trm_lst = $t_trm->term_list_increase();
-        $trm_lst_dsp = new term_list_ui($trm_lst->api_json());
-        $result = $frm_html->dsp_text($back, $trm_lst_dsp);
+        $trm_lst_ui = new term_list_ui($trm_lst->api_json());
+        $result = $frm_html->dsp_text($back, $trm_lst_ui);
         $target = '"' . words::PERCENT
             . '" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0">' . words::THIS_NAME . '</a>'
             . ' - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0">' . words::PRIOR_NAME . '</a> )'
@@ -362,7 +362,7 @@ class formula_write_tests
         $wrd = new word($t->usr1);
         $wrd->load_by_name(words::CH);
         /*
-        $result = trim($frm_dsp->dsp_result($wrd, $back));
+        $result = trim($frm_ui->dsp_result($wrd, $back));
         $target = '0.79 %';
         $t->assert('formula->dsp_result for ' . $frm->dsp_id() . ' and ' . $wrd->name(), $result, $target);
         */

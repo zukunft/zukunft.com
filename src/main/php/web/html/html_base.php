@@ -1056,7 +1056,7 @@ class html_base
     {
         global $mtr;
         $result = '';
-        $but = new button();
+        $btn = new button();
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
                 $result .= '<' . self::BUTTON . ' ' . self::TYPE . '="submit" ' . self::CLASS_HTML . '="btn btn-outline-success btn-space">' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '</' . self::BUTTON . '>';
@@ -1081,10 +1081,10 @@ class html_base
                     '" ' . self::VALUE . '="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= $but->back($back);
+                $result .= $btn->back($back);
             }
             if ($del_call <> "") {
-                $result .= $but->del(msg_id::DEL, $del_call);
+                $result .= $btn->del(msg_id::DEL, $del_call);
             }
         }
         $result .= '</' . self::FORM . '>';
@@ -1203,7 +1203,7 @@ class html_base
         string $back = ''): string
     {
         global $mtr;
-        $but = new button();
+        $btn = new button();
         $result = '';
 
         $row_nbr = 0;
@@ -1499,7 +1499,7 @@ class html_base
     function dsp_form_end($submit_name, $back, $del_call = ''): string
     {
         global $mtr;
-        $but = new button();
+        $btn = new button();
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
@@ -1525,10 +1525,10 @@ class html_base
                     '" ' . self::VALUE . '="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= $but->back($back);
+                $result .= $btn->back($back);
             }
             if ($del_call <> "") {
-                $result .= $but->del(msg_id::DEL, $del_call);
+                $result .= $btn->del(msg_id::DEL, $del_call);
             }
         }
         $result .= '</' . self::FORM . '>';

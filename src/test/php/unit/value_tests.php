@@ -268,8 +268,8 @@ class value_tests
         $t->assert_api_to_ui($val, new value_ui());
 
         // TODO move to ui tests
-        $val_dsp = new value_ui($val->api_json([api_types::INCL_PHRASES]));
-        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=value_edit&id=32770">3.14</a>');
+        $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
+        $t->assert('value edit link', $val_ui->value_edit(), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=value_edit&id=32770">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
 
