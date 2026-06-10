@@ -58,7 +58,6 @@ include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'styles.php';
-//include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::LOG . 'change_log_named.php';
 //include_once html_paths::LOG . 'user_log_display.php';
@@ -87,7 +86,6 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
-use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -788,8 +786,8 @@ class word extends sandbox_code_id
      */
     function dsp_edit(string $back = ''): string
     {
-        $cfg = new config();
-        $row_limit = $cfg->get_by([words::ROW, words::LIMIT], def::FALLBACK_DB_PAGE_ROWS);
+        global $ui_sys;
+        $row_limit = $ui_sys->cfg->get_by([words::ROW, words::LIMIT], def::FALLBACK_DB_PAGE_ROWS);
         $html = new html_base();
         $phr_lst_up = $this->parents();
         $phr_lst_down = $this->children();

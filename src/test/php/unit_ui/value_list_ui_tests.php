@@ -33,9 +33,13 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -94,6 +98,15 @@ class value_list_ui_tests
         $table_html = $lst_zh_ui->table($phr_lst_context_ui);
         $test_page .= 'as table with context: ' . $header_html . $table_html . '<br>';
         $t->html_page_test($test_page, 'value_list', 'value_list', $t);
+
+        $t->subheader($ts . 'user config');
+
+        $cfg = new config($t_val->value_list_all()->api_json([api_types::INCL_PHRASES]));
+        $test_name = 'a loaded config value is returned by the phrase names';
+        // get_by returns the display value, so the number is rounded for the user
+        $t->assert($test_name, $cfg->get_by([words::PI_SYMBOL]), round(values::PI_LONG, 2));
+        $test_name = 'a missing config value returns the given default';
+        $t->assert($test_name, $cfg->get_by([words::POD], 7), 7);
 
         // TODO add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"

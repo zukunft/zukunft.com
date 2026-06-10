@@ -43,6 +43,7 @@ include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
+include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user.php';
@@ -95,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
+use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
@@ -238,6 +240,8 @@ class test_lib
         $dto_ui->frm_lst = $t_frm->formula_list_ui();
         $dto_ui->frm_lnk_lst = $t_frm->formula_link_list_ui();
         $dto_ui->chg_log = $t_log->log_list_named_ui();
+        // an empty config so that the getters return the shared defaults
+        $dto_ui->cfg = new config_ui();
 
         // set the global cache var
         $ui_sys = $dto_ui;

@@ -58,3 +58,20 @@ When a backend and frontend factory of the same fixture both exist, pair them as
 `word_swiss_franc()` / `swiss_franc_ui()`. Older `*_dsp` helpers (`word_dsp()`,
 `word_chf_dsp()`, `word_zh_dsp()`) predate this rule and should be renamed to the
 `_ui` ending when next touched.
+
+## Config values come from `$ui_sys->cfg`
+
+Frontend code reads user config values (formatting, list limits, ...) only from
+the request cache `$ui_sys->cfg`, never via `new config()`:
+
+```php
+global $ui_sys;
+$limit = $ui_sys->cfg->get_by([words::ROW, words::LIMIT], def::FALLBACK_DB_PAGE_ROWS);
+```
+
+`http/view.php` creates and loads the cache once at request start;
+`test_lib::ui_test_cache()` sets an empty one for unit tests, so the getters
+return the shared defaults. A `config` constructed anywhere else is an *empty*
+value list: `get_by()` silently returns the fallback instead of the user setting,
+and the per-request load from the backend is bypassed. The rule is enforced by
+`coding_rule_tests::php_web_config_from_cache_tests`.

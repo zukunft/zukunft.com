@@ -39,7 +39,6 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::GROUP . 'group.php';
-//include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
@@ -71,7 +70,6 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\group\group;
-use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
@@ -785,9 +783,8 @@ class phrase_list extends sandbox_list_named
     {
         $phr = null;
         if ($this->count() > 1) {
-            $cfg = new config();
             // TODO get from frontend config
-            // $is_dominant_pct = $cfg->get(config::MIN_PCT_OF_PHRASES_TO_PRESELECT, $db_con);
+            // $is_dominant_pct = $ui_sys->cfg->get(config::MIN_PCT_OF_PHRASES_TO_PRESELECT, $db_con);
             $is_dominant_pct = 0.3;
             $count_lst = array_count_values($this->id_lst());
             sort($count_lst);

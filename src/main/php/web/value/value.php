@@ -49,7 +49,6 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::FIGURE . 'figure.php';
-include_once html_paths::HELPER . 'config.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -68,7 +67,6 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\group\group;
-use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
@@ -442,9 +440,9 @@ class value extends sandbox_value
      */
     function val_formatted(): string
     {
+        global $ui_sys;
+        $cfg = $ui_sys->cfg;
         $result = '';
-
-        $cfg = new config();
 
         if (!is_null($this->number())) {
             // load the list of phrases if needed

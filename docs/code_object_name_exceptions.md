@@ -87,7 +87,7 @@ component_link_type: $cmp_lnk_typ, $lnk_typ_ui
 component_list: $add_lst, $cmp_lst, $db_lst, $db_lst_all, $lst, $phr_lst, $wrd_lst
 component_type: $cmp_typ
 component_type_list: $cmp_lst
-config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg, $usr_cfg
+config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg
 controller: $ctrl
 data_object: $cac, $cfg, $dto, $dto_base_ui, $dto_ui
 db_cache: $cac, $db_cache
