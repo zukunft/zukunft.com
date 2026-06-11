@@ -1975,17 +1975,13 @@ class phrase_list extends sandbox_list_named
      */
     function scaling_lst(): phrase_list
     {
-        global $sys;
-
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
         $lib = new library();
 
         $result = new phrase_list($this->get_user());
-        $scale_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
-        $scale_hidden_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING_HIDDEN);
-        // loop over the phrase ids and add only the time ids to the result array
+        // loop over the phrases and add only the scaling phrases to the result list
         foreach ($this->lst() as $phr) {
-            if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {
+            if ($phr->is_scaling()) {
                 $result->add($phr);
                 log_debug('found (' . $phr->name() . ')');
             } else {

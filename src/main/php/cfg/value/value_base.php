@@ -149,7 +149,6 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
-include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -216,7 +215,6 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use DateTime;
 use Exception;
 
@@ -1336,7 +1334,6 @@ class value_base extends sandbox_value
         log_debug('value->scale ' . $this->get_value());
         // fallback value
         $result = $this->get_value();
-        $usr_msg = new user_message();
 
         $lib = new library();
 
@@ -1373,34 +1370,41 @@ class value_base extends sandbox_value
                                 $formula_text = $frm->ref_text;
                                 log_debug('scaling formula "' . $frm->name() . '" (' . $frm->id() . '): ' . $formula_text);
                                 if ($formula_text <> "") {
-                                    $l_part = $lib->str_left_of($formula_text, chars::CHAR_CALC);
                                     $r_part = $lib->str_right_of($formula_text, chars::CHAR_CALC);
                                     $exp = new expression($frm);
                                     $exp->set_ref_text($frm->ref_text);
                                     $res_phr_lst = $exp->load_result_phrases();
-                                    $phr_lst = $frm->load_phrases($usr_msg);
                                     if (!$res_phr_lst->is_empty()) {
-                                        $res_wrd_lst = $res_phr_lst->wrd_lst_all();
-                                        $wrd_lst = $phr_lst->wrd_lst_all();
-                                        if (count($res_wrd_lst->lst()) == 1 and count($wrd_lst->lst()) == 1) {
-                                            $res_wrd = $res_wrd_lst->lst()[0];
-                                            $r_wrd = $wrd_lst->lst()[0];
-
-                                            // test if it is a valid scale formula
-                                            if ($res_wrd->is_type(phrase_type_shared::SCALING_HIDDEN)
-                                                and $r_wrd->is_type(phrase_type_shared::SCALING)) {
-                                                $wrd_symbol = chars::WORD_START . $r_wrd->id() . chars::WORD_END;
-                                                log_debug('replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->get_value() . ')');
-                                                $r_part = str_replace($wrd_symbol, $this->get_value(), $r_part);
-                                                log_debug('replace done (' . $r_part . ')');
-                                                // TODO separate time from value words
-                                                $calc = new calc_internal();
-                                                $result = $calc->parse($r_part);
-                                            } else {
-                                                log_err('Formula "' . $formula_text . '" seems to be not a valid scaling formula, because the words are not defined as scaling words.', 'scale');
-                                            }
+                                        // test if it is a valid scale formula
+                                        // which means that the result side must contain exactly one word of type scaling
+                                        // and the source side must use the scaling word of this value e.g. "million"
+                                        $res_scale_lst = $res_phr_lst->wrd_lst_all()->scaling_lst();
+                                        $r_ids = $exp->phr_id_lst($exp->r_part());
+                                        $r_has_scale_wrd = in_array($scale_wrd->id(), $r_ids->lst ?? []);
+                                        if (count($res_scale_lst->lst()) == 1 and $r_has_scale_wrd) {
+                                            $wrd_symbol = chars::WORD_START . $scale_wrd->id() . chars::WORD_END;
+                                            log_debug('replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->get_value() . ')');
+                                            $r_part = str_replace($wrd_symbol, $this->get_value(), $r_part);
+                                            log_debug('replace done (' . $r_part . ')');
+                                            // TODO separate time from value words
+                                            $calc = new calc_internal();
+                                            $result = $calc->parse($r_part);
                                         } else {
-                                            log_err('Formula "' . $formula_text . '" seems to be not a valid scaling formula, because only one word should be on both sides of the equation.', 'scale');
+                                            $reason = '';
+                                            if (count($res_scale_lst->lst()) != 1) {
+                                                $reason .= ' the result phrases "' . $res_phr_lst->dsp_name()
+                                                    . '" do not contain exactly one word of type scaling';
+                                            }
+                                            if (!$r_has_scale_wrd) {
+                                                if ($reason != '') {
+                                                    $reason .= ' and';
+                                                }
+                                                $reason .= ' the source part does not use the scaling word "'
+                                                    . $scale_wrd->name() . '"';
+                                            }
+                                            log_err('Formula "' . $formula_text
+                                                . '" is not a valid scaling formula, because'
+                                                . $reason . '.', 'scale');
                                         }
                                     }
                                 }
