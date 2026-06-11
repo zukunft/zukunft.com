@@ -388,8 +388,8 @@ class words
     const int EURO_ID = 267;
     const string USD = 'USD';
     const int USD_ID = 259;
-    const string US_DOLLAR = 'US-Dollar';
-    const int US_DOLLAR_ID = 2426;
+    const string US_DOLLAR = 'US dollar';
+    const int US_DOLLAR_ID = 268;
     const int CURRENCY_ID = 2397;
 
     // words from import file company.json used for the start page in order of appearance

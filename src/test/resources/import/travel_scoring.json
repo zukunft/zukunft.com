@@ -24,10 +24,10 @@
       "name": "country"
     },
     {
-      "name": "US-Dollar",
+      "name": "US dollar",
       "refs": [
         {
-          "name": "US-Dollar",
+          "name": "United States dollar",
           "type": "wikipedia"
         }
       ]
@@ -4179,7 +4179,7 @@
     {
       "from": "$",
       "verb": "is alias of",
-      "to": "US-Dollar"
+      "to": "US dollar"
     },
     {
       "name": "Political correctness",

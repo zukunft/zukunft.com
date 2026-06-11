@@ -1427,13 +1427,13 @@
     {
       "from": "$",
       "verb": "is alias of",
-      "to": "US-Dollar",
+      "to": "US dollar",
       "description": "The dollar sign $ is most commonly used as the symbol for the United States dollar, although it is also used for many other dollar-denominated currencies."
     },
     {
       "from": "U.S. dollar",
       "verb": "is alias of",
-      "to": "US-Dollar"
+      "to": "US dollar"
     },
     {
       "name": "exchange rate",
@@ -1614,7 +1614,7 @@
       "description": "The interest rate applicable to the quote currency of a currency pair. Higher quote-currency interest rates relative to the base currency typically lead to forward rates above spot."
     },
     {
-      "from": "US-Dollar",
+      "from": "US dollar",
       "verb": "is a",
       "to": "currency"
     },
@@ -1626,7 +1626,7 @@
     {
       "from": "USD",
       "verb": "is symbol for",
-      "to": "US-Dollar"
+      "to": "US dollar"
     },
     {
       "from": "US$",
@@ -1636,7 +1636,7 @@
     {
       "from": "US$",
       "verb": "is symbol for",
-      "to": "US-Dollar"
+      "to": "US dollar"
     },
     {
       "from": "Euro",
@@ -2814,21 +2814,21 @@
     },
     {
       "words": [
-        "US-Dollar",
+        "US dollar",
         "Proportion of daily volume April 2019"
       ],
       "number": 88.3
     },
     {
       "words": [
-        "US-Dollar",
+        "US dollar",
         "Proportion of daily volume April 2022"
       ],
       "number": 88.5
     },
     {
       "words": [
-        "US-Dollar",
+        "US dollar",
         "Growth rate (2019–2022)"
       ],
       "number": 0.2
