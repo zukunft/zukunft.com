@@ -33,11 +33,13 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
@@ -47,6 +49,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
@@ -141,6 +144,22 @@ class test_sys_log extends test_objects
         $sys_lst->add($this->sys_log());
         $sys_lst->add($this->sys_log_filled());
         return $sys_lst;
+    }
+
+    /**
+     * @return sys_log_list_ui a frontend list of the system errors related to the user
+     */
+    function list_for_user_ui(): sys_log_list_ui
+    {
+        return new sys_log_list_ui($this->sys_log_list()->api_json());
+    }
+
+    /**
+     * @return sys_log_list_ui an empty frontend system error list e.g. if all user issues are closed
+     */
+    function list_for_user_empty_ui(): sys_log_list_ui
+    {
+        return new sys_log_list_ui();
     }
 
 }

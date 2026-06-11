@@ -57,6 +57,8 @@ messages:
   error_update_program_issues: "Von anderen Benutzern gefundene Programmprobleme, die noch nicht behoben wurden."
   error_update_no_open: "Es sind keine offenen Fehler mehr vorhanden."
   error_update_permission_denied: "Sie sind nicht berechtigt, den Fehlerstatus zu ändern. Wenn Sie die Berechtigung möchten, fordern Sie sie bitte unter admin@zukunft.com an."
+  user_system_errors: "Offene Probleme, die Sie betreffen"
+  user_system_errors_none: "Es ist kein offenes Problem mit Ihnen verknüpft."
   about_sponsored_by: "wird unterstützt von"
   about_main_idea: "Eine der Hauptideen ist die Verwendung von"
   about_once_implemented: "Wenn implementiert, könnte es möglich sein"

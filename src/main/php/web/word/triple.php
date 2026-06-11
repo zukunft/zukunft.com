@@ -733,7 +733,8 @@ class triple extends sandbox_code_id
                 $msk_id = views::TRIPLE_ID;
             }
             $url = $html->url_new($msk_id, $lnk_phr->id());
-            $result = $html->ref($url, $lnk_phr->name());
+            // the phrase description as link title so the user sees it as a tooltip
+            $result = $html->ref($url, $lnk_phr->name(), $lnk_phr->get_description() ?? '');
         }
         return $result;
     }

@@ -1691,6 +1691,8 @@ enum messages: string
     case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';
     case ERROR_UPDATE_NO_OPEN = 'error_update_no_open';
     case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
+    case USER_SYSTEM_ERRORS = 'user_system_errors';
+    case USER_SYSTEM_ERRORS_NONE = 'user_system_errors_none';
 
 
     /*

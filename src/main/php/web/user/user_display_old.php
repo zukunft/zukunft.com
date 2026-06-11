@@ -99,28 +99,6 @@ class user_display_old extends user
         return $this->viewer;
     }
 
-    // display the error that are related to the user, so that he can track when they are closed
-    // or display the error that are related to the user, so that he can track when they are closed
-    function dsp_errors($dsp_type, $size, $page, $back): string
-    {
-        log_debug($dsp_type . ' errors for user ' . $this->name);
-
-        $result = '';
-        $err_lst = new sys_log_list;
-        //$err_lst->set_user($this);
-        //$err_lst->page = $page;
-        //$err_lst->size = $size;
-        //$err_lst->dsp_type = $dsp_type;
-        //$err_lst->back = $back;
-        if ($err_lst->load()) {
-            $err_lst_ui = new sys_log_list($err_lst->api_json());
-            $result = $err_lst_ui->get_html();
-        }
-
-        log_debug('done');
-        return $result;
-    }
-
     /**
      * display word changes by the user which are not (yet) standard
      */

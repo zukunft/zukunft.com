@@ -254,9 +254,9 @@ class word_tests
         $wrd->phr_lst = $t_phr->list_ui();
         $txt = $form->title_named($wrd);
         $t->assert_text_contains($test_name, $txt, verbs::SYMBOL_NAME);
-        $test_name = 'link of "CHF is symbol for Swiss Frank"';
+        $test_name = 'link of "CHF is symbol for Swiss Frank" with the description as tooltip';
         $lnk = '<a href="/http/view.php?m=' . views::WORD_ID
-            . '&id=' . words::SWISS_FRANC_ID . '">' . words::SWISS_FRANC . '</a>';
+            . '&id=' . words::SWISS_FRANC_ID . '" title="' . words::SWISS_FRANC_COM . '">' . words::SWISS_FRANC . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = 'name of "CHF is symbol for Swiss Frank';
         $t->assert_text_contains($test_name, $txt, '>CHF</h4>');
@@ -276,6 +276,8 @@ class word_tests
         $t->assert_text_contains($test_name, $txt, '>' . words::COMPANY . '</a>');
         $test_name = '... and still canton';
         $t->assert_text_contains($test_name, $txt, '>' . words::CANTON . '</a>');
+        $test_name = '... without a tooltip because canton has no description';
+        $t->assert_text_contains($test_name, $txt, '&id=' . words::CANTON_ID . '">' . words::CANTON . '</a>');
         $test_name = '... but city NOT';
         $t->assert_text_not_contains($test_name, $txt, '>' . words::CITY . '</a>');
 

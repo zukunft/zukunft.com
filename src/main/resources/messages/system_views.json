@@ -674,6 +674,13 @@
       "code_id": "system_body_user_settings"
     },
     {
+      "name": "user system errors",
+      "description": "show the most relevant open system errors linked to the user",
+      "type": "user_system_errors",
+      "code_id": "user_system_errors",
+      "ui_msg_code_id": "user_system_errors"
+    },
+    {
       "name": "system form title paste table",
       "description": "show the language specific title for the drop table to db page",
       "type": "system_title",
@@ -6317,6 +6324,10 @@
         {
           "position": "2",
           "name": "system body user settings"
+        },
+        {
+          "position": "3",
+          "name": "user system errors"
         }
       ]
     },

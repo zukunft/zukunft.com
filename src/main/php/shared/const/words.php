@@ -380,15 +380,16 @@ class words
     const string CHF = 'CHF';
     const int CHF_ID = 258;
     const string SWISS_FRANC = 'Swiss franc';
-    const int SWISS_FRANC_ID = 2399;
+    const int SWISS_FRANC_ID = 2400;
+    const string SWISS_FRANC_COM = 'The currency of Switzerland and Liechtenstein.';
     const string EUR = 'EUR';
     const int EUR_ID = 2427;
     const string EURO = 'Euro';
     const int EURO_ID = 267;
     const string USD = 'USD';
     const int USD_ID = 259;
-    const string US_DOLLAR = 'US-Dollar';
-    const int US_DOLLAR_ID = 2426;
+    const string US_DOLLAR = 'US dollar';
+    const int US_DOLLAR_ID = 268;
     const int CURRENCY_ID = 2397;
 
     // words from import file company.json used for the start page in order of appearance

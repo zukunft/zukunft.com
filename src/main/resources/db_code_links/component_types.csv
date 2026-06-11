@@ -191,3 +191,4 @@ component_type_id, type_name, description, code_id
 190, 'show plural', 'show the plural form of a word without link or form field', 'system_show_field_plural'
 191, 'show phrase type', 'show the phrase type name of a word without link or form field', 'system_show_field_phrase_type'
 192, 'title of named with edit link', 'shows the object name as a page title with a link to the edit view; the name is rendered in the user frontend language by loading the same object in that language once the sandbox language field is added', 'title_of_named_with_edit_link'
+193, 'user system errors', 'show the most relevant open system errors linked to the user', 'user_system_errors'
