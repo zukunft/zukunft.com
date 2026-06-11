@@ -706,6 +706,46 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list as ch_inhabitants_in_mio_2019 but with "mio" missing the scaling type
+     *                     to test the scaling type check
+     */
+    function ch_inhabitants_in_mio_2019_unscaled(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_ch()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_2019()->phrase());
+        $lst->add($t_wrd->word_mio_unscaled()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with the target phrases to scale a value to single inhabitants
+     */
+    function inhabitant_one_phrase_list(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_one()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list as inhabitant_one_phrase_list but with "one" missing the scaling type
+     *                     to test the scaling type check
+     */
+    function inhabitant_one_unscaled_phrase_list(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_one_unscaled()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
     function phrase_list_zh_mio_2020(): phrase_list

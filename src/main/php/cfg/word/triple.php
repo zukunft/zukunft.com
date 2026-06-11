@@ -1322,14 +1322,15 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return bool true if the word has the type "scaling" (e.g. "a million", "a million" or "one"; "one" is a hidden scaling type)
+     * @return bool true if the triple has one of the scaling types (e.g. "a million" or "one"; "one" is a hidden scaling type)
      */
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type_shared::SCALING)
-            or $this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
-            $result = true;
+        foreach (phrase_type_shared::SCALING_TYPES as $scale_type) {
+            if ($this->is_type($scale_type)) {
+                $result = true;
+            }
         }
         return $result;
     }

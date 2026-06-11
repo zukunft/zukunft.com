@@ -242,15 +242,13 @@ class formula_write_tests
         $phr_lst = $phr_lst_all->del_list($phr_lst);
         $result = $phr_lst->dsp_name();
         $target = '"' . words::TEST_SHARE . '"';
-        // TODO Prio 0 activate
-        //$t->assert('formula->assign_phr_lst for "' . $frm->name() . '"', $result, $target);
+        $t->assert('formula->assign_phr_lst for "' . $frm->name() . '"', $result, $target);
 
         $phr_lst_all = $frm_pe->assign_phr_ulst();
         $phr_lst = $phr_lst_all->del_list($phr_lst);
         $result = $phr_lst->dsp_name();
         $target = '"' . words::TEST_SHARE . '"';
-        // TODO Prio 0 activate
-        //$t->assert('formula->assign_phr_ulst for "' . $frm->name() . '"', $result, $target);
+        $t->assert('formula->assign_phr_ulst for "' . $frm->name() . '"', $result, $target);
 
         // test the calculation of one value
         $phr_lst = new phrase_list($t->usr1);

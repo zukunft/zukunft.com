@@ -1614,11 +1614,17 @@ class phrase extends combine_named
         return $wrd->is_measure();
     }
 
-// return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
-    function is_scaling()
+    /**
+     * @return bool true if the word or triple of this phrase has one of the scaling types
+     *              (e.g. "million" or "one"; "one" is a hidden scaling type)
+     */
+    function is_scaling(): bool
     {
-        $wrd = $this->main_word();
-        return $wrd->is_scaling();
+        $result = false;
+        if ($this->obj() instanceof word or $this->obj() instanceof triple) {
+            $result = $this->obj()->is_scaling();
+        }
+        return $result;
     }
 
     /**

@@ -5573,6 +5573,7 @@
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /user/user_message.php
     \-- add_id - section for function add_id not yet defined that it should be add in /user/user_message.php
     \-- add_err_with_vars - section for function add_err_with_vars not yet defined that it should be add in /user/user_message.php
+    \-- add_warning_with_vars - section for function add_warning_with_vars not yet defined that it should be add in /user/user_message.php
     \-- add_error_text - section for function add_error_text not yet defined that it should be add in /user/user_message.php
     \-- add_warning - section for function add_warning not yet defined that it should be add in /user/user_message.php
     \-- add_message - section for function add_message not yet defined that it should be add in /user/user_message.php

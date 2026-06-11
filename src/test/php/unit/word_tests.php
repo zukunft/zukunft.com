@@ -171,6 +171,18 @@ class word_tests
         $wrd = $t_wrd->word_filled();
         $t->assert_reset($wrd);
 
+        $t->subheader($ts . 'type check');
+        $test_name = 'a word with the scaling type is a scaling word';
+        $t->assert_true($test_name, $t_wrd->word_mio()->is_scaling());
+        $test_name = 'a word with the hidden scaling type is a scaling word';
+        $t->assert_true($test_name, $t_wrd->word_one()->is_scaling());
+        $test_name = 'a word without a type is not a scaling word';
+        $t->assert_false($test_name, $t_wrd->word_mio_unscaled()->is_scaling());
+        $test_name = 'the phrase of a scaling word is a scaling phrase';
+        $t->assert_true($test_name, $t_wrd->word_mio()->phrase()->is_scaling());
+        $test_name = 'the phrase of a word without a type is not a scaling phrase';
+        $t->assert_false($test_name, $t_wrd->word_mio_unscaled()->phrase()->is_scaling());
+
         $t->subheader($ts . 'api');
         $wrd = $t_wrd->word();
         $t->assert_api_json($wrd);

@@ -85,7 +85,7 @@ class words
 
     // e.g. one instance / pod of zukunft.com
     const string URL = 'url';
-    const int URL_ID = 207;
+    const int URL_ID = 208;
     // e.g. the launch date of the first beta version of zukunft.com
     const string LAUNCH = 'launch';
     const int LAUNCH_ID = 199;
@@ -412,7 +412,7 @@ class words
     const string CONFIG = 'config';
     const string COUNTRY = 'country';
     const string CH = 'Switzerland';
-    const int CH_ID = 208;
+    const int CH_ID = 207;
     const string GERMANY = 'Germany';
     const string CANTON = 'Canton';
     const int CANTON_ID = 187;

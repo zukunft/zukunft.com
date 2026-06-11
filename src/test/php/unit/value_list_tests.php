@@ -113,6 +113,9 @@ class value_list_tests
         $test_name = 'load values related to all phrases of a list '
             . 'e.g. the inhabitants of Canton Zurich over time';
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->canton_zh_phrase_list());
+        $test_name = 'load values related to all phrases of a two phrase list '
+            . 'e.g. the inhabitants of Switzerland over time';
+        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->ch_inhabitant_phrase_list());
         $test_name = 'load values related to any phrase of a list '
             . 'e.g. the match const pi and e';
         // temp line until the function usage is checked correctly by the ide
