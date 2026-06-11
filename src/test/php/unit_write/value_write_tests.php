@@ -206,9 +206,10 @@ class value_write_tests
         $dest_phr_lst->load_by_names(array(words::INHABITANTS, words::ONE));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
-        $result = $mio_val->scale($dest_phr_lst);
+        $result = $mio_val->scale($dest_phr_lst, $usr_msg);
         $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
         $t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
+        $t->assert_true(', value->val_scaling reports no problem', $usr_msg->is_ok());
 
         // test the figure object creation
         $phr_lst = $t_db->load_phrase_list(array(words::CANTON, words::ZH, words::INHABITANTS, words::MIO, words::YEAR_2020));

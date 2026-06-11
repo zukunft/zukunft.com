@@ -202,8 +202,12 @@ class formula extends formula_map
     /**
      * return the result of a special formula
      * e.g. "this" or "next" where the value of this or the following time word is returned
+     *
+     * @param phrase_list $phr_lst the phrases that select the value to use
+     * @param phrase|null $time_phr the time phrase as the base for "this", "next" and "prior"
+     * @param user_message $msg to collect the warnings and errors that might be shown to the user or admin
      */
-    function calc_predefined(phrase_list $phr_lst, ?phrase $time_phr = null): value
+    function calc_predefined(phrase_list $phr_lst, ?phrase $time_phr, user_message $msg): value
     {
         log_debug("formula->special_result (" . $this->id() . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name() . " and user " . $this->get_user()->name . ")");
         $val = null;
@@ -214,7 +218,7 @@ class formula extends formula_map
                 $val_phr_lst = clone $phr_lst;
                 $val_phr_lst->add($time_phr); // the time word should be added at the end, because ...
                 log_debug("this (" . $time_phr->name() . ")");
-                $val = $val_phr_lst->value_scaled();
+                $val = $val_phr_lst->value_scaled($msg);
             }
             if ($this->type_cl == formula_type::NEXT) {
                 $val_phr_lst = clone $phr_lst;
@@ -222,7 +226,7 @@ class formula extends formula_map
                 if ($next_wrd->id() > 0) {
                     $val_phr_lst->add($next_wrd); // the time word should be added at the end, because ...
                     log_debug("next (" . $next_wrd->name() . ")");
-                    $val = $val_phr_lst->value_scaled();
+                    $val = $val_phr_lst->value_scaled($msg);
                 }
             }
             if ($this->type_cl == formula_type::PREV) {
@@ -231,7 +235,7 @@ class formula extends formula_map
                 if ($prior_wrd->id() > 0) {
                     $val_phr_lst->add($prior_wrd->phrase()); // the time word should be added at the end, because ...
                     log_debug("prior (" . $prior_wrd->name() . ")");
-                    $val = $val_phr_lst->value_scaled();
+                    $val = $val_phr_lst->value_scaled($msg);
                 }
             }
         }

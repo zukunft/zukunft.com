@@ -179,7 +179,7 @@ class formula_write_tests
                 if ($time_phr == null) {
                     $time_phr = $t_wrd->word_2019()->phrase();
                 }
-                $val = $elm_frm->calc_predefined($phr_lst, $time_phr);
+                $val = $elm_frm->calc_predefined($phr_lst, $time_phr, $usr_msg);
                 $result = $val->number();
                 $target = words::YEAR_2019;
                 // TODO: get the best matching number

@@ -141,6 +141,7 @@ include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
@@ -213,6 +214,7 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
@@ -1324,103 +1326,122 @@ class value_base extends sandbox_value
 
 
     /**
-     * scale a value for the target words
-     * e.g. if the target words contains "millions" "2'100'000" is converted to "2.1"
-     *      if the target words are empty convert "2.1 mio" to "2'100'000"
-     * once this is working switch on the call in word_list->value_scaled
+     * scale a value to the target scaling
+     * e.g. if this value has the scaling word "millions" "2.1 mio" is converted to "2'100'000"
+     * loads the scaling formula and the formula result phrases from the database
+     * and lets scale_calc do the calculation without further database access
+     * TODO Prio 1 scale the number to the scaling given by $target_wrd_lst e.g. convert "2'100'000" to "2.1 mio"
+     *      once this is working switch on the call in word_list->value_scaled
+     *
+     * @param word_list|phrase_list|null $target_wrd_lst list of phrases that should define the target scaling (not yet used)
+     * @param user_message $msg to collect the warnings and errors that might be shown to the user or admin
+     * @return float|null the scaled number or the unscaled number if scaling is not possible
      */
-    function scale($target_wrd_lst): ?float
+    function scale(word_list|phrase_list|null $target_wrd_lst, user_message $msg): ?float
     {
         log_debug('value->scale ' . $this->get_value());
-        // fallback value
-        $result = $this->get_value();
 
-        $lib = new library();
-
+        // load the phrases of this value e.g. "Switzerland", "inhabitants" and "million"
         $this->load_phrases();
 
-        // check input parameters
-        if (is_null($this->get_value())) {
-            // this test should be done in the calling function if needed
-            log_debug("To scale a value the number should not be empty.");
-        } elseif (is_null($this->get_user()->id)) {
-            log_warning("To scale a value the user must be defined.", "value->scale");
-        } elseif ($this->phrase_list()->is_empty()) {
-            log_warning("To scale a value the word list should be loaded by the calling method.", "value->scale");
-        } else {
-            log_debug($this->get_value() . ' for ' . $this->grp()->dsp_id() . ' (user ' . $this->get_user()->id . ')');
-
-            // if it has a scaling word, scale it to one
-            if ($this->phrase_list()->has_scaling()) {
-                log_debug('value words have a scaling words');
-                // get any scaling words related to the value
-                $scale_wrd_lst = $this->phrase_list()->scaling_lst();
-                if (count($scale_wrd_lst->lst()) > 1) {
-                    log_warning('Only one scale word can be taken into account in the current version, but not a list like ' . $scale_wrd_lst->name() . '.', "value->scale");
-                } else {
-                    if (count($scale_wrd_lst->lst()) == 1) {
-                        $scale_wrd = $scale_wrd_lst->lst()[0];
-                        log_debug('word (' . $scale_wrd->name() . ')');
-                        if ($scale_wrd->id() > 0) {
-                            $frm = $scale_wrd->formula();
-                            $frm->usr = $this->get_user(); // temp solution utils the bug of not setting is found
-                            if (!isset($frm)) {
-                                log_warning('No scaling formula defined for "' . $scale_wrd->name() . '".', "value->scale");
-                            } else {
-                                $formula_text = $frm->ref_text;
-                                log_debug('scaling formula "' . $frm->name() . '" (' . $frm->id() . '): ' . $formula_text);
-                                if ($formula_text <> "") {
-                                    $r_part = $lib->str_right_of($formula_text, chars::CHAR_CALC);
-                                    $exp = new expression($frm);
-                                    $exp->set_ref_text($frm->ref_text);
-                                    $res_phr_lst = $exp->load_result_phrases();
-                                    if (!$res_phr_lst->is_empty()) {
-                                        // test if it is a valid scale formula
-                                        // which means that the result side must contain exactly one word of type scaling
-                                        // and the source side must use the scaling word of this value e.g. "million"
-                                        $res_scale_lst = $res_phr_lst->wrd_lst_all()->scaling_lst();
-                                        $r_ids = $exp->phr_id_lst($exp->r_part());
-                                        $r_has_scale_wrd = in_array($scale_wrd->id(), $r_ids->lst ?? []);
-                                        if (count($res_scale_lst->lst()) == 1 and $r_has_scale_wrd) {
-                                            $wrd_symbol = chars::WORD_START . $scale_wrd->id() . chars::WORD_END;
-                                            log_debug('replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->get_value() . ')');
-                                            $r_part = str_replace($wrd_symbol, $this->get_value(), $r_part);
-                                            log_debug('replace done (' . $r_part . ')');
-                                            // TODO separate time from value words
-                                            $calc = new calc_internal();
-                                            $result = $calc->parse($r_part);
-                                        } else {
-                                            $reason = '';
-                                            if (count($res_scale_lst->lst()) != 1) {
-                                                $reason .= ' the result phrases "' . $res_phr_lst->dsp_name()
-                                                    . '" do not contain exactly one word of type scaling';
-                                            }
-                                            if (!$r_has_scale_wrd) {
-                                                if ($reason != '') {
-                                                    $reason .= ' and';
-                                                }
-                                                $reason .= ' the source part does not use the scaling word "'
-                                                    . $scale_wrd->name() . '"';
-                                            }
-                                            log_err('Formula "' . $formula_text
-                                                . '" is not a valid scaling formula, because'
-                                                . $reason . '.', 'scale');
-                                        }
-                                    }
-                                }
-                            }
-                        }
+        // load the scaling formula and the formula result phrases for each scaling word of this value
+        $dto = new data_object($this->get_user());
+        foreach ($this->phrase_list()->scaling_lst()->lst() as $scale_wrd) {
+            if ($scale_wrd->id() > 0) {
+                $frm = $scale_wrd->formula();
+                if ($frm->ref_text != null and $frm->ref_text != '') {
+                    $frm->usr = $this->get_user(); // temp solution until the bug of not setting is found
+                    $dto->add_formula($frm);
+                    $exp = new expression($frm);
+                    $exp->set_ref_text($frm->ref_text);
+                    foreach ($exp->load_result_phrases()->lst() as $phr) {
+                        $dto->add_phrase($phr);
                     }
                 }
             }
+        }
 
-            // TODO: scale the number to the target scaling
-            // if no target scaling is defined leave the scaling at one
-            //if ($target_wrd_lst->has_scaling()) {
-            //}
+        // calculate the scaled number without further database access
+        $result = $this->scale_calc($dto, $msg);
+        return $result;
+    }
 
+    /**
+     * scale this value to one based on the given data object without database access
+     * e.g. if this value has the scaling word "millions" "2.1 mio" is converted to "2'100'000"
+     *
+     * @param data_object $dto cache with the scaling formulas and the formula result phrases
+     * @param user_message $msg to collect the warnings and errors that might be shown to the user or admin
+     * @return float|null the scaled number or the unscaled number if scaling is not possible
+     */
+    function scale_calc(data_object $dto, user_message $msg): ?float
+    {
+        // fallback value
+        $result = $this->get_value();
+
+        if (is_null($this->get_value())) {
+            // a missing number is supposed to be checked by the calling function if needed
+            log_debug('to scale a value the number should not be empty');
+        } elseif (is_null($this->get_user()->id)) {
+            $msg->add_warning_with_vars(msg_id::SCALING_USER_MISSING, [msg_id::VAR_VALUE => $this->dsp_id()]);
+        } elseif ($this->phrase_list()->is_empty()) {
+            $msg->add_warning_with_vars(msg_id::SCALING_PHRASES_MISSING, [msg_id::VAR_VALUE => $this->dsp_id()]);
+        } elseif ($this->phrase_list()->has_scaling()) {
+            $scale_wrd_lst = $this->phrase_list()->scaling_lst();
+            if (count($scale_wrd_lst->lst()) > 1) {
+                $msg->add_warning_with_vars(msg_id::SCALING_WORDS_AMBIGUOUS, [msg_id::VAR_NAME_LIST => $scale_wrd_lst->dsp_name()]);
+            } else {
+                $scale_wrd = $scale_wrd_lst->lst()[0];
+                $frm = $this->scale_formula_of($scale_wrd, $dto);
+                if ($frm == null) {
+                    $msg->add_warning_with_vars(msg_id::SCALING_FORMULA_MISSING, [msg_id::VAR_WORD_NAME => $scale_wrd->name()]);
+                } else {
+                    // test if it is a valid scale formula
+                    // which means that the result part must contain exactly one word of type scaling
+                    $exp = new expression($frm);
+                    $exp->set_ref_text($frm->ref_text, $dto->term_list());
+                    $res_ids = $exp->phr_id_lst($exp->res_part());
+                    $res_scale_lst = $dto->phrase_list()->filter_by_ids($res_ids)->wrd_lst_all()->scaling_lst();
+                    if (count($res_scale_lst->lst()) != 1) {
+                        $msg->add(msg_id::SCALING_FORMULA_RESULT_INVALID, [msg_id::VAR_FORMULA_NAME => $frm->name()]);
+                    } else {
+                        // replace the scaling word in the formula with the value and calculate the result
+                        $lib = new library();
+                        $r_part = $lib->str_right_of($frm->ref_text, chars::CHAR_CALC);
+                        $wrd_symbol = chars::WORD_START . $scale_wrd->id() . chars::WORD_END;
+                        $r_part = str_replace($wrd_symbol, $this->get_value(), $r_part);
+                        // TODO separate time from value words
+                        $calc = new calc_internal();
+                        $result = $calc->parse($r_part);
+                    }
+                }
+            }
         }
         return $result;
+    }
+
+    /**
+     * get the formula from the given data object that scales this value to one
+     * which means the formula where the source part uses the given scaling word
+     *
+     * @param phrase $scale_wrd the scaling word of this value e.g. "million"
+     * @param data_object $dto cache with the scaling formulas
+     * @return formula|null the formula to scale values of the scaling word to one or null if no formula is found
+     */
+    private function scale_formula_of(phrase $scale_wrd, data_object $dto): ?formula
+    {
+        $frm_found = null;
+        foreach ($dto->formula_list()->lst() as $frm) {
+            if ($frm_found == null and $frm->ref_text != null and $frm->ref_text != '') {
+                $exp = new expression($frm);
+                $exp->set_ref_text($frm->ref_text, $dto->term_list());
+                $r_ids = $exp->phr_id_lst($exp->r_part());
+                if (in_array($scale_wrd->id(), $r_ids->lst ?? [])) {
+                    $frm_found = $frm;
+                }
+            }
+        }
+        return $frm_found;
     }
 
 
