@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -42,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -122,6 +124,12 @@ class word_ui_tests
         $wrd_company_rel = $t_wrd->company_related_ui();
         $test_page .= $html->text_h2('stocks related to ' . $wrd_company_rel->name());
         $test_page .= 'stocks by impact: ' . $list->phrases_related_ex_symbols($wrd_company_rel) . '<br>';
+
+        // show the phrase type as read only text e.g. for a word detail view
+        $form = new system_form();
+        $wrd_measure = new word($t_wrd->hz()->api_json());
+        $test_page .= $html->text_h2('phrase type of ' . $wrd_measure->name());
+        $test_page .= 'phrase type: ' . $form->show_phrase_type($wrd_measure) . '<br>';
         $t->html_page_test($test_page, 'word html components', 'word', $t);
 
         $t->subheader($ts . 'related phrases');
@@ -152,6 +160,12 @@ class word_ui_tests
         $t->assert_text_not_contains($test_name, $ex_html, triples::DOLLAR_ALIAS);
         $test_name = 'without an alias nothing is shown';
         $t->assert($test_name, $list->phrase_aliases($wrd_chf_rel), '');
+
+        $t->subheader($ts . 'phrase type');
+        $test_name = 'the phrase type name is shown';
+        $t->assert($test_name, $form->show_phrase_type($wrd_measure), phrase_types::MEASURE_NAME);
+        $test_name = 'a word without a type shows an empty text';
+        $t->assert($test_name, $form->show_phrase_type($wrd_zh), '');
 
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related_ex_symbols($wrd_company_rel);
