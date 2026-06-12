@@ -79,6 +79,8 @@ include_once paths::MODEL_VIEW . 'term_view_list.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::SERVICE_MATH . 'calc_internal.php';
+include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -128,6 +130,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
@@ -909,6 +913,88 @@ class data_object
     function add_calc_validation(result $res): void
     {
         $this->res_chk_lst->add_result_direct($res);
+    }
+
+    /**
+     * check if the pre-calculated results of an import can be reproduced
+     * based on the values and formulas of this data object
+     * e.g. to check the consistency of an import file without using the database
+     *
+     * @param user_message $msg to collect the problems that the user should fix in the import file
+     * @return int the number of pre-calculated results that could not be reproduced
+     */
+    function validate_results(user_message $msg): int
+    {
+        $failures = 0;
+        foreach ($this->res_chk_lst->lst() as $res_chk) {
+            $usr_msg = new user_message();
+            $this->validate_result($res_chk, $usr_msg);
+            if (!$usr_msg->is_ok()) {
+                $failures++;
+            }
+            $msg->merge($usr_msg);
+        }
+        return $failures;
+    }
+
+    /**
+     * check if one pre-calculated result can be reproduced
+     * based on the values and formulas of this data object
+     *
+     * @param result $res_chk the imported result with the expected number
+     * @param user_message $msg to collect the problems that the user should fix in the import file
+     * @return void
+     */
+    private function validate_result(result $res_chk, user_message $msg): void
+    {
+        $lib = new library();
+
+        // use the formula of this data object because the result may only know the formula name
+        $frm = null;
+        if (isset($res_chk->frm)) {
+            $frm = $this->formula_list()->get_by_name($res_chk->frm->name());
+        }
+        $res_name = $res_chk->grp()->phrase_list()->dsp_name();
+        if ($frm == null or $frm->usr_text == null or $frm->usr_text == '') {
+            $msg->add(msg_id::CALC_VALIDATION_FORMULA_MISSING, [
+                msg_id::VAR_FORMULA_NAME => isset($res_chk->frm) ? $res_chk->frm->name() : '',
+                msg_id::VAR_NAME => $res_name
+            ]);
+        } else {
+            // select the values by the context phrases e.g. "apple", "price", "quantity" and "CHF"
+            $ctx_names = $res_chk->src_grp?->phrase_list()->names() ?? $res_chk->grp()->phrase_list()->names();
+            // replace the phrase names in the source part of the expression with the imported values
+            $r_part = $lib->str_right_of($frm->usr_text, chars::CHAR_CALC);
+            $exp_part_lst = explode(chars::TERM_DELIMITER, $r_part);
+            $i = 1; // the phrase names are the odd entries between the term delimiters
+            while ($i < count($exp_part_lst)) {
+                $phr_name = $exp_part_lst[$i];
+                $val = $this->value_list()->get_by_name_and_context($phr_name, $ctx_names);
+                if ($val == null) {
+                    $msg->add(msg_id::CALC_VALIDATION_VALUE_MISSING, [
+                        msg_id::VAR_WORD_NAME => $phr_name,
+                        msg_id::VAR_NAME => $res_name
+                    ]);
+                } else {
+                    $r_part = str_replace(
+                        chars::TERM_DELIMITER . $phr_name . chars::TERM_DELIMITER,
+                        $val->number(), $r_part);
+                }
+                $i = $i + 2;
+            }
+            // calculate and compare the result if all values have been found
+            if ($msg->is_ok()) {
+                $calc = new calc_internal();
+                $num_chk = $calc->parse($r_part);
+                if ((float)$num_chk != (float)$res_chk->number()) {
+                    $msg->add(msg_id::CALC_VALIDATION_FAILED, [
+                        msg_id::VAR_VALUE => $res_chk->number(),
+                        msg_id::VAR_NAME => $res_name,
+                        msg_id::VAR_VALUE_CHK => $num_chk
+                    ]);
+                }
+            }
+        }
     }
 
     function add_message(msg_id $msg): void

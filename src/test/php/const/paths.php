@@ -80,6 +80,7 @@ class paths
     const string EXPORT_WORD = self::EXPORT . 'word' . DIRECTORY_SEPARATOR;
     const string IMPORT = self::RESOURCE . 'import' . DIRECTORY_SEPARATOR;
     const string IMPORT_UNIT = self::IMPORT . 'unit_tests' . DIRECTORY_SEPARATOR;
+    const string IMPORT_INCONSISTENCY = self::IMPORT . 'inconsistency_tests' . DIRECTORY_SEPARATOR;
     const string IMPORT_WIKIPEDIA = self::IMPORT . 'wikipedia' . DIRECTORY_SEPARATOR;
     const string IMPORT_XBRL = self::IMPORT . 'xbrl' . DIRECTORY_SEPARATOR;
     const string IMPORT_XBRL_ZIP = self::IMPORT_XBRL . 'zip' . DIRECTORY_SEPARATOR;

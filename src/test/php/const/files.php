@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = true;
+    CONST bool AUTO_UPDATE_TEST_FILES = false;
 
     /*
      * types and extensions
@@ -118,6 +118,9 @@ class files
     CONST string IMPORT_VIEWS = test_paths::IMPORT_UNIT . 'views';
     CONST string IMPORT_COMPONENTS = test_paths::IMPORT_UNIT . 'components';
     CONST string IMPORT_RESULT_CALC = test_paths::IMPORT_UNIT . 'result_calc_simple';
+    CONST string IMPORT_CALC_VALIDATION = test_paths::IMPORT_UNIT . 'calc_validation';
+    CONST string IMPORT_CALC_VALIDATION_MISMATCH = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_mismatch';
+    CONST string IMPORT_CALC_VALIDATION_VALUE_MISSING = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_value_missing';
     CONST string IMPORT_UPDATE_EXT = '_update';
     CONST string IMPORT_UNDO_EXT = '_undo';
 
