@@ -605,7 +605,8 @@ class value extends sandbox_value
     // the same as \html\btn_del_value, but with another icon
     function btn_undo_add_value($back): string
     {
-        return \Zukunft\ZukunftCom\main\php\web\btn_undo('delete this value', '/http/value_del.php?id=' . $this->id() . '&back=' . $back . '');
+        return \Zukunft\ZukunftCom\main\php\web\btn_undo('delete this value',
+            new html_base()->url_new(views::VALUE_DEL_ID, $this->id(), '', $back));
     }
 
     // display a value, means create the HTML code that allows to edit the value
@@ -614,7 +615,7 @@ class value extends sandbox_value
         log_debug('value->dsp_tbl_std ');
         $html = new html_base();
         $result = '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref('/http/value_edit.php?id=' . $this->id() . '&back=' . $back, $this->val_formatted()) . '</div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted()) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -626,7 +627,7 @@ class value extends sandbox_value
         $html = new html_base();
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref('/http/value_edit.php?id=' . $this->id() . '&back=' . $back, $this->val_formatted(), '', styles::STYLE_USER) . '</div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted(), '', styles::STYLE_USER) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -747,7 +748,7 @@ class value extends sandbox_value
                 if ($word_names <> "") {
                     // display a row if the value has changed and
                     $result .= '<tr>';
-                    $result .= '<td>' . $html->ref('/http/value_edit.php?id=' . $group_id . '&back=' . $back, $row_value, '', 'grey') . '</td>';
+                    $result .= '<td>' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $group_id, '', $back), $row_value, '', 'grey') . '</td>';
                     $result .= '<td>' . $word_names . '</td>';
                     $result .= '</tr>';
                     $row_nbr++;
@@ -763,7 +764,7 @@ class value extends sandbox_value
         // display the last row if there has been at least one word
         if ($word_names <> "") {
             $result .= '<tr>';
-            $result .= '<td>' . $html->ref('/http/value_edit.php?id=' . $group_id . '&back=' . $back, $row_value, '', 'grey') . '</td>';
+            $result .= '<td>' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $group_id, '', $back), $row_value, '', 'grey') . '</td>';
             $result .= '<td>' . $word_names . '</td>';
             $result .= '</tr>';
         }
@@ -919,7 +920,7 @@ class value extends sandbox_value
                         '&confirm=1';
                     // url for the case that this phrase should be renamed
                     if ($phr->id() > 0) {
-                        $phrase_url = '/http/word_edit.php?id=' . $phr->id . '&back=' . $back;
+                        $phrase_url = '' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_EDIT . '&id=' . $phr->id . '&back=' . $back;
                     } else {
                         $lnk_id = $phr->id * -1;
                         $phrase_url = '' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::TRIPLE_EDIT . '&id=' . $lnk_id . '&back=' . $back;

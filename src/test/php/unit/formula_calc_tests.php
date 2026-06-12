@@ -49,8 +49,11 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -122,15 +125,16 @@ class formula_calc_tests
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
         $back = 0;
         $result = $frm_html->dsp_text($back, $trm_lst_ui);
+        $frm_edit_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_EDIT_ID . '&id=';
         $target = '"' . words::PERCENT
-            . '" = ( <a href="/http/formula_edit.php?id='
+            . '" = ( <a href="' . $frm_edit_url
             . $frm_this->id() . '&back=0">'
             . words::THIS_NAME
-            . '</a> - <a href="/http/formula_edit.php?id='
+            . '</a> - <a href="' . $frm_edit_url
             . $frm_prior->id()
             . '&back=0">'
             . words::PRIOR_NAME
-            . '</a> ) / <a href="/http/formula_edit.php?id=20&back=0">'
+            . '</a> ) / <a href="' . $frm_edit_url . '20&back=0">'
             . words::PRIOR_NAME . '</a>';
         $t->assert($test_name, $result, $target);
 
@@ -141,7 +145,7 @@ class formula_calc_tests
             $elm_grp = $elm_grp_lst->lst()[0];
             $elm_grp_ui = new element_group_ui($elm_grp->api_json());
             $result = $elm_grp_ui->dsp_names();
-            $target = '<a href="/http/formula_edit.php?id='
+            $target = '<a href="' . $frm_edit_url
                 . $frm_this->id() . '">'
                 . words::THIS_NAME . '</a>';
             $t->assert('element_group->dsp_names', trim($result), trim($target));

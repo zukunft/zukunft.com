@@ -599,7 +599,8 @@ class component extends sandbox_code_id
             $this->description);
         if ($add_link <= 0) {
             if ($this->id() > 0) {
-                $result .= $html->dsp_form_end('', $back, "/http/component_del.php?id=" . $this->id() . "&back=" . $back->url_encode());
+                $result .= $html->dsp_form_end('', $back,
+                    $html->url_new(views::COMPONENT_DEL_ID, $this->id(), '', $back->url_encode()));
             } else {
                 $result .= $html->dsp_form_end('', $back, '');
             }
@@ -758,7 +759,8 @@ class component extends sandbox_code_id
 
             $result .= $html->dsp_form_end('', $back);
         } else {
-            $result .= '      ' . btn_add('add new', '/http/component_edit.php?id=' . $this->id() . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
+            $result .= '      ' . btn_add('add new',
+                $html->url_new(views::COMPONENT_EDIT_ID, $this->id(), '', $back, '', 'add_link=1&word=' . $wrd->id));
         }
         $result .= '    </td>';
         $result .= '  </tr>';

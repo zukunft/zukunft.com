@@ -2225,13 +2225,14 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * @param user_message $msg to collect the warnings and errors that might be shown to the user or admin
      * @return value the best matching value scaled to one
      */
-    function value_scaled(): value
+    function value_scaled(user_message $msg): value
     {
         $val = $this->value();
         $wrd_lst = $this->wrd_lst_all();
-        $val->set_number($val->scale($wrd_lst));
+        $val->set_number($val->scale($wrd_lst, $msg));
 
         return $val;
     }

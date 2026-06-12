@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -206,9 +208,10 @@ class value_write_tests
         $dest_phr_lst->load_by_names(array(words::INHABITANTS, words::ONE));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
-        $result = $mio_val->scale($dest_phr_lst);
+        $result = $mio_val->scale($dest_phr_lst, $usr_msg);
         $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
         $t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
+        $t->assert_true(', value->val_scaling reports no problem', $usr_msg->is_ok());
 
         // test the figure object creation
         $phr_lst = $t_db->load_phrase_list(array(words::CANTON, words::ZH, words::INHABITANTS, words::MIO, words::YEAR_2020));
@@ -219,7 +222,7 @@ class value_write_tests
         $fig = $mio_val->figure();
         $fig_ui = $tl->ui_obj($fig, new figure_ui());
         $result = $fig_ui->display_linked('1');
-        $target = '<a href="/http/result_edit.php?id=' . $mio_val_ui->id() . '&back=1">1.55</a>';
+        $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . $mio_val_ui->id() . '&back=1">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation

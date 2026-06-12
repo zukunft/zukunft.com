@@ -271,7 +271,7 @@ class view extends view_exe
         $result = $this->html_navbar_start();
         $result .= '<td class="' . styles::STYLE_RIGHT . '">';
         if ($this->is_system() and !$ui_sys->usr->is_admin()) {
-            $url = $html->url(rest_ctrl::SEARCH);
+            $url = api::FIND_SCRIPT;
             $result .= new button($url, $back)->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {

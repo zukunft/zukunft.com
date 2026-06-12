@@ -427,13 +427,13 @@ class db_object extends TextIdObject
 
     /**
      * create the html url to create, change or delete this database object
-     * @param string $view_code_id the code id of the view as defined in the api controller class
+     * @param int|string $view the database id or the code id of the view that should be shown
      * @param string|null $back the back trace url for the undo functionality
      * @returns string the html code
      */
-    function obj_url(string $view_code_id, ?string $back = ''): string
+    function obj_url(int|string $view, ?string $back = ''): string
     {
-        return new html_base()->url($view_code_id, $this->id(), $back);
+        return new html_base()->url_new($view, $this->id(), '', $back);
     }
 
 

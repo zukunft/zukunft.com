@@ -1749,6 +1749,20 @@ class word extends sandbox_code_id
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->type_id() !== $this->type_id()) {
+            $change_typ = true;
+        } else {
+            $change_typ = false;
+        }
+        // TODO Prio 2 review
+        // do not overwrite a type with the default value
+        // because this is set also if not specified by the import
+        if ($this->type_id() == $sys->typ_lst->phr_typ->default_id() and $obj->type_id() !== null) {
+            // if not the user table
+            if (!$sc_par_lst->is_usr_tbl()) {
+                $change_typ = false;
+            }
+        }
+        if ($change_typ) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,

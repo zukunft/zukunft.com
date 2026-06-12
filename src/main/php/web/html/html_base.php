@@ -1251,12 +1251,12 @@ class html_base
 
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
-                $url = $this->url($class_name . rest_ctrl::UPDATE, $item->id(), $back);
+                $url = $this->url_new($class_name . rest_ctrl::UPDATE, $item->id(), '', $back);
                 $result .= $this->ref($url, $item->name());
                 $result .= '<' . self::BR . '>';
             }
         }
-        $url_add = $this->url($class_name . rest_ctrl::CREATE, 0, $back);
+        $url_add = $this->url_new($class_name . rest_ctrl::CREATE, 0, '', $back);
         $msg_id = $lib->class_to_add_msg_id($class);
         $result .= (new button($url_add, $back))->add($msg_id);
         $result .= '<' . self::BR . '>';

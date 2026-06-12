@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
@@ -179,7 +180,7 @@ class formula_write_tests
                 if ($time_phr == null) {
                     $time_phr = $t_wrd->word_2019()->phrase();
                 }
-                $val = $elm_frm->calc_predefined($phr_lst, $time_phr);
+                $val = $elm_frm->calc_predefined($phr_lst, $time_phr, $usr_msg);
                 $result = $val->number();
                 $target = words::YEAR_2019;
                 // TODO: get the best matching number
@@ -344,15 +345,15 @@ class formula_write_tests
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
         $result = $frm_html->dsp_text($back, $trm_lst_ui);
         $target = '"' . words::PERCENT
-            . '" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0">' . words::THIS_NAME . '</a>'
-            . ' - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0">' . words::PRIOR_NAME . '</a> )'
-            . ' / <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0">' . words::PRIOR_NAME . '</a>';
+            . '" = ( <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_this->id() . '&back=0">' . words::THIS_NAME . '</a>'
+            . ' - <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_prior->id() . '&back=0">' . words::PRIOR_NAME . '</a> )'
+            . ' / <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_prior->id() . '&back=0">' . words::PRIOR_NAME . '</a>';
         $t->assert('formula->dsp_text for ' . $frm->dsp_id(), $result, $target);
 
         // ... in HTML format with link
         $frm_increase = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $result = $frm_html->edit_link($back);
-        $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0">' . formulas::SYSTEM_TEST_ADD . '</a>';
+        $target = '<a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_increase->id() . '&back=0">' . formulas::SYSTEM_TEST_ADD . '</a>';
         $t->assert('formula->display for ' . $frm->dsp_id(), $result, $target);
 
         // ... the formula result selected by the word and in percent

@@ -2685,6 +2685,7 @@
     \-- is_same_val - section for function is_same_val is expected to be info in /value/value_base.php
     \-- scale_new - section for function scale_new not yet defined that it should be TODO activate in /value/value_base.php
     \-- scale - section for function scale not yet defined that it should be TODO activate in /value/value_base.php
+    \-- scale_calc - section for function scale_calc not yet defined that it should be TODO activate in /value/value_base.php
     \-- import_phrase_value - section for function import_phrase_value not yet defined that it should be im- and export in /value/value_base.php
     \-- save_from_api_msg - section for function save_from_api_msg is expected to be save in /value/value_base.php
     \-- figure - section for function figure not yet defined that it should be get functions that return other linked objects in /value/value_base.php
@@ -4517,7 +4518,7 @@
     \-- value
         \-- phrase_list - get the best matching value or value list for this phrase list
     \-- value_scaled
-        \-- phrase_list - @return value the best matching value scaled to one
+        \-- phrase_list - @param user_message $msg to collect the warnings and errors that might be shown to the user or admin
 \-- review - to be moved to the sql creator
     \-- load_by_phr
         \-- phrase_list - load a list of phrases by a given phrase, verb and direction
