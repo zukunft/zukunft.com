@@ -1,6 +1,10 @@
 TODO notes
 ----------
 
+next 
+
+show the related phrases sorted by impact on the default word page, restrict protection level reduction to admin users and format the expected sql test resources with the new sql_format function as part of fix #247
+
 A proper issue ticket should be created for these TODOs notes:
 
     but first this needs to be prioritized:
@@ -271,6 +275,7 @@ A proper issue ticket should be created for these TODOs notes:
          e.g. if a formula or value with a high impact is changed but save is not yet pressed the background should be red
          if nothing is changed the background should be a neutral e.g. light grey
     TODO for the dev and test environment the background should have a diagonal DEV or TEST text pattern
+    TODO for protection get_standard() defaults the norm protection to no_protection, so an owner's reduction to exactly no_protection is silently swallowed by the no_diff check even when allowed (reduction to user_protection works). If admins should be able to fully clear protection, that needs a separate review of row_mapper_std().
 
 
     TODO add a frontend cache that includes the most often used terms, values and views 

@@ -171,6 +171,24 @@
       "code_id": "list_children_of_word"
     },
     {
+      "name": "phrase aliases",
+      "description": "show the phrases that are an alias of this phrase",
+      "type": "phrase_aliases",
+      "code_id": "phrase_aliases"
+    },
+    {
+      "name": "phrase symbols",
+      "description": "show the symbols of this phrase",
+      "type": "phrase_symbols",
+      "code_id": "phrase_symbols"
+    },
+    {
+      "name": "related phrases without symbols",
+      "description": "list of phrases related to this phrase excluding the alias and symbol entries",
+      "type": "list_phrases_related_ex_symbols",
+      "code_id": "list_phrases_related_ex_symbols"
+    },
+    {
       "name": "system sub title values",
       "description": "show the language specific sub title for a value list",
       "type": "system_sub_title",
@@ -233,34 +251,44 @@
         },
         {
           "position": "6",
-          "name": "parents of word"
+          "name": "phrase aliases",
+          "style": "col-md-4"
         },
         {
           "position": "7",
-          "name": "children of word"
+          "name": "phrase symbols",
+          "style": "col-md-4"
         },
         {
           "position": "8",
-          "name": "system sub title values"
+          "name": "related phrases without symbols"
         },
         {
           "position": "9",
-          "name": "related values"
+          "name": "children of word"
         },
         {
           "position": "10",
-          "name": "system sub title references"
+          "name": "system sub title values"
         },
         {
           "position": "11",
-          "name": "ref list word"
+          "name": "related values"
         },
         {
           "position": "12",
-          "name": "system sub title log"
+          "name": "system sub title references"
         },
         {
           "position": "13",
+          "name": "ref list word"
+        },
+        {
+          "position": "14",
+          "name": "system sub title log"
+        },
+        {
+          "position": "15",
           "name": "change log word"
         }
       ]

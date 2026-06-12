@@ -43,6 +43,8 @@ class styles
     const string STYLE_BORDERLESS = 'borderless';
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
+    // bootstrap css class to keep a short line like 'has aliases: $, U.S. dollar' unbroken
+    const string TEXT_NOWRAP = 'text-nowrap';
 
     // css class wrapping a page-title heading and its action icon so that they
     // are shown to the user on the same line

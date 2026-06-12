@@ -1694,6 +1694,16 @@ enum messages: string
     case USER_SYSTEM_ERRORS = 'user_system_errors';
     case USER_SYSTEM_ERRORS_NONE = 'user_system_errors_none';
 
+    // related phrase lines on the default word page e.g. 'has aliases: $, U.S. dollar'
+    case PHRASE_HAS = 'phrase_has';
+    case PHRASE_ALIAS = 'phrase_alias';
+    case PHRASE_ALIASES = 'phrase_aliases';
+    case PHRASE_SYMBOL = 'phrase_symbol';
+    case PHRASE_SYMBOLS = 'phrase_symbols';
+
+    // if a non admin user tries to reduce the protection level of an object
+    case PROTECTION_REDUCE_DENIED = 'protection_reduce_denied';
+
 
     /*
      * form fields

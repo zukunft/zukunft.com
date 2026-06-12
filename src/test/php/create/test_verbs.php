@@ -124,6 +124,14 @@ class test_verbs extends test_objects
     }
 
     /**
+     * @return verb the "in" verb used by unit prefix triples (e.g. "in USD")
+     */
+    function verb_in(): verb
+    {
+        return new verb(verbs::IN_ID, verbs::IN_NAME, verbs::IN);
+    }
+
+    /**
      * @return verb a standard verb with all fields set
      */
     function verb_is_filled(): verb

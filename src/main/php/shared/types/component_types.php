@@ -402,6 +402,15 @@ class component_types
     const int LIST_PARENTS_OF_WORD_ID = 96;
     const string LIST_CHILDREN_OF_WORD = "list_children_of_word";
     const int LIST_CHILDREN_OF_WORD_ID = 48;
+    const string PHRASE_ALIASES = "phrase_aliases";
+    const int PHRASE_ALIASES_ID = 194;
+    const string PHRASE_ALIASES_COM = "show the phrases that are an alias of the given phrase e.g. 'has aliases: $, U.S. dollar' for 'US dollar'";
+    const string PHRASE_SYMBOLS = "phrase_symbols";
+    const int PHRASE_SYMBOLS_ID = 195;
+    const string PHRASE_SYMBOLS_COM = "show the symbols of the given phrase e.g. 'has symbol: USD' for 'US dollar'";
+    const string LIST_PHRASES_RELATED_EX_SYMBOLS = "list_phrases_related_ex_symbols";
+    const int LIST_PHRASES_RELATED_EX_SYMBOLS_ID = 196;
+    const string LIST_PHRASES_RELATED_EX_SYMBOLS_COM = "list of phrases related to the given phrase excluding the alias and symbol entries";
     const string LIST_TRIPLES_OF_VERB = "triples_by_verb";
     const int LIST_TRIPLES_OF_VERB_ID = 137;
     const string LIST_VALUES_BY_TRIPLE = "values_by_triple";
@@ -825,6 +834,9 @@ class component_types
         [self::SELECT_VIEW, self::SELECT_VIEW_ID],
         [self::LIST_PARENTS_OF_WORD, self::LIST_PARENTS_OF_WORD_ID],
         [self::LIST_CHILDREN_OF_WORD, self::LIST_CHILDREN_OF_WORD_ID],
+        [self::PHRASE_ALIASES, self::PHRASE_ALIASES_ID],
+        [self::PHRASE_SYMBOLS, self::PHRASE_SYMBOLS_ID],
+        [self::LIST_PHRASES_RELATED_EX_SYMBOLS, self::LIST_PHRASES_RELATED_EX_SYMBOLS_ID],
         [self::LIST_TRIPLES_OF_VERB, self::LIST_TRIPLES_OF_VERB_ID],
         [self::LIST_FORMULAS_OF_VERB, self::LIST_FORMULAS_OF_VERB_ID],
         [self::LIST_VALUES_BY_TRIPLE, self::LIST_VALUES_BY_TRIPLE_ID],

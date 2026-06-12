@@ -889,6 +889,19 @@ class test_words extends test_objects
         return new word_ui($wrd->api_json());
     }
 
+    /**
+     * @return word_ui "Swiss franc" with the related symbol and category phrases as loaded
+     *                 with the word from the backend e.g. to test the related phrases
+     *                 shown on the default word page
+     */
+    function swiss_franc_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = $this->swiss_franc_ui();
+        $wrd->phr_lst = $t_phr->list_swiss_franc_related_ui();
+        return $wrd;
+    }
+
     function euro(): word
     {
         $wrd = new word($this->env->usr1);
@@ -914,6 +927,39 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::USD_ID, words::USD);
+        return $wrd;
+    }
+
+    /**
+     * @return word the dollar sign "$" used as an alias of "US dollar"
+     */
+    function word_dollar(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::DOLLAR_ID, words::DOLLAR);
+        return $wrd;
+    }
+
+    /**
+     * @return word the spelling variant "U.S. dollar" used as an alias of "US dollar"
+     */
+    function word_u_s_dollar(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::U_S_DOLLAR_ID, words::U_S_DOLLAR);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui "US dollar" with the related alias, symbol and category phrases as loaded
+     *                 with the word from the backend e.g. to test the alias and symbol lines
+     *                 shown on the default word page
+     */
+    function us_dollar_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = new word_ui($this->us_dollar()->api_json());
+        $wrd->phr_lst = $t_phr->list_us_dollar_related_ui();
         return $wrd;
     }
 
@@ -946,6 +992,26 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::ABB_ID, words::ABB);
+        return $wrd;
+    }
+
+    function word_vestas(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::VESTAS_ID, words::VESTAS);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui "company" with the related stock triples as loaded with the word
+     *                 from the backend e.g. to test that the related phrases are sorted
+     *                 by the impact which is the market capitalisation for stocks
+     */
+    function company_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = new word_ui($this->word_company()->api_json());
+        $wrd->phr_lst = $t_phr->list_company_related_ui();
         return $wrd;
     }
 

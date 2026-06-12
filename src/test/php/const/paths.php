@@ -99,6 +99,7 @@ class paths
 
     // path parts
     const string DB = 'db' . DIRECTORY_SEPARATOR;
+    const string DB_FORMAT_TEST = self::DB . 'format_test' . DIRECTORY_SEPARATOR;
     const string FORMULA = 'formula' . DIRECTORY_SEPARATOR;
     // to test if all interface function of each web object word fine
     const string VIEW_FUNCTIONS = 'object_pages' . DIRECTORY_SEPARATOR;

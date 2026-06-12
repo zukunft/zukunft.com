@@ -4,6 +4,21 @@
 
 ### word frontend
 
+remove the type display e.g. 'standard' from the default word view
+
+add the position types 'side_or_first_below', 'side_or_below' and 'side_or_last_below' 
+which means that if the type is 'side_or_first_below'. If the screen width is below a number of pixel 
+that is defined in the config.yaml the component is positioned below the previous component.
+
+The default view for a word should have four column for width screens > 2800 pixel:
+1. a group of components with the description, the aliases / symbols and other related phrases
+2. a group with the most relevant value by impact and if it exists a chart on the top and the position type 'side_or_first_below'
+3. a group with the most relevant formulas and results and a result charts  and the position type 'side_or_last_below'
+4. a tab switch for the views with a miniature preview and two buttons: 'view' or 'switch'
+5. a second tab with the change log with the latest changes on the top
+6. maybe a preselected third tab with the user changes if the user has done some overwrites
+   the tab switch has the position type 'side_or_last_below'
+
 show the phrases related to a word in the default word page; create first a list of unit tests 
 show the formulas assigned to a word in the default word page
 show the value related to a word in the default word page
@@ -12,6 +27,8 @@ show the changes of a word in the default word page
 show the description of the word on the left 1/3 of the screen
 add the component position type "side or below" that shows this component right of the previous component is not the screen size is too small, what is too small is taken from the config which the user can overwrite an the default value is 1000 pixel
 show the views assigned to a word in the default word page
+
+mainly copy the word default view to the triple default view
 
 create a job to update the usage of a word
 
@@ -43,8 +60,12 @@ or smaller tasks like:
 
 ### fix warnings
 
-src/main/php/web/word/triple.php
+in src/main/php/web/word/triple.php try to fix:
 Warning:(758, 16) Method 'reload_objects' not found in triple
 Warning:(762, 27) Method 'get_verb_name' not found in triple
 Warning:(780, 16) Method 'reload_objects' not found in triple
 Warning:(784, 27) Method 'get_verb_name' not found in triple
+
+### general
+
+check where in the frontend a parameter / configuration values is used that is not yet taken from the config.yaml / user_configuration and at least mark it with a TODO Prio 1

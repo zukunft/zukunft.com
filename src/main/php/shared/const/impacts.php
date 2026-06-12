@@ -45,4 +45,19 @@ class impacts
     const float HTP_ZH_CANTON = 32400;
     const float HTP_ZH_COMPANY = 22500;
 
+    // approximate market capitalisation in CHF as of 2025 used as the impact of the test stocks
+    const float MARKET_CAP_ABB = 88000000000;
+    const float MARKET_CAP_ZURICH_INSURANCE = 82000000000;
+    const float MARKET_CAP_VESTAS = 14000000000;
+
+    // distinct impacts for the currency test triples so that any sort by impact is deterministic
+    const float CURRENCY_USD = 987654;
+    const float CURRENCY_EURO = 876543;
+    const float CURRENCY_CHF = 765432;
+    const float SYMBOL_USD = 87654;
+    const float SYMBOL_CHF = 76543;
+    const float IN_USD = 7654;
+    const float ALIAS_DOLLAR = 765;
+    const float ALIAS_U_S_DOLLAR = 76;
+
 }

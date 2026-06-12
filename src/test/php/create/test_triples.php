@@ -624,6 +624,48 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "Zurich Insurance" as a stock with the market capitalisation as impact
+     */
+    function company_zurich_market_cap(): triple
+    {
+        $trp = $this->company_zurich();
+        $trp->set_impact(impacts::MARKET_CAP_ZURICH_INSURANCE);
+        return $trp;
+    }
+
+    /**
+     * @return triple "ABB (company)" as a stock with the market capitalisation as impact
+     */
+    function abb_company(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::COMPANY_ABB_ID, triples::COMPANY_ABB);
+        $trp->set_from($t_wrd->word_abb()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->word_company()->phrase());
+        $trp->set_impact(impacts::MARKET_CAP_ABB);
+        return $trp;
+    }
+
+    /**
+     * @return triple "Vestas SA" as a stock with the market capitalisation as impact
+     */
+    function vestas_company(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::COMPANY_VESTAS_ID, triples::COMPANY_VESTAS);
+        $trp->set_from($t_wrd->word_vestas()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->word_company()->phrase());
+        $trp->set_impact(impacts::MARKET_CAP_VESTAS);
+        return $trp;
+    }
+
+    /**
      * @return triple "CHF is symbol for Swiss franc" used for unit testing the
      *         page-title category subtitle for SYMBOL-typed related entries
      */
@@ -636,6 +678,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_chf()->phrase());
         $trp->set_verb($t_vrb->verb_is_symbol());
         $trp->set_to($t_wrd->swiss_franc()->phrase());
+        $trp->set_impact(impacts::SYMBOL_CHF);
         return $trp;
     }
 
@@ -651,6 +694,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->swiss_franc()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
+        $trp->set_impact(impacts::CURRENCY_CHF);
         return $trp;
     }
 
@@ -666,6 +710,71 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->euro()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
+        $trp->set_impact(impacts::CURRENCY_EURO);
+        return $trp;
+    }
+
+    /**
+     * @return triple "$ is alias of US dollar" used for unit testing the alias display
+     */
+    function alias_dollar(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::DOLLAR_ALIAS_ID, triples::DOLLAR_ALIAS);
+        $trp->set_from($t_wrd->word_dollar()->phrase());
+        $trp->set_verb($t_vrb->verb_alias());
+        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_impact(impacts::ALIAS_DOLLAR);
+        return $trp;
+    }
+
+    /**
+     * @return triple "U.S. dollar is alias of US dollar" used for unit testing the alias display
+     */
+    function alias_u_s_dollar(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::U_S_DOLLAR_ALIAS_ID, triples::U_S_DOLLAR_ALIAS);
+        $trp->set_from($t_wrd->word_u_s_dollar()->phrase());
+        $trp->set_verb($t_vrb->verb_alias());
+        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_impact(impacts::ALIAS_U_S_DOLLAR);
+        return $trp;
+    }
+
+    /**
+     * @return triple "USD is symbol for US dollar" used for unit testing the symbol display
+     */
+    function symbol_usd(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::USD_SYMBOL_ID, triples::USD_SYMBOL);
+        $trp->set_from($t_wrd->word_usd()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_impact(impacts::SYMBOL_USD);
+        return $trp;
+    }
+
+    /**
+     * @return triple "in USD" used for unit testing the related phrases that are not an alias or symbol
+     */
+    function in_usd(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::IN_USD_ID, triples::IN_USD);
+        $trp->set_from($t_wrd->word_usd()->phrase());
+        $trp->set_verb($t_vrb->verb_in());
+        $trp->set_to($t_wrd->us_dollar()->phrase());
+        $trp->set_impact(impacts::IN_USD);
         return $trp;
     }
 
@@ -681,6 +790,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->us_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
+        $trp->set_impact(impacts::CURRENCY_USD);
         return $trp;
     }
 

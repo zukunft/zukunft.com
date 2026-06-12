@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
 include_once html_paths::WORD . 'word.php';
@@ -49,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -139,9 +141,10 @@ class word_tests
         $t->assert_sql_update($sc, $wrd_renamed, $wrd);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::USER]);
-        $wrd_renamed_admin = $wrd->cloned(words::TEST_RENAMED);
-        $wrd_renamed_admin->set_protection_by_code_id(protection_types::ADMIN);
-        $t->assert_sql_update($sc, $wrd_renamed_admin, $wrd, [sql_type::LOG]);
+        // the changed protection level is part of the update statement
+        $wrd_renamed_user_protected = $wrd->cloned(words::TEST_RENAMED);
+        $wrd_renamed_user_protected->set_protection_by_code_id(protection_types::USER);
+        $t->assert_sql_update($sc, $wrd_renamed_user_protected, $wrd, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update failed cases e.g. description update');
         $wrd = $t_wrd->word();
@@ -157,6 +160,31 @@ class word_tests
         $wrd_filled = $t_wrd->word_filled();
         $wrd_renamed->id = $wrd->id();
         $t->assert_sql_update($sc, $wrd_renamed, $wrd_filled, [sql_type::LOG]);
+
+        $t->subheader($ts . 'protection');
+        $test_name = 'a re-import without protection keeps the database protection';
+        $usr_msg = new user_message();
+        $wrd_db = $t_wrd->word();
+        $wrd_imp = $t_wrd->word();
+        $wrd_imp->description = words::TEST_RENAMED;
+        $wrd_imp->set_protection_id(null);
+        $t->assert_false($test_name, in_array(sandbox::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $usr_msg)->names()));
+        $test_name = 'an explicit lower protection is part of the update fields';
+        $wrd_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
+        $t->assert_true($test_name, in_array(sandbox::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $usr_msg)->names()));
+        $test_name = 'a normal user cannot reduce the protection level';
+        $wrd_imp->check_protection_change($wrd_db, $t->usr_normal, $usr_msg);
+        $t->assert($test_name, $wrd_imp->protection_id(), $wrd_db->protection_id());
+        $test_name = 'the denied reduction is reported to the user';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), words::MATH);
+        $test_name = 'an admin user can reduce the protection level';
+        $usr_msg = new user_message();
+        $wrd_imp = $t_wrd->word();
+        $wrd_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
+        $wrd_imp->check_protection_change($wrd_db, $t->usr_admin, $usr_msg);
+        $t->assert($test_name, $wrd_imp->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT));
+        $test_name = 'the admin reduction is not reported';
+        $t->assert($test_name, $usr_msg->all_message_text(), '');
 
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $wrd);
@@ -262,12 +290,7 @@ class word_tests
         $t->assert_text_contains($test_name, $txt, '>CHF</h4>');
 
         $test_name = 'moves the edit icon onto the subtitle line';
-        $heading_end = strpos($txt, '</h4>');
-        $edit_pos = strpos($txt, icons::EDIT);
-        $t->assert_true($test_name,
-            $heading_end !== false
-            and $edit_pos !== false
-            and $edit_pos > $heading_end);
+        $t->assert_text_order($test_name, $txt, '</h4>', icons::EDIT);
 
         $test_name = 'reverse priority "Zurich is" subtitle has company when company is relevant';
         $wrd = $t_wrd->zh_ui();
