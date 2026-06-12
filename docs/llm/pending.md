@@ -4,12 +4,6 @@
 
 ### word frontend
 
-remove the type display e.g. 'standard' from the default word view
-
-add the position types 'side_or_first_below', 'side_or_below' and 'side_or_last_below' 
-which means that if the type is 'side_or_first_below'. If the screen width is below a number of pixel 
-that is defined in the config.yaml the component is positioned below the previous component.
-
 The default view for a word should have four column for width screens > 2800 pixel:
 1. a group of components with the description, the aliases / symbols and other related phrases
 2. a group with the most relevant value by impact and if it exists a chart on the top and the position type 'side_or_first_below'
@@ -28,9 +22,30 @@ show the description of the word on the left 1/3 of the screen
 add the component position type "side or below" that shows this component right of the previous component is not the screen size is too small, what is too small is taken from the config which the user can overwrite an the default value is 1000 pixel
 show the views assigned to a word in the default word page
 
+
+add the formulas assigned to a word to the word_default view using also 1/3 of the screen width
+
+add the values as a table where the word ist used to the word_default view using 2/3 of the screen width where often used phrases are column heads and the phrases are shown using a tree view
+
 mainly copy the word default view to the triple default view
 
 create a job to update the usage of a word
+
+### workflow
+
+fix the error messages 'url key "mask_id" is missing, url mapper for "mask" is missing, url mapper for "id" is missing, url mapper for "back" is missing, url mapper for "confirm" is missing, url mapper for "Name" is missing, url mapper for "py" is missing, url mapper for "Description" is missing, url mapper for "Plural" is missing, url mapper for "d" is missing, url mapper for "s" is missing, url mapper for "sp" is missing' caused by calling the url 'http://localhost/http/view.php?mask=3&id=259&back=259&confirm=1&Name=USD&py=3&Description=ISO+4217+alphabetic+code+for+the+United+States+dollar.&Plural=&d=0&s=1&sp=1' ; the expected result is that it should show the "Confirm update" view with the changes that the user has done and after pressing confirm that database row should be updated and the user should see th original page again, but with the updates , create first unit tests for the workflow using src/test/php/unit_workflow/all_workflow_tests.php
+
+add a '0' url prefix that is used to include the database values in the url for the url_to_html function to confirm the changes
+
+### import
+
+in json import a calc_validation list is created. Use this list to check if the results cen be reproduced based on the data_object $dto filled only with the values and formulas from the json import file. In case of any errors use the usual path via $msg to send a message to the user
+
+in json import a calc_validation list is created. Use this list to reproduce the results after the import for the user
+
+in json import add a view_validation part that contains the views in the pure text format created by the html_to_text function. use this to check if after the import the expected views for the user can be reproduced
+
+
 
 
 ### user frontend

@@ -1764,6 +1764,19 @@ class html_base
         return $this->div_bs($text, 'row ' . $style);
     }
 
+    /**
+     * a column of a row that is moved below the previous column on small screens
+     * because the columns of a row wrap if the screen is smaller than the sum of the column widths
+     *
+     * @param string $text the html code to show within the column
+     * @param int $min_width the minimal column width in pixel before the column is wrapped to a new line
+     * @return string the html code of the wrapping column
+     */
+    function div_col_min_width(string $text, int $min_width): string
+    {
+        return '<div class="col" style="min-width: ' . $min_width . 'px">' . $text . '</div>';
+    }
+
     function add_style(string $text, ?int $style_id = null): string
     {
         if ($style_id != null and $text != '') {

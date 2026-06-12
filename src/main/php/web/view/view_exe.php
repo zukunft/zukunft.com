@@ -187,12 +187,21 @@ class view_exe extends view_base
             $auto_row = true;
             // the style for the column if used
             $style_id = null;
+            // the columns of a side-or-below group that are stacked on small screens
+            $col_lst = [];
             foreach ($this->cmp_lst->lst() as $cmp) {
+                $pos_type = $cmp->pos_type_code_id($cfg->typ_lst_cache);
                 // add previous collected components to the final result
-                if ($row != '') {
+                if ($row != '' or $col_lst != []) {
                     // position the next component in a new row
-                    if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::BELOW) {
-                        if ($auto_row) {
+                    if ($pos_type == position_types::BELOW) {
+                        if ($col_lst != []) {
+                            // close the side-or-below group with the last collected column
+                            $col_lst[] = $row;
+                            $result .= $this->dsp_side_or_below_row($col_lst);
+                            $col_lst = [];
+                            $style_id = null;
+                        } elseif ($auto_row) {
                             // the row uses the style of the component e.g. col-md-4 for a short line
                             // or the full page width if no style is set
                             // TODO easy move code to HTML class
@@ -210,7 +219,12 @@ class view_exe extends view_base
                         $row = '';
                         $auto_row = true;
                     }
-                    if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::COLUMN) {
+                    if (in_array($pos_type, position_types::SIDE_OR_BELOW_GROUP)) {
+                        // the collected components become a column of the side-or-below group
+                        $col_lst[] = $row;
+                        $row = '';
+                    }
+                    if ($pos_type == position_types::COLUMN) {
                         // the component html code is added without adding a table row using the same style
                         $result .= $html->add_style($row, $style_id);
                         $row = '';
@@ -243,12 +257,48 @@ class view_exe extends view_base
                 }
 
             }
-            if ($row != '') {
+            if ($col_lst != []) {
+                // close a side-or-below group at the end of the view
+                $col_lst[] = $row;
+                $result .= $this->dsp_side_or_below_row($col_lst);
+            } elseif ($row != '') {
                 $result .= $row;
             }
         }
 
         return $result;
+    }
+
+    /**
+     * combine the columns of a side-or-below group to one row
+     * that shows the columns side by side on wide screens
+     * and below each other if the screen width in pixel is below
+     * the 'min side width' of the user configuration
+     *
+     * @param array $col_lst the html code of the columns
+     * @return string the html code of the row with the wrapping columns
+     */
+    private function dsp_side_or_below_row(array $col_lst): string
+    {
+        global $ui_sys;
+
+        $html = new html_base();
+        if ($ui_sys?->cfg !== null) {
+            $min_width = (int)$ui_sys->cfg->get_by(
+                [triples::SIDE_WIDTH, words::MIN, words::LAYOUT, words::FRONTEND, words::USER],
+                def::FALLBACK_MIN_SIDE_WIDTH);
+        } else {
+            $min_width = def::FALLBACK_MIN_SIDE_WIDTH;
+        }
+        // two columns fit side by side only if the screen is wider than the configured minimal width
+        $col_width = (int)round($min_width / 2);
+        $cols = '';
+        foreach ($col_lst as $col) {
+            if ($col != '') {
+                $cols .= $html->div_col_min_width($col, $col_width);
+            }
+        }
+        return $html->div_row($cols);
     }
 
 

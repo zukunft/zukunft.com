@@ -66,6 +66,7 @@ class triples
     const string SYSTEM_ERRORS = 'system errors';
     const string RESPONSE_TIME = 'response time';
     const string OUTPUT_FORMAT = 'output format';
+    const string SIDE_WIDTH = 'side width';
 
     // triples included in the initial setup that are used for system testing
     const string MATH_CONST = 'mathematical constant';
@@ -189,7 +190,7 @@ class triples
     const string COMPANY_ZURICH = "Zurich Insurance";
     const int COMPANY_ZURICH_ID = 140;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
-    const int CHF_SYMBOL_ID = 2898;
+    const int CHF_SYMBOL_ID = 2899;
     const int US_DOLLAR_ID = 123;
     const int EURO_ID = 122;
     const string USD_SYMBOL = "USD is symbol for US dollar";

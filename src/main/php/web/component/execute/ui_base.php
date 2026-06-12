@@ -48,14 +48,6 @@ class ui_base
 {
 
     /**
-     * @return string a fixed text
-     */
-    function text(): string
-    {
-        return 'fixed text component';
-    }
-
-    /**
      * @return string the name of a phrase and give the user the possibility to change the phrase name
      */
     function phrase_name(db_object|combine_named $phr): string

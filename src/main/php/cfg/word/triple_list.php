@@ -619,6 +619,25 @@ class triple_list extends sandbox_list_named
 
 
     /*
+     * sort
+     */
+
+    /**
+     * sort this triple list in place so that the triple with the highest impact is first
+     * the impact is the system calculated relevance e.g. the market capitalisation of a stock
+     * triples with the same impact are sorted by the database id for a stable order
+     * @return void
+     */
+    function sort_by_impact(): void
+    {
+        $lst = $this->lst();
+        usort($lst, fn(triple $a, triple $b)
+            => (($b->get_impact() ?? 0) <=> ($a->get_impact() ?? 0)) ?: $a->id() <=> $b->id());
+        $this->set_lst($lst);
+    }
+
+
+    /*
      * convert
      */
 

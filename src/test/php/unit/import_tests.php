@@ -115,6 +115,21 @@ class import_tests
         $dto = $imp->get_data_object($json_array, $usr_msg);
         $t->assert($test_name, $dto->formula_list()->count(), 4);
 
+        // the main stock triples have a distinct impact (the market capitalisation)
+        // so that the related phrases of e.g. CHF are always shown in the same order
+        $json_str = file_get_contents(test_files::IMPORT_PORTFOLIO_INSTRUMENTS);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $impacts = [];
+        foreach (['ROG main trading currency', 'UBSG main trading currency', 'ABBN main trading currency',
+                     'CFR main trading currency', 'ZURN main trading currency'] as $trp_name) {
+            $impacts[] = $dto->triple_list()->get_by_name($trp_name)?->get_impact();
+        }
+        $test_name = 'JSON import sets a distinct impact for each main stock triple';
+        $t->assert($test_name, count(array_unique($impacts)), 5);
+        $test_name = '... and no main stock triple is without an impact';
+        $t->assert_false($test_name, in_array(null, $impacts));
+
         // covers the simple "total = price * quantity" calculation in result_calc_simple.json:
         // the importer must populate values, the formula and the pre-calculated result
         $json_str = file_get_contents(test_files::IMPORT_RESULT_CALC . test_files::JSON);

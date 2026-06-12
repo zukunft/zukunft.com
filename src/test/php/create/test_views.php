@@ -316,6 +316,18 @@ class test_views extends test_objects
         return $msk;
     }
 
+    /**
+     * @return view with a side-or-below group of four text columns
+     *         to test the responsive column position types
+     */
+    function view_side_or_below(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view();
+        $msk->cmp_lnk_lst = $t_cmp->components_side_or_below($msk);
+        return $msk;
+    }
+
     function view_word_add(): view
     {
         $t_cmp = new test_components($this->env);
