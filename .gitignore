@@ -6,3 +6,6 @@
 .env
 .vscode/
 /composer.lock
+/composer.phar
+/vendor/
+/cache/cfg_zukunft.com system.json

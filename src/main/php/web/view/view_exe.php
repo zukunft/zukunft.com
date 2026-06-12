@@ -415,7 +415,8 @@ class view_exe extends view_base
             $result .= $this->dsp_type_selector($script);
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION);
-            $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id() . "&back=" . $back);
+            $result .= $html->dsp_form_end('', $back,
+                $html->url_new(views::VIEW_DEL_ID, $this->id(), '', $back));
         }
 
         // in edit mode show the assigned words and the hist on the right
@@ -506,13 +507,15 @@ class view_exe extends view_base
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected, $ui_sys->component_list());
 
-                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
+                $result .= $html->dsp_form_end('',
+                    $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
                 $result .= $this->component_selector($script, '', $this->type_id(), $ui_sys->component_list());
-                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
+                $result .= $html->dsp_form_end('',
+                    $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
             } else {
                 $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
                 $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
@@ -594,9 +597,9 @@ class view_exe extends view_base
             } else {
                 $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
-            $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_edit = $html->url_new(views::VIEW_EDIT_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
             $result .= btn_edit('design the view', $call_edit) . ' ';
-            $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_del = $html->url_new(views::VIEW_DEL_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';
         }

@@ -645,6 +645,16 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word "one" without the scaling type to test the scaling type check
+     */
+    function word_one_unscaled(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::ONE_ID, words::ONE);
+        return $wrd;
+    }
+
     function word_math(): word
     {
         $wrd = new word($this->env->usr1);
@@ -657,6 +667,16 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(words::MIO_ID, words::MIO_SHORT);
         $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
+        return $wrd;
+    }
+
+    /**
+     * @return word "mio" without the scaling type to test the scaling type check
+     */
+    function word_mio_unscaled(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::MIO_ID, words::MIO_SHORT);
         return $wrd;
     }
 

@@ -135,7 +135,7 @@ class base_ui_tests
         //$t->assert_sql_name_unique($log_ui->dsp_hist_links_sql($db_con, true));
 
         // button add
-        $url = $html->url(views::WORD_ADD);
+        $url = $html->url_new(views::WORD_ADD_ID);
         $t->html_page_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $t);
 
         $t->subheader($ts . 'unit html table tests');
@@ -299,46 +299,46 @@ class base_ui_tests
         $t->assert($test_name, $frm->btn_del('1'), $target);
 
 
-        $url = $html->url(views::WORD_ADD);
+        $url = $html->url_new(views::WORD_ADD_ID);
         $back = '1';
         $target = '<a href="/http/word_add.php" title="Add test"><img src="/images/button_add.svg" alt="Add test"></a>';
-        $target = '<a href="/http/word_add.php" title="add new word">';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title="add new word">';
         $result = (new button($url, $back))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
 
         // TODO move e.g. because the edit word button is tested already in the unit tests of the object
 
-        $url = $html->url(views::WORD_DEL);
+        $url = $html->url_new(views::WORD_DEL_ID);
         $target = '<a href="/http/view.php" title="Del test"><img src="/images/button_del.svg" alt="Del test"></a>';
-        $target = '<a href="/http/word_del.php" title="delete word"><i class="far fa-times-circle"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_DEL_ID . '" title="delete word"><i class="far fa-times-circle"></i></a>';
         $result = (new button($url, $back))->del(msg_id::WORD_DEL);
         $t->dsp_contains(", btn_del", $target, $result);
 
-        $url = $html->url(views::WORD_NAME);
+        $url = $html->url_new(views::WORD_NAME);
         $target = '<a href="/http/view.php" title="Undo test"><img src="/images/button_undo.svg" alt="Undo test"></a>';
         $target = '<a href="/http/word.php" title="undo"><img src="/images/button_undo.svg" alt="undo"></a>';
         $result = (new button($url, $back))->undo(msg_id::UNDO);
         //$t->assert(", btn_undo", $result, $target);
 
-        $url = $html->url(views::WORD_ADD);
+        $url = $html->url_new(views::WORD_ADD_ID);
         $target = '<a href="/http/view.php" title="Find test"><img src="/images/button_find.svg" alt="Find test"></a>';
         $target = '<a href="/http/word_add.php" title=""><img src="/images/button_find.svg" alt=""></a>';
         $result = (new button($url, $back))->find(msg_id::FIND);
         //$t->assert(", btn_find", $result, $target);
 
-        $url = $html->url(views::WORD_ADD);
+        $url = $html->url_new(views::WORD_ADD_ID);
         $target = '<a href="/http/view.php" title="Show all test"><img src="/images/button_filter_off.svg" alt="Show all test"></a>';
         $target = '<a href="/http/word_add.php" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
         $result = (new button($url, $back))->un_filter(msg_id::REMOVE_FILTER);
         //$t->assert(", btn_unfilter", $result, $target);
 
-        $url = $html->url(views::WORD_ADD);
+        $url = $html->url_new(views::WORD_ADD_ID);
         $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
-        $target = '<h6></h6><a href="/http/word_add.php&confirm=1">yes</a>/<a href="/http/word_add.php&confirm=-1">no</a>';
+        $target = '<h6></h6><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&confirm=1">yes</a>/<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&confirm=-1">no</a>';
         $result = (new button($url, $back))->yes_no();
         $t->assert(", btn_yesno", $result, $target);
 
-        $url = $html->url(views::WORD_ADD);
+        $url = $html->url_new(views::WORD_ADD_ID);
         $target = '<a href="' . api::MAIN_SCRIPT . '?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
         $result = (new button($url, $back))->back();
         //$t->assert(", btn_back", $result, $target);

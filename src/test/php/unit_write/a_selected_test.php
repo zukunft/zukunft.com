@@ -61,8 +61,10 @@ use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\formula_calc_tests;
 use Zukunft\ZukunftCom\test\php\unit\import_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\triple_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\value_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -137,8 +139,8 @@ class a_selected_test extends test_cleanup
              */
 
             // preferred tests to check upfront the words::*_ID and triples::*_ID
-            //new word_list_read_tests()->run($this);
-            //new triple_list_read_tests()->run($this);
+            new word_list_read_tests()->run($this);
+            new triple_list_read_tests()->run($this);
 
             /*
              * part of system setup testing
@@ -253,7 +255,7 @@ class a_selected_test extends test_cleanup
 
             // run the selected db write tests
             //new user_write_tests()->run($this);
-            //new sys_log_write_tests()->run($t);
+            new sys_log_write_tests()->run($this);
             //new horizontal_write_tests()->run($this);
 
             //new word_write_tests()->run($this);
@@ -271,7 +273,7 @@ class a_selected_test extends test_cleanup
             //new ref_write_tests()->run($this);
             //new value_write_tests()->run($this);
             //new value_list_write_tests()->run($t);
-            new expression_write_tests()->run($this);
+            //new expression_write_tests()->run($this);
             //new element_write_tests()->run($this);
             //new element_write_tests()->run_list($this);
             //new element_group_write_tests()->run($this);
@@ -287,8 +289,8 @@ class a_selected_test extends test_cleanup
             //new view_write_tests()->run($this);
             //new view_relation_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
-            new component_write_tests()->run($this);
-            new component_link_write_tests()->run($this);
+            //new component_write_tests()->run($this);
+            //new component_link_write_tests()->run($this);
 
             //new api_write_tests()->run($this);
             //new import_write_tests()->run($this);

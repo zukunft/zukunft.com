@@ -1181,7 +1181,7 @@ class sandbox_list_named extends sandbox_list
                 $sc_par_lst->add(sql_type::LOG);
                 $usr_msg = new user_message();
                 $qp = $sbx->sql_update($sc, $db_row, $usr_msg, $sc_par_lst);
-                if ($usr_msg->is_ok()) {
+                if ($usr_msg->is_ok() and $qp != null) {
                     $qp->obj_name = $sbx->name();
                     $sql_list->add_by_name($qp);
                 }
@@ -1256,12 +1256,12 @@ class sandbox_list_named extends sandbox_list
                         $sc_par_lst->add(sql_type::LOG);
                         $upd_usr_msg = new user_message();
                         $qp = $sbx->sql_update($sc, $db_row, $upd_usr_msg, $sc_par_lst);
-                        if ($upd_usr_msg->is_ok()) {
-                            $qp->obj_name = $sbx->name();
-                            $sql_list->add($qp);
-                        } else {
+                        if (!$upd_usr_msg->is_ok()) {
                             $usr_msg->merge($upd_usr_msg);
                             log_err('Internal import error: ' . $usr_msg->all_message_text());
+                        } elseif ($qp != null) {
+                            $qp->obj_name = $sbx->name();
+                            $sql_list->add($qp);
                         }
                     }
                 }

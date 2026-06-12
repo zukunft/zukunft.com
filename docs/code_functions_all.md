@@ -1169,6 +1169,7 @@
     \-- truncate_table_all - section for function truncate_table_all not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- truncate_table - section for function truncate_table not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- drop_table - section for function drop_table not yet defined that it should be private supporting functions in /db/sql_db.php
+    \-- drop_view - section for function drop_view not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- reset_seq_all - section for function reset_seq_all not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- reset_seq - section for function reset_seq not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- load_user_profiles - section for function load_user_profiles is expected to be load in /db/sql_db.php
@@ -2685,6 +2686,7 @@
     \-- is_same_val - section for function is_same_val is expected to be info in /value/value_base.php
     \-- scale_new - section for function scale_new not yet defined that it should be TODO activate in /value/value_base.php
     \-- scale - section for function scale not yet defined that it should be TODO activate in /value/value_base.php
+    \-- scale_calc - section for function scale_calc not yet defined that it should be TODO activate in /value/value_base.php
     \-- import_phrase_value - section for function import_phrase_value not yet defined that it should be im- and export in /value/value_base.php
     \-- save_from_api_msg - section for function save_from_api_msg is expected to be save in /value/value_base.php
     \-- figure - section for function figure not yet defined that it should be get functions that return other linked objects in /value/value_base.php
@@ -4518,7 +4520,7 @@
     \-- value
         \-- phrase_list - get the best matching value or value list for this phrase list
     \-- value_scaled
-        \-- phrase_list - @return value the best matching value scaled to one
+        \-- phrase_list - @param user_message $msg to collect the warnings and errors that might be shown to the user or admin
 \-- review - to be moved to the sql creator
     \-- load_by_phr
         \-- phrase_list - load a list of phrases by a given phrase, verb and direction
@@ -5580,6 +5582,7 @@
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /user/user_message.php
     \-- add_id - section for function add_id not yet defined that it should be add in /user/user_message.php
     \-- add_err_with_vars - section for function add_err_with_vars not yet defined that it should be add in /user/user_message.php
+    \-- add_warning_with_vars - section for function add_warning_with_vars not yet defined that it should be add in /user/user_message.php
     \-- add_error_text - section for function add_error_text not yet defined that it should be add in /user/user_message.php
     \-- add_warning - section for function add_warning not yet defined that it should be add in /user/user_message.php
     \-- add_message - section for function add_message not yet defined that it should be add in /user/user_message.php

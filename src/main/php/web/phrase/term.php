@@ -599,7 +599,8 @@ class term extends combine_named
     function dsp_unlink(int $link_id): string
     {
         $btn = new button();
-        $del_call = "/http/link_del.php?id=" . $link_id . "&back=" . $this->id();
+        $html = new html_base();
+        $del_call = $html->url_new(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
         $result = '    <td>' . "\n";
         $result .= $btn->del(msg_id::WORD_UNLINK, $del_call);
         $result .= '    </td>' . "\n";

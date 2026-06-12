@@ -283,6 +283,7 @@ class json_fields
     const string STD_ID = 'std_id';
 
     // to review
+    const string ACTION = 'action';
     const string USER_NAME = 'user';
     const string JOB_PARAMETER = 'job_parameter';
 

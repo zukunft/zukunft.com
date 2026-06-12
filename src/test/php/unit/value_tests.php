@@ -54,12 +54,14 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use DateTime;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -107,6 +109,64 @@ class value_tests
         $test_name = 'create a geolocation value object';
         $val = new value_obj()->get($usr, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
+
+        $t->subheader($ts . 'scaling');
+        $test_name = 'scale the Swiss inhabitants from millions to one';
+        $usr_msg = new user_message();
+        $val = $t_val->value_ch();
+        $trm_lst_scale = $t_trm->term_list_scale_mio();
+        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $usr_msg, $trm_lst_scale);
+        $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO * 1000000);
+        $test_name = '... and the scaling reports no problem';
+        $t->assert_true($test_name, $usr_msg->is_ok());
+
+        $test_name = 'if "mio" of the value is not a scaling word ask the user to set the type';
+        $usr_msg = new user_message();
+        $val = $t_val->value_ch_unscaled();
+        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $usr_msg, $trm_lst_scale);
+        $target = 'to scale a value one word of ' . $val->phrase_list()->dsp_name()
+            . ' needs to be of type scaling';
+        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $test_name = '... and the unscaled number is returned as fallback';
+        $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
+
+        $test_name = 'if "one" of the target list is not a scaling word ask the user to set the type';
+        $usr_msg = new user_message();
+        $val = $t_val->value_ch();
+        $trg_phr_lst = $t_phr->inhabitant_one_unscaled_phrase_list();
+        $result = $val->scale_new($trg_phr_lst, $usr_msg, $trm_lst_scale);
+        $target = 'to scale a value one word of ' . $trg_phr_lst->dsp_name()
+            . ' needs to be of type scaling';
+        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $test_name = '... and the unscaled number is returned as fallback';
+        $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
+
+        $test_name = 'scale the Swiss inhabitants to one based on a preloaded data object';
+        $usr_msg = new user_message();
+        $val = $t_val->value_ch();
+        $result = $val->scale_calc($t_trm->dto_scale_mio(), $usr_msg);
+        $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO * 1000000);
+        $test_name = '... and the scaling reports no problem';
+        $t->assert_true($test_name, $usr_msg->is_ok());
+
+        $test_name = 'if "one" of the formula result is not a scaling word report the problem';
+        $usr_msg = new user_message();
+        $val = $t_val->value_ch();
+        $result = $val->scale_calc($t_trm->dto_scale_mio_unscaled(), $usr_msg);
+        $target = 'the result part of the scaling formula ' . formulas::SCALE_MIO
+            . ' does not contain exactly one word of type scaling';
+        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $test_name = '... and the unscaled number is returned as fallback';
+        $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
+
+        $test_name = 'if the data object has no formula for the scaling word report the problem';
+        $usr_msg = new user_message();
+        $val = $t_val->value_ch();
+        $result = $val->scale_calc($t_trm->dto_scale_none(), $usr_msg);
+        $target = 'no scaling formula found for the word ' . words::MIO_SHORT;
+        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $test_name = '... and the unscaled number is returned as fallback';
+        $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         $t->subheader($ts . 'sql setup');
         $val = $t_val->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)

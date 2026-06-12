@@ -32,9 +32,15 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
@@ -56,6 +62,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -67,6 +75,7 @@ class type_tests
 
         // init
         $sc = new sql_creator();
+        $db_con = new sql_db();
         $t_typ = new test_types($t);
         $t->name = 'type->';
         $t->resource_path = 'db/type/';
@@ -76,6 +85,42 @@ class type_tests
         $t->header($ts);
 
         // TODO job_types
+
+        $t->subheader($ts . 'code link csv row mapper');
+        // the code link csv loader maps each csv row via the id field name derived from the class,
+        // so the derived name must match the csv and table column even for the enum classes
+        $test_name = 'id field of the sys log status enum matches the csv and table column';
+        $t->assert($test_name, $db_con->get_id_field_name(sys_log_statuum::class), sys_log_status::FLD_ID);
+        $test_name = 'id field of the user status enum matches the csv and table column';
+        $t->assert($test_name, $db_con->get_id_field_name(user_statuum::class), user_status::FLD_ID);
+
+        $test_name = 'a code link csv row with the id column fills the sys log status';
+        $log_sta = new sys_log_status('');
+        $csv_row = [
+            sys_log_status::FLD_ID => sys_log_statuum::OPEN_ID,
+            sys_log_status::FLD_NAME => sys_log_statuum::OPEN_NAME,
+            sql_db::FLD_CODE_ID => sys_log_statuum::OPEN,
+            sql_db::FLD_DESCRIPTION => sys_log_statuum::OPEN_COM
+        ];
+        $t->assert_true($test_name, $log_sta->row_mapper_typ_obj($csv_row, sys_log_statuum::class));
+        $test_name = 'the code id of the sys log status is filled from the csv row';
+        $t->assert($test_name, $log_sta->code_id, sys_log_statuum::OPEN);
+        $test_name = 'the name of the sys log status is filled from the csv row';
+        $t->assert($test_name, $log_sta->name(), sys_log_statuum::OPEN_NAME);
+
+        $test_name = 'a code link csv row without the id column reports a failed mapping';
+        $log_sta = new sys_log_status('');
+        $csv_row = [
+            sys_log_status::FLD_NAME => sys_log_statuum::OPEN_NAME,
+            sql_db::FLD_CODE_ID => sys_log_statuum::OPEN
+        ];
+        $t->assert_false($test_name, $log_sta->row_mapper_typ_obj($csv_row, sys_log_statuum::class));
+
+        $t->subheader($ts . 'type load sql');
+        // a type child class must create its load sql with its own table and id field
+        // and never fall back to the type_list base class
+        $log_fnc = new sys_log_function('', '', null, 1);
+        $t->assert_sql_by_id($sc, $log_fnc);
 
         $t->subheader($ts . 'system log type sql setup');
         $log_typ = new sys_log_level('');

@@ -77,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -191,6 +192,12 @@ class sandbox_tests
 
         // TODO review the tests below e.g. by using the test section ($ts) and $test_name like above
         $t->subheader($ts . 'functions that does not need a database connection');
+
+        $test_name = 'a missing selector overwrite is reported to the user via the message object';
+        $dbo_ui = new db_object_ui();
+        $result = $dbo_ui->verb_selector('test_form', null);
+        $target = 'verb_selector function is not overwritten by ' . db_object_ui::class;
+        $t->assert($test_name, $result, $target);
 
         // test if two sources are supposed to be the same
         $src1 = new source($usr);

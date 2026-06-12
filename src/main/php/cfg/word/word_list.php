@@ -1134,17 +1134,14 @@ class word_list extends sandbox_list_named
      */
     function scaling_lst(): word_list
     {
-        global $sys;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
         $result = new word_list($this->get_user());
-        $scale_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
-        $scale_hidden_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING_HIDDEN);
-        // loop over the word ids and add only the time ids to the result array
+        // loop over the words and add only the scaling words to the result list
         foreach ($this->lst() as $wrd) {
-            if ($wrd->type_id == $scale_type or $wrd->type_id == $scale_hidden_type) {
+            if ($wrd->is_scaling()) {
                 $wrd->usr = $this->get_user(); // review: should not be needed
                 $result->add_obj($wrd);
                 log_debug('found (' . $wrd->name() . ')');

@@ -80,8 +80,7 @@ class localhost_ui_tests
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = file_get_contents(api::URL_DEV . views::WORD_EDIT_ID . url_var::ADD_ID . words::MATH_ID);
         $sys->times->switch(system_time_type::DEFAULT);
-        // TODO Prio 0 activate
-        //$t->assert_text_contains($test_name, $page, words::MATH, test_base::TIMEOUT_LOCALHOST);
+        $t->assert_text_contains($test_name, $page, words::MATH, test_base::TIMEOUT_LOCALHOST);
         $test_name = 'verb add by url';
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = file_get_contents(api::URL_DEV . views::VERB_ADD_ID);

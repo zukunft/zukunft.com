@@ -191,6 +191,21 @@ class user_message extends Message
     }
 
     /**
+     * add a warning message with variables
+     * and add the translated message to the log so that the admin can also see it
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @param array $var_lst the vars that should be added to the message text
+     * @return void is never expected to fail
+     */
+    function add_warning_with_vars(?msg_id $msg_id, array $var_lst): void
+    {
+        $this->add($msg_id, $var_lst, true);
+        $msg = $this->get_last_message_translated();
+        log_warning($msg);
+    }
+
+    /**
      * add a message classified as an error
      * @param string $txt the explanation that should be shown to the user
      * @return void

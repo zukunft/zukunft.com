@@ -626,6 +626,17 @@ class expression extends shared_expression
             if ($msg->is_ok()) {
                 $trm = $trm_lst?->term_by_obj_id($id, $class);
                 if ($trm == null) {
+                    // if the term is not in the preloaded list load it from the database
+                    // TODO Prio 1 move this to a preprocessing function
+                    global $db_con;
+                    if ($db_con->is_open()) {
+                        $trm = new term($this->usr);
+                        if ($trm->load_by_obj_id($id, $class) == 0) {
+                            $trm = null;
+                        }
+                    }
+                }
+                if ($trm == null) {
                     $msg->add(msg_id::EXPRESSION_TERM_MISSING, [
                         msg_id::VAR_TERM => $obj_sym,
                         msg_id::VAR_FORMULA => $this->frm->dsp_id()

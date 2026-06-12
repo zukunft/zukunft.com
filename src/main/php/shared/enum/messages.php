@@ -446,6 +446,22 @@ enum messages: string
         . '" is missing';
     case VALUE_ID_MISSING = 'to add a value to the database at least one word must specify the value "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END;
+    case SCALING_WORD_MISSING = 'to scale a value one word of '
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . ' needs to be of type scaling';
+    case SCALING_USER_MISSING = 'to scale the value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' the user must be set';
+    case SCALING_PHRASES_MISSING = 'to scale the value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' the phrases must be loaded by the calling function';
+    case SCALING_WORDS_AMBIGUOUS = 'only one scaling word is supported, but the value has the scaling words '
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END;
+    case SCALING_FORMULA_MISSING = 'no scaling formula found for the word '
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END;
+    case SCALING_FORMULA_RESULT_INVALID = 'the result part of the scaling formula '
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . ' does not contain exactly one word of type scaling';
     case USER_MISSING = 'user in "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" missing';

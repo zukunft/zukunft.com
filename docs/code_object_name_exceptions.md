@@ -160,10 +160,10 @@ sql_par_list: $result, $sql_list
 sql_sync_sequences: $sql_seq
 sql_type_list: $sc_par_lst, $sc_par_lst_sub, $sc_par_lst_upd, $sc_par_typ
 sql_where: $pwh
-sys_log_function: $fnc, $log_fuc, $sys_log, $sys_log_fnc, $typ
+sys_log_function: $fnc, $log_fnc, $log_fuc, $sys_log, $sys_log_fnc, $typ
 sys_log_level: $log_typ
 sys_log_list: $err_lst, $err_lst_ui, $log_lst, $log_lst_ui, $sys_lst
-sys_log_status: $log_sta
+sys_log_status: $log_sta, $typ_obj
 sys_log_status_list: $lst, $sys_log_status
 system_form: $form, $sfm
 system_page: $page

@@ -81,7 +81,7 @@ class view_list_read_tests
         $result = json_decode($msk_lst->api_json(), true);
         $class_for_file = $t->class_without_namespace(view_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);
-        // TODO prio 1 use jso_contains and activate
+        // TODO Prio 1 use jso_contains and activate
         //$t->assert($test_name . $msk_lst->dsp_id(), $lib->json_is_similar($target, $result), true);
 
         $test_name = 'loading by component list by pattern ';

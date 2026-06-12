@@ -154,7 +154,7 @@ class import_write_tests
         //$test_name = 'test if the test reference has been deleted from the database';
         $ref = new ref($usr);
         $ref->load_by_ex_key(refs::SYSTEM_TEST_ADD);
-        // TODO prio 2 activate but least the removal of the user
+        // TODO Prio 2 activate but least the removal of the user
         //$t->assert($test_name, $ref->id(), 0);
 
         $test_name = 'remove the test reference directly as fallback to cleanup the database';
@@ -255,7 +255,7 @@ class import_write_tests
         $test_name = 'test if the test ' . $name . ' has been deleted from the database';
         $sbx->load_by_name($add_name);
         if ($sbx::class != verb::class) {
-            // TODO prio 3 maybe activate also for verbs but at least should be activated for normal sandbox objects
+            // TODO Prio 3 maybe activate also for verbs but at least should be activated for normal sandbox objects
             // TODO Prio 0 activate
             //$t->assert($test_name, $sbx->id(), 0);
         }

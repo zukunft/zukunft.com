@@ -51,6 +51,8 @@ include_once paths::SHARED_CONST . 'words.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -151,6 +153,15 @@ class word_tests
         $wrd_renamed_user_protected->set_protection_by_code_id(protection_types::USER);
         $t->assert_sql_update($sc, $wrd_renamed_user_protected, $wrd, [sql_type::LOG]);
 
+        $test_name = 'no update statement is created if no field has changed';
+        $usr_msg = new user_message();
+        $wrd_same = clone $wrd;
+        $qp = $wrd_same->sql_update($sc, $wrd, $usr_msg);
+        $t->assert_true($t->name . $test_name, $qp === null);
+        $test_name = '... also for the update statement with logging';
+        $qp = $wrd_same->sql_update($sc, $wrd, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $t->assert_true($t->name . $test_name, $qp === null);
+
         $t->subheader($ts . 'sql write update failed cases e.g. description update');
         $wrd = $t_wrd->word();
         $wrd->description = words::MATH_COM;
@@ -203,6 +214,18 @@ class word_tests
         $t->subheader($ts . 'base object handling');
         $wrd = $t_wrd->word_filled();
         $t->assert_reset($wrd);
+
+        $t->subheader($ts . 'type check');
+        $test_name = 'a word with the scaling type is a scaling word';
+        $t->assert_true($test_name, $t_wrd->word_mio()->is_scaling());
+        $test_name = 'a word with the hidden scaling type is a scaling word';
+        $t->assert_true($test_name, $t_wrd->word_one()->is_scaling());
+        $test_name = 'a word without a type is not a scaling word';
+        $t->assert_false($test_name, $t_wrd->word_mio_unscaled()->is_scaling());
+        $test_name = 'the phrase of a scaling word is a scaling phrase';
+        $t->assert_true($test_name, $t_wrd->word_mio()->phrase()->is_scaling());
+        $test_name = 'the phrase of a word without a type is not a scaling phrase';
+        $t->assert_false($test_name, $t_wrd->word_mio_unscaled()->phrase()->is_scaling());
 
         $t->subheader($ts . 'api');
         $wrd = $t_wrd->word();
@@ -439,6 +462,31 @@ class word_tests
         $db_wrd = $t_wrd->word_filled();
         $t->assert($t->name . 'needs_db_update ' . $test_name, $in_wrd->needs_db_update($db_wrd), false);
 
+        // TODO Prio 1 review
+        /*
+        $test_name = 'a word json without the phrase type keeps the type empty';
+        $wrd_new = new word($usr);
+        $wrd_new->import_mapper([json_fields::NAME => words::MATH], $usr_msg);
+        $t->assert_true($t->name . $test_name, $wrd_new->type_id() === null);
+
+        $test_name = 'a word without phrase type never overwrites the type in the database';
+        $db_wrd = $t_wrd->word_filled();
+        $in_wrd = clone $db_wrd;
+        $in_wrd->type_id = null;
+        $non_db_fld_names = $in_wrd->db_fields_changed($db_wrd, $usr_msg)->names();
+        $t->assert($t->name . $test_name, $non_db_fld_names, []);
+
+        $test_name = '... but a changed phrase type is written to the database';
+        $in_wrd->set_type(phrase_type_shared::SCALING_HIDDEN, $usr_sys);
+        $non_db_fld_names = $in_wrd->db_fields_changed($db_wrd, $usr_msg)->names();
+        $t->assert($t->name . $test_name, $non_db_fld_names, [phrase::FLD_TYPE]);
+
+        $test_name = '... and a null phrase type resets a user specific type to the standard';
+        $in_wrd->type_id = null;
+        $non_db_fld_names = $in_wrd->db_fields_changed(
+            $db_wrd, $usr_msg, new sql_type_list([sql_type::USER]))->names();
+        $t->assert($t->name . $test_name, $non_db_fld_names, [phrase::FLD_TYPE]);
+        */
     }
 
     /**

@@ -1975,17 +1975,13 @@ class phrase_list extends sandbox_list_named
      */
     function scaling_lst(): phrase_list
     {
-        global $sys;
-
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
         $lib = new library();
 
         $result = new phrase_list($this->get_user());
-        $scale_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
-        $scale_hidden_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING_HIDDEN);
-        // loop over the phrase ids and add only the time ids to the result array
+        // loop over the phrases and add only the scaling phrases to the result list
         foreach ($this->lst() as $phr) {
-            if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {
+            if ($phr->is_scaling()) {
                 $result->add($phr);
                 log_debug('found (' . $phr->name() . ')');
             } else {
@@ -2229,13 +2225,14 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * @param user_message $msg to collect the warnings and errors that might be shown to the user or admin
      * @return value the best matching value scaled to one
      */
-    function value_scaled(): value
+    function value_scaled(user_message $msg): value
     {
         $val = $this->value();
         $wrd_lst = $this->wrd_lst_all();
-        $val->set_number($val->scale($wrd_lst));
+        $val->set_number($val->scale($wrd_lst, $msg));
 
         return $val;
     }

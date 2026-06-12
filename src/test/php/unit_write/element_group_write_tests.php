@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -162,7 +163,7 @@ class element_group_write_tests
 
                     $result = $fig_ui->display_linked();
                     //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
-                    $target = '<a href="/http/result_edit.php?id=' . $fig->id() . '">8.51</a>';
+                    $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . $fig->id() . '">8.51</a>';
                     $t->assert('figure->display_linked', $result, $target);
                 }
             } else {

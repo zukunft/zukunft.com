@@ -333,6 +333,7 @@ include_once test_paths::UNIT_WRITE . 'formula_trigger_tests.php';
 include_once test_paths::UNIT_WRITE . 'result_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'element_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'element_group_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'sys_log_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'job_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'view_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
@@ -3571,10 +3572,16 @@ class test_base
      */
     function write_named_cleanup(sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx, string $name, bool $check = false): void
     {
-        $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
-        $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
-        $this->write_named_cleanup_one($sbx, $this->usr1, $name . self::EXT_RENAME, $check);
-        $this->write_named_cleanup_one($sbx, $this->usr2, $name . self::EXT_RENAME, $check);
+        if ($sbx instanceof type_object and !$sbx instanceof verb) {
+            // type rows are not user specific, so one cleanup per name is enough
+            $this->write_type_cleanup_one($sbx, $name, $check);
+            $this->write_type_cleanup_one($sbx, $name . self::EXT_RENAME, $check);
+        } else {
+            $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
+            $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
+            $this->write_named_cleanup_one($sbx, $this->usr1, $name . self::EXT_RENAME, $check);
+            $this->write_named_cleanup_one($sbx, $this->usr2, $name . self::EXT_RENAME, $check);
+        }
     }
 
     /**
@@ -3618,6 +3625,41 @@ class test_base
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
             }
             $sbx->del($usr_msg);
+        }
+    }
+
+    /**
+     * remove a remaining test row of a type object e.g. a sys log function
+     * because type rows are not user specific no user is set
+     *
+     * @param type_object $typ the type object e.g. a sys_log_function
+     * @param string $name the name of the type row that should be removed
+     * @param bool $check if true an error message is created if the object needs to be removed
+     *                    e.g. to detect incomplete clean-up of previous tests
+     * @return void
+     */
+    private
+    function write_type_cleanup_one(
+        type_object $typ,
+        string      $name,
+        bool        $check = false
+    ): void
+    {
+        global $db_con;
+
+        $usr_msg = new user_message($this->usr_admin);
+        $typ->load_by_name($name);
+        if ($typ->id() != 0) {
+            if ($check) {
+                log_warning('Unexpected cleanup of ' . $typ->dsp_id());
+            }
+            $sc = $db_con->sql_creator();
+            $qp = $typ->sql_delete($sc, $usr_msg, new sql_type_list());
+            if ($qp == null) {
+                log_warning('cleanup of type row ' . $typ->dsp_id() . ' is not allowed');
+            } elseif ($usr_msg->is_ok()) {
+                $db_con->delete($qp, 'cleanup ' . $typ->dsp_id(), $usr_msg);
+            }
         }
     }
 
@@ -4218,7 +4260,7 @@ class test_base
             $lib = new library();
             $result = $lib->diff_msg($id_lst, $db_lst);
             if ($result != '') {
-                log_warning($test_name . 'diff is:' . $result);
+                log_err($test_name . 'diff is:' . $result);
             }
         }
 

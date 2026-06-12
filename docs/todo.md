@@ -11,6 +11,7 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO add to subtitle the object type with link if not the default type and the share and protection and use a seperator from the config.yaml that the user can overwrite
     TODO add unit test for all frontend components
     TODO review the CHF page
          add the values with the highest im

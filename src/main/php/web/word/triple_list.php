@@ -43,6 +43,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -55,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -273,8 +275,9 @@ class triple_list extends ListBase
                     // give the user the possibility to add a similar word
                     $result .= '  <tr>';
                     $result .= '    <td>';
-                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add("Add similar word", '/http/word_add.php?verb=' .
-                            $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id . '&back=' . $start_id);
+                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add("Add similar word",
+                            $html->url_new(views::WORD_ADD_ID, 0, '', (string)$start_id, '', 'verb=' .
+                                $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id));
                     $result .= '    </td>';
                     $result .= '  </tr>';
 
