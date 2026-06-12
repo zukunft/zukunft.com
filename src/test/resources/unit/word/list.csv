@@ -1,8 +1,8 @@
 word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact,inactive,code_id,excluded,share_type_id,protect_id
 1,1,mathematics,,Mathematics is an area of knowledge that includes the topics of numbers and formulas,1,,,,,,,,3
-2,1,constant,,fixed and well-defined number,1,,,,,,,,3
+2,1,constant,,fixed and well-defined number,17,,,,,,,,3
 3,1,zero,,0 (zero) is a number representing an empty quantity. Adding (or subtracting) 0 to any number leaves that number unchanged; in mathematical terminology, 0 is the additive identity of the integers, rational numbers, real numbers, and complex numbers, as well as other algebraic structures,8,,,,,,,,3
-4,1,one,,1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit,1,,,,,,,,3
+4,1,one,,1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit,8,,,,,,,,3
 5,1,π,,Symbol for the ratio of the circumference of a circle to its diameter,17,,,,,,,,3
 6,1,𝑒,,Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.,17,,,,,,,,3
 7,1,physics,,the natural science that studies matter, energy, motion and their interactions; its subareas used here are mechanics, thermodynamics, electromagnetism, optics and quantum mechanics,1,,,,,,,,3
@@ -15,7 +15,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 14,1,human,,Humans (Homo sapiens) or modern humans are the most common and widespread species of primate, and the last surviving species of the genus Homo.,1,,,,,,,,3
 15,1,circumference,,In geometry, the circumference meaning is the perimeter of a circle or ellipse,1,,,,,,,,3
 16,1,diameter,,straight-line distance through the centre of a sphere,1,,,,,,,,3
-17,1,Pi,,ratio of the circumference of a circle to its diameter,1,,,,,,,,3
+17,1,Pi,,ratio of the circumference of a circle to its diameter,17,,,,,,,,3
 18,1,Euler's number,,The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.,17,,,,,,,,3
 19,1,Euler's constant,,Euler's constant (sometimes called the Euler–Mascheroni constant) is a mathematical constant, usually denoted by the lowercase Greek letter gamma (γ), defined as the limiting difference between the harmonic series and the natural logarithm, denoted here by log,17,,,,,,,,3
 20,1,base,,E.g. in a currency pair, the base currency is the first currency quoted and represents the unit being priced. For example, in the EUR/USD pair, EUR is the base currency.,1,,,,,,,,3
@@ -23,17 +23,17 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 22,1,system,,A system is a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.,1,,,,,system,,,3
 23,1,international,,Internationalism is a political principle that advocates greater political or economic cooperation among states and nations.,1,,,,,,,,3
 24,1,second,,SI base unit of time,1,,,,,,,,
-25,1,s,,The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).,1,,,,,,,,3
+25,1,s,,The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).,3,,,,,,,,3
 26,1,millisecond,milliseconds,1/1000 of a second,3,,,,,millisecond,,,3
-27,1,metre,,The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of ⁠1/299792458⁠ of a second, where the second is defined by a hyperfine transition frequency of caesium.,1,,,,,,,,3
-28,1,m,,Is a symbol for the metre, the base unit of length in the International System of Units (SI).,1,,,,,,,,3
-29,1,kilogram,,The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015×10−34 when expressed in the unit J⋅s, which is equal to kg⋅m2⋅s−1, where the metre and the second are defined in terms of c and ΔνCs.,1,,,,,,,,3
-30,1,kg,,The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.,1,,,,,,,,3
-31,1,ampere,,The ampere is the unit of electric current in the International System of Units (SI). One ampere is equal to 1 coulomb (C) moving past a point per second.,1,,,,,,,,3
+27,1,metre,,The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of ⁠1/299792458⁠ of a second, where the second is defined by a hyperfine transition frequency of caesium.,3,,,,,,,,3
+28,1,m,,Is a symbol for the metre, the base unit of length in the International System of Units (SI).,3,,,,,,,,3
+29,1,kilogram,,The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015×10−34 when expressed in the unit J⋅s, which is equal to kg⋅m2⋅s−1, where the metre and the second are defined in terms of c and ΔνCs.,3,,,,,,,,3
+30,1,kg,,The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.,3,,,,,,,,3
+31,1,ampere,,The ampere is the unit of electric current in the International System of Units (SI). One ampere is equal to 1 coulomb (C) moving past a point per second.,3,,,,,,,,3
 32,1,A,,Is a symbol for ampere,3,,,,,,,,3
 33,1,kelvin,,The kelvin is the base unit for temperature in the International System of Units (SI). The Kelvin scale is an absolute temperature scale that starts at the lowest possible temperature (absolute zero), taken to be 0 K.,3,,,,,,,,3
 34,1,K,,Is a symbol for kelvin,3,,,,,,,,3
-35,1,mole,,The mole (symbol mol) is a unit of measurement, the base unit in the International System of Units (SI) for amount of substance, an SI base quantity proportional to the number of elementary entities of a substance.,1,,,,,,,,3
+35,1,mole,,The mole (symbol mol) is a unit of measurement, the base unit in the International System of Units (SI) for amount of substance, an SI base quantity proportional to the number of elementary entities of a substance.,3,,,,,,,,3
 36,1,mol,,Is a symbol for mole,3,,,,,,,,3
 37,1,candela,,The candela is the unit of luminous intensity in the International System of Units (SI). It measures luminous power per unit solid angle emitted by a light source in a particular direction.,3,,,,,,,,3
 38,1,cd,,Is a symbol for candela,3,,,,,,,,3
@@ -41,35 +41,35 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 40,1,named,,A name is a term used for identification by an external observer. They can identify a class or category of things, or a single thing, either uniquely, or within a given context.,1,,,,,,,,3
 41,1,hertz,,The hertz (symbol: Hz) is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second,3,,,,,,,,3
 42,1,Hz,,Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second,3,,,,,,,,3
-43,1,radian,,The radian is a unit of plane angle defined such that one full turn equals 2π radians.,1,,,,,,,,3
+43,1,radian,,The radian is a unit of plane angle defined such that one full turn equals 2π radians.,3,,,,,,,,3
 44,1,rad,,Is a symbol for radian,3,,,,,,,,3
 45,1,steradian,,The steradian or square radian[1][2] is the unit of solid angle in the International System of Units (SI). It is used in three dimensional geometry, and is analogous to the radian, which quantifies planar angles.,3,,,,,,,,3
 46,1,sr,,Is a symbol for steradian,3,,,,,,,,3
-47,1,newton,,The newton is the unit of force in the International System of Units (SI). Expressed in terms of SI base units, it is 1 kg⋅m/s2, the force that accelerates a mass of one kilogram at one metre per second squared.,1,,,,,,,,3
-48,1,N,,Is a symbol for newton,1,,,,,,,,3
-49,1,pascal,,The pascal is the unit of pressure in the International System of Units (SI). It is also used to quantify internal pressure, stress, Young's modulus, and ultimate tensile strength.,1,,,,,,,,3
+47,1,newton,,The newton is the unit of force in the International System of Units (SI). Expressed in terms of SI base units, it is 1 kg⋅m/s2, the force that accelerates a mass of one kilogram at one metre per second squared.,3,,,,,,,,3
+48,1,N,,Is a symbol for newton,3,,,,,,,,3
+49,1,pascal,,The pascal is the unit of pressure in the International System of Units (SI). It is also used to quantify internal pressure, stress, Young's modulus, and ultimate tensile strength.,3,,,,,,,,3
 50,1,Pa,,Is a symbol for pascal,3,,,,,,,,3
-51,1,joule,,One joule is equal to the amount of work done when a force of one newton displaces a body through a distance of one metre in the direction of that force.,1,,,,,,,,3
+51,1,joule,,One joule is equal to the amount of work done when a force of one newton displaces a body through a distance of one metre in the direction of that force.,3,,,,,,,,3
 52,1,J,,Is a symbol for joule,3,,,,,,,,3
-53,1,watt,,The watt is the unit of power or radiant flux in the International System of Units (SI), equal to 1 joule per second or 1 kg⋅m2⋅s−3,1,,,,,,,,3
-54,1,W,,Is a symbol for watt,1,,,,,,,,3
-55,1,coulomb,,The SI defines the coulomb as "the quantity of electricity carried in 1 second by a current of 1 ampere". Then the value of the elementary charge e is defined to be 1.602176634×10−19 C.,1,,,,,,,,3
+53,1,watt,,The watt is the unit of power or radiant flux in the International System of Units (SI), equal to 1 joule per second or 1 kg⋅m2⋅s−3,3,,,,,,,,3
+54,1,W,,Is a symbol for watt,3,,,,,,,,3
+55,1,coulomb,,The SI defines the coulomb as "the quantity of electricity carried in 1 second by a current of 1 ampere". Then the value of the elementary charge e is defined to be 1.602176634×10−19 C.,3,,,,,,,,3
 56,1,C,,Is a symbol for coulomb,3,,,,,,,,3
-57,1,volt,,One volt is defined as the electric potential between two points of a conducting wire when an electric current of one ampere dissipates one watt of power between those points.,1,,,,,,,,3
-58,1,V,,Is a symbol for volt,1,,,,,,,,3
-59,1,Weber,,Is the unit of magnetic flux in the International System of Units (SI). The unit is derived (through Faraday's law of induction) from the relationship 1 Wb = 1 V⋅s (volt-second). A magnetic flux density of 1 Wb/m2 (one weber per square metre) is one tesla.,1,,,,,,,,3
+57,1,volt,,One volt is defined as the electric potential between two points of a conducting wire when an electric current of one ampere dissipates one watt of power between those points.,3,,,,,,,,3
+58,1,V,,Is a symbol for volt,3,,,,,,,,3
+59,1,Weber,,Is the unit of magnetic flux in the International System of Units (SI). The unit is derived (through Faraday's law of induction) from the relationship 1 Wb = 1 V⋅s (volt-second). A magnetic flux density of 1 Wb/m2 (one weber per square metre) is one tesla.,3,,,,,,,,3
 60,1,Wb,,Is a symbol for Weber,3,,,,,,,,3
 61,1,tesla,,The tesla is the unit of magnetic flux density (also called magnetic B-field strength) in the International System of Units (SI).  One tesla is equal to one weber per square metre.,3,,,,,,,,3
-62,1,T,,Is a symbol for tesla,1,,,,,,,,3
+62,1,T,,Is a symbol for tesla,3,,,,,,,,3
 63,1,farad,,The farad is the unit of electrical capacitance, the ability of a body to store an electrical charge, in the International System of Units (SI), equivalent to 1 coulomb per volt (C/V).,3,,,,,,,,3
-64,1,F,,Fisher F test statistic,1,,,,,,,,3
+64,1,F,,Fisher F test statistic,3,,,,,,,,3
 65,1,ohm,,The ohm is the unit of electrical resistance in the International System of Units (SI).,3,,,,,,,,3
 66,1,Ω,,Is a symbol for ohm,3,,,,,,,,3
 67,1,siemens,,The siemens is the unit of electric conductance, electric susceptance, and electric admittance in the International System of Units (SI). Conductance, susceptance, and admittance are the reciprocals of resistance, reactance, and impedance respectively; hence one siemens is equal to the reciprocal of one ohm (Ω−1) and is also referred to as the mho.,3,,,,,,,,3
-68,1,S,,Is a symbol for siemens,1,,,,,,,,3
+68,1,S,,Is a symbol for siemens,3,,,,,,,,3
 69,1,henry,,The henry is the unit of electrical inductance in the International System of Units (SI).[1] If a current of 1 ampere flowing through a coil produces flux linkage of 1 weber turn, that coil has a self-inductance of 1 henry.,3,,,,,,,,3
 70,1,H,,Is a symbol for henry,3,,,,,,,,3
-71,1,celsius,,The degree Celsius is the unit of temperature on the Celsius temperature scale one of two temperature scales used in the International System of Units (SI), the other being the closely related Kelvin scale.,1,,,,,,,,3
+71,1,celsius,,The degree Celsius is the unit of temperature on the Celsius temperature scale one of two temperature scales used in the International System of Units (SI), the other being the closely related Kelvin scale.,3,,,,,,,,3
 72,1,°C,,Is a symbol for celsius,3,,,,,,,,3
 73,1,lumen,,The lumen is the unit of luminous flux, a measure of the perceived power of visible light emitted by a source, in the International System of Units (SI).,3,,,,,,,,3
 74,1,lm,,Is a symbol for lumen,3,,,,,,,,3
@@ -85,7 +85,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 84,1,kat,,Is a symbol for katal,3,,,,,,,,3
 85,1,kinematic,,Kinematics is a subfield of physics and mathematics, developed in classical mechanics, that describes the motion of points, bodies (objects), and systems of bodies (groups of objects) without considering the forces that cause them to move.,3,,,,,,,,3
 86,1,light,,Light, visible light, or visible radiation is electromagnetic radiation that can be perceived by the human eye.,3,,,,,,,,3
-87,1,speed,,In kinematics, the speed (commonly referred to as v) of an object is the magnitude of the change of its position over time or the magnitude of the change of its position per unit of time.,1,,,,,,,,3
+87,1,speed,,In kinematics, the speed (commonly referred to as v) of an object is the magnitude of the change of its position over time or the magnitude of the change of its position per unit of time.,3,,,,,,,,3
 88,1,acceleration,,In mechanics, acceleration is the rate of change of the velocity of an object with respect to time.,3,,,,,,,,3
 89,1,square,,A square is a regular quadrilateral with four equal sides and four right angles.,1,,,,,,,,3
 90,1,cube,,A cube is a three-dimensional solid object bounded by six square faces.,1,,,,,,,,3
@@ -94,40 +94,40 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 93,1,luminous,,Luminosity is an absolute measure of radiated electromagnetic energy per unit time, and is synonymous with the radiant power emitted by a light-emitting object.,1,,,,,,,,3
 94,1,efficacy,,Efficacy is the ability to perform a task to a satisfactory or expected degree.,1,,,,,,,,3
 95,1,jerk (physics),,Jerk (also known as Jolt) is the rate of change of an object's acceleration over time.,3,,,,,,,,3
-96,1,angle,,an angular quantity measured in degrees,1,,,,,,,,3
-97,1,velocity,,Velocity is the directional speed of a motion of an object as a function of time; it is the rate of change of an object's position with respect to a frame of reference.,1,,,,,,,,3
-98,1,drift,,In electrical engineering, frequency drift is an unintended and generally arbitrary offset of an oscillator from its nominal frequency.,1,,,,,,,,3
+96,1,angle,,an angular quantity measured in degrees,3,,,,,,,,3
+97,1,velocity,,Velocity is the directional speed of a motion of an object as a function of time; it is the rate of change of an object's position with respect to a frame of reference.,3,,,,,,,,3
+98,1,drift,,In electrical engineering, frequency drift is an unintended and generally arbitrary offset of an oscillator from its nominal frequency.,3,,,,,,,,3
 99,1,volumetric,,Volume is a measure of regions in three-dimensional space.[1] It is often quantified numerically using SI derived units (such as the cubic metre and litre) or by various imperial or US customary units (such as the gallon, quart, cubic inch).,1,,,,,,,,3
 100,1,flow,,In physics, physical chemistry and engineering, fluid dynamics is a subdiscipline of fluid mechanics that describes the flow of fluids – liquids and gases.,1,,,,,,,,3
 101,1,rate,,frequency or proportion measured per unit of comparison,1,,,,,,,,3
-102,1,time,,duration measured for a process,1,,,,,time,,,3
+102,1,time,,duration measured for a process,3,,,,,time,,,3
 103,1,minute,,A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.,3,,,,,,,,3
-104,1,hour,,An hour is a unit of time equal to 60 minutes, or 3600 seconds.,1,,,,,,,,3
-105,1,day,days,A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.,1,,,,,,,,3
-106,1,week,weeks,A week is a unit of time equal to 7 days.,1,,,,,,,,3
-107,1,month,months,A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.,1,,,,,,,,3
-108,1,year,years,the orbital period of the Earth around the Sun, the standard unit for dating calendar events,1,,,,,year,,,3
+104,1,hour,,An hour is a unit of time equal to 60 minutes, or 3600 seconds.,3,,,,,,,,3
+105,1,day,days,A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.,2,,,,,,,,3
+106,1,week,weeks,A week is a unit of time equal to 7 days.,2,,,,,,,,3
+107,1,month,months,A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.,2,,,,,,,,3
+108,1,year,years,the orbital period of the Earth around the Sun, the standard unit for dating calendar events,2,,,,,year,,,3
 109,1,Planck,,Max Planck was a German theoretical physicist whose discovery of energy quanta won him the Nobel Prize in Physics in 1918.,1,,,,,,,,3
 110,1,Boltzmann,,Ludwig Boltzmann was an Austrian physicist and philosopher; his greatest achievements were the development of statistical mechanics.,1,,,,,,,,3
 111,1,Avogadro,,,1,,,,,,,,3
 112,1,mechanics,,the branch of physics that deals with the motion, forces and energy of objects,1,,,,,,,,3
-113,1,distance,,Distance is a numerical or occasionally qualitative measurement of how far apart objects, points, people, or ideas are.,1,,,,,,,,3
+113,1,distance,,Distance is a numerical or occasionally qualitative measurement of how far apart objects, points, people, or ideas are.,3,,,,,,,,3
 114,1,kilometre,,,3,,,,,,,,3
 115,1,km,,,3,,,,,,,,3
-116,1,area,,Area is the quantity that expresses the extent of a two-dimensional region in the plane.,1,,,,,,,,3
+116,1,area,,Area is the quantity that expresses the extent of a two-dimensional region in the plane.,3,,,,,,,,3
 117,1,are,,,3,,,,,,,,3
 118,1,m2,,,3,,,,,,,,3
 119,1,hectare,,,3,,,,,,,,3
 120,1,ha,,,3,,,,,,,,3
-121,1,volume,,journal volume number,1,,,,,,,,3
+121,1,volume,,journal volume number,3,,,,,,,,3
 122,1,m3,,,3,,,,,,,,3
 123,1,litre,,,3,,,,,,,,3
 124,1,l,,,3,,,,,,,,3
-125,1,kWh,,,1,,,,,,,,3
-126,1,gram,,,1,,,,,,,,3
+125,1,kWh,,,3,,,,,,,,3
+126,1,gram,,,3,,,,,,,,3
 127,1,g,,g is the standard acceleration due to gravity at Earth's surface, approximately 9.80665 m/s².,17,,,,,,,,3
 128,1,tonne,,,3,,,,,,,,3
-129,1,t,,Student t test statistic,1,,,,,,,,3
+129,1,t,,Student t test statistic,3,,,,,,,,3
 130,1,hyperfine,,,1,,,,,,,,3
 131,1,transition,,In atomic physics and chemistry, an atomic electron transition (also called an atomic transition, quantum jump, or quantum leap) is an electron changing from one energy level to another within an atom[1] or artificial atom.,1,,,,,,,,3
 132,1,frequency,,,1,,,,,,,,3
@@ -137,7 +137,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 136,1,1967,,,2,,,,,,,,
 137,1,1979,,,2,,,,,,,,
 138,1,1983,,,2,,,,,,,,
-139,1,2019,,,1,,,,,,,,
+139,1,2019,,,2,,,,,,,,
 140,1,2020,,,2,,,,,,,,
 141,1,per 100 km,,,18,,,,,,,,3
 142,1,number,,,1,,,,,,,,
@@ -156,20 +156,20 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 155,1,scale km to metre,,,10,,,,,,,,
 156,1,scale km to 100 km,,,10,,,,,,,,
 157,1,definition of joule,,,10,,,,,,,,
-158,1,thousand,,to specify numbers in thousand,1,,,,,,,,3
-159,1,million,,The natural number equal to 1,000,000 (one thousand thousand). Financial figures, particularly turnover statistics, are often expressed in millions of a given currency to keep numbers manageable.,1,,,,,,,,3
-160,1,billion,,to specify numbers in billions,1,,,,,,,,3
+158,1,thousand,,to specify numbers in thousand,7,,,,,,,,3
+159,1,million,,The natural number equal to 1,000,000 (one thousand thousand). Financial figures, particularly turnover statistics, are often expressed in millions of a given currency to keep numbers manageable.,7,,,,,,,,3
+160,1,billion,,to specify numbers in billions,7,,,,,,,,3
 161,1,percent,,unit, percentage,3,,,,,percent,,,3
 162,1,tsd.,,,7,,,,,,,,
 163,1,b,,,1,,,,,,,,
 164,1,scale thousand to one,,,10,,,,,,,,
 165,1,scale million to one,,,10,,,,,,,,
 166,1,scale billion to one,,,10,,,,,,,,
-167,1,Now,,,1,,,,,,,,3
+167,1,Now,,,2,,,,,,,,3
 168,1,January,,,2,,,,,,,,3
 169,1,February,,,2,,,,,,,,3
 170,1,March,,,2,,,,,,,,3
-171,1,April,,The fourth month of the Gregorian calendar, consisting of 30 days. The BIS Triennial Survey of foreign exchange turnover traditionally uses April as its reference month.,1,,,,,,,,3
+171,1,April,,The fourth month of the Gregorian calendar, consisting of 30 days. The BIS Triennial Survey of foreign exchange turnover traditionally uses April as its reference month.,2,,,,,,,,3
 172,1,May,,,2,,,,,,,,3
 173,1,June,,,2,,,,,,,,3
 174,1,July,,,2,,,,,,,,3
@@ -181,7 +181,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 180,1,latest,,,19,,,,,,,,3
 181,1,this,,,10,,,,,,,,
 182,1,next,,,10,,,,,,,,
-183,1,prior,,,1,,,,,,,,
+183,1,prior,,,10,,,,,,,,
 184,1,increase,,,10,,,,,,,,
 185,1,child,,,1,,,,,,,,
 186,1,Bern,,,1,,,,,,,,
@@ -264,7 +264,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 263,1,2024,,,2,,,,,,,,
 264,1,scale trillion to one,,,10,,,,,,,,
 265,1,global happy time points,,,10,,,,,,,,
-266,1,currency,,A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.,1,,,,,,,,3
+266,1,currency,,A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.,3,,,,,,,,3
 267,1,Euro,,The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.,1,,,,,,,,
 268,1,US dollar,,The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.,1,,,,,,,,
 269,1,Pound sterling,,,1,,,,,,,,
@@ -383,7 +383,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 382,1,limit,,maximum allowable value of a quantity,1,,,,,,,,
 383,1,function,,In mathematics, a function from a set X to a set Y assigns to each element of X exactly one element of Y.,1,,,,,,,,
 384,1,rule,,,1,,,,,,,,
-385,1,power,,Power is the amount of energy transferred or converted per unit time; the SI unit is the watt.,1,,,,,,,,3
+385,1,power,,Power is the amount of energy transferred or converted per unit time; the SI unit is the watt.,3,,,,,,,,3
 386,1,chain,,,1,,,,,,,,
 387,1,product,,,1,,,,,,,,
 388,1,quotient,,,1,,,,,,,,
@@ -530,10 +530,10 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 529,1,definition of simple interest,,,10,,,,,,,,
 530,1,definition of compound interest,,,10,,,,,,,,
 531,1,definition of continuous compounding,,,10,,,,,,,,
-532,1,force,,In physics, a force is an influence that can change the motion of an object; it has both magnitude and direction and is measured in newton.,1,,,,,,,,3
-533,1,mass,,Mass is the quantity of matter in a body and a measure of its resistance to acceleration (inertia) when a force is applied; the SI unit is the kilogram.,1,,,,,,,,3
-534,1,energy,,Energy is the quantitative property that is transferred to a body or system to perform work or to heat it; the SI unit is the joule.,1,,,,,,,,3
-535,1,pressure,,Pressure is the force applied perpendicular to the surface of an object per unit area; the SI unit is the pascal.,1,,,,,,,,3
+532,1,force,,In physics, a force is an influence that can change the motion of an object; it has both magnitude and direction and is measured in newton.,3,,,,,,,,3
+533,1,mass,,Mass is the quantity of matter in a body and a measure of its resistance to acceleration (inertia) when a force is applied; the SI unit is the kilogram.,3,,,,,,,,3
+534,1,energy,,Energy is the quantitative property that is transferred to a body or system to perform work or to heat it; the SI unit is the joule.,3,,,,,,,,3
+535,1,pressure,,Pressure is the force applied perpendicular to the surface of an object per unit area; the SI unit is the pascal.,3,,,,,,,,3
 536,1,voltage,,Voltage, also called electric potential difference, is the difference in electric potential between two points; the SI unit is the volt.,3,,,,,,,,3
 537,1,displacement,,In geometry and mechanics, a displacement is a vector whose length is the shortest distance from the initial to the final position of a point.,3,,,,,,,,
 538,1,momentum,,In Newtonian mechanics, momentum is the product of the mass and velocity of an object; it is a vector quantity.,3,,,,,,,,
@@ -542,12 +542,12 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 541,1,inertia,,Inertia is the tendency of an object to maintain its state of motion unless acted upon by a force.,1,,,,,,,,
 542,1,friction,,Friction is the force resisting the relative motion of solid surfaces, fluid layers, and material elements sliding against each other.,3,,,,,,,,
 543,1,gravity,,In physics, gravity is a fundamental interaction which causes mutual attraction between all things that have mass.,1,,,,,,,,
-544,1,density,,The density of a substance is its mass per unit volume; the SI unit is the kilogram per cubic metre.,1,,,,,,,,
-545,1,temperature,,Temperature is a physical quantity that expresses quantitatively the perceptions of hotness and coldness.,1,,,,,,,,
-546,1,heat,,In thermodynamics, heat is the thermal energy transferred between systems due to a temperature difference.,1,,,,,,,,
+544,1,density,,The density of a substance is its mass per unit volume; the SI unit is the kilogram per cubic metre.,3,,,,,,,,
+545,1,temperature,,Temperature is a physical quantity that expresses quantitatively the perceptions of hotness and coldness.,3,,,,,,,,
+546,1,heat,,In thermodynamics, heat is the thermal energy transferred between systems due to a temperature difference.,3,,,,,,,,
 547,1,entropy,,Entropy is a scientific concept that is most commonly associated with a state of disorder, randomness, or uncertainty in a thermodynamic system.,3,,,,,,,,
-548,1,enthalpy,,Enthalpy is the sum of a thermodynamic system's internal energy and the product of its pressure and volume.,1,,,,,,,,
-549,1,current,,An electric current is a flow of charged particles, such as electrons or ions, moving through an electrical conductor or space.,1,,,,,,,,
+548,1,enthalpy,,Enthalpy is the sum of a thermodynamic system's internal energy and the product of its pressure and volume.,3,,,,,,,,
+549,1,current,,An electric current is a flow of charged particles, such as electrons or ions, moving through an electrical conductor or space.,3,,,,,,,,
 550,1,resistance,,The electrical resistance of an object is a measure of its opposition to the flow of electric current.,3,,,,,,,,
 551,1,capacitance,,Capacitance is the capability of a material object or device to store electric charge.,3,,,,,,,,
 552,1,inductance,,Inductance is the tendency of an electrical conductor to oppose a change in the electric current flowing through it.,3,,,,,,,,
@@ -610,7 +610,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 609,1,G,,G is the gravitational constant, an empirical physical constant involved in the calculation of gravitational effects.,17,,,,,,,,
 610,1,ℏ,,ℏ is the reduced Planck constant, equal to the Planck constant divided by 2π.,17,,,,,,,,
 611,1,kB,,kB is the Boltzmann constant, the proportionality factor that relates the average kinetic energy of particles in a gas with the thermodynamic temperature of the gas.,17,,,,,,,,
-612,1,R,,Symbol or abbreviation for the South African rand.,1,,,,,,,,
+612,1,R,,Symbol or abbreviation for the South African rand.,17,,,,,,,,
 613,1,NA,,NA is the Avogadro constant, the proportionality factor that relates the number of constituent particles in a sample with the amount of substance in that sample.,17,,,,,,,,
 614,1,σ,,σ is the Stefan-Boltzmann constant, the constant of proportionality in the Stefan-Boltzmann law.,17,,,,,,,,
 615,1,ε0,,ε0 is the vacuum permittivity, the absolute permittivity of free space.,17,,,,,,,,
@@ -733,7 +733,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 732,1,definition of Snell's law,,,10,,,,,,,,
 733,1,index of refraction,,,10,,,,,,,,
 734,1,thin lens equation,,,10,,,,,,,,
-735,1,magnification,,the ratio of the apparent size of an image to the real size of the object,1,,,,,,,,
+735,1,magnification,,the ratio of the apparent size of an image to the real size of the object,10,,,,,,,,
 736,1,Doppler effect sound,,,10,,,,,,,,
 737,1,photon energy,,,10,,,,,,,,
 738,1,photon energy from wavelength,,,10,,,,,,,,
@@ -751,7 +751,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 750,1,relativistic momentum,,,10,,,,,,,,
 751,1,energy momentum relation,,,10,,,,,,,,
 752,1,radioactive decay,,,10,,,,,,,,
-753,1,half-life,,the time required for half of a quantity to react or decay,1,,,,,,,,
+753,1,half-life,,the time required for half of a quantity to react or decay,10,,,,,,,,
 754,1,amount of substance from particles,,,10,,,,,,,,
 755,1,Bohr radius energy levels,,,10,,,,,,,,
 756,1,chemistry,,the natural science that studies the composition, structure, properties and reactions of matter,1,,,,,,,,
@@ -2385,7 +2385,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 2384,1,2023,,,2,,,,,,,,
 2385,1,2022,,The Gregorian calendar year 2022 (MMXXII), in which the BIS conducted its most recent Triennial Survey of foreign exchange turnover at the time this dataset was compiled.,2,,,,,,,,
 2386,1,2021,,,2,,,,,,,,
-2387,1,2012,,,1,,,,,,,,
+2387,1,2012,,,2,,,,,,,,
 2388,1,2011,,,2,,,,,,,,
 2389,1,2010,,,2,,,,,,,,
 2390,1,2008,,,2,,,,,,,,

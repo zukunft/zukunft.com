@@ -2070,7 +2070,9 @@ class sandbox extends db_object_seq_id_user
                         // for a new user record compare with the norm db_row
                         $qp = $usr_db->sql_update_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
                     }
-                    $db_con->update($qp, 'update user ' . $obj_name, $usr_msg);
+                    if ($qp != null) {
+                        $db_con->update($qp, 'update user ' . $obj_name, $usr_msg);
+                    }
                 }
             } else {
                 if (!$this->no_diff($norm_obj, $usr_msg, $sc_par_lst)) {
@@ -3137,7 +3139,9 @@ class sandbox extends db_object_seq_id_user
         $db_row = clone $this;
         $db_row->load_by_id($this->id());
         $qp = $this->sql_update($sc, $db_row, $usr_msg, $sc_par_lst);
-        $db_con->update($qp, $msg, $usr_msg);
+        if ($qp != null) {
+            $db_con->update($qp, $msg, $usr_msg);
+        }
         return $usr_msg->is_ok();
     }
 
@@ -3860,7 +3864,8 @@ class sandbox extends db_object_seq_id_user
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
+     * @return sql_par|null the SQL update statement, the name of the SQL statement, and the parameter list
+     *                      or null if no field has changed and no database update is needed
      */
     function sql_update_switch(
         sql_creator        $sc,
@@ -3868,8 +3873,14 @@ class sandbox extends db_object_seq_id_user
         array              $fld_lst_all,
         user_message       $usr_msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
-    ): sql_par
+    ): sql_par|null
     {
+        // if no field has changed, no database update is needed
+        // and an update statement without any fields to set would be invalid
+        if ($fvt_lst->is_empty_except_internal_fields()) {
+            return null;
+        }
+
         // make the query name unique based on the changed fields
         $lib = new library();
         $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);

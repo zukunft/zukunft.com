@@ -324,9 +324,11 @@ class view_list extends ListBase
             } else {
                 $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
             }
-            $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_edit = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::VIEW_EDIT
+                . '&id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
             $result .= \html\btn_edit('design the view', $call_edit) . ' ';
-            $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_del = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::VIEW_DEL
+                . '&id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
             $result .= \html\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';
         }

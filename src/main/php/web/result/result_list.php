@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox_list_value.php';
 include_once html_paths::HELPER . 'config.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::FORMULA . 'formula.php';
@@ -82,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -351,7 +353,7 @@ class result_list extends sandbox_list_value
         $html = new html_base();
         $formula_links = '';
         foreach ($this->lst() as $res) {
-            $formula_links .= ' ' . $html->ref('/http/formula_edit.php?id=' . $res->frm->id . '&back=' . $back->url_encode(), $res->number) . ' ';
+            $formula_links .= ' ' . $html->ref($html->url_new(views::FORMULA_EDIT_ID, $res->frm->id, '', $back->url_encode()), $res->number) . ' ';
         }
         if ($formula_links <> '') {
             $result .= ' (or ' . $formula_links . ')';

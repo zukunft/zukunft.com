@@ -908,19 +908,19 @@ class value_list extends ListBase
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url(views::VALUE_ADD, $val->id(), $back);
+                    $url = $html->url_new(views::VALUE_ADD_ID, $val->id(), '', $back);
                     $btn = new button($url, $back);
                     $result .= \Zukunft\ZukunftCom\main\php\web\btn_add_value($val_phr_lst, Null, $this->common_phrases()->ids());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url(views::VALUE_EDIT, $val->id(), $back);
+                $url = $html->url_new(views::VALUE_EDIT_ID, $val->id(), '', $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url(views::VALUE_DEL, $val->id(), $back);
+                $url = $html->url_new(views::VALUE_DEL_ID, $val->id(), '', $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';

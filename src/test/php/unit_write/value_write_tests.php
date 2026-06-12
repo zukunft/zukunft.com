@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -220,7 +222,7 @@ class value_write_tests
         $fig = $mio_val->figure();
         $fig_ui = $tl->ui_obj($fig, new figure_ui());
         $result = $fig_ui->display_linked('1');
-        $target = '<a href="/http/result_edit.php?id=' . $mio_val_ui->id() . '&back=1">1.55</a>';
+        $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . $mio_val_ui->id() . '&back=1">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation

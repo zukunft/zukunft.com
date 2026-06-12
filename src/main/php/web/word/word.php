@@ -484,7 +484,7 @@ class word extends sandbox_code_id
      */
     function btn_unlink(int $link_id, string $back = ''): string
     {
-        $url = new html_base()->url(rest_ctrl::LINK . rest_ctrl::REMOVE, $link_id, $this->id());
+        $url = new html_base()->url_new(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
         return new button($url, $back)->del(msg_id::WORD_UNLINK);
     }
 
@@ -734,7 +734,7 @@ class word extends sandbox_code_id
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
-            $url = $html->url(rest_ctrl::WORD . rest_ctrl::UPDATE, $this->id(), $this->id());
+            $url = $html->url_new(views::WORD_EDIT_ID, $this->id(), '', (string)$this->id());
             $title .= $html->ref($url, $html->span($this->name(), styles::STYLE_GLYPH), 'Rename word');
             $result .= $html->dsp_text_h1($title);
         }
@@ -871,7 +871,8 @@ class word extends sandbox_code_id
 
         if ($usr->is_admin()) {
             // admin users should always have the possibility to create a new link type
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('add new link type', '/http/verb_add.php?back=' . $back);
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('add new link type',
+                new html_base()->url_new(views::VERB_ADD_ID, 0, '', $back));
         }
 
         return $result;
