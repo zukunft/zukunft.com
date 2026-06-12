@@ -276,7 +276,7 @@ class phrase_list extends sandbox_list_named
             log_err('the verb type cache is not loaded, so the category subtitle for '
                 . $phr->dsp_id() . ' cannot be built');
         } else {
-            $this->sort_impact();
+            $this->sort_by_impact();
             foreach (verbs::CATEGORY_VERBS as [$vrb_code_id, $direction]) {
                 // the first (highest-priority) category verb with matching entries wins
                 if ($result === '') {
@@ -384,6 +384,28 @@ class phrase_list extends sandbox_list_named
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_to()->id() == $phr->id()) {
+                        $result->add($trp);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the triples that point to the given phrase excluding the given verbs
+     * e.g. to show the related phrases without the alias and symbol entries on the default word page
+     * @param phrase $phr the target phrase
+     * @param array $vrb_ids the database ids of the verbs to exclude
+     * @return phrase_list the triples to the given phrase without the excluded verbs
+     */
+    function parent_triples_ex_verbs(phrase $phr, array $vrb_ids): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $trp) {
+            if ($trp->is_triple()) {
+                if (!in_array($trp->get_verb()?->id(), $vrb_ids)) {
                     if ($trp->get_to()->id() == $phr->id()) {
                         $result->add($trp);
                     }
@@ -578,7 +600,7 @@ class phrase_list extends sandbox_list_named
      * the impact is the system calculated relevance of the wrapped word or triple
      * @return void
      */
-    function sort_impact(): void
+    function sort_by_impact(): void
     {
         $lst = $this->lst();
         usort($lst, fn(phrase $a, phrase $b) => $b->impact() <=> $a->impact());
@@ -589,6 +611,18 @@ class phrase_list extends sandbox_list_named
     /*
      * display
      */
+
+    /**
+     * create the html code to display the phrases sorted with the highest impact first
+     * e.g. to show the stock with the highest market capitalisation first
+     * in contrast to name_link() which sorts the phrases by name
+     * @return string with a list of the phrase names with html links
+     */
+    function name_link_by_impact(): string
+    {
+        $this->sort_by_impact();
+        return implode(', ', $this->names_linked());
+    }
 
     function name_link_list(?phrase_list $phr_lst_header = null): string
     {

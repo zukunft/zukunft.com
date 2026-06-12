@@ -390,6 +390,10 @@ class words
     const int USD_ID = 259;
     const string US_DOLLAR = 'US dollar';
     const int US_DOLLAR_ID = 268;
+    const string U_S_DOLLAR = 'U.S. dollar';
+    const int U_S_DOLLAR_ID = 2427;
+    const string DOLLAR = '$';
+    const int DOLLAR_ID = 274;
     const int CURRENCY_ID = 2397;
 
     // words from import file company.json used for the start page in order of appearance

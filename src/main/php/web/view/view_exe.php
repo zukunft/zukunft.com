@@ -193,9 +193,15 @@ class view_exe extends view_base
                     // position the next component in a new row
                     if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::BELOW) {
                         if ($auto_row) {
-                            // the full page width row if a row contains only standard form elements
+                            // the row uses the style of the component e.g. col-md-4 for a short line
+                            // or the full page width if no style is set
                             // TODO easy move code to HTML class
-                            $result .= $html->div_row($row, view_styles::DEFAULT_ROW);
+                            $row_style = $html->get_style_code($style_id);
+                            if ($row_style == '') {
+                                $row_style = view_styles::DEFAULT_ROW;
+                            }
+                            $result .= $html->div_row($row, $row_style);
+                            $style_id = null;
                         } else {
                             // the component html code is added without adding a table row
                             $result .= $html->add_style($row, $style_id);

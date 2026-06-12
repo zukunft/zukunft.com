@@ -166,6 +166,16 @@ class files
 
     CONST string FIXED_DB_CSV = 'list' . self::CSV;
 
+    // for the SQL formatter
+    CONST string SQL_FORMAT_TEST = 'word_update_log_0022004000002_user' . self::SQL;
+    CONST string SQL_FORMAT_TEST_MYSQL = 'word_update_log_0022004000002_user_mysql' . self::SQL;
+    CONST string SQL_FORMAT_TEST_INSERT = 'word_insert_log_0111005000001' . self::SQL;
+    CONST string SQL_FORMAT_TEST_INSERT_MYSQL = 'word_insert_log_0111005000001_mysql' . self::SQL;
+    CONST string SQL_FORMAT_TEST_UPDATE = 'word_update_0022004000002' . self::SQL;
+    CONST string SQL_FORMAT_TEST_UPDATE_MYSQL = 'word_update_0022004000002_mysql' . self::SQL;
+    CONST string SQL_FORMAT_TEST_SELECT = 'word_by_id' . self::SQL;
+    CONST string SQL_FORMAT_TEST_SELECT_MYSQL = 'word_by_id_mysql' . self::SQL;
+
     const array TEST_IMPORT_FILES = [
         self::IMPORT_POPULISM_FERMI_ESTIMATE,
         self::IMPORT_PORTFOLIO_SPLIT_CALC,

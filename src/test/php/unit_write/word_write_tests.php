@@ -42,6 +42,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -345,6 +347,39 @@ class word_write_tests
         $result = $usr_msg->text();
         $target = 'A word with the name "'.words::TEST_ADD.'" already exists. Please use another word name.';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
+
+        $t->subheader($ts . 'protection');
+        $test_name = 'the owner can raise the protection of "' . words::TEST_ADD . '" to admin';
+        $wrd_prt = $t_db->load_word(words::TEST_ADD);
+        $wrd_prt->set_protection_by_code_id(protection_types::ADMIN);
+        $usr_msg = new user_message($t->usr1);
+        $wrd_prt->save($usr_msg);
+        $wrd_db = $t_db->load_word(words::TEST_ADD);
+        $t->assert($test_name, $wrd_db->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN), $t::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'a re-import without the protection field keeps the admin protection';
+        $wrd_prt = $t_db->load_word(words::TEST_ADD);
+        $wrd_prt->set_protection_id(null);
+        $wrd_prt->description = words::TEST_RENAMED;
+        $usr_msg = new user_message($t->usr1);
+        $wrd_prt->save($usr_msg);
+        $wrd_db = $t_db->load_word(words::TEST_ADD);
+        $t->assert($test_name, $wrd_db->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN), $t::TIMEOUT_LIMIT_DB);
+        // restore the description so that the later description log tests are not affected
+        $wrd_prt = $t_db->load_word(words::TEST_ADD);
+        $wrd_prt->description = words::TEST_ADD_COM;
+        $usr_msg = new user_message($t->usr1);
+        $wrd_prt->save($usr_msg);
+
+        $test_name = 'a normal user cannot reduce the protection level';
+        $wrd_prt = $t_db->load_word(words::TEST_ADD, $t->usr_normal);
+        $wrd_prt->set_protection_by_code_id(protection_types::NO_PROTECT);
+        $usr_msg = new user_message($t->usr_normal);
+        $wrd_prt->save($usr_msg);
+        $wrd_db = $t_db->load_word(words::TEST_ADD);
+        $t->assert($test_name, $wrd_db->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN), $t::TIMEOUT_LIMIT_DB);
+        $test_name = '... and the denied reduction is reported to the user';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), words::TEST_ADD);
 
         // check that the word name cannot be used for a verb, triple or formula any more
         // TODO Prio 0 review

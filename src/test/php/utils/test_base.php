@@ -806,6 +806,32 @@ class test_base
     }
 
     /**
+     * check that the first text appears before the second text in the result
+     *
+     * @param string $msg (unique) description of the test
+     * @param string $haystack the actual result that should contain both texts
+     * @param string $first the text expected to appear first
+     * @param string $second the text expected to appear after the first text
+     * @return bool true if both texts are found in the expected order
+     */
+    function assert_text_order(
+        string $msg,
+        string $haystack,
+        string $first,
+        string $second): bool
+    {
+        $target = $first . ' before ' . $second;
+        $pos_first = strpos($haystack, $first);
+        $pos_second = strpos($haystack, $second);
+        if ($pos_first !== false and $pos_second !== false and $pos_first < $pos_second) {
+            $result = $target;
+        } else {
+            $result = $haystack;
+        }
+        return $this->assert($msg, $result, $target);
+    }
+
+    /**
      * check that the result text does NOT contain the given needle
      *
      * @param string $msg (unique) description of the test
@@ -2422,12 +2448,18 @@ class test_base
         string  $file_name_ext = ''
     ): bool
     {
+        $lib = new library();
+        $created_sql = $lib->sql_format($qp->sql . $qp->call_sql . ' ' . $qp->call);
         $expected_sql = $this->assert_sql_expected($qp->name . $file_name_ext, $dialect);
         $result = $this->assert_sql(
             $this->name . 'sql creation of ' . $qp->name . ' (' . $dialect . ') to ' . $test_name,
-            $qp->sql . $qp->call_sql . ' ' . $qp->call,
+            $created_sql,
             $expected_sql
         );
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            // accept the created sql as the new expected statement
+            $this->update_file($this->assert_sql_file_path($qp->name . $file_name_ext, $dialect), $created_sql);
+        }
 
         // check if the prepared sql name is unique always based on the  Postgres query parameter creation
         if ($dialect == sql_db::POSTGRES) {
@@ -2444,7 +2476,7 @@ class test_base
      * @param string $dialect the db dialect
      * @return string the filename including the resource path
      */
-    function assert_sql_expected(string $name, string $dialect = ''): string
+    private function assert_sql_file_path(string $name, string $dialect = ''): string
     {
         if ($dialect == sql_db::POSTGRES) {
             $file_name_ext = '';
@@ -2453,7 +2485,19 @@ class test_base
         } else {
             $file_name_ext = $dialect;
         }
-        $file_name = $this->resource_path . $name . $file_name_ext . self::FILE_EXT;
+        return $this->resource_path . $name . $file_name_ext . self::FILE_EXT;
+    }
+
+    /**
+     * get the expected sql statement from the test resource file
+     *
+     * @param string $name the unique name of the query
+     * @param string $dialect the db dialect
+     * @return string the expected sql statement or the missing file message
+     */
+    function assert_sql_expected(string $name, string $dialect = ''): string
+    {
+        $file_name = $this->assert_sql_file_path($name, $dialect);
         $expected_sql = $this->file($file_name);
         if ($expected_sql == '') {
             $msg = 'File ' . $file_name . ' with the expected SQL statement is missing.';

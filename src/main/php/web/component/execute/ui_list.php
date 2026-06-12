@@ -44,7 +44,9 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'list_sort.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'source.php';
@@ -57,6 +59,7 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -66,7 +69,9 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
@@ -79,9 +84,11 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class ui_list extends ui_base
 {
@@ -94,7 +101,7 @@ class ui_list extends ui_base
      */
     function parents_of_word(word|db_object $wrd, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases($wrd->phrase(), foaf_direction::UP, $phr_lst);
+        return $this->phrases($wrd->phrase(), foaf_direction::UP, $this->related_list($wrd, $phr_lst));
     }
 
     /**
@@ -105,7 +112,120 @@ class ui_list extends ui_base
      */
     function children_of_word(word|db_object $wrd, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases($wrd->phrase(), foaf_direction::DOWN, $phr_lst);
+        return $this->phrases($wrd->phrase(), foaf_direction::DOWN, $this->related_list($wrd, $phr_lst));
+    }
+
+    /**
+     * prefer the related phrases loaded together with the word or triple (api_types::INCL_RELATED)
+     * over the general phrase cache so that the page shows the phrases related to this object
+     *
+     * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
+     * @param phrase_list|null $phr_lst the cached list of phrases given by the caller
+     * @return phrase_list|null the related phrases of the object or the given cache list
+     */
+    private function related_list(word|db_object $wrd, ?phrase_list $phr_lst): ?phrase_list
+    {
+        if ($wrd::class == word::class or $wrd::class == triple::class) {
+            if ($wrd->phr_lst != null) {
+                $phr_lst = $wrd->phr_lst;
+            }
+        }
+        return $phr_lst;
+    }
+
+    /**
+     * HTML for the phrases that are an alias of the given phrase
+     * e.g. for "US dollar" the line 'has aliases: $, U.S. dollar'
+     * where "$" links to the word page and "aliases" to the verb page
+     *
+     * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code with the alias line or an empty string if there is no alias
+     */
+    function phrase_aliases(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    {
+        return $this->phrases_by_verb($wrd, verbs::ALIAS, msg_id::PHRASE_ALIAS, msg_id::PHRASE_ALIASES, $phr_lst);
+    }
+
+    /**
+     * HTML for the symbols of the given phrase
+     * e.g. for "US dollar" the line 'has symbol: USD'
+     * where "USD" links to the word page and "symbol" to the verb page
+     *
+     * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code with the symbol line or an empty string if there is no symbol
+     */
+    function phrase_symbols(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    {
+        return $this->phrases_by_verb($wrd, verbs::SYMBOL, msg_id::PHRASE_SYMBOL, msg_id::PHRASE_SYMBOLS, $phr_lst);
+    }
+
+    /**
+     * HTML for the phrases related to the given phrase excluding the alias and symbol entries
+     * because these are already shown by the phrase_aliases and phrase_symbols components
+     * sorted with the highest impact first e.g. for stocks the highest market capitalisation
+     *
+     * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code with the remaining related phrases
+     */
+    function phrases_related_ex_symbols(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        $phr_cac = $this->related_list($wrd, $phr_lst);
+        $vrb_cac = $ui_sys?->typ_lst_cache?->vrb;
+        if ($phr_cac != null and $vrb_cac != null) {
+            $vrb_ids = [$vrb_cac->id(verbs::ALIAS), $vrb_cac->id(verbs::SYMBOL)];
+            $result = $phr_cac->parent_triples_ex_verbs($wrd->phrase(), $vrb_ids)->name_link_by_impact();
+        }
+        return $result;
+    }
+
+    /**
+     * HTML for the phrases linked to the given phrase by the given verb
+     * e.g. for "US dollar" and the alias verb the line 'has aliases: $, U.S. dollar'
+     * where "$" links to the word page and "aliases" to the verb page
+     *
+     * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
+     * @param string $vrb_code_id the code id of the verb to select the related phrases
+     * @param msg_id $msg_one the text for the verb link if there is one related phrase
+     * @param msg_id $msg_many the text for the verb link if there are several related phrases
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code with the related phrase line or an empty string if there is none
+     */
+    private function phrases_by_verb(
+        word|db_object $wrd,
+        string         $vrb_code_id,
+        msg_id         $msg_one,
+        msg_id         $msg_many,
+        ?phrase_list   $phr_lst
+    ): string
+    {
+        global $mtr;
+        global $ui_sys;
+
+        $html = new html_base();
+        $result = '';
+        $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id($vrb_code_id);
+        $phr_cac = $this->related_list($wrd, $phr_lst);
+        if ($vrb != null and $phr_cac != null) {
+            $lst = $phr_cac->parents($wrd->phrase(), $vrb);
+            if (!$lst->is_empty()) {
+                $msg = $msg_one;
+                if ($lst->count() > 1) {
+                    $msg = $msg_many;
+                }
+                $vrb_lnk = $html->ref($html->url_new(views::VERB_ID, $vrb->id()), $mtr->txt($msg));
+                $result = $html->span(
+                    $mtr->txt(msg_id::PHRASE_HAS) . ' ' . $vrb_lnk . ': ' . $lst->name_link(),
+                    styles::TEXT_NOWRAP
+                );
+            }
+        }
+        return $result;
     }
 
     /**

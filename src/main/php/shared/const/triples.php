@@ -192,8 +192,18 @@ class triples
     const int CHF_SYMBOL_ID = 2898;
     const int US_DOLLAR_ID = 123;
     const int EURO_ID = 122;
+    const string USD_SYMBOL = "USD is symbol for US dollar";
+    const int USD_SYMBOL_ID = 2866;
+    const string DOLLAR_ALIAS = "$ is alias of US dollar";
+    const int DOLLAR_ALIAS_ID = 2846;
+    const string U_S_DOLLAR_ALIAS = "U.S. dollar is alias of US dollar";
+    const int U_S_DOLLAR_ALIAS_ID = 2847;
+    const string IN_USD = "in USD";
+    const int IN_USD_ID = 2842;
     const string COMPANY_VESTAS = "Vestas SA";
+    const int COMPANY_VESTAS_ID = 142;
     const string COMPANY_ABB = "ABB (company)";
+    const int COMPANY_ABB_ID = 141;
     const string YEAR_2013_FOLLOW = "2014 is follower of 2013";
     const string TAXES_OF_CF = "income taxes is part of cash flow statement";
 

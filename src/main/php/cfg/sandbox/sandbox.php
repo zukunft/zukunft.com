@@ -838,12 +838,16 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * @return string the protection type code id based on the database id
+     * @return string the protection type code id based on the database id or an empty string if no protection is set
      */
     function protection_type_code_id(): string
     {
         global $sys;
-        return $sys->typ_lst->ptc_typ->code_id($this->protection_id);
+        $result = '';
+        if ($this->protection_id != null) {
+            $result = $sys->typ_lst->ptc_typ->code_id($this->protection_id) ?? '';
+        }
+        return $result;
     }
 
     /**
@@ -1307,6 +1311,37 @@ class sandbox extends db_object_seq_id_user
     /*
      * owner and access
      */
+
+    /**
+     * make sure that only an admin or system user reduces the protection level
+     * if a non admin user requests the reduction the database protection level is kept
+     * and a warning is added to the given message
+     * the protection ids are expected to be in rising order e.g. 1 no protection to 3 admin protection
+     *
+     * @param sandbox|CombineObject|IdObject $db_obj the object as it is saved in the database
+     * @param user $usr_req the user who has requested the change
+     * @param user_message $msg to report a denied protection reduction to the user
+     * @return void because the adjusted protection of this object and the message are the result
+     */
+    function check_protection_change(
+        CombineObject|sandbox|IdObject $db_obj,
+        user                           $usr_req,
+        user_message                   $msg
+    ): void
+    {
+        if ($this->protection_id != null and $db_obj->protection_id() != null) {
+            if ($this->protection_id < $db_obj->protection_id()) {
+                if (!$usr_req->is_admin() and !$usr_req->is_system()) {
+                    $msg->add_warning_with_vars(msg_id::PROTECTION_REDUCE_DENIED, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_PROTECT => $db_obj->protection_type_name(),
+                        msg_id::VAR_PROTECT_CHK => $this->protection_type_name()
+                    ]);
+                    $this->set_protection_id($db_obj->protection_id());
+                }
+            }
+        }
+    }
 
     /**
      * if the user is an admin the user can force to be the owner of this object
@@ -2785,6 +2820,8 @@ class sandbox extends db_object_seq_id_user
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
                     if ($msg->is_ok()) {
+                        // make sure that only an admin user reduces the protection level
+                        $this->check_protection_change($db_rec, $this->get_user(), $msg);
                         $this->save_fields_func($db_con, $db_rec, $std_rec, $msg, $sc_par_lst);
                     }
                 }
@@ -3475,7 +3512,9 @@ class sandbox extends db_object_seq_id_user
                 $sbx->excluded
             );
         }
-        if ($sbx->share_id <> $this->share_id) {
+        // an unset share or protection of e.g. an import does not remove the database setting
+        // to remove a share or protection setting the type e.g. no_protection must be given
+        if ($this->share_id != null and $sbx->share_id <> $this->share_id) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE,
@@ -3490,7 +3529,7 @@ class sandbox extends db_object_seq_id_user
                 $sbx->share_id
             );
         }
-        if ($sbx->protection_id <> $this->protection_id) {
+        if ($this->protection_id != null and $sbx->protection_id <> $this->protection_id) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT,

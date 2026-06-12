@@ -32,11 +32,16 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -46,6 +51,8 @@ class word_ui_tests
 {
     function run(test_cleanup $t, type_lists $cfg): void
     {
+        global $mtr;
+
         // init
         $html = new html_base();
         $t_wrd = new test_words($t);
@@ -96,7 +103,62 @@ class word_ui_tests
         $test_page .= $html->text_h2('similar to ' . $wrd_chf->name());
         $test_page .= $wrd_chf->similar($t_phr->list_currency_ui())->name_link_list() . '<br>';
         $test_page .= $t->dsp_title_named_edit($wrd);
+
+        // show the phrases related to a word as on the default word page
+        $list = new ui_list();
+        $wrd_chf_rel = $t_wrd->swiss_franc_related_ui();
+        $test_page .= $html->text_h2('phrases related to ' . $wrd_chf_rel->name());
+        $test_page .= 'symbols and aliases: ' . $list->parents_of_word($wrd_chf_rel) . '<br>';
+        $test_page .= 'categories: ' . $list->children_of_word($wrd_chf_rel) . '<br>';
+
+        // show the alias and symbol phrases as on the default word page
+        $wrd_usd_rel = $t_wrd->us_dollar_related_ui();
+        $test_page .= $html->text_h2('aliases and symbols of ' . $wrd_usd_rel->name());
+        $test_page .= $list->phrase_aliases($wrd_usd_rel) . '<br>';
+        $test_page .= $list->phrase_symbols($wrd_usd_rel) . '<br>';
+        $test_page .= 'other related phrases: ' . $list->phrases_related_ex_symbols($wrd_usd_rel) . '<br>';
+
+        // show the related stocks sorted by the market capitalisation as on the default company page
+        $wrd_company_rel = $t_wrd->company_related_ui();
+        $test_page .= $html->text_h2('stocks related to ' . $wrd_company_rel->name());
+        $test_page .= 'stocks by impact: ' . $list->phrases_related_ex_symbols($wrd_company_rel) . '<br>';
         $t->html_page_test($test_page, 'word html components', 'word', $t);
+
+        $t->subheader($ts . 'related phrases');
+        $test_name = 'the symbol triple of the word is shown';
+        $t->assert_text_contains($test_name, $list->parents_of_word($wrd_chf_rel), words::CHF);
+        $test_name = 'the category triple of the word is shown';
+        $t->assert_text_contains($test_name, $list->children_of_word($wrd_chf_rel), words::CURRENCY);
+        $test_name = 'without related phrases the section stays empty';
+        $t->assert($test_name, $list->parents_of_word($wrd_chf, new phrase_list()), '');
+
+        $t->subheader($ts . 'aliases and symbols');
+        $alias_html = $list->phrase_aliases($wrd_usd_rel);
+        $test_name = 'two aliases are shown with the plural text';
+        $t->assert_text_contains($test_name, $alias_html, $mtr->txt(msg_id::PHRASE_ALIASES));
+        $test_name = 'the alias line is not broken across lines';
+        $t->assert_text_contains($test_name, $alias_html, styles::TEXT_NOWRAP);
+        $test_name = 'the dollar sign is linked as alias';
+        $t->assert_text_contains($test_name, $alias_html, words::DOLLAR);
+        $symbol_html = $list->phrase_symbols($wrd_usd_rel);
+        $test_name = 'one symbol is shown with the singular text';
+        $t->assert_text_not_contains($test_name, $symbol_html, $mtr->txt(msg_id::PHRASE_SYMBOLS));
+        $test_name = 'the currency code is linked as symbol';
+        $t->assert_text_contains($test_name, $symbol_html, words::USD);
+        $ex_html = $list->phrases_related_ex_symbols($wrd_usd_rel);
+        $test_name = 'the other related phrases are listed';
+        $t->assert_text_contains($test_name, $ex_html, triples::IN_USD);
+        $test_name = 'the alias triples are excluded from the related phrases';
+        $t->assert_text_not_contains($test_name, $ex_html, triples::DOLLAR_ALIAS);
+        $test_name = 'without an alias nothing is shown';
+        $t->assert($test_name, $list->phrase_aliases($wrd_chf_rel), '');
+
+        $t->subheader($ts . 'related sorted by impact');
+        $stock_html = $list->phrases_related_ex_symbols($wrd_company_rel);
+        $test_name = 'the stock with the highest market capitalisation is first';
+        $t->assert_text_order($test_name, $stock_html, triples::COMPANY_ABB, triples::COMPANY_ZURICH);
+        $test_name = 'the stock with the lowest market capitalisation is last';
+        $t->assert_text_order($test_name, $stock_html, triples::COMPANY_ZURICH, triples::COMPANY_VESTAS);
 
         // the similar words of a word are the other words linked to the same parent via the 'is a' verb
         // e.g. "Swiss franc" is a "currency" and the other currencies are "Euro" and "US Dollar" (USD)

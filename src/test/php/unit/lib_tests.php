@@ -96,6 +96,25 @@ class lib_tests
         $result = $lib->trim_sql($text);
         $t->assert("trim_sql", $result, $target);
 
+        // sql_format recreates the hand formatted layout of an update log function
+        // from the generated single line sql statement
+        $test_name = 'sql_format';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST, $t);
+        $test_name = 'sql_format MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_MYSQL, $t);
+        $test_name = 'sql_format insert';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_INSERT, $t);
+        $test_name = 'sql_format insert MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_INSERT_MYSQL, $t);
+        $test_name = 'sql_format update';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_UPDATE, $t);
+        $test_name = 'sql_format update MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_UPDATE_MYSQL, $t);
+        $test_name = 'sql_format select';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT, $t);
+        $test_name = 'sql_format select MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_MYSQL, $t);
+
         // test trim of an JSON string to the relevant part
         // to make two JSON strings more comparable
         $text = ' { "field" :  "value", "array": [ "item" ] } ';
@@ -931,6 +950,15 @@ class lib_tests
 
         $usr_msg->merge($msg_2);
         $t->assert("last message of the combined message should be from msg_2", $usr_msg->get_last_message(), 'error text');
+    }
+
+    private function assert_sql_format(string $test_name, string $file_name, all_tests $t): void
+    {
+        $lib = new library();
+        $target = $t->file($file_name);
+        $result = $lib->sql_format($lib->trim($target));
+        $t->assert($test_name . ' recreates the formatted update log function', $result, $target);
+        $t->assert($test_name . ' is idempotent', $lib->sql_format($target), $target);
     }
 
 }

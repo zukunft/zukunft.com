@@ -840,9 +840,10 @@ class sandbox_list_named extends sandbox_list
     /**
      * select the sandbox objects that needs to be updated in the database
      * @param sandbox_list_named $db_lst list of sandbox objects as loaded from the database
+     * @param user_message $usr_msg to report e.g. a denied protection reduction to the user
      * @return sandbox_list_named with the sandbox objects that needs to be updated
      */
-    function update_list(sandbox_list_named $db_lst): sandbox_list_named
+    function update_list(sandbox_list_named $db_lst, user_message $usr_msg): sandbox_list_named
     {
         $upd_lst = clone $this;
         $upd_lst->reset();
@@ -850,6 +851,8 @@ class sandbox_list_named extends sandbox_list
             // TODO test if get_by_obj_id is faster
             $db_sbx = $db_lst->get_by_name($sbx->name());
             if ($db_sbx != null) {
+                // make sure that only an admin user reduces the protection level
+                $sbx->check_protection_change($db_sbx, $sbx->get_user(), $usr_msg);
                 if ($sbx->needs_db_update($db_sbx)) {
                     $upd_lst->add($sbx);
                 }
@@ -1037,7 +1040,7 @@ class sandbox_list_named extends sandbox_list
 
         // get the objects that need to be added
         $imp->step_start(msg_id::CHECK, $class, $db_lst->count());
-        $upd_lst = $this->update_list($db_lst);
+        $upd_lst = $this->update_list($db_lst, $usr_msg);
         $imp->step_end($db_lst->count());
 
         if (!$upd_lst->is_empty()) {

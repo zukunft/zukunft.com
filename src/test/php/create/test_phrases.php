@@ -886,6 +886,56 @@ class test_phrases
     }
 
     /**
+     * the phrases related to the word "Swiss franc" as loaded with the word from the backend
+     * e.g. to test the related phrases shown on the default word page
+     *
+     * @return phrase_list_ui with the symbol and the category triple of the Swiss franc
+     */
+    function list_swiss_franc_related_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->symbol_chf()->phrase());
+        $lst->add($t_trp->swiss_franc_currency()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the phrases related to the word "US dollar" as loaded with the word from the backend
+     * e.g. to test the alias and symbol lines shown on the default word page
+     *
+     * @return phrase_list_ui with the alias, symbol, prefix and category triples of the US dollar
+     */
+    function list_us_dollar_related_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->alias_dollar()->phrase());
+        $lst->add($t_trp->alias_u_s_dollar()->phrase());
+        $lst->add($t_trp->symbol_usd()->phrase());
+        $lst->add($t_trp->in_usd()->phrase());
+        $lst->add($t_trp->usd_currency()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the phrases related to the word "company" as loaded with the word from the backend
+     * in a not sorted order e.g. to test that the related stocks are shown
+     * sorted by the market capitalisation on the default word page
+     *
+     * @return phrase_list_ui with the stock triples of the company word
+     */
+    function list_company_related_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->vestas_company()->phrase());
+        $lst->add($t_trp->company_zurich_market_cap()->phrase());
+        $lst->add($t_trp->abb_company()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * the frontend list of city and canton related phrases
      * e.g. to test the subtitle for the city zurich
      *
