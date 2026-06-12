@@ -752,15 +752,11 @@ class triple extends sandbox_code_id
         log_debug("triple->dsp " . $this->id() . ".");
 
         $result = ''; // reset the html code var
-        $msg = new user_message();
-
-        // get the link from the database
-        $this->reload_objects($msg);
 
         // prepare to show the triple
-        $result .= $this->get_from()->name() . ' '; // e.g. Australia
-        $result .= $this->get_verb_name() . ' '; // e.g. is a
-        $result .= $this->get_to()->name();       // e.g. country
+        $result .= $this->get_from()->name() . ' ';   // e.g. Australia
+        $result .= $this->get_verb()->name() . ' ';   // e.g. is a
+        $result .= $this->get_to()->name();           // e.g. country
 
         return $result;
     }
@@ -774,15 +770,12 @@ class triple extends sandbox_code_id
         log_debug("triple->dsp_r " . $this->id() . ".");
 
         $result = ''; // reset the html code var
-        $msg = new user_message();
 
-        // get the link from the database
-        $this->reload_objects($msg);
-
-        // prepare to show the triple
-        $result .= $this->get_to()->name() . ' ';   // e.g. Countries
-        $result .= $this->get_verb_name() . ' '; // e.g. are
-        $result .= $this->get_from()->name();     // e.g. Australia (and others)
+        // prepare to show the triple in the reverse direction
+        // TODO use the reverse name of the verb e.g. "are" instead of "is a"
+        $result .= $this->get_to()->name() . ' ';     // e.g. Countries
+        $result .= $this->get_verb()->name() . ' ';   // e.g. are
+        $result .= $this->get_from()->name();         // e.g. Australia (and others)
 
         return $result;
     }
