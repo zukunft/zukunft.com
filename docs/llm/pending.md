@@ -4,10 +4,6 @@
 
 ### word frontend
 
-add the position types 'side_or_first_below', 'side_or_below' and 'side_or_last_below' 
-which means that if the type is 'side_or_first_below'. If the screen width is below a number of pixel 
-that is defined in the config.yaml the component is positioned below the previous component.
-
 The default view for a word should have four column for width screens > 2800 pixel:
 1. a group of components with the description, the aliases / symbols and other related phrases
 2. a group with the most relevant value by impact and if it exists a chart on the top and the position type 'side_or_first_below'

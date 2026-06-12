@@ -42,8 +42,10 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -52,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
@@ -60,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -70,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -247,6 +252,29 @@ class word_tests
         $vars_bare = $bare_wrd->api_json_array($with_related);
         $test_name = 'word api_json_array omits phrases_related when the list is empty';
         $t->assert_true($t->name . $test_name, !array_key_exists(json_fields::PHRASES_RELATED, $vars_bare));
+
+        $t->subheader($ts . 'related phrase selection by impact');
+        // the most relevant related phrases e.g. the stocks with the highest
+        // market capitalisation are kept within the per verb limit and shown first
+        $t_trp = new test_triples($t);
+        $wrd = $t_wrd->word();
+        $trp_lst = new triple_list($t->usr1);
+        $trp_lst->add($t_trp->vestas_company());
+        $trp_lst->add($t_trp->company_zurich_market_cap());
+        $trp_lst->add($t_trp->abb_company());
+        $test_name = 'the stocks are kept with the highest market capitalisation first';
+        $phr_lst = $wrd->select_phrases_related($trp_lst, 2);
+        $target = implode(', ', [triples::COMPANY_ABB, triples::COMPANY_ZURICH, triples::COMPANY_VESTAS]);
+        $t->assert($test_name, implode(', ', $phr_lst->names()), $target);
+        $test_name = 'the per verb limit keeps the most relevant stocks plus one to indicate the overflow';
+        $phr_lst = $wrd->select_phrases_related($trp_lst, 1);
+        $t->assert($test_name, implode(', ', $phr_lst->names()), triples::COMPANY_ABB . ', ' . triples::COMPANY_ZURICH);
+        $test_name = 'triples without an impact are kept in the order of the database id';
+        $trp_lst = new triple_list($t->usr1);
+        $trp_lst->add($t_trp->triple_ge());
+        $trp_lst->add($t_trp->triple_bern());
+        $phr_lst = $wrd->select_phrases_related($trp_lst, 2);
+        $t->assert($test_name, implode(', ', $phr_lst->names()), triples::CITY_BE . ', ' . triples::CITY_GE);
 
         $t->subheader($ts . 'html frontend');
         $wrd = $t_wrd->word();

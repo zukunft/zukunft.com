@@ -405,6 +405,49 @@ class test_components extends test_objects
         return $lnk;
     }
 
+    /**
+     * @param int $id the unique database id of the text component
+     * @param string $name the name of the component which is also the shown text
+     * @return component that simply shows the component name as text
+     */
+    function component_text(int $id, string $name): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set($id, $name);
+        $cmp->set_type(component_types::TEXT, $this->env->usr1);
+        return $cmp;
+    }
+
+    /**
+     * the components of a view with four text columns that are shown side by side
+     * on wide screens and below each other on small screens
+     * e.g. to test the side or below position types
+     *
+     * @param view $msk the view to link the components to
+     * @return component_link_list with the four column group
+     */
+    function components_side_or_below(view $msk): component_link_list
+    {
+        $lst = new component_link_list($this->env->usr1);
+        $cols = [
+            [components::COL_FIRST_ID, components::COL_FIRST_NAME, null],
+            [components::COL_SECOND_ID, components::COL_SECOND_NAME, position_types::SIDE_OR_FIRST_BELOW],
+            [components::COL_THIRD_ID, components::COL_THIRD_NAME, position_types::SIDE_OR_BELOW],
+            [components::COL_FOURTH_ID, components::COL_FOURTH_NAME, position_types::SIDE_OR_LAST_BELOW],
+        ];
+        $pos = 1;
+        foreach ($cols as [$id, $name, $pos_type]) {
+            $lnk = new component_link($this->env->usr1);
+            $lnk->set($pos, $msk, $this->component_text($id, $name), $pos);
+            if ($pos_type != null) {
+                $lnk->set_pos_type($pos_type);
+            }
+            $lst->add_link($lnk);
+            $pos++;
+        }
+        return $lst;
+    }
+
     function component_link_add(): component_link
     {
         $t_msk = new test_views($this->env);

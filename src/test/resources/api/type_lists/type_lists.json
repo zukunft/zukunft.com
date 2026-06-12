@@ -9008,6 +9008,24 @@
         "code_id": "column",
         "description": "right or left the previous component but within an explicitly defined row",
         "id": 4
+      },
+      {
+        "name": "side or first below",
+        "code_id": "side_or_first_below",
+        "description": "first column of a group that is shown side by side on wide screens and below each other if the screen is narrower than the configured minimal side width",
+        "id": 5
+      },
+      {
+        "name": "side or below",
+        "code_id": "side_or_below",
+        "description": "following column of a side by side group that is moved below on small screens",
+        "id": 6
+      },
+      {
+        "name": "side or last below",
+        "code_id": "side_or_last_below",
+        "description": "last column of a side by side group that is moved below on small screens",
+        "id": 7
       }
     ],
     "view_relation_types": [
@@ -18193,22 +18211,22 @@
             "position_type": 2
           },
           {
-            "link_id": 816,
-            "id": 194,
-            "name": "system show field description",
-            "description": "the object description as read only",
-            "type_id": 147,
-            "code_id": "show_field_description",
-            "position": 6,
-            "position_type": 1
-          },
-          {
             "link_id": 817,
             "id": 221,
             "name": "system formatter row right",
             "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
             "type_id": 33,
             "code_id": "row_right",
+            "position": 6,
+            "position_type": 1
+          },
+          {
+            "link_id": 816,
+            "id": 194,
+            "name": "system show field description",
+            "description": "the object description as read only",
+            "type_id": 147,
+            "code_id": "show_field_description",
             "position": 6,
             "position_type": 1
           },
@@ -19710,17 +19728,6 @@
             "position_type": 1
           },
           {
-            "link_id": 937,
-            "id": 210,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 939,
             "id": 213,
             "name": "system form button export",
@@ -19728,6 +19735,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 937,
+            "id": 210,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -19962,17 +19980,6 @@
             "position_type": 1
           },
           {
-            "link_id": 959,
-            "id": 210,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 961,
             "id": 213,
             "name": "system form button export",
@@ -19980,6 +19987,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 959,
+            "id": 210,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },

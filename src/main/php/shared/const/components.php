@@ -50,6 +50,16 @@ class components
     const string MATRIX_COM = 'changeable sheet with words, number and formulas';
     const int MATRIX_ID = 2;
 
+    // text components to test the side or below position types
+    const string COL_FIRST_NAME = 'first column';
+    const int COL_FIRST_ID = 297;
+    const string COL_SECOND_NAME = 'second column';
+    const int COL_SECOND_ID = 298;
+    const string COL_THIRD_NAME = 'third column';
+    const int COL_THIRD_ID = 299;
+    const string COL_FOURTH_NAME = 'fourth column';
+    const int COL_FOURTH_ID = 300;
+
     // for system views
     const string FORM_TITLE = 'form_title';
     const string FORM_TITLE_NAME = 'form title';

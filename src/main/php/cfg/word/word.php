@@ -489,6 +489,22 @@ class word extends sandbox_code_id
     {
         $trp_lst = new triple_list($this->get_user());
         $trp_lst->load_by_phr($this->phrase(), null, foaf_direction::BOTH);
+        $this->phrases_related = $this->select_phrases_related($trp_lst, $per_verb_limit);
+    }
+
+    /**
+     * select the most relevant phrases related to this word from the given triples
+     * sorted with the highest impact first so that e.g. the stocks with the highest
+     * market capitalisation are kept within the per verb limit and always shown in the same order
+     *
+     * @param triple_list $trp_lst the triples connected to this word
+     * @param int $per_verb_limit upper bound on triples kept per verb; one extra row is kept
+     *                            so the caller can detect overflow without a count
+     * @return phrase_list the kept triples as phrases with the highest impact first
+     */
+    function select_phrases_related(triple_list $trp_lst, int $per_verb_limit): phrase_list
+    {
+        $trp_lst->sort_by_impact();
         $kept = new phrase_list($this->get_user());
         $per_verb_count = [];
         foreach ($trp_lst->lst() as $trp) {
@@ -500,7 +516,7 @@ class word extends sandbox_code_id
                 $per_verb_count[$vrb_id] = $seen + 1;
             }
         }
-        $this->phrases_related = $kept;
+        return $kept;
     }
 
     /**
