@@ -55,6 +55,9 @@ class def
     // fallback separator between list entries e.g. the share and protection subtitle in a page title;
     // overridden by config.yaml entry frontend.lists.separator.entry
     const string FALLBACK_ENTRY_SEPARATOR = ', ';
+    // fallback for the minimal screen width in pixel to show 'side or below' components side by side;
+    // overridden by config.yaml entry frontend.layout.min side width
+    const int FALLBACK_MIN_SIDE_WIDTH = 1000;
     const string ENCODING = 'utf-8'; // the default encoding for the backend
     const string FILE_PHP = '.php'; // the file extension for the code scripts
 

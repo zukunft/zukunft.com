@@ -448,7 +448,7 @@ class component_exe extends component
             component_types::CSV_EXPORT => $port->csv_export($dbo, $back),
             component_types::ODS_EXPORT => $port->ods_export($dbo, $back),
 
-            component_types::TEXT => $base->text(),
+            component_types::TEXT => $this->text(),
 
             default => 'program code for component ' . $this->dsp_id() . ' of component type "' . $this->type_code_id($cfg->typ_lst_cache) . '" (id ' . $this->type_id() . ') missing<br>'
         };

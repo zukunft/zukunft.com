@@ -243,52 +243,48 @@
         },
         {
           "position": "4",
-          "name": "system show field phrase type"
-        },
-        {
-          "position": "5",
           "name": "system sub title usage number"
         },
         {
-          "position": "6",
+          "position": "5",
           "name": "phrase aliases",
           "style": "col-md-4"
         },
         {
-          "position": "7",
+          "position": "6",
           "name": "phrase symbols",
           "style": "col-md-4"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "related phrases without symbols"
         },
         {
-          "position": "9",
+          "position": "8",
           "name": "children of word"
         },
         {
-          "position": "10",
+          "position": "9",
           "name": "system sub title values"
         },
         {
-          "position": "11",
+          "position": "10",
           "name": "related values"
         },
         {
-          "position": "12",
+          "position": "11",
           "name": "system sub title references"
         },
         {
-          "position": "13",
+          "position": "12",
           "name": "ref list word"
         },
         {
-          "position": "14",
+          "position": "13",
           "name": "system sub title log"
         },
         {
-          "position": "15",
+          "position": "14",
           "name": "change log word"
         }
       ]

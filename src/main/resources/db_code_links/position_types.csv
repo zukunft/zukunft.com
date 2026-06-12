@@ -3,3 +3,6 @@ position_type_id, type_name, description, code_id
 2, 'side', 'is right of the previous entry (or left for right to left languages)', 'side'
 3, 'combine', 'below but using the same column as the previous component', 'combine'
 4, 'column', 'right or left the previous component but within an explicitly defined row', 'column'
+5, 'side or first below', 'first column of a group that is shown side by side on wide screens and below each other if the screen is narrower than the configured minimal side width', 'side_or_first_below'
+6, 'side or below', 'following column of a side by side group that is moved below on small screens', 'side_or_below'
+7, 'side or last below', 'last column of a side by side group that is moved below on small screens', 'side_or_last_below'

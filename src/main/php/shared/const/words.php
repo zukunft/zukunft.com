@@ -150,6 +150,8 @@ class words
     const string DATABASE_COM = 'An organized collection of data stored and accessed electronically.';
     const string LISTS = 'lists';
     const string LISTS_COM = 'general parameters for lists e.g. the number of default entries';
+    const string LAYOUT = 'layout';
+    const string LAYOUT_COM = 'the settings to position the components on the screen';
 
     // words with a predefined functionality
     const string MOST = 'most';
@@ -380,7 +382,7 @@ class words
     const string CHF = 'CHF';
     const int CHF_ID = 258;
     const string SWISS_FRANC = 'Swiss franc';
-    const int SWISS_FRANC_ID = 2400;
+    const int SWISS_FRANC_ID = 2401;
     const string SWISS_FRANC_COM = 'The currency of Switzerland and Liechtenstein.';
     const string EUR = 'EUR';
     const int EUR_ID = 2427;
