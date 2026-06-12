@@ -617,6 +617,23 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" is missing in the import message '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case CALC_VALIDATION_FORMULA_MISSING = 'the formula "'
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . '" to validate the result of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is missing in the import message';
+    case CALC_VALIDATION_VALUE_MISSING = 'the value for "'
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . '" to validate the result of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is missing in the import message';
+    case CALC_VALIDATION_FAILED = 'the imported result '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' does not match the result '
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . ' calculated based on the imported values';
     case FORMULA_ID_MISSING = 'formula id is missing in the import message '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case FORMULA_JSON_MISSING = 'formula JSON is missing in the import message '

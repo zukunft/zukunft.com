@@ -891,6 +891,15 @@ class import
             }
             // TODO add json_fields::VIEW_VALIDATION
         }
+
+        // check that the pre-calculated results can be reproduced
+        // based on the values and formulas of the import file
+        if (!$dto->result_check_list()->is_empty()) {
+            $failed = $dto->validate_results($usr_msg);
+            $this->calc_validations_failed += $failed;
+            $this->calc_validations_done += $dto->result_check_list()->count() - $failed;
+        }
+
         return $dto;
     }
 

@@ -73,13 +73,9 @@ or smaller tasks like:
 - dsp_sandbox_view_link → "show component-link changes (order/position) vs. standard and others, undo button" — the old function has dead code (if (SQL_DB_TYPE != POSTGRES) wrapping an if (== POSTGRES)), so on Postgres it currently renders nothing; treat the behaviour as new, not as a port
 - dsp_sandbox_source → "show source changes (name/url/description/type) vs. standard and others, undo button" — resolve the open TODO whether sources get a real del_usr_cfg() in the backend instead of the frontend del() call
 
-### fix warnings
+### fix error and warnings
 
-in src/main/php/web/word/triple.php try to fix:
-Warning:(758, 16) Method 'reload_objects' not found in triple
-Warning:(762, 27) Method 'get_verb_name' not found in triple
-Warning:(780, 16) Method 'reload_objects' not found in triple
-Warning:(784, 27) Method 'get_verb_name' not found in triple
+
 
 ### general
 

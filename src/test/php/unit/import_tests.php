@@ -144,7 +144,39 @@ class import_tests
         $test_name = 'JSON import result_calc result count';
         $t->assert($test_name, $dto->result_list()->count(), 1);
 
+        // covers the validation of the import based on the pre-calculated results:
+        // the result of "total = price * quantity" must be reproducible
+        // based on the values and formulas of the import file
+        $test_name = 'JSON import calc validation confirms a consistent import file';
+        $usr_msg = new user_message($usr);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $t->assert($test_name, $dto->result_check_list()->count(), 1);
+        $test_name = '... and reports no problem';
+        $t->assert_true($test_name, $usr_msg->is_ok());
+
+        $test_name = 'JSON import calc validation reports a result mismatch';
+        $usr_msg = new user_message($usr);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_MISMATCH . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $target = 'the imported result 11 of ' . $dto->result_check_list()->lst()[0]->grp()->phrase_list()->dsp_name()
+            . ' does not match the result 10 calculated based on the imported values';
+        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+
+        $test_name = 'JSON import calc validation reports a missing value';
+        $usr_msg = new user_message($usr);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_VALUE_MISSING . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $target = 'the value for "quantity" to validate the result of '
+            . $dto->result_check_list()->lst()[0]->grp()->phrase_list()->dsp_name()
+            . ' is missing in the import message';
+        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+
         $test_name = 'JSON import warning creation';
+        $usr_msg = new user_message($usr);
         $json_str = file_get_contents(test_files::IMPORT_WARNING);
         $imp = new import(test_paths::IMPORT . 'warning_and_error_test.json');
         $imp->put_json_direct($json_str, $usr_msg);

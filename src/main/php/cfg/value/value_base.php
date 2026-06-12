@@ -1174,6 +1174,15 @@ class value_base extends sandbox_value
         return $result;
     }
 
+    /**
+     * @param array $names list of phrase names e.g. the context phrases of a result validation
+     * @return bool true if all phrases of this value are part of the given phrase names
+     */
+    function matches_context(array $names): bool
+    {
+        return empty(array_diff($this->phr_lst()->names(), $names));
+    }
+
 
     /*
      * check
