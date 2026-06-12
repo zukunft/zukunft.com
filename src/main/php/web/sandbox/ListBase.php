@@ -140,9 +140,14 @@ class ListBase extends ListOfIdObjects
     {
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
-            $new = clone $dbo;
-            $new->api_mapper($value, $usr_msg);
-            $this->add_obj($new, true);
+            if (is_array($value)) {
+                $new = clone $dbo;
+                $new->api_mapper($value, $usr_msg);
+                $this->add_obj($new, true);
+            } else {
+                // e.g. an api error message should not stop the rendering of the other components
+                log_warning('unexpected api message part "' . $value . '" for a ' . $dbo::class . ' list');
+            }
         }
         return $usr_msg;
     }

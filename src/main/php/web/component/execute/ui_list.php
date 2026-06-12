@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
+include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -67,6 +68,7 @@ include_once paths::SHARED_ENUM . 'foaf_direction.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -388,12 +390,40 @@ class ui_list extends ui_base
     }
 
     /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
+     * HTML for the formulas assigned to the given word, triple or phrase
+     * e.g. for the word "minute" the formula "scale minute to sec"
+     *
+     * @param word|phrase|db_object $wrd the object shown to the user e.g. the word "minute"
+     * @param data_object|null $cac the cached lists for initial display without backend call
+     * @param bool $test_mode true to create a reproducible result without a backend call
+     * @return string the html code with the linked names of the assigned formulas
      */
-    function formulas(): string
+    function formulas(word|phrase|db_object $wrd, ?data_object $cac = null, bool $test_mode = false): string
     {
-        return 'formulas component';
+        global $ui_sys;
+
+        if ($wrd::class == phrase::class) {
+            $phr = $wrd;
+        } else {
+            $phr = $wrd->phrase();
+        }
+        $lnk_lst = $cac?->frm_lnk_lst;
+        $frm_lst = new formula_list();
+        // the default cache is an empty list, so an empty cache triggers the backend call
+        if ($lnk_lst != null and !$lnk_lst->is_empty()) {
+            $frm_lst = $lnk_lst->get_formula_list($phr, $cac->frm_lst);
+        } elseif (!$test_mode) {
+            // TODO Prio 2 decide if and when a reloading via api is done
+            $frm_lst->load_by_phr_id($phr->id());
+        }
+        if ($ui_sys?->cfg !== null) {
+            $row_limit = $ui_sys->cfg->get_by(
+                [triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                config::LIMIT_NAME_LIST);
+        } else {
+            $row_limit = config::LIMIT_NAME_LIST;
+        }
+        return $frm_lst->name_link('', $row_limit);
     }
 
     /**

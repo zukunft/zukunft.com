@@ -34,16 +34,19 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -130,6 +133,17 @@ class word_ui_tests
         $wrd_measure = new word($t_wrd->hz()->api_json());
         $test_page .= $html->text_h2('phrase type of ' . $wrd_measure->name());
         $test_page .= 'phrase type: ' . $form->show_phrase_type($wrd_measure) . '<br>';
+
+        // show the formulas assigned to a word as on the default word page
+        $t_frm = new test_formulas($t);
+        $dto = new data_object();
+        $dto->frm_lnk_lst = $t_frm->formula_link_list_ui();
+        $dto->frm_lst = $t_frm->formula_list_ui();
+        $wrd_minute = new word($t_wrd->word_minute()->api_json());
+        $test_page .= $html->text_h2('formulas assigned to ' . $wrd_minute->name());
+        $test_page .= 'formulas: ' . $list->formulas($wrd_minute, $dto) . '<br>';
+        $test_page .= $html->text_h2('formulas assigned to ' . $wrd->name());
+        $test_page .= 'formulas: ' . $list->formulas($wrd, $dto) . '<br>';
         $t->html_page_test($test_page, 'word html components', 'word', $t);
 
         $t->subheader($ts . 'related phrases');
@@ -166,6 +180,14 @@ class word_ui_tests
         $t->assert($test_name, $form->show_phrase_type($wrd_measure), phrase_types::MEASURE_NAME);
         $test_name = 'a word without a type shows an empty text';
         $t->assert($test_name, $form->show_phrase_type($wrd_zh), '');
+
+        $t->subheader($ts . 'assigned formulas');
+        $test_name = 'the formula assigned to the word is listed';
+        $t->assert_text_contains($test_name, $list->formulas($wrd_minute, $dto), formulas::SCALE_TO_SEC);
+        $test_name = 'the sample formula of the default test word is listed';
+        $t->assert_text_contains($test_name, $list->formulas($wrd, $dto), formulas::INCREASE);
+        $test_name = 'a word without assigned formulas shows an empty list';
+        $t->assert($test_name, $list->formulas($wrd_zh, $dto), '');
 
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related_ex_symbols($wrd_company_rel);

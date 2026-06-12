@@ -110,6 +110,13 @@ class formula_list_tests
         $trp_lst = $t_frm->formula_list_short();
         $t->assert_api_to_ui($trp_lst, new formula_list_ui());
 
+        // an api error message keeps the frontend list empty and logs a warning on purpose
+        // instead of stopping the rendering of the page
+        $test_name = 'an api error message is not mapped to the list';
+        $frm_lst = new formula_list_ui();
+        $frm_lst->api_mapper(['message' => 'the phrase id is missing']);
+        $t->assert($test_name, $frm_lst->count(), 0);
+
     }
 
     /**

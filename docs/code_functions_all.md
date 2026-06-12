@@ -4947,6 +4947,7 @@
 \-- formula_link_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /formula/formula_link_list.php
     \-- get_phrase_list - section for function get_phrase_list is expected to be set and get in /formula/formula_link_list.php
+    \-- get_formula_list - section for function get_formula_list is expected to be set and get in /formula/formula_link_list.php
     \-- name_tip - section for function name_tip not yet defined that it should be display in /formula/formula_link_list.php
 \-- formula_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /formula/formula_list.php
@@ -6463,6 +6464,8 @@
         \-- component_list - set the vars of these list display objects bases on the api json array
     \-- load_by_formula_id
         \-- formula_link_list - get the formula link that use this formula from the backend via api
+    \-- load_by_phr_id
+        \-- formula_list - load the formulas assigned to the given phrase from the backend via api
     \-- load
         \-- config - request the user-specific frontend configuration from the backend
     \-- get_by
@@ -6806,7 +6809,7 @@
     \-- num_list
         \-- ui_list - TODO move code from component_dsp_old
     \-- formulas
-        \-- ui_list - TODO move code from component_dsp_old
+        \-- ui_list - HTML for the formulas assigned to the given word, triple or phrase
     \-- values_by_word
         \-- ui_list - show a list of values related to the given object
     \-- values_by_triple
@@ -6993,6 +6996,8 @@
 \-- related
     \-- get_phrase_list
         \-- formula_link_list - get the phrases from this list
+    \-- get_formula_list
+        \-- formula_link_list - get the formulas of this list that are assigned to the given phrase
     \-- result_phrases_most_relevant
         \-- phrase_list - get the phrase of the most relevant result
     \-- category_subtitle

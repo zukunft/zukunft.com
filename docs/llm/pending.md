@@ -14,7 +14,6 @@ The default view for a word should have four column for width screens > 2800 pix
    the tab switch has the position type 'side_or_last_below'
 
 show the phrases related to a word in the default word page; create first a list of unit tests 
-show the formulas assigned to a word in the default word page
 show the value related to a word in the default word page
 show the references related to a word in the default word page
 show the changes of a word in the default word page
@@ -38,6 +37,8 @@ fix the error messages 'url key "mask_id" is missing, url mapper for "mask" is m
 add a '0' url prefix that is used to include the database values in the url for the url_to_html function to confirm the changes
 
 ### import
+
+create a copy of all words and triples used for system testing before the config import, so that adding a new config value with a new word or triple does not break the test cases
 
 in json import a calc_validation list is created. Use this list to check if the results cen be reproduced based on the data_object $dto filled only with the values and formulas from the json import file. In case of any errors use the usual path via $msg to send a message to the user
 

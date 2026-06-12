@@ -302,6 +302,7 @@ class test_formulas extends test_objects
     {
         $lst = new formula_list($this->env->usr1);
         $lst->add($this->formula());
+        $lst->add($this->formula_increase());
         $lst->add($this->formula_this());
         $lst->add($this->formula_prior());
         $lst->add($this->formula_city_population());
@@ -322,6 +323,18 @@ class test_formulas extends test_objects
         $lnk->set(1, $this->formula(), $t_wrd->word_minute()->phrase());
         $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::TIME_PERIOD));
         $lnk->order_nbr = 2;
+        return $lnk;
+    }
+
+    /**
+     * @return formula_link the increase formula assigned to the word "mathematics"
+     *         as a sample to show the formula list on the default word page
+     */
+    function formula_link_increase(): formula_link
+    {
+        $t_wrd = new test_words($this->env);
+        $lnk = new formula_link($this->env->usr1);
+        $lnk->set(2, $this->formula_increase(), $t_wrd->word()->phrase());
         return $lnk;
     }
 
@@ -367,6 +380,7 @@ class test_formulas extends test_objects
     {
         $lst = new formula_link_list($this->env->usr1);
         $lst->add_link($this->formula_link());
+        $lst->add_link($this->formula_link_increase());
         return $lst;
     }
 
