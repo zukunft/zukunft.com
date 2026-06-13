@@ -48,6 +48,38 @@ Pick the tier by what the function does: read-only → `unit_read`; mutating →
 `src/test/php/unit/`. Functions touching both (e.g. a `save()` that first loads
 to merge) belong in `unit_write` because the write side dominates cleanup needs.
 
+## No ad-hoc database access — only the standard interface and the `/test` scripts
+
+For testing, never create any temporary script that reads or writes data from
+the database — no one-off `psql`/SQL statements, no throwaway PHP probe files,
+no direct table queries "just to check". The database is accessed **only** via
+the already created standard interface (the model objects' `load_*`, `save`,
+`del` methods) and via the existing scripts in `/test`.
+
+This holds for every step of a test's life:
+
+- **Setup**: missing fixture data is created through the model objects or an
+  import file run by a `/test` script — never by hand-written `INSERT`s.
+- **Verification**: whether an import or cleanup worked is asserted by a test in
+  the matching tier (`unit_read`/`unit_write`) using `load_by_name()` & co. —
+  never by querying tables directly.
+- **Cleanup / healing**: leftover test data is removed via the objects' `del()`
+  in the test's cleanup (fix the cleanup if it misses rows) — never by a manual
+  `DELETE`.
+
+The reasons: a direct SQL statement bypasses the user sandbox overlays, the
+change log and the caches, so it can leave the database in a state the
+application itself can never produce; and whatever the temp script checked or
+fixed is lost — encoded as a proper test or cleanup it keeps working for every
+future run.
+
+- **Right**: the write test records which words/triples were missing before the
+  import and removes exactly those via `del()` in its cleanup; a failed cleanup
+  is fixed in the test and re-run.
+- **Wrong**: `psql -c "delete from triples where triple_id = 3985"` to remove a
+  row a cleanup missed, or a `/tmp/probe.php` that opens the DB to inspect a
+  table.
+
 ## Test object creation
 
 All objects used in tests come from a factory function in

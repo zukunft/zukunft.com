@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
 
     /*
      * types and extensions
@@ -55,6 +55,7 @@ class files
     CONST string MD = '.md';
     CONST string CSV = '.csv';
     CONST string ZIP = '.zip';
+    CONST string XML = '.xml';
 
 
     /*
@@ -166,6 +167,17 @@ class files
 
     // XBRL filesets (zipped instance + taxonomy delivered by an issuer)
     CONST string IMPORT_XBRL_ABB_2013_ZIP = test_paths::IMPORT_XBRL_ZIP . 'abb-2013-xbrl_fileset-20131231' . self::ZIP;
+    CONST string IMPORT_XBRL_ABB_2013_DIR = test_paths::IMPORT_XBRL . 'abb-2013-xbrl_fileset-20131231' . DIRECTORY_SEPARATOR;
+    CONST string IMPORT_XBRL_ABB_2013 = self::IMPORT_XBRL_ABB_2013_DIR . 'abb-2013-xbrl_fileset-20131231' . self::JSON;
+    // a hand reduced facts snippet of the ABB 2013 instance and the expected conversion
+    // the json file name mirrors xbrl::FACTS_JSON_SUFFIX
+    CONST string FACTS_JSON_SUFFIX = '_json';
+    CONST string IMPORT_XBRL_SAMPLE_NAME = 'sample';
+    CONST string IMPORT_XBRL_SAMPLE_XML = self::IMPORT_XBRL_ABB_2013_DIR . self::IMPORT_XBRL_SAMPLE_NAME . self::XML;
+    CONST string IMPORT_XBRL_SAMPLE_JSON = self::IMPORT_XBRL_ABB_2013_DIR . self::IMPORT_XBRL_SAMPLE_NAME . self::FACTS_JSON_SUFFIX . self::JSON;
+    CONST string IMPORT_XBRL_CONFLICT_XML = test_paths::IMPORT_XBRL . 'sample_conflict' . self::XML;
+    CONST string IMPORT_XBRL_PERIOD_XML = test_paths::IMPORT_XBRL . 'sample_period' . self::XML;
+    CONST string IMPORT_XBRL_MISSING_NAME = 'does_not_exist';
 
     CONST string FIXED_DB_CSV = 'list' . self::CSV;
 

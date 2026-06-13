@@ -107,6 +107,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Write the test first. Every function has ≥1 positive and ≥1 negative test; a happy-path-only function counts as untested.
 - The negative test asserts the *reported* outcome (`msg_id` / empty / `false`), never merely "no exception thrown".
 - Pick the tier by what the function does: pure → `unit/`; DB read → `unit_read/`; DB write/REST/cache → `unit_write/`.
+- Never create temp scripts (`psql`, ad-hoc PHP probes, ...) that read or write database data; the database is accessed only via the standard model interface and the existing scripts in `/test`. → `docs/llm/testing.md`
 - All test objects come from a `create/test_*.php` factory — single objects and populated lists alike, never inline construction.
 - Factory method names don't repeat the class's object word (`test_phrases::list_chf_symbol_ui`, not `phrase_list_...`).
 - Named test objects use only `RESERVED_NAMES` consts; DB ids in tests are `*_ID` consts; add the const + reserved entry before writing the test if none fits.

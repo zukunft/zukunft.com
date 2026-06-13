@@ -634,6 +634,18 @@ enum messages: string
         . ' does not match the result '
         . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
         . ' calculated based on the imported values';
+    case XBRL_FACT_VALUE_CONFLICT = 'the XBRL fact "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" for the context "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" has the conflicting values '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' and '
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END;
+    case XBRL_NO_FACTS = 'no XBRL facts found in the given input';
+    case FILE_WRITE_FAILED = 'could not write the file "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '"';
     case FORMULA_ID_MISSING = 'formula id is missing in the import message '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case FORMULA_JSON_MISSING = 'formula JSON is missing in the import message '

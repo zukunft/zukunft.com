@@ -110,6 +110,11 @@ class import
     // import assumption
     const int IMPORT_VALIDATE_PCT_TIME = 10;
 
+    // the maximal processing time of one import in seconds
+    // longer than the default page request limit because a large import
+    // needs more cpu time but a hanging import should still be stopped
+    const int MAX_IMPORT_TIME_SEC = 3600;
+
     // the user who wants to import data
     public ?user $usr = null;
 
@@ -393,6 +398,10 @@ class import
     ): bool
     {
         global $cfg;
+
+        // allow a long but limited processing time
+        // because a large import needs more cpu time than a single page request
+        set_time_limit(self::MAX_IMPORT_TIME_SEC);
 
         // get the relevant config values
         $decode_per_sec = $cfg->get_by([

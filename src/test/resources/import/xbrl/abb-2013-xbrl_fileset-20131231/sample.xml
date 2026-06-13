@@ -1,0 +1,6 @@
+<us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent decimals="-6" contextRef="I2012" unitRef="USD">271000000</us-gaap: AllowanceForDoubtfulAccountsReceivableCurrent>
+<us-gaap: AllowanceForDoubtfulAccountsReceivableCurrent decimals="-6" contextRef="I2013" unitRef="USD">317000000</us-gaap: AllowanceForDoubtfulAccountsReceivableCurrent>
+<us-gaap: AllowanceForDoubtfulAccountsReceivableCurrent decimals="-6" contextRef="I2010_AllowanceForDoubtfulAccountsMember" unitRef="USD">215000000</us-gaap: AllowanceForDoubtfulAccountsReceivableCurrent>
+<us-gaap: AllowanceForDoubtfulAccountsReceivableCurrent decimals="-6" contextRef="I2011_AllowanceForDoubtfulAccountsMember" unitRef="USD">227000000</us-gaap: AllowanceForDoubtfulAccountsReceivableCurrent>
+<us-gaap: AllowanceForDoubtfulAccountsReceivableCurrent decimals="-6" contextRef="I2012_AllowanceForDoubtfulAccountsMember" unitRef="USD">271000000</us-gaap: AllowanceForDoubtfulAccountsReceivableCurrent>
+<us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent decimals="-6" contextRef="I2013_AllowanceForDoubtfulAccountsMember" unitRef="USD">317000000</us-gaap: AllowanceForDoubtfulAccountsReceivableCurrent>

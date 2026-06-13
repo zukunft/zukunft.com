@@ -512,6 +512,16 @@ class words
 
     // base words that are fixed part of the base setup
     const string CURRENCY = 'currency';
+    // the differentiator word used to qualify a value by business segment e.g. in the XBRL import
+    const string SECTOR = 'sector';
+    // base income statement words defined in accounting.json and re-declared on import
+    const string PROFIT = 'profit';
+    const string GROSS = 'gross';
+    const string COST = 'cost';
+    const string REVENUE = 'revenue';
+    // the building block words of the [[US GAAP]] reporting standard triple
+    const string US = 'US';
+    const string GAAP = 'GAAP';
 
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)

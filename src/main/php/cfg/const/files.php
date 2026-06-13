@@ -46,6 +46,8 @@ class files
 
     const string JSON = '.json';
     const string YAML = '.yaml';
+    const string XML = '.xml';
+    const string ZIP = '.zip';
     const string CODE_LINK_TYPE = '.csv';
     const string SQL = '.sql';
     const string SEP = '_';

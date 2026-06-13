@@ -398,6 +398,7 @@ class json_fields
 
     // for formulas
     const string EXPRESSION = 'expression';
+    const string RESULT = 'result'; // the expected result of a check formula e.g. of the XBRL summation-item validation
     const string ASSIGNED_WORD = 'assigned_word';
     const string FORMULAS = 'formulas';
     const string RESULTS = 'results';
