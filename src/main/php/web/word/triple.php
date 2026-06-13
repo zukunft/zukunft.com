@@ -789,7 +789,7 @@ class triple extends sandbox_code_id
         $result = ''; // reset the html code var
 
         //$btn = new button();
-        //$result .= $btn->yes_no('Is "' . $this->display() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
+        //$result .= $btn->yes_no('Is "' . $this->display() . '" wrong?', rest_ctrl::PATH_FIXED .'link_del.php?id=' . $this->id() . '&back=' . $back);
         $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
 
         return $result;

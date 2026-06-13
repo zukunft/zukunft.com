@@ -74,6 +74,7 @@ detail file. Order is by how often they fire, not importance.
 - `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/frontend.md`
 - Any function returning/operating on a frontend object ends in `_ui` (`_dsp` is the display-class suffix only). → `docs/llm/frontend.md`
 - Frontend config values always come from the request cache `$ui_sys->cfg`; never `new config()` in `web/`. → `docs/llm/frontend.md`
+- `web/` never accesses the database; request all data via the API (`rest_call`/`api_get` + `api_mapper`), never SQL (`sql_db`/`sql_creator`) or a backend `cfg/` load. Only exception: `web/frontend.php`'s deprecated direct-DB bootstrap (being migrated to the API). → `docs/llm/frontend.md`
 
 ### Unit-testability
 - No PHP superglobals inside functions (`$_GET/$_POST/$_SESSION/$_SERVER/...`); the allowed fixed globals are the only exception. → `docs/llm/state-and-messages.md`
@@ -119,12 +120,14 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Data-file-dependent tests recreate the artifact from a shared const (one point of change), e.g. import-JSON names from a reserved test word.
 - Every component-type renderer arm in `component_exe.php` has a page-based test in `unit_ui/<topic>_ui_tests.php`.
 - Every HTML-returning function in `web/` contributes a fragment to an `object_pages/<name>.html` snapshot; cross-object renderers go through a `test_base` helper.
+- Never modify an existing file under `src/test/resources/`; only *add* new resource files. A failing snapshot stays failing — the existing scripts or a human reviewer regenerate it to verify your change. → `docs/llm/testing.md`
+- Never change `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES`; it must always stay `false`. Flipping it to `true` to regenerate fixtures is the existing scripts' / reviewer's job, never an LLM edit. → `docs/llm/testing.md`
 - Every machine-checkable coding rule (e.g. frontend code may only read `$ui_sys`/`$mtr`) has a coded check in `unit/coding_rule_tests.php`; reviewer attention is not a substitute. → `docs/llm/testing.md`
 
 ## Pre-commit checklist
 
-- `files::AUTO_UPDATE_HTML` must be `false` (true silently overwrites failing HTML snapshots).
-- When PHP changes affect HTML output, update the matching `src/test/resources/web/html/` snapshot; the test scripts verify the rest — don't hand-audit fixtures.
+- Never change `files::AUTO_UPDATE_TEST_FILES` (`src/test/php/const/files.php`); it must always remain `false` — `true` silently overwrites failing snapshots and masks regressions.
+- Never overwrite an existing `src/test/resources/` fixture (HTML/SQL/CSV/JSON) to make a test pass; leave it failing for the existing scripts or a human reviewer to regenerate — the snapshot diff is the reviewer's signal, not yours to silence. You may *add* new resource files.
 - No real secrets anywhere (source, fixtures, config, commit messages). Dummy passwords must be explicitly labelled; remove an accidentally-staged secret before committing, not in a follow-up.
 - Run `test/test_coding_rules.php`; fix what it reports.
 - `test/test.php` must run without error; fix any failure before committing.

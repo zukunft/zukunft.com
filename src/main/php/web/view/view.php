@@ -598,9 +598,9 @@ class view extends view_exe
             } else {
                 $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
-            $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_edit = rest_ctrl::PATH_FIXED .'view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_edit('design the view', $call_edit) . ' ';
-            $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_del = rest_ctrl::PATH_FIXED .'view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';
         }

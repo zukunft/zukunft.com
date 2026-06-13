@@ -814,7 +814,7 @@ class value extends sandbox_value
                 log_debug('value->dsp_edit ' . $this->dsp_id());
             }
         }
-        $this_url = '/http/' . $script . '.php?id=' . $this->id() . '&back=' . $back; // url to call this display again to display the user changes
+        $this_url = rest_ctrl::PATH_FIXED . $script . '.php?id=' . $this->id() . '&back=' . $back; // url to call this display again to display the user changes
 
         // display the words and triples
         $result .= $html->dsp_tbl_start_select();

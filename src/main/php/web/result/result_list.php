@@ -44,6 +44,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::GROUP . 'group.php';
 include_once html_paths::GROUP . 'group_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -66,6 +67,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\group\group_list;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -121,37 +123,54 @@ class result_list extends sandbox_list_value
      */
     function load_by_formula_and_group_list(formula $frm, group_list $lst): bool
     {
-        $result = false;
-
-        $api = new rest_call();
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
         $data[url_var::GROUP] = $lst->ids();
+        return $this->load_by($data);
+    }
+
+    /**
+     * load a list of results linked to a formula
+     *
+     * @param formula $frm the formula to select the results
+     * @return bool true if value or phrases are found
+     */
+    function load_by_formula(formula $frm): bool
+    {
+        $data = array();
+        $data[url_var::FORMULA] = $frm->id();
+        return $this->load_by($data);
+    }
+
+    /**
+     * load a list of results linked to a phrase group
+     *
+     * @param group $grp a named object used for selection e.g. a formula
+     * @return bool true if value or phrases are found
+     */
+    function load_by_group(group $grp): bool
+    {
+        $data = array();
+        $data[url_var::GROUP] = $grp->id();
+        return $this->load_by($data);
+    }
+
+    /**
+     * get a list of results via api from the backend
+     *
+     * @param array $data the array to select the results
+     * @return bool true if value or phrases are found
+     */
+    function load_by(array $data): bool
+    {
+        $result = false;
+        $api = new rest_call();
         $json_body = $api->api_get(self::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }
         return $result;
-    }
-
-    /**
-     * load a list of results linked to
-     * a formula
-     * a phrase group
-     *   either of the source or the result
-     *   and with or without time selection
-     * a word or a triple
-     *
-     * @param object $obj a named object used for selection e.g. a formula
-     * @param bool $by_source set to true to force the selection e.g. by source phrase group id
-     * @return bool true if value or phrases are found
-     */
-    function load_by_obj(object $obj, bool $by_source = false): bool
-    {
-        // TODO Prio 0 move to backend
-        $qp = $this->load_sql_by_obj_old($db_con, $obj, $by_source);
-        return $this->load($qp);
     }
 
 

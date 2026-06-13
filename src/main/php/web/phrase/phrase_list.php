@@ -951,7 +951,7 @@ class phrase_list extends sandbox_list_named
         }
         $url_phr = $this->id_url_long();
 
-        $val_btn_call  = '/http/value_add.php?back='.$back.$url_phr;
+        $val_btn_call  = rest_ctrl::PATH_FIXED .'value_add.php?back='.$back.$url_phr;
         $result .= \html\btn_add ($val_btn_title, $val_btn_call);
         zu_debug('phrase_list->btn_add_value -> done');
         */

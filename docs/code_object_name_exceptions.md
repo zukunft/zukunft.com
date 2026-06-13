@@ -60,7 +60,8 @@ calc_internal: $calc
 change_action: $act, $typ
 change_field: $fld, $typ
 change_field_list: $cng_fld_cac
-change_link: $chg, $log
+change_link: $chg, $log, $log_empty
+change_log_link_list: $cl_lst, $log_link_ui, $lst
 change_log_list: $log, $log_lst, $log_ui, $lst, $result
 change_log_named: $chg_ui, $log_ui
 change_table_field: $tbl_fld

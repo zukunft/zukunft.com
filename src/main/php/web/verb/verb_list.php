@@ -123,7 +123,7 @@ class verb_list extends type_list
         $edit_script = $item_type . "_edit.php";
         $add_script = $item_type . "_add.php";
         foreach ($item_lst as $item) {
-            $result .= $html->ref('/http/' . $edit_script . '?id=' . $item->id, $item->name) . '<br> ';
+            $result .= $html->ref(rest_ctrl::PATH_FIXED . $edit_script . '?id=' . $item->id, $item->name) . '<br> ';
         }
         $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('Add ' . $item_type, $add_script);
         $result .= '<br>';
