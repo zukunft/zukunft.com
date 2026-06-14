@@ -105,3 +105,40 @@ direct-DB bootstrap (`start` / `open_db` / `load_cache`) still opens a connectio
 and is therefore the one file excluded from the coded check. It is being migrated
 to the API (`TODO Prio 1` in that test); once done, the exception is removed and
 no `web/` file touches the database at all.
+
+## Always sort lists before rendering them
+
+Every list shown on a frontend page must be sorted by a **deterministic key**
+before it is turned into HTML. The API and the database return rows in no
+guaranteed order, so an unsorted list renders in whatever order the rows happen
+to arrive — which differs between pods, query plans, and runs. That makes the
+HTML snapshot tests (`object_pages/*.html`, `views_by_*/*.html`) volatile: they
+pass on one run and fail on the next for no real change, and a genuine
+regression hides in the noise.
+
+Pick the key that matches the list's purpose and is reproducible:
+
+- **impact** (system-calculated relevance) for "most relevant first" lists, e.g.
+  the related phrases, values, and formulas on the default word page —
+  `phrase_list::sort_by_impact()`, `value_list::sort_by_impact()`; ties must
+  still resolve deterministically, so fall back to name or id when impacts are
+  equal.
+- **name** for alphabetical pick lists and selectors.
+- **id** (or another stable unique field) as the last-resort tie-breaker so the
+  order is total, never partial.
+
+```php
+// right: sort, then render
+$val_lst->sort_by_impact();
+return $val_lst->list($phr_lst);
+
+// wrong: render whatever order the api returned
+return $val_lst->list($phr_lst);
+```
+
+This applies to every renderer in `web/` that outputs more than one row
+(tables, link lists, option lists, related-object lists). When you add a new
+list-rendering function, sort inside it (or require the caller to pass an
+already-sorted list and assert it) — do not rely on the upstream load order.
+A new `object_pages/<name>.html` fragment that reorders between runs is the
+signal that a sort is missing.

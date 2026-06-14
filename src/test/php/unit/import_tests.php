@@ -47,7 +47,10 @@ use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -190,6 +193,82 @@ class import_tests
         $imp->put_json_direct($json_str, $usr_msg);
         $target = 'Import file has been created with version "9.9.9"';
         $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $target);
+
+        $t->subheader($ts . 'duplicate component check');
+        $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
+        $imp->usr = $usr;
+
+        // a component name is the key the views use, so the same name twice in one import is reported
+        $test_name = 'JSON import reports a component defined twice';
+        $usr_msg = new user_message($usr);
+        $json_array = [json_fields::COMPONENTS => [
+            [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::VALUES_RELATED],
+            [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::PHRASES_RELATED]
+        ]];
+        $imp->get_data_object($json_array, $usr_msg);
+        $target = 'The view component with the name "' . components::TEST_VALUES_NAME
+            . '" is defined more than once in the same import.';
+        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+
+        // two components with different names are a valid import
+        $test_name = 'JSON import accepts components with unique names';
+        $usr_msg = new user_message($usr);
+        $json_array = [json_fields::COMPONENTS => [
+            [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::VALUES_RELATED],
+            [json_fields::NAME => components::TEST_RESULTS_NAME, json_fields::TYPE_NAME => component_types::RESULTS_RELATED]
+        ]];
+        $imp->get_data_object($json_array, $usr_msg);
+        $t->assert_true($test_name, $usr_msg->is_ok());
+
+        $t->subheader($ts . 'view row balance check');
+
+        // a view that opens a row with row_right but never closes it with row_end is reported
+        $test_name = 'JSON import reports a view with an unclosed row';
+        $usr_msg = new user_message($usr);
+        $json_str = file_get_contents(test_files::IMPORT_VIEW_ROW_NOT_CLOSED . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $usr_msg);
+        $target = 'are not balanced';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $target);
+
+        // the same view is a valid import once the row is closed with a row_end component
+        $test_name = 'JSON import accepts a view with a closed row';
+        $usr_msg = new user_message($usr);
+        $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][] = [
+            json_fields::POSITION => 3,
+            json_fields::NAME => 'system formatter row end'
+        ];
+        $imp->get_data_object($json_array, $usr_msg);
+        $t->assert_true($test_name, $usr_msg->is_ok());
+
+        $t->subheader($ts . 'view component position check');
+
+        // a view that uses the same component position twice (and so misses one) is reported as an error
+        $test_name = 'JSON import reports a double component position';
+        $usr_msg = new user_message($usr);
+        $json_str = file_get_contents(test_files::IMPORT_VIEW_COMPONENT_POS_DOUBLE . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $usr_msg);
+        $target = 'is used more than once';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $target);
+
+        // the same view is a valid import once every component has a unique position from 1 to n
+        $test_name = 'JSON import accepts a view with complete component positions';
+        $usr_msg = new user_message($usr);
+        $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][1][json_fields::POSITION] = 2;
+        $imp->get_data_object($json_array, $usr_msg);
+        $t->assert_true($test_name, $usr_msg->is_ok());
+
+        // json has no order, so a position that differs from the json order is only a warning
+        // that does not block the import but is reported because it could confuse the user
+        $test_name = 'JSON import reports a position differing from the json order as a warning only';
+        $usr_msg = new user_message($usr);
+        $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][0][json_fields::POSITION] = 2;
+        $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][1][json_fields::POSITION] = 1;
+        $imp->get_data_object($json_array, $usr_msg);
+        $t->assert_true($test_name, $usr_msg->is_ok());
+        $test_name = 'the json order warning names the unexpected position';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), 'Unexpected position');
 
         $t->subheader($ts . 'convert');
 

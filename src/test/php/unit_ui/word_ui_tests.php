@@ -45,9 +45,11 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -144,6 +146,12 @@ class word_ui_tests
         $test_page .= 'formulas: ' . $list->formulas($wrd_minute, $dto) . '<br>';
         $test_page .= $html->text_h2('formulas assigned to ' . $wrd->name());
         $test_page .= 'formulas: ' . $list->formulas($wrd, $dto) . '<br>';
+
+        // show the values related to a word sorted by impact as on the default word page
+        $t_val = new test_values($t);
+        $dto->val_lst = $t_val->value_list_zh_impact_ui();
+        $test_page .= $html->text_h2('values related to ' . $wrd_zh->name());
+        $test_page .= 'values by impact: ' . $list->values_by_word($wrd_zh, $dto) . '<br>';
         $t->html_page_test($test_page, 'word html components', 'word', $t);
 
         $t->subheader($ts . 'related phrases');
@@ -195,6 +203,23 @@ class word_ui_tests
         $t->assert_text_order($test_name, $stock_html, triples::COMPANY_ABB, triples::COMPANY_ZURICH);
         $test_name = 'the stock with the lowest market capitalisation is last';
         $t->assert_text_order($test_name, $stock_html, triples::COMPANY_ZURICH, triples::COMPANY_VESTAS);
+
+        $t->subheader($ts . 'related values sorted by impact');
+        $val_html = $list->values_by_word($wrd_zh, $dto);
+        $test_name = 'the value of the phrase with the highest impact is shown first';
+        $t->assert_text_order($test_name, $val_html, triples::COMPANY_ZURICH, triples::CITY_ZH_NAME);
+        $test_name = 'a word without related values shows an empty value list';
+        $t->assert($test_name, $list->values_by_word($wrd, $dto), '');
+
+        // a word loaded with its related values carries them through the api to the
+        // default word page, so the value list is shown without a separate cache
+        $test_name = 'the related values of a word are shown from the word api';
+        $wrd_zh_be = $t_wrd->word_zh();
+        $wrd_zh_be->values_related = $t_val->value_list_zh_impact();
+        $wrd_zh_rel = new word($wrd_zh_be->api_json(
+            [api_types::INCL_RELATED, api_types::INCL_PHRASES, api_types::TEST_MODE]));
+        $t->assert_text_order($test_name, $list->values_by_word($wrd_zh_rel),
+            triples::COMPANY_ZURICH, triples::CITY_ZH_NAME);
 
         // the similar words of a word are the other words linked to the same parent via the 'is a' verb
         // e.g. "Swiss franc" is a "currency" and the other currencies are "Euro" and "US Dollar" (USD)

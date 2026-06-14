@@ -236,6 +236,12 @@ class word extends sandbox_code_id
     // the per-verb count is bounded by the related-per-verb config so the list stays compact
     public ?phrase_list $phrases_related = null;
 
+    // the values related to this word (this word is one of the phrases of the value's group);
+    // populated lazily by load_values_related() and only emitted via api_json_array() when the
+    // api_types::INCL_RELATED flag is set, so the default word view can show e.g. for "Zurich"
+    // the inhabitant numbers; the frontend caps and sorts the list by impact when rendering
+    public ?value_list $values_related = null;
+
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
 
@@ -468,6 +474,15 @@ class word extends sandbox_code_id
                         $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
                             new api_type_list([api_types::INCL_PHRASES]), $usr);
                     }
+                    if ($this->values_related == null and !$typ_lst->test_mode()) {
+                        $this->load_values_related();
+                    }
+                    if ($this->values_related != null and !$this->values_related->is_empty()) {
+                        // INCL_PHRASES so each value carries its group phrases, which the
+                        // frontend needs for the value name and to sort the list by impact
+                        $vars[json_fields::VALUES] = $this->values_related->api_json_array(
+                            new api_type_list([api_types::INCL_PHRASES]), $usr);
+                    }
                 }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
@@ -477,6 +492,15 @@ class word extends sandbox_code_id
         }
 
         return $vars;
+    }
+
+    /**
+     * load the values related to this word into the in-memory values_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_values_related(): void
+    {
+        $this->values_related = $this->reload_value_list();
     }
 
     /**
@@ -520,9 +544,9 @@ class word extends sandbox_code_id
     }
 
     /**
-     * load a word by id and, in the same call, populate the related phrases that the
-     * default word view's page-title renderer expects (City, Canton, ... inline list and
-     * the "is symbol for <X>" symbol-line layout). Used by the default-word-view path —
+     * load a word by id and, in the same call, populate the related phrases and the related
+     * values that the default word view expects (the page-title renderer's City, Canton, ...
+     * inline list, the "is symbol for <X>" symbol line and the related values list). Used by the default-word-view path —
      * test snapshot generation via test_base::assert_view and any other caller that wants
      * the rendered HTML to reflect a word's connecting triples without going through the
      * INCL_RELATED-gated api_json round-trip
@@ -535,6 +559,7 @@ class word extends sandbox_code_id
         $loaded_id = parent::load_by_id($id);
         if ($loaded_id > 0) {
             $this->load_phrases_related();
+            $this->load_values_related();
         }
         return $loaded_id;
     }

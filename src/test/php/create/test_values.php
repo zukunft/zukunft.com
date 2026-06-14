@@ -201,6 +201,20 @@ class test_values extends test_objects
     }
 
     /**
+     * @param phrase[] $phrases the phrases that should build the group of the value
+     * @return value with a sample number assigned to the group of the given phrases
+     */
+    function value_for_phrases(array $phrases): value
+    {
+        $lst = new phrase_list($this->env->usr1);
+        foreach ($phrases as $phr) {
+            $lst->add($phr);
+        }
+        $grp = $lst->get_grp_id(false);
+        return new value($this->env->usr1, values::SAMPLE_FLOAT, $grp);
+    }
+
+    /**
      * @return value with the maximal number of prime phrase
      */
     function value_main(): value
@@ -385,6 +399,28 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_zh(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * two values related to the word Zurich but assigned to phrases of a different impact
+     * so that the sort by impact and the display on the default word page can be tested
+     * @return value_list with values related to Zurich of a low and a high impact
+     */
+    function value_list_zh_impact(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $zh = $t_wrd->word_zh()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$zh, $t_trp->zh_city_low_impact()->phrase()]));
+        $lst->add($this->value_for_phrases([$zh, $t_trp->company_zurich_high_impact()->phrase()]));
+        return $lst;
+    }
+
+    function value_list_zh_impact_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_zh_impact(), [api_types::INCL_PHRASES]);
     }
 
     function value_list_math_ui(): value_list_ui

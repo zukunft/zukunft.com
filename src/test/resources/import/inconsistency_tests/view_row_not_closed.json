@@ -1,0 +1,45 @@
+{
+  "version": "0.0.3",
+  "time": "2024-06-14 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "view with an unclosed row"
+  ],
+  "components": [
+    {
+      "name": "system formatter row right",
+      "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
+      "type": "row_right",
+      "code_id": "row_right"
+    },
+    {
+      "name": "system show field name",
+      "description": "show the object name as read only text",
+      "type": "system_show_field_name",
+      "code_id": "show_field_name"
+    },
+    {
+      "name": "system formatter row end",
+      "description": "to close the previous opened row and show the components collected since the start in one row",
+      "type": "row_end",
+      "code_id": "row_end"
+    }
+  ],
+  "views": [
+    {
+      "name": "test view with an unclosed row",
+      "description": "a view that opens a row with row_right but never closes it to test the row balance check",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "2",
+          "name": "system show field name"
+        }
+      ]
+    }
+  ]
+}
