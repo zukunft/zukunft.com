@@ -2354,46 +2354,46 @@
           "name": "system form end"
         },
         {
-          "position": "16",
+          "position": "14",
           "name": "system formatter row start"
         },
         {
-          "position": "17",
+          "position": "15",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "18",
+          "position": "16",
           "name": "system sub title triples",
           "style": "col-md-4"
         },
         {
-          "position": "19",
+          "position": "17",
           "name": "triples that use a verb",
           "position_type": "combine"
         },
         {
-          "position": "20",
+          "position": "18",
           "name": "system sub title formulas",
           "style": "col-md-4"
         },
         {
-          "position": "21",
+          "position": "19",
           "name": "formulas that use a verb",
           "position_type": "combine"
         },
         {
-          "position": "22",
+          "position": "20",
           "name": "system sub title log",
           "style": "col-md-4"
         },
         {
-          "position": "23",
+          "position": "21",
           "name": "change log verb",
           "position_type": "combine"
         },
         {
-          "position": "24",
+          "position": "22",
           "name": "system formatter row end"
         }
       ]
@@ -3954,80 +3954,80 @@
           "name": "assigned phrases of this formula"
         },
         {
-          "position": "16",
+          "position": "14",
           "name": "system form button cancel"
         },
         {
-          "position": "17",
+          "position": "15",
           "name": "system form button save"
         },
         {
-          "position": "18",
+          "position": "16",
           "name": "system formatter row end"
         },
         {
-          "position": "19",
+          "position": "17",
           "name": "system form end"
         },
         {
-          "position": "20",
+          "position": "18",
           "name": "system formatter row start"
         },
         {
-          "position": "21",
+          "position": "19",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "22",
+          "position": "20",
           "name": "system formatter row end"
         },
         {
-          "position": "23",
+          "position": "21",
           "name": "system formatter row start"
         },
         {
-          "position": "24",
+          "position": "22",
           "name": "system sub title results",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "25",
+          "position": "23",
           "name": "result list of formula",
           "position_type": "combine"
         },
         {
-          "position": "26",
+          "position": "24",
           "name": "system sub title formulas",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "29",
+          "position": "25",
           "name": "formula list of formula",
           "position_type": "combine"
         },
         {
-          "position": "30",
+          "position": "26",
           "name": "system formatter row end"
         },
         {
-          "position": "31",
+          "position": "27",
           "name": "system formatter row start"
         },
         {
-          "position": "32",
+          "position": "28",
           "name": "system sub title log",
           "style": "col-md-12"
         },
         {
-          "position": "33",
+          "position": "29",
           "name": "change log formula",
           "position_type": "combine"
         },
         {
-          "position": "34",
+          "position": "30",
           "name": "system formatter row end"
         }
       ]
@@ -4068,64 +4068,64 @@
           "name": "system form end"
         },
         {
-          "position": "20",
+          "position": "8",
           "name": "system formatter row start"
         },
         {
-          "position": "21",
+          "position": "9",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "22",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "23",
+          "position": "11",
           "name": "system formatter row start"
         },
         {
-          "position": "24",
+          "position": "12",
           "name": "system sub title results",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "25",
+          "position": "13",
           "name": "result list of formula",
           "position_type": "combine"
         },
         {
-          "position": "26",
+          "position": "14",
           "name": "system sub title formulas",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "29",
+          "position": "15",
           "name": "formula list of formula",
           "position_type": "combine"
         },
         {
-          "position": "30",
+          "position": "16",
           "name": "system formatter row end"
         },
         {
-          "position": "31",
+          "position": "17",
           "name": "system formatter row start"
         },
         {
-          "position": "32",
+          "position": "18",
           "name": "system sub title log",
           "style": "col-md-12"
         },
         {
-          "position": "33",
+          "position": "19",
           "name": "change log formula",
           "position_type": "combine"
         },
         {
-          "position": "34",
+          "position": "20",
           "name": "system formatter row end"
         }
       ]
@@ -5168,22 +5168,18 @@
         },
         {
           "position": "12",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "13",
           "name": "system form button cancel"
         },
         {
-          "position": "14",
+          "position": "13",
           "name": "system form button save"
         },
         {
-          "position": "15",
+          "position": "14",
           "name": "system formatter row end"
         },
         {
-          "position": "16",
+          "position": "15",
           "name": "system form end"
         }
       ]
@@ -5325,6 +5321,10 @@
         },
         {
           "position": "13",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "14",
           "name": "system form end"
         }
       ]
@@ -5672,6 +5672,10 @@
         },
         {
           "position": "9",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "10",
           "name": "system form end"
         }
       ]
@@ -5763,23 +5767,23 @@
           "name": "system form field description"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system formatter row right"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button save"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -5817,19 +5821,23 @@
           "name": "system show field description"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system formatter row right"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button del"
         },
         {
-          "position": "9",
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -6368,18 +6376,22 @@
         },
         {
           "position": "3",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "4",
-          "name": "system form button import"
+          "name": "system form button cancel"
         },
         {
           "position": "5",
-          "name": "system formatter row end"
+          "name": "system form button import"
         },
         {
           "position": "6",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "7",
           "name": "system form end"
         }
       ]
@@ -6471,23 +6483,23 @@
           "name": "system formatter row right"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form button save"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button export"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -6523,23 +6535,23 @@
           "name": "system formatter row right"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form button save"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button export"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -6575,23 +6587,23 @@
           "name": "system formatter row right"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form button save"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button export"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -6627,23 +6639,23 @@
           "name": "system formatter row right"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form button save"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button export"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form end"
         }
       ]

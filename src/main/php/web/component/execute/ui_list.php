@@ -442,10 +442,31 @@ class ui_list extends ui_base
         ?int                            $style_id = null
     ): string
     {
-        $val_lst = $dto->val_lst?->filter($dbo);
+        $val_lst = $this->value_related_list($dbo, $dto);
+        // value_list::list() sorts by impact and limits the number via the user/config setting
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
         return $this->value_list($val_lst, $phr_lst, $style_id);
+    }
+
+    /**
+     * the values shown by values_by_word: a word loaded with its related values carries them
+     * directly (e.g. the default word view), otherwise they are taken from the data cache
+     *
+     * @param word|db_object|type_object|null $dbo the object the values are related to
+     * @param data_object|null $dto the data cache used until the backend has returned the values
+     * @return value_list|null the values related to the given object or null if there are none
+     */
+    private function value_related_list(
+        word|db_object|type_object|null $dbo,
+        ?data_object                    $dto
+    ): ?value_list
+    {
+        $val_lst = $dto?->val_lst?->filter($dbo);
+        if ($dbo::class == word::class and $dbo->val_lst != null) {
+            $val_lst = $dbo->val_lst;
+        }
+        return $val_lst;
     }
 
     /**

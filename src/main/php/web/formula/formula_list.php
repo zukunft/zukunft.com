@@ -156,8 +156,25 @@ class formula_list extends ListBase
      * @return string with a list of the formula names with html links
      * ex. names_linked
      */
+    /**
+     * sort this formula list in place so that the formula with the highest impact is first
+     * formulas with the same (or no) impact are sorted by name so that the order is always
+     * deterministic and the html does not change between runs e.g. for the snapshot tests
+     * @return void
+     */
+    function sort_by_impact(): void
+    {
+        $lst = $this->lst();
+        usort($lst, function (formula $a, formula $b) {
+            return $b->impact() <=> $a->impact()
+                ?: strcmp($a->name() ?? '', $b->name() ?? '');
+        });
+        $this->set_lst($lst);
+    }
+
     function name_link(string $back = '', int $limit = config::LIMIT_NAME_LIST): string
     {
+        $this->sort_by_impact();
         return implode(', ', $this->names_link($back, $limit));
     }
 
@@ -186,6 +203,7 @@ class formula_list extends ListBase
     {
         $html = new html_base();
         $cols = '';
+        $this->sort_by_impact();
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $wrd) {

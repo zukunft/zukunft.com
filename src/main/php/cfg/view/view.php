@@ -94,6 +94,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -132,6 +133,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 
 class view extends sandbox_code_id
@@ -302,6 +304,8 @@ class view extends sandbox_code_id
                     $cmp_pos++;
                 }
             }
+            $this->check_rows_closed($msg);
+            $this->check_component_positions_complete($json_lst, $msg);
         }
 
         // TODO add the assigned terms
@@ -329,10 +333,12 @@ class view extends sandbox_code_id
     }
 
     /**
-     * check if the position in the json is reasonable
-     * TODO add unit test case
+     * check if the position declared in the json matches the order of the components in the json
+     * json has by definition no order, so a mismatch is only a warning that does not block the import
+     * but it is reported because it could confuse the user (e.g. when the file is edited by hand)
+     *
      * @param array $cmp_lnk_json the part of the json array which contains one component link
-     * @param int $pos the expected position
+     * @param int $pos the expected position derived from the order in the json
      * @param user_message $msg the user message object where the potential warning should be added
      * @return void just enriches the given user message object with the warning message
      */
@@ -342,14 +348,14 @@ class view extends sandbox_code_id
         user_message $msg
     ): void
     {
-        if (in_array(json_fields::POSITION, $cmp_lnk_json)) {
-            $json_pos = $cmp_lnk_json[json_fields::POSITION];;
+        if (array_key_exists(json_fields::POSITION, $cmp_lnk_json)) {
+            $json_pos = (int)$cmp_lnk_json[json_fields::POSITION];
             if ($pos !== $json_pos) {
                 $cmp_name = 'component name missing';
-                if (in_array(json_fields::NAME, $cmp_lnk_json)) {
-                    $json_pos = $cmp_lnk_json[json_fields::NAME];;
+                if (array_key_exists(json_fields::NAME, $cmp_lnk_json)) {
+                    $cmp_name = $cmp_lnk_json[json_fields::NAME];
                 }
-                $msg->add(msg_id::JSON_ORDER_POS_COMPONENT, [
+                $msg->add_warning_with_vars(msg_id::JSON_ORDER_POS_COMPONENT, [
                     msg_id::VAR_VALUE => $json_pos,
                     msg_id::VAR_VALUE_CHK => $pos,
                     msg_id::VAR_COMPONENT_NAME => $cmp_name,
@@ -358,6 +364,70 @@ class view extends sandbox_code_id
             }
         }
 
+    }
+
+    /**
+     * check that the component positions declared in the json form a complete sequence
+     * from 1 to the number of components without a position used twice or a position missing
+     * because a double or missing position number leads to an unexpected component order
+     *
+     * @param array $json_lst the components part of the view import json
+     * @param user_message $msg the user message object where a potential error should be added
+     * @return void just enriches the given user message object with the error messages
+     */
+    private function check_component_positions_complete(
+        array        $json_lst,
+        user_message $msg
+    ): void
+    {
+        $positions = [];
+        foreach ($json_lst as $json_cmp) {
+            if (array_key_exists(json_fields::POSITION, $json_cmp)) {
+                $positions[] = (int)$json_cmp[json_fields::POSITION];
+            }
+        }
+        $count = count($json_lst);
+        for ($pos = 1; $pos <= $count; $pos++) {
+            $found = count(array_keys($positions, $pos));
+            if ($found > 1) {
+                $msg->add(msg_id::VIEW_COMPONENT_POS_DOUBLE, [
+                    msg_id::VAR_VALUE => $pos,
+                    msg_id::VAR_VIEW_NAME => $this->name()
+                ]);
+            } elseif ($found == 0) {
+                $msg->add(msg_id::VIEW_COMPONENT_POS_MISSING, [
+                    msg_id::VAR_VALUE => $pos,
+                    msg_id::VAR_VIEW_NAME => $this->name()
+                ]);
+            }
+        }
+    }
+
+    /**
+     * check that every row opened with a row_start or row_right component
+     * is closed again with a matching row_end component within the same view
+     * because an unclosed row leaves an open html div that breaks the page layout
+     *
+     * @param user_message $msg the user message object where a potential warning should be added
+     * @return void just enriches the given user message object with the warning message
+     */
+    private function check_rows_closed(user_message $msg): void
+    {
+        if ($this->cmp_lnk_lst != null) {
+            $open = 0;
+            foreach ($this->cmp_lnk_lst->lst() as $lnk) {
+                $type_code_id = $lnk->get_component()->type_code_id();
+                if ($type_code_id == component_types::ROW_START
+                    or $type_code_id == component_types::ROW_RIGHT) {
+                    $open++;
+                } elseif ($type_code_id == component_types::ROW_END) {
+                    $open--;
+                }
+            }
+            if ($open != 0) {
+                $msg->add(msg_id::VIEW_ROWS_NOT_CLOSED, [msg_id::VAR_VIEW_NAME => $this->name()]);
+            }
+        }
     }
 
 

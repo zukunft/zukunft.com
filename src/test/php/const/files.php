@@ -122,6 +122,8 @@ class files
     CONST string IMPORT_CALC_VALIDATION = test_paths::IMPORT_UNIT . 'calc_validation';
     CONST string IMPORT_CALC_VALIDATION_MISMATCH = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_mismatch';
     CONST string IMPORT_CALC_VALIDATION_VALUE_MISSING = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_value_missing';
+    CONST string IMPORT_VIEW_ROW_NOT_CLOSED = test_paths::IMPORT_INCONSISTENCY . 'view_row_not_closed';
+    CONST string IMPORT_VIEW_COMPONENT_POS_DOUBLE = test_paths::IMPORT_INCONSISTENCY . 'view_component_pos_double';
     CONST string IMPORT_UPDATE_EXT = '_update';
     CONST string IMPORT_UNDO_EXT = '_undo';
 

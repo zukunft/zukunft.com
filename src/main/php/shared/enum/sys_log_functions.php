@@ -47,6 +47,6 @@ enum sys_log_functions: string
 
     // only to test the write functions
     const string TEST_NAME = "System test function name";
-    const string TEST_COM = "System test function description";
+    const string TEST_COM = "only to test the write functions";
 
 }

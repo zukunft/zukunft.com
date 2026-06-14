@@ -273,7 +273,7 @@ class config_numbers extends value_list
                     log_debug($this->count() . ' config values loaded');
                     $this->load_phrases();
                 } else {
-                    log_err('no config values loaded');
+                    log_warning('no config values loaded');
                     $usr_msg->add_id(msg_id::CONFIG_EMPTY);
                 }
                 if ($usr_msg->is_ok()) {

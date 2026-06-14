@@ -207,6 +207,19 @@ class value_list extends ListBase
         return $val_lst;
     }
 
+    /**
+     * sort this value list in place so that the value with the highest impact is first
+     * the impact of a value is the highest impact of the phrases it is assigned to
+     * @return void
+     */
+    function sort_by_impact(): void
+    {
+        $lst = $this->lst();
+        usort($lst, fn(value $a, value $b) => $b->number() <=> $a->number());
+        usort($lst, fn(value $a, value $b) => $b->impact() <=> $a->impact());
+        $this->set_lst($lst);
+    }
+
 
     /*
      * display
@@ -236,6 +249,8 @@ class value_list extends ListBase
         $result = '';
 
         if (!$this->is_empty()) {
+            // sort so the highest impact value is shown first and the order is always deterministic
+            $this->sort_by_impact();
             if ($limit == null) {
                 global $ui_sys;
                 if ($ui_sys?->cfg !== null) {
@@ -324,6 +339,9 @@ class value_list extends ListBase
     function table(?phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
+
+        // sort so the highest impact value is shown first and the order is always deterministic
+        $this->sort_by_impact();
 
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;

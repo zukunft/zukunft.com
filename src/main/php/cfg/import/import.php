@@ -1368,11 +1368,19 @@ class import
     ): user_message
     {
         $i = 0;
+        $names = [];
         foreach ($json_array as $cmp_json) {
             $cmp = new component($this->usr);
             if ($cmp->import_mapper($cmp_json, $usr_msg, $dto)) {
-                $dto->add_component($cmp);
-                $i++;
+                // a component name is the key used by the views, so it must be unique within one import
+                $name = $cmp->name();
+                if (in_array($name, $names)) {
+                    $usr_msg->add(msg_id::COMPONENT_DEFINED_TWICE, [msg_id::VAR_COMPONENT_NAME => $name]);
+                } else {
+                    $names[] = $name;
+                    $dto->add_component($cmp);
+                    $i++;
+                }
             }
             $this->display_progress($i, $per_sec, $cmp->dsp_id());
         }

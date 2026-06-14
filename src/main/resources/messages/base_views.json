@@ -122,13 +122,8 @@
       "type": "phrases_related"
     },
     {
-      "name": "related values",
-      "description": "",
-      "type": "phrases_related"
-    },
-    {
       "name": "currency formulas",
-      "description": "",
+      "description": "show the formulas related to a currency",
       "type": "phrases_related"
     },
     {
