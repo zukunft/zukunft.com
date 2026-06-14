@@ -34,11 +34,13 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'button.php';
@@ -360,7 +362,7 @@ class base_ui_tests
         $url_part = parse_url('?m=3&id=123');
         parse_str($url_part["query"], $url_array);
         $result = $html->url_with_back(api::LOGIN_SCRIPT, $url_array);
-        $t->assert($test_name, $result, '/http/view.php?m=61&9m=3&9id=123');
+        $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=61&9m=3&9id=123');
 
         $test_name = 'url from back part while editing word 123';
         $url_part = parse_url('?m=2&9m=3&9id=123');
@@ -377,7 +379,7 @@ class base_ui_tests
         $url_part = parse_url('?m=1');
         parse_str($url_part["query"], $url_array);
         $result = $html->url_with_back(api::MAIN_SCRIPT . '?m=3&id=123', $url_array);
-        $t->assert($test_name, $result, '/http/view.php?m=3&id=123&9m=1');
+        $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=3&id=123&9m=1');
 
         $lib = new library();
         $usr_msg = new user_message();

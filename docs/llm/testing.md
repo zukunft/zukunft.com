@@ -302,6 +302,42 @@ When adding such a test: (1) add a reserved test entry to `words.php` (or the
 matching `*_const` file) if none fits, (2) build the import file's name from that
 const, and (3) use the same const for cleanup and for any regeneration script.
 
+## Never edit an existing test resource — only add
+
+Everything under `src/test/resources/` (HTML/SQL snapshots, dummy-cache JSON,
+fixture CSVs, import files) is **read-only to a code change**. When your change
+makes one of these fixtures stale, **do not** overwrite it — not by hand and not
+by flipping `AUTO_UPDATE_TEST_FILES` to `true`. Leave the test failing and the
+fixture untouched; the failing snapshot diff is exactly the evidence the next
+step needs.
+
+The switch `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES` **must always
+stay `false` and must never be changed by an LLM** — not even temporarily and
+reverted within the same change. Setting it to `true` is how the *existing
+scripts* (run deliberately by a human) or a *human code reviewer* regenerate the
+baselines; it is never part of an automated code edit. Treat the constant as
+read-only just like the resource files it controls.
+
+Existing resources are regenerated only by **the existing scripts** (the
+`AUTO_UPDATE_TEST_FILES` mechanism, run deliberately) or by a **human code
+reviewer**, who compares the regenerated fixture against the code change to
+confirm the new output is intended. If the LLM both changes the code *and*
+rewrites the fixture to match, that confirmation step is lost — the snapshot can
+no longer disagree with the code.
+
+You may freely **add** new resource files (a new `object_pages/<name>.html`, a
+new SQL fixture for a new query, a new import file) — adding introduces no risk
+of silently masking a regression in an existing baseline.
+
+- **Right**: PHP change alters a rendered page → the matching
+  `object_pages/*.html` test fails → you commit the code change with the test
+  red (or the failure noted), and the reviewer/script regenerates the snapshot.
+- **Right**: a brand-new renderer → you *add* its `object_pages/<name>.html`.
+- **Wrong**: setting `AUTO_UPDATE_TEST_FILES = true`, running the suite to
+  overwrite the stale snapshots, then committing the regenerated fixtures.
+- **Wrong**: hand-editing a `views_by_id/*.html` or `db/**/*.sql` fixture so the
+  assertion passes again.
+
 ## Page-based UI tests for component-type renderers
 
 Every UI rendering function dispatched from `web/component/component_exe.php` —
@@ -381,8 +417,9 @@ Worked examples of rules that belong here:
   reads outside `http/*.php` entry points.
 - **Frontend icons come from `web/const/icons.php`** — fail on inline
   `fas fa-*` strings in `web/**` (already a documented rule).
-- **`AUTO_UPDATE_HTML` is `false`** — fail the run if `files::AUTO_UPDATE_HTML`
-  is `true`, so a forgotten `true` cannot land on a branch.
+- **`AUTO_UPDATE_TEST_FILES` is `false`** — fail the run if
+  `files::AUTO_UPDATE_TEST_FILES` is `true`, so a forgotten (or LLM-introduced)
+  `true` cannot land on a branch.
 
 Each check is one positive + one negative test in `coding_rule_tests.php` (the
 positive proves the check catches a known bad fixture line; the negative proves

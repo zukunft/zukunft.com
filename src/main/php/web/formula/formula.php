@@ -717,15 +717,15 @@ class formula extends sandbox_code_id
         $result = '<br>';
         $html = new html_base();
 
-        $result .= $html->dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back);
-        $result .= $html->dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back . '&refresh=1');
+        $result .= $html->dsp_btn_text("Test", rest_ctrl::PATH_FIXED .'formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back);
+        $result .= $html->dsp_btn_text("Refresh results", rest_ctrl::PATH_FIXED .'formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back . '&refresh=1');
 
         $result .= '<br><br>';
 
         // display some sample values
         log_debug("value list");
         $res_lst = new result_list($usr);
-        $res_lst->load_by_obj($this);
+        $res_lst->load_by_formula($this);
         $sample_val = $res_lst->display();
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {

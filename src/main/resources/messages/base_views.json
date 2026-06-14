@@ -196,6 +196,18 @@
       "ui_msg_code_id": "system_sub_title_values"
     },
     {
+      "name": "system sub title formulas",
+      "description": "show the language specific sub title for a formula list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_formulas",
+      "ui_msg_code_id": "system_sub_title_formulas"
+    },
+    {
+      "name": "formula list",
+      "description": "list of formulas",
+      "type": "formula_list"
+    },
+    {
       "name": "system sub title references",
       "description": "show the language specific sub title for a reference list",
       "type": "system_sub_title",
@@ -273,18 +285,26 @@
         },
         {
           "position": "11",
-          "name": "system sub title references"
+          "name": "system sub title formulas"
         },
         {
           "position": "12",
-          "name": "ref list word"
+          "name": "formula list"
         },
         {
           "position": "13",
-          "name": "system sub title log"
+          "name": "system sub title references"
         },
         {
           "position": "14",
+          "name": "ref list word"
+        },
+        {
+          "position": "15",
+          "name": "system sub title log"
+        },
+        {
+          "position": "16",
           "name": "change log word"
         }
       ]

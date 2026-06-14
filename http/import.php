@@ -181,12 +181,12 @@ if ($usr->id() > 0) {
         $result .= $html->dsp_err($msg->all_message_text());
 
         $result .= $html->dsp_form_file_select();
-        // $result .= dsp_btn_text ('Start import', '/http/import.php?confirm=1&filepath='.);
+        // $result .= dsp_btn_text ('Start import', rest_ctrl::PATH_FIXED .'import.php?confirm=1&filepath='.);
         /*
         if ($fileName == '') {
-          $result .= dsp_btn_text ('Start import', '/http/import.php?confirm=1');
+          $result .= dsp_btn_text ('Start import', rest_ctrl::PATH_FIXED .'import.php?confirm=1');
         } else {
-          $result .= dsp_btn_text ('Start import', '/http/import.php?confirm=1&filename='.$fileName);
+          $result .= dsp_btn_text ('Start import', rest_ctrl::PATH_FIXED .'import.php?confirm=1&filename='.$fileName);
         }
         */
     }

@@ -149,7 +149,10 @@ class horizontal_ui_tests
                 $cmp = new component_exe();
                 $cmp->set_type_id($typ->id());
                 $cmp->code_id = $typ->code_id;
-                $test_page .= $cmp->dsp_entries($ui_obj, 'component type tests', views::WORD_EDIT_ID, $ui->dto);
+                // render in test mode so that no component triggers a backend call
+                // TODO Prio 2 review and move the calls to the backend 'outside'
+                $test_page .= $cmp->dsp_entries($ui_obj, 'component type tests', views::WORD_EDIT_ID, $ui->dto,
+                    null, '', '', true);
             } else {
                 $test_page .= 'no object mapped for type ' .  $typ->name;
             }

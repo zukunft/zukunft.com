@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
@@ -375,7 +376,7 @@ class formula_write_tests
 
         $page = 1;
         $size = 20;
-        $call = '/http/test.php';
+        $call = rest_ctrl::PATH_FIXED .'test.php';
         // TODO Prio 2 activate
         //$result = $frm_html->dsp_hist($page, $size, $call, $back);
         //$target = 'changed to';

@@ -131,7 +131,7 @@ class result_list extends sandbox_value_list
      * @param int $page the offset for the limit
      * @return bool true if at least one value found
      */
-    function load_by_phr_lst(
+    function load_by_phrase_list(
         phrase_list $phr_lst,
         bool        $or = false,
         int         $limit = sql_db::ROW_LIMIT,
@@ -159,6 +159,36 @@ class result_list extends sandbox_value_list
 
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_frm($sc, $frm);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the list of results that have been calculated by the given formula
+     * dedicated replacement for the formula case of the deprecated load_by_obj
+     *
+     * @param formula $frm the formula whose results should be loaded
+     * @return bool true if at least one result has been loaded
+     */
+    function load_by_formula(formula $frm): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_formula($db_con, $frm);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the list of results that are linked to the given phrase (a word or a triple)
+     * dedicated replacement for the word and triple case of the deprecated load_by_obj
+     *
+     * @param phrase $phr the phrase whose results should be loaded
+     * @return bool true if at least one result has been loaded
+     */
+    function load_by_phrase(phrase $phr): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_phrase($db_con, $phr);
         return $this->load($qp);
     }
 
@@ -277,6 +307,77 @@ class result_list extends sandbox_value_list
             $qp->merge($qp_tbl, true);
         }
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+        return $qp;
+    }
+
+    /**
+     * create the SQL statement to load the list of results calculated by the given formula
+     * dedicated replacement for the formula case of the deprecated load_sql_by_obj_old
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param formula $frm the formula whose results should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_formula(sql_db $db_con, formula $frm): sql_par
+    {
+        $qp = new sql_par(self::class);
+        if ($frm->id() <= 0) {
+            log_err('The formula id must be set to load the results of a ' . self::class,
+                self::class . '->load_sql_by_formula');
+            $qp->name = '';
+        } else {
+            $db_con->set_class(result::class);
+            // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+            $res = new result($this->get_user());
+            $db_con->set_id_field($res->id_field());
+            $qp->name .= formula_db::FLD_ID;
+            $db_con->set_name($qp->name);
+            $db_con->set_fields(result_db::FLD_NAMES);
+            $db_con->set_usr($this->get_user()->id);
+            $db_con->add_par(sql_par_type::INT, $frm->id());
+            $qp->sql = $db_con->select_by_field_list(array(formula_db::FLD_ID));
+            $qp->par = $db_con->get_par();
+        }
+        return $qp;
+    }
+
+    /**
+     * create the SQL statement to load the list of results linked to the given phrase (a word or a triple)
+     * dedicated replacement for the word and triple case of the deprecated load_sql_by_obj_old
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase $phr the phrase whose results should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_phrase(sql_db $db_con, phrase $phr): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $obj = $phr->obj();
+        $fld = '';
+        if ($obj !== null and $obj->id() > 0) {
+            if (get_class($obj) == word::class) {
+                $fld = word_db::FLD_ID;
+            } elseif (get_class($obj) == triple::class) {
+                $fld = triple_db::FLD_ID;
+            }
+        }
+        if ($fld == '') {
+            log_err('The word or triple id must be set to load the results of a ' . self::class,
+                self::class . '->load_sql_by_phrase');
+            $qp->name = '';
+        } else {
+            $db_con->set_class(result::class);
+            // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+            $res = new result($this->get_user());
+            $db_con->set_id_field($res->id_field());
+            $qp->name .= $fld;
+            $db_con->set_name($qp->name);
+            $db_con->set_fields(result_db::FLD_NAMES);
+            $db_con->set_usr($this->get_user()->id);
+            $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
+            $qp->sql = $db_con->select_by_field_list(array($fld));
+            $qp->par = $db_con->get_par();
+        }
         return $qp;
     }
 
@@ -551,12 +652,13 @@ class result_list extends sandbox_value_list
      *   and with or without time selection
      * a word or a triple
      *
-     * TODO: split to single functions and deprecate
-     *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param object $obj a named object used for selection e.g. a formula
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     * @deprecated use the dedicated builder instead: load_sql_by_formula() for a formula,
+     *             load_sql_by_phrase() for a word or triple,
+     *             and load_sql_by_grp() / load_sql_by_src_grp() for a phrase group
      */
     function load_sql_by_obj_old(sql_db $db_con, object $obj, bool $by_source = false): sql_par
     {
@@ -670,6 +772,9 @@ class result_list extends sandbox_value_list
      * @param object $obj a named object used for selection e.g. a formula
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if value or phrases are found
+     * @deprecated use the dedicated loader instead: load_by_formula() for a formula,
+     *             load_by_phrase() for a word or triple,
+     *             and load_by_grp() for a phrase group (with $by_source for the source group)
      */
     function load_by_obj(object $obj, bool $by_source = false): bool
     {
@@ -1165,7 +1270,7 @@ class result_list extends sandbox_value_list
     function load_by_val(value_base $val): string
     {
         $phr_lst = $val->phr_lst();
-        return $this->load_by_phr_lst($phr_lst);
+        return $this->load_by_phrase_list($phr_lst);
     }
 
     /**

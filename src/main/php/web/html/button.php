@@ -309,7 +309,7 @@ class button
         $result .= '    ';
         $result .= '  </button>';
         // the modal box itself
-        $form_name = '/http/value_add';
+        $form_name = rest_ctrl::PATH_FIXED .'value_add';
         $result .= '  <div class="modal" id="val_add' . $modal_nbr . '">';
         $result .= '    <div class="modal-dialog">';
         $result .= '      <div class="modal-content">';

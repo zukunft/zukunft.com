@@ -75,3 +75,33 @@ return the shared defaults. A `config` constructed anywhere else is an *empty*
 value list: `get_by()` silently returns the fallback instead of the user setting,
 and the per-request load from the backend is bypassed. The rule is enforced by
 `coding_rule_tests::php_web_config_from_cache_tests`.
+
+## The frontend never accesses the database — load via the API
+
+Code under `src/main/php/web/**` must not open or query the database. It never
+declares `global $db_con`, never builds SQL (`sql_db` / `sql_creator`), and never
+calls a backend (`cfg/`) model load function. Everything a frontend object needs
+is requested from the backend through the API and mapped from the returned JSON:
+
+```php
+$data = array($url_var => $id);
+$rest = new rest_call();
+$json_body = $rest->api_get($class, $data);
+$this->api_mapper($json_body);
+```
+
+Why: the frontend must stay pod-independent (it can render against a *remote*
+backend pod over the API, not just the local database) and fully unit-testable
+without a database — tests feed the dummy cache or a stored api-json fixture
+instead of a live connection. A direct DB read also bypasses the api-version and
+permission handling that the API layer applies.
+
+This overlaps the allowed-globals rule (`web/` may read only `$ui_sys` / `$mtr`,
+never `$db_con`; see `state-and-messages.md`) and is enforced by
+`coding_rule_tests::php_web_only_allowed_globals_tests`.
+
+The single current exception is `web/frontend.php`, whose **deprecated**
+direct-DB bootstrap (`start` / `open_db` / `load_cache`) still opens a connection
+and is therefore the one file excluded from the coded check. It is being migrated
+to the API (`TODO Prio 1` in that test); once done, the exception is removed and
+no `web/` file touches the database at all.

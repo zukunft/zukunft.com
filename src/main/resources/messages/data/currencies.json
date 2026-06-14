@@ -2616,7 +2616,7 @@
     {
       "name": "yearly average turnover by month sum",
       "expression": "\"yearly average turnover\" = &sum; ( \"monthly average turnover\" ) / 12",
-      "assigned_word": "turnover"
+      "assigned_word": "currency"
     },
     {
       "name": "currency conversion calculation",
@@ -2636,7 +2636,7 @@
     {
       "name": "reverse currency conversion",
       "expression": "\"source amount\" = \"target amount\" / \"exchange rate\"",
-      "assigned_word": "conversion"
+      "assigned_word": "currency"
     },
     {
       "name": "USD cross rate",
@@ -2651,7 +2651,7 @@
     {
       "name": "bid-ask spread absolut",
       "expression": "\"bid-ask spread\" = \"ask price\" - \"bid price\"",
-      "assigned_word": "spread",
+      "assigned_word": "currency",
       "description": "The bid-ask spread is the difference between the ask price and the bid price for a given currency or other asset. It represents the implicit transaction cost of trading and is a key indicator of market liquidity.",
       "refs": [
         {
@@ -2663,13 +2663,13 @@
     {
       "name": "bid-ask spread percent",
       "expression": "\"spread percent\" = ( \"ask price\" - \"bid price\" ) / \"ask price\" * 100",
-      "assigned_word": "spread",
+      "assigned_word": "currency",
       "description": "The bid-ask spread expressed as a percentage of the ask price, allowing direct comparison of spreads across different currencies and price levels."
     },
     {
       "name": "rate percent change",
       "expression": "\"percent change\" = ( \"new rate\" - \"old rate\" ) / \"old rate\" * 100",
-      "assigned_word": "change"
+      "assigned_word": "currency"
     },
     {
       "name": "forward rate from spot",

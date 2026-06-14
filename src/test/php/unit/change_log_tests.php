@@ -42,6 +42,7 @@ include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'changes_norm.php';
 include_once paths::MODEL_LOG . 'changes_big.php';
 include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_log_link_list.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::LOG . 'user_log_display.php';
@@ -51,11 +52,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
@@ -69,6 +72,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -222,20 +228,32 @@ class change_log_tests
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_17_plus()->id(), $log_lst, $db_con, $t);
 
-        // sql to load the word by id
-        $test_name = 'user change log';
-        //$log_ui = new user_log_display();
-        //$log_ui->usr = $usr;
-        //$log_ui->type = $lib->class_to_name(user::class);
-        //$log_ui->size = sql_db::ROW_LIMIT;
-        //$db_con->db_type = sql_db::POSTGRES;
-        // TODO Prio 1 activate
-        //$created_sql = $log_ui->dsp_hist_links_sql($db_con);
-        //$expected_sql = $t->file('db/log/change_log.sql');
-        //$t->assert('user_log_display->dsp_hist_links_sql by ' . $log_ui->type, $lib->trim($created_sql), $lib->trim($expected_sql));
+        // sql to load the link change history of an object (used by the default word/formula/view page)
+        $t->subheader($ts . 'link change list by object');
+        $cl_lst = new change_log_link_list();
+        $test_name = 'sql to load the link changes of a word selects the change_links table';
+        $sql_word = $cl_lst->load_sql_by_obj($db_con, word::class, 123, $usr);
+        $t->assert_text_contains($test_name, $sql_word, 'FROM change_links c');
+        $test_name = 'the link changes of a word are selected by the from and to id';
+        $t->assert_text_contains($test_name, $sql_word,
+            '(c.old_from_id = 123 OR c.old_to_id = 123 OR c.new_from_id = 123 OR c.new_to_id = 123)');
+        $test_name = 'the link changes of a component are selected by the to id only';
+        $sql_cmp = $cl_lst->load_sql_by_obj($db_con, component::class, 45, $usr);
+        $t->assert_text_contains($test_name, $sql_cmp, '(c.old_to_id = 45 OR c.new_to_id = 45)');
+        $test_name = 'an unknown object class creates no link change sql';
+        $t->assert($test_name, $cl_lst->load_sql_by_obj($db_con, change_table::class, 1, $usr), '');
 
-        // ... and check if the prepared sql name is unique
-        //$t->assert_sql_name_unique($log_ui->dsp_hist_links_sql($db_con, true));
+        // a link change is sent to the frontend with the relevant side as old/new value
+        $t->subheader($ts . 'link change api');
+        $test_name = 'the new link target is sent as the new value';
+        $log_lnk = $t_log->log_link();
+        $log_lnk->new_text_to = words::MATH;
+        $api = $log_lnk->api_json_array(new api_type_list([]));
+        $t->assert($test_name, $api[json_fields::NEW_VALUE] ?? '', words::MATH);
+        $test_name = 'a link change without a display text sends no new value';
+        $log_empty = new change_link($usr);
+        $api = $log_empty->api_json_array(new api_type_list([]));
+        $t->assert_true($test_name, ($api[json_fields::NEW_VALUE] ?? null) === null);
 
         // sql to load a log entry by field and row id
         // TODO check that user-specific changes are included in the list of changes

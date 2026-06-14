@@ -34,7 +34,9 @@ namespace Zukunft\ZukunftCom\main\php\web\formula;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
+include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
@@ -109,6 +111,34 @@ class formula_link_list extends ListBase
             }
         }
         return $phr_lst;
+    }
+
+
+    /**
+     * get the formulas of this list that are assigned to the given phrase
+     *
+     * @param phrase $phr the phrase to filter the links e.g. the word "minute"
+     * @param formula_list|null $cac_lst cache of formulas used to reduce the backend calls
+     * @return formula_list with the formulas assigned to the given phrase
+     */
+    function get_formula_list(phrase $phr, ?formula_list $cac_lst = null): formula_list
+    {
+        $frm_lst = new formula_list();
+        foreach ($this->lst() as $lnk) {
+            if ($lnk->phrase()->id() == $phr->id()) {
+                $frm_id = $lnk->formula()?->id() ?? 0;
+                $to_add = $cac_lst?->get($frm_id);
+                if ($to_add == null and $frm_id != 0) {
+                    // TODO Prio 2 speed up by loading all formulas at once
+                    $to_add = new formula();
+                    $to_add->load_by_id($frm_id);
+                }
+                if ($to_add != null) {
+                    $frm_lst->add($to_add);
+                }
+            }
+        }
+        return $frm_lst;
     }
 
 

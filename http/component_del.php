@@ -97,7 +97,7 @@ if ($usr->id > 0) {
 
             // TODO: display how the views would be changed
 
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno('Delete the view element "' . $cmp_del->name() . '"? ', '/http/component_del.php?id=' . $cmp_del_id . '&back=' . $back);
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno('Delete the view element "' . $cmp_del->name() . '"? ', rest_ctrl::PATH_FIXED .'component_del.php?id=' . $cmp_del_id . '&back=' . $back);
         }
     } else {
         $result .= $html->dsp_go_back($back, $usr);

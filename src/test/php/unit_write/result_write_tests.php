@@ -215,7 +215,7 @@ class result_write_tests
         // load results by formula
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_RENAMED);
         $res_lst = new result_list($usr);
-        $res_lst->load_by_obj($frm);
+        $res_lst->load_by_formula($frm);
         $result = $res_lst->dsp_id();
         $target = '0.0078';
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
@@ -223,7 +223,7 @@ class result_write_tests
         // load results by phrase group
         $grp = $t_db->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K));
         $res_lst = new result_list($usr);
-        $res_lst->load_by_obj($grp);
+        $res_lst->load_by_grp($grp);
         $result = $res_lst->dsp_id();
         $target = '8505.251';
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
@@ -250,10 +250,10 @@ class result_write_tests
         $result = $res_lst->dsp_id();
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
-        // load results by word id
+        // load results by word (via its phrase)
         $wrd = $t_db->load_word(words::INHABITANTS);
         $res_lst = new result_list($usr);
-        $res_lst->load_by_obj($wrd);
+        $res_lst->load_by_phrase($wrd->phrase());
         $result = $res_lst->dsp_id();
         $target = '0.0078';
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
@@ -262,7 +262,7 @@ class result_write_tests
         //$frm = $t_db->load_formula(TF_PE);
         $frm = $t_db->load_formula(formulas::INCREASE);
         $res_lst = new result_list($usr);
-        $res_lst->load_by_obj($frm);
+        $res_lst->load_by_formula($frm);
         $result = $res_lst->dsp_id();
         $target = '"sales","' . words::PCT . '","increase","' . words::TEST_RENAMED . '","2017"';
         $target = words::INHABITANTS;

@@ -1088,7 +1088,8 @@ class test_base
             $map_ui = new MapObject();
             $cfg->usr = $map_ui->convertToUi($usr, $usr_msg_ui);
         }
-        $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
+        // render in test mode so that the result is reproducible without backend calls
+        $actual = $dsp_html->show($dbo_dsp, $cfg, '', '', true);
 
         // check if the created view matches the expected view
         return $this->assert_html_body(

@@ -357,6 +357,21 @@ If a formula's inputs all live elsewhere — e.g. `"molar mass" = "mass" /
 redefined — either define the formula in the file owning its inputs, or leave
 it **unassigned**.
 
+### Assign the formula to the most *parent* phrase
+
+Assign a formula at the highest level of the phrase hierarchy where it
+applies, never to every child: `bid-ask spread absolut` works for every
+currency, so it is assigned once to the phrase `currency` (currencies.json) —
+not to `CHF`, `EUR`, ... . The assignment is inherited by all children, e.g.
+by every phrase that `is a` currency.
+
+The same formula may apply to further hierarchies that are owned by other
+import files — `bid-ask spread absolut` also applies to `securities`, which
+is added by the instruments import file. Such assignments are **cumulative**:
+an import *adds* its parent phrase to the formula's existing assignments and
+never replaces assignments made by other files, unless the import states
+otherwise.
+
 ### The `percent` measure auto-scales
 
 A formula whose result is assigned to `percent` and that computes a ratio

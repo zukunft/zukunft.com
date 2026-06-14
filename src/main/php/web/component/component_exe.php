@@ -433,7 +433,7 @@ class component_exe extends component
             component_types::LIST_REF => $list->ref_list_word($dbo, $cfg),
             component_types::LIST_RESULTS => $list->result_list($dbo, $cfg),
             component_types::LINK_LIST_WORD => $list->link_list_word($dbo, $cfg),
-            component_types::FORMULAS => $list->formulas($dbo),
+            component_types::FORMULAS => $list->formulas($dbo, $cfg, $test_mode),
             //component_type::FORMULA_RESULTS => $list->results($dbo),
             component_types::WORDS_DOWN => $foaf->word_children($dbo),
             component_types::WORDS_UP => $foaf->word_parents($dbo),

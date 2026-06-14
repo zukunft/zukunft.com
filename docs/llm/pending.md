@@ -2,6 +2,29 @@
 
 ## list of planned llm prompts
 
+### general
+
+see /docs/llm/coding.md and note in /docs/llm/ that function names should be the long version because a function call is usually more time cost intensive e.g. it should be load_by_phrase_list instead of load_by_phr_lst.
+
+see /docs/llm/coding.md and note in /docs/llm/ that within a class section like /* function should be sorted 'top down' means often used public functions should be on the top and rarely used private function at the buttom e.g. load_by_phrase should be before load_sql_by_phrase
+
+
+### remove the database access from src/main/php/web (load via the API only)
+
+scan of 2026-06-13: the frontend must never open or query the database (see docs/llm/frontend.md "The frontend never accesses the database — load via the API"). The markers are `new sql_db` / `new sql_creator` / `global $db_con`; the coded check is coding_rule_tests::php_web_only_allowed_globals_tests. Remaining cases, solve step by step:
+
+1. (live) web/log/user_log_display.php::dsp_hist_links() and its helper dsp_hist_links_sql() build raw SQL via `new sql_db()` to show the link/relation change history. Called live from the dsp_hist_links() wrappers of component, view, view_exe, formula and word. Replace with an API-based load like the already-migrated dsp_hist() (which uses change_log_list::load_by_object_field + change_log_list::tbl); extend the change-log list api loader for the link case if needed, then delete dsp_hist_links_sql().
+
+2. (live) web/frontend.php open_db()/start() bootstrap opens the database connection directly (already marked "TODO Prio 1 to be deprecated and use the api only for the frontend"); it is the only file excluded from coding_rule_tests::php_web_only_allowed_globals_tests. Move the bootstrap behind the API so web/ no longer needs $sys/$db_con/$cac/$cfg, then remove the 'frontend.php' exception from that coded check.
+
+3. (dead) web/log/user_log_display.php::dsp_hist_old() uses `new sql_db()` + raw SQL but is only referenced from commented-out callers and is superseded by dsp_hist(). Remove it. (side note: the live dsp_hist() builds $result but then `return '';` — fix while there.)
+
+4. (dead) web/value/value.php::dsp_samples() uses `new sql_db()` + raw SQL but sits entirely inside a /* ... */ block comment (lines ~695-776). Remove it, or rebuild via the group/value API if the sample display is still wanted.
+
+5. (dead) web/user/user_display_old.php contains 9 `new sql_db()` direct-DB display functions and is not referenced anywhere in src/main/php. Delete the file.
+
+after each step src/main/php/web must stay free of `new sql_db` / `new sql_creator` / `global $db_con`.
+
 ### word frontend
 
 The default view for a word should have four column for width screens > 2800 pixel:
@@ -14,7 +37,6 @@ The default view for a word should have four column for width screens > 2800 pix
    the tab switch has the position type 'side_or_last_below'
 
 show the phrases related to a word in the default word page; create first a list of unit tests 
-show the formulas assigned to a word in the default word page
 show the value related to a word in the default word page
 show the references related to a word in the default word page
 show the changes of a word in the default word page
@@ -23,7 +45,7 @@ add the component position type "side or below" that shows this component right 
 show the views assigned to a word in the default word page
 
 
-add the formulas assigned to a word to the word_default view using also 1/3 of the screen width
+add the formulas assigned to the parent phrase to the word_default view using also 1/3 of the screen width
 
 add the values as a table where the word ist used to the word_default view using 2/3 of the screen width where often used phrases are column heads and the phrases are shown using a tree view
 
@@ -37,7 +59,11 @@ fix the error messages 'url key "mask_id" is missing, url mapper for "mask" is m
 
 add a '0' url prefix that is used to include the database values in the url for the url_to_html function to confirm the changes
 
+Add a hidden json to the get request to detect the value changed or use 0 prefix for url vars
+
 ### import
+
+create a copy of all words and triples used for system testing before the config import, so that adding a new config value with a new word or triple does not break the test cases
 
 in json import a calc_validation list is created. Use this list to check if the results cen be reproduced based on the data_object $dto filled only with the values and formulas from the json import file. In case of any errors use the usual path via $msg to send a message to the user
 

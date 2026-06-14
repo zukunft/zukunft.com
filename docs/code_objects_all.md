@@ -203,6 +203,7 @@ the object structure is:
 │   ├── value_type_list - a list of value types e.g. to create the query extension
 │   └── ListOfIdObjectsShared
 │       ├── list_db_read
+│       │   ├── change_log_link_list - a list of the link changes done by the users e.g. to show the link history of a word
 │       │   ├── change_log_list - read the changes from the database and forward them to the API
 │       │   ├── list_db_write
 │       │   │   ├── element_group - a group of formula elements that, in combination, return a value or a list of values
@@ -274,6 +275,7 @@ the object structure is:
 │           ├── figure_listUi - the display extension of the api figure list object
 │           ├── formula_link_listUi - create the html code for a list of formula links
 │           ├── formula_listUi - a list function to create the HTML code to display a formula list
+│           ├── change_log_link_listUi - to create the HTML code to display a list of user link changes
 │           ├── change_log_listUi - a list function to create the HTML code to display a list of user changes
 │           ├── ref_listUi - create the HTML code to display a reference list
 │           ├── source_listUi - create the HTML code to display a source list
@@ -315,7 +317,8 @@ the object structure is:
 │       ├── elementUi - $elm - either a word, triple, verb or formula with a link to a formula
 │       ├── sandboxUi
 │       │   ├── change_logUi
-│       │   │   └── change_log_namedUi - a list function to create the HTML code to display a list of user changes
+│       │   │   └── change_log_namedUi
+│       │   │       └── change_log_linkUi - $cng_lnk - the frontend object to display one link change done by a user
 │       │   ├── refUi - $ref - the extension of the reference API objects to create ref base html code
 │       │   ├── sandbox_linkUi
 │       │   │   ├── component_linkUi - create HTML code to display a n:m link between a view and a component

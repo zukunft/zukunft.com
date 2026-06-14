@@ -41,9 +41,12 @@ include_once html_paths::HTML . 'styles.php';
 //include_once html_paths::RESULT . 'result.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
+include_once html_paths::HELPER . 'config.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
@@ -52,9 +55,26 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class formula_list extends ListBase
 {
+
+    /*
+     * load
+     */
+
+    /**
+     * load the formulas assigned to the given phrase from the backend via api
+     *
+     * @param int $id the id of the phrase to which the formulas are assigned
+     * @return bool true if at least one formula has been loaded
+     */
+    function load_by_phr_id(int $id): bool
+    {
+        return parent::load_by_id(self::class, url_var::PHRASE, $id);
+    }
+
 
     /*
      * set and get
@@ -132,23 +152,27 @@ class formula_list extends ListBase
 
     /**
      * @param string $back the back trace url for the undo functionality
+     * @param int $limit the max number of formula names to show
      * @return string with a list of the formula names with html links
      * ex. names_linked
      */
-    function name_link(string $back = ''): string
+    function name_link(string $back = '', int $limit = config::LIMIT_NAME_LIST): string
     {
-        return implode(', ', $this->names_link($back));
+        return implode(', ', $this->names_link($back, $limit));
     }
 
     /**
      * @param string $back the back trace url for the undo functionality
+     * @param int $limit the max number of formula names to add to the list
      * @return array with a list of the formula names with html links
      */
-    private function names_link(string $back = ''): array
+    private function names_link(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
     {
         $result = array();
         foreach ($this->lst() as $frm) {
-            $result[] = $frm->name_link($back);
+            if (count($result) < $limit) {
+                $result[] = $frm->name_link($back);
+            }
         }
         return $result;
     }

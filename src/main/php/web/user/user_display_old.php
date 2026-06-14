@@ -133,7 +133,7 @@ class user_display_old extends user
             }
             $result .= '<td>' . $wrd_row['usr_word_name'] . '</td><td>' . $wrd_row['word_name'] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_word='.$log_row['type_table'].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = '/http/user.php?id=' . $this->id() . '&undo_word=' . $wrd_row['word_id'] . '&back=' . $back . '';
+            $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_word=' . $wrd_row['word_id'] . '&back=' . $back . '';
             $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
             $result .= '</tr>';
         }
@@ -274,10 +274,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $wrd_lnk_other->name();
                     }
-                    $sandbox_other = $html->ref('/http/user_triple.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_triple.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard triple " . $sbx_row['std_triple'], $url) . '</td>';
 
                     // display the triple changes by the user
@@ -350,7 +350,7 @@ class user_display_old extends user
             $result .= '<td>' . $frm_row['usr_formula_text'] . '</td>';
             $result .= '<td>' . $frm_row[formula_db::FLD_FORMULA_TEXT] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula_db::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = '/http/user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula_db::FLD_ID] . '&back=' . $back . '';
+            $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula_db::FLD_ID] . '&back=' . $back . '';
             $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula " . $frm_row[formula_db::FLD_FORMULA_TEXT], $url) . '</td>';
             $result .= '</tr>';
         }
@@ -489,10 +489,10 @@ class user_display_old extends user
                         $to_ui = new phrase($frm_lnk_other->tob()->api_json());
                         $sandbox_other .= $to_ui->name_linked();
                     }
-                    $sandbox_other = $html->ref('/http/user_formula_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_formula_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_formula_link=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_formula_link=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula_link " . $sbx_row['std_formula_link'], $url) . '</td>';
 
                     // display the formula_link changes by the user
@@ -620,7 +620,7 @@ class user_display_old extends user
                     } else {
                         $sandbox_usr_txt = $val_usr->val_formatted();
                     }
-                    $sandbox_usr_txt = $html->ref('/http/value_edit.php?id=' . $val_usr->id() . '&back=' . $back, $sandbox_usr_txt);
+                    $sandbox_usr_txt = $html->ref(rest_ctrl::PATH_FIXED .'value_edit.php?id=' . $val_usr->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard value
                     if ($val_std->is_excluded()) {
@@ -659,10 +659,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $val_other->val_formatted();
                     }
-                    $sandbox_other = $html->ref('/http/user_value.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_value.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_value=' . $val_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_value=' . $val_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard value " . $val_row['std_value'], $url) . '</td>';
 
                     // display the value changes by the user
@@ -786,7 +786,7 @@ class user_display_old extends user
                     } else {
                         $sandbox_usr_txt = $usr_ui->name();
                     }
-                    $sandbox_usr_txt = $html->ref('/http/view_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
+                    $sandbox_usr_txt = $html->ref(rest_ctrl::PATH_FIXED .'view_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard view
                     if ($dsp_std->is_excluded()) {
@@ -827,10 +827,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $dsp_other->name();
                     }
-                    $sandbox_other = $html->ref('/http/user_view.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_view.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_view=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_view=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard view " . $sbx_row['std_view'], $url) . '</td>';
 
                     // display the view changes by the user
@@ -952,7 +952,7 @@ class user_display_old extends user
                     } else {
                         $sandbox_usr_txt = $usr_ui->name();
                     }
-                    $sandbox_usr_txt = $html->ref('/http/component_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
+                    $sandbox_usr_txt = $html->ref(rest_ctrl::PATH_FIXED .'component_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard component
                     if ($dsp_std->is_excluded()) {
@@ -993,10 +993,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $cmp_other->name();
                     }
-                    $sandbox_other = $html->ref('/http/user.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_component=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_component=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard component " . $sbx_row['std_component'], $url) . '</td>';
 
                     // display the component changes by the user
@@ -1162,10 +1162,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $lnk_other_ui->name();
                     }
-                    $sandbox_other = $html->ref('/http/user_component_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_component_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_component_link=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_component_link=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard component_link " . $sbx_row['std_component_link'], $url) . '</td>';
 
                     // display the component_link changes by the user
@@ -1302,7 +1302,7 @@ class user_display_old extends user
                     } else {
                         $sandbox_usr_txt = $usr_ui->name();
                     }
-                    $sandbox_usr_txt = $html->ref('/http/source_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
+                    $sandbox_usr_txt = $html->ref(rest_ctrl::PATH_FIXED .'source_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard source
                     if ($dsp_std->is_excluded()) {
@@ -1345,10 +1345,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $dsp_other->name();
                     }
-                    $sandbox_other = $html->ref('/http/user_source.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_source.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_source=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_source=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard source " . $sbx_row['std_source'], $url) . '</td>';
 
                     // display the source changes by the user

@@ -32,14 +32,18 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SYSTEM . 'back_trace.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_link_list as change_log_link_list_cfg;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_link_list as change_log_link_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\test\php\create\test_log;
@@ -82,6 +86,24 @@ class change_log_ui_tests
         $test_page .= $log_ui->tbl($back, true, true);
 
         $t->html_page_test($test_page, 'change_log', 'change_log', $t);
+
+        // link change history rendering (e.g. the triples added to or removed from a word)
+        // the link list classes are loaded here, not at the top of the file, because the frontend
+        // change_log_link extends change_log_named which sits at the root of the bootstrap include chain
+        include_once paths::MODEL_LOG . 'change_log_link_list.php';
+        include_once html_paths::LOG . 'change_log_link_list.php';
+
+        $t->subheader($ts . 'link changes');
+        // round-trip a backend link change through the api to the frontend and render it
+        $cl_lst = new change_log_link_list_cfg();
+        $cl = $t_log->log_link();
+        $cl->new_text_to = words::MATH;
+        $cl_lst->add($cl);
+        $log_link_ui = new change_log_link_list_ui($cl_lst->api_json($api_typ_lst));
+        $test_name = 'a link change is shown as a link to the new target';
+        $t->assert_text_contains($test_name, $log_link_ui->tbl($back), words::MATH);
+        $test_name = 'an empty link change list renders no table row';
+        $t->assert_text_not_contains($test_name, new change_log_link_list_ui()->tbl($back), '<tr');
     }
 
 }

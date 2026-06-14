@@ -13,6 +13,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO target approche to finish frontend: small commits and final solution
     TODO add to subtitle the object type with link if not the default type and the share and protection and use a seperator from the config.yaml that the user can overwrite
     TODO add unit test for all frontend components
+    TODO create a /test/reset_db_forced.php script that removes the config table before /test/reset_db.php is called
+    TODO create a /test/test_full_load.php script that load
     TODO review the CHF page
          add the values with the highest im
     TODO review the start page and base it purely on database values
