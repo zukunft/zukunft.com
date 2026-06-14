@@ -724,6 +724,19 @@ enum messages: string
     case VIEW_CREATED = 'view with name "'
         . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
         . '" created';
+    case VIEW_ROWS_NOT_CLOSED = 'the rows of the view "'
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . '" are not balanced: a row opened with row_start or row_right is not closed with a matching row_end';
+    case VIEW_COMPONENT_POS_DOUBLE = 'the component position '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' is used more than once in the view "'
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . '"';
+    case VIEW_COMPONENT_POS_MISSING = 'the component position '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' is missing in the view "'
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . '"';
 
     case COMPONENT_MISSING_IMPORT = 'component "'
         . self::VAR_START . self::VAR_COMPONENT . self::VAR_END
@@ -739,6 +752,9 @@ enum messages: string
     case COMPONENT_ALREADY_EXISTS = 'A view component with the name "'
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
         . '" ' . self::ALREADY_EXISTS->value . '. Please use another name.';
+    case COMPONENT_DEFINED_TWICE = 'The view component with the name "'
+        . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
+        . '" is defined more than once in the same import.';
     case FORMULA_RENAME_NOT_ALLOWED = 'formula names cannot be changed to "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '".';

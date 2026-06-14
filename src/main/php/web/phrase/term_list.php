@@ -171,12 +171,17 @@ class term_list extends sandbox_list_named
     /**
      * sort this term list in place so that the term with the highest impact is first
      * the impact is the system calculated relevance of the wrapped word, triple, formula or verb
+     * terms with the same (or no) impact are sorted by name so that the order is always
+     * deterministic and the html does not change between runs e.g. for the snapshot tests
      * @return void
      */
     function sort_by_impact(): void
     {
         $lst = $this->lst();
-        usort($lst, fn(term $a, term $b) => $b->get_impact() <=> $a->get_impact());
+        usort($lst, function (term $a, term $b) {
+            return $b->get_impact() <=> $a->get_impact()
+                ?: strcmp($a->name() ?? '', $b->name() ?? '');
+        });
         $this->set_lst($lst);
     }
 

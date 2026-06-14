@@ -399,6 +399,16 @@ class value extends sandbox_value
     }
 
     /**
+     * the impact of a value is the highest impact of the phrases it is assigned to
+     * so that the most relevant values (e.g. of the highest ranked phrase) are shown first
+     * @return float the system calculated impact used to sort the values
+     */
+    function impact(): float
+    {
+        return $this->grp->phr_lst()->max_impact();
+    }
+
+    /**
      * @return string interface function to align the value with the other sandbox objects
      */
     function get_description(): string

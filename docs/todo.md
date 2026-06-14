@@ -11,9 +11,10 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
-    TODO add to subtitle the object type with link if not the default type and the share and protection and use a seperator from the config.yaml that the user can overwrite
+    TODO check that all json import files that are needed for the db read and write tests are within on const array and make sure that these files are imported before the config
     TODO add unit test for all frontend components
-    TODO create a /test/reset_db_forced.php script that removes the config table before /test/reset_db.php is called
+    TODO add a 'no change' parameter to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
+    TODO move the database ids used for unit and db read tests before the database ids of the system config so that a change in the system config does not break the unit or db read tests because additional data for unit tests are less probable than addidional config values
     TODO create a /test/test_full_load.php script that load
     TODO review the CHF page
          add the values with the highest im

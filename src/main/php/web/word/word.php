@@ -68,6 +68,7 @@ include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb_list.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once paths::API_OBJECT . 'api_message.php';
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -145,6 +147,10 @@ class word extends sandbox_code_id
 
     // the phrases connected to this word by a triple
     public ?phrase_list $phr_lst = null;
+
+    // the values related to this word, e.g. for "Zurich" the inhabitant numbers;
+    // filled from the INCL_RELATED api message and shown by the related values component
+    public ?value_list $val_lst = null;
 
     // the system calculated impact of this word used to sort the words by relevance
     // (highest impact first); same field name as triple, formula and verb so a term can
@@ -231,6 +237,18 @@ class word extends sandbox_code_id
             }
         } else {
             $this->phr_lst = null;
+        }
+        if (array_key_exists(json_fields::VALUES, $json_array)) {
+            $value = $json_array[json_fields::VALUES];
+            if (is_array($value)) {
+                $lst = new value_list();
+                $lst->api_mapper($value);
+                $this->val_lst = $lst;
+            } else {
+                $this->val_lst = null;
+            }
+        } else {
+            $this->val_lst = null;
         }
         return $msg->is_ok();
     }
