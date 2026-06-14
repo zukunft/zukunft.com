@@ -12,6 +12,7 @@ the object structure is:
 ├── def - general system definitions
 ├── files - resource file names used in the backend
 ├── paths - set the path const for the backend php scripts
+├── xbrl - the XBRL format vocabulary used to convert an XBRL fileset to a zukunft.com import
 ├── db_check - test if the database exists and start the creation or upgrade process
 ├── sql - all sql language const used in all database dialects
 ├── sql_creator - create sql statements for different database dialects

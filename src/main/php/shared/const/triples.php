@@ -171,6 +171,13 @@ class triples
     const int CASH_FLOW_STATEMENT_ID = 132;
     const string INCOME_TAX = 'income taxes';
     const int INCOME_TAX_ID = 133;
+    // income statement concepts that the base setup defines as a triple (re-declared on XBRL import)
+    const string GROSS_PROFIT = 'gross profit';
+    const string COST_OF_REVENUE = 'cost of revenue';
+    // the US GAAP accounting standard, built from the words "US" and "GAAP",
+    // and its lower case XBRL taxonomy namespace prefix used in the concept ids e.g. "us-gaap_Revenues"
+    const string US_GAAP = 'US GAAP';
+    const string US_GAAP_XBRL = 'us-gaap';
 
     const string SECOND = 'second (time)';
     const int SECOND_ID = 20;

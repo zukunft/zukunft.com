@@ -340,6 +340,7 @@ include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'xbrl_write_tests.php';
 
 include_once test_paths::UNIT_WRITE . 'test_word_display.php';
 include_once test_paths::UNIT_WRITE . 'test_math.php';

@@ -39,7 +39,7 @@ include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_CONST . 'files.php';
-include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -47,8 +47,8 @@ use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -231,22 +231,115 @@ class import_tests
         $t->assert_json($test_name, $result, $target);
 
         // XBRL fileset unpacker (first step of import_convert_xbrl)
-        $lib = new library();
-        $test_name = 'XBRL zip unpacker creates a unique extraction folder';
+        $test_name = 'XBRL zip unpacker extracts the fileset into the folder named like the fileset';
         $conv_xbrl = new import_convert_xbrl;
         $folder = $conv_xbrl->unzip(
             test_files::IMPORT_XBRL_ABB_2013_ZIP,
             test_paths::IMPORT_XBRL,
-            'unit_test'
+            ''
         );
-        $t->assert($test_name, is_dir($folder), true);
+        $t->assert($test_name, $folder, test_files::IMPORT_XBRL_ABB_2013_DIR);
 
         $test_name = 'XBRL zip unpacker extracts at least one file';
         $extracted = array_diff(scandir($folder), ['.', '..']);
         $t->assert($test_name, count($extracted) > 0, true);
 
-        // cleanup so the test stays repeatable without leaving the working tree dirty
-        $lib->dir_remove($folder);
+        // read the segment sales values from the unpacked fileset
+        // and check that the created import json matches the expected json
+        $test_name = 'XBRL fileset values are converted to the expected import json';
+        $usr_msg = new user_message($usr);
+        $conv_str = $conv_xbrl->convert_folder($folder, $conv_xbrl->instance_file_name('2013'), test_base::TEST_TIMESTAMP, $usr_msg);
+        $result = json_decode($conv_str, true);
+        $target = json_decode(file_get_contents(test_files::IMPORT_XBRL_ABB_2013), true);
+        $t->assert_json($test_name, $result, $target);
+
+        // check that a fact with dimension members is converted to a value
+        // e.g. the 2013 level 1 assets of the recurring fair value measurements
+        $test_name = 'XBRL fact with dimension members is converted to a value';
+        $target_words = [import_convert_xbrl::ISSUER_ABB, 'assets fair value disclosure',
+            'fair value inputs level 1', 'fair value measurements recurring', 'USD', '2013'];
+        $fact_number = '';
+        foreach ($result[json_fields::VALUES] as $val_json) {
+            if ($val_json[json_fields::WORDS] == $target_words) {
+                $fact_number = $val_json[json_fields::NUMBER];
+            }
+        }
+        $t->assert($test_name, $fact_number, '129000000');
+
+        // check that the calculation linkbase concept names are split into words
+        // e.g. "us-gaap_OtherComprehensiveIncomeLossNetOfTax" leads to the word "comprehensive"
+        $test_name = 'XBRL concept names are split into words';
+        $wrd_names = array_column($result[json_fields::WORDS], json_fields::NAME);
+        $t->assert($test_name, in_array('comprehensive', $wrd_names), true);
+
+        // check that a verb within a concept name leads to a triple
+        // e.g. "...NetOfTax" leads to the triple "net" "of" "tax"
+        $test_name = 'XBRL concept name verbs lead to triples';
+        $trp_found = false;
+        foreach ($result[json_fields::TRIPLES] as $trp_json) {
+            if (($trp_json[json_fields::EX_FROM] ?? '') == 'net'
+                and ($trp_json[json_fields::EX_VERB] ?? '') == 'of'
+                and ($trp_json[json_fields::EX_TO] ?? '') == 'tax') {
+                $trp_found = true;
+            }
+        }
+        $t->assert($test_name, $trp_found, true);
+
+        // save the created json in the fileset folder
+        // and leave the unpacked files in the folder for manual checks
+        $test_name = 'XBRL convert job saves the json in the fileset folder';
+        $usr_msg = new user_message($usr);
+        $json_path = $conv_xbrl->convert_folder_to_file($folder, $conv_xbrl->instance_file_name('2013'), test_base::TEST_TIMESTAMP, $usr_msg);
+        $t->assert($test_name, $json_path, test_files::IMPORT_XBRL_ABB_2013);
+
+        // convert an XBRL facts snippet to an import json
+        // the facts transformer reports inconsistencies via the user message
+        // instead of throwing exceptions
+        $test_name = 'XBRL facts xml is converted to the expected import json';
+        $usr_msg = new user_message($usr);
+        $facts_xml = file_get_contents(test_files::IMPORT_XBRL_SAMPLE_XML);
+        $conv_str = $conv_xbrl->convert_facts($facts_xml, test_base::TEST_TIMESTAMP, $usr_msg);
+        $result = json_decode($conv_str, true);
+        $target = json_decode(file_get_contents(test_files::IMPORT_XBRL_SAMPLE_JSON), true);
+        $t->assert_json($test_name, $result, $target);
+        $test_name = '... and consistent facts report no problem';
+        $t->assert_true($test_name, $usr_msg->is_ok());
+
+        $test_name = 'XBRL facts converter saves the json next to the facts file';
+        $usr_msg = new user_message($usr);
+        $json_path = $conv_xbrl->convert_facts_to_file(
+            test_files::IMPORT_XBRL_ABB_2013_DIR,
+            test_files::IMPORT_XBRL_SAMPLE_NAME . test_files::XML,
+            test_base::TEST_TIMESTAMP, $usr_msg);
+        $t->assert($test_name, $json_path, test_files::IMPORT_XBRL_SAMPLE_JSON);
+
+        $test_name = 'XBRL facts converter reports conflicting fact values';
+        $usr_msg = new user_message($usr);
+        $conflict_xml = file_get_contents(test_files::IMPORT_XBRL_CONFLICT_XML);
+        $conv_xbrl->convert_facts($conflict_xml, test_base::TEST_TIMESTAMP, $usr_msg);
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), 'conflicting values');
+
+        $test_name = 'XBRL facts of a part year context are skipped';
+        $usr_msg = new user_message($usr);
+        $period_xml = file_get_contents(test_files::IMPORT_XBRL_PERIOD_XML);
+        $conv_str = $conv_xbrl->convert_facts($period_xml, test_base::TEST_TIMESTAMP, $usr_msg);
+        $result = json_decode($conv_str, true);
+        $t->assert($test_name, count($result[json_fields::VALUES]), 1);
+
+        $test_name = 'XBRL facts converter reports when no facts are found';
+        $usr_msg = new user_message($usr);
+        $conv_xbrl->convert_facts('', test_base::TEST_TIMESTAMP, $usr_msg);
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), 'no XBRL facts');
+
+        $test_name = 'XBRL facts converter reports a missing facts file';
+        $usr_msg = new user_message($usr);
+        $json_path = $conv_xbrl->convert_facts_to_file(
+            test_files::IMPORT_XBRL_ABB_2013_DIR,
+            test_files::IMPORT_XBRL_MISSING_NAME . test_files::XML,
+            test_base::TEST_TIMESTAMP, $usr_msg);
+        $t->assert($test_name, $json_path, '');
+        $test_name = '... and the user message reports the problem';
+        $t->assert_false($test_name, $usr_msg->is_ok());
 
         $test_name = 'XBRL zip unpacker rejects a missing input file';
         $caught = false;

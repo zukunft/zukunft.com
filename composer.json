@@ -11,7 +11,8 @@
     "php-jsonpointer/php-jsonpointer": "^4.0",
     "ext-mysqli": "*",
     "ext-pdo": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "ext-zip": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^11.5"
