@@ -62,6 +62,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
@@ -91,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
 class ui_list extends ui_base
 {
@@ -545,11 +547,21 @@ class ui_list extends ui_base
     ): string
     {
         global $ui_sys;
+        $html = new html_base();
         $style_txt = '';
         if ($style_id != null) {
             $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
-        return $val_lst->list($phr_lst, '', $style_txt);
+        // wrap the value lines in a block div so each value stays on one line;
+        // as a LIST_GROUP component the related-value list is emitted without an
+        // auto row, so without this block the bare inline phrases land directly
+        // in the flex-column main container and every phrase is pushed onto its
+        // own line
+        $result = $val_lst->list($phr_lst, '', $style_txt);
+        if ($result != '') {
+            $result = $html->div($result, view_styles::COL_SM_12);
+        }
+        return $result;
     }
 
     /**
