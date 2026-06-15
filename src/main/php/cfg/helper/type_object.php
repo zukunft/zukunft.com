@@ -1070,7 +1070,7 @@ class type_object extends db_object_seq_id
             }
         } else {
             // for the system user it should be possible to delete a type
-            if ($msg->usr->is_system()) {
+            if ($msg->usr->is_system() or $msg->usr->is_admin_local()) {
                 $can_del = true;
             }
         }

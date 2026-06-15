@@ -2,7 +2,7 @@
 
 Detail for the structure rules in `CLAUDE.md` → "Structure & style".
 
-## Single return per function
+## One exit per function and loop — no `break` or `continue`
 
 Every function has exactly one `return`, at the end. Assign the result to a
 named variable (`$result`, `$next_url`, ...) and return it at the bottom.
@@ -28,9 +28,35 @@ function action_login(...): array
 }
 ```
 
-**Exception**: guard clauses at the very top (e.g. `if ($x === null) { return ''; }`)
-are allowed when they protect a precondition that makes the rest of the body
-meaningless. Everything else flows to the single return.
+The same reasoning bans `break` and `continue` inside loops: a jump out of the
+middle of a block is spaghetti control flow, the reader can no longer assume the
+loop body runs top to bottom. Wrap the work in the positive condition instead of
+skipping with `continue`, and let the loop's own condition (or a flag variable)
+end it instead of `break`.
+
+```php
+// Wrong — continue jumps out of the middle of the body
+foreach ($frm_lst as $frm) {
+    if ($frm->id() != 0) {
+        continue;
+    }
+    $msg->add(...);
+    // ... more work ...
+}
+
+// Right — the work lives inside the positive condition
+foreach ($frm_lst as $frm) {
+    if ($frm->id() == 0) {
+        $msg->add(...);
+        // ... more work ...
+    }
+}
+```
+
+**Exception**: guard clauses at the very top of a *function* (e.g.
+`if ($x === null) { return ''; }`) are allowed when they protect a precondition
+that makes the rest of the body meaningless. Everything else flows to the single
+return; loops have no equivalent exception.
 
 ## Log the unexpected branch instead of returning silently
 

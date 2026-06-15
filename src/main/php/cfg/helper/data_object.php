@@ -1434,7 +1434,16 @@ class data_object
             $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
             if ($res->src_grp !== null) {
                 $this->resolve_phrase_list_ids($res->src_grp->phrase_list(), $phr_lst, $usr_msg);
-                $res->set_src_grp($res->src_grp->phrase_list()->get_grp_id(false));
+                // an unresolved source phrase list yields no group; skip it with a
+                // warning instead of passing null to the non-nullable set_src_grp
+                $src_grp = $res->src_grp->phrase_list()->get_grp_id(false);
+                if ($src_grp !== null) {
+                    $res->set_src_grp($src_grp);
+                } else {
+                    $usr_msg->add_warning_with_vars(msg_id::IMPORT_RESULT_SOURCE_GROUP_MISSING, [
+                        msg_id::VAR_GROUP => $res->grp()->dsp_id()
+                    ]);
+                }
             }
         }
     }

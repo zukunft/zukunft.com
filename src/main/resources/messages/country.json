@@ -42,22 +42,13 @@
       ]
     },
     {
-      "name": "percent",
-      "comment": "to specify numbers in percent",
-      "type": "percent",
-      "protection": "admin_protection"
+      "name": "percent"
     },
     {
-      "name": "thousand",
-      "comment": "to specify numbers in thousand",
-      "type": "scaling",
-      "protection": "admin_protection"
+      "name": "thousand"
     },
     {
-      "name": "million",
-      "comment": "to specify numbers in millions",
-      "type": "scaling",
-      "protection": "admin_protection"
+      "name": "million"
     },
     {
       "name": "ranking",

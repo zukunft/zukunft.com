@@ -558,6 +558,9 @@ enum messages: string
         . '" is expected to be a number ('
         . self::VAR_START . self::VAR_GROUP . self::VAR_END
         . ')';
+    case IMPORT_RESULT_SOURCE_GROUP_MISSING = 'Import result: the source group of "'
+        . self::VAR_START . self::VAR_GROUP . self::VAR_END
+        . '" could not be resolved and is skipped';
     case IMPORT_VALUE_NOT_NUMERIC = 'Import value: "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . '" is expected to be a number ('
