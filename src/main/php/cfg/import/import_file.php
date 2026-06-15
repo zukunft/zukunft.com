@@ -132,6 +132,7 @@ class import_file
         $imp->step_main_end();
 
         if (!$json_str) {
+            log_err('import file ' . $filename . ' cannot be loaded');
             $this->read_error($filename, file_types::JSOM, $usr_msg);
         } else {
             if ($json_str == '') {
@@ -324,30 +325,26 @@ class import_file
     }
 
     /**
-     * TODO move HTML code to frontend
-     * import all zukunft.com base configuration json files
-     * for an import it can be assumed that this base configuration is loaded
-     * even if a user has overwritten some of these definitions the technical import should be possible
-     * TODO load this configuration on first start of zukunft
-     * TODO add a check bottom for admin to reload the base configuration
+     * TODO fill a user_message with the warning and error messages and return true if successful
+     * TODO add a check bottom for admin to reload the system configuration
+     * import zukunft.com system data and data used for unit tests via json file
+     * for an import it can be assumed that this type configuration is loaded
+     * @param user $usr the owner of the initial system data
+     * @param bool $direct true if the data_object based loading cannot yet be used (to be dismissed)
+     * @return string any error or warning message during import
      */
-    function import_base_config(user $usr, bool $direct = false): string
+    function import_system_data(user $usr, bool $direct = false): string
     {
         $result = '';
-        log_info('base setup',
+        log_info('system data setup',
             sys_log_functions::IMPORT_BASE_CONFIG_NAME,
-            'import of the base setup',
-            'import_base_config',
+            'import of the system and test data',
+            'import_system_data',
             $usr, true
         );
 
-        foreach (files::BASE_CONFIG_FILES as $filename) {
+        foreach (files::SYSTEM_DATA_FILES as $filename) {
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
-        }
-
-        // config files that cannot yet be loaded via list saving
-        foreach (files::BASE_CONFIG_FILES_DIRECT as $filename) {
-            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, true)->get_last_message();
         }
 
         log_debug('load base config ... done');
@@ -372,30 +369,6 @@ class import_file
 
         foreach (files::POD_CONFIG_FILES_DIRECT as $filename) {
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
-        }
-
-        log_debug('load pod base config ... done');
-
-        return $result;
-    }
-
-    /**
-     * import the default pod base configuration json files
-     * for an import it can be assumed that this base configuration is loaded
-     * even if a user has overwritten some of these definitions the technical import should be possible
-     */
-    function import_test_config(user $usr, bool $direct = false): string
-    {
-        $result = '';
-        log_info('test setup',
-            sys_log_functions::IMPORT_TEST_CONFIG_NAME,
-            'import of the pod test setup',
-            sys_log_functions::IMPORT_TEST_CONFIG,
-            $usr, true
-        );
-
-        foreach (files::BASE_IMPORT_FILE_LIST as $filename) {
-            $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
         }
 
         log_debug('load pod base config ... done');

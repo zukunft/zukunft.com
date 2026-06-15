@@ -1123,24 +1123,29 @@ class formula_list extends sandbox_list_named
     private function report_missing(user_message $msg, term_list $cache, string $file_name): void
     {
         foreach ($this->lst() as $frm) {
+            // only a formula that could not be saved (still without a database id)
+            // needs its missing terms reported; a formula already in the database
+            // keeps its already validated expression, so a metadata-only change
+            // (e.g. adding a description or excluding the formula) must not
+            // re-check its terms and raise a spurious missing term warning
             if ($frm->id() == 0) {
                 $msg->add(msg_id::IMPORT_FORMULA_FAILED, [
                     msg_id::VAR_FORMULA => $frm->name(),
                     msg_id::VAR_FILE_NAME => $file_name
                 ]);
-            }
-            $exp = $frm->expression($cache);
-            // TODO Prio 3 try to avoid reloading of the terms
-            $trm_lst = $frm->load_terms($msg, $cache, $exp);
-            $frm_trm_lst = $exp->terms($msg, $trm_lst);
-            foreach ($frm_trm_lst->lst() as $trm) {
-                if ($trm->id() == 0) {
-                    $frm_trm = $trm_lst->get_by_name($trm->name());
-                    if ($frm_trm == null) {
-                        $msg->add(msg_id::IMPORT_TERM_NOT_FOUND, [
-                            msg_id::VAR_NAME => $trm->name(),
-                            msg_id::VAR_ID => $frm->dsp_id()
-                        ]);
+                $exp = $frm->expression($cache);
+                // TODO Prio 3 try to avoid reloading of the terms
+                $trm_lst = $frm->load_terms($msg, $cache, $exp);
+                $frm_trm_lst = $exp->terms($msg, $trm_lst);
+                foreach ($frm_trm_lst->lst() as $trm) {
+                    if ($trm->id() == 0) {
+                        $frm_trm = $trm_lst->get_by_name($trm->name());
+                        if ($frm_trm == null) {
+                            $msg->add(msg_id::IMPORT_TERM_NOT_FOUND, [
+                                msg_id::VAR_NAME => $trm->name(),
+                                msg_id::VAR_ID => $frm->dsp_id()
+                            ]);
+                        }
                     }
                 }
             }

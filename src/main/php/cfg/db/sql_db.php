@@ -1243,11 +1243,10 @@ class sql_db
 
             $import = new import_file();
             $this->import_verbs($usr);
-            $import->import_base_config($usr);
+            $import->import_system_data($usr);
             $this->create_internal_words($usr);
             $import->import_config_yaml($usr);
             $import->import_pod_config($usr);
-            $import->import_test_config($usr);
 
             // add the admin users if defined in the env file
             $this->add_admin_users_from_env($usr_msg, $usr);

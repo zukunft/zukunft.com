@@ -431,14 +431,7 @@
       ]
     },
     {
-      "name": "percent",
-      "description": "A ratio expressed as a fraction of 100, denoted by the symbol %. Percentages are widely used in finance to express rates of return, changes in value, and proportional spreads.",
-      "refs": [
-        {
-          "name": "Percentage",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "percent"
     },
     {
       "name": "change",

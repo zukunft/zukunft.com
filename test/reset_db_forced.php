@@ -65,14 +65,13 @@ if ($db_con->is_open()) {
         if ($start_usr->is_admin() or getenv(ENVIRONMENT) == ENV_DEV) {
             echo 'forced reset: dropping the ' . words::CONFIG . ' table before the database reset' . "\n";
             $db_con->drop_table(words::CONFIG);
+            $db_con->close();
 
-            // run the standard database reset which recreates all tables including the config table
-            if ($db_con->setup()) {
-                $db_con->open();
-                if (!$db_con->is_open()) {
-                    log_fatal('Cannot connect to database', 'prg_restart');
-                }
-            }
+            // delegate to reset_db.php so that the forced reset loads exactly the same
+            // data as the normal reset; with the config table dropped above reset_db.php
+            // starts with the built-in config defaults and recreates the config table
+            // from scratch together with all other tables and the unit test base data
+            include __DIR__ . DIRECTORY_SEPARATOR . 'reset_db.php';
         }
     }
 } else {

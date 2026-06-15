@@ -1,32 +1,48 @@
 {
-  "version": "0.0.4",
+  "version": "0.0.3",
   "time": "2026-06-07 10:00:00",
   "user": "timon",
   "selection": [
     "average HTP impact of the city, canton, workplaces and insurance of Zurich"
   ],
   "words": [
-    { "name": "City of Zurich", "description": "the municipality of Zurich, the largest city of Switzerland" },
-    { "name": "Canton of Zurich", "description": "the most populous canton of Switzerland" },
+    { "name": "Zurich", "description": "the largest city of Switzerland and the capital of its canton" },
+    { "name": "city", "description": "a large permanent human settlement" },
+    { "name": "canton", "description": "a member state of the Swiss federation" },
+    { "name": "workplace", "plural": "workplaces", "description": "a location that hosts jobs" },
     { "name": "Zurich Insurance", "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich" },
-    { "name": "City of Zurich workplaces", "description": "the City of Zurich seen as an employer location, hosting the jobs within the municipality including commuters" },
     { "name": "entity", "plural": "entities", "description": "an organisation or administrative body that can influence people" },
     { "name": "inhabitant", "plural": "inhabitants", "description": "a person who lives in a place" },
     { "name": "customer", "plural": "customers", "description": "a person served by a commercial entity" },
-    { "name": "employed person", "plural": "employed persons", "description": "a person holding a job located in the place, residents and commuters alike" },
-    { "name": "person influenced", "plural": "persons influenced", "description": "the number of people an entity influences, inhabitants for a region, customers for a company or employed persons for a workplace" },
-    { "name": "happy time point", "plural": "happy time points", "type": "measure", "description": "HTP, the UN DALY index extended to the lowest two levels of the Maslow pyramid" },
-    { "name": "impact factor on HTP", "type": "percent", "description": "the share of one person's happy time points that the entity influences" },
-    { "name": "impact weighted reach", "description": "persons influenced multiplied by the impact factor on HTP, expressed in HTP-units" },
-    { "name": "average impact weighted reach", "description": "the mean impact weighted reach across the listed entities" },
+    { "name": "person", "plural": "persons", "description": "an individual human being" },
+    { "name": "employed", "description": "holding a job" },
+    { "name": "influenced", "description": "affected by an entity" },
+    { "name": "happy", "description": "feeling or showing pleasure or contentment" },
+    { "name": "time", "description": "the indefinite continued progress of existence" },
+    { "name": "point", "plural": "points", "description": "a single unit on a scale" },
+    { "name": "impact", "description": "a marked effect or influence" },
+    { "name": "factor", "description": "a circumstance that contributes to a result" },
+    { "name": "HTP", "description": "the acronym used for the happy time point measure" },
+    { "name": "weighted", "description": "scaled by a relative weight" },
+    { "name": "reach", "description": "the number of people exposed to or affected by something" },
+    { "name": "average", "description": "the mean value of a set of numbers" },
     { "name": "2025", "type": "time" },
     { "name": "2024", "type": "time" },
     { "name": "2023", "type": "time" }
   ],
-  "verbs": [
-    { "name": "is a", "description": "link a word to its parent type", "reverse": "are" }
-  ],
   "triples": [
+    { "name": "City of Zurich", "from": "city", "verb": "of", "to": "Zurich", "description": "the municipality of Zurich, the largest city of Switzerland" },
+    { "name": "Canton of Zurich", "from": "canton", "verb": "of", "to": "Zurich", "description": "the most populous canton of Switzerland" },
+    { "name": "City of Zurich workplaces", "from": "workplace", "verb": "of", "to": "City of Zurich", "description": "the City of Zurich seen as an employer location, hosting the jobs within the municipality including commuters" },
+    { "name": "employed person", "from": "person", "verb": "kind of", "to": "employed", "description": "a person holding a job located in the place, residents and commuters alike" },
+    { "name": "person influenced", "from": "person", "verb": "kind of", "to": "influenced", "description": "the number of people an entity influences, inhabitants for a region, customers for a company or employed persons for a workplace" },
+    { "name": "time point", "from": "point", "verb": "is measure type for", "to": "time", "description": "a value multiplied by the time" },
+    { "name": "happy time point", "from": "happy", "verb": "and", "to": "time point", "type": "measure", "description": "HTP, the UN DALY index extended to the lowest two levels of the Maslow pyramid" },
+    { "name": "impact factor", "from": "factor", "verb": "of", "to": "impact", "description": "a factor expressing the strength of an impact" },
+    { "name": "", "from": "impact factor", "verb": "on", "to": "HTP", "type": "percent", "description": "the share of one person's happy time points that the entity influences" },
+    { "name": "weighted reach", "from": "reach", "verb": "kind of", "to": "weighted", "description": "a reach scaled by a relative weight" },
+    { "name": "impact weighted reach", "from": "weighted reach", "verb": "of", "to": "impact", "description": "persons influenced multiplied by the impact factor on HTP, expressed in HTP-units" },
+    { "name": "average impact weighted reach", "from": "impact weighted reach", "verb": "kind of", "to": "average", "description": "the mean impact weighted reach across the listed entities" },
     { "name": "", "from": "City of Zurich", "verb": "is a", "to": "entity" },
     { "name": "", "from": "Canton of Zurich", "verb": "is a", "to": "entity" },
     { "name": "", "from": "Zurich Insurance", "verb": "is a", "to": "entity" },
@@ -126,27 +142,27 @@
     {
       "words": [ "City of Zurich", "impact weighted reach" ],
       "number": "22152",
-      "source words": [ "City of Zurich", "person influenced", "City of Zurich", "impact factor on HTP" ]
+      "context": [ "City of Zurich", "person influenced", "City of Zurich", "impact factor on HTP" ]
     },
     {
       "words": [ "Canton of Zurich", "impact weighted reach" ],
       "number": "32400",
-      "source words": [ "Canton of Zurich", "person influenced", "Canton of Zurich", "impact factor on HTP" ]
+      "context": [ "Canton of Zurich", "person influenced", "Canton of Zurich", "impact factor on HTP" ]
     },
     {
       "words": [ "City of Zurich workplaces", "impact weighted reach" ],
       "number": "49000",
-      "source words": [ "City of Zurich workplaces", "person influenced", "City of Zurich workplaces", "impact factor on HTP" ]
+      "context": [ "City of Zurich workplaces", "person influenced", "City of Zurich workplaces", "impact factor on HTP" ]
     },
     {
       "words": [ "Zurich Insurance", "impact weighted reach" ],
       "number": "22500",
-      "source words": [ "Zurich Insurance", "person influenced", "Zurich Insurance", "impact factor on HTP" ]
+      "context": [ "Zurich Insurance", "person influenced", "Zurich Insurance", "impact factor on HTP" ]
     },
     {
       "words": [ "average impact weighted reach" ],
       "number": "31513",
-      "source words": [ "City of Zurich", "impact weighted reach", "Canton of Zurich", "impact weighted reach", "City of Zurich workplaces", "impact weighted reach", "Zurich Insurance", "impact weighted reach" ]
+      "context": [ "City of Zurich", "impact weighted reach", "Canton of Zurich", "impact weighted reach", "City of Zurich workplaces", "impact weighted reach", "Zurich Insurance", "impact weighted reach" ]
     }
   ]
 }

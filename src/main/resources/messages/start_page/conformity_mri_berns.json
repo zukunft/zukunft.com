@@ -267,9 +267,7 @@
       "description": "journal volume number"
     },
     {
-      "name": "percent",
-      "description": "unit, percentage",
-      "type": "measure"
+      "name": "percent"
     },
     {
       "name": "millisecond",

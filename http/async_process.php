@@ -104,7 +104,7 @@ if ($usr->id > 0) {
         $html->echo("loading of base configuration started<br>");
 
         $import = new import_file();
-        $import->import_base_config($usr);
+        $import->import_system_data($usr);
 
         $html->echo("loading of base configuration finished<br>");
 

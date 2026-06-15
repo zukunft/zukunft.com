@@ -181,7 +181,7 @@ class files
     CONST string SQL_FORMAT_TEST_SELECT = 'word_by_id' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT_MYSQL = 'word_by_id_mysql' . self::SQL;
 
-    const array TEST_IMPORT_FILES = [
+    const array TEST_DATA_FILES = [
         self::IMPORT_POPULISM_FERMI_ESTIMATE,
         self::IMPORT_PORTFOLIO_SPLIT_CALC,
         self::IMPORT_PORTFOLIO_INSTRUMENTS,
@@ -189,11 +189,11 @@ class files
         self::IMPORT_PORTFOLIO_SPLIT_PARAMETERS_SAMPLE,
     ];
 
-    const array TEST_DIRECT_IMPORT_FILE_LIST = [
+    const array TEST_DATA_FILES_DIRECT = [
         self::IMPORT_TRAVEL_SCORING_VALUE_LIST,
     ];
 
-    const array TEST_IMPORT_FILE_LIST_ALL = [
+    const array TEST_DATA_FILES_NOT_REVIEWED = [
         self::IMPORT_TRAVEL_SCORING,
         self::IMPORT_TRAVEL_SCORING_VALUE_LIST,
         self::IMPORT_ABB_2013,
