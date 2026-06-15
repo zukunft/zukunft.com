@@ -59,6 +59,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::LOG . 'change_log_named.php';
 //include_once html_paths::LOG . 'user_log_display.php';
@@ -97,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
@@ -154,6 +156,7 @@ class word extends sandbox_code_id
     // filled from the INCL_RELATED api message and shown by the related values component
     public ?value_list $val_lst = null;
     public ?formula_list $frm_lst = null;
+    public ?ref_list $ref_lst = null;
 
     // the system calculated impact of this word used to sort the words by relevance
     // (highest impact first); same field name as triple, formula and verb so a term can
@@ -264,6 +267,18 @@ class word extends sandbox_code_id
             }
         } else {
             $this->frm_lst = null;
+        }
+        if (array_key_exists(json_fields::REFERENCES, $json_array)) {
+            $reference = $json_array[json_fields::REFERENCES];
+            if (is_array($reference)) {
+                $lst = new ref_list();
+                $lst->api_mapper($reference);
+                $this->ref_lst = $lst;
+            } else {
+                $this->ref_lst = null;
+            }
+        } else {
+            $this->ref_lst = null;
         }
         return $msg->is_ok();
     }

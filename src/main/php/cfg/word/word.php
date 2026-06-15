@@ -148,6 +148,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -249,6 +250,12 @@ class word extends sandbox_code_id
     // when the api_types::INCL_RELATED flag is set, so the default word view can show the
     // formulas using the word; the frontend caps and sorts the list by impact when rendering
     public ?formula_list $formulas_related = null;
+
+    // the external references of this word (e.g. its wikidata or wikipedia link);
+    // populated lazily by load_references_related() and only emitted via api_json_array()
+    // when the api_types::INCL_RELATED flag is set, so the default word view can show the
+    // references; refs have no impact, so the frontend keeps the database (id) order
+    public ?ref_list $references_related = null;
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -501,6 +508,13 @@ class word extends sandbox_code_id
                         $vars[json_fields::FORMULAS] = $this->formulas_related->api_json_array(
                             new api_type_list(), $usr);
                     }
+                    if ($this->references_related == null and !$typ_lst->test_mode()) {
+                        $this->load_references_related();
+                    }
+                    if ($this->references_related != null and !$this->references_related->is_empty()) {
+                        $vars[json_fields::REFERENCES] = $this->references_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
                 }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
@@ -530,6 +544,17 @@ class word extends sandbox_code_id
         $frm_lst = new formula_list($this->get_user());
         $frm_lst->load_by_phr($this->phrase());
         $this->formulas_related = $frm_lst;
+    }
+
+    /**
+     * load the external references of this word into the in-memory references_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_references_related(): void
+    {
+        $ref_lst = new ref_list($this->get_user());
+        $ref_lst->load_by_phr_id($this->phrase()->id());
+        $this->references_related = $ref_lst;
     }
 
     /**

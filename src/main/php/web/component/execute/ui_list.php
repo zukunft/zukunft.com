@@ -361,9 +361,14 @@ class ui_list extends ui_base
         if ($dbo::class == triple::class) {
             $phr = $dbo->phrase();
         }
-        $ref_lst = $dto->ref_list_cloned();
         if ($phr != null) {
-            $ref_lst = $ref_lst->get_by_phrase($phr);
+            // a word loaded for its page carries its references directly (like the related
+            // values and formulas); otherwise fall back to the page reference cache
+            if ($dbo::class == word::class and $dbo->ref_lst != null) {
+                $ref_lst = $dbo->ref_lst;
+            } else {
+                $ref_lst = $dto->ref_list_cloned()->get_by_phrase($phr);
+            }
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($dbo->phrase());
             $result = $ref_lst->list($phr_lst);
