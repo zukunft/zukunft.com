@@ -87,6 +87,7 @@ include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -137,6 +138,7 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
@@ -241,6 +243,12 @@ class word extends sandbox_code_id
     // api_types::INCL_RELATED flag is set, so the default word view can show e.g. for "Zurich"
     // the inhabitant numbers; the frontend caps and sorts the list by impact when rendering
     public ?value_list $values_related = null;
+
+    // the formulas related to this word (this word is one of the formula's terms);
+    // populated lazily by load_formulas_related() and only emitted via api_json_array()
+    // when the api_types::INCL_RELATED flag is set, so the default word view can show the
+    // formulas using the word; the frontend caps and sorts the list by impact when rendering
+    public ?formula_list $formulas_related = null;
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -483,6 +491,16 @@ class word extends sandbox_code_id
                         $vars[json_fields::VALUES] = $this->values_related->api_json_array(
                             new api_type_list([api_types::INCL_PHRASES]), $usr);
                     }
+                    if ($this->formulas_related == null and !$typ_lst->test_mode()) {
+                        $this->load_formulas_related();
+                    }
+                    if ($this->formulas_related != null and !$this->formulas_related->is_empty()) {
+                        // a fresh api_type_list (no INCL_RELATED) so the formulas emit only
+                        // their own name, id and impact, which the frontend needs to render
+                        // and sort the list by impact, without recursing back into relations
+                        $vars[json_fields::FORMULAS] = $this->formulas_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
                 }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
@@ -501,6 +519,17 @@ class word extends sandbox_code_id
     function load_values_related(): void
     {
         $this->values_related = $this->reload_value_list();
+    }
+
+    /**
+     * load the formulas related to this word into the in-memory formulas_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_formulas_related(): void
+    {
+        $frm_lst = new formula_list($this->get_user());
+        $frm_lst->load_by_phr($this->phrase());
+        $this->formulas_related = $frm_lst;
     }
 
     /**
