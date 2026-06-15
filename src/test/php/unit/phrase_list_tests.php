@@ -50,10 +50,10 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -111,12 +111,12 @@ class phrase_list_tests
         $test_name = 'load phrases by ids';
         $t->assert_sql_by_ids($test_name, $sc, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
-        $phr_names = array(word_names::MATH, triples::MATH_CONST);
+        $phr_names = array(word_names::MATH, triple_names::MATH_CONST);
         $t->assert_sql_by_names($sc, $phr_lst, $phr_names);
 
         // to review
         $t->assert_sql_names($sc, $phr_lst, new phrase($usr));
-        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triples::MATH_CONST);
+        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triple_names::MATH_CONST);
 
         $this->test = $t;
 

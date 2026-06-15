@@ -79,6 +79,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::LOG . 'change_log_list.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -115,7 +116,6 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
@@ -126,6 +126,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -294,8 +295,8 @@ class test_log
         $chg = $this->log_entry_add();
         $chg->set_table(change_tables::TRIPLE);
         $chg->set_field(change_fields::FLD_TRIPLE_NAME);
-        $chg->new_value = triples::MATH_CONST;
-        $chg->row_id = triples::MATH_CONST_ID;
+        $chg->new_value = triple_names::MATH_CONST;
+        $chg->row_id = triple_names::MATH_CONST_ID;
         return $chg;
     }
 

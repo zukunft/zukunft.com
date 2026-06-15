@@ -53,6 +53,7 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::WORD . 'triple_list.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -91,7 +93,7 @@ class test_triples extends test_objects
     {
         global $db_con;
 
-        parent::cleanup_objects($ts, triples::TEST_TRIPLES, new triple($this->env->usr1));
+        parent::cleanup_objects($ts, triple_names::TEST_TRIPLES, new triple($this->env->usr1));
 
         // cleanup all triples that use a test verb
         $vrb = new verb();
@@ -109,7 +111,7 @@ class test_triples extends test_objects
         // also clean up the words and verbs used for the triples
         $t_wrd = new test_words($this->env);
         $t_wrd->cleanup($ts);
-        parent::cleanup_objects($ts, [triples::SYSTEM_TEST_ADD_AUTO], new verb());
+        parent::cleanup_objects($ts, [triple_names::SYSTEM_TEST_ADD_AUTO], new verb());
     }
 
 
@@ -125,8 +127,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::MATH_CONST_ID, triples::MATH_CONST);
-        $trp->description = triples::MATH_CONST_COM;
+        $trp->set(triple_names::MATH_CONST_ID, triple_names::MATH_CONST);
+        $trp->description = triple_names::MATH_CONST_COM;
         $trp->set_from($t_wrd->word_const()->phrase());
         $trp->set_verb($t_vrb->verb_part());
         $trp->set_to($t_wrd->word()->phrase());
@@ -164,8 +166,8 @@ class test_triples extends test_objects
     function triple_api(): triple
     {
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::MATH_CONST_ID, triples::MATH_CONST);
-        $trp->description = triples::MATH_CONST_COM;
+        $trp->set(triple_names::MATH_CONST_ID, triple_names::MATH_CONST);
+        $trp->description = triple_names::MATH_CONST_COM;
         $trp->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         global $sys;
         $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
@@ -179,10 +181,10 @@ class test_triples extends test_objects
     {
         global $sys;
         $trp = $this->triple();
-        $trp->name_given = triples::MATH_CONST_GIVEN;
+        $trp->name_given = triple_names::MATH_CONST_GIVEN;
         $trp->weight = 0.5;
         $trp->set_view_id(views::MATH_CONST_ID);
-        $trp->usage = triples::SYSTEM_TEST_ADD_USAGE;
+        $trp->usage = triple_names::SYSTEM_TEST_ADD_USAGE;
         $trp->impact = impacts::MAX;
         $trp->exclude();
         $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
@@ -218,8 +220,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $trp = $this->triple_filled_included();
         $trp->id = 0;
-        $trp->set_name(triples::SYSTEM_TEST_ADD);
-        $trp->set_code_id(triples::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
+        $trp->set_name(triple_names::SYSTEM_TEST_ADD);
+        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
         $trp->set_from($t_wrd->word_filled_add()->phrase());
         $trp->set_to($t_wrd->word_filled_add_to()->phrase());
         return $trp;
@@ -231,14 +233,14 @@ class test_triples extends test_objects
     function triple_name_only(): triple
     {
         $trp = new triple($this->env->usr1);
-        $trp->set_name(triples::MATH_CONST);
+        $trp->set_name(triple_names::MATH_CONST);
         return $trp;
     }
 
     function triple_add(phrase $wrd_from, verb $vrb, phrase $phr_to): triple
     {
         $trp = new triple($this->env->usr1);
-        $trp->set_name(triples::SYSTEM_TEST_ADD);
+        $trp->set_name(triple_names::SYSTEM_TEST_ADD);
         $trp->set_from($wrd_from);
         $trp->set_verb($vrb);
         $trp->set_to($phr_to);
@@ -254,12 +256,12 @@ class test_triples extends test_objects
         $trp = $this->triple_add($wrd_from, $vrb, $phr_to);
         $trp->id = 0;
         $trp->include();
-        $trp->set_name(triples::SYSTEM_TEST_ADD);
-        $trp->set_code_id(triples::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
+        $trp->set_name(triple_names::SYSTEM_TEST_ADD);
+        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
         $trp->weight = 0.5;
         $trp->set_view_id(views::MATH_CONST_ID);
-        $trp->usage = triples::SYSTEM_TEST_ADD_USAGE;
-        $trp->impact = triples::SYSTEM_TEST_ADD_IMPACT;
+        $trp->usage = triple_names::SYSTEM_TEST_ADD_USAGE;
+        $trp->impact = triple_names::SYSTEM_TEST_ADD_IMPACT;
         $trp->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $trp;
@@ -287,8 +289,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::PI_SYMBOL_ID, triples::PI_SYMBOL_NAME);
-        $trp->description = triples::PI_COM;
+        $trp->set(triple_names::PI_SYMBOL_ID, triple_names::PI_SYMBOL_NAME);
+        $trp->description = triple_names::PI_COM;
         $trp->set_from($t_wrd->word_pi_symbol()->phrase());
         $trp->set_verb($t_vrb->verb_alias());
         $trp->set_to($t_wrd->word_pi()->phrase());
@@ -303,8 +305,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::PI_ID, triples::PI_NAME);
-        $trp->description = triples::PI_COM;
+        $trp->set(triple_names::PI_ID, triple_names::PI_NAME);
+        $trp->description = triple_names::PI_COM;
         $trp->set_from($t_wrd->word_pi()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->triple()->phrase());
@@ -319,8 +321,8 @@ class test_triples extends test_objects
     function triple_pi_api(): triple
     {
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::PI_ID, triples::PI_NAME);
-        $trp->description = triples::PI_COM;
+        $trp->set(triple_names::PI_ID, triple_names::PI_NAME);
+        $trp->description = triple_names::PI_COM;
         $trp->set_type(phrase_types::TRIPLE_HIDDEN, $this->env->usr1);
         return $trp;
     }
@@ -333,7 +335,7 @@ class test_triples extends test_objects
     function second(): triple
     {
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::SECOND_ID, triples::SECOND);
+        $trp->set(triple_names::SECOND_ID, triple_names::SECOND);
         return $trp;
     }
 
@@ -346,7 +348,7 @@ class test_triples extends test_objects
         $t_trp = new test_triples($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::TRANSITION_CS_ID, triples::TRANSITION_CS);
+        $trp->set(triple_names::TRANSITION_CS_ID, triple_names::TRANSITION_CS);
         $trp->set_from($t_trp->hyperfine_transition_frequency()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($t_wrd->cs_133()->phrase());
@@ -359,7 +361,7 @@ class test_triples extends test_objects
         $t_trp = new test_triples($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::TRANSITION_FREQUENCY_ID, triples::TRANSITION_FREQUENCY);
+        $trp->set(triple_names::TRANSITION_FREQUENCY_ID, triple_names::TRANSITION_FREQUENCY);
         $trp->set_from($t_trp->hyperfine_transition()->phrase());
         $trp->set_verb($t_vrb->verb_has());
         $trp->set_to($t_wrd->frequency()->phrase());
@@ -371,7 +373,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::HYPERFINE_TRANSITION_ID, triples::HYPERFINE_TRANSITION);
+        $trp->set(triple_names::HYPERFINE_TRANSITION_ID, triple_names::HYPERFINE_TRANSITION);
         $trp->set_from($t_wrd->transition()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
         $trp->set_to($t_wrd->hyperfine()->phrase());
@@ -386,8 +388,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::SPEED_OF_LIGHT_ID, triples::SPEED_OF_LIGHT);
-        $trp->description = triples::SPEED_OF_LIGHT_COM;
+        $trp->set(triple_names::SPEED_OF_LIGHT_ID, triple_names::SPEED_OF_LIGHT);
+        $trp->description = triple_names::SPEED_OF_LIGHT_COM;
         $trp->set_from($t_wrd->speed()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($t_wrd->light()->phrase());
@@ -399,8 +401,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::M_PER_S_ID, triples::M_PER_S);
-        $trp->description = triples::M_PER_S_COM;
+        $trp->set(triple_names::M_PER_S_ID, triple_names::M_PER_S);
+        $trp->description = triple_names::M_PER_S_COM;
         $trp->set_from($t_wrd->metre()->phrase());
         $trp->set_verb($t_vrb->verb_per());
         $trp->set_to($t_wrd->second()->phrase());
@@ -413,7 +415,7 @@ class test_triples extends test_objects
         $t_trp = new test_triples($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::DEFINITION_YEAR_1983_ID, triples::DEFINITION_YEAR_1983);
+        $trp->set(triple_names::DEFINITION_YEAR_1983_ID, triple_names::DEFINITION_YEAR_1983);
         $trp->set_from($t_trp->year_1983()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_trp->definition_year()->phrase());
@@ -426,7 +428,7 @@ class test_triples extends test_objects
         $t_trp = new test_triples($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::DEFINITION_YEAR_1967_ID, triples::DEFINITION_YEAR_1967);
+        $trp->set(triple_names::DEFINITION_YEAR_1967_ID, triple_names::DEFINITION_YEAR_1967);
         $trp->set_from($t_trp->year_1967()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_trp->definition_year()->phrase());
@@ -439,7 +441,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::DEFINITION_YEAR_ID, triples::DEFINITION_YEAR);
+        $trp->set(triple_names::DEFINITION_YEAR_ID, triple_names::DEFINITION_YEAR);
         $trp->set_from($t_wrd->word_year()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($t_wrd->definition()->phrase());
@@ -451,7 +453,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::YEAR_1983_ID, triples::YEAR_1983);
+        $trp->set(triple_names::YEAR_1983_ID, triple_names::YEAR_1983);
         $trp->set_from($t_wrd->word_1983()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_year()->phrase());
@@ -463,7 +465,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::YEAR_1967_ID, triples::YEAR_1967);
+        $trp->set(triple_names::YEAR_1967_ID, triple_names::YEAR_1967);
         $trp->set_from($t_wrd->word_1967()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_year()->phrase());
@@ -478,7 +480,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::GLOBAL_WARMING_ID, triples::GLOBAL_WARMING);
+        $trp->set(triple_names::GLOBAL_WARMING_ID, triple_names::GLOBAL_WARMING);
         $trp->set_from($t_wrd->word_global()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_warmer()->phrase());
@@ -493,7 +495,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::GWP_ID, triples::GWP);
+        $trp->set(triple_names::GWP_ID, triple_names::GWP);
         $trp->set_from($this->triple_global_warming()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_potential()->phrase());
@@ -518,8 +520,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::E_ID, triples::E);
-        $trp->description = triples::E_COM;
+        $trp->set(triple_names::E_ID, triple_names::E);
+        $trp->description = triple_names::E_COM;
         $trp->set_from($t_wrd->word_e()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->triple()->phrase());
@@ -536,7 +538,7 @@ class test_triples extends test_objects
         $t_vrb = new test_verbs($this->env);
         $t_db = new test_db_load($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set_name(triples::SYSTEM_TEST_ADD_VIA_FUNC);
+        $trp->set_name(triple_names::SYSTEM_TEST_ADD_VIA_FUNC);
         $wrd_add_func = $t_db->load_word(word_names::TEST_ADD_VIA_FUNC);
         $wrd_math = $t_db->load_word(word_names::MATH);
         $trp->set_from($wrd_add_func->phrase());
@@ -553,11 +555,11 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::CITY_ZH_ID, triples::CITY_ZH_NAME);
+        $trp->set(triple_names::CITY_ZH_ID, triple_names::CITY_ZH_NAME);
         $trp->set_from($t_wrd->word_zh()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_city()->phrase());
-        $trp->set_description(triples::CITY_ZH_COM);
+        $trp->set_description(triple_names::CITY_ZH_COM);
         $trp->set_impact(impacts::HTP_ZH_CITY);
         return $trp;
     }
@@ -580,7 +582,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::CANTON_ZURICH_ID, triples::CANTON_ZURICH_NAME);
+        $trp->set(triple_names::CANTON_ZURICH_ID, triple_names::CANTON_ZURICH_NAME);
         $trp->set_from($t_wrd->word_zh()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_canton()->phrase());
@@ -606,7 +608,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::COMPANY_ZURICH_ID, triples::COMPANY_ZURICH);
+        $trp->set(triple_names::COMPANY_ZURICH_ID, triple_names::COMPANY_ZURICH);
         $trp->set_from($t_wrd->word_zh()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_company()->phrase());
@@ -642,7 +644,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::COMPANY_ABB_ID, triples::COMPANY_ABB);
+        $trp->set(triple_names::COMPANY_ABB_ID, triple_names::COMPANY_ABB);
         $trp->set_from($t_wrd->word_abb()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_company()->phrase());
@@ -658,7 +660,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::COMPANY_VESTAS_ID, triples::COMPANY_VESTAS);
+        $trp->set(triple_names::COMPANY_VESTAS_ID, triple_names::COMPANY_VESTAS);
         $trp->set_from($t_wrd->word_vestas()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_company()->phrase());
@@ -675,7 +677,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::CHF_SYMBOL_ID, triples::CHF_SYMBOL);
+        $trp->set(triple_names::CHF_SYMBOL_ID, triple_names::CHF_SYMBOL);
         $trp->set_from($t_wrd->word_chf()->phrase());
         $trp->set_verb($t_vrb->verb_is_symbol());
         $trp->set_to($t_wrd->swiss_franc()->phrase());
@@ -723,7 +725,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::DOLLAR_ALIAS_ID, triples::DOLLAR_ALIAS);
+        $trp->set(triple_names::DOLLAR_ALIAS_ID, triple_names::DOLLAR_ALIAS);
         $trp->set_from($t_wrd->word_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_alias());
         $trp->set_to($t_wrd->us_dollar()->phrase());
@@ -739,7 +741,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::U_S_DOLLAR_ALIAS_ID, triples::U_S_DOLLAR_ALIAS);
+        $trp->set(triple_names::U_S_DOLLAR_ALIAS_ID, triple_names::U_S_DOLLAR_ALIAS);
         $trp->set_from($t_wrd->word_u_s_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_alias());
         $trp->set_to($t_wrd->us_dollar()->phrase());
@@ -755,7 +757,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::USD_SYMBOL_ID, triples::USD_SYMBOL);
+        $trp->set(triple_names::USD_SYMBOL_ID, triple_names::USD_SYMBOL);
         $trp->set_from($t_wrd->word_usd()->phrase());
         $trp->set_verb($t_vrb->verb_is_symbol());
         $trp->set_to($t_wrd->us_dollar()->phrase());
@@ -771,7 +773,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::IN_USD_ID, triples::IN_USD);
+        $trp->set(triple_names::IN_USD_ID, triple_names::IN_USD);
         $trp->set_from($t_wrd->word_usd()->phrase());
         $trp->set_verb($t_vrb->verb_in());
         $trp->set_to($t_wrd->us_dollar()->phrase());
@@ -787,7 +789,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::US_DOLLAR_ID, word_names::US_DOLLAR . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
+        $trp->set(triple_names::US_DOLLAR_ID, word_names::US_DOLLAR . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
         $trp->set_from($t_wrd->us_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
@@ -803,7 +805,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::CITY_BE_ID, triples::CITY_BE);
+        $trp->set(triple_names::CITY_BE_ID, triple_names::CITY_BE);
         $trp->set_from($t_wrd->word_bern()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_city()->phrase());
@@ -818,7 +820,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::CITY_GE_ID, triples::CITY_GE);
+        $trp->set(triple_names::CITY_GE_ID, triple_names::CITY_GE);
         $trp->set_from($t_wrd->word_ge()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_city()->phrase());
@@ -833,7 +835,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::GLOBAL_PROBLEM_ID, triples::GLOBAL_PROBLEM);
+        $trp->set(triple_names::GLOBAL_PROBLEM_ID, triple_names::GLOBAL_PROBLEM);
         $trp->set_from($t_wrd->word_problem()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
         $trp->set_to($t_wrd->word_global()->phrase());
@@ -848,7 +850,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::GLOBAL_WARMING_ID, triples::GLOBAL_WARMING);
+        $trp->set(triple_names::GLOBAL_WARMING_ID, triple_names::GLOBAL_WARMING);
         $trp->set_from($t_wrd->word_climate()->phrase());
         $trp->set_verb($t_vrb->verb_can_get());
         $trp->set_to($t_wrd->word_warmer()->phrase());
@@ -862,7 +864,7 @@ class test_triples extends test_objects
     {
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::GLOBAL_WARMING_PROBLEM_ID);
+        $trp->set(triple_names::GLOBAL_WARMING_PROBLEM_ID);
         $trp->set_from($this->global_warming()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->global_problem()->phrase());
@@ -877,8 +879,8 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::GWP_ID);
-        $trp->set_name(triples::GWP);
+        $trp->set(triple_names::GWP_ID);
+        $trp->set_name(triple_names::GWP);
         $trp->set_from($this->global_warming()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_potential()->phrase());
@@ -893,7 +895,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::POPULISM_PROBLEM_ID);
+        $trp->set(triple_names::POPULISM_PROBLEM_ID);
         $trp->set_from($t_wrd->word_populism()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->global_problem()->phrase());
@@ -908,7 +910,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::POVERTY_PROBLEM_ID);
+        $trp->set(triple_names::POVERTY_PROBLEM_ID);
         $trp->set_from($t_wrd->word_poverty()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->global_problem()->phrase());
@@ -923,7 +925,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::POTENTIAL_HEALTH_PROBLEM_ID);
+        $trp->set(triple_names::POTENTIAL_HEALTH_PROBLEM_ID);
         $trp->set_from($t_wrd->word_health()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
         $trp->set_to($this->global_problem()->phrase());
@@ -938,7 +940,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::POTENTIAL_EDUCATION_PROBLEM_ID);
+        $trp->set(triple_names::POTENTIAL_EDUCATION_PROBLEM_ID);
         $trp->set_from($t_wrd->word_education()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
         $trp->set_to($this->global_problem()->phrase());
@@ -953,7 +955,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::TIME_POINTS_ID, triples::TIME_POINTS);
+        $trp->set(triple_names::TIME_POINTS_ID, triple_names::TIME_POINTS);
         $trp->set_from($t_wrd->word_time()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
         $trp->set_to($t_wrd->word_points()->phrase());
@@ -968,7 +970,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::HAPPY_TIME_POINTS_ID, triples::HAPPY_TIME_POINTS);
+        $trp->set(triple_names::HAPPY_TIME_POINTS_ID, triple_names::HAPPY_TIME_POINTS);
         $trp->set_from($t_wrd->word_happy()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
         $trp->set_to($this->time_points()->phrase());
@@ -1051,73 +1053,73 @@ class test_triples extends test_objects
     function year_2019(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2019_ID, triples::YEAR_2019, $t_wrd->word_2019());
+        return $this->year_x(triple_names::YEAR_2019_ID, triple_names::YEAR_2019, $t_wrd->word_2019());
     }
 
     function year_2020(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2020_ID, triples::YEAR_2020, $t_wrd->word_2020());
+        return $this->year_x(triple_names::YEAR_2020_ID, triple_names::YEAR_2020, $t_wrd->word_2020());
     }
 
     function year_2021(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2021_ID, triples::YEAR_2021, $t_wrd->word_2021());
+        return $this->year_x(triple_names::YEAR_2021_ID, triple_names::YEAR_2021, $t_wrd->word_2021());
     }
 
     function year_2022(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2022_ID, triples::YEAR_2022, $t_wrd->word_2022());
+        return $this->year_x(triple_names::YEAR_2022_ID, triple_names::YEAR_2022, $t_wrd->word_2022());
     }
 
     function year_2023(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2023_ID, triples::YEAR_2023, $t_wrd->word_2023());
+        return $this->year_x(triple_names::YEAR_2023_ID, triple_names::YEAR_2023, $t_wrd->word_2023());
     }
 
     function year_2024(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2024_ID, triples::YEAR_2024, $t_wrd->word_2024());
+        return $this->year_x(triple_names::YEAR_2024_ID, triple_names::YEAR_2024, $t_wrd->word_2024());
     }
 
     function year_2025(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2025_ID, triples::YEAR_2025, $t_wrd->word_2025());
+        return $this->year_x(triple_names::YEAR_2025_ID, triple_names::YEAR_2025, $t_wrd->word_2025());
     }
 
     function year_2026(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2026_ID, triples::YEAR_2026, $t_wrd->word_2026());
+        return $this->year_x(triple_names::YEAR_2026_ID, triple_names::YEAR_2026, $t_wrd->word_2026());
     }
 
     function year_2027(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2027_ID, triples::YEAR_2027, $t_wrd->word_2027());
+        return $this->year_x(triple_names::YEAR_2027_ID, triple_names::YEAR_2027, $t_wrd->word_2027());
     }
 
     function year_2028(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2028_ID, triples::YEAR_2028, $t_wrd->word_2028());
+        return $this->year_x(triple_names::YEAR_2028_ID, triple_names::YEAR_2028, $t_wrd->word_2028());
     }
 
     function year_2029(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2029_ID, triples::YEAR_2029, $t_wrd->word_2029());
+        return $this->year_x(triple_names::YEAR_2029_ID, triple_names::YEAR_2029, $t_wrd->word_2029());
     }
 
     function year_2030(): triple
     {
         $t_wrd = new test_words($this->env);
-        return $this->year_x(triples::YEAR_2030_ID, triples::YEAR_2030, $t_wrd->word_2030());
+        return $this->year_x(triple_names::YEAR_2030_ID, triple_names::YEAR_2030, $t_wrd->word_2030());
     }
 
 

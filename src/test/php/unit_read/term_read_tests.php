@@ -52,9 +52,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_read_tests
@@ -94,10 +94,10 @@ class term_read_tests
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
         $trm->row_mapper_sandbox($db_row, triple_db::FLD_ID, triple_db::FLD_NAME, phrase::FLD_TYPE);
-        $t->assert($t->name . ' triple row mapper', $trm->name(), triples::MATH_CONST);
+        $t->assert($t->name . ' triple row mapper', $trm->name(), triple_names::MATH_CONST);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);
-        $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triples::MATH_CONST);
+        $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triple_names::MATH_CONST);
 
         // test load by term by a formula db row
         $frm = new formula($t->usr1);

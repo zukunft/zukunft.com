@@ -44,8 +44,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -153,7 +153,7 @@ class group_write_tests
 
         // test getting the phrase group id based on word and word link ids
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(triples::CITY_ZH, word_names::INHABITANTS));
+        $phr_lst->load_by_names(array(triple_names::CITY_ZH, word_names::INHABITANTS));
         $zh_city_grp = $phr_lst->get_grp_id();
         $result = $zh_city_grp->get_id();
         if ($result > 0) {
@@ -163,7 +163,7 @@ class group_write_tests
 
         // test names
         $result = implode(",", $zh_city_grp->names());
-        $target = word_names::INHABITANTS . ',' . triples::CITY_ZH;
+        $target = word_names::INHABITANTS . ',' . triple_names::CITY_ZH;
         $t->assert('phrase_group->names', $result, $target);
 
         // test if the phrase group links are correctly recreated when a group is updated

@@ -33,18 +33,16 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once html_paths::ELEMENT . 'element_group.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
@@ -56,8 +54,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -200,8 +199,8 @@ class formula_calc_tests
         $frm = $t_frm->formula();
         $trm_lst = $frm->term_list($t_trm->term_list_time());
         $t->assert($test_name, $trm_lst->dsp_id(),
-            '"' . word_names::MINUTE . '","' . triples::SECOND . '" ('
-            . $lib->term_id(triples::SECOND_ID, triple::class) . ','
+            '"' . word_names::MINUTE . '","' . triple_names::SECOND . '" ('
+            . $lib->term_id(triple_names::SECOND_ID, triple::class) . ','
             . $lib->term_id(word_names::MINUTE_ID, word::class) . ')');
 
         // TODO add result display test

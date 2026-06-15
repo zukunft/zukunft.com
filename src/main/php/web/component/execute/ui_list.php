@@ -65,6 +65,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
+//include_once test_paths::CONST . 'triple_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
@@ -86,6 +87,8 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -672,7 +675,7 @@ class ui_list extends ui_base
     ): string
     {
         $phr = new phrase();
-        $phr->load_by_name(triples::GLOBAL_PROBLEM);
+        $phr->load_by_name(triple_names::GLOBAL_PROBLEM);
         return $this->list_sort($phr, $dto);
     }
 

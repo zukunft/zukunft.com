@@ -44,9 +44,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -79,8 +79,8 @@ class term_write_tests
 
         // ... check also for a triple
         $term = new term($usr);
-        $term->load_by_obj_name(triples::CITY_ZH);
-        $target = '<style class="text-danger">A triple with the name "' . triples::CITY_ZH . '" already exists. '
+        $term->load_by_obj_name(triple_names::CITY_ZH);
+        $target = '<style class="text-danger">A triple with the name "' . triple_names::CITY_ZH . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.</style>';
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);

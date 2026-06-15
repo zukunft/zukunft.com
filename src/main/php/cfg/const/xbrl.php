@@ -40,16 +40,17 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class xbrl
 {
 
-    // the US GAAP taxonomy namespace prefix of the income statement concept ids (triples::US_GAAP)
-    const string NS = triples::US_GAAP_XBRL;
+    // the US GAAP taxonomy namespace prefix of the income statement concept ids (triple_names::US_GAAP)
+    const string NS = triple_names::US_GAAP_XBRL;
     // the us-gaap concepts of the main income statement facts
     // the concept names follow the locator labels of the calculation linkbase
     const string CONCEPT_REVENUES = self::NS . '_Revenues';

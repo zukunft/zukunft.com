@@ -38,8 +38,8 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -71,13 +71,13 @@ class triple_read_tests
         $wrd_company = $t_db->test_word(word_names::COMPANY);
 
         $t->subheader($ts . 'load');
-        $test_name = 'load triple ' . triples::MATH_CONST . ' by name and id';
+        $test_name = 'load triple ' . triple_names::MATH_CONST . ' by name and id';
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triples::MATH_CONST);
+        $trp->load_by_name(triple_names::MATH_CONST);
         $trp_by_id = new triple($t->usr1);
         $trp_by_id->load_by_id($trp->id());
-        $t->assert($test_name, $trp_by_id->name(), triples::MATH_CONST);
-        $t->assert($test_name, $trp_by_id->description, triples::MATH_CONST_COM);
+        $t->assert($test_name, $trp_by_id->name(), triple_names::MATH_CONST);
+        $t->assert($test_name, $trp_by_id->description, triple_names::MATH_CONST_COM);
 
         $test_name = 'triple load ' . word_names::CANTON . ' ' . word_names::ZH . ' by link';
         $lnk_canton = new triple($t->usr1);
@@ -91,14 +91,14 @@ class triple_read_tests
         $result = $lnk_canton->name_generated();
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'triple load ' . triples::COMPANY_ZURICH . ' by link';
+        $test_name = 'triple load ' . triple_names::COMPANY_ZURICH . ' by link';
         $lnk_company = new triple($t->usr1);
         $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
-        $target = triples::COMPANY_ZURICH;
+        $target = triple_names::COMPANY_ZURICH;
         $result = $lnk_company->name();
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'triple generated name of ' . triples::COMPANY_ZURICH . ' via function';
+        $test_name = 'triple generated name of ' . triple_names::COMPANY_ZURICH . ' via function';
         $lnk_company->set_name('');
         $target = 'Zurich (company)';
         $result = $lnk_company->name_generated();

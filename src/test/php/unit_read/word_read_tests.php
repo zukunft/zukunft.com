@@ -44,10 +44,10 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -235,7 +235,7 @@ class word_read_tests
         $t->header($ts);
 
         $t->subheader($ts . 'export');
-        $test_name = triples::PI_NAME;
+        $test_name = triple_names::PI_NAME;
         $trp = $t_trp->triple_pi();
         $t->assert_export_reload($ts . $test_name, $trp);
     }

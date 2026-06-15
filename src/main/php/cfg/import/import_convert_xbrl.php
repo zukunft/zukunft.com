@@ -70,18 +70,19 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
+//include_once test_paths::CONST . 'triple_names.php';
 //include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\const\xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use RuntimeException;
 use ZipArchive;
@@ -106,8 +107,8 @@ class import_convert_xbrl
     // the concept names follow the locator labels of the calculation linkbase
     const array CONCEPT_WORDS = [
         xbrl::CONCEPT_REVENUES => self::MEASURE_SALES,
-        xbrl::CONCEPT_COST_OF_REVENUE => triples::COST_OF_REVENUE,
-        xbrl::CONCEPT_GROSS_PROFIT => triples::GROSS_PROFIT,
+        xbrl::CONCEPT_COST_OF_REVENUE => triple_names::COST_OF_REVENUE,
+        xbrl::CONCEPT_GROSS_PROFIT => triple_names::GROSS_PROFIT,
     ];
     // the parent concept of the calculation linkbase used to create the check formula
     // like the summation-item validation of the Arelle XBRL processor
@@ -118,13 +119,13 @@ class import_convert_xbrl
     // the triple is re-declared like in accounting.json
     // so that the import reuses the base concept instead of creating a word with the same name
     const array CONCEPT_TRIPLES = [
-        triples::GROSS_PROFIT => [
-            json_fields::NAME => triples::GROSS_PROFIT,
+        triple_names::GROSS_PROFIT => [
+            json_fields::NAME => triple_names::GROSS_PROFIT,
             json_fields::EX_FROM => word_names::PROFIT,
             json_fields::EX_VERB => verbs::KIND_OF_NAME,
             json_fields::EX_TO => word_names::GROSS,
         ],
-        triples::COST_OF_REVENUE => [
+        triple_names::COST_OF_REVENUE => [
             json_fields::EX_FROM => word_names::COST,
             json_fields::EX_VERB => verbs::OF_NAME,
             json_fields::EX_TO => word_names::REVENUE,

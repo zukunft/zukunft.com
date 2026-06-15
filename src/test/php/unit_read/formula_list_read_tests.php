@@ -40,11 +40,9 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_list_read_tests
@@ -91,7 +89,7 @@ class formula_list_read_tests
         // test loading the formulas that use the results related to the word second
         $test_name = 'formulas that use the word "second" are at least "scale minute to sec"';
         $trp_sec = new triple($t->usr1);
-        $trp_sec->load_by_name(triples::SECOND);
+        $trp_sec->load_by_name(triple_names::SECOND);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_triple_ref($trp_sec);
         $t->assert_contains($test_name, $frm_lst->names(), [formulas::SCALE_TO_SEC]);
@@ -99,7 +97,7 @@ class formula_list_read_tests
         // test loading the formulas that use the results related to the triple "Zurich (City)"
         $test_name = 'formulas that use the word "Zurich" are at least "population in the biggest city"';
         $trp_zh = new triple($t->usr1);
-        $trp_zh->load_by_name(triples::CITY_ZH);
+        $trp_zh->load_by_name(triple_names::CITY_ZH);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_triple_ref($trp_zh);
         $t->assert_contains($test_name, $frm_lst->names(), [formulas::BIGGEST_CITY]);

@@ -59,11 +59,11 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -95,7 +95,7 @@ class import_write_tests
 
 
         $this->assert_import_json_named($t, $ts, new triple($usr),
-            triples::SYSTEM_TEST_ADD, triples::SYSTEM_TEST_ADD_COM, test_files::IMPORT_TRIPLES);
+            triple_names::SYSTEM_TEST_ADD, triple_names::SYSTEM_TEST_ADD_COM, test_files::IMPORT_TRIPLES);
 
         $test_name = 'remove the test word and word to directly as fallback to cleanup the database as fallback for the triple case';
         $wrd = new word($usr);

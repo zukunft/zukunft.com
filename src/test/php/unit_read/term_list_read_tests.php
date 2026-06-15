@@ -42,8 +42,8 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -73,9 +73,9 @@ class term_list_read_tests
         $t->assert_contains($test_name, $lst->names(), verbs::NOT_SET_NAME);
         $test_name = 'loading phrase names with pattern return the expected triple';
         $lst = new term_list($t->usr1);
-        $pattern = substr(triples::MATH_CONST, 0, -1);
+        $pattern = substr(triple_names::MATH_CONST, 0, -1);
         $lst->load_names($pattern);
-        $t->assert_contains($test_name, $lst->names(), triples::MATH_CONST);
+        $t->assert_contains($test_name, $lst->names(), triple_names::MATH_CONST);
         $test_name = 'loading phrase names with pattern return the expected formula';
         $lst = new term_list($t->usr1);
         $pattern = substr(formulas::SCALE_TO_SEC, 0, -1);
@@ -86,7 +86,7 @@ class term_list_read_tests
         $trm_lst = new term_list($t->usr1);
         $trm_lst->load_by_ids((new trm_ids([1, -1, 2, -2])));
         $result = $trm_lst->name();
-        $target = '"' . triples::MATH_CONST . '","' .
+        $target = '"' . triple_names::MATH_CONST . '","' .
             word_names::MATH . '","' .
             verbs::NOT_SET_NAME . '","' .
             formulas::SCALE_TO_SEC . '"'; // order adjusted based on the number of usage

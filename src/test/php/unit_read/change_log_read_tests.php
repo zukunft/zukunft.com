@@ -133,7 +133,7 @@ class change_log_read_tests
         // TODO Prio 1 activate
         //$first_change = $lst->lst()[0];
         //$t->assert('first triple change is setting', $first_change->old_value, '');
-        //$t->assert('... the given name', $first_change->new_value, triples::PI_NAME);
+        //$t->assert('... the given name', $first_change->new_value, triple_names::PI_NAME);
 
         // check loading of user value changes
         $lst = new change_log_list();

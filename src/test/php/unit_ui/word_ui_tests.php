@@ -41,12 +41,12 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -178,9 +178,9 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $symbol_html, word_names::USD);
         $ex_html = $list->phrases_related_ex_symbols($wrd_usd_rel);
         $test_name = 'the other related phrases are listed';
-        $t->assert_text_contains($test_name, $ex_html, triples::IN_USD);
+        $t->assert_text_contains($test_name, $ex_html, triple_names::IN_USD);
         $test_name = 'the alias triples are excluded from the related phrases';
-        $t->assert_text_not_contains($test_name, $ex_html, triples::DOLLAR_ALIAS);
+        $t->assert_text_not_contains($test_name, $ex_html, triple_names::DOLLAR_ALIAS);
         $test_name = 'without an alias nothing is shown';
         $t->assert($test_name, $list->phrase_aliases($wrd_chf_rel), '');
 
@@ -201,14 +201,14 @@ class word_ui_tests
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related_ex_symbols($wrd_company_rel);
         $test_name = 'the stock with the highest market capitalisation is first';
-        $t->assert_text_order($test_name, $stock_html, triples::COMPANY_ABB, triples::COMPANY_ZURICH);
+        $t->assert_text_order($test_name, $stock_html, triple_names::COMPANY_ABB, triple_names::COMPANY_ZURICH);
         $test_name = 'the stock with the lowest market capitalisation is last';
-        $t->assert_text_order($test_name, $stock_html, triples::COMPANY_ZURICH, triples::COMPANY_VESTAS);
+        $t->assert_text_order($test_name, $stock_html, triple_names::COMPANY_ZURICH, triple_names::COMPANY_VESTAS);
 
         $t->subheader($ts . 'related values sorted by impact');
         $val_html = $list->values_by_word($wrd_zh, $dto);
         $test_name = 'the value of the phrase with the highest impact is shown first';
-        $t->assert_text_order($test_name, $val_html, triples::COMPANY_ZURICH, triples::CITY_ZH_NAME);
+        $t->assert_text_order($test_name, $val_html, triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
         $test_name = 'a word without related values shows an empty value list';
         $t->assert($test_name, $list->values_by_word($wrd, $dto), '');
 
@@ -220,7 +220,7 @@ class word_ui_tests
         $wrd_zh_rel = new word($wrd_zh_be->api_json(
             [api_types::INCL_RELATED, api_types::INCL_PHRASES, api_types::TEST_MODE]));
         $t->assert_text_order($test_name, $list->values_by_word($wrd_zh_rel),
-            triples::COMPANY_ZURICH, triples::CITY_ZH_NAME);
+            triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
 
         // the similar words of a word are the other words linked to the same parent via the 'is a' verb
         // e.g. "Swiss franc" is a "currency" and the other currencies are "Euro" and "US Dollar" (USD)

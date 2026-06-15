@@ -43,7 +43,6 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -55,11 +54,11 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -504,14 +503,14 @@ class value_write_tests
         // using the triple zurich (city) instead of two single words
         // used to test if requesting the value with the separate words returns the value
         $t_db->test_value(array(
-            triples::CITY_ZH,
+            triple_names::CITY_ZH,
             word_names::INHABITANTS
         ),
             values::CITY_ZH_INHABITANTS_2019);
 
         // ... same with the concrete year
         $t_db->test_value(array(
-            triples::CITY_ZH,
+            triple_names::CITY_ZH,
             word_names::INHABITANTS,
             word_names::YEAR_2019
         ),

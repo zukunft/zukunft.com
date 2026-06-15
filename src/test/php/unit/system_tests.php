@@ -31,9 +31,8 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SERVICE . 'config.php';
@@ -197,7 +196,7 @@ class system_tests
         $t->assert_dsp_id($t_frm->formula_link(), 'from "scale minute to sec" (formula_id 1) to "minute" (word_id 103) as phrase as (formula_link_id 1)');
         $t->assert_dsp_id($t_frm->element(), 'word "minute" (' . word_names::MINUTE_ID . ') for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id 1/103) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_frm->expression(), '""second (time)" = "minute" * 60" ({t' . triples::SECOND_ID . '}={w' . word_names::MINUTE_ID . '}*60)');
+        $t->assert_dsp_id($t_frm->expression(), '""second (time)" = "minute" * 60" ({t' . triple_names::SECOND_ID . '}={w' . word_names::MINUTE_ID . '}*60)');
         $t->assert_dsp_id($t_res->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_res->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / ' . words::PCT_ID . ',,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_fig->figure_value(), 'value figure Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');

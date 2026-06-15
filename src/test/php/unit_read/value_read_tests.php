@@ -40,10 +40,10 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -72,11 +72,11 @@ class value_read_tests
         $val->load_objects();
         $t->assert($ts . $test_name, $val->name(), groups::TN_READ);
 
-        $test_name = word_names::PI . ' phrase ' . triples::PI_COM;
+        $test_name = word_names::PI . ' phrase ' . triple_names::PI_COM;
         $phr_lst = $val->grp()->phrase_list();
         if ($phr_lst->count() > 0) {
             $phr = $phr_lst->lst()[0];
-            $t->assert($ts . $test_name, $phr->get_description(), triples::PI_COM);
+            $t->assert($ts . $test_name, $phr->get_description(), triple_names::PI_COM);
             $test_name = word_names::PI . ' phrase code id ' . phrase_types::TRIPLE_HIDDEN;
             $t->assert($ts . $test_name, $phr->type_code_id(), phrase_types::TRIPLE_HIDDEN);
         } else {
@@ -105,13 +105,13 @@ class value_read_tests
 
         $test_name = 'value of a words group can be accessed by the triple e.g. '
             . word_names::INHABITANTS . ' of ' . word_names::ZH . ' and ' . word_names::CANTON
-            . ' is fallback value for ' . triples::CANTON_ZURICH;
+            . ' is fallback value for ' . triple_names::CANTON_ZURICH;
         // check if loading value with a phrase returns a value created with the phrase parts
         // e.g. the value created with words canton and zurich
         // should be returned if requested with the phrase canton of zurich
         // TODO Prio 2 activate
         $val = $t_db->load_value(array(
-            triples::CANTON_ZURICH,
+            triple_names::CANTON_ZURICH,
             word_names::INHABITANTS,
             word_names::MIO,
             word_names::YEAR_2020
@@ -120,7 +120,7 @@ class value_read_tests
         //    $val->number(), values::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
         $test_name = 'value of a triple can be accessed by the word group e.g. '
-            . word_names::INHABITANTS . ' of ' . triples::CANTON_ZURICH
+            . word_names::INHABITANTS . ' of ' . triple_names::CANTON_ZURICH
             . ' is fallback value for ' . word_names::ZH . ' and ' . word_names::CANTON;
         // check if loading value with a phrase returns a value created with the phrase parts
         // e.g. the value created with words canton and zurich
@@ -202,13 +202,13 @@ class value_read_tests
         $t->subheader($ts . 'frontend api');
         $val = new value($t->usr1);
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->add_name(triples::PI_NAME);
+        $phr_lst->add_name(triple_names::PI_NAME);
         $grp = new group_id();
         $val->load_by_id($grp->get_id($phr_lst));
         $val->load_objects();
 
         $test_name = groups::TN_READ;
-        $phr_grp = $t_db->add_phrase_group(array(triples::PI_NAME), groups::TN_READ);
+        $phr_grp = $t_db->add_phrase_group(array(triple_names::PI_NAME), groups::TN_READ);
         $val = $t_db->load_value_by_phr_grp($phr_grp);
         $t->assert_export_reload($ts . $test_name, $val);
 

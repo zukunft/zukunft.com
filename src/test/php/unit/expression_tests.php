@@ -41,13 +41,13 @@ include_once paths::SHARED_CONST . 'words.php';
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -122,7 +122,7 @@ class expression_tests
         $exp = $frm->expression();
         $trm_id_lst = $exp->phrase_id_list($usr_msg);
         $result = $trm_id_lst->dsp_id();
-        $target = 'phrase_id ' . triples::SECOND_ID * -1 . ' for user ' . users::SYSTEM_TEST_ID . ' (' . users::SYSTEM_TEST_NAME . ')';
+        $target = 'phrase_id ' . triple_names::SECOND_ID * -1 . ' for user ' . users::SYSTEM_TEST_ID . ' (' . users::SYSTEM_TEST_NAME . ')';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'phrase id is invalid because the id is not a number';
@@ -139,7 +139,7 @@ class expression_tests
         $exp = $frm->expression();
         $trm_id_lst = $exp->term_id_list_all($usr_msg);
         $result = $trm_id_lst->dsp_id();
-        $target = '"","" (' . triples::SECOND_ID * -2 + 1 . ',' . word_names::MINUTE_ID * 2 - 1 . ')';
+        $target = '"","" (' . triple_names::SECOND_ID * -2 + 1 . ',' . word_names::MINUTE_ID * 2 - 1 . ')';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'id list of missing terms is empty if all terms are given';

@@ -68,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_const;
@@ -364,7 +365,7 @@ class test_cleanup extends test_api
         }
 
         $test_name_loop = 'request to delete the added test phrases';
-        foreach (triples::TEST_TRIPLES as $phr_name) {
+        foreach (triple_names::TEST_TRIPLES as $phr_name) {
             $test_name = $test_name_loop . ' "' . $phr_name . '"';
             $phr = $t_db->load_phrase($phr_name);
             if ($phr->id() <> 0) {
@@ -538,7 +539,7 @@ class test_cleanup extends test_api
         $pos = 1;
         foreach ($names as $name) {
             $class = match ($name) {
-                triples::PI_NAME => triple::class,
+                triple_names::PI_NAME => triple::class,
                 formulas::SCALE_TO_SEC, formulas::THIS_NAME, formulas::PRIOR => formula::class,
                 verbs::NOT_SET, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,

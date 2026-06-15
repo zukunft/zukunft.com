@@ -44,7 +44,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -52,22 +51,22 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_obj;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
-use DateTime;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use DateTime;
 
 class value_tests
 {
@@ -308,7 +307,7 @@ class value_tests
         $test_case = 'show the unit after the value';
         $val = $tl->ui_value($t_val->light_speed());
         $result = $tl->text_from_html($val->with_unit_and_info());
-        $target = groups::LENGTH_DEFINITION . ' ' . values::SPEED_OF_LIGHT_TXT . ' ' . triples::M_PER_S;
+        $target = groups::LENGTH_DEFINITION . ' ' . values::SPEED_OF_LIGHT_TXT . ' ' . triple_names::M_PER_S;
         $t->assert($test_case, $result, $target);
 
         $t->subheader($ts . 'ui validation');

@@ -17,8 +17,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -62,7 +62,7 @@ class triple_tests
 
         $t->subheader($ts . 'sql read standard by name');
         $trp = new triple($usr);
-        $trp->set_name(triples::PI);
+        $trp->set_name(triple_names::PI);
         $t->assert_sql_standard_by_name($sc, $trp);
 
         $t->subheader($ts . 'sql read standard by link');

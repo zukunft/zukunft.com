@@ -40,9 +40,9 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
@@ -103,7 +103,7 @@ class verb_tests
 
         $t->subheader($ts . 'triple usage');
 
-        $this->assert_verb($t, verbs::IS, $t_trp->triple_pi(), word_names::PI . ' (' . triples::MATH_CONST . ')');
+        $this->assert_verb($t, verbs::IS, $t_trp->triple_pi(), word_names::PI . ' (' . triple_names::MATH_CONST . ')');
         $this->assert_verb($t, verbs::PART, $t_trp->triple(), word_names::CONST_NAME . ' ' . verbs::PART_NAME . ' ' . word_names::MATH);
 
 

@@ -38,11 +38,11 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -105,12 +105,12 @@ class phrase_write_tests
         $phr->set_id_from_obj($zh_company_id, triple::class);
         $phr->load_by_id($zh_company_id);
         $result = $phr->name();
-        $target = triples::COMPANY_ZURICH;
+        $target = triple_names::COMPANY_ZURICH;
         $t->assert('phrase->load triple by id ' . $zh_company_id, $result, $target);
 
         $phr_ui = new phrase_ui($phr->api_json());
         $result = $lib->trim_html($phr_ui->dsp_tbl());
-        $target = $lib->trim_html(' <tr> <td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . VIEWS::TRIPLE_ID . '&id=' . $trp->id() . '">' . triples::COMPANY_ZURICH . '</a></td></tr> ');
+        $target = $lib->trim_html(' <tr> <td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . VIEWS::TRIPLE_ID . '&id=' . $trp->id() . '">' . triple_names::COMPANY_ZURICH . '</a></td></tr> ');
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 
         // test getting the parent for phrase Vestas

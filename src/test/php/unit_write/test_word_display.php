@@ -44,9 +44,9 @@ use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
@@ -174,7 +174,7 @@ function run_word_display_test(all_tests $t): void
     // for testing the selector display a company selector and select ABB
     // TODO fix second run
     $phr_corp = $t_db->load_phrase(word_names::COMPANY);
-    $phr_ZH_INS = $t_db->load_phrase(triples::COMPANY_ZURICH);
+    $phr_ZH_INS = $t_db->load_phrase(triple_names::COMPANY_ZURICH);
     /* TODO base it on the api
     $sel = new html_selector;
     $sel->form = 'test_form';
