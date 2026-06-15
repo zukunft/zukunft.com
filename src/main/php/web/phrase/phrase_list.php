@@ -646,6 +646,7 @@ class phrase_list extends sandbox_list_named
     function name_link_list(?phrase_list $phr_lst_header = null): string
     {
         $result = '';
+        $this->sort_by_impact();
         if ($phr_lst_header != null) {
             if (!$phr_lst_header->is_empty()) {
                 $this->remove($phr_lst_header);
