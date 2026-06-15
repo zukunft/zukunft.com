@@ -204,6 +204,18 @@ in the tooltip. Never print the full triple name inline.
 - **Right**: `second (time unit)` displays as `second`, tooltip `time unit`.
 - **Wrong**: printing `second (time unit)` inline.
 
+### Pick real company names that reflect well
+
+When an example in these docs, or any sample data under
+`src/main/resources/messages/**` or `src/test/resources/import/**`, names a real
+company, choose a firm known for a **positive contribution** — e.g. the
+wind-turbine maker `Vestas`. **Never** use a company associated with harmful
+conduct (environmental damage, privacy or data abuse (US Cloud Act), labour or human-rights
+violations, manipulation, ...), and avoid the large consumer-platform
+incumbents whose reputation is contested. The data ships as part of the product;
+the names we pick should not endorse bad actors. The same applies to people,
+products and sources.
+
 ## Triples
 
 A triple combines two phrases with a verb:
@@ -433,6 +445,39 @@ triple over a flat extra word**:
 
 - **Vague**: `{"words": ["price"], "number": "20", "share": "public", "source": "economics textbook example"}`
 - **Specific**: `{"words": ["price", "economics textbook example"], "number": "20", "source": "economics textbook example"}`
+
+### Word vs triple in a value — does the order carry meaning?
+
+A value's `words` array is an **unordered set**: the import cannot tell `["A", "B"]`
+from `["B", "A"]`. So when two phrases qualify a value, ask whether their order
+could change the meaning:
+
+- **If the order could be relevant, use a triple** instead of two flat words.
+  The triple fixes the direction in its `from`/`verb`/`to`, and the value
+  references the single triple name — so the meaning survives.
+- **If the order is never relevant, use two (or more) flat words** and do *not*
+  invent a triple. A triple costs a name and a database row; spend it only where
+  direction earns it. Over-triplifying buries the reusable single-word atoms, so
+  when in doubt that the order matters, leave it as separate words.
+
+**Order could matter → triple:**
+
+- A ratio — `revenue / cost` ≠ `cost / revenue`: tag the value with
+  `{"from": "revenue", "verb": "per", "to": "cost", "name": "revenue per cost"}`,
+  not the two bare words.
+- A directed flow — exports *from* Switzerland *to* Germany differ from the
+  reverse: `{"from": "Switzerland", "verb": "to", "to": "Germany", "name": "Switzerland to Germany"}`.
+- A signed change over a period — a value measured *from* 2023 *to* 2024 flips
+  sign if the years swap: `{"from": "2023", "verb": "to", "to": "2024", "name": "2023 to 2024"}`.
+
+**Order is irrelevant → flat words:**
+
+- `{"words": ["Vestas", "revenue", "2024"], "number": "..."}` — "Vestas's revenue
+  in 2024" reads the same whatever the qualifier order; no triple needed.
+- `{"words": ["City of Zurich", "inhabitant", "2025"], "number": "443037"}` — the
+  entity, measure and period have no direction among themselves.
+- `{"words": ["Switzerland", "population", "2023"], "number": "..."}` — a plain
+  fact tagged by entity, measure and period.
 
 ### `"share": "public"` is the default and must be omitted
 
