@@ -41,6 +41,7 @@ include_once html_paths::WORD . 'word_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -51,9 +52,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -83,7 +84,7 @@ class word_list_tests
         // load only the names
         $wrd_lst = new word_list($usr);
         $t->assert_sql_names($sc, $wrd_lst, new word($usr));
-        $t->assert_sql_names($sc, $wrd_lst, new word($usr), words::MATH);
+        $t->assert_sql_names($sc, $wrd_lst, new word($usr), word_names::MATH);
 
         // load by word ids
         $test_name = 'load words by ids';
@@ -92,7 +93,7 @@ class word_list_tests
 
         // load by word names
         $wrd_lst = new word_list($usr);
-        $wrd_names = array(words::MATH, words::TEST_ADD);
+        $wrd_names = array(word_names::MATH, word_names::TEST_ADD);
         $this->assert_sql_by_names($t, $db_con, $wrd_lst, $wrd_names);
 
         // load by type
@@ -253,12 +254,12 @@ class word_list_tests
         $t->assert($t->name . '->sorted', $wrd_lst_filtered->name(), '"word3","word2"');
 
         // filter by name
-        $test_name = 'filtered word list by name does not contain ' . words::E_SYMBOL . ' any more';
+        $test_name = 'filtered word list by name does not contain ' . word_names::E_SYMBOL . ' any more';
         $wrd_lst = $t_wrd->word_list();
-        $filtered = $wrd_lst->filter_by_name([words::E_SYMBOL]);
-        $t->assert_contains_not($test_name, $filtered->names(), words::E_SYMBOL);
-        $test_name = 'filtered word list by name still contains ' . words::PI_SYMBOL;
-        $t->assert_contains($test_name, $filtered->names(), words::PI_SYMBOL);
+        $filtered = $wrd_lst->filter_by_name([word_names::E_SYMBOL]);
+        $t->assert_contains_not($test_name, $filtered->names(), word_names::E_SYMBOL);
+        $test_name = 'filtered word list by name still contains ' . word_names::PI_SYMBOL;
+        $t->assert_contains($test_name, $filtered->names(), word_names::PI_SYMBOL);
 
         // time list
         $wrd_lst = new word_list($usr);

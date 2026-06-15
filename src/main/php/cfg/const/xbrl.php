@@ -36,11 +36,14 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\const;
 
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class xbrl
 {
@@ -72,7 +75,7 @@ class xbrl
     const string FACT_VALUE = 'value';
 
     // keys used inside the segment array returned by import_convert_xbrl::extract_segment_sales()
-    const string SEG_SECTOR = words::SECTOR;
+    const string SEG_SECTOR = word_names::SECTOR;
     const string SEG_VALUE = self::FACT_VALUE;
 
     // suffix added to the facts file name for the created import json

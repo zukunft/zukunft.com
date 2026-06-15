@@ -39,13 +39,12 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
-use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\start_ui_read_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
@@ -150,14 +149,14 @@ class all_unit_read_tests extends all_unit_tests
         $t_db = new test_db_load($t);
         // add functional test rows to the database for read testing e.g. exclude sandbox entries
         $t_db->test_triple(
-            words::PI, verbs::IS, triples::MATH_CONST,
+            word_names::PI, verbs::IS, triples::MATH_CONST,
             triples::PI_NAME, triples::PI_NAME
         );
         $phr_grp = $t_db->add_phrase_group(array(triples::PI_NAME), groups::TN_READ);
         $t_db->test_value_by_phr_grp($phr_grp, values::PI_LONG);
 
         $t_db->test_triple(
-            words::E_SYMBOL, verbs::ALIAS, words::E,
+            word_names::E_SYMBOL, verbs::ALIAS, word_names::E,
             triples::E, triples::E
         );
         $phr_grp = $t_db->add_phrase_group(array(triples::E), groups::TN_READ);

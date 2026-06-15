@@ -44,10 +44,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\element\element_group;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -108,7 +108,7 @@ class element_group_write_tests
             // prepare the phrase list for the formula element selection
             // means "get all numbers related to the Swiss inhabitants for 2019 and 2020"
             $phr_lst = new phrase_list($usr);
-            $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::MIO));
+            $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO));
 
             // get "this" from the formula element group list
             $elm_grp = $elm_grp_lst->lst()[0];
@@ -117,9 +117,9 @@ class element_group_write_tests
             // test debug id first
             $result = $elm_grp->dsp_id();
             $target = '"'
-                . words::THIS_NAME . '" (' . $frm_this->id() . ') and "'
-                . words::INHABITANTS . '","'
-                . words::MIO . '","'
+                . word_names::THIS_NAME . '" (' . $frm_this->id() . ') and "'
+                . word_names::INHABITANTS . '","'
+                . word_names::MIO . '","'
                 . words::CH . '"';
             $t->assert('element_group->dsp_id', $result, $target);
 
@@ -183,7 +183,7 @@ class element_group_write_tests
             //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
             $fig_lst = $elm_grp->figures();
             $fig_id = $fig_lst->get_first_id();
-            $target = ' 8.505251 {f18}'  . words::YEAR_2020 . ','  . words::INHABITANTS . ','  . words::MIO . ','  . words::CH . '  (58266170593050764)';
+            $target = ' 8.505251 {f18}'  . word_names::YEAR_2020 . ','  . word_names::INHABITANTS . ','  . word_names::MIO . ','  . words::CH . '  (58266170593050764)';
             $t->assert('figure_list->dsp_id', $result, $target);
 
             $fig_lst_ui = new figure_list($fig_lst->api_json());
@@ -195,11 +195,11 @@ class element_group_write_tests
         } else {
             $result = 'formula element group list is empty';
             $target = 'this (3) and "'
-                . words::ABB . '","'
-                . words::SALES . '","'
+                . word_names::ABB . '","'
+                . word_names::SALES . '","'
                 . words::CHF . '","'
-                . words::MIO . '","'
-                . words::YEAR_2015 . '"@';
+                . word_names::MIO . '","'
+                . word_names::YEAR_2015 . '"@';
             $t->assert('element_group->dsp_names', $result, $target);
         }
 

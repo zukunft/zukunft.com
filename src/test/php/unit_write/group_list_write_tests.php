@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class group_list_write_tests
@@ -54,17 +55,17 @@ class group_list_write_tests
 
         // Switzerland inhabitants
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::MIO));
+        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO));
         $country_grp = $phr_lst->get_grp_id();
 
         // Canton of Zurich inhabitants
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO));
+        $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO));
         $canton_grp = $phr_lst->get_grp_id();
 
         // City of Zurich inhabitants
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::ZH, words::CITY, words::INHABITANTS, words::MIO));
+        $phr_lst->load_by_names(array(word_names::ZH, word_names::CITY, word_names::INHABITANTS, word_names::MIO));
         $city_grp = $phr_lst->get_grp_id();
 
         // test add a phrase group to a phrase group list
@@ -73,19 +74,19 @@ class group_list_write_tests
         $grp_lst->add($canton_grp);
         $grp_lst->add($city_grp);
         $result = $grp_lst->name();
-        $target = words::INHABITANTS . ','
-            . words::MIO . ','
+        $target = word_names::INHABITANTS . ','
+            . word_names::MIO . ','
             . words::CH
             . ' and '
-            . words::CANTON . ','
-            . words::INHABITANTS . ','
-            . words::MIO . ','
-            . words::ZH
+            . word_names::CANTON . ','
+            . word_names::INHABITANTS . ','
+            . word_names::MIO . ','
+            . word_names::ZH
             . ' and '
-            . words::CITY . ','
-            . words::INHABITANTS . ','
-            . words::MIO . ','
-            . words::ZH;
+            . word_names::CITY . ','
+            . word_names::INHABITANTS . ','
+            . word_names::MIO . ','
+            . word_names::ZH;
         $t->assert('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
 
@@ -93,18 +94,18 @@ class group_list_write_tests
         $grp_lst = new group_list($usr);
 
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(words::CH, words::INHABITANTS, words::MIO));
+        $wrd_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO));
         $country_grp = $wrd_lst->get_grp();
         $grp_lst->add($country_grp);
 
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO));
+        $wrd_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO));
         $canton_grp = $wrd_lst->get_grp();
         $grp_lst->add($canton_grp);
 
         $phr_lst = $grp_lst->common_phrases();
         $result = $phr_lst->dsp_name();
-        $target = '"' . words::INHABITANTS . '","' . words::MIO . '"';
+        $target = '"' . word_names::INHABITANTS . '","' . word_names::MIO . '"';
         $t->assert('phrase_group_list->common_phrases of ' . $grp_lst->dsp_id(), $result, $target);
 
     }

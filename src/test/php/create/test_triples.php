@@ -53,6 +53,7 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::WORD . 'triple_list.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
@@ -66,13 +67,13 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -536,8 +537,8 @@ class test_triples extends test_objects
         $t_db = new test_db_load($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set_name(triples::SYSTEM_TEST_ADD_VIA_FUNC);
-        $wrd_add_func = $t_db->load_word(words::TEST_ADD_VIA_FUNC);
-        $wrd_math = $t_db->load_word(words::MATH);
+        $wrd_add_func = $t_db->load_word(word_names::TEST_ADD_VIA_FUNC);
+        $wrd_math = $t_db->load_word(word_names::MATH);
         $trp->set_from($wrd_add_func->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($wrd_math->phrase());
@@ -690,7 +691,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(2398, words::SWISS_FRANC . ' ' . verbs::IS_NAME . ' ' . words::CURRENCY);
+        $trp->set(2398, word_names::SWISS_FRANC . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
         $trp->set_from($t_wrd->swiss_franc()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
@@ -706,7 +707,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(2399, words::EURO . ' ' . verbs::IS_NAME . ' ' . words::CURRENCY);
+        $trp->set(2399, word_names::EURO . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
         $trp->set_from($t_wrd->euro()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
@@ -786,7 +787,7 @@ class test_triples extends test_objects
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
-        $trp->set(triples::US_DOLLAR_ID, words::US_DOLLAR . ' ' . verbs::IS_NAME . ' ' . words::CURRENCY);
+        $trp->set(triples::US_DOLLAR_ID, word_names::US_DOLLAR . ' ' . verbs::IS_NAME . ' ' . word_names::CURRENCY);
         $trp->set_from($t_wrd->us_dollar()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->currency()->phrase());
@@ -1171,7 +1172,7 @@ class test_triples extends test_objects
         $trp->set_from($phr_lst->get($from_id)->phrase());
         $trp->set_verb($t_vrb->random());
         $trp->set_to($phr_lst->get($to_id)->phrase());
-        $trp->set_name(words::TEST_SPEED_PREFIX . $id);
+        $trp->set_name(word_names::TEST_SPEED_PREFIX . $id);
 
         $type_id = rand(1, $sys->typ_lst->phr_typ->count());
         $trp->set_type_id($type_id, $this->env->usr1);

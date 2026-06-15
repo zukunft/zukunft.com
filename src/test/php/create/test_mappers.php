@@ -93,6 +93,7 @@ include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_languages.php';
 include_once test_paths::CREATE . 'test_phrases.php';
 include_once test_paths::CREATE . 'test_terms.php';
@@ -184,7 +185,6 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
@@ -194,6 +194,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 // test group (alphabetic by FQN)
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -367,7 +368,7 @@ class test_mappers
                 $obj->name = users::TEST_USER_NAME_UPDATED;
                 break;
             case word::class;
-                $obj->set_name(words::TEST_RENAMED);
+                $obj->set_name(word_names::TEST_RENAMED);
                 break;
             case verb::class;
                 $obj->set_name(verbs::TEST_ADD_RENAMED);

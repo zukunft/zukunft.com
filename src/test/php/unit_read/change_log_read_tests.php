@@ -43,9 +43,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_components;
@@ -106,7 +105,7 @@ class change_log_read_tests
         // ... and if the first entry is the adding of the word name
         $first_change = $lst->lst()[0];
         $t->assert('first word change is adding', $first_change->old_value, '');
-        $t->assert('... the name', $first_change->new_value, words::MATH);
+        $t->assert('... the name', $first_change->new_value, word_names::MATH);
 
         // check loading of verb name changes
         $lst = new change_log_list();

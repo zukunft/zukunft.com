@@ -39,8 +39,8 @@ include_once paths::SHARED_CONST . 'triples.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -65,10 +65,10 @@ class triple_read_tests
         // load the verb used for testing
         $is_id = $sys->typ_lst->vrb->id(verbs::IS);
         // load the words used for testing the triples (Zurich (City) and Zurich (Canton)
-        $wrd_zh = $t_db->load_word(words::ZH);
-        $wrd_canton = $t_db->load_word(words::CANTON);
+        $wrd_zh = $t_db->load_word(word_names::ZH);
+        $wrd_canton = $t_db->load_word(word_names::CANTON);
         // create the group test word
-        $wrd_company = $t_db->test_word(words::COMPANY);
+        $wrd_company = $t_db->test_word(word_names::COMPANY);
 
         $t->subheader($ts . 'load');
         $test_name = 'load triple ' . triples::MATH_CONST . ' by name and id';
@@ -79,14 +79,14 @@ class triple_read_tests
         $t->assert($test_name, $trp_by_id->name(), triples::MATH_CONST);
         $t->assert($test_name, $trp_by_id->description, triples::MATH_CONST_COM);
 
-        $test_name = 'triple load ' . words::CANTON . ' ' . words::ZH . ' by link';
+        $test_name = 'triple load ' . word_names::CANTON . ' ' . word_names::ZH . ' by link';
         $lnk_canton = new triple($t->usr1);
         $lnk_canton->load_by_link_id($wrd_zh->id(), $is_id, $wrd_canton->id());
-        $target = words::ZH . ' (' . words::CANTON . ')';
+        $target = word_names::ZH . ' (' . word_names::CANTON . ')';
         $result = $lnk_canton->name();
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
 
-        $test_name = 'triple generated name of ' . words::CANTON . ' ' . words::ZH . ' via function';
+        $test_name = 'triple generated name of ' . word_names::CANTON . ' ' . word_names::ZH . ' via function';
         $lnk_canton->set_name('');
         $result = $lnk_canton->name_generated();
         $t->assert($test_name, $result, $target);

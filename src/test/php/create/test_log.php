@@ -79,6 +79,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::LOG . 'change_log_list.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -117,7 +118,6 @@ use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
@@ -126,6 +126,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
@@ -202,8 +203,8 @@ class test_log
         $chg = $this->log_entry_add();
         $chg->set_table(change_tables::WORD);
         $chg->set_field(change_fields::FLD_WORD_NAME);
-        $chg->new_value = words::MATH;
-        $chg->row_id = words::MATH_ID;
+        $chg->new_value = word_names::MATH;
+        $chg->row_id = word_names::MATH_ID;
         return $chg;
     }
 
@@ -215,7 +216,7 @@ class test_log
     {
         $chg = $this->log_word_add();
         $chg->set_action(change_actions::UPDATE);
-        $chg->old_value = words::TEST_RENAMED;
+        $chg->old_value = word_names::TEST_RENAMED;
         return $chg;
     }
 
@@ -416,7 +417,7 @@ class test_log
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::WORD);
         $chg->set_field(change_fields::FLD_WORD_NAME);
-        $chg->new_value = words::MATH;
+        $chg->new_value = word_names::MATH;
         $chg->row_id = 1;
         return $chg;
     }
@@ -433,7 +434,7 @@ class test_log
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::WORD);
         $chg->set_field(change_fields::FLD_WORD_NAME);
-        $chg->new_value = words::MATH;
+        $chg->new_value = word_names::MATH;
         $chg->row_id = 1;
         return $chg;
     }
@@ -566,7 +567,7 @@ class test_log
             change::class,
             changes_norm::class,
             changes_big::class
-            => words::MATH,
+            => word_names::MATH,
             change_values_prime::class,
             change_values_big::class,
             change_values_norm::class
@@ -671,9 +672,9 @@ class test_log
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::TRIPLE);
-        $chg->new_from_id = words::CONST_ID;
+        $chg->new_from_id = word_names::CONST_ID;
         $chg->new_link_id = verbs::PART_ID;
-        $chg->new_to_id = words::MATH_ID;
+        $chg->new_to_id = word_names::MATH_ID;
         $chg->row_id = 1;
         return $chg;
     }

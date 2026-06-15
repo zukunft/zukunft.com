@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
@@ -63,12 +64,12 @@ class group_write_tests
         $t_db = new test_db_load($t);
         $t_phr = new test_phrases($t);
         $grp_add_lst = [
-            [groups::TN_ADD_PRIME_FUNC, true, words::TEST_ADD_GROUP_PRIME_FUNC, sql_type::PRIME, 'function', words::TEST_RENAMED_GROUP_PRIME_FUNC],
-            [groups::TN_ADD_PRIME_SQL, false, words::TEST_ADD_GROUP_PRIME_SQL, sql_type::PRIME, 'insert', words::TEST_RENAMED_GROUP_PRIME_SQL],
-            [groups::TN_ADD_MOST_FUNC, true, words::TEST_ADD_GROUP_MOST_FUNC, sql_type::MOST, 'function', words::TEST_RENAMED_GROUP_MOST_FUNC],
-            [groups::TN_ADD_MOST_SQL, false, words::TEST_ADD_GROUP_MOST_SQL, sql_type::MOST, 'insert', words::TEST_RENAMED_GROUP_MOST_SQL],
-            [groups::TN_ADD_BIG_FUNC, true, words::TEST_ADD_GROUP_BIG_FUNC, sql_type::BIG, 'function', words::TEST_RENAMED_GROUP_BIG_FUNC],
-            [groups::TN_ADD_BIG_SQL, false, words::TEST_ADD_GROUP_BIG_SQL, sql_type::BIG, 'insert', words::TEST_RENAMED_GROUP_BIG_SQL],
+            [groups::TN_ADD_PRIME_FUNC, true, word_names::TEST_ADD_GROUP_PRIME_FUNC, sql_type::PRIME, 'function', word_names::TEST_RENAMED_GROUP_PRIME_FUNC],
+            [groups::TN_ADD_PRIME_SQL, false, word_names::TEST_ADD_GROUP_PRIME_SQL, sql_type::PRIME, 'insert', word_names::TEST_RENAMED_GROUP_PRIME_SQL],
+            [groups::TN_ADD_MOST_FUNC, true, word_names::TEST_ADD_GROUP_MOST_FUNC, sql_type::MOST, 'function', word_names::TEST_RENAMED_GROUP_MOST_FUNC],
+            [groups::TN_ADD_MOST_SQL, false, word_names::TEST_ADD_GROUP_MOST_SQL, sql_type::MOST, 'insert', word_names::TEST_RENAMED_GROUP_MOST_SQL],
+            [groups::TN_ADD_BIG_FUNC, true, word_names::TEST_ADD_GROUP_BIG_FUNC, sql_type::BIG, 'function', word_names::TEST_RENAMED_GROUP_BIG_FUNC],
+            [groups::TN_ADD_BIG_SQL, false, word_names::TEST_ADD_GROUP_BIG_SQL, sql_type::BIG, 'insert', word_names::TEST_RENAMED_GROUP_BIG_SQL],
         ];
 
         // start the test section (ts)
@@ -118,7 +119,7 @@ class group_write_tests
         // test if the time word is correctly excluded
         // TODO move to phrase list tests
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::YEAR_2020));
+        $wrd_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
         $phr_grp = new group($usr);
         $phr_grp->load_by_phr_lst($wrd_lst->phrase_list());
         $result = $phr_grp->id();
@@ -143,7 +144,7 @@ class group_write_tests
             $phr_grp_reload->load_by_id($phr_grp->id());
             $wrd_lst_reloaded = $phr_grp_reload->phrase_list()->words();
             $result = array_diff(
-                array(words::MIO, words::ZH, words::CANTON, words::INHABITANTS, words::CH),
+                array(word_names::MIO, word_names::ZH, word_names::CANTON, word_names::INHABITANTS, words::CH),
                 $wrd_lst_reloaded->names()
             );
         }
@@ -152,7 +153,7 @@ class group_write_tests
 
         // test getting the phrase group id based on word and word link ids
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(triples::CITY_ZH, words::INHABITANTS));
+        $phr_lst->load_by_names(array(triples::CITY_ZH, word_names::INHABITANTS));
         $zh_city_grp = $phr_lst->get_grp_id();
         $result = $zh_city_grp->get_id();
         if ($result > 0) {
@@ -162,12 +163,12 @@ class group_write_tests
 
         // test names
         $result = implode(",", $zh_city_grp->names());
-        $target = words::INHABITANTS . ',' . triples::CITY_ZH;
+        $target = word_names::INHABITANTS . ',' . triples::CITY_ZH;
         $t->assert('phrase_group->names', $result, $target);
 
         // test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS));
+        $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS));
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($usr);
         $grp_check->set_id($grp->id());
@@ -177,7 +178,7 @@ class group_write_tests
 
         // second test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::YEAR_2020));
+        $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($usr);
         $grp_check->set_id($grp->id());

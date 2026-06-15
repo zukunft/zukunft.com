@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -75,34 +76,34 @@ class phrase_list_write_tests
 
         // TODO make prepare not needed any more
         $t_db->test_word(words::CHF, phrase_type_shared::MEASURE);
-        $t_db->test_word(words::SALES);
+        $t_db->test_word(word_names::SALES);
 
         // load the main test word and verb
-        $wrd_company = $t_db->test_word(words::MATH);
+        $wrd_company = $t_db->test_word(word_names::MATH);
         $is_id = $sys->typ_lst->vrb->id(verbs::IS);
 
         // prepare test by loading Insurance Zurich
-        $wrd_zh = $t_db->load_word(words::ZH);
+        $wrd_zh = $t_db->load_word(word_names::ZH);
         $lnk_company = new triple($usr);
         $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
         $triple_sample_id = $lnk_company->id();
 
         // test the phrase loading via id
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(words::ABB, words::VESTAS));
+        $wrd_lst->load_by_names(array(word_names::ABB, word_names::VESTAS));
         $id_lst = $wrd_lst->ids();
         $id_lst[] = $triple_sample_id * -1;
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_names_by_ids(new phr_ids($id_lst));
-        $target = '"' . words::ABB . '","' . words::VESTAS . '","' . triples::COMPANY_ZURICH . '"';
-        $target = '"' . words::ABB . '","' . words::VESTAS . '"';
+        $target = '"' . word_names::ABB . '","' . word_names::VESTAS . '","' . triples::COMPANY_ZURICH . '"';
+        $target = '"' . word_names::ABB . '","' . word_names::VESTAS . '"';
         $result = $phr_lst->dsp_name();
         $t->assert('phrase->load via id', $result, $target);
 
         // ... the complete word list, which means split the triples into single words
         $wrd_lst_all = $phr_lst->wrd_lst_all();
-        $target = '"' . words::ABB . '","' . words::VESTAS . '","' . words::ZH . '","' . words::COMPANY . '"';
-        $target = '"' . words::ABB . '","' . words::VESTAS . '"';
+        $target = '"' . word_names::ABB . '","' . word_names::VESTAS . '","' . word_names::ZH . '","' . word_names::COMPANY . '"';
+        $target = '"' . word_names::ABB . '","' . word_names::VESTAS . '"';
         $result = $wrd_lst_all->name();
         $t->assert('phrase->wrd_lst_all of list above', $result, $target);
 
@@ -110,11 +111,11 @@ class phrase_list_write_tests
         // test getting the parent for phrase list with ABB
         $lib = new library();
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(words::ABB));
+        $wrd_lst->load_by_names(array(word_names::ABB));
         $phr_lst = $wrd_lst->phrase_list();
         $lst_parents = $phr_lst->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::IS));
         $result = $lib->dsp_array($lst_parents->names());
-        $target = words::COMPANY; // order adjusted based on the number of usage
+        $target = word_names::COMPANY; // order adjusted based on the number of usage
         $t->assert('phrase_list->foaf_parents for ' . $phr_lst->dsp_name() . ' up', $result, $target);
 
         // ... same using is
@@ -125,7 +126,7 @@ class phrase_list_write_tests
 
         // ... same with Vestas
         $wrd_lst = new word_list($usr);
-        $phr_lst->load_by_names(array(words::VESTAS));
+        $phr_lst->load_by_names(array(word_names::VESTAS));
         $phr_lst = $wrd_lst->phrase_list();
         $lst_is = $phr_lst->is();
         $result = $lib->dsp_array($lst_is->names());
@@ -134,20 +135,20 @@ class phrase_list_write_tests
 
         // test the excluding function
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::ABB, words::SALES, words::CHF, words::MIO, words::YEAR_2017));
+        $phr_lst->load_by_names(array(word_names::ABB, word_names::SALES, words::CHF, word_names::MIO, word_names::YEAR_2017));
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_time();
         $result = $phr_lst_ex->names();
-        $target = [words::ABB, words::SALES, words::CHF, words::MIO];
+        $target = [word_names::ABB, word_names::SALES, words::CHF, word_names::MIO];
         $t->assert_contains('phrase_list->ex_time of ' . $phr_lst->dsp_name(), $result, $target);
         $result = $phr_lst_ex->names();
-        $target = [words::YEAR_2017];
+        $target = [word_names::YEAR_2017];
         $t->assert_contains_not('phrase_list->ex_time ex ' . $phr_lst->dsp_name(), $result, $target);
 
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_measure();
         $result = $phr_lst_ex->names();
-        $target = [words::ABB, words::SALES, words::MIO, words::YEAR_2017];
+        $target = [word_names::ABB, word_names::SALES, word_names::MIO, word_names::YEAR_2017];
         $t->assert_contains('phrase_list->ex_measure of ' . $phr_lst->dsp_name(), $target, $result);
         $result = $phr_lst_ex->names();
         $target = [words::CHF];
@@ -156,10 +157,10 @@ class phrase_list_write_tests
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_scaling();
         $result = $phr_lst_ex->names();
-        $target = [words::ABB, words::SALES, words::CHF, words::YEAR_2017];
+        $target = [word_names::ABB, word_names::SALES, words::CHF, word_names::YEAR_2017];
         $t->assert_contains('phrase_list->ex_scaling of ' . $phr_lst->dsp_name(), $result, $target);
         $result = $phr_lst_ex->names();
-        $target = [words::MIO];
+        $target = [word_names::MIO];
         $t->assert_contains_not('phrase_list->ex_scaling ex ' . $phr_lst->dsp_name(), $result, $target);
 
         // cleanup - fallback delete

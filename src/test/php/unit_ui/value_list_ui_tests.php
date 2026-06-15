@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -106,7 +107,7 @@ class value_list_ui_tests
         $cfg = new config($t_val->value_list_all()->api_json([api_types::INCL_PHRASES]));
         $test_name = 'a loaded config value is returned by the phrase names';
         // get_by returns the display value, so the number is rounded for the user
-        $t->assert($test_name, $cfg->get_by([words::PI_SYMBOL]), round(values::PI_LONG, 2));
+        $t->assert($test_name, $cfg->get_by([word_names::PI_SYMBOL]), round(values::PI_LONG, 2));
         $test_name = 'a missing config value returns the given default';
         $t->assert($test_name, $cfg->get_by([words::POD], 7), 7);
 

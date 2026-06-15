@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\element\element;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -63,7 +64,7 @@ class element_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
+        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
         $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         // load increase formula for testing
@@ -73,7 +74,7 @@ class element_write_tests
 
         // get the test word ids
         $wrd_country = $t_db->load_word(words::COUNTRY);
-        $wrd_canton = $t_db->load_word(words::CANTON);
+        $wrd_canton = $t_db->load_word(word_names::CANTON);
         $vrb_id = $sys->typ_lst->vrb->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
@@ -152,7 +153,7 @@ class element_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
+        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
         $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         // load increase formula for testing

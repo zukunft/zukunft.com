@@ -85,6 +85,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+//include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -107,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -1013,11 +1015,12 @@ class word extends sandbox_code_id
      * fixed
      */
 
+    // TODO Prio 1 review because is it really needed?
     function math(): word
     {
         $wrd = new word();
-        $wrd->id = words::MATH_ID;
-        $wrd->name = words::MATH;
+        $wrd->id = word_names::MATH_ID;
+        $wrd->name = word_names::MATH;
         return $wrd;
     }
 

@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -62,11 +63,11 @@ class expression_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_price = $t_db->test_word(words::TEST_PRICE);
-        $wrd_earning = $t_db->test_word(words::TEST_EARNING);
-        $wrd_pe = $t_db->test_word(words::TEST_PE);
+        $wrd_price = $t_db->test_word(word_names::TEST_PRICE);
+        $wrd_earning = $t_db->test_word(word_names::TEST_EARNING);
+        $wrd_pe = $t_db->test_word(word_names::TEST_PE);
         $frm_ratio = $t_db->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP, $usr_msg);
-        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
+        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
         $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         $back = '';
@@ -77,7 +78,7 @@ class expression_write_tests
         $frm_pe = $t_db->load_formula(formulas::SYSTEM_TEST_RATIO);
 
         $result = $frm_sector->usr_text;
-        $target = '= "' . words::COUNTRY . '" "differentiator" "' . words::CANTON . '" / "' . words::TEST_TOTAL . '"';
+        $target = '= "' . words::COUNTRY . '" "differentiator" "' . word_names::CANTON . '" / "' . word_names::TEST_TOTAL . '"';
         $t->assert('user text', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // create expressions for testing
@@ -134,9 +135,9 @@ class expression_write_tests
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
         }
-        $target = '"' . words::TEST_EARNING . '","' . words::TEST_PRICE . '"';
+        $target = '"' . word_names::TEST_EARNING . '","' . word_names::TEST_PRICE . '"';
         if ($result != $target) {
-            $target = '"' . words::TEST_PRICE . '","' . words::TEST_EARNING . '"';
+            $target = '"' . word_names::TEST_PRICE . '","' . word_names::TEST_EARNING . '"';
         }
         $t->assert('phr_lst for "' . $exp_pe->dsp_id() . '"', $result, $target);
 

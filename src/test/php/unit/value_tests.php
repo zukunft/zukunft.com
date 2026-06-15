@@ -60,8 +60,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -163,7 +162,7 @@ class value_tests
         $usr_msg = new user_message();
         $val = $t_val->value_ch();
         $result = $val->scale_calc($t_trm->dto_scale_none(), $usr_msg);
-        $target = 'no scaling formula found for the word ' . words::MIO_SHORT;
+        $target = 'no scaling formula found for the word ' . word_names::MIO_SHORT;
         $t->assert($test_name, $usr_msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);

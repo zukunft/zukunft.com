@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -244,7 +245,7 @@ class formula_list_tests
     {
         // prepare
         $wrd = new word($t->usr1);
-        $wrd->set(words::DEFAULT_WORD_ID,words::TEST_ADD);
+        $wrd->set(words::DEFAULT_WORD_ID,word_names::TEST_ADD);
         $phr = $wrd->phrase();
 
         // check the Postgres query syntax

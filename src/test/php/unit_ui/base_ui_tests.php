@@ -74,11 +74,11 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -163,7 +163,7 @@ class base_ui_tests
         $val_city->set_number(values::CITY_ZH_INHABITANTS_2019);
         $val_city_ui = new value_ui($val_city->api_json([api_types::INCL_PHRASES]));
         $val_city_html = $val_city_ui->name_link();
-        $t->assert_text_contains('', $val_city_html, words::CITY);
+        $t->assert_text_contains('', $val_city_html, word_names::CITY);
 
         // create the value for the inhabitants of the city of zurich
         $val_canton = new value($t->usr1);
@@ -171,7 +171,7 @@ class base_ui_tests
         $val_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
         $val_canton_ui = new value_ui($val_canton->api_json([api_types::INCL_PHRASES]));
         $val_canton_html = $val_canton_ui->name_link();
-        $t->assert_text_contains('', $val_canton_html, words::CANTON);
+        $t->assert_text_contains('', $val_canton_html, word_names::CANTON);
 
         // create the value for the inhabitants of Switzerland
         $val_ch = new value($t->usr1);
@@ -188,7 +188,7 @@ class base_ui_tests
         $res_city->set_number(values::CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
         $res_city_ui = new value_ui($res_city->api_json([api_types::INCL_PHRASES]));
         $res_city_html = $res_city_ui->name_link();
-        $t->assert_text_contains('', $res_city_html, words::CITY);
+        $t->assert_text_contains('', $res_city_html, word_names::CITY);
 
         // create the formula result for the inhabitants of the canton of zurich
         $res_canton = new result($t->usr1);

@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -158,7 +159,7 @@ class word_ui_tests
         $test_name = 'the symbol triple of the word is shown';
         $t->assert_text_contains($test_name, $list->parents_of_word($wrd_chf_rel), words::CHF);
         $test_name = 'the category triple of the word is shown';
-        $t->assert_text_contains($test_name, $list->children_of_word($wrd_chf_rel), words::CURRENCY);
+        $t->assert_text_contains($test_name, $list->children_of_word($wrd_chf_rel), word_names::CURRENCY);
         $test_name = 'without related phrases the section stays empty';
         $t->assert($test_name, $list->parents_of_word($wrd_chf, new phrase_list()), '');
 
@@ -169,12 +170,12 @@ class word_ui_tests
         $test_name = 'the alias line is not broken across lines';
         $t->assert_text_contains($test_name, $alias_html, styles::TEXT_NOWRAP);
         $test_name = 'the dollar sign is linked as alias';
-        $t->assert_text_contains($test_name, $alias_html, words::DOLLAR);
+        $t->assert_text_contains($test_name, $alias_html, word_names::DOLLAR);
         $symbol_html = $list->phrase_symbols($wrd_usd_rel);
         $test_name = 'one symbol is shown with the singular text';
         $t->assert_text_not_contains($test_name, $symbol_html, $mtr->txt(msg_id::PHRASE_SYMBOLS));
         $test_name = 'the currency code is linked as symbol';
-        $t->assert_text_contains($test_name, $symbol_html, words::USD);
+        $t->assert_text_contains($test_name, $symbol_html, word_names::USD);
         $ex_html = $list->phrases_related_ex_symbols($wrd_usd_rel);
         $test_name = 'the other related phrases are listed';
         $t->assert_text_contains($test_name, $ex_html, triples::IN_USD);
@@ -223,12 +224,12 @@ class word_ui_tests
 
         // the similar words of a word are the other words linked to the same parent via the 'is a' verb
         // e.g. "Swiss franc" is a "currency" and the other currencies are "Euro" and "US Dollar" (USD)
-        $test_name = 'word->similar for ' . words::SWISS_FRANC;
+        $test_name = 'word->similar for ' . word_names::SWISS_FRANC;
         $similar = $t_wrd->swiss_franc_ui()->similar($t_phr->list_currency_ui());
         $names = $similar->names();
         sort($names);
         $result = implode(',', $names);
-        $target = words::EURO . ',' . words::US_DOLLAR;
+        $target = word_names::EURO . ',' . word_names::US_DOLLAR;
         $t->assert($test_name, $result, $target);
 
     }

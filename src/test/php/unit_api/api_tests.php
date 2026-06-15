@@ -40,6 +40,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_api;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -77,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -86,7 +88,6 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
-use Zukunft\ZukunftCom\test\php\utils\test_api;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::MODEL_LOG . 'change_log.php';
@@ -98,6 +99,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 
 class api_tests
@@ -131,7 +133,7 @@ class api_tests
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, url_var::EMAIL);
         $t->assert_api_get(word::class);
         $t->assert_api_get_json(word::class, url_var::WORD);
-        $t->assert_api_get_by_text(word::class, words::MATH);
+        $t->assert_api_get_by_text(word::class, word_names::MATH);
         $t->assert_api_get(verb::class);
         $t->assert_api_get_by_text(verb::class, verbs::NOT_SET_NAME);
         $t->assert_api_get(triple::class);
@@ -158,18 +160,18 @@ class api_tests
         $t->subheader($ts . 'api list');
 
         $t->assert_api_get_list(type_lists::class);
-        $t->assert_api_get_list(word_list::class, [words::MATH_ID, words::CONST_ID, words::PI_ID]);
-        $t->assert_api_get_list(word_list::class, words::MATH, url_var::PATTERN);
+        $t->assert_api_get_list(word_list::class, [word_names::MATH_ID, word_names::CONST_ID, word_names::PI_ID]);
+        $t->assert_api_get_list(word_list::class, word_names::MATH, url_var::PATTERN);
         // TODO Prio 1 review and add triple links to phrases
-        $t->assert_api_get_list(phrase_list::class, [words::MATH_ID, words::CONST_ID, words::PI_ID, triples::MATH_CONST_ID * -1, triples::PI_ID * -1]);
-        $t->assert_api_get_list(phrase_list::class, words::MATH, url_var::PATTERN);
-        $t->assert_api_get_list(term_list::class, [words::MATH_ID, triples::MATH_CONST_ID * -1, verbs::NOT_SET_ID * 2, formulas::SCALE_TO_SEC_ID * -2]);
+        $t->assert_api_get_list(phrase_list::class, [word_names::MATH_ID, word_names::CONST_ID, word_names::PI_ID, triples::MATH_CONST_ID * -1, triples::PI_ID * -1]);
+        $t->assert_api_get_list(phrase_list::class, word_names::MATH, url_var::PATTERN);
+        $t->assert_api_get_list(term_list::class, [word_names::MATH_ID, triples::MATH_CONST_ID * -1, verbs::NOT_SET_ID * 2, formulas::SCALE_TO_SEC_ID * -2]);
         $t->assert_api_get_list(formula_list::class, [formulas::SCALE_TO_SEC_ID]);
         $t->assert_api_get_list(view_list::class, views::START_NAME, url_var::PATTERN);
         $t->assert_api_get_list(component_list::class, views::WORD_ADD_ID, url_var::VIEW);
 
-        $t->assert_api_chg_list(word::class,words::MATH_ID);
-        $t->assert_api_chg_list(word::class,words::MATH_ID, change_fields::FLD_WORD_NAME);
+        $t->assert_api_chg_list(word::class,word_names::MATH_ID);
+        $t->assert_api_chg_list(word::class,word_names::MATH_ID, change_fields::FLD_WORD_NAME);
 
         $t->assert_api_get_list(
             sys_log_list::class,
@@ -235,15 +237,15 @@ class api_tests
         // load the frontend objects via api call
         $test_name = 'api id and name call of a word';
         $wrd_zh = new word_ui();
-        $wrd_zh->load_by_name(words::ZH);
+        $wrd_zh->load_by_name(word_names::ZH);
         $wrd_zh->load_by_id($wrd_zh->id());
-        $t->assert($test_name, $wrd_zh->name(), words::ZH);
+        $t->assert($test_name, $wrd_zh->name(), word_names::ZH);
 
         $test_name = 'api id and name call of a phrase';
         $phr_zh = new phrase_ui();
-        $phr_zh->load_by_name(words::ZH);
+        $phr_zh->load_by_name(word_names::ZH);
         $phr_zh->load_by_id($phr_zh->id());
-        $t->assert($test_name, $phr_zh->name(), words::ZH);
+        $t->assert($test_name, $phr_zh->name(), word_names::ZH);
 
     }
 

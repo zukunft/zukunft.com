@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -80,7 +81,7 @@ class verb_read_tests
         $countries = $country->children();
         $t->assert_contains('is a based on ' . words::COUNTRY,
             $countries->names(),
-            array(words::CH, words::GERMANY)
+            array(words::CH, word_names::GERMANY)
         );
 
         // 'is part of' - test the direct selection of the members via 'is part of' verb

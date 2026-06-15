@@ -35,6 +35,7 @@
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class formulas
 {
@@ -71,7 +72,7 @@ class formulas
     const int SCALE_HOUR_ID = 2;
     const string SCALE_HOUR_EXP = '{w24}={w105}*3600';
     const string DIAMETER = '= "circumference" / "Pi"';
-    const string DIAMETER_DB = '={w' . words::CIRCUMFERENCE_ID . '}/{w' . words::PI_ID . '}';
+    const string DIAMETER_DB = '={w' . word_names::CIRCUMFERENCE_ID . '}/{w' . word_names::PI_ID . '}';
     const string THIS_NAME = 'this';
     const int THIS_ID = 18;
     const string THIS_EXP = '="Now"';
@@ -82,18 +83,18 @@ class formulas
     const string PERCENT = 'percent';
     const string INCREASE = 'increase';
     const int INCREASE_ID = 21;
-    const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '"';
-    const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . words::THIS_NAME . '" / "' . words::PRIOR_NAME . '" )';
+    const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
+    const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )';
     const string INCREASE_DB = '{w' . words::PCT_ID . '}=({f' . formulas::THIS_ID . '}-{f' . formulas::PRIOR_ID . '})/{f' . formulas::PRIOR_ID . '}';
     const string LITRE_TO_M3 = 'scale litre to m3';
     const string BIGGEST_CITY = 'population in the city of Zurich in percent of '  . words::CH;
     const string SCALE_MIO = 'scale millions to one';
     const int SCALE_MIO_ID = 3;
     const string SCALE_MIO_EXP = '"one" = "millions" * 1000000';
-    const string SCALE_MIO_DB = '{w' . words::ONE_ID . '} = {w' . words::MIO_ID . '} * 1000000';
+    const string SCALE_MIO_DB = '{w' . word_names::ONE_ID . '} = {w' . word_names::MIO_ID . '} * 1000000';
     const string PARTS_IN_PERCENT = 'parts in percent';
     const string PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "' . verbs::OF_NAME . '" / "total"'; // TODO check if separate verb "of each" is needed
-    const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . words::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
+    const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
     const string CITY_POPULATION = 'city population';
     const int CITY_POPULATION_ID = 26;
     const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "City" )';

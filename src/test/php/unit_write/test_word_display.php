@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
@@ -68,9 +69,9 @@ function run_word_display_test(all_tests $t): void
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
     // correct test would be using a "fixed HTML text contains"
     $wrd_ZH = new word($usr);
-    $wrd_ZH->load_by_name(words::ZH);
+    $wrd_ZH->load_by_name(word_names::ZH);
     $direction = foaf_direction::UP;
-    $target = words::COMPANY;
+    $target = word_names::COMPANY;
     // get the link types related to the word
     $link_types = $wrd_ZH->link_types($direction);
     $link_types_ui = new verb_list_ui($link_types->api_json());
@@ -81,7 +82,7 @@ function run_word_display_test(all_tests $t): void
 
     // ... and the other side
     $wrd_ZH = new word($usr);
-    $wrd_ZH->load_by_name(words::ZH);
+    $wrd_ZH->load_by_name(word_names::ZH);
     $direction = foaf_direction::DOWN;
     $target = 'ZU';
     $link_types = $wrd_ZH->link_types($direction);
@@ -92,11 +93,11 @@ function run_word_display_test(all_tests $t): void
 
     // ... and the graph display for 2019
     $wrd_2020 = new word($usr);
-    $wrd_2020->load_by_name(words::YEAR_2020);
+    $wrd_2020->load_by_name(word_names::YEAR_2020);
     $direction = foaf_direction::DOWN;
     $wrd_2021 = new word($usr);
-    $wrd_2021->load_by_name(words::TEST_2021);
-    $lnk_20_to_21 = $t_db->load_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
+    $wrd_2021->load_by_name(word_names::TEST_2021);
+    $lnk_20_to_21 = $t_db->load_triple(word_names::TEST_2021, verbs::FOLLOW, word_names::YEAR_2020);
     $target_part_is_followed = verbs::FOLLOWER_OF;
     $link_types = $wrd_2020->link_types($direction);
     $wrd_2020_ui = new word_ui($wrd_2020->api_json());
@@ -116,10 +117,10 @@ function run_word_display_test(all_tests $t): void
 
     // ... and the other side
     $direction = foaf_direction::UP;
-    $wrd_2019 = $t_db->load_word(words::YEAR_2019);
+    $wrd_2019 = $t_db->load_word(word_names::YEAR_2019);
     $wrd_year = $t_db->load_word(words::YEAR_CAP);
-    $lnk_20_is_year = $t_db->load_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
-    $lnk_19_to_20 = $t_db->load_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
+    $lnk_20_is_year = $t_db->load_triple(word_names::YEAR_2020, verbs::IS, words::YEAR_CAP);
+    $lnk_19_to_20 = $t_db->load_triple(word_names::YEAR_2020, verbs::FOLLOW, word_names::YEAR_2019);
     $link_types = $wrd_2020->link_types($direction);
     $wrd_2020_ui = new word_ui($wrd_2020->api_json());
     $link_types_ui = new verb_list_ui($link_types->api_json());
@@ -136,15 +137,15 @@ function run_word_display_test(all_tests $t): void
 
     // the value table for ABB
     $wrd_ZH = new word($usr);
-    $wrd_ZH->load_by_name(words::ZH, word::class);
+    $wrd_ZH->load_by_name(word_names::ZH, word::class);
     $wrd_year = new word($usr);
     $wrd_year->load_by_name(words::YEAR_CAP, word::class);
     /*
     $target = zut_dsp_list_wrd_val($wrd_ZH->id(), $wrd_year->id(), $usr->id());
     $target = substr($target,0,208);
     */
-    $target = words::YEAR_2020;
-    $target = words::ZH;
+    $target = word_names::YEAR_2020;
+    $target = word_names::ZH;
     // TODO add a sample
     //$result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
     //$t->assert('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $result, $target, $t::TIMEOUT_LIMIT_PAGE);
@@ -172,7 +173,7 @@ function run_word_display_test(all_tests $t): void
 
     // for testing the selector display a company selector and select ABB
     // TODO fix second run
-    $phr_corp = $t_db->load_phrase(words::COMPANY);
+    $phr_corp = $t_db->load_phrase(word_names::COMPANY);
     $phr_ZH_INS = $t_db->load_phrase(triples::COMPANY_ZURICH);
     /* TODO base it on the api
     $sel = new html_selector;

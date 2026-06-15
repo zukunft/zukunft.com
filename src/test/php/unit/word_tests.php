@@ -33,9 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
-use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -47,12 +45,12 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -72,9 +70,13 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -117,7 +119,7 @@ class word_tests
 
         $t->subheader($ts . 'sql read default and user changes');
         $wrd = new word($usr);
-        $wrd->id = words::CONST_ID;
+        $wrd->id = word_names::CONST_ID;
         $t->assert_sql_standard($sc, $wrd);
         $t->assert_sql_not_changed($sc, $wrd);
         $t->assert_sql_user_changes($sc, $wrd);
@@ -126,7 +128,7 @@ class word_tests
 
         $t->subheader($ts . 'sql write insert');
         $wrd = new word($usr);
-        $wrd->set_name(words::TEST_ADD);
+        $wrd->set_name(word_names::TEST_ADD);
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG]);
         $wrd = $t_wrd->word();
         $t->assert_sql_insert($sc, $wrd);
@@ -144,12 +146,12 @@ class word_tests
 
         $t->subheader($ts . 'sql write update');
         $wrd = $t_wrd->word();
-        $wrd_renamed = $wrd->cloned(words::TEST_RENAMED);
+        $wrd_renamed = $wrd->cloned(word_names::TEST_RENAMED);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::USER]);
         // the changed protection level is part of the update statement
-        $wrd_renamed_user_protected = $wrd->cloned(words::TEST_RENAMED);
+        $wrd_renamed_user_protected = $wrd->cloned(word_names::TEST_RENAMED);
         $wrd_renamed_user_protected->set_protection_by_code_id(protection_types::USER);
         $t->assert_sql_update($sc, $wrd_renamed_user_protected, $wrd, [sql_type::LOG]);
 
@@ -164,11 +166,11 @@ class word_tests
 
         $t->subheader($ts . 'sql write update failed cases e.g. description update');
         $wrd = $t_wrd->word();
-        $wrd->description = words::MATH_COM;
+        $wrd->description = word_names::MATH_COM;
         $wrd_updated = $t_wrd->word();
         $wrd_updated->set_user($usr_sys);
-        $wrd_updated->plural = words::TEST_RENAMED;
-        $wrd_updated->description = words::TEST_RENAMED;
+        $wrd_updated->plural = word_names::TEST_RENAMED;
+        $wrd_updated->description = word_names::TEST_RENAMED;
         $wrd_updated->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
 
@@ -182,7 +184,7 @@ class word_tests
         $usr_msg = new user_message();
         $wrd_db = $t_wrd->word();
         $wrd_imp = $t_wrd->word();
-        $wrd_imp->description = words::TEST_RENAMED;
+        $wrd_imp->description = word_names::TEST_RENAMED;
         $wrd_imp->set_protection_id(null);
         $t->assert_false($test_name, in_array(sandbox::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $usr_msg)->names()));
         $test_name = 'an explicit lower protection is part of the update fields';
@@ -192,7 +194,7 @@ class word_tests
         $wrd_imp->check_protection_change($wrd_db, $t->usr_normal, $usr_msg);
         $t->assert($test_name, $wrd_imp->protection_id(), $wrd_db->protection_id());
         $test_name = 'the denied reduction is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), words::MATH);
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), word_names::MATH);
         $test_name = 'an admin user can reduce the protection level';
         $usr_msg = new user_message();
         $wrd_imp = $t_wrd->word();
@@ -311,20 +313,20 @@ class word_tests
         $wrd = $t_wrd->zh_ui();
         $wrd->phr_lst = $t_phr->list_ui();
         $txt = $form->title_named($wrd, 2);
-        $lnk = words::CITY_ID . '">' . words::CITY . '</a>';
+        $lnk = word_names::CITY_ID . '">' . word_names::CITY . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = '... and canton';
-        $lnk = words::CANTON_ID . '">' . words::CANTON . '</a>';
+        $lnk = word_names::CANTON_ID . '">' . word_names::CANTON . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = '... and "..." for more';
-        $lnk = views::WORD_RELATED_ID . '&id=' . words::ZH_ID . '">...</a>';
+        $lnk = views::WORD_RELATED_ID . '&id=' . word_names::ZH_ID . '">...</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = '... but company is NOT';
-        $t->assert_text_not_contains($test_name, $txt, words::COMPANY);
+        $t->assert_text_not_contains($test_name, $txt, word_names::COMPANY);
 
         $test_name = 'company is part if limit is higher';
         $txt = $form->title_named($wrd, 4);
-        $t->assert_text_contains($test_name, $txt, words::COMPANY);
+        $t->assert_text_contains($test_name, $txt, word_names::COMPANY);
         $test_name = '... and "..." for more is goner';
         $t->assert_text_not_contains($test_name, $txt, '>...</a>');
 
@@ -335,7 +337,7 @@ class word_tests
         $t->assert_text_contains($test_name, $txt, verbs::SYMBOL_NAME);
         $test_name = 'link of "CHF is symbol for Swiss Frank" with the description as tooltip';
         $lnk = '<a href="/http/view.php?m=' . views::WORD_ID
-            . '&id=' . words::SWISS_FRANC_ID . '" title="' . words::SWISS_FRANC_COM . '">' . words::SWISS_FRANC . '</a>';
+            . '&id=' . word_names::SWISS_FRANC_ID . '" title="' . word_names::SWISS_FRANC_COM . '">' . word_names::SWISS_FRANC . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = 'name of "CHF is symbol for Swiss Frank';
         $t->assert_text_contains($test_name, $txt, '>CHF</h4>');
@@ -347,13 +349,13 @@ class word_tests
         $wrd = $t_wrd->zh_ui();
         $wrd->phr_lst = $t_phr->list_zh_impact_ui();
         $txt = $form->title_named($wrd);
-        $t->assert_text_contains($test_name, $txt, '>' . words::COMPANY . '</a>');
+        $t->assert_text_contains($test_name, $txt, '>' . word_names::COMPANY . '</a>');
         $test_name = '... and still canton';
-        $t->assert_text_contains($test_name, $txt, '>' . words::CANTON . '</a>');
+        $t->assert_text_contains($test_name, $txt, '>' . word_names::CANTON . '</a>');
         $test_name = '... without a tooltip because canton has no description';
-        $t->assert_text_contains($test_name, $txt, '&id=' . words::CANTON_ID . '">' . words::CANTON . '</a>');
+        $t->assert_text_contains($test_name, $txt, '&id=' . word_names::CANTON_ID . '">' . word_names::CANTON . '</a>');
         $test_name = '... but city NOT';
-        $t->assert_text_not_contains($test_name, $txt, '>' . words::CITY . '</a>');
+        $t->assert_text_not_contains($test_name, $txt, '>' . word_names::CITY . '</a>');
 
         $test_name = 'if there is no subtitle the edit icon is in the same line';
         $wrd = $t_wrd->chf_ui();
@@ -398,8 +400,8 @@ class word_tests
         $t->assert_text_contains($test_name, $t->dsp_title_named_edit($measure_word), styles::SUBTITLE);
         $test_name = 'all optional subtiles';
         $title = $sfm->title_named($t_wrd->zh_full_ui());
-        $target = words::ZH . ' <' . icons::EDIT
-            . '> (' . verbs::IS_NAME . ' ' . words::CITY . ', ' . words::CANTON . ', ... / '
+        $target = word_names::ZH . ' <' . icons::EDIT
+            . '> (' . verbs::IS_NAME . ' ' . word_names::CITY . ', ' . word_names::CANTON . ', ... / '
             . phrase_types::MEASURE_NAME . ' / '
             . share_types::PERSONAL_NAME . ', ' . protection_types::ADMIN_NAME . ')';
         $t->assert($test_name, $lib->html_to_text($title), $target);
@@ -466,7 +468,7 @@ class word_tests
         /*
         $test_name = 'a word json without the phrase type keeps the type empty';
         $wrd_new = new word($usr);
-        $wrd_new->import_mapper([json_fields::NAME => words::MATH], $usr_msg);
+        $wrd_new->import_mapper([json_fields::NAME => word_names::MATH], $usr_msg);
         $t->assert_true($t->name . $test_name, $wrd_new->type_id() === null);
 
         $test_name = 'a word without phrase type never overwrites the type in the database';

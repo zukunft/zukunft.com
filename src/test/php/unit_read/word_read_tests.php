@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -76,10 +77,10 @@ class word_read_tests
         $t->header($ts);
 
         $t->subheader($ts . 'load');
-        $test_name = words::MATH;
+        $test_name = word_names::MATH;
         $wrd = new word($t->usr1);
-        $t->assert_load($wrd, words::MATH);
-        $t->assert($ts . $test_name . 'description', $wrd->description, words::MATH_COM);
+        $t->assert_load($wrd, word_names::MATH);
+        $t->assert($ts . $test_name . 'description', $wrd->description, word_names::MATH_COM);
 
         // TODO load plural, type and view
 
@@ -139,14 +140,14 @@ class word_read_tests
 
         $t->subheader($ts . 'api creation');
 
-        $test_name = words::MATH;
-        $wrd = $t_db->load_word(words::MATH);
+        $test_name = word_names::MATH;
+        $wrd = $t_db->load_word(word_names::MATH);
         $t->assert_export_reload($ts . $test_name, $wrd);
 
         $t->subheader($ts . 'frontend');
 
         $test_name = 'get the most useful view for a word';
-        $wrd = $t_db->load_word(words::MATH);
+        $wrd = $t_db->load_word(word_names::MATH);
         $dsp_id = $wrd->calc_view_id();
         $t->assert($test_name, $dsp_id, 0);
 
@@ -160,38 +161,38 @@ class word_read_tests
 
         // create word objects for testing
         $wrd = new word ($t->usr1);
-        $wrd->load_by_name(words::MATH);
+        $wrd->load_by_name(word_names::MATH);
         $wrd_scale = new word ($t->usr1);
-        $wrd_scale->load_by_name(words::MIO);
+        $wrd_scale->load_by_name(word_names::MIO);
         $phr = new phrase ($t->usr1);
-        $phr->load_by_name(words::PI_SYMBOL);
-        $phr_grp = $t_db->load_phrase_group(array(words::PI_SYMBOL));
+        $phr->load_by_name(word_names::PI_SYMBOL);
+        $phr_grp = $t_db->load_phrase_group(array(word_names::PI_SYMBOL));
 
         // load a word list by the word id
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id()));
-        $t->assert('load_by_id', $wrd_lst->name(), '"' . words::MATH . '"');
+        $t->assert('load_by_id', $wrd_lst->name(), '"' . word_names::MATH . '"');
 
         // load a word list by the word ids
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id(), $wrd_scale->id()));
-        $t->assert('load_by_ids', $wrd_lst->name(), '"' . words::MATH . '","' . words::MIO . '"');
+        $t->assert('load_by_ids', $wrd_lst->name(), '"' . word_names::MATH . '","' . word_names::MIO . '"');
 
         // load a word list by the word name
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_names(array(words::MATH));
-        $t->assert('load_by_name', $wrd_lst->name(), '"' . words::MATH . '"');
+        $wrd_lst->load_by_names(array(word_names::MATH));
+        $t->assert('load_by_name', $wrd_lst->name(), '"' . word_names::MATH . '"');
 
         // load a word list by the word ids
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_names(array(words::MATH, words::MIO));
-        $t->assert('load_by_names', $wrd_lst->name(), '"' . words::MATH . '","' . words::MIO . '"');
+        $wrd_lst->load_by_names(array(word_names::MATH, word_names::MIO));
+        $t->assert('load_by_names', $wrd_lst->name(), '"' . word_names::MATH . '","' . word_names::MIO . '"');
 
         // load a word list by the phrase group
         if ($phr_grp != null) {
             $wrd_lst = new word_list ($t->usr1);
             $wrd_lst->load_by_grp_id($phr_grp->id());
-            $t->assert('load_by_group', $wrd_lst->name(), '"' . words::PI_SYMBOL . '"');
+            $t->assert('load_by_group', $wrd_lst->name(), '"' . word_names::PI_SYMBOL . '"');
         }
 
         // load a word list by type
@@ -209,13 +210,13 @@ class word_read_tests
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id()));
         $wrd_lst->add_id($wrd_scale->id());
-        $t->assert('add_id', $wrd_lst->name(), '"' . words::MATH . '","' . words::MIO . '"');
+        $t->assert('add_id', $wrd_lst->name(), '"' . word_names::MATH . '","' . word_names::MIO . '"');
 
         // add a word to a list by the word name
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id()));
-        $wrd_lst->add_name(words::MIO);
-        $t->assert('add_id', $wrd_lst->name(), '"' . words::MATH . '","' . words::MIO . '"');
+        $wrd_lst->add_name(word_names::MIO);
+        $t->assert('add_id', $wrd_lst->name(), '"' . word_names::MATH . '","' . word_names::MIO . '"');
 
 
         $t->subheader($ts . 'FOAF read tests');

@@ -56,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -98,9 +99,9 @@ class formula_calc_tests
 
         $result = $exp->dsp_id();
         $target = '""' . words::PERCENT . '" = ( "'
-            . words::THIS_NAME . '" - "'
-            . words::PRIOR_NAME . '" ) / "'
-            . words::PRIOR_NAME . '"" ({w'
+            . word_names::THIS_NAME . '" - "'
+            . word_names::PRIOR_NAME . '" ) / "'
+            . word_names::PRIOR_NAME . '"" ({w'
             . $wrd_pct->id() . '}=({f'
             . $frm_this->id() . '}-{f'
             . $frm_prior->id() . '})/{f'
@@ -129,13 +130,13 @@ class formula_calc_tests
         $target = '"' . words::PERCENT
             . '" = ( <a href="' . $frm_edit_url
             . $frm_this->id() . '&back=0">'
-            . words::THIS_NAME
+            . word_names::THIS_NAME
             . '</a> - <a href="' . $frm_edit_url
             . $frm_prior->id()
             . '&back=0">'
-            . words::PRIOR_NAME
+            . word_names::PRIOR_NAME
             . '</a> ) / <a href="' . $frm_edit_url . '20&back=0">'
-            . words::PRIOR_NAME . '</a>';
+            . word_names::PRIOR_NAME . '</a>';
         $t->assert($test_name, $result, $target);
 
         // define the element group object to retrieve the value
@@ -147,7 +148,7 @@ class formula_calc_tests
             $result = $elm_grp_ui->dsp_names();
             $target = '<a href="' . $frm_edit_url
                 . $frm_this->id() . '">'
-                . words::THIS_NAME . '</a>';
+                . word_names::THIS_NAME . '</a>';
             $t->assert('element_group->dsp_names', trim($result), trim($target));
         }
         /*
@@ -179,7 +180,7 @@ class formula_calc_tests
         $target->add($frm_wrd->phrase());
         $trm_lst->add($frm_wrd->term());
         $exp = new expression($frm);
-        $exp->set_ref_text('{w' . words::ONE_ID . '}={w' . words::MIO_ID . '}*1000000', $t_trm->term_list_scale());
+        $exp->set_ref_text('{w' . word_names::ONE_ID . '}={w' . word_names::MIO_ID . '}*1000000', $t_trm->term_list_scale());
         $result = $exp->load_result_phrases($trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formulas::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
 
@@ -199,9 +200,9 @@ class formula_calc_tests
         $frm = $t_frm->formula();
         $trm_lst = $frm->term_list($t_trm->term_list_time());
         $t->assert($test_name, $trm_lst->dsp_id(),
-            '"' . words::MINUTE . '","' . triples::SECOND . '" ('
+            '"' . word_names::MINUTE . '","' . triples::SECOND . '" ('
             . $lib->term_id(triples::SECOND_ID, triple::class) . ','
-            . $lib->term_id(words::MINUTE_ID, word::class) . ')');
+            . $lib->term_id(word_names::MINUTE_ID, word::class) . ')');
 
         // TODO add result display test
 
@@ -227,7 +228,7 @@ class formula_calc_tests
         $test_name = 'formula city population reference text';
         $frm = $t_frm->formula_city_population();
         $result = $frm->get_ref_text();
-        $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . words::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . words::CITY_ID . '})';
+        $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . word_names::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . word_names::CITY_ID . '})';
         $t->assert($test_name, $result, $target);
 
 

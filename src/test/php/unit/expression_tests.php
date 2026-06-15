@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -77,7 +78,7 @@ class expression_tests
         $exp = $frm->expression();
         $trm_id_lst = $exp->term_id_list($usr_msg);
         $result = $trm_id_lst->dsp_id();
-        $target = words::MINUTE_ID * 2 - 1;
+        $target = word_names::MINUTE_ID * 2 - 1;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'reference text is invalid because a symbol is too short';
@@ -138,7 +139,7 @@ class expression_tests
         $exp = $frm->expression();
         $trm_id_lst = $exp->term_id_list_all($usr_msg);
         $result = $trm_id_lst->dsp_id();
-        $target = '"","" (' . triples::SECOND_ID * -2 + 1 . ',' . words::MINUTE_ID * 2 - 1 . ')';
+        $target = '"","" (' . triples::SECOND_ID * -2 + 1 . ',' . word_names::MINUTE_ID * 2 - 1 . ')';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'id list of missing terms is empty if all terms are given';
@@ -194,10 +195,10 @@ class expression_tests
         $usr_msg->reset();
         $phr_lst = $exp->terms($usr_msg, $trm_lst)->phrase_list();
         $result = $phr_lst->dsp_id();
-        $target = '"' . words::CIRCUMFERENCE . '","'
-            . words::PI . '" (phrase_id '
-            . words::CIRCUMFERENCE_ID . ','
-            . words::PI_ID . ') for user 3 (zukunft.com system test)';
+        $target = '"' . word_names::CIRCUMFERENCE . '","'
+            . word_names::PI . '" (phrase_id '
+            . word_names::CIRCUMFERENCE_ID . ','
+            . word_names::PI_ID . ') for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // test the phrase list of the left side
@@ -234,7 +235,7 @@ class expression_tests
         $exp->ref_text($trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->dsp_id();
-        $target = '"parts,' . verbs::OF_NAME . '" (' . words::PARTS_ID . ',' . verbs::OF_ID . ') / "total" (' . words::TOTAL_ID
+        $target = '"parts,' . verbs::OF_NAME . '" (' . word_names::PARTS_ID . ',' . verbs::OF_ID . ') / "total" (' . words::TOTAL_ID
             . ') for user 3 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
@@ -244,7 +245,7 @@ class expression_tests
         $elm_grp_lst = $exp->element_list($usr_msg, $trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"parts","of","total" (element_id '
-            . words::PARTS_ID . ',' . verbs::OF_ID . ',' . words::TOTAL_ID
+            . word_names::PARTS_ID . ',' . verbs::OF_ID . ',' . words::TOTAL_ID
             . ') for user 3 (zukunft.com system test)';
         $target = '"parts","of","total" (element_id 1/286,1/5,1/287) for user 3 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
@@ -303,7 +304,7 @@ class expression_tests
         $frm_prior = $trm_lst->get_by_name(formulas::PRIOR);
 
         $result = $elm_grp_lst->dsp_id();
-        $target = '"' . formulas::THIS_NAME . '" (' . $frm_this->id_obj() . ') / "' . formulas::PRIOR . '" (' . $frm_prior->id_obj() . ') / "' . words::PRIOR_NAME . '" ('
+        $target = '"' . formulas::THIS_NAME . '" (' . $frm_this->id_obj() . ') / "' . formulas::PRIOR . '" (' . $frm_prior->id_obj() . ') / "' . word_names::PRIOR_NAME . '" ('
             . $frm_prior->id_obj() . ')';
         $t->dsp_contains($test_name, $target, $result);
 
@@ -320,7 +321,7 @@ class expression_tests
         $trm_names = $exp->get_usr_names();
         $trm_lst_rev = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst_rev);
-        $target = '={w' . words::CIRCUMFERENCE_ID . '}/{w' . words::PI_ID . '}';
+        $target = '={w' . word_names::CIRCUMFERENCE_ID . '}/{w' . word_names::PI_ID . '}';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'source phrase list with id from the reference text';
@@ -328,7 +329,7 @@ class expression_tests
         $exp_sector->set_ref_text(formulas::PARTS_IN_PERCENT_DB, $trm_lst);
         $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part());
         $result = $phr_lst->dsp_id();
-        $target = '"","" (phrase_id ' . words::PARTS_ID . ',' . words::TOTAL_ID
+        $target = '"","" (phrase_id ' . word_names::PARTS_ID . ',' . words::TOTAL_ID
             . ') for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
@@ -337,7 +338,7 @@ class expression_tests
         $exp_scale->set_ref_text(formulas::SCALE_MIO_DB, $trm_lst);
         $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->res_part());
         $result = $phr_lst->dsp_id();
-        $target = 'phrase_id ' . words::ONE_ID . ' for user 3 (zukunft.com system test)';
+        $target = 'phrase_id ' . word_names::ONE_ID . ' for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
     }

@@ -30,6 +30,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
@@ -37,6 +38,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -52,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -108,7 +111,7 @@ class phrase_list_tests
         $test_name = 'load phrases by ids';
         $t->assert_sql_by_ids($test_name, $sc, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
-        $phr_names = array(words::MATH, triples::MATH_CONST);
+        $phr_names = array(word_names::MATH, triples::MATH_CONST);
         $t->assert_sql_by_names($sc, $phr_lst, $phr_names);
 
         // to review
@@ -181,7 +184,7 @@ class phrase_list_tests
         $phr_lst_ui = $t_phr->ui_phrase_list();
         $phr = $phr_lst_ui->mainly();
         if ($phr != null) {
-            $t->assert_text_contains('Main word is "math"', $phr->name(), words::MATH);
+            $t->assert_text_contains('Main word is "math"', $phr->name(), word_names::MATH);
         }
 
 
@@ -220,7 +223,7 @@ class phrase_list_tests
     {
         global $usr;
         $wrd = new word($usr);
-        $wrd->set(words::DEFAULT_WORD_ID, words::TEST_ADD);
+        $wrd->set(words::DEFAULT_WORD_ID, word_names::TEST_ADD);
         return $wrd->phrase();
     }
 
@@ -233,7 +236,7 @@ class phrase_list_tests
         global $sys;
 
         $wrd = new word($usr);
-        $wrd->set(words::CONST_ID, words::TEST_RENAMED);
+        $wrd->set(word_names::CONST_ID, word_names::TEST_RENAMED);
         $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         return $wrd->phrase();
     }

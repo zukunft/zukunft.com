@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -67,16 +68,16 @@ class job_write_tests
         // make sure that the test value is set independent of any previous database tests
         $t_db->test_value(array(
             words::CH,
-            words::INHABITANTS,
-            words::MIO,
-            words::YEAR_2020
+            word_names::INHABITANTS,
+            word_names::MIO,
+            word_names::YEAR_2020
         ),
             values::CH_INHABITANTS_2020_IN_MIO);
 
 
         // prepare test adding a batch job via a list
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
+        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
         $phr_lst->ex_time();
         $val = new value($usr);
         $val->load_by_grp($phr_lst->get_grp_id());
@@ -111,7 +112,7 @@ class job_write_tests
         // prepare test adding a batch job via a list
         $frm = $t_db->load_formula(formulas::INCREASE);
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
+        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
 
         // test adding a batch job via a list
         $job_lst = new job_list($usr);

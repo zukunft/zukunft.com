@@ -39,7 +39,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
@@ -95,7 +95,7 @@ class verb_write_tests
         $t->subheader($ts . 'list');
 
         // check the loading of the "is a" verb
-        $wrd_ZH = $t_db->load_word(words::ZH);
+        $wrd_ZH = $t_db->load_word(word_names::ZH);
         $vrb_lst = $wrd_ZH->link_types(foaf_direction::UP);
         $t->assert_contains('verb_list->link_types ', $vrb_lst->db_id_list(), [verbs::IS_NAME]);
 

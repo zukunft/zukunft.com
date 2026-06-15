@@ -43,7 +43,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_link_list as change_log_link_
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\test\php\create\test_log;
@@ -97,11 +97,11 @@ class change_log_ui_tests
         // round-trip a backend link change through the api to the frontend and render it
         $cl_lst = new change_log_link_list_cfg();
         $cl = $t_log->log_link();
-        $cl->new_text_to = words::MATH;
+        $cl->new_text_to = word_names::MATH;
         $cl_lst->add($cl);
         $log_link_ui = new change_log_link_list_ui($cl_lst->api_json($api_typ_lst));
         $test_name = 'a link change is shown as a link to the new target';
-        $t->assert_text_contains($test_name, $log_link_ui->tbl($back), words::MATH);
+        $t->assert_text_contains($test_name, $log_link_ui->tbl($back), word_names::MATH);
         $test_name = 'an empty link change list renders no table row';
         $t->assert_text_not_contains($test_name, new change_log_link_list_ui()->tbl($back), '<tr');
     }
