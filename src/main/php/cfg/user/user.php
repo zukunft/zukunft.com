@@ -2236,6 +2236,20 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * @returns bool true if the user has admin rights and is local e.g. the development testing user
+     */
+    function is_admin_local(): bool
+    {
+        $result = false;
+        if ($this->is_admin()) {
+            if ($this->ip_addr == 'localhost') {
+                $result = true;
+            }
+            return $result;
+        }
+    }
+
+    /**
      * @returns bool true if the user is a system user e.g. the reserved word names can be used
      */
     function is_system(): bool
@@ -2490,7 +2504,7 @@ class user extends db_id_object_non_sandbox
 
         if ($usr_req == null) {
             // fall back to the user being saved when no requesting user is set on $sys
-            $usr_req = clone ($usr ?? $this);
+            $usr_req = clone($usr ?? $this);
         }
 
         // configure the global database connection object for the select, insert, update and delete queries
@@ -2710,7 +2724,8 @@ class user extends db_id_object_non_sandbox
      * @param user $usr_req the user who has request the user adding or update
      * @return user_message with the description of any problems for the user and the suggested solution
      */
-    private function db_update_user(sql_db $db_con, user $db_usr, user $usr_req): user_message
+    private
+    function db_update_user(sql_db $db_con, user $db_usr, user $usr_req): user_message
     {
         log_debug($this->dsp_id());
 
@@ -3612,7 +3627,8 @@ class user extends db_id_object_non_sandbox
      * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
-    protected function check(user_message $msg): bool
+    protected
+    function check(user_message $msg): bool
     {
         // the username must be set
         if ($this->name == '' or $this->name == null) {

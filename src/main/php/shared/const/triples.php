@@ -197,7 +197,7 @@ class triples
     const string COMPANY_ZURICH = "Zurich Insurance";
     const int COMPANY_ZURICH_ID = 140;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
-    const int CHF_SYMBOL_ID = 2899;
+    const int CHF_SYMBOL_ID = 235;
     const int US_DOLLAR_ID = 123;
     const int EURO_ID = 122;
     const string USD_SYMBOL = "USD is symbol for US dollar";

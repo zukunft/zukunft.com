@@ -42,7 +42,7 @@ Each rule is one line. When one governs your current edit, open the linked
 detail file. Order is by how often they fire, not importance.
 
 ### Structure & style
-- One `return` per function, at the end, into a named variable; top-of-function guard clauses excepted. → `docs/llm/structure.md`
+- One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
 - Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`

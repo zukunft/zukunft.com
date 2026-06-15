@@ -1076,18 +1076,7 @@
       "name": "continuous"
     },
     {
-      "name": "percent",
-      "description": "In mathematics, a percentage is a number or ratio expressed as a fraction of 100.",
-      "refs": [
-        {
-          "name": "Percentage",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11229",
-          "type": "wikidata"
-        }
-      ]
+      "name": "percent"
     },
     {
       "name": "change"

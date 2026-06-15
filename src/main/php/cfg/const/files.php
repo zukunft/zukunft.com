@@ -59,7 +59,8 @@ class files
 
     const string RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
-    const string DATA_PATH = self::MESSAGE_PATH . 'data' . DIRECTORY_SEPARATOR;
+    const string SYSTEM_UNIT_TEST_DATA_PATH = self::MESSAGE_PATH . 'system_unit_test_data' . DIRECTORY_SEPARATOR;
+    const string SYSTEM_UNIT_TEST_DATA_FOLDER = 'system_unit_test_data' . DIRECTORY_SEPARATOR;
     const string DATA_START_PAGE_PATH = self::MESSAGE_PATH . 'start_page' . DIRECTORY_SEPARATOR;
     const string DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
@@ -138,6 +139,7 @@ class files
     // initial data just to add some sample data and for system testing
     const string COUNTRY_FILE = 'country' . self::JSON;
     const string COMPANY_FILE = 'company' . self::JSON;
+    const string ZURICH_HTP_IMPACT_FILE = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'zurich_htp_impact' . self::JSON;
 
     // temp setup files that are loaded at the end not to change the id of objects used by the system tests
     const string MATH_FILE = 'math' . self::JSON;
@@ -153,30 +155,43 @@ class files
     const string ACCOUNTING_FILE = 'accounting' . self::JSON;
 
     // initial data import
-    CONST string IMPORT_COUNTRIES = self::DATA_PATH . 'countries' . self::JSON;
-    CONST string IMPORT_COUNTRY_ISO = self::DATA_PATH . 'country-ISO-3166' . self::JSON;
-    CONST string IMPORT_DEMOCRACY_INDEX = self::DATA_PATH . 'democracy_index_table' . self::JSON;
-    CONST string IMPORT_CURRENCIES = self::DATA_PATH . 'currencies' . self::JSON;
-    CONST string IMPORT_WIND_INVESTMENT = self::DATA_PATH . 'wind_investment' . self::JSON;
-    CONST string IMPORT_COMPANIES = self::DATA_PATH . 'companies' . self::JSON;
+    CONST string TEST_COUNTRIES = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'countries' . self::JSON;
+    CONST string TEST_CURRENCIES = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'currencies' . self::JSON;
+    CONST string TEST_COMPANIES = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'companies' . self::JSON;
+    CONST string IMPORT_COUNTRY_ISO = self::SYSTEM_UNIT_TEST_DATA_PATH . 'country-ISO-3166' . self::JSON;
+    CONST string IMPORT_DEMOCRACY_INDEX = self::SYSTEM_UNIT_TEST_DATA_PATH . 'democracy_index_table' . self::JSON;
+    CONST string IMPORT_WIND_INVESTMENT = self::SYSTEM_UNIT_TEST_DATA_PATH . 'wind_investment' . self::JSON;
 
     /*
      * file lists
      */
 
-    // to load the default data for a pod
-    const array BASE_CONFIG_FILES = [
+    // to load the data required for the system and the unit or db read tests
+    const array SYSTEM_DATA_FILES = [
         files_shared::SYSTEM_VIEWS_FILE,
         self::SOURCES_FILE,
         self::UNITS_FILE,
         self::SCALING_FILE,
-        self::IP_BLACKLIST_FILE,
         self::TIME_FILE,
         self::BASE_PHRASES_FILE,
         self::BASE_VIEWS_FILE,
         self::START_PAGE_DATA_FILE,
         self::COMPANY_FILE,
         self::COUNTRY_FILE,
+        self::TEST_COUNTRIES,
+        self::TEST_CURRENCIES,
+        self::TEST_COMPANIES,
+        // TODO Prio 0 activate
+        //self::ZURICH_HTP_IMPACT_FILE,
+    ];
+
+    // to load the default system data for a standard pod
+    const array POD_CONFIG_FILES_DIRECT = [
+        self::IP_BLACKLIST_FILE,
+    ];
+
+    // to load the default data for a pod
+    const array BASE_DATA_FILES = [
         self::MATH_FILE,
         self::PHYSICS_FILE,
         self::CHEMISTRY_FILE,
@@ -190,27 +205,12 @@ class files
         self::ACCOUNTING_FILE,
     ];
 
-    const array BASE_IMPORT_FILE_LIST = [
-        self::IMPORT_COUNTRIES,
+    // to load the default data for a pod
+    const array BASE_DATA_PATH_FILES = [
         self::IMPORT_COUNTRY_ISO,
         self::IMPORT_DEMOCRACY_INDEX,
-        self::IMPORT_CURRENCIES,
-        self::IMPORT_COMPANIES,
         self::IMPORT_WIND_INVESTMENT,
         self::CONFORMITY_MRI_BERNS_FILE,
-    ];
-
-    // to load the default data for all pods
-    const array BASE_CONFIG_FILES_DIRECT = [
-    ];
-
-    // to load the default data for a standard pod
-    const array POD_CONFIG_FILES_DIRECT = [
-        self::IP_BLACKLIST_FILE,
-        self::BASE_VIEWS_FILE,
-        self::COUNTRY_FILE,
-        self::START_PAGE_DATA_FILE,
-        self::COMPANY_FILE
     ];
 
 }
