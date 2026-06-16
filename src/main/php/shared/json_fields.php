@@ -392,6 +392,9 @@ class json_fields
     // for value lists
     const string VALUES = 'values';
 
+    // the recent change log entries of an object e.g. shown on the default word page
+    const string CHANGES = 'changes';
+
     // a list of the word names without further parameters
     const string WORD_LIST = 'word-list';
 

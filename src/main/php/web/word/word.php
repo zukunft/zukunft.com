@@ -62,6 +62,7 @@ include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::LOG . 'change_log_named.php';
+include_once html_paths::LOG . 'change_log_list.php';
 //include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -93,6 +94,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
@@ -157,6 +159,7 @@ class word extends sandbox_code_id
     public ?value_list $val_lst = null;
     public ?formula_list $frm_lst = null;
     public ?ref_list $ref_lst = null;
+    public ?change_log_list $chg_log = null;
 
     // the system calculated impact of this word used to sort the words by relevance
     // (highest impact first); same field name as triple, formula and verb so a term can
@@ -279,6 +282,18 @@ class word extends sandbox_code_id
             }
         } else {
             $this->ref_lst = null;
+        }
+        if (array_key_exists(json_fields::CHANGES, $json_array)) {
+            $change = $json_array[json_fields::CHANGES];
+            if (is_array($change)) {
+                $lst = new change_log_list();
+                $lst->api_mapper($change);
+                $this->chg_log = $lst;
+            } else {
+                $this->chg_log = null;
+            }
+        } else {
+            $this->chg_log = null;
         }
         return $msg->is_ok();
     }

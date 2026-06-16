@@ -361,6 +361,7 @@
     \-- load_values_related - section for function load_values_related is expected to be load in /word/word.php
     \-- load_formulas_related - section for function load_formulas_related is expected to be load in /word/word.php
     \-- load_references_related - section for function load_references_related is expected to be load in /word/word.php
+    \-- load_changes_related - section for function load_changes_related is expected to be load in /word/word.php
     \-- load_phrases_related - section for function load_phrases_related is expected to be load in /word/word.php
     \-- select_phrases_related - section for function select_phrases_related not yet defined that it should be api in /word/word.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /word/word.php
@@ -4112,6 +4113,7 @@
         \-- change - create an array for the api json message
         \-- change_link - add the link change fields to the api json message of one change log entry
         \-- change_log - create an array for the api json creation
+        \-- change_log_list - create the api json array with one entry per change so that the frontend
         \-- change_value - create an array for the api json message
         \-- ref_list - @return user|null the person who wants to see the refs
         \-- ref_type - TODO use parent function for setting the name, ...

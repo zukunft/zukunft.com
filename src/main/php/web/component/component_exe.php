@@ -411,7 +411,7 @@ class component_exe extends component
             component_types::RESULTS_RELATED => $list->results_related($dbo, $cfg),
             component_types::PHRASES_RELATED => $list->phrases_related($dbo, $cfg),
             component_types::BUTTON_REQUEST => $form->button_request(),
-            component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst),
+            component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst, $test_mode),
             component_types::USER_SYSTEM_ERRORS => $log->user_system_errors($err_lst, $this->ui_msg_code_id),
 
             // view relation only -

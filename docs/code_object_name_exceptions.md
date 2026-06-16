@@ -38,7 +38,7 @@ word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $htp, $is_wrd,
 
 ## Classes without a suggested var name
 
-DateTime: $actual_time, $fix_now, $new_value, $now, $request_time, $request_timestamp, $result, $sys_log_timestamp, $time, $timeout
+DateTime: $actual_time, $fix_now, $new_value, $now, $request_time, $request_timestamp, $result, $sys_log_timestamp, $target, $time, $timeout
 ListOfIdNamedCodeObjects: $del_lst, $lst
 ListOfIdNamedObjects: $del_lst, $lst
 ListOfIdObjects: $del_lst, $lst
@@ -62,7 +62,7 @@ change_field: $fld, $typ
 change_field_list: $cng_fld_cac
 change_link: $chg, $log, $log_empty
 change_log_link_list: $cl_lst, $log_link_ui, $lst
-change_log_list: $log, $log_lst, $log_ui, $lst, $result
+change_log_list: $chg_lst, $log, $log_lst, $log_ui, $lst, $result
 change_log_named: $chg_ui, $log_ui
 change_table_field: $tbl_fld
 change_table_list: $cng_tbl_cac

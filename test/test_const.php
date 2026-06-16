@@ -35,6 +35,11 @@
 global $debug;
 $debug = $_GET['debug'] ?? 0;
 
+// pin the timezone for all tests so that date-dependent results (e.g. the ATOM
+// offset of a timezone-less db timestamp) are deterministic regardless of the
+// host's php.ini date.timezone setting
+date_default_timezone_set('UTC');
+
 // set the path const for the initial backend and frontend settings
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;

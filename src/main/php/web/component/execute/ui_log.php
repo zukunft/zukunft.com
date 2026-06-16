@@ -40,6 +40,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -50,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -65,11 +67,14 @@ class ui_log
     /**
      * @return string with the html code that shows the recent changes of this object
      */
-    function system_change_log(db_object $dbo, change_log_list $log_lst): string
+    function system_change_log(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): string
     {
-        // TODO review
-        // if the given change og is empty use the global cache
-        if ($log_lst->is_empty()) {
+        // a word loaded for its page carries its recent changes directly (like the related
+        // values, formulas and references); otherwise use the given change log or, if that
+        // is empty, the global request cache
+        if ($dbo::class == word::class and $dbo->chg_log != null and !$dbo->chg_log->is_empty()) {
+            $log_lst = $dbo->chg_log;
+        } elseif ($log_lst->is_empty()) {
             global $ui_sys;
             if ($ui_sys == null) {
                 log_warning('ui cache is empty');
@@ -80,7 +85,7 @@ class ui_log
         }
         // filter the change log based on the given object
         $log_lst = $log_lst->filter($dbo);
-        return $log_lst->dsp();
+        return $log_lst->dsp(null, false, false, $test_mode);
     }
 
     /**

@@ -94,6 +94,7 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -144,6 +145,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -256,6 +258,12 @@ class word extends sandbox_code_id
     // when the api_types::INCL_RELATED flag is set, so the default word view can show the
     // references; refs have no impact, so the frontend keeps the database (id) order
     public ?ref_list $references_related = null;
+
+    // the most recent change log entries of this word;
+    // populated lazily by load_changes_related() and only emitted via api_json_array()
+    // when the api_types::INCL_RELATED flag is set, so the default word view can show the
+    // recent changes; the change log is ordered by time, latest first
+    public ?change_log_list $changes_related = null;
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -515,6 +523,13 @@ class word extends sandbox_code_id
                         $vars[json_fields::REFERENCES] = $this->references_related->api_json_array(
                             new api_type_list(), $usr);
                     }
+                    if ($this->changes_related == null and !$typ_lst->test_mode()) {
+                        $this->load_changes_related();
+                    }
+                    if ($this->changes_related != null and !$this->changes_related->is_empty()) {
+                        $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
                 }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
@@ -555,6 +570,17 @@ class word extends sandbox_code_id
         $ref_lst = new ref_list($this->get_user());
         $ref_lst->load_by_phr_id($this->phrase()->id());
         $this->references_related = $ref_lst;
+    }
+
+    /**
+     * load the most recent change log entries of this word into the in-memory
+     * changes_related list so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_changes_related(): void
+    {
+        $chg_lst = new change_log_list();
+        $chg_lst->load_obj_last($this, $this->get_user());
+        $this->changes_related = $chg_lst;
     }
 
     /**
