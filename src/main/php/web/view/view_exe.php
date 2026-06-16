@@ -272,8 +272,8 @@ class view_exe extends view_base
     /**
      * combine the columns of a side-or-below group to one row
      * that shows the columns side by side on wide screens
-     * and below each other if the screen width in pixel is below
-     * the 'min side width' of the user configuration
+     * and wraps them onto fewer rows (down to a single stacked column)
+     * as the screen gets narrower than the configured side widths
      *
      * @param array $col_lst the html code of the columns
      * @return string the html code of the row with the wrapping columns
@@ -287,11 +287,19 @@ class view_exe extends view_base
             $min_width = (int)$ui_sys->cfg->get_by(
                 [triples::SIDE_WIDTH, words::MIN, words::LAYOUT, words::FRONTEND, words::USER],
                 def::FALLBACK_MIN_SIDE_WIDTH);
+            $wide_width = (int)$ui_sys->cfg->get_by(
+                [triples::SIDE_WIDTH, words::MAX, words::LAYOUT, words::FRONTEND, words::USER],
+                def::FALLBACK_WIDE_SIDE_WIDTH);
         } else {
             $min_width = def::FALLBACK_MIN_SIDE_WIDTH;
+            $wide_width = def::FALLBACK_WIDE_SIDE_WIDTH;
         }
-        // two columns fit side by side only if the screen is wider than the configured minimal width
-        $col_width = (int)round($min_width / 2);
+        // size each column so that up to MAX_SIDE_COLUMNS fit at the configured wide width
+        // and the flex row wraps to fewer columns as the screen gets narrower;
+        // never narrower than half the min side width so two columns still fit above it
+        $col_width = max(
+            (int)round($wide_width / position_types::MAX_SIDE_COLUMNS),
+            (int)round($min_width / 2));
         $cols = '';
         foreach ($col_lst as $col) {
             if ($col != '') {

@@ -82,6 +82,11 @@
       "type": "values_related"
     },
     {
+      "name": "value chart",
+      "description": "show a chart of the most relevant values by impact on top of the value list",
+      "type": "value_chart"
+    },
+    {
       "name": "related results",
       "description": "show the most relevant and related results",
       "type": "results_related"
@@ -233,6 +238,25 @@
       "description": "show the change log of this word",
       "type": "change_log",
       "code_id": "change_log_word"
+    },
+    {
+      "name": "system sub title views",
+      "description": "show the language specific sub title for the related views",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_views",
+      "ui_msg_code_id": "system_sub_title_views"
+    },
+    {
+      "name": "view list word",
+      "description": "show the default view of this word and of its parent words",
+      "type": "view_list",
+      "code_id": "view_list_word"
+    },
+    {
+      "name": "view tab box",
+      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_word"
     }
   ],
   "views": [
@@ -252,61 +276,67 @@
         },
         {
           "position": "3",
-          "name": "system show field plural"
+          "name": "system show field plural",
+          "position_type": "combine"
         },
         {
           "position": "4",
-          "name": "system sub title usage number"
+          "name": "phrase aliases",
+          "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "phrase aliases",
-          "style": "col-md-4"
+          "name": "phrase symbols",
+          "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "phrase symbols",
-          "style": "col-md-4"
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "related phrases without subtitles"
+          "name": "children of word",
+          "position_type": "combine"
         },
         {
           "position": "8",
-          "name": "children of word"
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "9",
-          "name": "system sub title values"
+          "name": "value chart",
+          "position_type": "combine"
         },
         {
           "position": "10",
-          "name": "related values"
+          "name": "related values",
+          "position_type": "combine"
         },
         {
           "position": "11",
-          "name": "system sub title formulas"
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
         },
         {
           "position": "12",
-          "name": "formula list"
+          "name": "formula list",
+          "position_type": "combine"
         },
         {
           "position": "13",
-          "name": "system sub title references"
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         },
         {
           "position": "14",
-          "name": "ref list word"
+          "name": "system sub title references"
         },
         {
           "position": "15",
-          "name": "system sub title log"
-        },
-        {
-          "position": "16",
-          "name": "change log word"
+          "name": "ref list word",
+          "position_type": "combine"
         }
       ]
     },

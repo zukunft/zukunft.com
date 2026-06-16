@@ -97,6 +97,10 @@ if ($usr->id() > 0) {
         if (isset($_GET['type'])) {
             $wrd->type_id = $_GET['type'];
         }        // any functional code for special word is defined with the code_id of the word type
+        if (isset($_GET[url_var::VIEW])) {
+            // set the default view of the word e.g. from the 'switch' button of the word page view box
+            $wrd->set_view_id($_GET[url_var::VIEW]);
+        }
 
         // if the save bottom has been pressed
         if ($_GET['confirm'] > 0) {

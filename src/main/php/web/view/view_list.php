@@ -186,11 +186,14 @@ class view_list extends ListBase
      */
     private function names_linked(string $back = ''): array
     {
+        // key by name and sort so the rendered order is deterministic and independent
+        // of the api/db row order (see the frontend list-sorting rule)
         $views = array();
         foreach ($this->lst() as $msk) {
-            $views[] = $msk->name_link();
+            $views[$msk->name()] = $msk->name_link();
         }
-        return $views;
+        ksort($views, SORT_NATURAL);
+        return array_values($views);
     }
 
 
