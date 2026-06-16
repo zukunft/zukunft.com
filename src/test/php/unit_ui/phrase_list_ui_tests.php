@@ -44,6 +44,8 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_list_ui_tests
@@ -101,22 +103,22 @@ class phrase_list_ui_tests
         $phr = new phrase($usr);
         $phr->load_by_id($zh_company_id);
         $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
-        $target = triples::COMPANY_ZURICH;
+        $target = triple_names::COMPANY_ZURICH;
         $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' .
-            triples::COMPANY_ZURICH . ' selected contains ' .
-            triples::COMPANY_ZURICH, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+            triple_names::COMPANY_ZURICH . ' selected contains ' .
+            triple_names::COMPANY_ZURICH, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test the phrase selector for the word company
         $wrd = new word($usr);
-        $wrd->load_by_name(words::COMPANY, word::class);
+        $wrd->load_by_name(word_names::COMPANY, word::class);
         $trp_ins = new triple($usr);
-        $trp_ins->load_by_name(triples::COMPANY_ZURICH, triple::class);
+        $trp_ins->load_by_name(triple_names::COMPANY_ZURICH, triple::class);
         $phr = $wrd->phrase();
         $phr_ui = new phrase_dsp($phr->api_json());
         $result = $phr->dsp_selector($phr_ui, $form_name, $pos, '', $back);
         $target = $trp_ins->name();
-        $t->dsp_contains(', phrase->dsp_selector of type ' . words::COMPANY . ' is : ' .
-            $result . ' which contains ' . triples::COMPANY_ZURICH,
+        $t->dsp_contains(', phrase->dsp_selector of type ' . word_names::COMPANY . ' is : ' .
+            $result . ' which contains ' . triple_names::COMPANY_ZURICH,
             $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
         */
 

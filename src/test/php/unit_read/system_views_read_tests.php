@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -89,15 +90,15 @@ class system_views_read_tests
         $cfg->set_view_list($t_msk->view_list_ui());
         $cfg->set_component_list($t_cmp->component_list_ui());
         // create the test pages
-        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::MATH_ID, $cfg);
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         // Zurich and CHF is the example for the page-title symbol-line layout
-        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::ZH_ID, $cfg);
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::ZH_ID, $cfg);
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::CHF_ID, $cfg);
         // inhabitants is the example for the related formula list (e.g. the "increase" formula)
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::INHABITANT_ID, $cfg);
-        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1), words::MATH_ID);
-        $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), words::MATH_ID, $cfg);
-        $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), words::MATH_ID, $cfg);
+        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1), word_names::MATH_ID);
+        $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
+        $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         $t->assert_view(views::VERB, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_ADD, $t->usr1, new verb());
         $t->assert_view(views::VERB_EDIT, $t->usr1, new verb(), 1, $cfg);
@@ -173,8 +174,8 @@ class system_views_read_tests
         // the former find.php has been replaced by the word find view (m=67)
         $t->dsp_web_test(
             api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID
-            . url_var::ADD . url_var::PATTERN_HUMAN . url_var::EQ . words::ABB,
-            words::ABB,
+            . url_var::ADD . url_var::PATTERN_HUMAN . url_var::EQ . word_names::ABB,
+            word_names::ABB,
             ', frontend view.php for the word find view contains at least', $is_connected);
 
     }

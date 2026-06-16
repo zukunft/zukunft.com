@@ -39,7 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
@@ -55,7 +55,7 @@ function run_system_test(all_tests $t): void
     $t->header($ts);
 
     // load the main test word
-    $wrd_company = $t_db->test_word(words::COMPANY);
+    $wrd_company = $t_db->test_word(word_names::COMPANY);
 
     if ($t::TEST_EMAIL) {
         $t->subheader($ts . 'est mail sending');

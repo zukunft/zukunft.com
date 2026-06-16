@@ -36,17 +36,21 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\const;
 
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
 
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class xbrl
 {
 
-    // the US GAAP taxonomy namespace prefix of the income statement concept ids (triples::US_GAAP)
-    const string NS = triples::US_GAAP_XBRL;
+    // the US GAAP taxonomy namespace prefix of the income statement concept ids (triple_names::US_GAAP)
+    const string NS = triple_names::US_GAAP_XBRL;
     // the us-gaap concepts of the main income statement facts
     // the concept names follow the locator labels of the calculation linkbase
     const string CONCEPT_REVENUES = self::NS . '_Revenues';
@@ -72,7 +76,7 @@ class xbrl
     const string FACT_VALUE = 'value';
 
     // keys used inside the segment array returned by import_convert_xbrl::extract_segment_sales()
-    const string SEG_SECTOR = words::SECTOR;
+    const string SEG_SECTOR = word_names::SECTOR;
     const string SEG_VALUE = self::FACT_VALUE;
 
     // suffix added to the facts file name for the created import json

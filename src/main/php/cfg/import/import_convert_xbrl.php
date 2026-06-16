@@ -58,8 +58,7 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\import;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-
-
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_CONST . 'files.php';
@@ -71,17 +70,20 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
+//include_once test_paths::CONST . 'triple_names.php';
+//include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\const\xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use RuntimeException;
 use ZipArchive;
 
@@ -89,11 +91,11 @@ class import_convert_xbrl
 {
 
     // ABB-specific source identifiers used when building the import JSON
-    const string ISSUER_ABB = words::ABB;
-    const string MEASURE_SALES = words::SALES;
+    const string ISSUER_ABB = word_names::ABB;
+    const string MEASURE_SALES = word_names::SALES;
     const string CURRENCY_CHF = words::CHF;
-    const string SCALE_MILLION = words::MIO;
-    const string SECTOR = words::SECTOR;
+    const string SCALE_MILLION = word_names::MIO;
+    const string SECTOR = word_names::SECTOR;
     const string VERB_IS_A = verbs::IS_NAME;
 
     // non-standard formula fields of the check formula
@@ -105,8 +107,8 @@ class import_convert_xbrl
     // the concept names follow the locator labels of the calculation linkbase
     const array CONCEPT_WORDS = [
         xbrl::CONCEPT_REVENUES => self::MEASURE_SALES,
-        xbrl::CONCEPT_COST_OF_REVENUE => triples::COST_OF_REVENUE,
-        xbrl::CONCEPT_GROSS_PROFIT => triples::GROSS_PROFIT,
+        xbrl::CONCEPT_COST_OF_REVENUE => triple_names::COST_OF_REVENUE,
+        xbrl::CONCEPT_GROSS_PROFIT => triple_names::GROSS_PROFIT,
     ];
     // the parent concept of the calculation linkbase used to create the check formula
     // like the summation-item validation of the Arelle XBRL processor
@@ -117,16 +119,16 @@ class import_convert_xbrl
     // the triple is re-declared like in accounting.json
     // so that the import reuses the base concept instead of creating a word with the same name
     const array CONCEPT_TRIPLES = [
-        triples::GROSS_PROFIT => [
-            json_fields::NAME => triples::GROSS_PROFIT,
-            json_fields::EX_FROM => words::PROFIT,
+        triple_names::GROSS_PROFIT => [
+            json_fields::NAME => triple_names::GROSS_PROFIT,
+            json_fields::EX_FROM => word_names::PROFIT,
             json_fields::EX_VERB => verbs::KIND_OF_NAME,
-            json_fields::EX_TO => words::GROSS,
+            json_fields::EX_TO => word_names::GROSS,
         ],
-        triples::COST_OF_REVENUE => [
-            json_fields::EX_FROM => words::COST,
+        triple_names::COST_OF_REVENUE => [
+            json_fields::EX_FROM => word_names::COST,
             json_fields::EX_VERB => verbs::OF_NAME,
-            json_fields::EX_TO => words::REVENUE,
+            json_fields::EX_TO => word_names::REVENUE,
         ],
     ];
 

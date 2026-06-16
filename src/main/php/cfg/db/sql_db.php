@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_creator.php';
@@ -173,6 +174,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'library.php';
+//include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
@@ -289,8 +291,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
-use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
-use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -299,6 +299,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Exception;
 use mysqli;
 use mysqli_result;
@@ -1257,8 +1258,8 @@ class sql_db
             $usr_msg = new user_message($usr);
             $msk_lnk = new term_view($usr);
             $wrd = new word($usr);
-            $wrd->set(words::MATH_ID, words::MATH);
-            $wrd->description = words::MATH_COM;
+            $wrd->set(word_names::MATH_ID, word_names::MATH);
+            $wrd->description = word_names::MATH_COM;
             $wrd->set_type(phrase_type_shared::NORMAL, $usr);
             $msk = new view($usr);
             $msk->set(views::START_ID, views::START_NAME);

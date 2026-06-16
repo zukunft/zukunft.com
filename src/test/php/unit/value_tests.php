@@ -44,7 +44,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -52,23 +51,22 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_obj;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
-use DateTime;
 use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use DateTime;
 
 class value_tests
 {
@@ -153,7 +151,7 @@ class value_tests
         $usr_msg = new user_message();
         $val = $t_val->value_ch();
         $result = $val->scale_calc($t_trm->dto_scale_mio_unscaled(), $usr_msg);
-        $target = 'the result part of the scaling formula ' . formulas::SCALE_MIO
+        $target = 'the result part of the scaling formula ' . formula_names::SCALE_MIO
             . ' does not contain exactly one word of type scaling';
         $t->assert($test_name, $usr_msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
@@ -163,7 +161,7 @@ class value_tests
         $usr_msg = new user_message();
         $val = $t_val->value_ch();
         $result = $val->scale_calc($t_trm->dto_scale_none(), $usr_msg);
-        $target = 'no scaling formula found for the word ' . words::MIO_SHORT;
+        $target = 'no scaling formula found for the word ' . word_names::MIO_SHORT;
         $t->assert($test_name, $usr_msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
@@ -309,7 +307,7 @@ class value_tests
         $test_case = 'show the unit after the value';
         $val = $tl->ui_value($t_val->light_speed());
         $result = $tl->text_from_html($val->with_unit_and_info());
-        $target = groups::LENGTH_DEFINITION . ' ' . values::SPEED_OF_LIGHT_TXT . ' ' . triples::M_PER_S;
+        $target = groups::LENGTH_DEFINITION . ' ' . values::SPEED_OF_LIGHT_TXT . ' ' . triple_names::M_PER_S;
         $t->assert($test_case, $result, $target);
 
         $t->subheader($ts . 'ui validation');

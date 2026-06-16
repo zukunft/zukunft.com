@@ -39,6 +39,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_list_read_tests
@@ -58,17 +59,17 @@ class triple_list_read_tests
 
         // test loading triple names
         $test_name = 'loading triple names with pattern return the expected triple';
-        $pattern = substr(triples::MATH_CONST, 0, -1);
+        $pattern = substr(triple_names::MATH_CONST, 0, -1);
         $trp_lst = new triple_list($t->usr1);
         $trp_lst->load_names($pattern);
-        $t->assert_contains($test_name, $trp_lst->names(), triples::MATH_CONST);
+        $t->assert_contains($test_name, $trp_lst->names(), triple_names::MATH_CONST);
 
 
         // test load by triple list by ids
         $test_name = 'load triples by ids';
         $trp_lst = new triple_list($t->usr1);
-        $trp_lst->load_by_ids(array(triples::MATH_CONST_ID,triples::PI_SYMBOL_ID));
-        $target = array(triples::MATH_CONST, triples::PI_SYMBOL_NAME); // order adjusted based on the number of usage
+        $trp_lst->load_by_ids(array(triple_names::MATH_CONST_ID,triple_names::PI_SYMBOL_ID));
+        $target = array(triple_names::MATH_CONST, triple_names::PI_SYMBOL_NAME); // order adjusted based on the number of usage
         $t->assert_contains($test_name, $trp_lst->names(), $target);
         /* TODO Prio 1 activate
         $test_name = 'load triples by names';
@@ -82,7 +83,7 @@ class triple_list_read_tests
         */
 
         $test_name = 'all expected test triples are in the database';
-        $t->assert_db_test_id_list($test_name, triples::TEST_TRIPLE_IDS, new triple($t->usr1), new triple_list($t->usr1));
+        $t->assert_db_test_id_list($test_name, triple_names::TEST_TRIPLE_IDS, new triple($t->usr1), new triple_list($t->usr1));
 
     }
 

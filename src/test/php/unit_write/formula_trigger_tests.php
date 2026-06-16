@@ -36,10 +36,11 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\web\result\result;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -60,20 +61,20 @@ class formula_trigger_tests
         $t->header($ts);
 
         // prepare the calculation trigger test
-        $phr_names_ch_19 = [words::CH, words::INHABITANTS, words::MIO, words::YEAR_2019];
+        $phr_names_ch_19 = [words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019];
         $phr_ch_19 = new phrase_list($usr);
         $phr_ch_19->load_by_names($phr_names_ch_19);
-        $phr_names_ch_20 = [words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020];
+        $phr_names_ch_20 = [words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020];
         $phr_ch_20 = new phrase_list($usr);
         $phr_ch_20->load_by_names($phr_names_ch_20);
         $phr_lst1 = new phrase_list($usr);
         $phr_lst1->add_name(words::CH);
-        $phr_lst1->add_name(words::INHABITANTS);
-        $phr_lst1->add_name(words::MIO);
+        $phr_lst1->add_name(word_names::INHABITANTS);
+        $phr_lst1->add_name(word_names::MIO);
         $phr_lst2 = clone $phr_lst1;
-        $phr_lst1->add_name(words::YEAR_2019);
-        $phr_lst2->add_name(words::YEAR_2020);
-        $frm = $t_db->load_formula(formulas::INCREASE);
+        $phr_lst1->add_name(word_names::YEAR_2019);
+        $phr_lst2->add_name(word_names::YEAR_2020);
+        $frm = $t_db->load_formula(formula_names::INCREASE);
 
         $test_name = 'add a number ' . values::CH_INHABITANTS_2019_IN_MIO . ' for 2019';
         $val_add1 = new value($usr);

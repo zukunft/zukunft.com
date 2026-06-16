@@ -43,9 +43,11 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -70,17 +72,17 @@ class phrase_list_read_tests
 
         $test_name = 'loading phrase names with pattern return the expected word';
         $lst = new phrase_list($t->usr1);
-        $pattern = substr(words::MATH, 0, -1);
+        $pattern = substr(word_names::MATH, 0, -1);
         $lst->load_names($pattern);
-        $t->assert_contains($test_name, $lst->names(), words::MATH);
+        $t->assert_contains($test_name, $lst->names(), word_names::MATH);
         $test_name = 'loading phrase names with pattern return the expected triple';
         $lst = new phrase_list($t->usr1);
-        $pattern = substr(triples::MATH_CONST, 0, -1);
+        $pattern = substr(triple_names::MATH_CONST, 0, -1);
         $lst->load_names($pattern);
-        $t->assert_contains($test_name, $lst->names(), triples::MATH_CONST);
+        $t->assert_contains($test_name, $lst->names(), triple_names::MATH_CONST);
         $test_name = 'formula names are not included in the normal phrase list';
         $lst = new phrase_list($t->usr1);
-        $lst->load_names(formulas::SCALE_TO_SEC);
+        $lst->load_names(formula_names::SCALE_TO_SEC);
         // TODO Prio 1 activate
         //$t->assert_contains_not($test_name, $lst->names(), formulas::TN_READ);
         $test_name = 'api message of phrases list';
@@ -108,8 +110,8 @@ class phrase_list_read_tests
         $t->assert_contains($test_name, $country_lst->names(), words::CH);
         $test_name = 'Zurich is a country (even if it is part of a country)';
         $zurich = new phrase($t->usr1);
-        $zurich->load_by_name(words::ZH);
-        $t->assert_contains_not($test_name, $country_lst->names(), words::ZH);
+        $zurich->load_by_name(word_names::ZH);
+        $t->assert_contains_not($test_name, $country_lst->names(), word_names::ZH);
         $test_name = 'The word country is not part of the country list';
         $t->assert_contains_not($test_name, $country_lst->names(), words::COUNTRY);
 
@@ -120,7 +122,7 @@ class phrase_list_read_tests
         $t->assert_greater($test_name, 0, $auto_years);
 
         // Canton is related to Switzerland and Zurich
-        $phr_canton = $t_db->load_phrase(words::CANTON);
+        $phr_canton = $t_db->load_phrase(word_names::CANTON);
         $phr_lst = $phr_canton->all_related();
         $test_name = 'The word Canton is related to Switzerland and Zurich';
         // TODO ABB is not expected to be related even if it is related via zurich and company

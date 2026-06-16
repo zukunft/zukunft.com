@@ -71,10 +71,10 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -247,9 +247,9 @@ class change_log_tests
         $t->subheader($ts . 'link change api');
         $test_name = 'the new link target is sent as the new value';
         $log_lnk = $t_log->log_link();
-        $log_lnk->new_text_to = words::MATH;
+        $log_lnk->new_text_to = word_names::MATH;
         $api = $log_lnk->api_json_array(new api_type_list([]));
-        $t->assert($test_name, $api[json_fields::NEW_VALUE] ?? '', words::MATH);
+        $t->assert($test_name, $api[json_fields::NEW_VALUE] ?? '', word_names::MATH);
         $test_name = 'a link change without a display text sends no new value';
         $log_empty = new change_link($usr);
         $api = $log_empty->api_json_array(new api_type_list([]));
@@ -283,7 +283,7 @@ class change_log_tests
         // prepare the objects for the tests
         $wrd = $t_wrd->word();
         $trp = new triple($usr);
-        $trp->set(triples::PI_ID, triples::PI_NAME);
+        $trp->set(triple_names::PI_ID, triple_names::PI_NAME);
 
 
         $t->subheader($ts . 'api');

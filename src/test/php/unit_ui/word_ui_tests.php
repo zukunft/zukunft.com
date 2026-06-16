@@ -40,13 +40,14 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -158,7 +159,7 @@ class word_ui_tests
         $test_name = 'the symbol triple of the word is shown';
         $t->assert_text_contains($test_name, $list->parents_of_word($wrd_chf_rel), words::CHF);
         $test_name = 'the category triple of the word is shown';
-        $t->assert_text_contains($test_name, $list->children_of_word($wrd_chf_rel), words::CURRENCY);
+        $t->assert_text_contains($test_name, $list->children_of_word($wrd_chf_rel), word_names::CURRENCY);
         $test_name = 'without related phrases the section stays empty';
         $t->assert($test_name, $list->parents_of_word($wrd_chf, new phrase_list()), '');
 
@@ -169,17 +170,17 @@ class word_ui_tests
         $test_name = 'the alias line is not broken across lines';
         $t->assert_text_contains($test_name, $alias_html, styles::TEXT_NOWRAP);
         $test_name = 'the dollar sign is linked as alias';
-        $t->assert_text_contains($test_name, $alias_html, words::DOLLAR);
+        $t->assert_text_contains($test_name, $alias_html, word_names::DOLLAR);
         $symbol_html = $list->phrase_symbols($wrd_usd_rel);
         $test_name = 'one symbol is shown with the singular text';
         $t->assert_text_not_contains($test_name, $symbol_html, $mtr->txt(msg_id::PHRASE_SYMBOLS));
         $test_name = 'the currency code is linked as symbol';
-        $t->assert_text_contains($test_name, $symbol_html, words::USD);
+        $t->assert_text_contains($test_name, $symbol_html, word_names::USD);
         $ex_html = $list->phrases_related_ex_symbols($wrd_usd_rel);
         $test_name = 'the other related phrases are listed';
-        $t->assert_text_contains($test_name, $ex_html, triples::IN_USD);
+        $t->assert_text_contains($test_name, $ex_html, triple_names::IN_USD);
         $test_name = 'the alias triples are excluded from the related phrases';
-        $t->assert_text_not_contains($test_name, $ex_html, triples::DOLLAR_ALIAS);
+        $t->assert_text_not_contains($test_name, $ex_html, triple_names::DOLLAR_ALIAS);
         $test_name = 'without an alias nothing is shown';
         $t->assert($test_name, $list->phrase_aliases($wrd_chf_rel), '');
 
@@ -191,23 +192,23 @@ class word_ui_tests
 
         $t->subheader($ts . 'assigned formulas');
         $test_name = 'the formula assigned to the word is listed';
-        $t->assert_text_contains($test_name, $list->formulas($wrd_minute, $dto), formulas::SCALE_TO_SEC);
+        $t->assert_text_contains($test_name, $list->formulas($wrd_minute, $dto), formula_names::SCALE_TO_SEC);
         $test_name = 'the sample formula of the default test word is listed';
-        $t->assert_text_contains($test_name, $list->formulas($wrd, $dto), formulas::INCREASE);
+        $t->assert_text_contains($test_name, $list->formulas($wrd, $dto), formula_names::INCREASE);
         $test_name = 'a word without assigned formulas shows an empty list';
         $t->assert($test_name, $list->formulas($wrd_zh, $dto), '');
 
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related_ex_symbols($wrd_company_rel);
         $test_name = 'the stock with the highest market capitalisation is first';
-        $t->assert_text_order($test_name, $stock_html, triples::COMPANY_ABB, triples::COMPANY_ZURICH);
+        $t->assert_text_order($test_name, $stock_html, triple_names::COMPANY_ABB, triple_names::COMPANY_ZURICH);
         $test_name = 'the stock with the lowest market capitalisation is last';
-        $t->assert_text_order($test_name, $stock_html, triples::COMPANY_ZURICH, triples::COMPANY_VESTAS);
+        $t->assert_text_order($test_name, $stock_html, triple_names::COMPANY_ZURICH, triple_names::COMPANY_VESTAS);
 
         $t->subheader($ts . 'related values sorted by impact');
         $val_html = $list->values_by_word($wrd_zh, $dto);
         $test_name = 'the value of the phrase with the highest impact is shown first';
-        $t->assert_text_order($test_name, $val_html, triples::COMPANY_ZURICH, triples::CITY_ZH_NAME);
+        $t->assert_text_order($test_name, $val_html, triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
         $test_name = 'a word without related values shows an empty value list';
         $t->assert($test_name, $list->values_by_word($wrd, $dto), '');
 
@@ -219,16 +220,16 @@ class word_ui_tests
         $wrd_zh_rel = new word($wrd_zh_be->api_json(
             [api_types::INCL_RELATED, api_types::INCL_PHRASES, api_types::TEST_MODE]));
         $t->assert_text_order($test_name, $list->values_by_word($wrd_zh_rel),
-            triples::COMPANY_ZURICH, triples::CITY_ZH_NAME);
+            triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
 
         // the similar words of a word are the other words linked to the same parent via the 'is a' verb
         // e.g. "Swiss franc" is a "currency" and the other currencies are "Euro" and "US Dollar" (USD)
-        $test_name = 'word->similar for ' . words::SWISS_FRANC;
+        $test_name = 'word->similar for ' . word_names::SWISS_FRANC;
         $similar = $t_wrd->swiss_franc_ui()->similar($t_phr->list_currency_ui());
         $names = $similar->names();
         sort($names);
         $result = implode(',', $names);
-        $target = words::EURO . ',' . words::US_DOLLAR;
+        $target = word_names::EURO . ',' . word_names::US_DOLLAR;
         $t->assert($test_name, $result, $target);
 
     }

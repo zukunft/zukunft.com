@@ -43,8 +43,9 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -75,13 +76,13 @@ class formula_list_tests
         // load only the names
         $frm_lst = new formula_list($usr);
         $t->assert_sql_names($sc, $frm_lst, new formula($usr));
-        $t->assert_sql_names($sc, $frm_lst, new formula($usr), formulas::SCALE_TO_SEC);
+        $t->assert_sql_names($sc, $frm_lst, new formula($usr), formula_names::SCALE_TO_SEC);
 
         // sql to load a list of formulas by the id, name or ...
         $frm_lst = new formula_list($usr);
         $test_name = 'load formulas by ids';
         $t->assert_sql_by_ids($test_name, $sc, $frm_lst);
-        $t->assert_sql_by_names($sc, $frm_lst, array(formulas::INCREASE, formulas::INCREASE));
+        $t->assert_sql_by_names($sc, $frm_lst, array(formula_names::INCREASE, formula_names::INCREASE));
         $t->assert_sql_like($sc, $frm_lst, 'i');
         $t->assert_sql_all_paged($db_con, $frm_lst);
         $this->assert_sql_by_word_ref($t, $db_con, $frm_lst);
@@ -244,7 +245,7 @@ class formula_list_tests
     {
         // prepare
         $wrd = new word($t->usr1);
-        $wrd->set(words::DEFAULT_WORD_ID,words::TEST_ADD);
+        $wrd->set(words::DEFAULT_WORD_ID,word_names::TEST_ADD);
         $phr = $wrd->phrase();
 
         // check the Postgres query syntax

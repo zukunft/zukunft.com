@@ -38,10 +38,11 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -106,7 +107,7 @@ class value_list_ui_tests
         $cfg = new config($t_val->value_list_all()->api_json([api_types::INCL_PHRASES]));
         $test_name = 'a loaded config value is returned by the phrase names';
         // get_by returns the display value, so the number is rounded for the user
-        $t->assert($test_name, $cfg->get_by([words::PI_SYMBOL]), round(values::PI_LONG, 2));
+        $t->assert($test_name, $cfg->get_by([word_names::PI_SYMBOL]), round(values::PI_LONG, 2));
         $test_name = 'a missing config value returns the given default';
         $t->assert($test_name, $cfg->get_by([words::POD], 7), 7);
 
@@ -114,7 +115,7 @@ class value_list_ui_tests
         $impact_lst = $t_val->value_list_zh_impact_ui();
         $impact_lst->sort_by_impact();
         $test_name = 'the value of the phrase with the highest impact is first';
-        $t->assert_text_order($test_name, $impact_lst->list(), triples::COMPANY_ZURICH, triples::CITY_ZH_NAME);
+        $t->assert_text_order($test_name, $impact_lst->list(), triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
         $test_name = 'sort by impact of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->list(), '');
 

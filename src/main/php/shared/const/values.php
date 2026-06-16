@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_CONST . 'def.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class values
 {
@@ -85,7 +86,7 @@ class values
     // list of values that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
     const array TEST_VALUES = array(
-        [words::TEST_ADD_GROUP_PRIME],
+        [word_names::TEST_ADD_GROUP_PRIME],
     );
 
 }

@@ -45,30 +45,26 @@ include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -92,31 +88,31 @@ class import_write_tests
             users::TEST_USER_NAME, users::TEST_USER_COM, test_files::IMPORT_USERS, $t_usr->system_user());
 
         $this->assert_import_json_named($t, $ts, new word($usr),
-            words::TEST_ADD, words::TEST_ADD_COM, test_files::IMPORT_WORDS);
+            word_names::TEST_ADD, word_names::TEST_ADD_COM, test_files::IMPORT_WORDS);
 
         $this->assert_import_json_named($t, $ts, new verb(),
             verbs::TEST_ADD_NAME, verbs::TEST_ADD_COM, test_files::IMPORT_VERBS, $t_usr->system_user());
 
 
         $this->assert_import_json_named($t, $ts, new triple($usr),
-            triples::SYSTEM_TEST_ADD, triples::SYSTEM_TEST_ADD_COM, test_files::IMPORT_TRIPLES);
+            triple_names::SYSTEM_TEST_ADD, triple_names::SYSTEM_TEST_ADD_COM, test_files::IMPORT_TRIPLES);
 
         $test_name = 'remove the test word and word to directly as fallback to cleanup the database as fallback for the triple case';
         $wrd = new word($usr);
-        $wrd->load_by_name(words::TEST_ADD);
+        $wrd->load_by_name(word_names::TEST_ADD);
         if ($wrd->id() > 0) {
             $wrd->del($usr_msg);
         }
         $wrd = new word($usr);
-        $wrd->load_by_name(words::TEST_ADD);
+        $wrd->load_by_name(word_names::TEST_ADD);
         $t->assert($test_name, $wrd->id(), 0);
         $wrd_to = new word($usr);
-        $wrd_to->load_by_name(words::TEST_ADD_TO);
+        $wrd_to->load_by_name(word_names::TEST_ADD_TO);
         if ($wrd_to->id() > 0) {
             $wrd_to->del($usr_msg);
         }
         $wrd_to = new word($usr);
-        $wrd_to->load_by_name(words::TEST_ADD_TO);
+        $wrd_to->load_by_name(word_names::TEST_ADD_TO);
         $t->assert($test_name, $wrd_to->id(), 0);
 
 
@@ -170,7 +166,7 @@ class import_write_tests
 
 
         $this->assert_import_json_named($t, $ts, new formula($usr),
-            formulas::SYSTEM_TEST_ADD, formulas::SYSTEM_TEST_ADD_COM, test_files::IMPORT_FORMULAS);
+            formula_names::SYSTEM_TEST_ADD, formula_names::SYSTEM_TEST_ADD_COM, test_files::IMPORT_FORMULAS);
 
         $this->assert_import_json_named($t, $ts, new component($usr),
             components::TEST_ADD_NAME, components::TEST_ADD_COM, test_files::IMPORT_COMPONENTS);

@@ -33,11 +33,9 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
-use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -61,8 +59,8 @@ class ref_write_tests
         $t->assert_write_link($t_ref->ref_filled_add());
 
         // create the test ref
-        $wrd = $t_db->test_word(words::TEST_ADD);
-        $t_db->test_ref(words::TEST_ADD, ref::TEST_REF_NAME, ref_types::WIKIDATA);
+        $wrd = $t_db->test_word(word_names::TEST_ADD);
+        $t_db->test_ref(word_names::TEST_ADD, ref::TEST_REF_NAME, ref_types::WIKIDATA);
 
         // load by phrase and type
         global $sys;
@@ -72,14 +70,14 @@ class ref_write_tests
         $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id());
         $result = $ref->get_external_key();
         $target = ref::TEST_REF_NAME;
-        $t->assert('ref->load "' . words::TEST_ADD . '" in ' . ref_types::WIKIDATA, $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
+        $t->assert('ref->load "' . word_names::TEST_ADD . '" in ' . ref_types::WIKIDATA, $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         if ($ref->id() > 0) {
             // load by id and test the loading of the objects
             $ref2 = new ref($usr);
             $ref2->load_by_id($ref->id());
             $result = $ref2->phrase()->name();
-            $target = words::TEST_ADD;
+            $target = word_names::TEST_ADD;
             $t->assert('ref->load_object word', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
             $result = $ref2->predicate_name();
             $target = ref_types::WIKIDATA;
@@ -87,7 +85,7 @@ class ref_write_tests
         }
 
         // cleanup of ref specific tests
-        $t->write_named_cleanup($wrd, words::TEST_ADD);
+        $t->write_named_cleanup($wrd, word_names::TEST_ADD);
     }
 
 }

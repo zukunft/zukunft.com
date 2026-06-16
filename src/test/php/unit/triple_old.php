@@ -43,7 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_old
@@ -73,7 +73,7 @@ class triple_old
 
         // sql to load a triple by name
         $trp = new triple($usr);
-        $trp->set_name(triples::COMPANY_ZURICH);
+        $trp->set_name(triple_names::COMPANY_ZURICH);
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
 

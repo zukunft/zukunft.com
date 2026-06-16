@@ -40,7 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -62,9 +62,9 @@ class formula_read_tests
         $t->header($ts);
 
         $t->subheader($ts . 'load' );
-        $test_name = formulas::SCALE_TO_SEC;
+        $test_name = formula_names::SCALE_TO_SEC;
         $frm = new formula($t->usr1);
-        $t->assert_load($frm, formulas::SCALE_TO_SEC);
+        $t->assert_load($frm, formula_names::SCALE_TO_SEC);
 
         $t->subheader($ts . 'by name');
 
@@ -101,8 +101,8 @@ class formula_read_tests
 
         $t->subheader($ts . 'api');
 
-        $test_name = formulas::INCREASE;
-        $frm = $t_db->load_formula(formulas::INCREASE);
+        $test_name = formula_names::INCREASE;
+        $frm = $t_db->load_formula(formula_names::INCREASE);
         if ($frm->name() != '') {
             $t->assert_export_reload($ts . $test_name, $frm);
         } else {

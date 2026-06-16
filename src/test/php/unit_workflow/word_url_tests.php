@@ -33,8 +33,10 @@
 namespace Zukunft\ZukunftCom\test\php\unit_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_db.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
@@ -44,12 +46,12 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 
 class word_url_tests
@@ -81,14 +83,14 @@ class word_url_tests
         $test_name = 'show edit view';
         $url_arr = [];
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
-        $url_arr[url_var::ID] = words::MATH_ID;
+        $url_arr[url_var::ID] = word_names::MATH_ID;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        $t->assert_text_contains($test_name, $result, words::MATH);
+        $t->assert_text_contains($test_name, $result, word_names::MATH);
 
         $test_name = '... view with execution time measurement';
         $url_arr[url_var::DEBUG] = url_var::DEBUG_EXE_TIME_REPORT;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        $t->assert_text_contains($test_name, $result, words::MATH);
+        $t->assert_text_contains($test_name, $result, word_names::MATH);
 
         $test_name = 'add request via url without name should return a missing error message';
         $url_arr = [];
@@ -100,7 +102,7 @@ class word_url_tests
         //$t->assert_text_contains($test_name, $result, msg_id::WORD_NAME_MISSING->text());
 
         $test_name = '... with name ask the user to confirm adding the word';
-        $url_arr[url_var::NAME] = words::TEST_ADD;
+        $url_arr[url_var::NAME] = word_names::TEST_ADD;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
         // TODO Prio 0 activate once url_to_html routes a create request to the views::CONFIRM_ADD mask
         //$t->assert_text_contains($test_name, $result, $mtr->get(msg_id::FORM_TITLE_CONFIRM_ADD->text()));
@@ -108,13 +110,13 @@ class word_url_tests
         $test_name = '... if confirmed the word is added';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        $t->assert_text_contains($test_name, $result, words::TEST_ADD);
+        $t->assert_text_contains($test_name, $result, word_names::TEST_ADD);
 
         $test_name = '... so it can be deleted';
         $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
         // TODO Prio 0 activate once url_to_html handles url_var::CRUD_DELETE like the create action
-        //$t->assert_text_contains($test_name, $result, words::TEST_ADD);
+        //$t->assert_text_contains($test_name, $result, word_names::TEST_ADD);
 
 
         $t->subheader($ts . 'search');
@@ -132,7 +134,7 @@ class word_url_tests
 
         // cleanup - fallback delete
         $wrd = new word($t->usr1);
-        foreach (words::TEST_WORDS as $wrd_name) {
+        foreach (word_names::TEST_WORDS as $wrd_name) {
             $t->write_named_cleanup($wrd, $wrd_name);
         }
 

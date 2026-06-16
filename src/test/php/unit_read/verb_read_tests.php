@@ -40,9 +40,10 @@ include_once paths::SHARED_CONST . 'triples.php';
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class verb_read_tests
@@ -80,7 +81,7 @@ class verb_read_tests
         $countries = $country->children();
         $t->assert_contains('is a based on ' . words::COUNTRY,
             $countries->names(),
-            array(words::CH, words::GERMANY)
+            array(words::CH, word_names::GERMANY)
         );
 
         // 'is part of' - test the direct selection of the members via 'is part of' verb
@@ -88,11 +89,11 @@ class verb_read_tests
         $parts = $switzerland->direct_parts();
         $t->assert_contains('direct parts of ' . words::CH,
             $parts->names(),
-            array(triples::CANTON_ZURICH)
+            array(triple_names::CANTON_ZURICH)
         );
         $t->assert_contains_not('direct parts of ' . words::CH,
             $parts->names(),
-            array(triples::CITY_ZH)
+            array(triple_names::CITY_ZH)
         );
 
         // 'is part of' - test the recursive selection of the members via 'is part of' verb
@@ -100,7 +101,7 @@ class verb_read_tests
         $parts = $switzerland->parts();
         $t->assert_contains('parts of ' . words::CH . ' and parts of the parts',
             $parts->names(),
-            array(triples::CANTON_ZURICH, triples::CITY_ZH)
+            array(triple_names::CANTON_ZURICH, triple_names::CITY_ZH)
         );
 
 
