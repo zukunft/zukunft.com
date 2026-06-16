@@ -40,12 +40,12 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -192,9 +192,9 @@ class word_ui_tests
 
         $t->subheader($ts . 'assigned formulas');
         $test_name = 'the formula assigned to the word is listed';
-        $t->assert_text_contains($test_name, $list->formulas($wrd_minute, $dto), formulas::SCALE_TO_SEC);
+        $t->assert_text_contains($test_name, $list->formulas($wrd_minute, $dto), formula_names::SCALE_TO_SEC);
         $test_name = 'the sample formula of the default test word is listed';
-        $t->assert_text_contains($test_name, $list->formulas($wrd, $dto), formulas::INCREASE);
+        $t->assert_text_contains($test_name, $list->formulas($wrd, $dto), formula_names::INCREASE);
         $test_name = 'a word without assigned formulas shows an empty list';
         $t->assert($test_name, $list->formulas($wrd_zh, $dto), '');
 

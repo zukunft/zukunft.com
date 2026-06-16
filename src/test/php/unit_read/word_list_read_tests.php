@@ -41,7 +41,7 @@ include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -85,8 +85,8 @@ class word_list_read_tests
         $t->assert_contains_not($test_name, $wrd_lst->names(), word_names::MATH);
         $test_name = 'formula names are not included in the normal word list';
         $wrd_lst = new word_list($t->usr1);
-        $wrd_lst->load_names(formulas::SCALE_TO_SEC);
-        $t->assert_contains_not($test_name, $wrd_lst->names(), formulas::SCALE_TO_SEC);
+        $wrd_lst->load_names(formula_names::SCALE_TO_SEC);
+        $t->assert_contains_not($test_name, $wrd_lst->names(), formula_names::SCALE_TO_SEC);
 
 
         // test load by word list by ids

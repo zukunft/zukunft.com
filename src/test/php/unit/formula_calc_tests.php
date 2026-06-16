@@ -48,13 +48,13 @@ use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -112,11 +112,11 @@ class formula_calc_tests
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"'
-            . formulas::THIS_NAME . '" ('
+            . formula_names::THIS_NAME . '" ('
             . $frm_this->id() . ') / "'
-            . formulas::PRIOR . '" ('
+            . formula_names::PRIOR . '" ('
             . $frm_prior->id() . ') / "'
-            . formulas::PRIOR . '" ('
+            . formula_names::PRIOR . '" ('
             . $frm_prior->id() . ')';
         $t->dsp_contains($test_name, $target, $result);
 
@@ -181,7 +181,7 @@ class formula_calc_tests
         $exp = new expression($frm);
         $exp->set_ref_text('{w' . word_names::ONE_ID . '}={w' . word_names::MIO_ID . '}*1000000', $t_trm->term_list_scale());
         $result = $exp->load_result_phrases($trm_lst);
-        $t->assert('Expression->res_phr_lst for ' . formulas::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
+        $t->assert('Expression->res_phr_lst for ' . formula_names::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
 
         // get the special formulas used in a formula to calculate the result
         // e.g. "next" is a special formula to get the following values
@@ -208,8 +208,8 @@ class formula_calc_tests
         // test the calculation of one value
         $trm_lst = $t->term_list_for_tests(array(
             words::PCT,
-            formulas::THIS_NAME,
-            formulas::PRIOR
+            formula_names::THIS_NAME,
+            formula_names::PRIOR
         ));
         $phr_lst = $t_phr->phrase_list_increase();
 

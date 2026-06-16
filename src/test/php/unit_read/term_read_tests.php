@@ -51,8 +51,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -101,17 +101,17 @@ class term_read_tests
 
         // test load by term by a formula db row
         $frm = new formula($t->usr1);
-        $qp = $frm->load_sql_by_id($db_con->sql_creator(),formulas::SCALE_TO_SEC_ID);
+        $qp = $frm->load_sql_by_id($db_con->sql_creator(),formula_names::SCALE_TO_SEC_ID);
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(formula::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
         $trm->row_mapper_sandbox($db_row, formula_db::FLD_ID, formula_db::FLD_NAME, formula_db::FLD_TYPE);
-        $t->assert($t->name . ' formula row mapper', $trm->name(), formulas::SCALE_TO_SEC);
+        $t->assert($t->name . ' formula row mapper', $trm->name(), formula_names::SCALE_TO_SEC);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), formula::class);
-        $t->assert($t->name . ' formula by object id', $trm_by_obj_id->name(), formulas::SCALE_TO_SEC);
+        $t->assert($t->name . ' formula by object id', $trm_by_obj_id->name(), formula_names::SCALE_TO_SEC);
 
         // test load by term by a verb db row
         $vrb = new verb();

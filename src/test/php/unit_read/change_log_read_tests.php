@@ -41,12 +41,12 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
@@ -156,7 +156,7 @@ class change_log_read_tests
         // ... and if the first entry is the adding the minute scale formula
         $first_change = $lst->lst()[0];
         $t->assert('first formula change is adding', $first_change->old_value, '');
-        $t->assert('... the minute scale formula', $first_change->new_value, formulas::SCALE_TO_SEC_EXP);
+        $t->assert('... the minute scale formula', $first_change->new_value, formula_names::SCALE_TO_SEC_EXP);
 
         // check loading of name changes of source
         $lst = new change_log_list();

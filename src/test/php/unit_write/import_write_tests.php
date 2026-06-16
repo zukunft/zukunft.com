@@ -57,12 +57,12 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -166,7 +166,7 @@ class import_write_tests
 
 
         $this->assert_import_json_named($t, $ts, new formula($usr),
-            formulas::SYSTEM_TEST_ADD, formulas::SYSTEM_TEST_ADD_COM, test_files::IMPORT_FORMULAS);
+            formula_names::SYSTEM_TEST_ADD, formula_names::SYSTEM_TEST_ADD_COM, test_files::IMPORT_FORMULAS);
 
         $this->assert_import_json_named($t, $ts, new component($usr),
             components::TEST_ADD_NAME, components::TEST_ADD_COM, test_files::IMPORT_COMPONENTS);

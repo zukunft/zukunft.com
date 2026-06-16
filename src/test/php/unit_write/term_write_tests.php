@@ -43,8 +43,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -96,9 +96,9 @@ class term_write_tests
 
         // ... check also for a formula
         $term = new term($usr);
-        $term->load_by_obj_name(formulas::INCREASE);
+        $term->load_by_obj_name(formula_names::INCREASE);
         // each formula name has also a word
-        $target = 'A formula with the name "' . formulas::INCREASE . '" already exists. '
+        $target = 'A formula with the name "' . formula_names::INCREASE . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.';
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);

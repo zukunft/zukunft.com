@@ -70,7 +70,6 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -84,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -142,7 +142,7 @@ class api_tests
         // the value contains only the phrase id and name in the api message because the phrase are expected to be cached in the frontend
         $t->assert_api_get(value::class, values::PI_ID);
         $t->assert_api_get(formula::class);
-        $t->assert_api_get_by_text(formula::class, formulas::SCALE_TO_SEC);
+        $t->assert_api_get_by_text(formula::class, formula_names::SCALE_TO_SEC);
         $t->assert_api_get(view::class);
         $t->assert_api_get(view::class, 1, 1);
         $t->assert_api_get_by_text(view::class, views::START_NAME);
@@ -165,8 +165,8 @@ class api_tests
         // TODO Prio 1 review and add triple links to phrases
         $t->assert_api_get_list(phrase_list::class, [word_names::MATH_ID, word_names::CONST_ID, word_names::PI_ID, triple_names::MATH_CONST_ID * -1, triple_names::PI_ID * -1]);
         $t->assert_api_get_list(phrase_list::class, word_names::MATH, url_var::PATTERN);
-        $t->assert_api_get_list(term_list::class, [word_names::MATH_ID, triple_names::MATH_CONST_ID * -1, verbs::NOT_SET_ID * 2, formulas::SCALE_TO_SEC_ID * -2]);
-        $t->assert_api_get_list(formula_list::class, [formulas::SCALE_TO_SEC_ID]);
+        $t->assert_api_get_list(term_list::class, [word_names::MATH_ID, triple_names::MATH_CONST_ID * -1, verbs::NOT_SET_ID * 2, formula_names::SCALE_TO_SEC_ID * -2]);
+        $t->assert_api_get_list(formula_list::class, [formula_names::SCALE_TO_SEC_ID]);
         $t->assert_api_get_list(view_list::class, views::START_NAME, url_var::PATTERN);
         $t->assert_api_get_list(component_list::class, views::WORD_ADD_ID, url_var::VIEW);
 

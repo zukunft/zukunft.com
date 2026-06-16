@@ -43,10 +43,10 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -82,7 +82,7 @@ class expression_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'reference text is invalid because a symbol is too short';
-        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL;
+        $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL;
         $exp = $frm->expression();
         $exp->term_id_list($usr_msg);
         $result = $usr_msg->all_message_text();
@@ -91,7 +91,7 @@ class expression_tests
         $usr_msg->reset();
 
         $test_name = 'reference text is invalid because the id is not a number';
-        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER;
+        $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER;
         $exp = $frm->expression();
         $exp->term_id_list($usr_msg);
         $result = $usr_msg->all_message_text();
@@ -100,7 +100,7 @@ class expression_tests
         $usr_msg->reset();
 
         $test_name = 'reference text is invalid because the term type is not supported';
-        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID;
+        $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID;
         $exp = $frm->expression();
         $exp->term_id_list($usr_msg);
         $result = $usr_msg->all_message_text();
@@ -126,7 +126,7 @@ class expression_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'phrase id is invalid because the id is not a number';
-        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_PHRASE_ID_NOT_VALID;
+        $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_PHRASE_ID_NOT_VALID;
         $exp = $frm->expression();
         $exp->phrase_id_list($usr_msg);
         $result = $usr_msg->all_message_text();
@@ -167,20 +167,20 @@ class expression_tests
 
         $this->frm_exp_convert($t,
             'including a triple',
-            formulas::DIAMETER,
-            formulas::DIAMETER_DB,
+            formula_names::DIAMETER,
+            formula_names::DIAMETER_DB,
             $trm_lst
         );
         $this->frm_exp_convert($t,
             'including fixed formulas',
-            formulas::INCREASE_EXP,
-            formulas::INCREASE_DB,
+            formula_names::INCREASE_EXP,
+            formula_names::INCREASE_DB,
             $trm_lst
         );
         $this->frm_exp_convert($t,
             'including verbs',
-            formulas::PARTS_IN_PERCENT_EXP,
-            formulas::PARTS_IN_PERCENT_DB,
+            formula_names::PARTS_IN_PERCENT_EXP,
+            formula_names::PARTS_IN_PERCENT_DB,
             $trm_lst
         );
 
@@ -188,7 +188,7 @@ class expression_tests
         $test_name = 'get the calc phrases';
         $frm = $t_frm->formula();
         $exp = new expression($frm);
-        $exp->set_user_text(formulas::DIAMETER, $trm_lst);
+        $exp->set_user_text(formula_names::DIAMETER, $trm_lst);
         //$trm_names = $exp->get_usr_names();
         //$trm_lst = $t->term_list_for_tests($trm_names);
         $exp->ref_text($trm_lst);
@@ -204,11 +204,11 @@ class expression_tests
         // test the phrase list of the left side
         $test_name = 'get the result phrases';
         $exp = new expression($frm);
-        $exp->set_user_text(formulas::INCREASE_EXP, $trm_lst);
+        $exp->set_user_text(formula_names::INCREASE_EXP, $trm_lst);
         $exp->ref_text($trm_lst);
         $phr_lst = $exp->load_result_phrases($trm_lst);
         $result = $phr_lst->dsp_id();
-        $target = '"' . formulas::PERCENT
+        $target = '"' . formula_names::PERCENT
             . '" (phrase_id ' . words::PCT_ID . ') for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
@@ -230,7 +230,7 @@ class expression_tests
         //      because one person can be tax payer in more than one Canton
         $test_name = 'get the formula element group list';
         $exp = new expression($frm);
-        $exp->set_user_text(formulas::PARTS_IN_PERCENT_EXP, $trm_lst);
+        $exp->set_user_text(formula_names::PARTS_IN_PERCENT_EXP, $trm_lst);
         $trm_names = $exp->get_usr_names();
         $exp->ref_text($trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
@@ -255,9 +255,9 @@ class expression_tests
         $test_name = 'test the conversion of the user text to the database reference text with fixed formulas';
         $frm = $t_frm->formula_increase();
         $exp = $frm->expression();
-        $exp->set_user_text(formulas::INCREASE_EXP, $trm_lst);
+        $exp->set_user_text(formula_names::INCREASE_EXP, $trm_lst);
         $result = $exp->ref_text($trm_lst);
-        $target = formulas::INCREASE_DB;
+        $target = formula_names::INCREASE_DB;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test getting the phrase ids';
@@ -267,30 +267,30 @@ class expression_tests
 
         $test_name = 'test the conversion of the database reference text to the user text';
         $result = $exp->user_text($trm_lst);
-        $target = formulas::INCREASE_EXP;
+        $target = formula_names::INCREASE_EXP;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the formula element list';
         $elm_lst = $exp->element_list($usr_msg, $trm_lst);
         $result = $elm_lst->dsp_id();
-        $target = '"' . formulas::THIS_NAME . '","'
-            . formulas::PRIOR . '","'
-            . formulas::PRIOR . '" (element_id 21/18,21/20,21/20) for user 3 (zukunft.com system test)';
+        $target = '"' . formula_names::THIS_NAME . '","'
+            . formula_names::PRIOR . '","'
+            . formula_names::PRIOR . '" (element_id 21/18,21/20,21/20) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the formula term list';
         $trm_lst = $exp->terms($usr_msg, $trm_lst);
         $result = $trm_lst->dsp_id();
         $target = '"' . words::PERCENT . '","'
-            . formulas::PRIOR . '","'
-            . formulas::THIS_NAME . '" (36,40,321)';
+            . formula_names::PRIOR . '","'
+            . formula_names::THIS_NAME . '" (36,40,321)';
         $t->assert($test_name, $result, $target);
 
         // element_special_following
         $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
         $follow_lst = $exp->terms_following($usr_msg, $trm_lst);
         $result = $follow_lst->dsp_name();
-        $target = '"' . formulas::PRIOR . '","' . formulas::THIS_NAME . '"';
+        $target = '"' . formula_names::PRIOR . '","' . formula_names::THIS_NAME . '"';
         $t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // TODO element_special_following_frm
@@ -300,11 +300,11 @@ class expression_tests
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
 
         // create the formulas for testing
-        $frm_this = $trm_lst->get_by_name(formulas::THIS_NAME);
-        $frm_prior = $trm_lst->get_by_name(formulas::PRIOR);
+        $frm_this = $trm_lst->get_by_name(formula_names::THIS_NAME);
+        $frm_prior = $trm_lst->get_by_name(formula_names::PRIOR);
 
         $result = $elm_grp_lst->dsp_id();
-        $target = '"' . formulas::THIS_NAME . '" (' . $frm_this->id_obj() . ') / "' . formulas::PRIOR . '" (' . $frm_prior->id_obj() . ') / "' . word_names::PRIOR_NAME . '" ('
+        $target = '"' . formula_names::THIS_NAME . '" (' . $frm_this->id_obj() . ') / "' . formula_names::PRIOR . '" (' . $frm_prior->id_obj() . ') / "' . word_names::PRIOR_NAME . '" ('
             . $frm_prior->id_obj() . ')';
         $t->dsp_contains($test_name, $target, $result);
 
@@ -317,7 +317,7 @@ class expression_tests
         // tests based on the pi formula
         $test_name = 'test the user text conversion with a triple';
         $exp = new expression($frm);
-        $exp->set_user_text(formulas::DIAMETER, $t_trm->term_list_all());
+        $exp->set_user_text(formula_names::DIAMETER, $t_trm->term_list_all());
         $trm_names = $exp->get_usr_names();
         $trm_lst_rev = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst_rev);
@@ -326,7 +326,7 @@ class expression_tests
 
         $test_name = 'source phrase list with id from the reference text';
         $exp_sector = new expression($frm);
-        $exp_sector->set_ref_text(formulas::PARTS_IN_PERCENT_DB, $trm_lst);
+        $exp_sector->set_ref_text(formula_names::PARTS_IN_PERCENT_DB, $trm_lst);
         $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part());
         $result = $phr_lst->dsp_id();
         $target = '"","" (phrase_id ' . word_names::PARTS_ID . ',' . words::TOTAL_ID
@@ -335,7 +335,7 @@ class expression_tests
 
         $test_name = 'result phrase list with id from the reference text';
         $exp_scale = new expression($frm);
-        $exp_scale->set_ref_text(formulas::SCALE_MIO_DB, $trm_lst);
+        $exp_scale->set_ref_text(formula_names::SCALE_MIO_DB, $trm_lst);
         $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->res_part());
         $result = $phr_lst->dsp_id();
         $target = 'phrase_id ' . word_names::ONE_ID . ' for user 3 (zukunft.com system test)';

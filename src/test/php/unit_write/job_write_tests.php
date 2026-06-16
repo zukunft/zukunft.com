@@ -41,10 +41,10 @@ use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -110,7 +110,7 @@ class job_write_tests
         $t->header($ts);
 
         // prepare test adding a batch job via a list
-        $frm = $t_db->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formula_names::INCREASE);
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
 

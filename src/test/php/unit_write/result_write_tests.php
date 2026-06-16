@@ -40,9 +40,9 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -67,16 +67,16 @@ class result_write_tests
          * prepare
          */
 
-        $test_name = 'add of formula ' . formulas::INCREASE_EXP . ' with name ' . formulas::SYSTEM_TEST_ADD;
+        $test_name = 'add of formula ' . formula_names::INCREASE_EXP . ' with name ' . formula_names::SYSTEM_TEST_ADD;
         $frm = new formula($t->usr1);
-        $frm->set_name(formulas::SYSTEM_TEST_ADD);
-        $frm->usr_text = formulas::INCREASE_EXP;
+        $frm->set_name(formula_names::SYSTEM_TEST_ADD);
+        $frm->usr_text = formula_names::INCREASE_EXP;
         $t->assert_true($test_name, $frm->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        $test_name = 'rename formula to ' . formulas::SYSTEM_TEST_RENAMED;
+        $test_name = 'rename formula to ' . formula_names::SYSTEM_TEST_RENAMED;
         // check if the formula can be renamed
-        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
-        $frm->set_name(formulas::SYSTEM_TEST_RENAMED);
+        $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
+        $frm->set_name(formula_names::SYSTEM_TEST_RENAMED);
         $t->assert_true($test_name, $frm->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
 
@@ -84,7 +84,7 @@ class result_write_tests
         $phr_lst = new phrase_list($usr);
         $phr_lst->add_name(words::CH);
         //$phr_lst->add_name(formulas::TN_ADD);
-        $phr_lst->add_name(formulas::SYSTEM_TEST_RENAMED);
+        $phr_lst->add_name(formula_names::SYSTEM_TEST_RENAMED);
         $phr_lst->add_name(words::PCT);
         $phr_lst->add_name(word_names::INHABITANTS);
         $ch_up_grp = $phr_lst->get_grp_id();
@@ -96,7 +96,7 @@ class result_write_tests
                 $result = '';
             }
         } else {
-            $result = 'no ' . word_names::INHABITANTS . ' ' . formulas::INCREASE . ' value found for ' . words::CH;
+            $result = 'no ' . word_names::INHABITANTS . ' ' . formula_names::INCREASE . ' value found for ' . words::CH;
         }
         // TODO review
         $target = results::TV_INCREASE_LONG;
@@ -116,7 +116,7 @@ class result_write_tests
                 $result = '';
             }
         } else {
-            $result = 'no ' . word_names::YEAR_2020 . ' ' . word_names::INHABITANTS . ' ' . formulas::INCREASE . ' value found for ' . words::CH;
+            $result = 'no ' . word_names::YEAR_2020 . ' ' . word_names::INHABITANTS . ' ' . formula_names::INCREASE . ' value found for ' . words::CH;
         }
         //$result = $ch_increase->phr_grp_id;
         if (isset($time_phr)) {
@@ -187,16 +187,16 @@ class result_write_tests
         // cleanup - fallback delete
         $frm = new formula($t->usr1);
         $frm->set_user($t->usr1);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
         $frm->del($usr_msg);
         $frm->set_user($t->usr2);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
         $frm->del($usr_msg);
         $frm->set_user($t->usr1);
-        $frm->load_by_name(formulas::SYSTEM_TEST_RENAMED);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_RENAMED);
         $frm->del($usr_msg);
         $frm->set_user($t->usr2);
-        $frm->load_by_name(formulas::SYSTEM_TEST_RENAMED);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_RENAMED);
         $frm->del($usr_msg);
 
 
@@ -214,7 +214,7 @@ class result_write_tests
         $t->header($ts);
 
         // load results by formula
-        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_RENAMED);
+        $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_RENAMED);
         $res_lst = new result_list($usr);
         $res_lst->load_by_formula($frm);
         $result = $res_lst->dsp_id();
@@ -261,7 +261,7 @@ class result_write_tests
 
         // TODO add PE frm test
         //$frm = $t_db->load_formula(TF_PE);
-        $frm = $t_db->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formula_names::INCREASE);
         $res_lst = new result_list($usr);
         $res_lst->load_by_formula($frm);
         $result = $res_lst->dsp_id();

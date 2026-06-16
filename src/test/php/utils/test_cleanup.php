@@ -60,14 +60,13 @@ use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
@@ -349,7 +348,7 @@ class test_cleanup extends test_api
         }
 
         $test_name_loop = 'request to delete the added test formulas';
-        foreach (formulas::TEST_FORMULAS as $frm_name) {
+        foreach (formula_names::TEST_FORMULAS as $frm_name) {
             $test_name = $test_name_loop . ' "' . $frm_name . '"';
             $frm = $t_db->load_formula($frm_name);
             if ($frm->id() > 0) {
@@ -540,7 +539,7 @@ class test_cleanup extends test_api
         foreach ($names as $name) {
             $class = match ($name) {
                 triple_names::PI_NAME => triple::class,
-                formulas::SCALE_TO_SEC, formulas::THIS_NAME, formulas::PRIOR => formula::class,
+                formula_names::SCALE_TO_SEC, formula_names::THIS_NAME, formula_names::PRIOR => formula::class,
                 verbs::NOT_SET, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,
             };
@@ -550,16 +549,16 @@ class test_cleanup extends test_api
             $trm->set_name($name);
 
             // set types of some special terms
-            if ($name == formulas::THIS_NAME) {
+            if ($name == formula_names::THIS_NAME) {
                 $trm->obj()->type_cl = formula_type::THIS;
-                $trm->set_obj_id(formulas::THIS_ID);
+                $trm->set_obj_id(formula_names::THIS_ID);
                 $wrd = new word($usr);
                 $wrd->set(word_names::THIS_ID, formula_type::THIS);
                 $trm->obj()->name_wrd = $wrd;
             }
-            if ($name == formulas::PRIOR) {
+            if ($name == formula_names::PRIOR) {
                 $trm->obj()->type_cl = formula_type::PREV;
-                $trm->set_obj_id(formulas::PRIOR_ID);
+                $trm->set_obj_id(formula_names::PRIOR_ID);
                 $wrd = new word($usr);
                 $wrd->set(word_names::PRIOR_ID, formula_type::PREV);
                 $trm->obj()->name_wrd = $wrd;

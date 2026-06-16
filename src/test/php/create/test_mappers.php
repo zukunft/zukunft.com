@@ -93,6 +93,7 @@ include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
+include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_languages.php';
@@ -177,7 +178,6 @@ use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 // shared group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
@@ -194,6 +194,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 // test group (alphabetic by FQN)
@@ -391,7 +392,7 @@ class test_mappers
                 $obj->set_name(groups::SYSTEM_TEST_RENAMED);
                 break;
             case formula::class;
-                $obj->set_name(formulas::SYSTEM_TEST_RENAMED);
+                $obj->set_name(formula_names::SYSTEM_TEST_RENAMED);
                 break;
             case formula_link::class;
                 $obj->set_formula($t_frm->formula());

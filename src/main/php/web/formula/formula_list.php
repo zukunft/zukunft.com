@@ -33,6 +33,7 @@ namespace Zukunft\ZukunftCom\main\php\web\formula;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 //include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -43,6 +44,7 @@ include_once html_paths::HTML . 'styles.php';
 //include_once html_paths::VERB . 'verb.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once test_paths::CONST . 'formula_names.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED . 'url_var.php';
 
@@ -54,8 +56,8 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 
 class formula_list extends ListBase
 {
@@ -97,6 +99,7 @@ class formula_list extends ListBase
 
     /**
      * get the default formula
+     * TODO Prio 1 review and check if null is not the better value
      * TODO if a phrase can be ranked use the ranking formula
      * @param sandbox $sbx the object to which the default formula should be found
      * @return int the formula id if no formula has been selected until now
@@ -104,8 +107,8 @@ class formula_list extends ListBase
     function default_id(sandbox $sbx): int
     {
         return match ($sbx::class) {
-            result::class => formulas::NOT_SET_ID,
-            default => formulas::INCREASE_ID
+            result::class => formula_names::NOT_SET_ID,
+            default => formula_names::INCREASE_ID
         };
     }
 

@@ -45,10 +45,10 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -68,15 +68,15 @@ class formula_link_write_tests
         $ts = 'db write formula link ';
         $t->header($ts);
 
-        $t->subheader($ts . 'for ' . formulas::SYSTEM_TEST_ADD);
+        $t->subheader($ts . 'for ' . formula_names::SYSTEM_TEST_ADD);
         $t->assert_write_link($t_frm->formula_link_filled_add());
 
         $t->subheader($ts . 'specific');
-        $frm = $t_db->test_formula(formulas::SYSTEM_TEST_ADD, formulas::INCREASE_EXP, $usr_msg);
+        $frm = $t_db->test_formula(formula_names::SYSTEM_TEST_ADD, formula_names::INCREASE_EXP, $usr_msg);
         $wrd = $t_db->test_word(word_names::TEST_ADD);
 
 
-        $t_db->test_formula_link(formulas::SYSTEM_TEST_ADD, word_names::TEST_ADD);
+        $t_db->test_formula_link(formula_names::SYSTEM_TEST_ADD, word_names::TEST_ADD);
 
         $test_name = 'link phrase "' . $wrd->name() . '" to a formula "' . $frm->name() . '" using the formula function link_phr';
         $result = $frm->link_phrase_and_save($wrd->phrase(), $usr_msg);
@@ -122,7 +122,7 @@ class formula_link_write_tests
         $t->assert('formula_link->load by phrase id and link id "' . $phr->dsp_name(), $result, $target);
 
         // ... check if the link is shown correctly
-        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         echo $phr_lst->dsp_id() . '<br>';
         $result = $phr_lst->does_contain($phr);
@@ -134,7 +134,7 @@ class formula_link_write_tests
         //     so even if the word is linked the word link is nevertheless false
         // TODO add a check that the word is linked if the second user activates the word
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -147,7 +147,7 @@ class formula_link_write_tests
             . ' from the formula ' . $frm->name() . '" by user "' . $t->usr2->name . '"';
         // if second user removes the new link
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
         $phr = new phrase($t->usr2);
         $phr->load_by_name(word_names::TEST_ADD);
         $t->assert_true($test_name, $frm->unlink_phrase($phr, $usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -166,7 +166,7 @@ class formula_link_write_tests
 
         // ... check if the link is really not used any more for the second user
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -176,7 +176,7 @@ class formula_link_write_tests
         // ... check if the value update for the second user has been triggered
 
         // ... check if the link is still used for the first user
-        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = true;
@@ -199,7 +199,7 @@ class formula_link_write_tests
         $t->assert('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $result, $target);
 
         // check if the formula is not used any more for both users
-        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -233,13 +233,13 @@ class formula_link_write_tests
         $t->subheader($ts . 'cleanup formula link write');
         $usr_msg->reset(true);
         $frm = new formula($t->usr1);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
         $wrd = new word($t->usr1);
         $wrd->load_by_name(word_names::TEST_ADD);
         $lnk = new formula_link($t->usr1);
         $lnk->load_by_link($frm, $wrd->phrase());
         $lnk->del($usr_msg);
-        foreach (formulas::TEST_FORMULAS as $frm_name) {
+        foreach (formula_names::TEST_FORMULAS as $frm_name) {
             $t->write_named_cleanup($frm, $frm_name);
         }
         foreach (word_names::TEST_WORDS as $wrd_name) {
@@ -263,10 +263,10 @@ class formula_link_write_tests
         $t->header($ts);
 
         // prepare
-        $frm = $t_db->add_formula(formulas::INCREASE, formulas::INCREASE_EXP, $usr_msg);
+        $frm = $t_db->add_formula(formula_names::INCREASE, formula_names::INCREASE_EXP, $usr_msg);
         $phr = $t_db->add_word(words::YEAR_CAP)->phrase();
         $frm->link_phrase_and_save($phr, $usr_msg);
-        $t_db->test_formula_link(formulas::INCREASE, words::YEAR_CAP);
+        $t_db->test_formula_link(formula_names::INCREASE, words::YEAR_CAP);
 
         // test
         $frm_lnk_lst = new formula_link_list($t->usr1);
@@ -289,14 +289,14 @@ class formula_link_write_tests
         $ts = 'db create formula links ';
         $t->header($ts);
 
-        $t_db->test_formula_link(formulas::SYSTEM_TEST_RATIO, word_names::TEST_SHARE);
-        $t_db->test_formula_link(formulas::SYSTEM_TEST_SECTOR, word_names::TEST_SHARE);
-        $t_db->test_formula_link(formulas::SYSTEM_TEST_ADD, words::YEAR_CAP);
-        $t_db->test_formula_link(formulas::SYSTEM_TEST_SCALE_K, word_names::TEST_IN_K);
-        $t_db->test_formula_link(formulas::SYSTEM_TEST_SCALE_TO_K, word_names::ONE);
-        $t_db->test_formula_link(formulas::SYSTEM_TEST_SCALE_MIO, word_names::MIO);
-        $t_db->test_formula_link(formulas::SYSTEM_TEST_SCALE_BIL, word_names::TEST_BIL);
-        $t_db->test_formula_link(formulas::INCREASE, words::YEAR_CAP);
+        $t_db->test_formula_link(formula_names::SYSTEM_TEST_RATIO, word_names::TEST_SHARE);
+        $t_db->test_formula_link(formula_names::SYSTEM_TEST_SECTOR, word_names::TEST_SHARE);
+        $t_db->test_formula_link(formula_names::SYSTEM_TEST_ADD, words::YEAR_CAP);
+        $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_K, word_names::TEST_IN_K);
+        $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_TO_K, word_names::ONE);
+        $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_MIO, word_names::MIO);
+        $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_BIL, word_names::TEST_BIL);
+        $t_db->test_formula_link(formula_names::INCREASE, words::YEAR_CAP);
 
     }
 

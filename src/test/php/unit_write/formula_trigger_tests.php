@@ -36,10 +36,10 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\web\result\result;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -74,7 +74,7 @@ class formula_trigger_tests
         $phr_lst2 = clone $phr_lst1;
         $phr_lst1->add_name(word_names::YEAR_2019);
         $phr_lst2->add_name(word_names::YEAR_2020);
-        $frm = $t_db->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formula_names::INCREASE);
 
         $test_name = 'add a number ' . values::CH_INHABITANTS_2019_IN_MIO . ' for 2019';
         $val_add1 = new value($usr);

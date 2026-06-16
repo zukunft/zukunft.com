@@ -44,9 +44,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\element\element_group;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -75,17 +75,17 @@ class element_group_write_tests
         $t->header($ts);
 
         // load the test ids
-        $frm_this = $t_db->load_formula(formulas::THIS_NAME);
-        $frm_prior = $t_db->load_formula(formulas::PRIOR);
+        $frm_this = $t_db->load_formula(formula_names::THIS_NAME);
+        $frm_prior = $t_db->load_formula(formula_names::PRIOR);
 
         // load increase formula for testing
-        $frm = $t_db->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formula_names::INCREASE);
 
-        $test_name = 'compare the database formula "' . formulas::THIS_NAME . '" with the fixed test formula';
+        $test_name = 'compare the database formula "' . formula_names::THIS_NAME . '" with the fixed test formula';
         //$t->assert_true($test_name, $frm_this->no_diff($t_frm->formula_this(), $usr_msg));
-        $test_name = 'compare the database formula "' . formulas::PRIOR . '" with the fixed test formula';
+        $test_name = 'compare the database formula "' . formula_names::PRIOR . '" with the fixed test formula';
         //$t->assert_true($test_name, $frm_this->no_diff($t_frm->formula_prior(), $usr_msg));
-        $test_name = 'compare the database formula "' . formulas::INCREASE . '" with the fixed test formula';
+        $test_name = 'compare the database formula "' . formula_names::INCREASE . '" with the fixed test formula';
         //$t->assert_true($test_name, $frm_this->no_diff($t_frm->formula_increase(), $usr_msg));
 
         // load the terms needed for the formula expression
@@ -96,7 +96,7 @@ class element_group_write_tests
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
 
         $result = $elm_grp_lst->dsp_id();
-        $target = '"' . formulas::THIS_NAME . '" (' . $frm_this->id() . ') / "' . formulas::PRIOR . '" (' . $frm_prior->id() . ') / "' . formulas::PRIOR . '" (' . $frm_prior->id() . ')';
+        $target = '"' . formula_names::THIS_NAME . '" (' . $frm_this->id() . ') / "' . formula_names::PRIOR . '" (' . $frm_prior->id() . ') / "' . formula_names::PRIOR . '" (' . $frm_prior->id() . ')';
         $t->dsp_contains(', element_group_list->dsp_id', $target, $result);
 
 

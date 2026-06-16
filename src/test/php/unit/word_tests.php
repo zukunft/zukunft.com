@@ -62,7 +62,6 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -75,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -503,13 +503,13 @@ class word_tests
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $wrd->load_sql_by_formula_name($sc, formulas::SCALE_TO_SEC);
+        $qp = $wrd->load_sql_by_formula_name($sc, formula_names::SCALE_TO_SEC);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $wrd->load_sql_by_formula_name($sc, formulas::SCALE_TO_SEC);
+            $qp = $wrd->load_sql_by_formula_name($sc, formula_names::SCALE_TO_SEC);
             $t->assert_qp($qp, $sc->db_type);
         }
     }

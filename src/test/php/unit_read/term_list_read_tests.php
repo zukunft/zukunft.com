@@ -41,8 +41,8 @@ include_once paths::SHARED_CONST . 'words.php';
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -78,9 +78,9 @@ class term_list_read_tests
         $t->assert_contains($test_name, $lst->names(), triple_names::MATH_CONST);
         $test_name = 'loading phrase names with pattern return the expected formula';
         $lst = new term_list($t->usr1);
-        $pattern = substr(formulas::SCALE_TO_SEC, 0, -1);
+        $pattern = substr(formula_names::SCALE_TO_SEC, 0, -1);
         $lst->load_names($pattern);
-        $t->assert_contains($test_name, $lst->names(), formulas::SCALE_TO_SEC);
+        $t->assert_contains($test_name, $lst->names(), formula_names::SCALE_TO_SEC);
 
         $test_name = 'loading by term list by ids ';
         $trm_lst = new term_list($t->usr1);
@@ -89,7 +89,7 @@ class term_list_read_tests
         $target = '"' . triple_names::MATH_CONST . '","' .
             word_names::MATH . '","' .
             verbs::NOT_SET_NAME . '","' .
-            formulas::SCALE_TO_SEC . '"'; // order adjusted based on the number of usage
+            formula_names::SCALE_TO_SEC . '"'; // order adjusted based on the number of usage
         $t->assert($test_name . $trm_lst->dsp_id(), $result, $target);
 
         $test_name = 'loading the api message creation of the api index file for ';

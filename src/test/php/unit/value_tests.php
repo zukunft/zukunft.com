@@ -52,12 +52,12 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -151,7 +151,7 @@ class value_tests
         $usr_msg = new user_message();
         $val = $t_val->value_ch();
         $result = $val->scale_calc($t_trm->dto_scale_mio_unscaled(), $usr_msg);
-        $target = 'the result part of the scaling formula ' . formulas::SCALE_MIO
+        $target = 'the result part of the scaling formula ' . formula_names::SCALE_MIO
             . ' does not contain exactly one word of type scaling';
         $t->assert($test_name, $usr_msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';

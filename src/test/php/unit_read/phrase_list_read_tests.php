@@ -43,9 +43,9 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -82,7 +82,7 @@ class phrase_list_read_tests
         $t->assert_contains($test_name, $lst->names(), triple_names::MATH_CONST);
         $test_name = 'formula names are not included in the normal phrase list';
         $lst = new phrase_list($t->usr1);
-        $lst->load_names(formulas::SCALE_TO_SEC);
+        $lst->load_names(formula_names::SCALE_TO_SEC);
         // TODO Prio 1 activate
         //$t->assert_contains_not($test_name, $lst->names(), formulas::TN_READ);
         $test_name = 'api message of phrases list';
