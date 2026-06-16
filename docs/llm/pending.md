@@ -6,29 +6,30 @@
 
 add a list of views related to the word (or its parent words)  to the word default page
 
-The default view for a word should have four column for width screens > 2800 pixel:
+show the description of the word in the word default page on the left 1/3 of the screen
+
+The default view for a word should have four columns for width screens > 2800 pixel (config parameter):
 1. a group of components with the description, the aliases / symbols and other related phrases
 2. a group with the most relevant value by impact and if it exists a chart on the top and the position type 'side_or_first_below'
-3. a group with the most relevant formulas and results and a result charts  and the position type 'side_or_last_below'
-4. a tab switch for the views with a miniature preview and two buttons: 'view' or 'switch'
+3. a group with the most relevant formulas and results (and later a result charts, just create a TODO) and the position type 'side_or_last_below'
+4. a tab switch for the views with a miniature preview and two buttons: 'view' or 'switch' (see src/main/php/web/html/html_base.php::dsp_link_hist_box)
 5. a second tab with the change log with the latest changes on the top
+second step:
 6. maybe a preselected third tab with the user changes if the user has done some overwrites
    the tab switch has the position type 'side_or_last_below'
-
-add the default date format 'd-m-Y H:i' to the config.yaml that the user can overwrite to display a date and use the config value where 'd-m-Y H:i' is used until now. For any system tests used a fixed const to replace 'd-m-Y H:i'
-show the changes of a word in the default word page
-show the description of the word on the left 1/3 of the screen
-add the component position type "side or below" that shows this component right of the previous component is not the screen size is too small, what is too small is taken from the config which the user can overwrite an the default value is 1000 pixel
-show the views assigned to a word in the default word page
-
-move time zone setting to .env
-
 
 add the formulas assigned to the parent phrase to the word_default view using also 1/3 of the screen width
 
 add the values as a table where the word ist used to the word_default view using 2/3 of the screen width where often used phrases are column heads and the phrases are shown using a tree view
 
 mainly copy the word default view to the triple default view
+
+### backend
+
+add the default date format 'd-m-Y H:i' to the config.yaml that the user can overwrite to display a date and use the config value where 'd-m-Y H:i' is used until now. For any system tests used a fixed const to replace 'd-m-Y H:i'
+
+move time zone setting to .env
+
 
 create a job to update the usage of a word
 

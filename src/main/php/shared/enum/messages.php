@@ -1691,6 +1691,7 @@ enum messages: string
     case FORM_SUB_TITLE_ASSIGNED_PHRASES = 'system_sub_title_assigned_phrases';
     case FORM_SUB_TITLE_RESULTS = 'system_sub_title_results';
     case FORM_SUB_TITLE_LOG = 'system_sub_title_log';
+    case FORM_SUB_TITLE_VIEWS = 'system_sub_title_views';
 
     // log, im- and export titles
     case FORM_TITLE_ERROR_LOG = 'system_title_error_log';

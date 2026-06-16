@@ -73,7 +73,7 @@ include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb_list.php';
-//include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -162,6 +162,7 @@ class word extends sandbox_code_id
     public ?formula_list $frm_lst = null;
     public ?ref_list $ref_lst = null;
     public ?change_log_list $chg_log = null;
+    public ?view_list $view_lst = null;
 
     // the system calculated impact of this word used to sort the words by relevance
     // (highest impact first); same field name as triple, formula and verb so a term can
@@ -296,6 +297,18 @@ class word extends sandbox_code_id
             }
         } else {
             $this->chg_log = null;
+        }
+        if (array_key_exists(json_fields::VIEWS, $json_array)) {
+            $view = $json_array[json_fields::VIEWS];
+            if (is_array($view)) {
+                $lst = new view_list();
+                $lst->api_mapper($view);
+                $this->view_lst = $lst;
+            } else {
+                $this->view_lst = null;
+            }
+        } else {
+            $this->view_lst = null;
         }
         return $msg->is_ok();
     }

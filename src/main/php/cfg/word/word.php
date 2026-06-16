@@ -110,6 +110,7 @@ include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SHARED_CONST . 'users.php';
@@ -160,6 +161,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -264,6 +266,11 @@ class word extends sandbox_code_id
     // when the api_types::INCL_RELATED flag is set, so the default word view can show the
     // recent changes; the change log is ordered by time, latest first
     public ?change_log_list $changes_related = null;
+
+    // the views that can show this word: its own default view plus the default views of
+    // its parent words; populated lazily by load_views_related() and only emitted via
+    // api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?view_list $views_related = null;
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -530,6 +537,13 @@ class word extends sandbox_code_id
                         $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
                             new api_type_list(), $usr);
                     }
+                    if ($this->views_related == null and !$typ_lst->test_mode()) {
+                        $this->load_views_related();
+                    }
+                    if ($this->views_related != null and !$this->views_related->is_empty()) {
+                        $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
                 }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
@@ -581,6 +595,43 @@ class word extends sandbox_code_id
         $chg_lst = new change_log_list();
         $chg_lst->load_obj_last($this, $this->get_user());
         $this->changes_related = $chg_lst;
+    }
+
+    /**
+     * load the views related to this word into the in-memory views_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag; the list is the word's own
+     * default view plus the default views of its parent words (the phrases it "is a")
+     * each view is loaded by id because set_view_id() only stores the id, not the name that
+     * the api export and the frontend name_link need
+     * TODO the parent loop loads each parent word and its view one by one; replace with a
+     *      single list load once a view_list->load_by_word_list() exists
+     */
+    function load_views_related(): void
+    {
+        $msk_lst = new view_list($this->get_user());
+        $this->add_default_view_to($msk_lst);
+        foreach ($this->parents()->lst() as $phr) {
+            if ($phr->is_word()) {
+                $par_wrd = new word($this->get_user());
+                $par_wrd->load_by_id($phr->id());
+                $par_wrd->add_default_view_to($msk_lst);
+            }
+        }
+        $this->views_related = $msk_lst;
+    }
+
+    /**
+     * add the fully loaded default view of this word to the given list (skipping duplicates and
+     * words without a default view); the view is loaded by id so that it carries its name
+     * @param view_list $msk_lst the list the default view is added to
+     */
+    private function add_default_view_to(view_list $msk_lst): void
+    {
+        if ($this->view != null and $this->view->id() > 0) {
+            $msk = new view($this->get_user());
+            $msk->load_by_id($this->view->id());
+            $msk_lst->add($msk);
+        }
     }
 
     /**

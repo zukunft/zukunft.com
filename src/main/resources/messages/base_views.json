@@ -233,6 +233,19 @@
       "description": "show the change log of this word",
       "type": "change_log",
       "code_id": "change_log_word"
+    },
+    {
+      "name": "system sub title views",
+      "description": "show the language specific sub title for the related views",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_views",
+      "ui_msg_code_id": "system_sub_title_views"
+    },
+    {
+      "name": "view list word",
+      "description": "show the default view of this word and of its parent words",
+      "type": "view_list",
+      "code_id": "view_list_word"
     }
   ],
   "views": [
@@ -256,56 +269,60 @@
         },
         {
           "position": "4",
-          "name": "system sub title usage number"
-        },
-        {
-          "position": "5",
           "name": "phrase aliases",
           "style": "col-md-4"
         },
         {
-          "position": "6",
+          "position": "5",
           "name": "phrase symbols",
           "style": "col-md-4"
         },
         {
-          "position": "7",
+          "position": "6",
           "name": "related phrases without subtitles"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "children of word"
         },
         {
-          "position": "9",
+          "position": "8",
           "name": "system sub title values"
         },
         {
-          "position": "10",
+          "position": "9",
           "name": "related values"
         },
         {
-          "position": "11",
+          "position": "10",
           "name": "system sub title formulas"
         },
         {
-          "position": "12",
+          "position": "11",
           "name": "formula list"
         },
         {
-          "position": "13",
+          "position": "12",
           "name": "system sub title references"
         },
         {
-          "position": "14",
+          "position": "13",
           "name": "ref list word"
         },
         {
+          "position": "14",
+          "name": "system sub title views"
+        },
+        {
           "position": "15",
-          "name": "system sub title log"
+          "name": "view list word"
         },
         {
           "position": "16",
+          "name": "system sub title log"
+        },
+        {
+          "position": "17",
           "name": "change log word"
         }
       ]

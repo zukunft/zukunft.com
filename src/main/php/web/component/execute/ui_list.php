@@ -422,6 +422,25 @@ class ui_list extends ui_base
     }
 
     /**
+     * HTML for the views related to the given word: its own default view plus the default
+     * views of its parent words; a word loaded for its page carries the list directly in
+     * view_lst (filled from the INCL_RELATED api message)
+     *
+     * @param db_object $dbo the word that should be shown to the user
+     * @param data_object|null $cfg the context used to create the view
+     * @return string the html code with the linked names of the related views
+     */
+    function views_related(db_object $dbo, ?data_object $cfg = null): string
+    {
+        $result = '';
+        if ($dbo::class == word::class and $dbo->view_lst != null) {
+            // name_link() renders the views in a deterministic, name-sorted order
+            $result = $dbo->view_lst->name_link();
+        }
+        return $result;
+    }
+
+    /**
      * @param db_object $dbo the word, triple or formula object that should be shown to the user
      * @param data_object|null $cfg the context used to create the view
      * @return string with the html code of links that can be changes

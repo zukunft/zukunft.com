@@ -65,6 +65,7 @@ messages:
   system_sub_title_assigned_phrases: "Assigned words and triples"
   system_sub_title_results: "Results"
   system_sub_title_log: "Changes"
+  system_sub_title_views: "Views"
   system_title_about: "About"
   system_title_setup: "Setup"
   system_title_signup: "Signup"

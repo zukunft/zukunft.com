@@ -432,6 +432,7 @@ class component_exe extends component
 
             // related
             component_types::LIST_REF => $list->ref_list_word($dbo, $cfg),
+            component_types::LIST_VIEWS => $list->views_related($dbo, $cfg),
             component_types::LIST_RESULTS => $list->result_list($dbo, $cfg),
             component_types::LINK_LIST_WORD => $list->link_list_word($dbo, $cfg),
             component_types::FORMULAS => $list->formulas($dbo, $cfg, $test_mode),
