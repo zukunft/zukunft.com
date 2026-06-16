@@ -4,8 +4,6 @@
 
 ### word frontend
 
-add a list of views related to the word (or its parent words)  to the word default page
-
 show the description of the word in the word default page on the left 1/3 of the screen
 
 The default view for a word should have four columns for width screens > 2800 pixel (config parameter):
