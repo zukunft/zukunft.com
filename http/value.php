@@ -52,6 +52,7 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("value");
 
 // get the parameters
@@ -75,9 +76,9 @@ if ($usr->id > 0) {
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the page (or phrase id) from which formula testing has been called
 
-    $msk_dsp = new view_ui($msk->api_json());
+    $msk_ui = new view_ui($msk->api_json());
     $dto = new data_object();
-    $result .= $msk_dsp->dsp_navbar($dto, $back);
+    $result .= $msk_ui->dsp_navbar($dto, $back);
 
     if ($wrd_names <> '') {
 
@@ -89,8 +90,8 @@ if ($usr->id > 0) {
         $result .= $wrd_lst_dsp->name_link();
         $result .= ' = ';
         $val = $wrd_lst->value();
-        $val_dsp = new value_ui($val->api_json());
-        $result .= $val_dsp->value_edit($back);
+        $val_ui = new value_ui($val->api_json());
+        $result .= $val_ui->value_edit($back);
     }
 }
 

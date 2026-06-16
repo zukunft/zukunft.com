@@ -5,6 +5,7 @@
     web/phrase/phrase.php - to create the html code to display a word or triple
     ---------------------
 
+    $phr is the suggested var name
 
     This file is part of zukunft.com - calc with words
 
@@ -35,6 +36,7 @@ namespace Zukunft\ZukunftCom\main\php\web\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
@@ -47,11 +49,16 @@ include_once html_paths::VERB . 'verb_list.php';
 //include_once html_paths::WORD . 'word.php';
 //include_once html_paths::WORD . 'word_list.php';
 include_once html_paths::WORD . 'triple.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -60,9 +67,12 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class phrase extends combine_named
 {
@@ -70,6 +80,36 @@ class phrase extends combine_named
     /*
      * construct and map
      */
+
+    /**
+     * set the vars of this phrase frontend object based on the url array
+     * dispatches to word::url_mapper or triple::url_mapper depending on the
+     * PHRASE_CLASS url field; falls back to a currently set obj if no class is provided
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    {
+        // PHRASE_CLASS encodes word vs triple; mirrors the OBJECT_CLASS dispatch in api_mapper
+        $class = $url_array[url_var::PHRASE_CLASS] ?? null;
+        if ($class === json_fields::CLASS_WORD) {
+            $this->set_obj(new word());
+        } elseif ($class === json_fields::CLASS_TRIPLE) {
+            $this->set_obj(new triple());
+        }
+        $obj = $this->obj();
+        if ($obj instanceof triple) {
+            $obj->url_mapper($url_array, $usr_msg, $dto);
+            $this->set_id($obj->id());
+        } elseif ($obj instanceof word) {
+            $obj->url_mapper($url_array, $usr_msg, $dto);
+        } else {
+            $usr_msg->add_error_text('Phrase class missing in url ' . json_encode($url_array));
+        }
+        return $usr_msg;
+    }
 
     /**
      * set the vars of this phrase frontend object bases on the api json array
@@ -81,15 +121,15 @@ class phrase extends combine_named
     {
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-                $wrd_dsp = new word();
-                $wrd_dsp->api_mapper($json_array, $usr_msg);
-                $this->set_obj($wrd_dsp);
+                $wrd_ui = new word();
+                $wrd_ui->api_mapper($json_array, $usr_msg);
+                $this->set_obj($wrd_ui);
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-                $trp_dsp = new triple();
-                $trp_dsp->api_mapper($json_array, $usr_msg);
-                $this->set_obj($trp_dsp);
+                $trp_ui = new triple();
+                $trp_ui->api_mapper($json_array, $usr_msg);
+                $this->set_obj($trp_ui);
                 // switch the phrase id to the object id
-                $this->set_id($trp_dsp->id());
+                $this->set_id($trp_ui->id());
             } else {
                 $usr_msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a phrase');
             }
@@ -194,6 +234,18 @@ class phrase extends combine_named
         }
     }
 
+    /**
+     * @return int|null the id of the connecting verb when this phrase wraps a triple, else null
+     */
+    function get_verb_id(): ?int
+    {
+        if ($this->is_triple()) {
+            return $this->get_verb()?->id();
+        } else {
+            return null;
+        }
+    }
+
     function get_from(): ?phrase
     {
         if ($this->is_triple()) {
@@ -264,12 +316,12 @@ class phrase extends combine_named
 
     function is_type_phrase(phrase $phr): bool
     {
-        global $ui_cac;
+        global $ui_sys;
 
         $result = false;
         $typ_id = $this->type_id();
         if ($typ_id != null) {
-            $typ = $ui_cac?->typ_lst_cache?->html_phrase_types?->get($this->type_id());
+            $typ = $ui_sys?->typ_lst_cache?->phr_typ?->get($this->type_id());
             if ($typ != null) {
                 $typ_phr_lst = $typ->type_phrases();
                 foreach ($typ_phr_lst->lst() as $typ_phr) {
@@ -300,6 +352,15 @@ class phrase extends combine_named
     function is_info(): bool
     {
         return $this->obj()->is_info();
+    }
+
+    /**
+     * @return float the system calculated impact of the wrapped word or triple;
+     *               used to sort a phrase list so that the most relevant phrase is shown first
+     */
+    function impact(): float
+    {
+        return $this->obj()->impact();
     }
 
 
@@ -352,8 +413,8 @@ class phrase extends combine_named
     {
         $result = new phrase_list();
         if ($phr_lst_cac != null) {
-            $result->merge($phr_lst_cac->parents($this, $typ_lst->html_verbs->get_by_code_id(verbs::IS)));
-            $result->merge($phr_lst_cac->parents($this, $typ_lst->html_verbs->get_by_code_id(verbs::CAN_BE)));
+            $result->merge($phr_lst_cac->parents($this, $typ_lst->vrb->get_by_code_id(verbs::IS)));
+            $result->merge($phr_lst_cac->parents($this, $typ_lst->vrb->get_by_code_id(verbs::CAN_BE)));
         }
         return $result;
     }
@@ -383,6 +444,41 @@ class phrase extends combine_named
         } else {
             return $this->obj()->main_word();
         }
+    }
+
+    /**
+     * similar to dsp_link
+     *
+     * @param $style
+     * @return string
+     */
+    function dsp_link_style($style): string
+    {
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
+            . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description, $style);
+    }
+
+    /**
+     * return the html code to display a word
+     */
+    function display(): string
+    {
+        return (new html_base())->ref_view(views::PHRASE, $this->id(), $this->name());
+    }
+
+    /**
+     * simply to display a single word or triple link
+     */
+    function display_linked(): string
+    {
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
+            . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description);
+    }
+
+    function name_linked(): string
+    {
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
+            . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description);
     }
 
     /**

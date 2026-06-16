@@ -13,13 +13,15 @@
     "description": "A mathematical constant that never changes e.g. Pi",
     "type_id": 17,
     "protection": 3,
+    "impact": 9999999999,
     "class": "triple"
   },
   {
     "id": 1,
     "name": "scale minute to sec",
     "type_id": 1,
-    "user_text": "\"second\" = \"minute\" * 60",
+    "user_text": "\"second (time)\" = \"minute\" * 60",
+    "latex": "\\text{s} = 60 \\cdot \\text{min}",
     "class": "formula"
   },
   {

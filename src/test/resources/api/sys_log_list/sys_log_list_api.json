@@ -9,10 +9,10 @@
       "id": 3,
       "user_id": 3,
       "function_id": 5,
-      "trace": "import_test_config",
+      "trace": "import_test_files",
       "type_id": 3,
-      "text": "test setup",
-      "description": "import of the pod test setup",
+      "text": "test import",
+      "description": "import of the some test json files",
       "status": 1
     },
     {
@@ -29,10 +29,10 @@
       "id": 1,
       "user_id": 3,
       "function_id": 3,
-      "trace": "import_base_config",
+      "trace": "import_system_data",
       "type_id": 3,
-      "text": "base setup",
-      "description": "import of the base setup",
+      "text": "system data setup",
+      "description": "import of the system and test data",
       "status": 1
     }
   ]

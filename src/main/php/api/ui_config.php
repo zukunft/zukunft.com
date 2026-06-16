@@ -48,20 +48,29 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use DateTime;
+use Exception;
 
 class ui_config
 {
 
     /**
      * create a user-specific api json message string of this combine object for the frontend
-     * that contains at the moment the preloaded types and the system views
-     * target is to include the data cache with the objects most often used by the user
-     * the final message should be cached in the backend for faster response
+     * that contains at the moment the preloaded types and the system views.
+     * target is to include the data cache with the objects most often used by the user.
+     * the final message should be cached in the backend for faster response.
      * in a first step in the database later maybe as a file if it is faster
      * and if possible cached in the frontend in a cookie if possible
      *
@@ -71,7 +80,7 @@ class ui_config
      */
     function api_json(
         api_type_list|array $typ_lst,
-        user|user_ui|null $usr = null
+        user|user_ui|null   $usr = null
     ): string
     {
         global $sys;
@@ -106,6 +115,72 @@ class ui_config
             $cac = new data_object($usr);
         }
         $cac->load_system_views($db_con);
+    }
+
+    /**
+     * get the cache or reloaded ui type json message
+     * @param api_type_list|array $typ_lst
+     * @param user|user_ui|null $usr
+     * @return string
+     */
+    function get(
+        api_type_list|array $typ_lst,
+        user|user_ui|null   $usr = null
+    ): string
+    {
+        $result = $this->read_db_cache($usr);
+        if ($result === false) {
+            $this->reload($usr);
+            $result = $this->api_json($typ_lst, $usr);
+            $this->write_db_cache($usr);
+        }
+        return $result;
+    }
+
+
+
+    /*
+     * cache
+     */
+
+    private function read_db_cache(user $usr): string|bool
+    {
+        $cac = new db_cache($usr);
+        $cac->load_by_type_id(db_cache_types::TYPES_ID);
+        if ($cac->data !== null) {
+            // TODO Prio 1 add trigger check
+            $cut_time = new DateTime;
+            try {
+                $lib = new library();
+                $time_offset = $lib->unquote(CACHE_MAX_AGE);
+                $cut_time->modify($time_offset);
+            } catch (Exception $e) {
+                echo 'Error: ' . $e->getMessage();
+            }
+            if ($cac->last_update >= $cut_time) {
+                if (is_string($cac->data)) {
+                    return $cac->data;
+                } else {
+                    return json_encode($cac->data);
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private function write_db_cache(user $usr): void
+    {
+        $cac = new db_cache($usr);
+        $cac->type_id = db_cache_types::TYPES_ID;
+        $cac->data = $this->api_json([api_types::HEADER, api_types::INCL_COMPONENTS], $usr);
+        $cac->usr = $usr;
+        $cac->status_id = db_cache_statuum::CLEAN_ID;
+        $cac->last_update = new DateTime();
+        $msg = new user_message($usr);
+        $cac->save($msg);
     }
 
 }

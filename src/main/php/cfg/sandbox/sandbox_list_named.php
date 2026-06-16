@@ -51,6 +51,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
 //include_once paths::MODEL_PHRASE . 'phrase_list.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
+//include_once paths::MODEL_PHRASE . 'term_list.php';
 //include_once paths::MODEL_REF . 'source_list.php';
 include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -544,11 +546,16 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_id(sandbox_list_named $lst_new): user_message
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get($sbx_new->term()->id());
+                if ($this::class == term_list::class) {
+                    $sbx_old = $this->get($sbx_new->term()->id());
+                } else {
+                    $sbx_old = $this->get($sbx_new->id());
+                }
                 if ($sbx_old != null) {
                     $sbx_old->fill($sbx_new, $usr);
                 } else {
@@ -578,10 +585,11 @@ class sandbox_list_named extends sandbox_list
         bool               $fill_all = false
     ): user_message
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
         $msg = new user_message();
 
-        // loop over the objects of theis list because it is expected to be smaller than tha cache list
+        // loop over the objects of this list because it is expected to be smaller than tha cache list
         foreach ($this->lst() as $obj_to_fill) {
             if ($obj_to_fill->id() == 0 and $obj_to_fill->name($fill_all) != '') {
                 $db_obj = $db_lst->get_by_name($obj_to_fill->name($fill_all), $fill_all);
@@ -832,9 +840,10 @@ class sandbox_list_named extends sandbox_list
     /**
      * select the sandbox objects that needs to be updated in the database
      * @param sandbox_list_named $db_lst list of sandbox objects as loaded from the database
+     * @param user_message $usr_msg to report e.g. a denied protection reduction to the user
      * @return sandbox_list_named with the sandbox objects that needs to be updated
      */
-    function update_list(sandbox_list_named $db_lst): sandbox_list_named
+    function update_list(sandbox_list_named $db_lst, user_message $usr_msg): sandbox_list_named
     {
         $upd_lst = clone $this;
         $upd_lst->reset();
@@ -842,6 +851,8 @@ class sandbox_list_named extends sandbox_list
             // TODO test if get_by_obj_id is faster
             $db_sbx = $db_lst->get_by_name($sbx->name());
             if ($db_sbx != null) {
+                // make sure that only an admin user reduces the protection level
+                $sbx->check_protection_change($db_sbx, $sbx->get_user(), $usr_msg);
                 if ($sbx->needs_db_update($db_sbx)) {
                     $upd_lst->add($sbx);
                 }
@@ -1029,7 +1040,7 @@ class sandbox_list_named extends sandbox_list
 
         // get the objects that need to be added
         $imp->step_start(msg_id::CHECK, $class, $db_lst->count());
-        $upd_lst = $this->update_list($db_lst);
+        $upd_lst = $this->update_list($db_lst, $usr_msg);
         $imp->step_end($db_lst->count());
 
         if (!$upd_lst->is_empty()) {
@@ -1087,7 +1098,9 @@ class sandbox_list_named extends sandbox_list
 
         // prepare
         $sc = $db_con->sql_creator();
-        $usr_msg = new user_message();
+        // the list's user is the requester for everything done here; downstream callers like
+        // formula_map::del_links read $usr_msg->usr->id() and would dereference null otherwise
+        $usr_msg = new user_message($this->get_user());
 
         // get the objects that need to be added
         $imp->step_start(msg_id::CHECK, $class, $db_lst->count());
@@ -1168,7 +1181,7 @@ class sandbox_list_named extends sandbox_list
                 $sc_par_lst->add(sql_type::LOG);
                 $usr_msg = new user_message();
                 $qp = $sbx->sql_update($sc, $db_row, $usr_msg, $sc_par_lst);
-                if ($usr_msg->is_ok()) {
+                if ($usr_msg->is_ok() and $qp != null) {
                     $qp->obj_name = $sbx->name();
                     $sql_list->add_by_name($qp);
                 }
@@ -1243,12 +1256,12 @@ class sandbox_list_named extends sandbox_list
                         $sc_par_lst->add(sql_type::LOG);
                         $upd_usr_msg = new user_message();
                         $qp = $sbx->sql_update($sc, $db_row, $upd_usr_msg, $sc_par_lst);
-                        if ($upd_usr_msg->is_ok()) {
-                            $qp->obj_name = $sbx->name();
-                            $sql_list->add($qp);
-                        } else {
+                        if (!$upd_usr_msg->is_ok()) {
                             $usr_msg->merge($upd_usr_msg);
                             log_err('Internal import error: ' . $usr_msg->all_message_text());
+                        } elseif ($qp != null) {
+                            $qp->obj_name = $sbx->name();
+                            $sql_list->add($qp);
                         }
                     }
                 }

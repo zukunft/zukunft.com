@@ -52,9 +52,10 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("source_edit");
 
-global $sys_msk_cac;
+global $sys;
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
@@ -72,7 +73,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(views::SOURCE_EDIT));
+    $msk->load_by_id($sys->msk_cac->id(views::SOURCE_EDIT));
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the original calling page that should be shown after the change if finished
 
@@ -116,14 +117,14 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // show the source and its relations, so that the user can change it
-            $scr_dsp = new source_ui($src->api_json());
-            //$result .= $scr_dsp->dsp_edit($back);
+            $scr_ui = new source_ui($src->api_json());
+            //$result .= $scr_ui->dsp_edit($back);
         }
     }
 }

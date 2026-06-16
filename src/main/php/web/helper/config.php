@@ -38,6 +38,7 @@ namespace Zukunft\ZukunftCom\main\php\web\helper;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once paths::MODEL_HELPER . 'system_object.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
@@ -48,6 +49,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
@@ -66,6 +68,7 @@ class config extends value_list
      */
 
     const int LIMIT_NAME_LIST = shared_config::LIMIT_NAME_LIST;
+    const int LIMIT_SEARCH_LIST = shared_config::LIMIT_SEARCH_LIST;
 
 
     /*
@@ -103,12 +106,12 @@ class config extends value_list
 
     /**
      * request the user-specific frontend configuration from the backend
+     * @param system_object $sys the backend system control object for the execution time tracking
+     * @param string $part the config part to load e.g. the frontend config
      * @return user_message if it fails the reason why
      */
-    function load(string $part = api::CONFIG_FRONTEND): user_message
+    function load(system_object $sys, string $part = api::CONFIG_FRONTEND): user_message
     {
-        global $sys;
-
         $msg = new user_message();
         $sys->times->switch(system_time_type::LOAD_CONFIG);
 
@@ -134,17 +137,15 @@ class config extends value_list
      * get a frontend config value selected by the phrase names
      *
      * @param array $names with the phrase names to select the config value
-     * @param bool $no_zero if true a non-zero number is returned to avoid decision by zero
-     * @return int|float|string|null with the user-specific config value
+     * @param int|float|string|null $default the value used if the config value is missing or zero e.g. to avoid a zero list limit
+     * @return int|float|string|null with the user-specific config value or the given default
      */
-    function get_by(array $names, bool $no_zero = false): int|float|string|null
+    function get_by(array $names, int|float|string|null $default = null): int|float|string|null
     {
         $val = $this->get_by_names($names);
         $num = $val?->value();
-        if ($no_zero) {
-            if ($num == 0 or $num == null) {
-                $num = 1;
-            }
+        if ($num == null) {
+            $num = $default;
         }
         return $num;
     }

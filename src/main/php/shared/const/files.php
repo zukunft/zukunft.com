@@ -42,7 +42,9 @@ class files
      */
 
     const string JSON = '.json';
+    const string YAML = '.yaml';
     const string CSS = '.css';
+    const string SVG = '.svg';
 
 
     /*
@@ -61,6 +63,9 @@ class files
      * system config
      */
 
+    // the system configuration values that an admin can change without a code update
+    const string CONFIG_YAML = self::RESOURCE_PATH . 'config' . self::YAML;
+
     // the system views as a zukunft.com user import json
     const string SYSTEM_VIEWS_FILE = 'system_views' . self::JSON;
     const string SYSTEM_VIEWS = self::MESSAGE_PATH . self::SYSTEM_VIEWS_FILE;
@@ -70,4 +75,9 @@ class files
 
     // for html
     const string STYLE_HTML = self::STYLE_PATH . 'style_html' . self::CSS;
+    const string STYLE_FALLBACK = self::STYLE_PATH . 'style' . self::CSS;
+    const string STYLE_BS = paths::EXT_LIB_BS_CSS . 'bootstrap' . self::CSS;
+    const string STYLE_FONT = paths::EXT_LIB_FONT_CSS . 'all' . self::CSS;
+    const string LOGO = paths::IMAGE_RES . 'ZUKUNFT_logo' . self::SVG;
+
 }

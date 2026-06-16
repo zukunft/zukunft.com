@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_creator.php';
@@ -58,6 +59,9 @@ include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_cache.php';
+include_once paths::MODEL_HELPER . 'db_cache_status.php';
+include_once paths::MODEL_HELPER . 'db_cache_type.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
@@ -157,8 +161,11 @@ include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_HELPER . 'Message.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
+include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -167,6 +174,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'library.php';
+//include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
@@ -186,6 +194,9 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -277,6 +288,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
@@ -287,6 +299,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Exception;
 use mysqli;
 use mysqli_result;
@@ -379,6 +392,9 @@ class sql_db
         sys_log::class,
         system_time_type::class,
         system_time::class,
+        db_cache_status::class,
+        db_cache_type::class,
+        db_cache::class,
         job_status::class,
         job_type::class,
         job_time::class,
@@ -501,6 +517,9 @@ class sql_db
         sys_log::class,
         sys_log_status::class,
         sys_log_function::class,
+        db_cache::class,
+        db_cache_status::class,
+        db_cache_type::class,
         share_type::class,
         protection_type::class,
         user::class,
@@ -573,6 +592,7 @@ class sql_db
         change_link::class,
         sys_log::class,
         job::class,
+        db_cache::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
     const array CLASSES_WITH_USER_CHANGES = [
@@ -1149,10 +1169,21 @@ class sql_db
     {
         global $sys;
         global $db_con;
-        global $log_txt;
         global $cac;
+        $log_txt = $sys->log_txt;
 
         $usr_msg = new user_message();
+
+        // remove all tables and views remaining from an outdated or incomplete setup
+        // to avoid conflicts with the index and constraint creation of the setup script
+        // dropping the remaining tables never causes a loss of user data
+        // because this function is only called if the config table is missing
+        // and without the config table the database is unusable anyway
+        $dropped_objects = $this->reset_db_core();
+        if ($dropped_objects > 0) {
+            $log_txt->echo_text_log('Removed ' . $dropped_objects
+                . ' tables and views of an outdated or incomplete database setup');
+        }
 
         // create the tables, db indexes and foreign keys
         $sql = $this->sql_to_create_database_structure();
@@ -1190,10 +1221,10 @@ class sql_db
             $this->import_system_users();
 
             // use the system user for the database updates
-            global $usr;
             $usr = new user;
             $usr->load_by_id(users::SYSTEM_ID);
             $usr_msg->usr = $usr;
+            $sys->usr_req = $usr;
 
             // recreate the code link database rows
             $log_txt->echo_text_log('Create the code links');
@@ -1213,19 +1244,22 @@ class sql_db
 
             $import = new import_file();
             $this->import_verbs($usr);
-            $import->import_base_config($usr);
+            $import->import_system_data($usr);
             $this->create_internal_words($usr);
             $import->import_config_yaml($usr);
             $import->import_pod_config($usr);
-            $import->import_test_config($usr);
+
+            // add the admin users if defined in the env file
+            $this->add_admin_users_from_env($usr_msg, $usr);
+
             $this->db_check_missing_owner();
 
             // TODO Prio 0 review
             $usr_msg = new user_message($usr);
             $msk_lnk = new term_view($usr);
             $wrd = new word($usr);
-            $wrd->set(words::MATH_ID, words::MATH);
-            $wrd->description = words::MATH_COM;
+            $wrd->set(word_names::MATH_ID, word_names::MATH);
+            $wrd->description = word_names::MATH_COM;
             $wrd->set_type(phrase_type_shared::NORMAL, $usr);
             $msk = new view($usr);
             $msk->set(views::START_ID, views::START_NAME);
@@ -1272,27 +1306,47 @@ class sql_db
 
     /**
      * force to drop any remaining tables of the database
-     * only used for testing to reset the db after a broken db update script
+     * used to clean up before a setup and for testing to reset the db after a broken db update script
      * TODO remove or deactivate this before prod deployment
      *
-     * @return void
+     * @return int the number of dropped tables
      */
-    function reset_db_core(): void
+    function reset_db_core(): int
     {
-        // run reset the main database tables
+        $dropped_objects = 0;
         $usr_msg = new user_message();
+
+        // drop the views first because they can only be dropped with a drop view statement
         $sql = sql::SELECT
-            . " table_name FROM information_schema.tables WHERE table_schema = 'public';";
+            . " table_name FROM information_schema.views WHERE table_schema = 'public';";
+        $view_lst = $this->fetch_all($sql, $usr_msg);
+        if ($view_lst !== false) {
+            foreach ($view_lst as $view) {
+                $view_name = $view[0];
+                $this->drop_view($view_name);
+                $dropped_objects++;
+            }
+        }
+
+        // run reset the main database tables
+        $sql = sql::SELECT
+            . " table_name FROM information_schema.tables"
+            . " WHERE table_schema = 'public' AND table_type = 'BASE TABLE';";
         $tbl_lst = $this->fetch_all($sql, $usr_msg);
-        foreach ($tbl_lst as $tbl) {
-            $tbl_name = $tbl[0];
-            $this->drop_table($tbl_name);
+        if ($tbl_lst !== false) {
+            foreach ($tbl_lst as $tbl) {
+                $tbl_name = $tbl[0];
+                $this->drop_table($tbl_name);
+                $dropped_objects++;
+            }
         }
 
         // load the core db rows to have at least the profile id of the system user
         // TODO Prio 2 check if this is called at the correct step
         //$this->db_fill_code_links();
         //$this->db_check_missing_owner();
+
+        return $dropped_objects;
     }
 
     /**
@@ -1301,7 +1355,6 @@ class sql_db
     function run_db_truncate(user $sys_usr): void
     {
         global $sys;
-        global $log_txt;
 
         $lib = new library();
         $sys->times->switch(system_time_type::DB_WRITE);
@@ -1309,7 +1362,7 @@ class sql_db
         // the tables in order to avoid the usage of CASCADE
         $table_names = sql_db::DB_TABLE_CLASSES_DESC_DEPENDING;
 
-        $log_txt->echo_log('truncate ');
+        $sys->log_txt->echo_log('truncate ');
 
         // truncate tables that have already a build in truncate statement creation
         $sql = '';
@@ -1513,8 +1566,12 @@ class sql_db
                                 $update_col_values[] = trim($data[$i]);
                                 $add_row[$col_names[$i]] = trim($data[$i]);
                             }
-                            $typ_obj->row_mapper_typ_obj($add_row, $class);
-                            $typ_obj->db_add($msg, $this, $sc_par_lst);
+                            if ($typ_obj->row_mapper_typ_obj($add_row, $class)) {
+                                $typ_obj->db_add($msg, $this, $sc_par_lst);
+                            } else {
+                                log_err('csv code link row ' . $row . ' of ' . $table_name
+                                    . ' does not match the id field of ' . $class);
+                            }
                         } else {
                             // build a db_row array from the csv line to use the row_mapper
                             $upd_row = [];
@@ -1581,7 +1638,8 @@ class sql_db
      */
     function set_class(string $class, bool $usr_table = false, string $ext = ''): bool
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
 
         $lib = new library();
         $this->reset();
@@ -2402,6 +2460,13 @@ class sql_db
         if ($result == 'job_typess') {
             $result = 'job_types';
         }
+        // for the database upgrade process only
+        if ($result == 'db_cache_statuss') {
+            $result = 'db_cache_statuum';
+        }
+        if ($result == 'db_cache_typess') {
+            $result = 'db_cache_types';
+        }
         if ($result == 'component_typess') {
             $result = 'component_types';
         }
@@ -2465,6 +2530,7 @@ class sql_db
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
             and $class != user_profile::class
             and $class != user_status::class
+            and $class != user_statuum::class
             and $class != user_type::class
             and $class != user_official_type::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
@@ -2474,8 +2540,20 @@ class sql_db
         if ($result == 'sys_log_statuss_id') {
             $result = 'sys_log_status_id';
         }
+        if ($result == 'sys_log_statuum_id') {
+            $result = 'sys_log_status_id';
+        }
+        if ($result == 'user_statuum_id') {
+            $result = 'user_status_id';
+        }
         if ($result == 'blocked_ip_id') {
             $result = 'ip_range_id';
+        }
+        if ($result == 'db_cache_status_id') {
+            $result = 'status_id';
+        }
+        if ($result == 'db_cache_type_id') {
+            $result = 'type_id';
         }
         return $result;
     }
@@ -2579,6 +2657,12 @@ class sql_db
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'job_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'db_cache_status_name') {
+            $result = db_cache_status::FLD_NAME;
+        }
+        if ($result == 'db_cache_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
@@ -5544,10 +5628,10 @@ class sql_db
 
     function truncate_table_all(): void
     {
-        global $log_txt;
+        global $sys;
 
         // the sequence names of the tables to reset
-        $log_txt->echo_log('truncate all tables ');
+        $sys->log_txt->echo_log('truncate all tables ');
         foreach (def::DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
@@ -5555,9 +5639,9 @@ class sql_db
 
     function truncate_table(string $table_name): void
     {
-        global $log_txt;
+        global $sys;
 
-        $log_txt->echo_log('truncate table ' . $table_name);
+        $sys->log_txt->echo_log('truncate table ' . $table_name);
         $sql = sql::TRUNCATE . ' ' . $this->get_table_name_esc($table_name) . ' ' . sql::CASCADE . '; ';
         try {
             $this->exe($sql);
@@ -5569,11 +5653,10 @@ class sql_db
     function drop_table(string $table_name): void
     {
         global $sys;
-        global $log_txt;
 
         $sys->times->switch(system_time_type::DB_WRITE);
 
-        $log_txt->echo_log('DROP TABLE ' . $table_name);
+        $sys->log_txt->echo_log('DROP TABLE ' . $table_name);
         if ($this->has_table($table_name)) {
             $sql = 'drop table ' . $table_name . ' cascade;';
             try {
@@ -5581,6 +5664,23 @@ class sql_db
             } catch (Exception $e) {
                 //log_info('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
             }
+        }
+        $sys->times->switch();
+    }
+
+    function drop_view(string $view_name): void
+    {
+        global $sys;
+
+        $sys->times->switch(system_time_type::DB_WRITE);
+
+        $sys->log_txt->echo_log('DROP VIEW ' . $view_name);
+        // "if exists" because the view may have been removed already by the cascade of a previous drop
+        $sql = 'drop view if exists ' . $view_name . ' cascade;';
+        try {
+            $this->exe($sql);
+        } catch (Exception $e) {
+            //log_info('Cannot drop view ' . $view_name . ' with "' . $sql . '" because: ' . $e->getMessage());
         }
         $sys->times->switch();
     }
@@ -5596,11 +5696,10 @@ class sql_db
     function reset_seq(string $seq_name, int $start_id = 1): void
     {
         global $sys;
-        global $log_txt;
 
         $sys->times->switch(system_time_type::DB_WRITE);
 
-        $log_txt->echo_log('RESET SEQUENCE ' . $seq_name);
+        $sys->log_txt->echo_log('RESET SEQUENCE ' . $seq_name);
         $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
         try {
             $this->exe($sql);
@@ -5703,6 +5802,55 @@ class sql_db
         }
 
         return $result;
+    }
+
+    /**
+     * add the admin user based on the env files
+     * make sure that this onl is called on initial setup
+     *
+     * @param user_message $msg to collect the user messages
+     * @param user $usr the user who is requesting the adding of the admin users
+     * @return bool true if the setup has been fine
+     */
+    function add_admin_users_from_env(user_message $msg, user $usr): bool
+    {
+        $sys_msg = clone $msg;
+        $sys_msg->usr = $usr;
+
+        if (ADMIN_USER != '' and ADMIN_PW != '' and ADMIN_MAIL != '') {
+            $usr = new user(ADMIN_USER, ADMIN_MAIL);
+            $usr->set_profile(user_profiles::ADMIN, $sys_msg);
+            $usr->set_password(ADMIN_PW, $msg);
+            if ($msg->is_ok()) {
+                $usr->save($sys_msg);
+            };
+        }
+        if (CO_ADMIN_USER != '' and CO_ADMIN_PW != '' and CO_ADMIN_MAIL != '') {
+            $usr = new user(CO_ADMIN_USER, CO_ADMIN_MAIL);
+            $usr->set_password(CO_ADMIN_PW, $msg);
+            $usr->set_profile(user_profiles::ADMIN, $sys_msg);
+            if ($msg->is_ok()) {
+                $usr->save($sys_msg);
+            };
+        }
+        if (USER_NAME != '' and USER_PW != '' and USER_MAIL != '') {
+            $usr = new user(USER_NAME, USER_MAIL);
+            $usr->set_password(USER_PW, $msg);
+            $usr->set_profile(user_profiles::EMAIL, $sys_msg);
+            if ($msg->is_ok()) {
+                $usr->save($sys_msg);
+            };
+        }
+        if (CO_USER_NAME != '' and CO_USER_PW != '' and CO_USER_MAIL != '') {
+            $usr = new user(CO_USER_NAME, CO_USER_MAIL);
+            $usr->set_password(CO_USER_PW, $msg);
+            $usr->set_profile(user_profiles::EMAIL, $sys_msg);
+            if ($msg->is_ok()) {
+                $usr->save($sys_msg);
+            };
+        }
+
+        return $msg->is_ok();
     }
 
     function import_verbs(user $usr): bool
@@ -5809,7 +5957,7 @@ class sql_db
     function import_system_views(user $usr): bool
     {
         global $db_con;
-        global $sys_msk_cac;
+        global $sys;
 
         $result = false;
 
@@ -5821,8 +5969,8 @@ class sql_db
             }
         }
 
-        $sys_msk_cac = new view_sys_list($usr);
-        $sys_msk_cac->load($db_con);
+        $sys->msk_cac = new view_sys_list($usr);
+        $sys->msk_cac->load($db_con);
 
         return $result;
     }

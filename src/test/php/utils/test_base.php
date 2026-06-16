@@ -51,11 +51,14 @@
 
 namespace Zukunft\ZukunftCom\test\php\utils;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -118,9 +121,11 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -172,6 +177,8 @@ include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::EXECUTE . 'system_form.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -213,6 +220,7 @@ include_once test_paths::UNIT . 'user_tests.php';
 include_once test_paths::UNIT . 'user_list_tests.php';
 include_once test_paths::UNIT . 'sandbox_tests.php';
 include_once test_paths::UNIT . 'type_tests.php';
+include_once test_paths::UNIT . 'db_cache_tests.php';
 include_once test_paths::UNIT . 'horizontal_tests.php';
 include_once test_paths::UNIT . 'word_tests.php';
 include_once test_paths::UNIT . 'word_list_tests.php';
@@ -327,12 +335,14 @@ include_once test_paths::UNIT_WRITE . 'formula_trigger_tests.php';
 include_once test_paths::UNIT_WRITE . 'result_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'element_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'element_group_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'sys_log_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'job_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'view_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'xbrl_write_tests.php';
 
 include_once test_paths::UNIT_WRITE . 'test_word_display.php';
 include_once test_paths::UNIT_WRITE . 'test_math.php';
@@ -360,8 +370,6 @@ include_once html_paths::USER . 'user_display_old.php';
 
 class test_base
 {
-    // the url which should be used for testing (maybe later api::HOST_UAT)
-    const string URL = api::HOST_PROD;
 
     const string TEST_TYPE_CONTAINS = 'contains';
     const string TEST_TYPE_NOT = 'not';
@@ -616,7 +624,8 @@ class test_base
         string|bool|array|null $target = '',
         float                  $exe_max_time = self::TIMEOUT_LIMIT,
         string                 $comment = '',
-        string                 $test_type = ''): bool
+        string                 $test_type = ''
+    ): bool
     {
         // init the test result vars
         $lib = new library();
@@ -800,6 +809,57 @@ class test_base
     }
 
     /**
+     * check that the first text appears before the second text in the result
+     *
+     * @param string $msg (unique) description of the test
+     * @param string $haystack the actual result that should contain both texts
+     * @param string $first the text expected to appear first
+     * @param string $second the text expected to appear after the first text
+     * @return bool true if both texts are found in the expected order
+     */
+    function assert_text_order(
+        string $msg,
+        string $haystack,
+        string $first,
+        string $second): bool
+    {
+        $target = $first . ' before ' . $second;
+        $pos_first = strpos($haystack, $first);
+        $pos_second = strpos($haystack, $second);
+        if ($pos_first !== false and $pos_second !== false and $pos_first < $pos_second) {
+            $result = $target;
+        } else {
+            $result = $haystack;
+        }
+        return $this->assert($msg, $result, $target);
+    }
+
+    /**
+     * check that the result text does NOT contain the given needle
+     *
+     * @param string $msg (unique) description of the test
+     * @param string $haystack the actual result
+     * @param string $needle the text that is expected to be absent from the haystack
+     * @param float $exe_max_time the expected max time to create the result
+     * @param string $comment
+     * @return bool true if the needle is absent from the haystack
+     */
+    function assert_text_not_contains(
+        string $msg,
+        string $haystack,
+        string $needle,
+        float  $exe_max_time = self::TIMEOUT_LIMIT,
+        string $comment = ''): bool
+    {
+        if (str_contains($haystack, $needle)) {
+            $result = $needle;
+        } else {
+            $result = '';
+        }
+        return $this->assert($msg, $result, $needle, $exe_max_time, $comment, self::TEST_TYPE_NOT);
+    }
+
+    /**
      * check if the test for results contains at least all expected results
      * or in other words if all needles can be found in the haystack
      *
@@ -945,7 +1005,7 @@ class test_base
     {
         $lib = new library();
         $test_name = $lib->class_to_name($test_name);
-        $url = api::HOST_TESTING . url_var::API_PATH . 'json';
+        $url = THIS_URL . url_var::API_PATH . 'json';
         $data = array($fld => $id);
         $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
@@ -1006,11 +1066,11 @@ class test_base
         // create the api message that send to the frontend
         $api_msg = $msk->api_json([api_types::INCL_COMPONENTS]);
         if ($id != 0) {
-            // add the database object json to the api message
-            // to send only one message to the frontend
-            $dbo->load_by_id($id);
+            // add the related database objects
+            $dbo->load_by_id_with_related($id);
         }
-        $dbo_api_msg = $dbo->api_json();
+        // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above
+        $dbo_api_msg = $dbo->api_json([api_types::INCL_RELATED, api_types::INCL_PHRASES]);
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
         $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($id != 0) {
@@ -1021,16 +1081,18 @@ class test_base
         $dsp_html = new view_ui;
         $dsp_html->set_from_json($api_msg, $usr_msg_ui);
         if ($cfg == null) {
+            global $sys;
             $ui = new frontend('');
             $ui->load_cache();
             $cfg = new data_object_ui();
             $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         }
         if ($cfg->usr->id() == 0) {
-            $ui_map = new MapObject();
-            $cfg->usr = $ui_map->convertToUi($usr, $usr_msg_ui);
+            $map_ui = new MapObject();
+            $cfg->usr = $map_ui->convertToUi($usr, $usr_msg_ui);
         }
-        $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
+        // render in test mode so that the result is reproducible without backend calls
+        $actual = $dsp_html->show($dbo_dsp, $cfg, '', '', true);
 
         // check if the created view matches the expected view
         return $this->assert_html_body(
@@ -1066,6 +1128,10 @@ class test_base
             $usr_obj->import_obj($json_in, $usr_msg, $dto);
             //$this->set_id_for_unit_tests($usr_obj);
             $json_ex = $usr_obj->export_json([], false);
+            // TODO Prio 2 remove exception
+            if ($usr_obj::class == user::class) {
+                $json_ex = $this->json_remove_volatile($json_ex);
+            }
             // TODO remove, for faster debugging only
             $json_in_txt = json_encode($json_in);
             $json_ex_txt = json_encode($json_ex);
@@ -1197,6 +1263,20 @@ class test_base
     }
 
     /**
+     * like asser but using the html filter
+     *
+     * @param string $test_name the description of the test
+     * @param string $result
+     * @param string $target
+     * @return bool true if the html has no relevant differences
+     */
+    function assert_html(string $test_name, string $result, string $target): bool
+    {
+        $lib = new library();
+        return $this->assert($test_name, $lib->trim_html($result), $lib->trim_html($target));
+    }
+
+    /**
      * check if the created html matches a defined html file
      *
      * @param string $test_name the description of the test
@@ -1206,11 +1286,8 @@ class test_base
      */
     function assert_html_body(string $test_name, string $body, string $file_path): bool
     {
-        $lib = new library();
-
         $actual = $this->html_page($body);
-        $expected = $this->file($file_path . test_files::HTML);
-        return $this->assert($test_name, $lib->trim_html($actual), $lib->trim_html($expected));
+        return $this->assert_html_page($test_name, $actual, $file_path);
     }
 
     /**
@@ -1225,8 +1302,13 @@ class test_base
     {
         $lib = new library();
 
-        $expected = $this->file($file_path . test_files::HTML);
-        return $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
+        $resource_file = $file_path . test_files::HTML;
+        $expected = $this->file($resource_file);
+        $result = $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $this->update_file($resource_file, $lib->format_html($html));
+        }
+        return $result;
     }
 
 
@@ -2370,12 +2452,18 @@ class test_base
         string  $file_name_ext = ''
     ): bool
     {
+        $lib = new library();
+        $created_sql = $lib->sql_format($qp->sql . $qp->call_sql . ' ' . $qp->call);
         $expected_sql = $this->assert_sql_expected($qp->name . $file_name_ext, $dialect);
         $result = $this->assert_sql(
             $this->name . 'sql creation of ' . $qp->name . ' (' . $dialect . ') to ' . $test_name,
-            $qp->sql . $qp->call_sql . ' ' . $qp->call,
+            $created_sql,
             $expected_sql
         );
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            // accept the created sql as the new expected statement
+            $this->update_file($this->assert_sql_file_path($qp->name . $file_name_ext, $dialect), $created_sql);
+        }
 
         // check if the prepared sql name is unique always based on the  Postgres query parameter creation
         if ($dialect == sql_db::POSTGRES) {
@@ -2392,7 +2480,7 @@ class test_base
      * @param string $dialect the db dialect
      * @return string the filename including the resource path
      */
-    function assert_sql_expected(string $name, string $dialect = ''): string
+    private function assert_sql_file_path(string $name, string $dialect = ''): string
     {
         if ($dialect == sql_db::POSTGRES) {
             $file_name_ext = '';
@@ -2401,7 +2489,19 @@ class test_base
         } else {
             $file_name_ext = $dialect;
         }
-        $file_name = $this->resource_path . $name . $file_name_ext . self::FILE_EXT;
+        return $this->resource_path . $name . $file_name_ext . self::FILE_EXT;
+    }
+
+    /**
+     * get the expected sql statement from the test resource file
+     *
+     * @param string $name the unique name of the query
+     * @param string $dialect the db dialect
+     * @return string the expected sql statement or the missing file message
+     */
+    function assert_sql_expected(string $name, string $dialect = ''): string
+    {
+        $file_name = $this->assert_sql_file_path($name, $dialect);
         $expected_sql = $this->file($file_name);
         if ($expected_sql == '') {
             $msg = 'File ' . $file_name . ' with the expected SQL statement is missing.';
@@ -3476,10 +3576,16 @@ class test_base
      */
     function write_named_cleanup(sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx, string $name, bool $check = false): void
     {
-        $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
-        $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
-        $this->write_named_cleanup_one($sbx, $this->usr1, $name . self::EXT_RENAME, $check);
-        $this->write_named_cleanup_one($sbx, $this->usr2, $name . self::EXT_RENAME, $check);
+        if ($sbx instanceof type_object and !$sbx instanceof verb) {
+            // type rows are not user specific, so one cleanup per name is enough
+            $this->write_type_cleanup_one($sbx, $name, $check);
+            $this->write_type_cleanup_one($sbx, $name . self::EXT_RENAME, $check);
+        } else {
+            $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
+            $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
+            $this->write_named_cleanup_one($sbx, $this->usr1, $name . self::EXT_RENAME, $check);
+            $this->write_named_cleanup_one($sbx, $this->usr2, $name . self::EXT_RENAME, $check);
+        }
     }
 
     /**
@@ -3527,6 +3633,41 @@ class test_base
     }
 
     /**
+     * remove a remaining test row of a type object e.g. a sys log function
+     * because type rows are not user specific no user is set
+     *
+     * @param type_object $typ the type object e.g. a sys_log_function
+     * @param string $name the name of the type row that should be removed
+     * @param bool $check if true an error message is created if the object needs to be removed
+     *                    e.g. to detect incomplete clean-up of previous tests
+     * @return void
+     */
+    private
+    function write_type_cleanup_one(
+        type_object $typ,
+        string      $name,
+        bool        $check = false
+    ): void
+    {
+        global $db_con;
+
+        $usr_msg = new user_message($this->usr_admin);
+        $typ->load_by_name($name);
+        if ($typ->id() != 0) {
+            if ($check) {
+                log_warning('Unexpected cleanup of ' . $typ->dsp_id());
+            }
+            $sc = $db_con->sql_creator();
+            $qp = $typ->sql_delete($sc, $usr_msg, new sql_type_list());
+            if ($qp == null) {
+                log_warning('cleanup of type row ' . $typ->dsp_id() . ' is not allowed');
+            } elseif ($usr_msg->is_ok()) {
+                $db_con->delete($qp, 'cleanup ' . $typ->dsp_id(), $usr_msg);
+            }
+        }
+    }
+
+    /**
      * remove remaining test rows for one name and one user
      *
      * @param value_base|sandbox_multi $sbx the value or phrase group object
@@ -3539,9 +3680,9 @@ class test_base
     private
     function write_value_cleanup_one(
         value_base|sandbox_multi $sbx,
-        user       $usr,
-        group      $grp,
-        bool       $check = false
+        user                     $usr,
+        group                    $grp,
+        bool                     $check = false
     ): void
     {
         $usr_msg = new user_message($usr);
@@ -3771,7 +3912,7 @@ class test_base
     {
         $lib = new library();
         $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = $sbx->get_user()->name() . ' ' . $action . ' "';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ' . $action . ' "';
         if ($action == msg_id::LOG_UPDATE->value) {
             $target .= $old_name . '" to "' . $name . '"';
         } else {
@@ -4011,7 +4152,7 @@ class test_base
     {
         $lib = new library();
         $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = $sbx->get_user()->name() . ' ' . $action . ' "';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ' . $action . ' "';
         if ($action == msg_id::LOG_UPDATE->value) {
             $target .= $old_name . '" to "' . $name . '"';
         } else {
@@ -4123,7 +4264,7 @@ class test_base
             $lib = new library();
             $result = $lib->diff_msg($id_lst, $db_lst);
             if ($result != '') {
-                log_warning($test_name . 'diff is:' . $result);
+                log_err($test_name . 'diff is:' . $result);
             }
         }
 
@@ -4400,7 +4541,7 @@ class test_base
         $msg_net_off = 'Cannot gat the policy, probably not connected to the internet';
         if ($is_connected) {
             try {
-                $result = file_get_contents(self::URL . $url_path);
+                $result = file_get_contents(THIS_URL . $url_path);
             } catch (Exception $e) {
                 $result = false;
                 $msg_net_off .= ': ' . $e->getMessage();
@@ -4462,7 +4603,6 @@ class test_base
     function dsp_result(): void
     {
         global $sys;
-        global $errors;
 
         echo "\n";
         $since_start = microtime(true) - $this->start_time();
@@ -4475,7 +4615,7 @@ class test_base
         echo "\n";
         echo $this->error_counter . ' test errors';
         echo "\n";
-        echo $errors . ' internal errors';
+        echo $sys->errors . ' internal errors';
         echo "\n";
     }
 
@@ -4581,7 +4721,30 @@ class test_base
     function html_page(string $body): string
     {
         $html = new html_base();
-        return $html->header_test('test') . $body . $html->footer();
+        return $html->header('test')
+            . $html->navbar(views::START_ID)
+            . $html->main($body)
+            . $html->footer();
+    }
+
+    /**
+     * build the html section that exercises the TITLE_NAMED_EDIT component renderer
+     * (system_form::title_of_named_with_edit_link) for the given object, so every
+     * object_pages snapshot covers the page-title-with-edit-link component type;
+     * each object UI test is expected to append this to its $test_page before the
+     * html_page_test() call
+     *
+     * @param db_object $dbo the named object whose page is being snapshotted; must
+     *                       define VIEW_EDIT and MSG_EDIT (word, triple, formula,
+     *                       verb, view, component, source, ref, value, result, ...)
+     * @return string a h2 heading plus the rendered TITLE_NAMED_EDIT html
+     */
+    function dsp_title_named_edit(db_object $dbo): string
+    {
+        $html = new html_base();
+        $sfm = new system_form();
+        return $html->text_h2('title named with edit link')
+            . $sfm->title_named($dbo);
     }
 
     function class_without_namespace(string $class_name_with_namespace): string
@@ -4602,8 +4765,8 @@ class test_base
         }
         $log = new change($this->usr1);
         $log->load_by_user($this->usr1);
-        $log_dsp = new change_log_ui($log->api_json());
-        return $log_dsp->dsp(true);
+        $log_ui = new change_log_ui($log->api_json());
+        return $log_ui->dsp(true);
     }
 
     /**
@@ -4632,8 +4795,8 @@ class test_base
             $log = $sbx->log_object();
         }
         $log->load_by_field_row($sbx::class, $fld, $id, $usr_only);
-        $log_dsp = new change_log_ui($log->api_json());
-        return $log_dsp->dsp($ex_time);
+        $log_ui = new change_log_ui($log->api_json());
+        return $log_ui->dsp($ex_time);
     }
 
 
@@ -4668,6 +4831,47 @@ class test_base
     function has_file(string $test_resource_path): bool
     {
         return file_exists(test_paths::RESOURCE . $test_resource_path);
+    }
+
+    /**
+     * overwrite the test resource file with the actual result to accept it as the new target
+     * @param string $test_resource_path the path of the file starting from the test resource path
+     * @param string $result the actual result that should become the new expected target
+     */
+    function update_file(string $test_resource_path, string $result): void
+    {
+        // TODO always set a breakpoint here
+        $filepath = test_paths::RESOURCE . $test_resource_path;
+        if (file_put_contents($filepath, $result) === false) {
+            log_err('Cannot write target file ' . $filepath);
+        }
+    }
+
+    /**
+     * overwrite the test file with the actual result to accept it as the new target
+     * @param string $filepath the path of the file including the path
+     * @param string $result the actual result that should become the new expected target
+     */
+    function update_path_file(string $filepath, string $result): void
+    {
+        // TODO always set a breakpoint here
+        if (file_put_contents($filepath, $result) === false) {
+            log_err('Cannot write target file ' . $filepath);
+        }
+    }
+
+    /**
+     * suggest deletion of an orphaned snapshot file; deletes immediately when AUTO_UPDATE_FILES is true
+     * @param string $file_path absolute path to the html snapshot file
+     */
+    function delete_path_file(string $file_path): void
+    {
+        if (test_files::AUTO_UPDATE_TEST_FILES) {
+            log_warning('orphaned test snapshot – consider deleting: ' . $file_path);
+            if (test_files::AUTO_UPDATE_TEST_FILES) {
+                unlink($file_path);
+            }
+        }
     }
 
 

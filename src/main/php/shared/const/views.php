@@ -32,6 +32,8 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\test\php\const\word_names;
+
 class views
 {
 
@@ -46,6 +48,11 @@ class views
     const string START_NAME = 'Start view';
     const string START_COM = 'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.';
     const int START_ID = 1;
+
+    // the id of the last system view that should be included in the unit testing
+    const int MIN_TEST_ID = 1;
+    // TODO Prio 1 set to 109
+    const int MAX_TEST_ID = 111;
 
     // curl views for main objects
     const string WORD_ADD = 'word_add';
@@ -244,71 +251,94 @@ class views
     const string JOB_CHECK = 'job_check';
     const int JOB_CHECK_ID = 84;
 
+    // admin
+    const string ADMIN_MAIN = 'admin_main';
+    const int ADMIN_MAIN_ID = 85;
+
     // list views for users
     const string VERBS = 'verbs';
-    const int VERBS_ID = 85;
+    const int VERBS_ID = 86;
     const string COMPLETE = 'complete';
-    const int COMPLETE_ID = 86;
+    const int COMPLETE_ID = 87;
     const string BASE_UNITS = 'base_units';
-    const int BASE_UNITS_ID = 87;
+    const int BASE_UNITS_ID = 89;
 
     // default views
     // TODO easy add missing default views e.g. for formula
     const string WORD = 'word_default';
-    const int WORD_ID = 88;
+    const int WORD_ID = 90;
     const string WORD_NAME = 'Word';
     const string VERB = 'verb_default';
-    const int VERB_ID = 89;
+    const int VERB_ID = 91;
     const string VERB_NAME = 'Verb';
     const string TRIPLE = 'triple_default';
-    const int TRIPLE_ID = 90;
+    const int TRIPLE_ID = 92;
     const string SOURCE = 'source_default';
-    const int SOURCE_ID = 91;
+    const int SOURCE_ID = 93;
     const string REF = 'ref_default';
-    const int REF_ID = 92;
+    const int REF_ID = 94;
     const string LANGUAGE = 'language_default';
-    const int LANGUAGE_ID = 93;
+    const int LANGUAGE_ID = 95;
     const string VALUE = 'value_default';
-    const int VALUE_ID = 94;
+    const int VALUE_ID = 96;
     const string FORMULA = 'formula_default';
-    const int FORMULA_ID = 95;
+    const int FORMULA_ID = 97;
     const string RESULT = 'result_default';
-    const int RESULT_ID = 96;
+    const int RESULT_ID = 98;
 
     // base views for users
     const string RANKING = 'ranking';
-    const int RANKING_ID = 97;
+    const int RANKING_ID = 99;
     const string SCIENCE = 'science';
-    const int SCIENCE_ID = 98;
+    const int SCIENCE_ID = 100;
     const string SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
     const string HISTORIC = 'hist';
-    const int HISTORIC_ID = 99;
+    const int HISTORIC_ID = 101;
     const string HISTORIC_NAME = 'Historic';
     const string HISTORIC_COM = 'show mainly related words that are relevant in sciences';
     const string BIOLOGICAL = 'bio';
-    const int BIOLOGICAL_ID = 100;
+    const int BIOLOGICAL_ID = 102;
     const string BIOLOGICAL_NAME = 'Biological';
     const string BIOLOGICAL_COM = 'show what is relevant from the biological point of view';
     const string EDUCATION = 'edu';
-    const int EDUCATION_ID = 101;
+    const int EDUCATION_ID = 103;
     const string EDUCATION_NAME = 'Education';
     const string EDUCATION_COM = 'show mainly related words that are relevant in sciences';
     const string TOURISTIC = 'touristic';
-    const int TOURISTIC_ID = 102;
+    const int TOURISTIC_ID = 104;
     const string TOURISTIC_NAME = 'Touristic';
     const string TOURISTIC_COM = 'show mainly related words that are relevant in sciences';
     const string GRAPH = 'graph';
-    const int GRAPH_ID = 103;
+    const int GRAPH_ID = 105;
     const string GRAPH_NAME = 'Graph';
     const string GRAPH_COM = 'show mainly related words that are relevant in sciences';
     const string SIMPLE = 'simple';
-    const int SIMPLE_ID = 104;
+    const int SIMPLE_ID = 106;
     const string SIMPLE_NAME = 'Simple';
     const string SIMPLE_COM = 'show mainly related words that are relevant in sciences';
     const string MATH_CONST = 'math_const';
-    const int MATH_CONST_ID = 105;
+    const int MATH_CONST_ID = 107;
     const string MATH_CONST_NAME = 'math const';
     const string MATH_CONST_COM = 'Show a mathematical constance and the related words and formulas';
+    const string GLOBAL_PROBLEM = 'global_problem';
+    const int GLOBAL_PROBLEM_ID = 108;
+
+    // TODO Prio 3 resort the views and group it
+    const string SYSTEM_LOG = 'system_log';
+    const int SYSTEM_LOG_ID = 109;
+
+    // to sort
+    const string LANGUAGE_SELECT = 'language_select';
+    const int LANGUAGE_SELECT_ID = 88;
+    const string PHRASE = 'phrase_default';
+    const int PHRASE_ID = 110;
+
+    // full list of phrases related to a word/triple — the "..." link target shown in the
+    // page title when the title's truncated related-list overflows the per-verb config limit
+    // (e.g. for Zurich with limit=2 the title 'Zurich (City, Canton, ...)' links the '...'
+    // to this view, which then renders every related triple grouped by verb)
+    const string WORD_RELATED = 'word_related';
+    const int WORD_RELATED_ID = 111;
 
 
     /*
@@ -337,7 +367,12 @@ class views
     const string TEST_FORM = 'word_add';
     const int TEST_FORM_ID = 3;
 
-    // TODO to be created
+    // code if of views that should be checked before deployment if they are still fine with the base setup
+    const string CURRENCY = 'currency'; // the default view for all currencies
+    const int CURRENCY_ID = 111; // a kind of dummy id that may often change
+
+
+    // TODO views to be created
     const string WORD_LIST = 'word_list'; //
 
     const string USER_ADD = 'user_add';
@@ -345,12 +380,6 @@ class views
     const string USER_DEL = 'user_del';
     const string ERR_LOG = 'error_log';
     const string ERR_UPD = 'error_update';
-
-    // the id of the last system view that should be included in the unit testing
-    // TODO Prio 1 set to 1
-    const int MIN_TEST_ID = 2;
-    // TODO Prio 0 set to 37
-    const int MAX_TEST_ID = 35;
 
 
     const string COMPANY_RATIO_NAME = 'company ratios';
@@ -374,6 +403,19 @@ class views
     );
 
     // array of test view names create before the test
+    const array STATIC_VIEWS = array(
+        self::LOGIN_ID,
+        self::SIGNUP_ID,
+        self::START_ID,
+    );
+
+    // list of views where a logged in user is simulated to create the test view
+    const array TEST_LOGIN_VIEW_IDS = array(
+        self::WORD_EDIT_ID,
+        self::FORMULA_DEL_ID,
+    );
+
+    // array of test view names create before the test
     const array TEST_VIEWS = array(
         self::TEST_ADD_NAME,
         self::TEST_ADD_VIA_FUNC_NAME,
@@ -390,11 +432,53 @@ class views
     );
 
     // system masks that have a user as the main object
-    // TODO add the login views e.g. to detect the correct object for the url mapper
     const array USER_MASKS_IDS = [
         self::USER_ADMIN_ADD_ID,
         self::USER_ADMIN_EDIT_ID,
-        self::USER_ADMIN_DEL_ID
+        self::USER_ADMIN_DEL_ID,
+        self::BASE_UNITS_ID,
+    ];
+
+    // system masks that handle user authentication or user profile
+    const array USER_LOGIN_MASK_IDS = [
+        self::SIGNUP_ID,
+        self::LOGIN_ID,
+        self::LOGIN_ACTIVATE_ID,
+        self::LOGIN_RESET_ID,
+        self::LOGOUT_ID,
+        self::USER_ID,
+    ];
+
+    // system and base views whose page-title renderer does NOT show the category subtitle
+    const array VIEWS_WITHOUT_RELATED = [
+        // entry / static info
+        self::START,
+        self::ABOUT,
+        self::SETUP,
+        // authentication flow
+        self::LOGIN,
+        self::LOGIN_ACTIVATE,
+        self::LOGIN_RESET,
+        self::LOGOUT,
+        self::SIGNUP,
+        // language picker
+        self::LANGUAGE_SELECT,
+        // confirm dialogs and user-sandbox status views (no main-object subtitle)
+        self::CONFIRM_ADD,
+        self::CONFIRM_EDIT,
+        self::CONFIRM_DEL,
+        self::CONFIRM_VIEW,
+        self::SANDBOX,
+        self::UNDO,
+    ];
+
+    // system masks that only admin user can see
+    const array ADMIN_MASK_IDS = [
+        self::USER_ADMIN_ADD_ID,
+        self::USER_ADMIN_EDIT_ID,
+        self::USER_ADMIN_DEL_ID,
+        self::ADMIN_MAIN_ID,
+        self::COMPLETE_ID,
     ];
 
     // system masks that have a word as the main object
@@ -402,63 +486,81 @@ class views
         self::WORD_ADD_ID,
         self::WORD_EDIT_ID,
         self::WORD_DEL_ID,
+        self::WORD_ID,
         self::WORD_LOG_ID,
+        self::WORD_RELATED_ID,
     ];
 
     // system masks that have a verb as the main object
     const array VERB_MASKS_IDS = [
         self::VERB_ADD_ID,
         self::VERB_EDIT_ID,
-        self::VERB_DEL_ID
+        self::VERB_DEL_ID,
+        self::VERBS_ID,
+        self::VERB_ID,
     ];
 
     // system masks that have a triple as the main object
     const array TRIPLE_MASKS_IDS = [
         self::TRIPLE_ADD_ID,
         self::TRIPLE_EDIT_ID,
-        self::TRIPLE_DEL_ID
+        self::TRIPLE_DEL_ID,
+        self::TRIPLE_ID,
+    ];
+
+    // default view for a phrase
+    const array PHRASE_MASKS_IDS = [
+        self::PHRASE_ID,
     ];
 
     // system masks that have a source as the main object
     const array SOURCE_MASKS_IDS = [
         self::SOURCE_ADD_ID,
         self::SOURCE_EDIT_ID,
-        self::SOURCE_DEL_ID
+        self::SOURCE_DEL_ID,
+        self::SOURCE_ID,
     ];
 
     // system masks that have a reference as the main object
     const array REF_MASKS_IDS = [
         self::REF_ADD_ID,
         self::REF_EDIT_ID,
-        self::REF_DEL_ID
+        self::REF_DEL_ID,
+        self::REF_ID,
     ];
 
     // system masks that have a group as the main object
     const array GROUP_MASKS_IDS = [
         self::GROUP_ADD_ID,
         self::GROUP_EDIT_ID,
-        self::GROUP_DEL_ID
+        self::GROUP_DEL_ID,
     ];
 
     // system masks that have a value as the main object
     const array VALUE_MASKS_IDS = [
         self::VALUE_ADD_ID,
         self::VALUE_EDIT_ID,
-        self::VALUE_DEL_ID
+        self::VALUE_DEL_ID,
+        self::VALUE_DETAIL_ID,
+        self::VALUE_ID,
     ];
 
     // system masks that have a formula as the main object
     const array FORMULA_MASKS_IDS = [
         self::FORMULA_ADD_ID,
         self::FORMULA_EDIT_ID,
-        self::FORMULA_DEL_ID
+        self::FORMULA_DEL_ID,
+        self::FORMULA_TEST_ID,
+        self::FORMULA_ID,
     ];
 
     // system masks that have a result as the main object
     const array RESULT_MASKS_IDS = [
         self::RESULT_ADD_ID,
         self::RESULT_EDIT_ID,
-        self::RESULT_DEL_ID
+        self::RESULT_DEL_ID,
+        self::RESULT_EXPLAIN_ID,
+        self::RESULT_ID,
     ];
 
     // system masks that have a view as the main object
@@ -503,9 +605,128 @@ class views
         self::VIEW_RELATION_DEL_ID
     ];
 
+    // system masks that have a language as the main object
+    const array LANGUAGE_MASKS_IDS = [
+        self::LANGUAGE_ADD_ID,
+        self::LANGUAGE_EDIT_ID,
+        self::LANGUAGE_DEL_ID,
+        self::LANGUAGE_ID,
+        self::LANGUAGE_SELECT_ID,
+    ];
+
+    // system masks that have a system batch job as the main object
+    const array JOB_MASKS_IDS = [
+        self::JOB_ASYNC_ID,
+        self::JOB_CONTROL_ID,
+        self::JOB_CHECK_ID,
+    ];
+
+    // system masks that are used for all objects to confirm a change
+    // sandbox is included because the user sandbox can be confirmed
+    const array CONFIRM_MASKS_IDS = [
+        self::CONFIRM_ADD_ID,
+        self::CONFIRM_EDIT_ID,
+        self::CONFIRM_DEL_ID,
+        self::CONFIRM_VIEWS_ID,
+        self::SANDBOX_ID,
+        self::UNDO_ID,
+    ];
+
+    // general and static system views
+    const array STATIC_VIEW_IDS = [
+        self::ABOUT_ID,
+        self::SETUP_ID,
+    ];
+
+    // system log views
+    const array SYSTEM_LOG_VIEW_IDS = [
+        self::ERROR_LOG_ID,
+        self::ERROR_UPDATE_ID,
+        self::SYSTEM_LOG_ID,
+    ];
+
+    // system views that are using a phrase list as a context e.g. that use the phrases as preselection for search
+    const array CONTEXT_VIEW_IDS = [
+        self::WORD_FIND_ID,
+        self::SEARCH_FULL_ID,
+        self::PASTE_TABLE_ID,
+        self::IMPORT_ID,
+        self::EXPORT_ID,
+        self::EXPORT_JSON_ID,
+        self::EXPORT_XML_ID,
+        self::EXPORT_CSV_ID,
+        self::EXPORT_ODS_ID,
+        self::GRAPH_ID,
+        self::SIMPLE_ID,
+    ];
+
+    // views that the user can change and are not used for a system process that use a single phrase as stating point
+    const array CHANGEABLE_PHRASE_VIEW_IDS = [
+        self::RANKING_ID,
+        self::SCIENCE_ID,
+        self::HISTORIC_ID,
+        self::BIOLOGICAL_ID,
+        self::EDUCATION_ID,
+        self::TOURISTIC_ID,
+        self::MATH_CONST_ID,
+        self::GLOBAL_PROBLEM_ID,
+    ];
+
+    // system forms for interactive and complex object selection
+    const array SEARCH_MASKS_IDS = [
+        self::WORD_FIND_ID,
+        self::SEARCH_FULL_ID,
+        self::LANGUAGE_SELECT_ID,
+    ];
+
+    // system forms to im- and export a data selection
+    const array IM_EXPORT_MASKS_IDS = [
+        self::PASTE_TABLE_ID,
+        self::IMPORT_ID,
+        self::EXPORT_ID,
+        self::EXPORT_JSON_ID,
+        self::EXPORT_XML_ID,
+        self::EXPORT_CSV_ID,
+        self::EXPORT_ODS_ID,
+    ];
+
     // system masks that only used to display a sandbox object
+    // TODO review SETUP_ID seems to be not correct
     const array SHOW_MASKS_IDS = [
         self::START_ID,
+        self::ABOUT_ID,
+        self::SETUP_ID,
+        self::ERROR_LOG_ID,
+        self::VALUE_DETAIL_ID,
+        self::RESULT_EXPLAIN_ID,
+        self::SANDBOX_ID,
+        self::USER_ID,
+        self::ADMIN_MAIN_ID,
+        self::VERBS_ID,
+        self::COMPLETE_ID,
+        self::BASE_UNITS_ID,
+        self::WORD_ID,
+        self::VERB_ID,
+        self::TRIPLE_ID,
+        self::SOURCE_ID,
+        self::REF_ID,
+        self::LANGUAGE_ID,
+        self::VALUE_ID,
+        self::FORMULA_ID,
+        self::RESULT_ID,
+        self::RANKING_ID,
+        self::SCIENCE_ID,
+        self::HISTORIC_ID,
+        self::BIOLOGICAL_ID,
+        self::EDUCATION_ID,
+        self::TOURISTIC_ID,
+        self::GRAPH_ID,
+        self::SIMPLE_ID,
+        self::MATH_CONST_ID,
+        self::SYSTEM_LOG_ID,
+        self::GLOBAL_PROBLEM_ID,
+        self::PHRASE_ID,
+        self::WORD_RELATED_ID,
     ];
 
     // system masks that add a sandbox object
@@ -525,6 +746,9 @@ class views
         self::COMPONENT_LINK_ADD_ID,
         self::FORMULA_LINK_ADD_ID,
         self::VIEW_RELATION_ADD_ID,
+        self::USER_ADMIN_ADD_ID,
+        self::LANGUAGE_ADD_ID,
+        self::CONFIRM_ADD_ID,
     ];
 
     // system masks that change a sandbox object
@@ -544,6 +768,11 @@ class views
         self::COMPONENT_LINK_EDIT_ID,
         self::FORMULA_LINK_EDIT_ID,
         self::VIEW_RELATION_EDIT_ID,
+        self::USER_ADMIN_EDIT_ID,
+        self::LANGUAGE_EDIT_ID,
+        self::CONFIRM_EDIT_ID,
+        self::CONFIRM_VIEWS_ID,
+        self::ERROR_UPDATE_ID,
     ];
 
     // system masks that delete a sandbox object
@@ -563,6 +792,15 @@ class views
         self::COMPONENT_LINK_DEL_ID,
         self::FORMULA_LINK_DEL_ID,
         self::VIEW_RELATION_DEL_ID,
+        self::USER_ADMIN_DEL_ID,
+        self::LANGUAGE_DEL_ID,
+        self::CONFIRM_DEL_ID,
+    ];
+
+    // system masks that should not have the standard zukunft header
+    const array NO_NAVBAR_IDS = [
+        self::SIGNUP_ID,
+        self::LOGIN_ID,
     ];
 
     // system masks that are used to modify other system masks
@@ -574,6 +812,34 @@ class views
     const array EDIT_DEL_MASKS_IDS = [
         self::EDIT_MASKS_IDS,
         self::DEL_MASKS_IDS,
+    ];
+
+    // system masks that are used to modify other system masks
+    const array PROCESS_STEP_MASKS_IDS = [
+        self::SIGNUP_ID,
+        self::LOGIN_ID,
+        self::LOGIN_ACTIVATE_ID,
+        self::LOGIN_RESET_ID,
+        self::LOGOUT_ID,
+        self::SETUP_ID,
+        self::UNDO_ID,
+        self::PASTE_TABLE_ID,
+        self::IMPORT_ID,
+        self::EXPORT_ID,
+        self::EXPORT_JSON_ID,
+        self::EXPORT_XML_ID,
+        self::EXPORT_CSV_ID,
+        self::EXPORT_ODS_ID,
+        self::JOB_ASYNC_ID,
+        self::JOB_CONTROL_ID,
+        self::JOB_CHECK_ID,
+        self::FORMULA_TEST_ID,
+    ];
+
+    // system masks that trigger an action via GET (no form submission required)
+    const array GET_ACTION_IDS = [
+        self::LOGOUT_ID,
+        self::ERROR_UPDATE_ID,
     ];
 
     // TODO Prio 0 convert to a key value map and use id for code_id_to_id and id_to_code_id
@@ -663,6 +929,7 @@ class views
         self::JOB_ASYNC_ID => self::JOB_ASYNC,
         self::JOB_CONTROL_ID => self::JOB_CONTROL,
         self::JOB_CHECK_ID => self::JOB_CHECK,
+        self::ADMIN_MAIN_ID => self::ADMIN_MAIN,
         self::VERBS_ID => self::VERBS,
         self::COMPLETE_ID => self::COMPLETE,
         self::BASE_UNITS_ID => self::BASE_UNITS,
@@ -684,6 +951,11 @@ class views
         self::GRAPH_ID => self::GRAPH,
         self::SIMPLE_ID => self::SIMPLE,
         self::MATH_CONST_ID => self::MATH_CONST,
+        self::GLOBAL_PROBLEM_ID => self::GLOBAL_PROBLEM,
+        self::SYSTEM_LOG_ID => self::SYSTEM_LOG,
+        self::LANGUAGE_SELECT_ID => self::LANGUAGE_SELECT,
+        self::PHRASE_ID => self::PHRASE,
+        self::CURRENCY_ID => self::CURRENCY,
     ];
 
     const array SYSTEM_VIEWS = [
@@ -771,7 +1043,17 @@ class views
         self::JOB_ASYNC,
         self::JOB_CONTROL,
         self::JOB_CHECK,
+        self::ADMIN_MAIN,
+        self::GLOBAL_PROBLEM,
     ];
+
+    // list of predefined user views that are fixed assigned to a word or triple
+    // it should be checked during the build process that the word, triples and views exists
+    // and that the result with the base setup still looks fine
+    const array PHRASE_VIEWS = [
+        word_names::CURRENCY => self::CONFIRM_MASKS_IDS
+    ];
+
 
     /**
      * returns the code id of the base view that is used to show the changeable object
@@ -822,6 +1104,93 @@ class views
             log_err('code id for view id ' . $id . ' not found');
             return 0;
         }
+    }
+
+    /**
+     * @param string $class the class name including the path
+     * @return int the database id of the view to add the object or -1 if no view is assigned yet
+     */
+    function class_to_add(string $class): int
+    {
+        $short = substr(strrchr($class, '\\'), 1) ?: $class;
+        return match ($short) {
+            'word' => self::WORD_ADD_ID,
+            'verb' => self::VERB_ADD_ID,
+            'triple' => self::TRIPLE_ADD_ID,
+            'source' => self::SOURCE_ADD_ID,
+            'ref' => self::REF_ADD_ID,
+            'value' => self::VALUE_ADD_ID,
+            'group' => self::GROUP_ADD_ID,
+            'formula' => self::FORMULA_ADD_ID,
+            'formula_link' => self::FORMULA_LINK_ADD_ID,
+            'result' => self::RESULT_ADD_ID,
+            'view' => self::VIEW_ADD_ID,
+            'component' => self::COMPONENT_ADD_ID,
+            'view_link' => self::VIEW_LINK_ADD_ID,
+            'component_link' => self::COMPONENT_LINK_ADD_ID,
+            'view_relation' => self::VIEW_RELATION_ADD_ID,
+            'user' => self::USER_ADMIN_ADD_ID,
+            'language' => self::LANGUAGE_ADD_ID,
+            default => -1
+        };
+    }
+
+    /**
+     * @param string $class the class name including the path
+     * @return int the database id of the view to edit the object or -1 if no view is assigned yet
+     */
+    function class_to_edit(string $class): int
+    {
+        $short = substr(strrchr($class, '\\'), 1) ?: $class;
+        return match ($short) {
+            'word' => self::WORD_EDIT_ID,
+            'verb' => self::VERB_EDIT_ID,
+            'triple' => self::TRIPLE_EDIT_ID,
+            'source' => self::SOURCE_EDIT_ID,
+            'ref' => self::REF_EDIT_ID,
+            'value' => self::VALUE_EDIT_ID,
+            'group' => self::GROUP_EDIT_ID,
+            'formula' => self::FORMULA_EDIT_ID,
+            'formula_link' => self::FORMULA_LINK_EDIT_ID,
+            'result' => self::RESULT_EDIT_ID,
+            'view' => self::VIEW_EDIT_ID,
+            'component' => self::COMPONENT_EDIT_ID,
+            'view_link' => self::VIEW_LINK_EDIT_ID,
+            'component_link' => self::COMPONENT_LINK_EDIT_ID,
+            'view_relation' => self::VIEW_RELATION_EDIT_ID,
+            'user' => self::USER_ADMIN_EDIT_ID,
+            'language' => self::LANGUAGE_EDIT_ID,
+            default => -1
+        };
+    }
+
+    /**
+     * @param string $class the class name including the path
+     * @return int the database id of the view to delete the object or -1 if no view is assigned yet
+     */
+    function class_to_del(string $class): int
+    {
+        $short = substr(strrchr($class, '\\'), 1) ?: $class;
+        return match ($short) {
+            'word' => self::WORD_DEL_ID,
+            'verb' => self::VERB_DEL_ID,
+            'triple' => self::TRIPLE_DEL_ID,
+            'source' => self::SOURCE_DEL_ID,
+            'ref' => self::REF_DEL_ID,
+            'value' => self::VALUE_DEL_ID,
+            'group' => self::GROUP_DEL_ID,
+            'formula' => self::FORMULA_DEL_ID,
+            'formula_link' => self::FORMULA_LINK_DEL_ID,
+            'result' => self::RESULT_DEL_ID,
+            'view' => self::VIEW_DEL_ID,
+            'component' => self::COMPONENT_DEL_ID,
+            'view_link' => self::VIEW_LINK_DEL_ID,
+            'component_link' => self::COMPONENT_LINK_DEL_ID,
+            'view_relation' => self::VIEW_RELATION_DEL_ID,
+            'user' => self::USER_ADMIN_DEL_ID,
+            'language' => self::LANGUAGE_DEL_ID,
+            default => -1
+        };
     }
 
 }

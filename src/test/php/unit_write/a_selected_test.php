@@ -59,9 +59,12 @@ use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\formula_calc_tests;
+use Zukunft\ZukunftCom\test\php\unit\import_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\triple_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\value_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -106,7 +109,7 @@ class a_selected_test extends test_cleanup
 
         // run the selected unit tests
         //new system_tests()->run($this);
-        //new import_tests()->run($this);
+        new import_tests()->run($this);
         //new formula_link_tests()->run($this);
         //new formula_calc_tests()->run($this);
         //new api_tests()->run($this);
@@ -136,8 +139,8 @@ class a_selected_test extends test_cleanup
              */
 
             // preferred tests to check upfront the words::*_ID and triples::*_ID
-            //new word_list_read_tests()->run($this);
-            //new triple_list_read_tests()->run($this);
+            new word_list_read_tests()->run($this);
+            new triple_list_read_tests()->run($this);
 
             /*
              * part of system setup testing
@@ -153,12 +156,13 @@ class a_selected_test extends test_cleanup
              * unit testing - with system users
              */
             $t_db = new test_db_load($this);
-            $t_db->type_list_recreate($this, $this->usr1);
+            //$t_db->type_list_check($this, $this->usr1);
 
 
+            global $sys;
             $ui = new frontend('api based ui tests');
             $ui->load_cache();
-            new type_lists_ui_tests()->run($this, $ui);
+            //new type_lists_ui_tests()->run($this, $ui);
 
             // check and update the fixed csv files
             // e.g. to have an indication which words might be missing due to the code changes
@@ -187,7 +191,7 @@ class a_selected_test extends test_cleanup
             */
             //new import_write_tests()->run($t);
             $imf = new import_file();
-            //$ta = new all_unit_write_tests();
+            $ta = new all_unit_write_tests();
             //$ta->import_test_files($usr);
             //$imf->json_file(files::MESSAGE_PATH . files::TIME_FILE, $usr, false);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
@@ -251,7 +255,7 @@ class a_selected_test extends test_cleanup
 
             // run the selected db write tests
             //new user_write_tests()->run($this);
-            //new sys_log_write_tests()->run($t);
+            new sys_log_write_tests()->run($this);
             //new horizontal_write_tests()->run($this);
 
             //new word_write_tests()->run($this);
@@ -270,13 +274,13 @@ class a_selected_test extends test_cleanup
             //new value_write_tests()->run($this);
             //new value_list_write_tests()->run($t);
             //new expression_write_tests()->run($this);
-            new element_write_tests()->run($this);
-            new element_write_tests()->run_list($this);
-            new element_group_write_tests()->run($this);
-            new formula_write_tests()->run($this);
+            //new element_write_tests()->run($this);
+            //new element_write_tests()->run_list($this);
+            //new element_group_write_tests()->run($this);
+            //new formula_write_tests()->run($this);
             //new formula_write_tests()->run_list($this);
-            new formula_link_write_tests()->run($this);
-            new formula_link_write_tests()->run_list($this);
+            //new formula_link_write_tests()->run($this);
+            //new formula_link_write_tests()->run_list($this);
             //new formula_trigger_tests()->run($t);
             //new result_write_tests()->run($t);
             //new result_write_tests()->run_list($t);
@@ -285,11 +289,12 @@ class a_selected_test extends test_cleanup
             //new view_write_tests()->run($this);
             //new view_relation_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
-            new component_write_tests()->run($this);
-            new component_link_write_tests()->run($this);
+            //new component_write_tests()->run($this);
+            //new component_link_write_tests()->run($this);
 
             //new api_write_tests()->run($this);
             //new import_write_tests()->run($this);
+            new xbrl_write_tests()->run($this);
 
             //$import = new import_file();
             //$import->import_test_files($usr);

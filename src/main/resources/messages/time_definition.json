@@ -51,11 +51,16 @@
       "name": "year",
       "plural": "years",
       "type": "time",
+      "description": "A year is the time taken for an astronomical object to complete one orbit around another; in the Gregorian calendar a common year has 365 days and a leap year 366 days.",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "year",
+          "name": "Year",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q577",
+          "type": "wikidata"
         }
       ]
     },
@@ -126,12 +131,12 @@
       ]
     },
     {
-      "name": "Juli",
+      "name": "July",
       "type": "time",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Juli",
+          "name": "July",
           "type": "wikipedia"
         }
       ]
@@ -195,9 +200,6 @@
       "name": "latest",
       "type": "latest",
       "protection": "admin_protection"
-    },
-    {
-      "name": "year"
     },
     {
       "name": "percent"

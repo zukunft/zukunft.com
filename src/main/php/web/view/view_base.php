@@ -48,9 +48,12 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
@@ -63,9 +66,12 @@ include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -227,8 +233,8 @@ class view_base extends sandbox_code_id
 
     function type_code_id(): ?string
     {
-        global $ui_cac;
-        $msk_typ_lst = $ui_cac->typ_lst_cache->html_view_types;
+        global $ui_sys;
+        $msk_typ_lst = $ui_sys->typ_lst_cache->msk_typ;
         $id = $this->type_id();
         if ($id != null) {
             return $msk_typ_lst->get($this->type_id())?->get_code_id();
@@ -271,7 +277,7 @@ class view_base extends sandbox_code_id
         return parent::name_link($back, $style, $msk_id);
     }
 
-    function title(db_object $dbo): string
+    function title(db_object|type_object|combine_named|sandbox_list $dbo): string
     {
         return $this->name() . ' ' . $dbo->name();
     }
@@ -283,47 +289,27 @@ class view_base extends sandbox_code_id
 
     /**
      * create the HTML code to select a view type
+     * overrides db_object::view_type_selector so that form_view_type returns a real selector for view objects
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the phrase type
+     * @return string the html code to select the view type
      */
-    function type_selector(string $form, ?type_lists $typ_lst): string
+    public function view_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
-            $used_type_id = $typ_lst->html_view_types->default_id();
+            $used_type_id = $typ_lst->msk_typ->default_id();
         }
-        return $typ_lst->html_view_types->selector($form, $used_type_id);
+        return $typ_lst->msk_typ->selector($form, $used_type_id);
     }
 
     public function style_selector(string $form, ?type_lists $typ_lst): string
     {
         $used_style_id = $this->get_style_id();
         if ($used_style_id == null) {
-            $used_style_id = $typ_lst->html_view_styles->default_id();
+            $used_style_id = $typ_lst->msk_sty->default_id();
         }
-        return $typ_lst->html_view_styles->selector($form, $used_style_id);
-    }
-
-    /**
-     * create the HTML code to select a component
-     * * @param string $form the name of the html form
-     * * @param string $pattern the pattern used to filter the components by the name
-     * * @param int $id the id of the component selected until now
-     * * @param component_list $cmp_lst with the suggested components
-     * * @return string the html code to select a component
-     */
-    function component_selector(
-        string         $form,
-        string         $pattern,
-        int            $id,
-        component_list $cmp_lst
-    ): string
-    {
-        if ($pattern != '') {
-            $cmp_lst->load_like($pattern);
-        }
-        return $cmp_lst->selector($form, $id, url_var::COMPONENT, msg_id::FORM_SELECT_COMPONENT);
+        return $typ_lst->msk_sty->selector($form, $used_style_id);
     }
 
     function log_err(string $msg): void

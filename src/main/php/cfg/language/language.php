@@ -5,6 +5,8 @@
     model/language/language.php - to define a language for the user interface
     ---------------------------
 
+    $lan is the suggested var name
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -51,6 +53,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -68,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class language extends type_object
@@ -81,16 +85,24 @@ class language extends type_object
     const string TBL_COMMENT = 'for table languages';
     const string FLD_ID = 'language_id';
     const string FLD_NAME = 'language_name';
+    const string FLD_NAME_COM = 'the name of the language in the system language, which is English';
+    const string FLD_CODE_ID_COM = 'the ISO 639-1 language code plus BCP 47 plus additional language codes requested by zukunft.com users';
     const string FLD_WIKI_CODE = 'wikimedia_code';
+    const string FLD_WIKI_CODE_COM = 'wikimedia language code e.g. no instead of nb (Norwegian Bokmål in ISO) for a full link to wikipedia';
+    const string FLD_LOCAL_NAME = 'local_name';
+    const string FLD_LOCAL_NAME_COM = 'the name of the language in the language';
+    const string FLD_USAGE_COM = 'the number of speakers worldwide';
 
     // field lists for the table creation
     const array FLD_LST_NAME = array(
-        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     const array FLD_LST_ALL = array(
-        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
+        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_WIKI_CODE, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
+        [self::FLD_WIKI_CODE, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_WIKI_CODE_COM],
+        [self::FLD_LOCAL_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_LOCAL_NAME_COM],
+        [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
     );
 
 
@@ -98,8 +110,9 @@ class language extends type_object
      * object vars
      */
 
-    // the language code from Wikimedia for synchronisation
-    public ?string $wiki_code = null;
+    public ?string $wiki_code = null; // the language code from Wikimedia for synchronisation
+    public ?string $local_name = null; // the name in the language
+    public ?int $usage = null; // estimation how many users the language has for sorting
 
 
     /*
@@ -115,6 +128,8 @@ class language extends type_object
     {
         parent::reset();
         $this->wiki_code = null;
+        $this->local_name = null;
+        $this->usage = null;
     }
 
     /**
@@ -130,6 +145,12 @@ class language extends type_object
         if ($result) {
             if (array_key_exists(self::FLD_WIKI_CODE, $db_row)) {
                 $this->wiki_code = ($db_row[self::FLD_WIKI_CODE]);
+            }
+            if (array_key_exists(self::FLD_LOCAL_NAME, $db_row)) {
+                $this->local_name = ($db_row[self::FLD_LOCAL_NAME]);
+            }
+            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
+                $this->usage = ($db_row[sql_db::FLD_USAGE]);
             }
         }
         return $result;
@@ -149,6 +170,12 @@ class language extends type_object
         if (array_key_exists(json_fields::WIKI_CODE, $api_json)) {
             if ($api_json[json_fields::WIKI_CODE] <> '') {
                 $this->wiki_code = $api_json[json_fields::WIKI_CODE];
+            }
+            if ($api_json[json_fields::LOCAL_NAME] <> '') {
+                $this->local_name = $api_json[json_fields::LOCAL_NAME];
+            }
+            if ($api_json[json_fields::USAGE] <> '') {
+                $this->usage = $api_json[json_fields::USAGE];
             }
         }
 
@@ -173,9 +200,18 @@ class language extends type_object
     {
         parent::import_mapper($in_ex_json, $msg, $dto);
 
-        if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+        if ($msg->usr === null) {
+            log_err('user not set in user_message', 'import_mapper');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
             if (key_exists(json_fields::WIKI_CODE, $in_ex_json)) {
                 $this->wiki_code = $in_ex_json[json_fields::WIKI_CODE];
+            }
+            if (key_exists(json_fields::LOCAL_NAME, $in_ex_json)) {
+                $this->local_name = $in_ex_json[json_fields::LOCAL_NAME];
+            }
+            if (key_exists(json_fields::USAGE, $in_ex_json)) {
+                $this->usage = $in_ex_json[json_fields::USAGE];
             }
         }
 
@@ -200,6 +236,8 @@ class language extends type_object
         $vars = array_merge($vars, get_object_vars($this));
         $vars[json_fields::ID] = $this->id();
         $vars[json_fields::WIKI_CODE] = $this->wiki_code;
+        $vars[json_fields::LOCAL_NAME] = $this->local_name;
+        $vars[json_fields::USAGE] = $this->usage;
         return $vars;
     }
 
@@ -259,6 +297,12 @@ class language extends type_object
         if ($this->wiki_code !== null) {
             $vars[json_fields::WIKI_CODE] = $this->wiki_code;
         }
+        if ($this->local_name !== null) {
+            $vars[json_fields::LOCAL_NAME] = $this->local_name;
+        }
+        if ($this->usage !== null) {
+            $vars[json_fields::USAGE] = $this->usage;
+        }
         return $vars;
     }
 
@@ -280,7 +324,9 @@ class language extends type_object
         return array_merge(
             parent::db_fields_all(),
             [
-                self::FLD_WIKI_CODE
+                self::FLD_WIKI_CODE,
+                self::FLD_LOCAL_NAME,
+                sql_db::FLD_USAGE,
             ]
         );
     }
@@ -319,6 +365,36 @@ class language extends type_object
                 $this->wiki_code,
                 sql_field_type::NAME,
                 $obj->wiki_code
+            );
+        }
+        if ($obj->local_name !== $this->local_name) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_LOCAL_NAME,
+                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_LOCAL_NAME),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_LOCAL_NAME,
+                $this->local_name,
+                sql_field_type::NAME,
+                $obj->local_name
+            );
+        }
+        if ($obj->usage !== $this->usage) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_USAGE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_USAGE,
+                $this->usage,
+                sql_db::FLD_USAGE_SQL_TYP,
+                $obj->usage
             );
         }
         return $lst;

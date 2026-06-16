@@ -674,6 +674,13 @@
       "code_id": "system_body_user_settings"
     },
     {
+      "name": "user system errors",
+      "description": "show the most relevant open system errors linked to the user",
+      "type": "user_system_errors",
+      "code_id": "user_system_errors",
+      "ui_msg_code_id": "user_system_errors"
+    },
+    {
       "name": "system form title paste table",
       "description": "show the language specific title for the drop table to db page",
       "type": "system_title",
@@ -781,6 +788,43 @@
       "description": "show all progress of job dashboard",
       "type": "system_body_process",
       "code_id": "system_body_process"
+    },
+    {
+      "name": "system title admin",
+      "description": "show the language specific title for the administrator dashboard",
+      "type": "system_title",
+      "code_id": "system_title_admin",
+      "ui_msg_code_id": "system_title_admin"
+    },
+    {
+      "name": "system admin response times",
+      "description": "show the most relevant delays in response to user request",
+      "type": "system_admin_url_delay",
+      "code_id": "system_admin_url_delay"
+    },
+    {
+      "name": "system admin failed logins",
+      "description": "show last and most critical failed login trails to be able to detect hacking attempts",
+      "type": "system_admin_login_fails",
+      "code_id": "system_admin_login_fails"
+    },
+    {
+      "name": "system admin unassigned errors",
+      "description": "show new detected internal errors that do not yet have a human check priority and that are not yet assigned to a developer",
+      "type": "system_admin_errors_unassigned",
+      "code_id": "system_admin_errors_unassigned"
+    },
+    {
+      "name": "system admin pending error fixes",
+      "description": "show a list of errors where the fix has been expected but that are not yet fixed",
+      "type": "system_admin_errors_delayed_fix",
+      "code_id": "system_admin_errors_delayed_fix"
+    },
+    {
+      "name": "system admin delayed jobs",
+      "description": "list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs",
+      "type": "system_admin_jobs_delayed",
+      "code_id": "system_admin_jobs_delayed"
     },
     {
       "name": "system form hidden back stack",
@@ -1727,6 +1771,26 @@
       "type": "system_form_field_weight",
       "code_id": "form_field_weight",
       "ui_msg_code_id": "form_field_weight"
+    },
+    {
+      "name": "title language select",
+      "description": "show the page title to select a language",
+      "type": "system_title",
+      "code_id": "title_language_select",
+      "ui_msg_code_id": "title_language_select"
+    },
+    {
+      "name": "list of all languages",
+      "description": "show as many languages on on page as useful and allow the user to select one to change the frontend language and if there are more than can be displayed at once it needs be to pages allow to switch the pages",
+      "type": "select_list",
+      "code_id": "list_select_languages"
+    },
+    {
+      "name": "request additional language",
+      "description": "a button to request an additional language",
+      "type": "button_request",
+      "code_id": "button_add_languages",
+      "ui_msg_code_id": "button_add_languages"
     }
   ],
   "views": [
@@ -2290,46 +2354,46 @@
           "name": "system form end"
         },
         {
-          "position": "16",
+          "position": "14",
           "name": "system formatter row start"
         },
         {
-          "position": "17",
+          "position": "15",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "18",
+          "position": "16",
           "name": "system sub title triples",
           "style": "col-md-4"
         },
         {
-          "position": "19",
+          "position": "17",
           "name": "triples that use a verb",
           "position_type": "combine"
         },
         {
-          "position": "20",
+          "position": "18",
           "name": "system sub title formulas",
           "style": "col-md-4"
         },
         {
-          "position": "21",
+          "position": "19",
           "name": "formulas that use a verb",
           "position_type": "combine"
         },
         {
-          "position": "22",
+          "position": "20",
           "name": "system sub title log",
           "style": "col-md-4"
         },
         {
-          "position": "23",
+          "position": "21",
           "name": "change log verb",
           "position_type": "combine"
         },
         {
-          "position": "24",
+          "position": "22",
           "name": "system formatter row end"
         }
       ]
@@ -3890,80 +3954,80 @@
           "name": "assigned phrases of this formula"
         },
         {
-          "position": "16",
+          "position": "14",
           "name": "system form button cancel"
         },
         {
-          "position": "17",
+          "position": "15",
           "name": "system form button save"
         },
         {
-          "position": "18",
+          "position": "16",
           "name": "system formatter row end"
         },
         {
-          "position": "19",
+          "position": "17",
           "name": "system form end"
         },
         {
-          "position": "20",
+          "position": "18",
           "name": "system formatter row start"
         },
         {
-          "position": "21",
+          "position": "19",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "22",
+          "position": "20",
           "name": "system formatter row end"
         },
         {
-          "position": "23",
+          "position": "21",
           "name": "system formatter row start"
         },
         {
-          "position": "24",
+          "position": "22",
           "name": "system sub title results",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "25",
+          "position": "23",
           "name": "result list of formula",
           "position_type": "combine"
         },
         {
-          "position": "26",
+          "position": "24",
           "name": "system sub title formulas",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "29",
+          "position": "25",
           "name": "formula list of formula",
           "position_type": "combine"
         },
         {
-          "position": "30",
+          "position": "26",
           "name": "system formatter row end"
         },
         {
-          "position": "31",
+          "position": "27",
           "name": "system formatter row start"
         },
         {
-          "position": "32",
+          "position": "28",
           "name": "system sub title log",
           "style": "col-md-12"
         },
         {
-          "position": "33",
+          "position": "29",
           "name": "change log formula",
           "position_type": "combine"
         },
         {
-          "position": "34",
+          "position": "30",
           "name": "system formatter row end"
         }
       ]
@@ -4004,64 +4068,64 @@
           "name": "system form end"
         },
         {
-          "position": "20",
+          "position": "8",
           "name": "system formatter row start"
         },
         {
-          "position": "21",
+          "position": "9",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "22",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "23",
+          "position": "11",
           "name": "system formatter row start"
         },
         {
-          "position": "24",
+          "position": "12",
           "name": "system sub title results",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "25",
+          "position": "13",
           "name": "result list of formula",
           "position_type": "combine"
         },
         {
-          "position": "26",
+          "position": "14",
           "name": "system sub title formulas",
           "position_type": "column",
           "style": "col-md-4"
         },
         {
-          "position": "29",
+          "position": "15",
           "name": "formula list of formula",
           "position_type": "combine"
         },
         {
-          "position": "30",
+          "position": "16",
           "name": "system formatter row end"
         },
         {
-          "position": "31",
+          "position": "17",
           "name": "system formatter row start"
         },
         {
-          "position": "32",
+          "position": "18",
           "name": "system sub title log",
           "style": "col-md-12"
         },
         {
-          "position": "33",
+          "position": "19",
           "name": "change log formula",
           "position_type": "combine"
         },
         {
-          "position": "34",
+          "position": "20",
           "name": "system formatter row end"
         }
       ]
@@ -5104,22 +5168,18 @@
         },
         {
           "position": "12",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "13",
           "name": "system form button cancel"
         },
         {
-          "position": "14",
+          "position": "13",
           "name": "system form button save"
         },
         {
-          "position": "15",
+          "position": "14",
           "name": "system formatter row end"
         },
         {
-          "position": "16",
+          "position": "15",
           "name": "system form end"
         }
       ]
@@ -5261,6 +5321,10 @@
         },
         {
           "position": "13",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "14",
           "name": "system form end"
         }
       ]
@@ -5608,6 +5672,10 @@
         },
         {
           "position": "9",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "10",
           "name": "system form end"
         }
       ]
@@ -5699,23 +5767,23 @@
           "name": "system form field description"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system formatter row right"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button save"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -5753,19 +5821,23 @@
           "name": "system show field description"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system formatter row right"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button del"
         },
         {
-          "position": "9",
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -6260,6 +6332,10 @@
         {
           "position": "2",
           "name": "system body user settings"
+        },
+        {
+          "position": "3",
+          "name": "user system errors"
         }
       ]
     },
@@ -6300,18 +6376,22 @@
         },
         {
           "position": "3",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "4",
-          "name": "system form button import"
+          "name": "system form button cancel"
         },
         {
           "position": "5",
-          "name": "system formatter row end"
+          "name": "system form button import"
         },
         {
           "position": "6",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "7",
           "name": "system form end"
         }
       ]
@@ -6403,23 +6483,23 @@
           "name": "system formatter row right"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form button save"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button export"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -6455,23 +6535,23 @@
           "name": "system formatter row right"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form button save"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button export"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -6507,23 +6587,23 @@
           "name": "system formatter row right"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form button save"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button export"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -6559,23 +6639,23 @@
           "name": "system formatter row right"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form button save"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system form button cancel"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system form button export"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system formatter row end"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -6629,6 +6709,38 @@
       ]
     },
     {
+      "name": "Admin dashboard",
+      "description": "Show a overview of the most relevant issues that an administrator should check",
+      "type": "system",
+      "code_id": "admin_main",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title admin"
+        },
+        {
+          "position": "2",
+          "name": "system admin response times"
+        },
+        {
+          "position": "3",
+          "name": "system admin failed logins"
+        },
+        {
+          "position": "4",
+          "name": "system admin unassigned errors"
+        },
+        {
+          "position": "5",
+          "name": "system admin pending error fixes"
+        },
+        {
+          "position": "6",
+          "name": "system admin delayed jobs"
+        }
+      ]
+    },
+    {
       "name": "Verb List",
       "description": "List all available ways how to link two words",
       "code_id": "verbs",
@@ -6662,6 +6774,25 @@
         {
           "position": "6",
           "name": "Export XML"
+        }
+      ]
+    },
+    {
+      "name": "Language selection",
+      "description": "List all language in an overview page to select the ui language and allow to request an additional language",
+      "code_id": "language_select",
+      "components": [
+        {
+          "position": "1",
+          "name": "title language select"
+        },
+        {
+          "position": "2",
+          "name": "list of all languages"
+        },
+        {
+          "position": "3",
+          "name": "request additional language"
         }
       ]
     }

@@ -5,6 +5,8 @@
     model/log/change_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
     ------------------------
 
+    $cng is the suggested var name
+
     for reading the user changes from the database and forwarding them to
     the API and frontend model/log/changeLog* should be used
 
@@ -287,6 +289,7 @@ class change_log extends db_object_seq_id_user
     /**
      * set the table of this change log object by the class name
      * @param string $class the class name
+     * @param bool $usr_only true to use the user table prefix
      * @return bool true if the table/class is part of the log table
      */
     function set_class(string $class, bool $usr_only = false): bool
@@ -294,10 +297,11 @@ class change_log extends db_object_seq_id_user
         $lib = new library();
         $name = $lib->class_to_table($class);
         if ($usr_only) {
-            return $this->set_table(sql_db::TBL_USER_PREFIX . $name);
+            $db_changed = $this->set_table(sql_db::TBL_USER_PREFIX . $name);
         } else {
-            return $this->set_table($name);
+            $db_changed = $this->set_table($name);
         }
+        return $db_changed;
     }
 
     /**
@@ -367,7 +371,7 @@ class change_log extends db_object_seq_id_user
                         $db_changed = true;
                     }
                 } else {
-                    log_err("Cannot add field name " . $field_name . ' for table id ' . $this->table_id . '. Probably field needs to be added to the src/main/resources/db_code_links/change_fields.csv');
+                    log_err('Cannot add field name "' . $field_name . '" for table id ' . $this->table_id . '. Probably field needs to be added to the src/main/resources/db_code_links/change_fields.csv');
                 }
             }
         } else {

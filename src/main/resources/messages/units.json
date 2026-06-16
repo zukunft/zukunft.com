@@ -30,6 +30,10 @@
         {
           "name": "Constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1127670",
+          "type": "wikidata"
         }
       ]
     },
@@ -54,6 +58,10 @@
         {
           "name": "1",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q199",
+          "type": "wikidata"
         }
       ]
     },
@@ -65,7 +73,7 @@
     },
     {
       "name": "\uD835\uDC52",
-      "description": "Symbol for the Euler's number, which is defined as the limiting difference between the harmonic series and the natural logarithm",
+      "description": "Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
       "type": "constant",
       "protection": "admin_protection"
     },
@@ -77,6 +85,10 @@
         {
           "name": "physics",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q413",
+          "type": "wikidata"
         }
       ]
     },
@@ -88,6 +100,10 @@
         {
           "name": "science",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q336",
+          "type": "wikidata"
         }
       ]
     },
@@ -99,6 +115,10 @@
         {
           "name": "Natural",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q7860",
+          "type": "wikidata"
         }
       ]
     },
@@ -185,6 +205,10 @@
         {
           "name": "Circumference",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q843905",
+          "type": "wikidata"
         }
       ]
     },
@@ -196,6 +220,10 @@
         {
           "name": "Diameter",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q37221",
+          "type": "wikidata"
         }
       ]
     },
@@ -256,23 +284,31 @@
     },
     {
       "name": "base",
-      "description": "In mathematics, a base for the topology τ of a topological space (X, τ) is a family B of open subsets of X such that every open set of the topology is equal to the union of some sub-family of B.",
+      "description": "A base is something that serves as a foundation, reference point or starting value from which other things are built, derived or measured.",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Base (topology)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q810214",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "unit",
-      "description": "In mathematics, an identity element or neutral element of a binary operation is an element that leaves unchanged every element when the operation is applied",
+      "description": "A unit is a defined amount of a quantity, fixed by convention or standard, that is used as a reference to measure or count other amounts of the same kind.",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Identity element",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q185813",
+          "type": "wikidata"
         }
       ]
     },
@@ -284,6 +320,10 @@
         {
           "name": "System",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q58778",
+          "type": "wikidata"
         }
       ]
     },
@@ -295,21 +335,16 @@
         {
           "name": "Internationalism (politics)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q695838",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "second",
-      "description": "The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",
-      "plural": "seconds",
-      "type": "measure",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Second",
-          "type": "wikipedia"
-        }
-      ]
+      "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)"
     },
     {
       "name": "s",
@@ -320,13 +355,17 @@
     {
       "name": "millisecond",
       "plural": "milliseconds",
-      "description": "The 1'000 part of a second.",
+      "description": "The 1/1000th part of a second.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Millisecond",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q723733",
+          "type": "wikidata"
         }
       ]
     },
@@ -339,12 +378,16 @@
         {
           "name": "Metre",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11573",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "m",
-      "description": "Is a symbol for the metre is the base unit of length in the International System of Units (SI).",
+      "description": "Is a symbol for the metre, the base unit of length in the International System of Units (SI).",
       "type": "measure",
       "protection": "admin_protection"
     },
@@ -357,12 +400,16 @@
         {
           "name": "Kilogram",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11570",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "kg",
-      "description": "The symbol for the kilogram which was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
+      "description": "The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
       "type": "measure",
       "protection": "admin_protection"
     },
@@ -375,6 +422,10 @@
         {
           "name": "Ampere",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25272",
+          "type": "wikidata"
         }
       ]
     },
@@ -393,6 +444,10 @@
         {
           "name": "Kelvin",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11579",
+          "type": "wikidata"
         }
       ]
     },
@@ -411,6 +466,10 @@
         {
           "name": "Mole (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q41509",
+          "type": "wikidata"
         }
       ]
     },
@@ -429,6 +488,10 @@
         {
           "name": "Candela",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q83216",
+          "type": "wikidata"
         }
       ]
     },
@@ -446,6 +509,10 @@
         {
           "name": "Apomorphy and synapomorphy",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q962872",
+          "type": "wikidata"
         }
       ]
     },
@@ -457,6 +524,10 @@
         {
           "name": "Name",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q82799",
+          "type": "wikidata"
         }
       ]
     },
@@ -469,6 +540,10 @@
         {
           "name": "Hertz",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q39369",
+          "type": "wikidata"
         }
       ]
     },
@@ -487,6 +562,10 @@
         {
           "name": "Radian",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q33680",
+          "type": "wikidata"
         }
       ]
     },
@@ -505,6 +584,10 @@
         {
           "name": "Steradian",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q177612",
+          "type": "wikidata"
         }
       ]
     },
@@ -523,6 +606,10 @@
         {
           "name": "Newton (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q12438",
+          "type": "wikidata"
         }
       ]
     },
@@ -541,6 +628,10 @@
         {
           "name": "Pascal (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q44395",
+          "type": "wikidata"
         }
       ]
     },
@@ -559,6 +650,10 @@
         {
           "name": "Joule",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25269",
+          "type": "wikidata"
         }
       ]
     },
@@ -577,6 +672,10 @@
         {
           "name": "Watt",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25236",
+          "type": "wikidata"
         }
       ]
     },
@@ -595,6 +694,10 @@
         {
           "name": "Coulomb",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25406",
+          "type": "wikidata"
         }
       ]
     },
@@ -613,6 +716,10 @@
         {
           "name": "Volt",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25250",
+          "type": "wikidata"
         }
       ]
     },
@@ -631,6 +738,10 @@
         {
           "name": "Weber (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q170804",
+          "type": "wikidata"
         }
       ]
     },
@@ -649,6 +760,10 @@
         {
           "name": "Tesla (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q163343",
+          "type": "wikidata"
         }
       ]
     },
@@ -667,6 +782,10 @@
         {
           "name": "Farad",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q131255",
+          "type": "wikidata"
         }
       ]
     },
@@ -685,6 +804,10 @@
         {
           "name": "Ohm",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q47083",
+          "type": "wikidata"
         }
       ]
     },
@@ -703,6 +826,10 @@
         {
           "name": "Siemens (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q169893",
+          "type": "wikidata"
         }
       ]
     },
@@ -721,6 +848,10 @@
         {
           "name": "Henry (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q163354",
+          "type": "wikidata"
         }
       ]
     },
@@ -739,6 +870,10 @@
         {
           "name": "Celsius",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25267",
+          "type": "wikidata"
         }
       ]
     },
@@ -757,6 +892,10 @@
         {
           "name": "Lumen (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q484092",
+          "type": "wikidata"
         }
       ]
     },
@@ -775,6 +914,10 @@
         {
           "name": "Lux",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q179836",
+          "type": "wikidata"
         }
       ]
     },
@@ -786,13 +929,17 @@
     },
     {
       "name": "becquerel",
-      "description": "The becquerel is the unit of radioactivity in the International System of Units (SI). One becquerel is defined as an activity of one per second, on average, for aperiodic activity events referred to a radionuclide.",
+      "description": "The becquerel is the unit of radioactivity in the International System of Units (SI). One becquerel is defined as an activity of one decay per second, on average, for aperiodic decay events of a radionuclide.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Becquerel",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q102573",
+          "type": "wikidata"
         }
       ]
     },
@@ -811,6 +958,10 @@
         {
           "name": "Gray (unit)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q190095",
+          "type": "wikidata"
         }
       ]
     },
@@ -829,6 +980,10 @@
         {
           "name": "Sievert",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q103246",
+          "type": "wikidata"
         }
       ]
     },
@@ -847,6 +1002,10 @@
         {
           "name": "Katal",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q208634",
+          "type": "wikidata"
         }
       ]
     },
@@ -865,6 +1024,10 @@
         {
           "name": "Kinematics",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11476",
+          "type": "wikidata"
         }
       ]
     },
@@ -877,6 +1040,10 @@
         {
           "name": "Light",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q9128",
+          "type": "wikidata"
         }
       ]
     },
@@ -889,6 +1056,10 @@
         {
           "name": "Speed",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q3711325",
+          "type": "wikidata"
         }
       ]
     },
@@ -901,6 +1072,10 @@
         {
           "name": "Acceleration",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11376",
+          "type": "wikidata"
         }
       ]
     },
@@ -912,6 +1087,10 @@
         {
           "name": "Square_(algebra)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q111124",
+          "type": "wikidata"
         }
       ]
     },
@@ -923,6 +1102,10 @@
         {
           "name": "Cube",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q812880",
+          "type": "wikidata"
         }
       ]
     },
@@ -934,6 +1117,10 @@
         {
           "name": "Elementary particle",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q43116",
+          "type": "wikidata"
         }
       ]
     },
@@ -945,6 +1132,10 @@
         {
           "name": "Electric charge",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1111",
+          "type": "wikidata"
         }
       ]
     },
@@ -956,6 +1147,10 @@
         {
           "name": "Luminosity",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q105902",
+          "type": "wikidata"
         }
       ]
     },
@@ -967,6 +1162,10 @@
         {
           "name": "Efficacy",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q2585693",
+          "type": "wikidata"
         }
       ]
     },
@@ -979,6 +1178,10 @@
         {
           "name": "Jerk (physics)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q497332",
+          "type": "wikidata"
         }
       ]
     },
@@ -991,6 +1194,10 @@
         {
           "name": "Angle",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11352",
+          "type": "wikidata"
         }
       ]
     },
@@ -1003,18 +1210,10 @@
         {
           "name": "Velocity",
           "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "frequency",
-      "description": "Frequency most often measured in hertz, is the number of occurrences of a repeating event per unit of time.",
-      "type": "measure",
-      "protection": "admin_protection",
-      "refs": [
+        },
         {
-          "name": "Frequency",
-          "type": "wikipedia"
+          "name": "Q11465",
+          "type": "wikidata"
         }
       ]
     },
@@ -1027,6 +1226,10 @@
         {
           "name": "Frequency drift",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q5502869",
+          "type": "wikidata"
         }
       ]
     },
@@ -1038,6 +1241,10 @@
         {
           "name": "Volume",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q39297",
+          "type": "wikidata"
         }
       ]
     },
@@ -1049,6 +1256,10 @@
         {
           "name": "Fluid dynamics",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q216320",
+          "type": "wikidata"
         }
       ]
     },
@@ -1060,6 +1271,10 @@
         {
           "name": "Rate (mathematics)",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1144560",
+          "type": "wikidata"
         }
       ]
     },
@@ -1072,92 +1287,136 @@
         {
           "name": "Time",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11471",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "minute",
+      "description": "A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Minute",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q7727",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "hour",
+      "description": "An hour is a unit of time equal to 60 minutes, or 3600 seconds.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Hour",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q25235",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "day",
+      "description": "A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Day",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q573",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "week",
+      "description": "A week is a unit of time equal to 7 days.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Week",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q23387",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "month",
+      "description": "A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Month",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q5151",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "year",
+      "description": "A year is a unit of time equal to the orbital period of the Earth around the Sun, about 365.25 days.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "year",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q577",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "Planck",
+      "description": "Max Planck was a German theoretical physicist whose discovery of energy quanta won him the Nobel Prize in Physics in 1918.",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Max Planck",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q9021",
+          "type": "wikidata"
         }
       ]
     },
     {
       "name": "Boltzmann",
+      "description": "Ludwig Boltzmann was an Austrian physicist and philosopher; his greatest achievements were the development of statistical mechanics.",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Ludwig Boltzmann",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q84296",
+          "type": "wikidata"
         }
       ]
     },
@@ -1168,6 +1427,10 @@
         {
           "name": "Amedeo Avogadro",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q43476",
+          "type": "wikidata"
         }
       ]
     },
@@ -1179,6 +1442,10 @@
         {
           "name": "Mechanics",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q41217",
+          "type": "wikidata"
         }
       ]
     },
@@ -1190,6 +1457,10 @@
         {
           "name": "Distance",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q126017",
+          "type": "wikidata"
         }
       ]
     },
@@ -1211,6 +1482,10 @@
         {
           "name": "Area",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11500",
+          "type": "wikidata"
         }
       ]
     },
@@ -1222,6 +1497,10 @@
         {
           "name": "Hectare#Are",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q35852",
+          "type": "wikidata"
         }
       ]
     },
@@ -1238,6 +1517,10 @@
         {
           "name": "Hectare",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q35852",
+          "type": "wikidata"
         }
       ]
     },
@@ -1254,6 +1537,10 @@
         {
           "name": "Volume",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q39297",
+          "type": "wikidata"
         }
       ]
     },
@@ -1270,6 +1557,10 @@
         {
           "name": "Litre",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q11582",
+          "type": "wikidata"
         }
       ]
     },
@@ -1286,6 +1577,10 @@
         {
           "name": "Kilowatt-hour",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q182098",
+          "type": "wikidata"
         }
       ]
     },
@@ -1316,6 +1611,10 @@
         {
           "name": "Hyperfine structure",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1413102",
+          "type": "wikidata"
         }
       ]
     },
@@ -1327,6 +1626,10 @@
         {
           "name": "Atomic electron transition",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q3537671",
+          "type": "wikidata"
         }
       ]
     },
@@ -1337,6 +1640,10 @@
         {
           "name": "Frequency standard",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q362396",
+          "type": "wikidata"
         }
       ]
     },
@@ -1347,6 +1654,10 @@
         {
           "name": "Caesium",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1108",
+          "type": "wikidata"
         }
       ]
     },
@@ -1357,6 +1668,10 @@
         {
           "name": "Isotopes_of_caesium#Caesium-133",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q24638",
+          "type": "wikidata"
         }
       ]
     },
@@ -1367,6 +1682,10 @@
         {
           "name": "Definition",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q101072",
+          "type": "wikidata"
         }
       ]
     },
@@ -1394,6 +1713,12 @@
       "name": "per 100 km",
       "type": "measure_divisor",
       "protection": "admin_protection"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "ranking"
     }
   ],
   "triples": [
@@ -1409,8 +1734,13 @@
         {
           "name": "Mathematical_constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q186509",
+          "type": "wikidata"
         }
-      ]
+      ],
+      "impact": 9999999999
     },
     {
       "name": "Pi (math)",
@@ -1453,6 +1783,10 @@
         {
           "name": "Natural_science",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q7991",
+          "type": "wikidata"
         }
       ]
     },
@@ -1473,6 +1807,10 @@
         {
           "name": "Physical_constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q173227",
+          "type": "wikidata"
         }
       ]
     },
@@ -1529,6 +1867,10 @@
         {
           "name": "International System of Units",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q12457",
+          "type": "wikidata"
         }
       ]
     },
@@ -1543,6 +1885,10 @@
         {
           "name": "SI_base_unit",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q223662",
+          "type": "wikidata"
         }
       ]
     },
@@ -1553,8 +1899,49 @@
       "protection": "admin_protection"
     },
     {
-      "name": "second (unit)",
+      "name": "time unit",
+      "from": "unit",
+      "verb": "of",
+      "to": "time",
+      "description": "a unit to measure a duration, used to disambiguate words like 'second' that also have a non-time meaning"
+    },
+    {
+      "name": "ranking number",
+      "from": "ranking",
+      "verb": "with",
+      "to": "number",
+      "description": "an ordinal position in a ranking (first, second, third, ...), used to disambiguate words like 'second' that also are a time unit"
+    },
+    {
+      "name": "second (time)",
+      "description": "The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",
       "from": "second",
+      "verb": "must be one of",
+      "to": "time unit",
+      "plural": "seconds",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Second",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11574",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "second (ranking)",
+      "description": "the ranking-number reading of the ambiguous word 'second'; displayed as 'second' with 'ranking number' shown only in the tooltip",
+      "from": "second",
+      "verb": "must be one of",
+      "to": "ranking number"
+    },
+    {
+      "name": "second (unit)",
+      "from": "second (time)",
       "verb": "is a",
       "to": "SI base unit"
     },
@@ -1647,6 +2034,10 @@
         {
           "name": "SI_derived_unit#Derived units with special names",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q208469",
+          "type": "wikidata"
         }
       ]
     },
@@ -1677,6 +2068,10 @@
         {
           "name": "Metre per second",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q182429",
+          "type": "wikidata"
         }
       ]
     },
@@ -1699,14 +2094,34 @@
       "from": "metre",
       "verb": "can be",
       "to": "square",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Square metre",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25343",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "cubic metre",
       "from": "metre",
       "verb": "can be",
       "to": "cube",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Cubic metre",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25517",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "cubic metre per second",
@@ -1718,6 +2133,10 @@
         {
           "name": "Cubic metre per second",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q794261",
+          "type": "wikidata"
         }
       ]
     },
@@ -1737,6 +2156,10 @@
         {
           "name": "Elementary charge",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q2101",
+          "type": "wikidata"
         }
       ]
     },
@@ -1751,6 +2174,10 @@
         {
           "name": "Planck constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q122894",
+          "type": "wikidata"
         }
       ]
     },
@@ -1765,6 +2192,10 @@
         {
           "name": "Boltzmann_constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q5962",
+          "type": "wikidata"
         }
       ]
     },
@@ -1779,6 +2210,10 @@
         {
           "name": "Avogadro_constant",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q6203",
+          "type": "wikidata"
         }
       ]
     },
@@ -1823,8 +2258,12 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Avogadro_constant",
+          "name": "Luminous efficacy",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1504173",
+          "type": "wikidata"
         }
       ]
     },
@@ -1847,6 +2286,10 @@
         {
           "name": "Metre per second squared",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1051665",
+          "type": "wikidata"
         }
       ]
     },
@@ -1890,6 +2333,10 @@
         {
           "name": "Radian per second",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1063756",
+          "type": "wikidata"
         }
       ]
     },
@@ -1911,6 +2358,10 @@
         {
           "name": "Angular velocity",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q161635",
+          "type": "wikidata"
         }
       ]
     },
@@ -1925,6 +2376,10 @@
         {
           "name": "Angular acceleration",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q186300",
+          "type": "wikidata"
         }
       ]
     },
@@ -1959,8 +2414,27 @@
       "protection": "admin_protection"
     },
     {
-      "name": "frequency drift",
+      "name": "frequency (rate)",
+      "description": "the number of occurrences of a repeating event per unit of time, most often measured in hertz; the rate reading of the ambiguous word 'frequency', displayed as 'frequency' with 'rate' shown only in the tooltip",
       "from": "frequency",
+      "verb": "must be one of",
+      "to": "rate",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Frequency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11652",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "frequency drift",
+      "from": "frequency (rate)",
       "verb": "can",
       "to": "drift",
       "type": "measure",
@@ -2000,6 +2474,10 @@
         {
           "name": "Volumetric flow rate",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q1134348",
+          "type": "wikidata"
         }
       ]
     },
@@ -2007,32 +2485,6 @@
       "from": "distance",
       "verb": "is a",
       "to": "mechanics SI derived unit"
-    },
-    {
-      "name": "square metre",
-      "from": "metre",
-      "verb": "can be",
-      "to": "square",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Square metre",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "cubic metre",
-      "from": "metre",
-      "verb": "can be",
-      "to": "cube",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Cubic metre",
-          "type": "wikipedia"
-        }
-      ]
     },
     {
       "name": "per day",
@@ -2100,6 +2552,10 @@
         {
           "name": "Caesium standard",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q5017052",
+          "type": "wikidata"
         }
       ]
     },
@@ -2165,72 +2621,86 @@
   "formulas": [
     {
       "name": "scale minute to sec",
-      "expression": "\"second\" = \"minute\" * 60",
+      "expression": "\"second (time)\" = \"minute\" * 60",
+      "latex": "\\text{s} = 60 \\cdot \\text{min}",
       "assigned_word": "minute"
     },
     {
       "name": "scale hour to sec",
-      "expression": "\"second\" = \"hour\" * 3600",
+      "expression": "\"second (time)\" = \"hour\" * 3600",
+      "latex": "\\text{s} = 3600 \\cdot \\text{h}",
       "assigned_word": "hour"
     },
     {
       "name": "scale day to hour",
       "expression": "\"hour\" = \"day\" * 24",
+      "latex": "\\text{h} = 24 \\cdot \\text{d}",
       "assigned_word": "day"
     },
     {
       "name": "scale day to sec",
-      "expression": "\"second\" = \"day\" * 86400",
+      "expression": "\"second (time)\" = \"day\" * 86400",
+      "latex": "\\text{s} = 86400 \\cdot \\text{d}",
       "assigned_word": "day"
     },
     {
       "name": "scale week to day",
       "expression": "\"day\" = \"week\" * 7",
+      "latex": "\\text{d} = 7 \\cdot \\text{wk}",
       "assigned_word": "week"
     },
     {
       "name": "scale year to month",
       "expression": "\"month\" = \"year\" * 12",
+      "latex": "\\text{mo} = 12 \\cdot \\text{a}",
       "assigned_word": "year"
     },
     {
       "name": "scale year to second",
-      "expression": "\"second\" = \"year\" * 31557600",
+      "expression": "\"second (time)\" = \"year\" * 31557600",
+      "latex": "\\text{s} = 31557600 \\cdot \\text{a}",
       "assigned_word": "year"
     },
     {
       "name": "scale litre to m3",
       "expression": "\"m3\" = \"litre\" / 1000",
+      "latex": "\\text{m}^3 = \\text{L} / 1000",
       "assigned_word": "litre"
     },
     {
       "name": "scale gram to kg",
       "expression": "\"kg\" = \"gram\" / 1000",
+      "latex": "\\text{kg} = \\text{g} / 1000",
       "assigned_word": "gram"
     },
     {
       "name": "scale tonne to kg",
       "expression": "\"kg\" = \"tonne\" * 1000",
+      "latex": "\\text{kg} = 1000 \\cdot \\text{t}",
       "assigned_word": "tonne"
     },
     {
       "name": "scale kWh to joule",
       "expression": "\"joule\" = \"kWh\" * 3600000",
+      "latex": "\\text{J} = 3600000 \\cdot \\text{kWh}",
       "assigned_word": "kWh"
     },
     {
       "name": "scale km to metre",
-      "expression": "\"metre\" = \"km\" / 100",
+      "expression": "\"metre\" = \"km\" * 1000",
+      "latex": "\\text{m} = 1000 \\cdot \\text{km}",
       "assigned_word": "kilometre"
     },
     {
       "name": "scale km to 100 km",
       "expression": "\"per 100 km\" = \"km\" * 100",
+      "latex": "\\text{per 100 km} = 100 \\cdot \\text{km}",
       "assigned_word": "kilometre"
     },
     {
       "name": "definition of joule",
-      "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / \"second\" * \"second\"",
+      "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / ( \"second (time)\" * \"second (time)\" )",
+      "latex": "\\text{J} = \\dfrac{\\text{kg} \\cdot \\text{m}^2}{\\text{s}^2}",
       "assigned_word": "joule"
     }
   ],

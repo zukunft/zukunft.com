@@ -8,32 +8,42 @@
   "words": [
     {
       "name": "one",
-      "comment": "Used to force the scaling to one unit",
+      "description": "Used to force the scaling to one unit",
       "type": "scaling_hidden",
       "protection": "admin_protection"
     },
     {
       "name": "thousand",
-      "comment": "to specify numbers in thousand",
+      "description": "to specify numbers in thousand",
       "type": "scaling",
       "protection": "admin_protection"
     },
     {
       "name": "million",
-      "comment": "to specify numbers in millions",
+      "description": "to specify numbers in millions",
       "type": "scaling",
       "protection": "admin_protection"
     },
     {
       "name": "billion",
-      "comment": "to specify numbers in billions",
+      "description": "to specify numbers in billions",
       "type": "scaling",
       "protection": "admin_protection"
     },
     {
       "name": "percent",
-      "comment": "to specify numbers in percent",
+      "description": "A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.",
       "type": "percent",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11229",
+          "type": "wikidata"
+        }
+      ],
       "protection": "admin_protection"
     },
     {

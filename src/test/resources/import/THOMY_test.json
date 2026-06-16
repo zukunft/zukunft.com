@@ -14,9 +14,64 @@
     {
       "name": "gram",
       "type": "measure"
+    },
+    {
+      "name": "THOMY"
+    },
+    {
+      "name": "Nestlé"
+    },
+    {
+      "name": "product"
+    },
+    {
+      "name": "brand"
+    },
+    {
+      "name": "company"
+    },
+    {
+      "name": "sauce"
+    },
+    {
+      "name": "hollandaise"
+    },
+    {
+      "name": "vegan"
+    },
+    {
+      "name": "fat"
+    },
+    {
+      "name": "2020",
+      "type": "time"
+    },
+    {
+      "name": "ingredients"
+    },
+    {
+      "name": "food"
+    },
+    {
+      "name": "ingredient"
+    },
+    {
+      "name": "units"
     }
   ],
   "triples": [
+    {
+      "name": "sauce hollandaise",
+      "from": "sauce",
+      "verb": "kind of",
+      "to": "hollandaise"
+    },
+    {
+      "name": "food ingredient",
+      "from": "ingredient",
+      "verb": "kind of",
+      "to": "food"
+    },
     {
       "name": "Nestlé (company)",
       "from": "Nestlé",
@@ -26,22 +81,22 @@
     {
       "from": "Nestlé",
       "verb": "uses",
-      "to": "Brand"
+      "to": "brand"
     },
     {
       "from": "THOMY",
       "verb": "issue",
-      "to": "Product"
+      "to": "product"
     },
     {
-      "from": "Sauce Hollandaise",
+      "from": "sauce hollandaise",
       "verb": "is a",
-      "to": "Product"
+      "to": "product"
     },
     {
       "from": "THOMY",
       "verb": "has a",
-      "to": "Sauce Hollandaise"
+      "to": "sauce hollandaise"
     },
     {
       "from": "THOMY",
@@ -52,15 +107,20 @@
       "name": "THOMY (Brand)",
       "from": "THOMY",
       "verb": "is a",
-      "to": "Brand"
+      "to": "brand"
+    },
+    {
+      "name": "food ingredient units",
+      "from": "units",
+      "verb": "of",
+      "to": "food ingredient"
     }
   ],
-  "formulas": [
-  ],
+  "formulas": [],
   "values": [
     {
       "words": [
-        "Sauce Hollandaise",
+        "sauce hollandaise",
         "THOMY",
         "vegan",
         "fat",
@@ -71,6 +131,32 @@
       "number": "22"
     }
   ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
+    },
+    {
+      "name": "ingredient list",
+      "description": "list of ingredients with their food ingredient units for the current product",
+      "type": "values_related",
+      "code_id": "ingredient_list",
+      "row": "ingredients",
+      "column": "food ingredient units"
+    },
+    {
+      "name": "formulas",
+      "description": "simply show all related formulas",
+      "type": "formula_list"
+    },
+    {
+      "name": "Export JSON",
+      "description": "export this word and the related value in the JSON format",
+      "type": "export_json",
+      "code_id": "export_json"
+    }
+  ],
   "views": [
     {
       "name": "Food ingredients",
@@ -79,20 +165,15 @@
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         },
         {
           "position": "2",
-          "name": "ingredient list",
-          "code_id": "values_related",
-          "row": "ingredients",
-          "column": "food ingredient units"
+          "name": "ingredient list"
         },
         {
           "position": "3",
-          "name": "formulas",
-          "type": "formula_list"
+          "name": "formulas"
         },
         {
           "position": "4",

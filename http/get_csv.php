@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("get_csv");
 
 // load the session user parameters

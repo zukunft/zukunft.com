@@ -31,31 +31,28 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\log;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::LOG . 'change_log.php';
-//include_once html_paths::HELPER . 'config.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use Zukunft\ZukunftCom\main\php\web\formula\formula;
-use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
@@ -64,6 +61,16 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class change_log_named extends change_log
 {
+
+    /*
+     * test
+     */
+
+    // a fixed change time shown in test mode so the change log snapshots stay
+    // deterministic regardless of when the test data was created;
+    // matches test_const::DUMMY_DATETIME used to set the test change log entries
+    const string TEST_TIME = '2022-12-26T18:23:45+01:00';
+
 
     /*
      * object vars
@@ -123,6 +130,7 @@ class change_log_named extends change_log
      */
     function tr(back_trace $back, bool $condensed = false, bool $user_changes = false): string
     {
+        global $ui_sys;
         $html = new html_base();
 
         $html_text = '';
@@ -179,8 +187,7 @@ class change_log_named extends change_log
         }
         */
 
-        $usr_cfg = new config();
-        $time_text = date_format($this->change_time, $usr_cfg->date_time_format());
+        $time_text = date_format($this->change_time, $ui_sys->cfg->date_time_format());
         if (!$user_changes) {
             $time_text .= ' by ' . $this->usr->name;
         }
@@ -204,18 +211,18 @@ class change_log_named extends change_log
         $undo_btn = '';
         if ($this->table_name() == change_tables::WORD) {
             if ($this->action_code_id() == change_actions::ADD) {
-                $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
+                $undo_call = $html->url_new(views::VALUE_DEL_ID, $this->id(), '', $back->url_encode());
                 $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_tables::VIEW) {
             if ($this->action_code_id() == change_actions::ADD) {
-                $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
+                $undo_call = $html->url_new(views::VALUE_DEL_ID, $this->id(), '', $back->url_encode());
                 $undo_btn = new button($undo_call)->undo(msg_id::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_tables::FORMULA) {
             if ($this->action_code_id() == change_actions::UPDATE) {
-                $undo_call = $html->url(
-                    formula::class . rest_ctrl::UPDATE, $this->row_id,
+                $undo_call = $html->url_new(
+                    views::FORMULA_EDIT_ID, $this->row_id, '',
                     $back->url_encode() . '&undo_change=' . $this->id());
                 $undo_btn = new button($undo_call)->undo(msg_id::UNDO_DEL);
             }
@@ -240,8 +247,8 @@ class change_log_named extends change_log
      */
     private function action_code_id(): string
     {
-        global $sys;
-        $action = $sys->typ_lst->cng_act->get($this->action_id);
+        global $ui_sys;
+        $action = $ui_sys->typ_lst_cache->cng_act->get($this->action_id);
         return $action->code_id;
     }
 
@@ -250,8 +257,8 @@ class change_log_named extends change_log
      */
     private function action_name(): string
     {
-        global $sys;
-        $action = $sys->typ_lst->cng_act->get_by_id($this->action_id);
+        global $ui_sys;
+        $action = $ui_sys->typ_lst_cache->cng_act->get_by_id($this->action_id);
         return $action->name;
     }
 
@@ -260,8 +267,8 @@ class change_log_named extends change_log
      */
     private function field_code_id(): string
     {
-        global $sys;
-        $field = $sys->typ_lst->cng_fld->get($this->field_id);
+        global $ui_sys;
+        $field = $ui_sys->typ_lst_cache->cng_fld->get($this->field_id);
         return $field->code_id;
     }
 
@@ -270,8 +277,8 @@ class change_log_named extends change_log
      */
     private function field_description(): string
     {
-        global $sys;
-        $field = $sys->typ_lst->cng_fld->get($this->field_id);
+        global $ui_sys;
+        $field = $ui_sys->typ_lst_cache->cng_fld->get($this->field_id);
         return $field->description;
     }
 
@@ -280,24 +287,26 @@ class change_log_named extends change_log
      */
     private function table_name(): string
     {
-        global $sys;
-        $table = $sys->typ_lst->cng_tbl->get($this->table_id);
+        global $ui_sys;
+        $table = $ui_sys->typ_lst_cache->cng_tbl->get($this->table_id);
         return $table->name;
     }
 
     /**
+     * @param bool $test_mode true to show a fixed change time so that automatic
+     *                        test snapshots stay deterministic
      * @return string the current change as a human-readable text
-     *                optional without time for automatic testing
      */
-    public function dsp(bool $ex_time = false): string
+    public function dsp(bool $test_mode = false): string
     {
+        global $ui_sys;
         global $mtr;
         $result = '';
-        $usr_cfg = new config();
 
-        if (!$ex_time) {
-            $result .= date_format($this->change_time, $usr_cfg->date_time_format()) . ' ';
-        }
+        // in test mode use a fixed change time so the change log snapshots do not
+        // change with the moment the test data happened to be created
+        $time = $test_mode ? new DateTime(self::TEST_TIME) : $this->change_time;
+        $result .= date_format($time, $ui_sys->cfg->date_time_format()) . ' ';
         if ($this->usr != null) {
             if ($this->usr->name() <> '') {
                 $result .= $this->usr->name() . ' ';

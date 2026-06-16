@@ -12,6 +12,12 @@
       "type": "phrase_name"
     },
     {
+      "name": "Word title",
+      "description": "show the word name as a page title",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_word"
+    },
+    {
       "name": "spreadsheet",
       "description": "changeable sheet with words, number and formulas",
       "type": "calc_sheet"
@@ -76,6 +82,11 @@
       "type": "values_related"
     },
     {
+      "name": "value chart",
+      "description": "show a chart of the most relevant values by impact on top of the value list",
+      "type": "value_chart"
+    },
+    {
       "name": "related results",
       "description": "show the most relevant and related results",
       "type": "results_related"
@@ -94,6 +105,158 @@
       "name": "ranking list",
       "description": "list sorted by the calculated ranking",
       "type": "ranking_list"
+    },
+    {
+      "name": "problem definition",
+      "description": "show the most relevant definitions related to a problem",
+      "type": "phrases_related"
+    },
+    {
+      "name": "problem size",
+      "description": "show the estimations of the size of a problem",
+      "type": "phrases_related"
+    },
+    {
+      "name": "problem solutions",
+      "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
+      "type": "phrases_related"
+    },
+    {
+      "name": "exchange rates",
+      "description": "show the most relevant exchange rates",
+      "type": "phrases_related"
+    },
+    {
+      "name": "currency formulas",
+      "description": "show the formulas related to a currency",
+      "type": "phrases_related"
+    },
+    {
+      "name": "system show field description",
+      "description": "the object description as read only",
+      "type": "system_show_field_description",
+      "code_id": "show_field_description"
+    },
+    {
+      "name": "system show field plural",
+      "description": "show the plural form of a word as read only text",
+      "type": "system_show_field_plural",
+      "code_id": "show_field_plural"
+    },
+    {
+      "name": "system show field phrase type",
+      "description": "show the phrase type of a word as read only text",
+      "type": "system_show_field_phrase_type",
+      "code_id": "show_field_phrase_type"
+    },
+    {
+      "name": "system sub title usage number",
+      "description": "show the language specific sub title and the number how many times the object has been used",
+      "type": "system_sub_title_var",
+      "code_id": "system_sub_title_value_usage",
+      "ui_msg_code_id_vars": "system_sub_title_var_usage",
+      "ui_msg_code_id_exception": "system_sub_title_no_usage",
+      "ui_msg_value_exception": 0
+    },
+    {
+      "name": "parents of word",
+      "description": "list of words or triples that lead to this word",
+      "type": "list_parents_of_word",
+      "code_id": "list_parents_of_word"
+    },
+    {
+      "name": "children of word",
+      "description": "list of words or triples where this word leading to",
+      "type": "list_children_of_word",
+      "code_id": "list_children_of_word"
+    },
+    {
+      "name": "phrase aliases",
+      "description": "show the phrases that are an alias of this phrase",
+      "type": "phrase_aliases",
+      "code_id": "phrase_aliases"
+    },
+    {
+      "name": "phrase symbols",
+      "description": "show the symbols of this phrase",
+      "type": "phrase_symbols",
+      "code_id": "phrase_symbols"
+    },
+    {
+      "name": "related phrases without symbols",
+      "description": "list of phrases related to this phrase excluding the alias and symbol entries",
+      "type": "list_phrases_related_ex_symbols",
+      "code_id": "list_phrases_related_ex_symbols"
+    },
+    {
+      "name": "related phrases without subtitles",
+      "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
+      "type": "list_phrases_related_ex_subtitle",
+      "code_id": "list_phrases_related_ex_subtitle"
+    },
+    {
+      "name": "system sub title values",
+      "description": "show the language specific sub title for a value list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_values",
+      "ui_msg_code_id": "system_sub_title_values"
+    },
+    {
+      "name": "system sub title formulas",
+      "description": "show the language specific sub title for a formula list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_formulas",
+      "ui_msg_code_id": "system_sub_title_formulas"
+    },
+    {
+      "name": "formula list",
+      "description": "list of formulas",
+      "type": "formula_list"
+    },
+    {
+      "name": "system sub title references",
+      "description": "show the language specific sub title for a reference list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_references",
+      "ui_msg_code_id": "system_sub_title_references"
+    },
+    {
+      "name": "ref list word",
+      "description": "changeable list of reference of this word",
+      "type": "ref_list",
+      "code_id": "ref_list_word"
+    },
+    {
+      "name": "system sub title log",
+      "description": "show the language specific sub title for the change log",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_log",
+      "ui_msg_code_id": "system_sub_title_log"
+    },
+    {
+      "name": "change log word",
+      "description": "show the change log of this word",
+      "type": "change_log",
+      "code_id": "change_log_word"
+    },
+    {
+      "name": "system sub title views",
+      "description": "show the language specific sub title for the related views",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_views",
+      "ui_msg_code_id": "system_sub_title_views"
+    },
+    {
+      "name": "view list word",
+      "description": "show the default view of this word and of its parent words",
+      "type": "view_list",
+      "code_id": "view_list_word"
+    },
+    {
+      "name": "view tab box",
+      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_word"
     }
   ],
   "views": [
@@ -105,11 +268,75 @@
       "components": [
         {
           "position": "1",
-          "name": "Word"
+          "name": "Word title"
         },
         {
           "position": "2",
-          "name": "related values"
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field plural",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "children of word",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "9",
+          "name": "value chart",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "12",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        },
+        {
+          "position": "14",
+          "name": "system sub title references"
+        },
+        {
+          "position": "15",
+          "name": "ref list word",
+          "position_type": "combine"
         }
       ]
     },
@@ -340,6 +567,68 @@
       "assigned": [
         "Pi",
         "Euler's constant"
+      ]
+    },
+    {
+      "name": "problem with solutions",
+      "description": "Explain a problem and show the potential solutions",
+      "code_id": "global_problem",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word"
+        },
+        {
+          "position": "2",
+          "name": "problem definition"
+        },
+        {
+          "position": "3",
+          "name": "problem size"
+        },
+        {
+          "position": "4",
+          "name": "problem solutions"
+        }
+      ],
+      "assigned": [
+        "problem"
+      ]
+    },
+    {
+      "name": "System log",
+      "description": "show the most relevant system log entries (placeholder only at the moment)",
+      "code_id": "system_log"
+    },
+    {
+      "name": "Phrase (default)",
+      "description": "the default view for a word or triple",
+      "code_id": "phrase_default"
+    },
+    {
+      "name": "Currency",
+      "description": "Show a currency with the most relevant exchange rates and related formulas",
+      "code_id": "currency",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word"
+        },
+        {
+          "position": "2",
+          "name": "exchange rates"
+        },
+        {
+          "position": "3",
+          "name": "related values"
+        },
+        {
+          "position": "4",
+          "name": "currency formulas"
+        }
+      ],
+      "assigned": [
+        "currency"
       ]
     }
   ]

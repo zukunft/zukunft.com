@@ -5,6 +5,8 @@
     web/group/group.php - the extension of the phrase group api object to create the HTML code to display a word or triple
     -------------------
 
+    $grp is the suggested var name
+
     mainly links to the word and triple display functions
 
     The main sections of this object are
@@ -145,11 +147,11 @@ class group extends sandbox_named
 
     function set_lst_dsp(array $lst): void
     {
-        $phr_lst_dsp = array();
+        $phr_lst_ui = array();
         foreach ($lst as $phr) {
-            $phr_lst_dsp[] = $phr->dsp_obj();
+            $phr_lst_ui[] = $phr->dsp_obj();
         }
-        $this->set_lst($phr_lst_dsp);
+        $this->set_lst($phr_lst_ui);
     }
 
     /**

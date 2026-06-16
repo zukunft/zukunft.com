@@ -5,6 +5,8 @@
     shared/library.php - some useful function e.g. for string handling
     ------------------
 
+    $lib is the suggested var name
+
     TODO Prio 2 move the functions that use project objects to object_mapper class
 
 
@@ -34,6 +36,9 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared;
 
+use DateTimeInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
@@ -162,6 +167,11 @@ class library
     // to separate two string for the human-readable format
     const string SEPARATOR = ',';
 
+    // display array truncation thresholds
+    const int DSP_ALL_DEBUG = 10;  // debug level above which all entries are shown
+    const int DSP_MAX = 7;         // max entries before truncation kicks in
+    const int DSP_HEAD = 3;        // entries shown at the head of a truncated array
+
     /*
      * internal const
      */
@@ -219,6 +229,17 @@ class library
             log_err($msg);
         }
         return $result;
+    }
+
+    /**
+     * Converts a DateTime object into a URL-safe string parameter.
+     *
+     * @param DateTimeInterface $dateTime The date time object to convert.
+     * @return string The URL-encoded date string.
+     */
+    function time_to_url(DateTimeInterface $dateTime): string
+    {
+        return urlencode($dateTime->format(DateTimeInterface::ATOM));
     }
 
     /**
@@ -374,11 +395,563 @@ class library
         $result = preg_replace('/ >/', '>', $result);
         $result = preg_replace('/ </', '<', $result);
 
+        // remove a space directly after a tag e.g. '<td> 5' is the same as '<td>5'
+        $result = preg_replace('/> /', '>', $result);
+
         // remove spaces not needed
         $result = preg_replace('/> </', '><', $result);
 
         // restore the spaces that are needed
         return preg_replace('/<as /', ' <a ', $result);
+    }
+
+    /**
+     * @param string $html_string raw or compact HTML
+     * @return string HTML with each tag on its own line and child content indented by four spaces;
+     *                opening and closing tags of the same element share the same indentation level
+     */
+    function format_html(string $html_string): string
+    {
+        $indent = 0;
+        $tab = '    ';
+        $result = '';
+        $void_tags = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+            'link', 'meta', 'param', 'source', 'track', 'wbr'];
+
+        $tokens = preg_split('/(<[^>]+>)/', trim($html_string), -1,
+            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+        foreach ($tokens as $token) {
+            $token = trim($token);
+            if ($token === '') {
+                continue;
+            }
+            if (preg_match('/^<\/([a-zA-Z][a-zA-Z0-9]*)/', $token)) {
+                // closing tag: dedent first so it aligns with its opening tag
+                $indent = max(0, $indent - 1);
+                $result .= str_repeat($tab, $indent) . $token . "\n";
+            } elseif (preg_match('/^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)>$/', $token, $m)) {
+                $tag = strtolower($m[1]);
+                $attrs = $m[2];
+                $result .= str_repeat($tab, $indent) . $token . "\n";
+                if (!in_array($tag, $void_tags) && !str_ends_with(trim($attrs), '/')) {
+                    $indent++;
+                }
+            } else {
+                // text content or doctype/comment
+                $result .= str_repeat($tab, $indent) . $token . "\n";
+            }
+        }
+
+        return rtrim($result);
+    }
+
+    /**
+     * format a generated sql script so that it is easy to read and review
+     * e.g. as in the test resource files of src/test/resources/db/format_test/
+     * supports the postgres log functions, the mariadb log procedures,
+     * the prepared update statements
+     * and the prepared select queries with the user sandbox case or if fields
+     * a sql script that does not match any of these patterns is returned unchanged
+     *
+     * @param string $sql_string a generated sql script e.g. on a single line
+     * @return string the formatted sql script or the unchanged input if no pattern matches
+     */
+    function sql_format(string $sql_string): string
+    {
+        $result = $sql_string;
+        $sql = $this->trim($sql_string);
+        // remove a trailing empty statement that e.g. the test call concatenation may add
+        $sql = preg_replace('/; ?;$/', ';', $sql);
+        $pg_function = '/^CREATE OR REPLACE FUNCTION (\S+) \((.+?)\) RETURNS (\w+) AS '
+            . '\$\$ (DECLARE (.+?); )?BEGIN (.+) END \$\$ LANGUAGE plpgsql; '
+            . 'PREPARE (\S+) \((.+?)\) AS SELECT (\S+) \((.+?)\); '
+            . 'SELECT (\S+) \((.+)\);$/';
+        $my_procedure = '/^DROP PROCEDURE IF EXISTS (\S+); CREATE PROCEDURE (\S+) \((.+?)\) '
+            . 'BEGIN (.+) END; '
+            . "PREPARE (\S+) FROM 'SELECT (\S+) \((.+?)\)'; "
+            . 'SELECT (\S+) \((.+)\);$/';
+        $pg_update = '/^PREPARE (\S+) \((.+?)\) AS (UPDATE .+);$/';
+        $my_update = "/^PREPARE (\S+) FROM '(UPDATE .+)';$/";
+        $pg_select = '/^PREPARE (\S+) \((.+?)\) AS SELECT (.+) FROM (.+);$/';
+        $my_select = "/^PREPARE (\S+) FROM 'SELECT (.+) FROM (.+)';$/";
+        if (preg_match($pg_function, $sql, $prt)) {
+            $result = $this->sql_format_function($prt);
+        } elseif (preg_match($my_procedure, $sql, $prt)) {
+            $result = $this->sql_format_procedure($prt);
+        } elseif (preg_match($pg_update, $sql, $prt)) {
+            $result = 'PREPARE ' . $prt[1] . ' (' . implode(', ', $this->sql_split($prt[2])) . ") AS\n"
+                . $this->sql_format_update($prt[3]);
+        } elseif (preg_match($my_update, $sql, $prt)) {
+            $result = 'PREPARE ' . $prt[1] . " FROM\n"
+                . $this->sql_format_update_quoted($prt[2]);
+        } elseif (preg_match($pg_select, $sql, $prt)) {
+            $result = 'PREPARE ' . $prt[1] . ' (' . implode(', ', $this->sql_split($prt[2])) . ") AS\n"
+                . $this->sql_format_select_fields($this->sql_split($prt[3])) . "\n"
+                . $this->sql_format_select_tail($prt[4]) . ';';
+        } elseif (preg_match($my_select, $sql, $prt)) {
+            $fields = $this->sql_format_select_fields($this->sql_split($prt[2]));
+            // the opening quote of the mariadb query replaces part of the select indent
+            $result = 'PREPARE ' . $prt[1] . " FROM\n"
+                . "   '" . substr($fields, 4) . "\n"
+                . $this->sql_format_select_tail($prt[3]) . "';";
+        }
+        return $result;
+    }
+
+    /**
+     * format a postgres log function with the prepared test call
+     *
+     * @param array $prt the matched parts of the create function pattern
+     * @return string the formatted postgres function script
+     */
+    private function sql_format_function(array $prt): string
+    {
+        return 'CREATE OR REPLACE FUNCTION ' . $prt[1] . "\n"
+            . $this->sql_format_params($this->sql_split($prt[2])) . ' RETURNS ' . $prt[3] . " AS\n\$\$\n"
+            . ($prt[5] != '' ? 'DECLARE ' . $prt[5] . ";\n" : '')
+            . "BEGIN\n\n"
+            . $this->sql_format_body($prt[6])
+            . "\n\nEND\n\$\$ LANGUAGE plpgsql;\n\n"
+            . 'PREPARE ' . $prt[7] . "\n"
+            . '        (' . implode(', ', $this->sql_split($prt[8])) . ") AS\n"
+            . 'SELECT ' . $prt[9] . "\n"
+            . '        (' . implode(',', $this->sql_split($prt[10])) . ");\n\n"
+            . 'SELECT ' . $prt[11] . "\n"
+            . $this->sql_format_call_args($this->sql_split($prt[12]));
+    }
+
+    /**
+     * format a mariadb log procedure with the prepared test call
+     *
+     * @param array $prt the matched parts of the create procedure pattern
+     * @return string the formatted mariadb procedure script
+     */
+    private function sql_format_procedure(array $prt): string
+    {
+        return 'DROP PROCEDURE IF EXISTS ' . $prt[1] . ";\n"
+            . 'CREATE PROCEDURE ' . $prt[2] . "\n"
+            . $this->sql_format_params($this->sql_split($prt[3])) . "\nBEGIN\n\n"
+            . $this->sql_format_body($prt[4])
+            . "\n\nEND;\n\n"
+            . 'PREPARE ' . $prt[5] . " FROM\n"
+            . "    'SELECT " . $prt[6] . ' (' . implode(',', $this->sql_split($prt[7])) . ")';\n\n"
+            . 'SELECT ' . $prt[8] . "\n"
+            . $this->sql_format_call_args($this->sql_split($prt[9]));
+    }
+
+    /**
+     * split a sql list into its parts ignoring separators within quoted text or brackets
+     *
+     * @param string $sql_list the list part of a sql statement e.g. the parameters of a function
+     * @param string $sep the separator char e.g. a comma for a parameter list
+     * @return array the trimmed parts of the list
+     */
+    private function sql_split(string $sql_list, string $sep = ','): array
+    {
+        $result = [];
+        $part = '';
+        $in_quote = false;
+        $depth = 0;
+        foreach (str_split($sql_list) as $char) {
+            if ($char == "'") {
+                $in_quote = !$in_quote;
+            }
+            if (!$in_quote) {
+                if ($char == '(') {
+                    $depth++;
+                } elseif ($char == ')') {
+                    $depth--;
+                }
+            }
+            if ($char == $sep and !$in_quote and $depth == 0) {
+                $result[] = trim($part);
+                $part = '';
+            } else {
+                $part .= $char;
+            }
+        }
+        if (trim($part) != '') {
+            $result[] = trim($part);
+        }
+        return $result;
+    }
+
+    /**
+     * the number of sigil chars at the start of a sql value
+     * used to align a column name with the name part of the matching value
+     *
+     * @param string $val a sql value e.g. '_word_id' or '@new_word_id'
+     * @return int the number of leading sigil chars e.g. 1 for '_word_id'
+     */
+    private function sql_sigil(string $val): int
+    {
+        return strspn($val, '_@');
+    }
+
+    /**
+     * format the parameters of a sql function with one parameter per line and the types aligned
+     *
+     * @param array $par_lst the parameters of the function e.g. ['_user_id bigint', ...]
+     * @return string the parameter block including the brackets
+     */
+    private function sql_format_params(array $par_lst): string
+    {
+        $names = [];
+        $types = [];
+        foreach ($par_lst as $par) {
+            $names[] = strtok($par, ' ');
+            $types[] = trim(substr($par, strlen(strtok($par, ' '))));
+        }
+        $width = max(array_map('strlen', $names));
+        $lines = [];
+        foreach ($names as $i => $name) {
+            $prefix = $i == 0 ? '    (' : '     ';
+            $close = $i == count($names) - 1 ? ')' : ',';
+            $lines[] = $prefix . str_pad($name, $width) . ' ' . $types[$i] . $close;
+        }
+        return implode("\n", $lines);
+    }
+
+    /**
+     * format the statements of a sql log function body
+     * the inserts into the same table share one column grid
+     * the steps of a multi step script (e.g. an insert log that reuses the new row id)
+     * are separated by blank lines
+     *
+     * @param string $body the single line body of the function or procedure
+     * @return string the formatted body statements
+     */
+    private function sql_format_body(string $body): string
+    {
+        // parse the statements and collect the inserts by table for the grid alignment
+        $parsed = [];
+        $by_tbl = [];
+        $multi_step = false;
+        foreach ($this->sql_split($body, ';') as $stm) {
+            if (preg_match('/^INSERT INTO (\S+) \((.+?)\) SELECT (.+?)( RETURNING (.+))?$/', $stm, $prt)) {
+                $ins = [
+                    'tbl' => $prt[1],
+                    'cols' => $this->sql_split($prt[2]),
+                    'vals' => $this->sql_split($prt[3]),
+                    'returning' => trim($prt[5] ?? ''),
+                ];
+                $by_tbl[$prt[1]][] = $ins;
+                $parsed[] = ['type' => 'insert', 'ins' => $ins];
+                if ($ins['returning'] != '') {
+                    $multi_step = true;
+                }
+            } elseif (str_starts_with($stm, 'UPDATE ')) {
+                $parsed[] = ['type' => 'update', 'stm' => $stm];
+            } else {
+                // e.g. 'SELECT LAST_INSERT_ID() ...' or 'RETURN new_word_id'
+                $parsed[] = ['type' => 'plain', 'stm' => $stm];
+                if (str_contains($stm, 'LAST_INSERT_ID')) {
+                    $multi_step = true;
+                }
+            }
+        }
+        $grids = [];
+        foreach ($by_tbl as $tbl => $ins_lst) {
+            $grids[$tbl] = $this->sql_insert_grid($ins_lst);
+        }
+
+        // render the statements with a blank line between the steps
+        $result = '';
+        foreach ($parsed as $i => $stm) {
+            if ($stm['type'] == 'insert') {
+                [$widths, $last_start] = $grids[$stm['ins']['tbl']];
+                $result .= $this->sql_format_insert($stm['ins'], $widths, $last_start);
+            } elseif ($stm['type'] == 'update') {
+                $result .= $this->sql_format_update($stm['stm']);
+            } else {
+                $result .= '    ' . $stm['stm'] . ';';
+            }
+            if ($i < count($parsed) - 1) {
+                $result .= ($multi_step or $parsed[$i + 1]['type'] != 'insert') ? "\n\n" : "\n";
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * compute the column grid shared by the inserts into the same table
+     *
+     * @param array $ins_lst the parsed insert statements of one table
+     * @return array the max cell width per position and the start position of the last cell
+     */
+    private function sql_insert_grid(array $ins_lst): array
+    {
+        $widths = [];
+        $last_start = 0;
+        foreach ($ins_lst as $ins) {
+            foreach ($ins['cols'] as $j => $col) {
+                if ($j < count($ins['cols']) - 1) {
+                    $val = $ins['vals'][$j];
+                    $width = max($this->sql_sigil($val) + strlen($col), strlen($val)) + 1;
+                    $widths[$j] = max($widths[$j] ?? 0, $width);
+                }
+            }
+        }
+        foreach ($ins_lst as $ins) {
+            $pos = 0;
+            for ($j = 0; $j < count($ins['cols']) - 1; $j++) {
+                $pos += $widths[$j];
+            }
+            $last_start = max($last_start, $pos);
+        }
+        return [$widths, $last_start];
+    }
+
+    /**
+     * format one insert statement on the shared grid of its table
+     * each column name is aligned with the name part of the matching select value
+     *
+     * @param array $ins the parsed insert statement with the table, columns, values and returning part
+     * @param array $widths the max cell width per position of the table grid
+     * @param int $last_start the start position of the last cell of the table grid
+     * @return string the insert and select lines with the matching entries in the same column
+     */
+    private function sql_format_insert(array $ins, array $widths, int $last_start): string
+    {
+        $col_line = '    INSERT INTO ' . $ins['tbl'] . ' (';
+        $prefix_len = strlen($col_line);
+        $val_line = str_pad('', 9) . 'SELECT' . str_pad('', $prefix_len - 15);
+        $pos = 0;
+        $last = count($ins['cols']) - 1;
+        foreach ($ins['cols'] as $j => $col) {
+            $val = $ins['vals'][$j];
+            $sigil = str_pad('', $this->sql_sigil($val));
+            if ($j < $last) {
+                $col_line .= str_pad($sigil . $col . ',', $widths[$j]);
+                $val_line .= str_pad($val . ',', $widths[$j]);
+                $pos += $widths[$j];
+            } else {
+                $col_line .= str_pad('', $last_start - $pos) . $sigil . $col . ')';
+                $val_line .= str_pad('', $last_start - $pos) . $val;
+            }
+        }
+        $result = $col_line . "\n" . $val_line;
+        if ($ins['returning'] != '') {
+            $sigil_len = $this->sql_sigil($ins['vals'][$last]);
+            $result .= "\n" . str_pad('      RETURNING', $prefix_len + $sigil_len) . $ins['returning'] . ';';
+        } else {
+            $result .= ' ;';
+        }
+        return $result;
+    }
+
+    /**
+     * format an update statement with one field per line and the values aligned
+     *
+     * @param string $stm a single line statement e.g. 'UPDATE user_words SET word_name = _word_name WHERE ...'
+     * @return string the update statement with aligned set fields and right aligned keywords
+     */
+    private function sql_format_update(string $stm): string
+    {
+        // an unexpected statement is kept on a single line
+        if (!preg_match('/^UPDATE (\S+) SET (.+?) WHERE (.+)$/', $stm, $prt)) {
+            return '    ' . $stm . ';';
+        }
+        $fields = [];
+        $values = [];
+        foreach ($this->sql_split($prt[2]) as $set) {
+            $pair = explode('=', $set, 2);
+            $fields[] = trim($pair[0]);
+            $values[] = trim($pair[1]);
+        }
+        $width = max(array_map('strlen', $fields));
+        $lines = ['    UPDATE ' . $prt[1]];
+        foreach ($fields as $i => $field) {
+            $prefix = $i == 0 ? '       SET ' : '           ';
+            $close = $i == count($fields) - 1 ? '' : ',';
+            $lines[] = $prefix . str_pad($field, $width) . ' = ' . $values[$i] . $close;
+        }
+        $conds = explode(' AND ', $prt[3]);
+        foreach ($conds as $i => $cond) {
+            $prefix = $i == 0 ? '     WHERE ' : '       AND ';
+            $close = $i == count($conds) - 1 ? ';' : '';
+            $lines[] = $prefix . trim($cond) . $close;
+        }
+        return implode("\n", $lines);
+    }
+
+    /**
+     * format a prepared mariadb update statement which is quoted as a string
+     * each line gets an extra leading space so that the statement
+     * keeps the update layout within the quotes
+     *
+     * @param string $stm a single line update statement without the quotes
+     * @return string the formatted update statement including the quotes
+     */
+    private function sql_format_update_quoted(string $stm): string
+    {
+        $lines = explode("\n", $this->sql_format_update($stm));
+        foreach ($lines as $i => $line) {
+            if ($i == 0) {
+                $lines[$i] = substr($line, 0, 4) . "'" . substr($line, 4);
+            } else {
+                $lines[$i] = ' ' . $line;
+            }
+        }
+        // replace the closing semicolon with the closing quote
+        return substr(implode("\n", $lines), 0, -1) . "';";
+    }
+
+    /**
+     * format the arguments of the sql function test call with one argument per line
+     *
+     * @param array $arg_lst the call arguments e.g. ['3::bigint', "'mathematics'::text", ...]
+     * @return string the argument block including the brackets and the closing semicolon
+     */
+    private function sql_format_call_args(array $arg_lst): string
+    {
+        $lines = [];
+        foreach ($arg_lst as $i => $arg) {
+            $prefix = $i == 0 ? '       (' : '        ';
+            $close = $i == count($arg_lst) - 1 ? ');' : ',';
+            $lines[] = $prefix . $arg . $close;
+        }
+        return implode("\n", $lines);
+    }
+
+    /**
+     * format the field list of a prepared select query with one field per line
+     * the user sandbox case or if fields are aligned to a common grid
+     *
+     * @param array $fld_lst the select fields e.g. ['s.word_id', 'CASE WHEN (u.word_name ...']
+     * @return string the field lines starting with the select keyword
+     */
+    private function sql_format_select_fields(array $fld_lst): string
+    {
+        // collect the widths of the case or if fields for the alignment
+        $case_text_u = 0; // the longest user field checked as text e.g. u.description
+        $case_u = 0;      // the longest user field e.g. u.phrase_type_id
+        $case_s = 0;      // the longest standard field e.g. s.phrase_type_id
+        $case_pattern = "/^CASE WHEN \((\S+)( <> '')? IS (NOT TRUE|NULL)\) THEN (\S+) ELSE (\S+) END AS (\S+)$/";
+        $if_pattern = '/^IF\((\S+) IS NULL, (\S+), (\S+)\) AS (\S+)$/';
+        foreach ($fld_lst as $fld) {
+            if (preg_match($case_pattern, $fld, $prt)) {
+                if ($prt[2] != '') {
+                    $case_text_u = max($case_text_u, strlen($prt[1]));
+                }
+                $case_u = max($case_u, strlen($prt[1]));
+                $case_s = max($case_s, strlen($prt[4]));
+            } elseif (preg_match($if_pattern, $fld, $prt)) {
+                $case_u = max($case_u, strlen($prt[1]));
+                $case_s = max($case_s, strlen($prt[2]));
+            }
+        }
+        // the offset within the condition where the IS starts
+        $is_off = max($case_text_u + 8, $case_u + 1);
+
+        $lines = [];
+        foreach ($fld_lst as $i => $fld) {
+            if (preg_match($case_pattern, $fld, $prt)) {
+                if ($prt[2] != '') {
+                    $cond = str_pad($prt[1], $is_off - 7) . "<> ''  IS NOT TRUE";
+                } else {
+                    $cond = str_pad($prt[1], $is_off) . 'IS     NULL';
+                }
+                $line = 'CASE WHEN (' . $cond . ') THEN '
+                    . str_pad($prt[4], $case_s + 1) . 'ELSE '
+                    . str_pad($prt[5], $case_s + 1) . 'END AS ' . $prt[6];
+            } elseif (preg_match($if_pattern, $fld, $prt)) {
+                $line = 'IF(' . str_pad($prt[1], $case_u + 1) . 'IS NULL, '
+                    . str_pad($prt[2] . ',', $case_s + 2)
+                    . str_pad($prt[3] . ')', $case_u + 2) . 'AS ' . $prt[4];
+            } else {
+                $line = $fld;
+            }
+            $prefix = $i == 0 ? '    SELECT     ' : str_pad('', 15);
+            $lines[] = $prefix . $line;
+        }
+        return implode(",\n", $lines);
+    }
+
+    /**
+     * format the from, join and where part of a prepared select query
+     * with the keywords right aligned below the select
+     *
+     * @param string $tail the part of the query after the FROM keyword
+     * @return string the formatted from, join and where lines
+     */
+    private function sql_format_select_tail(string $tail): string
+    {
+        if (!preg_match('/^(\S+( \S+)?)( LEFT JOIN (\S+( \S+)?) ON (.+?))?( WHERE (.+))?$/', $tail, $prt)) {
+            return '          FROM ' . $tail;
+        }
+        $result = '          FROM ' . $prt[1];
+        if (($prt[3] ?? '') != '') {
+            $join_line = '     LEFT JOIN ' . $prt[4] . ' ON ';
+            $conds = explode(' AND ', $prt[6]);
+            $result .= "\n" . $join_line . $conds[0];
+            // the AND of a join condition is right aligned to the ON
+            $and_off = strlen($join_line) - 4;
+            for ($i = 1; $i < count($conds); $i++) {
+                $result .= "\n" . str_pad('', $and_off) . 'AND ' . $conds[$i];
+            }
+        }
+        if (($prt[7] ?? '') != '') {
+            $result .= "\n" . '         WHERE ' . $prt[8];
+        }
+        return $result;
+    }
+
+    /**
+     * convert an HTML fragment to the plain text a user would see in the browser
+     * so the result of a *_ui display function can be checked or logged in one line
+     * e.g. the page title html of "Zurich" becomes
+     * 'Zurich <fas fa-edit> (is a City, Canton, ... / measure) (personal, admin protection)'
+     * an icon is kept as a readable placeholder of its css class (e.g.
+     * '<i class="fas fa-edit"></i>' -> '<fas fa-edit>'); every other tag is removed
+     * and its text kept; a block tag (e.g. div, h4) becomes a single space so the
+     * blocks stay separated, an inline tag (e.g. a, span) is dropped without a space
+     *
+     * @param string $html_string the HTML fragment e.g. the result of a *_ui display function
+     * @return string the user-visible text with icons shown as '<css class>' placeholders
+     */
+    function html_to_text(string $html_string): string
+    {
+        // keep an icon as an encoded placeholder of its css class so the next
+        // tag removal does not drop it e.g. '<i class="fas fa-edit">' -> '<fas fa-edit>'
+        $result = preg_replace(
+            '/<i\b[^>]*\bclass="([^"]*)"[^>]*>\s*<\/i>/i',
+            '&lt;$1&gt;',
+            $html_string
+        );
+        // a block tag separates its content, so replace its boundary with a space
+        $block_tags = 'div|h[1-6]|p|ul|ol|li|table|thead|tbody|tr|td|th|header|footer|section|br|hr';
+        $result = preg_replace('/<\/?(?:' . $block_tags . ')\b[^>]*>/i', ' ', $result);
+        // an inline tag (e.g. the link around a related phrase) is dropped without a space
+        $result = strip_tags($result);
+        // turn entities (incl. the encoded icon placeholder) into their characters
+        $result = html_entity_decode($result, ENT_QUOTES | ENT_HTML5);
+        // collapse the spaces left by the removed block tags to a single space
+        return $this->trim($result);
+    }
+
+    /**
+     * replace volatile attribute values in HTML with fixed placeholders so snapshot tests stay stable
+     * volatile values are attributes whose value changes on every request e.g. CSRF session tokens
+     *
+     * @param string $html the raw HTML that may contain volatile values
+     * @param string $fixed_token replacement value for input fields with name="token"
+     * @return string HTML with every token value replaced by $fixed_token
+     */
+    function fix_volatile_in_html(string $html, string $fixed_token): string
+    {
+        return preg_replace_callback(
+            '/<input\b[^>]*>/i',
+            function (array $m) use ($fixed_token): string {
+                $tag = $m[0];
+                if (preg_match('/\bname="token"/i', $tag)) {
+                    $tag = preg_replace('/(\bvalue=")[^"]*(")/i', '${1}' . $fixed_token . '${2}', $tag);
+                }
+                return $tag;
+            },
+            $html
+        );
     }
 
     function escape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
@@ -393,6 +966,10 @@ class library
         return str_replace($esc_chr . $chr_to_esc, $chr_to_esc, $txt_to_esc);
     }
 
+    function unquote(string $text): string
+    {
+        return trim($text, "\"'");
+    }
 
     /*
      * select string part functions
@@ -551,6 +1128,7 @@ class library
     {
         $text = str_replace('.', '', $text);
         $text = str_replace('/', '', $text);
+        $text = str_replace(',', '_', $text);
         return substr($text, 0, 32);
     }
 
@@ -572,7 +1150,8 @@ class library
             if ($mtr != null) {
                 $msg_txt = $mtr->txt($msg_var[0]);
             } else {
-                $msg_txt = $msg_var[0];
+                // use ->value for backed enums (e.g. messages::PASSWORD_WRONG) because PHP 8.1+ does not implicitly cast them to string
+                $msg_txt = $msg_var[0] instanceof \BackedEnum ? $msg_var[0]->value : (string)$msg_var[0];
             }
             foreach ($msg_var[1] as $key => $var) {
                 $msg_txt = $this->msg_var_replace($msg_txt, $key, $var);
@@ -1332,6 +1911,47 @@ class library
         return $result;
     }
 
+    /**
+     * return all file paths found recursively under a directory
+     * @param string $dir root directory to scan
+     * @return array flat list of absolute file paths
+     */
+    function dir_files(string $dir): array
+    {
+        $result = [];
+        $iter = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+        foreach ($iter as $file) {
+            if ($file->isFile()) {
+                $result[] = $file->getPathname();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * recursively delete a directory and everything inside it
+     * caller-side guard: a missing directory is treated as already-removed (returns true)
+     * @param string $dir absolute path of the directory to remove
+     * @return bool true if the directory no longer exists when the function returns
+     */
+    function dir_remove(string $dir): bool
+    {
+        $result = true;
+        if (is_dir($dir)) {
+            $entries = array_diff(scandir($dir), ['.', '..']);
+            foreach ($entries as $entry) {
+                $path = $dir . DIRECTORY_SEPARATOR . $entry;
+                if (is_dir($path)) {
+                    $this->dir_remove($path);
+                } else {
+                    unlink($path);
+                }
+            }
+            $result = rmdir($dir);
+        }
+        return $result;
+    }
+
     function php_code_use(array $lines): array
     {
         $result = [];
@@ -1386,6 +2006,33 @@ class library
             $csv[] = $line . "\n";
         }
         return $csv;
+    }
+
+    /**
+     * clear all values of a named column in a CSV array (header + data lines)
+     * e.g. to strip password hashes before comparing user CSVs in tests
+     *
+     * @param array $csv array of newline-terminated strings, first element is the header
+     * @param string $col column name as it appears in the header
+     * @return array the CSV with the named column blanked in every data row
+     */
+    function csv_clear_col(array $csv, string $col): array
+    {
+        if (count($csv) < 2) {
+            return $csv;
+        }
+        $header_cols = explode(',', rtrim($csv[0], "\n"));
+        $idx = array_search($col, $header_cols);
+        if ($idx === false) {
+            return $csv;
+        }
+        $result = [$csv[0]];
+        for ($i = 1; $i < count($csv); $i++) {
+            $fields = explode(',', rtrim($csv[$i], "\n"));
+            $fields[$idx] = '';
+            $result[] = implode(',', $fields) . "\n";
+        }
+        return $result;
     }
 
     function is_volatile_db_field(string $class, string $fld): bool
@@ -1544,6 +2191,7 @@ class library
         $header_line = '';
         $path = '';
         $description = '';
+        $var_name = '';
         foreach ($lines as $line) {
             if ($header_line == '') {
                 if (str_contains($line, '.php - ')) {
@@ -1551,6 +2199,10 @@ class library
                     $path = trim($this->str_left_of($header_line, '.php - '));
                     $description = $this->str_right_of($header_line, '.php - ');
                 }
+            }
+            // pick up the suggested var name from the first comment block e.g. '$wrd'
+            if ($var_name == '' and str_contains($line, 'is the suggested var name')) {
+                $var_name = trim($this->str_left_of($line, 'is the suggested var name'));
             }
             if (str_starts_with($line, 'class')) {
                 $class = trim($this->str_between($line, 'class', 'extends'));
@@ -1581,7 +2233,12 @@ class library
                     }
                 }
                 if ($class != '') {
-                    $result[$class] = [$parent, $path, $description];
+                    // prefix the description with the suggested var name if the class declares one
+                    $class_desc = $description;
+                    if ($var_name != '') {
+                        $class_desc = $var_name . ' - ' . $description;
+                    }
+                    $result[$class] = [$parent, $path, $class_desc];
                 }
             }
         }
@@ -1880,30 +2537,44 @@ class library
      * @param array|null $in_array the array that should be formatted
      * @return string the value comma separated or "null" if the array is empty
      */
-    function dsp_array(?array $in_array, bool $with_keys = false): string
+    /**
+     * format an array as a human-readable comma-separated string for logging and debug output
+     *
+     * @param array|null $in_array the array to display; null is shown as the literal 'null'
+     * @param bool $with_keys when true each entry is formatted as key=value; defaults to false (values only)
+     * @return string comma-separated entries, truncated to DSP_HEAD + last when count >= DSP_MAX (or $debug) unless debug > DSP_ALL_DEBUG
+     */
+    static function dsp_array(?array $in_array, bool $with_keys = false): string
     {
-        global $debug;
-
-        $lib = new library();
-        $result = 'null';
-        if ($in_array != null) {
-            if ($debug > 10 or count($in_array) < 7) {
-                if (count($in_array) > 0) {
-                    $result = implode(',', $lib->array_flat($in_array));
-                }
-                if ($with_keys) {
-                    $result .= ' (keys ' . $this->dsp_array_keys($in_array) . ')';
-                }
-            } else {
-                $left = array_slice($in_array, 0, 3);
-                $result = implode(',', $lib->array_flat($left));
-                $result .= ',...,' . end($in_array);
-            }
+        // distinguish an absent array from an empty one
+        if ($in_array === null) {
+            return 'null';
         }
-        return $result;
+
+        // build a flat list of formatted entries, recursing into nested arrays
+        $pairs = [];
+        foreach ($in_array as $key => $val) {
+            $fmt = is_array($val) ? '[' . self::dsp_array($val, $with_keys) . ']' : (string)$val;
+            $pairs[] = $with_keys ? $key . '=' . $fmt : $fmt;
+        }
+
+        if (count($pairs) === 0) {
+            return '';
+        }
+
+        // show everything when debug is high or the array is small
+        global $debug;
+        $dsp_max = max($debug, self::DSP_MAX);
+        if ($debug > self::DSP_ALL_DEBUG or count($pairs) < $dsp_max) {
+            return implode(self::SEPARATOR, $pairs);
+        }
+
+        // truncate: first DSP_HEAD entries, ellipsis, then the last entry
+        $head = implode(self::SEPARATOR, array_slice($pairs, 0, self::DSP_HEAD));
+        return $head . ',...,' . end($pairs);
     }
 
-    function dsp_array_keys(?array $in_array): string
+    static function dsp_array_keys(?array $in_array): string
     {
         global $debug;
 
@@ -3045,6 +3716,9 @@ class library
         if ($result == 'job_statuss') {
             $result = 'job_statuum';
         }
+        if ($result == 'db_cache_statuss') {
+            $result = 'db_cache_statuum';
+        }
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_statuum';
         }
@@ -3160,6 +3834,8 @@ class library
             case $this->class_to_name(sys_log_function::class):
             case $this->class_to_name(job_status::class):
             case $this->class_to_name(job_type::class):
+            case $this->class_to_name(db_cache_status::class):
+            case $this->class_to_name(db_cache_type::class):
             case $this->class_to_name(user_profile::class):
             case $this->class_to_name(user_type::class):
             case $this->class_to_name(user_official_type::class):

@@ -5,6 +5,8 @@
     model/helper/system_object.php - a header object for the system data cache and execution time tracking
     ------------------------------
 
+    $sys is the suggested var name
+
     the suggested var name in the backend is global $sys
     this object contains objects and vars from the database that are often used
     and thet are user independent
@@ -48,6 +50,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 
@@ -58,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 
@@ -75,11 +79,11 @@ class system_object
     // name php script that has been called by the webserver
     public string $script;
     // names of the php functions
-    public string  $trace;
+    public string $trace;
     // the initial time the user done the request to measure the execution time
     public float $start_time;
     // time after that a log entry should be created to detect too long execution times and to be able to improve the code
-    public float  $time_limit;
+    public float $time_limit;
     public system_time_list $times;
     // to avoid repeating the same message
     public array $log_msg_lst;
@@ -92,6 +96,15 @@ class system_object
     // the system users as a private var to restrict the access
     // TODO Prio check where this is used and make sure it is only used for system testing
     public user_list $sys_usr_lst;
+
+    // the session user that has requested the current action (set once the user data is loaded)
+    public ?user $usr_req = null;
+
+    // the preloaded system views (mask cache) used to link code to the views by code id
+    public ?view_sys_list $msk_cac = null;
+
+    // the number of internal errors logged during the request (read e.g. by the test runner)
+    public int $errors = 0;
 
 
     /*
@@ -129,6 +142,16 @@ class system_object
     function load_type_lists(sql_db $db_con): bool
     {
         return $this->typ_lst->load($db_con);
+    }
+
+    /**
+     * load the cache types and statuum upfront from the database
+     * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @return bool
+     */
+    function load_cache_type(sql_db $db_con): bool
+    {
+        return $this->typ_lst->load_cache($db_con);
     }
 
     /**
@@ -185,6 +208,58 @@ class system_object
     function system_users(): user_list
     {
         return $this->sys_usr_lst;
+    }
+
+    /**
+     * get a preloaded system user
+     * TODO Prio 1 check that it is never be called by a user action and log all access as double check
+     *
+     * @return user|null null if no user with the code id is found
+     */
+    function system_user(): user|null
+    {
+        return $this->get_system_user(users::SYSTEM_CODE_ID);
+    }
+
+    /**
+     * get a preloaded admin user
+     * TODO Prio 1 check that it is never be called by a user action and log all access as double check
+     *
+     * @return user|null null if no user with the code id is found
+     */
+    function admin_user(): user|null
+    {
+        return $this->get_system_user(users::SYSTEM_ADMIN_CODE_ID);
+    }
+
+    /**
+     * get a preloaded admin user
+     * TODO Prio 1 check that it is never be called by a user action and log all access as double check
+     *
+     * @param string $code_id to select the system user
+     * @return user|null null if no user with the code id is found
+     */
+    private function get_system_user(string $code_id): user|null
+    {
+        $usr = $this->system_users()->get($code_id, false);
+        if ($usr === null) {
+            $this->set_fallback_users();
+            $usr = $this->system_users()->get($code_id);
+        }
+        return $usr;
+    }
+
+    /**
+     * create a fallback user only in development to allow testing without a fully seeded DB
+     * @return void
+     */
+    private function set_fallback_users(): void
+    {
+        if (getenv(ENVIRONMENT) == ENV_DEV) {
+            $this->system_users()->load_fallback();
+        } else {
+            log_fatal('fallback system users can be called in development for recovery', 'set_fallback_users');
+        }
     }
 
 

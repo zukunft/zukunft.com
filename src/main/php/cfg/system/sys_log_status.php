@@ -46,6 +46,7 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -76,7 +78,7 @@ class sys_log_status extends type_object
     const string TBL_COMMENT = 'to define the status of internal errors';
     const string FLD_ID = 'sys_log_status_id'; // name of the id field as const for other const
     const string FLD_NAME = 'status_name';
-    const string FLD_ACTION_COM = 'description of the action to get to this status';
+    const string FLD_ACTION_COM = 'human written description of the action to get to this status';
     const string FLD_ACTION = 'action';
 
     // field lists for the table creation  to use status_name instead of type_name because type_name may not be a unique name
@@ -96,6 +98,8 @@ class sys_log_status extends type_object
 
     // the status of the fixing of this issue (id only because all statuum are always in the $sys object)
     public ?int $status_id = null;
+    // human written description of the action to get to this status e.g. "assign to" (null for the initial status)
+    public ?string $action = null;
 
 
     /*
@@ -111,6 +115,7 @@ class sys_log_status extends type_object
     {
         parent::reset();
         $this->status_id = null;
+        $this->action = null;
     }
 
     /**
@@ -124,8 +129,11 @@ class sys_log_status extends type_object
     {
         $result = parent::row_mapper_typ_obj($db_row, $class);
         if ($result) {
-            if (array_key_exists(self::FLD_ACTION, $db_row)) {
-                $this->status_id = ($db_row[self::FLD_ACTION]);
+            if (array_key_exists(sys_log_status::FLD_ID, $db_row)) {
+                $this->status_id = ($db_row[sys_log_status::FLD_ID]);
+            }
+            if (array_key_exists(sys_log_status::FLD_ACTION, $db_row)) {
+                $this->action = ($db_row[sys_log_status::FLD_ACTION]);
             }
         }
         return $result;
@@ -145,6 +153,11 @@ class sys_log_status extends type_object
         if (array_key_exists(json_fields::STATUS, $api_json)) {
             if ($api_json[json_fields::STATUS] <> '') {
                 $this->status_id = $api_json[json_fields::STATUS];
+            }
+        }
+        if (array_key_exists(json_fields::ACTION, $api_json)) {
+            if ($api_json[json_fields::ACTION] <> '') {
+                $this->action = $api_json[json_fields::ACTION];
             }
         }
 
@@ -169,9 +182,15 @@ class sys_log_status extends type_object
     {
         parent::import_mapper($in_ex_json, $msg, $dto);
 
-        if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+        if ($msg->usr === null) {
+            log_err('user not set in user_message', 'import_mapper');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
             if (key_exists(json_fields::STATUS, $in_ex_json)) {
                 $this->status_id = $in_ex_json[json_fields::STATUS];
+            }
+            if (key_exists(json_fields::ACTION, $in_ex_json)) {
+                $this->action = $in_ex_json[json_fields::ACTION];
             }
         }
 
@@ -194,6 +213,7 @@ class sys_log_status extends type_object
     {
         $vars = parent::api_json_array($typ_lst, $usr);
         $vars[json_fields::STATUS] = $this->status_id;
+        $vars[json_fields::ACTION] = $this->action;
         return $vars;
     }
 
@@ -213,6 +233,9 @@ class sys_log_status extends type_object
         $vars = parent::export_json($exp_typ, $do_load);
         if ($this->status_id !== null) {
             $vars[json_fields::STATUS] = $this->status_id;
+        }
+        if ($this->action !== null) {
+            $vars[json_fields::ACTION] = $this->action;
         }
         return $vars;
     }
@@ -256,13 +279,15 @@ class sys_log_status extends type_object
     {
         global $sys;
 
-        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
-        if ($obj->status_id !== $this->status_id) {
+        // the status_id is not written here because it mirrors the primary key
+        // which never changes on an update
+        if ($obj->action !== $this->action) {
             if ($do_log) {
+                $sc = new sql_creator();
+                $table_id = $sc->table_id($this::class);
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ACTION,
                     $sys->typ_lst->cng_fld->id($table_id . self::FLD_ACTION),
@@ -271,9 +296,9 @@ class sys_log_status extends type_object
             }
             $lst->add_field(
                 self::FLD_ACTION,
-                $this->status_id,
-                sql_field_type::INT_SMALL,
-                $obj->status_id
+                $this->action,
+                sql_field_type::TEXT,
+                $obj->action
             );
         }
         return $lst;

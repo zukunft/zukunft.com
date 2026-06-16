@@ -2,6 +2,8 @@
 
 ## Calculating with words
 
+> **New here?** Start with the plain-language intro: [The idea behind zukunft.com](docs/idea_and_intro.md) · [auf Deutsch](docs/idee_und_einstieg.md)
+
 This program should
 - be a [Giant Global Graph](https://en.wikipedia.org/wiki/Giant_Global_Graph) (GGG) browser
 - have a wordpress like frontend for the GGG using mayly a similar view editor
@@ -133,7 +135,10 @@ Coding team suggestions
 - when all agree on the story-points the story is assigned to one member
 - critical: if there is a delay other team member **offer to help** (no blaming)  
 - at the sprint retro one selects a perspective that the other done not know for spontaneous answers
-- **one tool** (not two or more) per purpose: git, tickets, wiki, message e.g. element.io 
+- **one tool** (not two or more) per purpose: git, tickets, wiki, message e.g. element.io
+
+LLM KI usage
+- for LLM KI systems the [LLM coding guide](docs/llm/coding.md) might be helpfully
 
 Decisions
 - use this program for a mind map with all arguments where each has a weight and value and all changes are logged

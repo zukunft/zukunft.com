@@ -5,6 +5,8 @@
     web/ref/ref.php - the extension of the reference API objects to create ref base html code
     ---------------
 
+    $ref is the suggested var name
+
     extends db_object because this is the only display object that does not have an explicit name but has a type
 
 
@@ -86,6 +88,7 @@ class ref extends sandbox
     const string VIEW_ADD = views::REF_ADD;
     const string VIEW_EDIT = views::REF_EDIT;
     const string VIEW_DEL = views::REF_DEL;
+    const int VIEW_EDIT_ID = views::REF_EDIT_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::REF_ADD;
@@ -298,8 +301,8 @@ class ref extends sandbox
      */
     function type_name(): string
     {
-        global $sys;
-        return $sys->typ_lst->ref_typ->name($this->predicate_id());
+        global $ui_sys;
+        return $ui_sys->typ_lst_cache->ref_typ->name($this->predicate_id());
     }
 
     /**
@@ -307,9 +310,18 @@ class ref extends sandbox
      */
     function type_url(): string
     {
-        global $ui_cac;
-        $ref_typ_lst = $ui_cac->typ_lst_cache->html_ref_types;
+        global $ui_sys;
+        $ref_typ_lst = $ui_sys->typ_lst_cache->ref_typ;
         return $ref_typ_lst->url($this->predicate_id());
+    }
+
+    /**
+     * TODO Prio 2 either this or predicate_id should be deprecated
+     * @return int|null the database id of the type
+     */
+    function type_id(): ?int
+    {
+        return $this->predicate_id;
     }
 
     function used_url(): string
@@ -461,9 +473,9 @@ class ref extends sandbox
     {
         $used_ref_type_id = $this->predicate_id();
         if ($used_ref_type_id == null) {
-            $used_ref_type_id = $typ_lst->html_ref_types->default_id();
+            $used_ref_type_id = $typ_lst->ref_typ->default_id();
         }
-        return $typ_lst->html_ref_types->selector($form, $used_ref_type_id);
+        return $typ_lst->ref_typ->selector($form, $used_ref_type_id);
     }
 
     /**
@@ -506,6 +518,14 @@ class ref extends sandbox
         }
         $msk_lst = $msk_lst->only_type(view_types::REF);
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
+    }
+
+    /**
+     * @return string that best describes this object
+     */
+    function display(): string
+    {
+        return $this->name();
     }
 
 }

@@ -44,7 +44,8 @@ class sql_sync_sequences
     private function sync_postgres($result, sql_db $db_con): user_message
     {
         global $debug;
-        global $log_txt;
+        global $sys;
+        $log_txt = $sys->log_txt;
 
         $usr_msg = new user_message();
         while ($row = pg_fetch_assoc($result)) {
@@ -84,7 +85,8 @@ class sql_sync_sequences
     private function sync_mysql($result, sql_db $db_con): user_message
     {
         global $debug;
-        global $log_txt;
+        global $sys;
+        $log_txt = $sys->log_txt;
 
         $usr_msg = new user_message();
         while ($row = mysqli_fetch_assoc($result)) {

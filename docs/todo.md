@@ -1,21 +1,71 @@
 TODO notes
 ----------
 
+next 
+
+show the related phrases sorted by impact on the default word page, restrict protection level reduction to admin users and format the expected sql test resources with the new sql_format function as part of fix #247
+
 A proper issue ticket should be created for these TODOs notes:
 
     but first this needs to be prioritized:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO check that all json import files that are needed for the db read and write tests are within on const array and make sure that these files are imported before the config
+    TODO add unit test for all frontend components
+    TODO add a 'no change' parameter to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
+    TODO move the database ids used for unit and db read tests before the database ids of the system config so that a change in the system config does not break the unit or db read tests because additional data for unit tests are less probable than addidional config values
+    TODO create a /test/test_full_load.php script that load
+    TODO review the CHF page
+         add the values with the highest im
+    TODO review the start page and base it purely on database values
+    TODO create a useful default view for each link in the start page
+    TODO create a workflow test for each add, edit or delete view reachable from the start page
+    TODO add data for the next level of the start page so the definition of the problem, that leading and lagging causes, a list of the possible solutions and the ranking of the solution based on risk and reward
+    TODO review all system views and make sure that at least all components used in the pages return a reasonable result
+    TODO add phrase_id for the additional selection to the component link so that 
+         e.g. for the global warming problem the phrases "definition", "size" and "solutions" can be used 
+         for a sorted phrase list solution
+    TODO create a useful page e.g. for currencies
+    TODO add links for the values in the frontend page 
+    TODO fill the workflox unit tests
+    TODO fix to bugs in the component types so that all component type returns a nice result
+    TODO add unti test for all system pages including the login page to be able to use the view.php script also for the login page
+    TODO deprecate the old $back parameter and use instead back prefixed parameters
+    TODO deprecate all non view.php http calls
+    TODO check how to shorten the urls e.g. that www.zukunft.com/login calls www.zukunft.com/http/view.php?m=61 
+    TODO test for add word workflow: add the function "url_to_action_and_next_step" in the workflow class
     TODO add horitontal write test that includes all cases of changing any unique key e.g. the name, code_id, linked object and group_id for values
     TODO finish the frontend component tests
     TODO create the frontend page reaction flow tests
+    TODO add test to check that all components show the expected html result
+    TODO check that all words and triples on of the config file have a const in words and triples
+    TODO fix issues in the unit tests for all component types ('Component display test' in src/test/php/unit_ui/base_ui_tests.php)
+    TODO test user activate and password reset
+    TODO add a test that the initial data load does not change any fields to avoid changes test conditions e.g. as it happed for the description of USD 
+    TODO create a coded unit test for all possible coding rules e.g. that in frontend only the global vars $ui_sys and $mtr should be used
+
+    TODO review the base import files:
+         in src/test/resources/import/fermi_estimates.json add a description to the words and try to fimd a wikipedia / wikidata ref
+         add to src/test/resources/import/fermi_estimates.json some results that should be checked on import
+         add to src/test/resources/import/fermi_estimates.json the calculation for the potentail gain, the risk aand the next test step in currency and htp
+    TODO review the import in full test so that each file is only imported once
+    TODO add to import the option to create a warning if the user changes a object parameter to make sure that the system user does not import contradicting data
+    TODO in import calculate the result values once based on the data_object and report an error if the result values cannot be reproduced and add a sample json for the fail test to src/test/resources/import/inconsistency_tests
+         after data import check that the result values can be reproduced
 
     TODO Release 0.0.4
+    TODO fix bug that the same triple with another name is not detected as similar triple
+         steps to reproduce:
+         1. create a triple "gross profit" with a json import file
+         2. create a triple "Gross profit" based on the same words with another json import file
+         3. the result will be an error message like this: RROR:  duplicate key value violates unique constraint "triples_unique_idx" DETAIL:  Key (from_phrase_id, verb_id, to_phrase_id)=(1071, 36, 938) ('gross profit') already exists.
+         4. add import test cases for src/test/resources/import/import_test_edge_cases/fixed_generated_name.json
     TODO use the name "nud" (New User Default) for the default data that should be used if the user has not done an overwrite
     TODO use the name "psv" (Public Standard Value) for values and results that are no read and write restrictions 
     TODO fix all prio 0 TODO including unit tests
     TODO use the url_var class const for all url vars
+    TODO check that the user changeable config parameters 'lists.separator.entry' and 'lists.separator.caterory' are use for all one line lists shown the the user
     TODO check that the api, url and import mapper just map the fields
          and the permission check of critical fields is done before the database save
     TODO make sure the the save function always includes all fields e.g. if by the user the activation_timeout is included
@@ -104,7 +154,7 @@ A proper issue ticket should be created for these TODOs notes:
          - $db_con for the database connection
          - $cfg for the user configuration numbers that changes more often than the types and the system views  
          - $cac for the backend cache of user-specific data_object
-         - $ui_cac for the frontend cache including the session user
+         - $ui_sys for the frontend cache including the session user
          - $mtr for the message translation use as the last step in the frontend
          - $t for the base test object with the functions for assert and cleanup
          - $t_sys for error counting and the execution times 
@@ -147,14 +197,21 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add a frontend db cache table (until it is known how e.g. a cockie can be used as a cache)
          the fields of the table "cache_ui" are the same as for the backend but without user and backend config: 
 
-    TODO use global $ui_cac for the frontend cache and $cac for the global backend cache and remove all other caches
+    TODO use global $ui_sys for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
+
+    TODO start with 3 item for a default selection (2 if the account is used on a smartphone) 
+         and increase this values to 5 (8, 13, 21) if 3 times (5, 8, 13, 21) more has been pressed
+         decrease the value if the account has not been used for 3 (5, 8, 13, 21) month or less has been pressed
+         for some easy item e.g. languages additional 2 (3, 5, 8, 13) or double, triple select items are shown 
 
     TODO add a documentation how to add a phrase type (and make the process easier)
 
     TODO complete system view with: about, async_process, calculate
     TODO create an admin page with the numbner of connected pods, the usage an the most likely and latest SPAM posts
+
+    TODO write a function that checks the order of the import based on the description in lll_coding.md (or switch to fully automatic include)
 
     TODO object chart 
          - add legend with object types and that dotted line is inheritance   
@@ -222,6 +279,7 @@ A proper issue ticket should be created for these TODOs notes:
          e.g. if a formula or value with a high impact is changed but save is not yet pressed the background should be red
          if nothing is changed the background should be a neutral e.g. light grey
     TODO for the dev and test environment the background should have a diagonal DEV or TEST text pattern
+    TODO for protection get_standard() defaults the norm protection to no_protection, so an owner's reduction to exactly no_protection is silently swallowed by the no_diff check even when allowed (reduction to user_protection works). If admins should be able to fully clear protection, that needs a separate review of row_mapper_std().
 
 
     TODO add a frontend cache that includes the most often used terms, values and views 
@@ -254,6 +312,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add properties to verbs so that the same behavior con be used for several verbs
     TODO use the $load_all parameter for all load functions to include excluded rows for admins
     TODO add a unit and db test
+    TODO review the unit tests of all system views
     TODO check which arrays cam be converted to a class
     TODO adapt the best view editor features from wordpress
     TODO adapt the best user handling features from wordpress

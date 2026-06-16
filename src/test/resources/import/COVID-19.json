@@ -401,6 +401,118 @@
         }
       ],
       "protection": "admin_protection"
+    },
+    {
+      "name": "TI",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "GE",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "GR",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "AG",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ZH",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "VD",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "BS",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "BE",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "BL",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "VS",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "FR",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "NE",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "SZ",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ZG",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "SG",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "LU",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "AR",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "JU",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "TG",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "SH",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "SO",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "NW",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "GL",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "AI",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "OW",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "UR",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "FL",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ZU",
+      "protection": "admin_protection"
     }
   ],
   "triples": [

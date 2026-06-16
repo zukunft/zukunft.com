@@ -316,6 +316,18 @@ class test_views extends test_objects
         return $msk;
     }
 
+    /**
+     * @return view with a side-or-below group of four text columns
+     *         to test the responsive column position types
+     */
+    function view_side_or_below(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view();
+        $msk->cmp_lnk_lst = $t_cmp->components_side_or_below($msk);
+        return $msk;
+    }
+
     function view_word_add(): view
     {
         $t_cmp = new test_components($this->env);
@@ -378,6 +390,15 @@ class test_views extends test_objects
         return new view_list_ui($t_msk->view_list_word()->api_json());
     }
 
+    function view_relation_add(): view_relation
+    {
+        $mrl = new view_relation($this->env->usr1);
+        $mrl->set_parent($this->view_add());
+        $mrl->set_relation_type(view_relation_types::ADD);
+        $mrl->set_child($this->view_word_log());
+        return $mrl;
+    }
+
     function view_relation(): view_relation
     {
         $mrl = new view_relation($this->env->usr1);
@@ -413,6 +434,16 @@ class test_views extends test_objects
         //$msk_rel->set_parent($this->view_filled_add());
         //$msk_rel->set_child($this->view_part_filled_add());
         return $msk_rel;
+    }
+
+    function term_view_add(): term_view
+    {
+        $t_wrd = new test_words($this->env);
+        $trm_msk = new term_view($this->env->usr1);
+        $trm_msk->set_term($t_wrd->word_add()->term());
+        $trm_msk->set_predicate(view_link_types::DEFAULT);
+        $trm_msk->set_view($this->view_add());
+        return $trm_msk;
     }
 
     function term_view(): term_view

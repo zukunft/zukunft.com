@@ -80,9 +80,13 @@ class paths
     const string EXPORT_WORD = self::EXPORT . 'word' . DIRECTORY_SEPARATOR;
     const string IMPORT = self::RESOURCE . 'import' . DIRECTORY_SEPARATOR;
     const string IMPORT_UNIT = self::IMPORT . 'unit_tests' . DIRECTORY_SEPARATOR;
+    const string IMPORT_INCONSISTENCY = self::IMPORT . 'inconsistency_tests' . DIRECTORY_SEPARATOR;
     const string IMPORT_WIKIPEDIA = self::IMPORT . 'wikipedia' . DIRECTORY_SEPARATOR;
+    const string IMPORT_XBRL = self::IMPORT . 'xbrl' . DIRECTORY_SEPARATOR;
+    const string IMPORT_XBRL_ZIP = self::IMPORT_XBRL . 'zip' . DIRECTORY_SEPARATOR;
     const string UNIT_RES = self::RESOURCE . 'unit' . DIRECTORY_SEPARATOR;
     const string SYSTEM = self::UNIT_RES . 'system' . DIRECTORY_SEPARATOR;
+    const string SANDBOX = self::UNIT_RES . 'sandbox' . DIRECTORY_SEPARATOR;
 
     // path for resources to test the frontend
     const string WEB_RES = self::RESOURCE . 'web' . DIRECTORY_SEPARATOR;
@@ -96,6 +100,7 @@ class paths
 
     // path parts
     const string DB = 'db' . DIRECTORY_SEPARATOR;
+    const string DB_FORMAT_TEST = self::DB . 'format_test' . DIRECTORY_SEPARATOR;
     const string FORMULA = 'formula' . DIRECTORY_SEPARATOR;
     // to test if all interface function of each web object word fine
     const string VIEW_FUNCTIONS = 'object_pages' . DIRECTORY_SEPARATOR;

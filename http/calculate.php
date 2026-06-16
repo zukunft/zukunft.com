@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("calculate");
 
 // load the requesting user

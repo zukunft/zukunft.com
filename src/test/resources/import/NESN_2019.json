@@ -33,98 +33,365 @@
     {
       "name": "2013",
       "type": "time"
+    },
+    {
+      "name": "Nestlé"
+    },
+    {
+      "name": "CHF"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "sales"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "report"
+    },
+    {
+      "name": "current"
+    },
+    {
+      "name": "assets"
+    },
+    {
+      "name": "liabilities"
+    },
+    {
+      "name": "non-current"
+    },
+    {
+      "name": "total"
+    },
+    {
+      "name": "equity"
+    },
+    {
+      "name": "shareholders"
+    },
+    {
+      "name": "parent"
+    },
+    {
+      "name": "non-controlling"
+    },
+    {
+      "name": "interests"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "financial"
+    },
+    {
+      "name": "debt"
+    },
+    {
+      "name": "operating"
+    },
+    {
+      "name": "cash"
+    },
+    {
+      "name": "flow"
+    },
+    {
+      "name": "free"
+    },
+    {
+      "name": "capital"
+    },
+    {
+      "name": "additions"
+    },
+    {
+      "name": "underlying"
+    },
+    {
+      "name": "trading"
+    },
+    {
+      "name": "profit"
+    },
+    {
+      "name": "taxes"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "dividend"
+    },
+    {
+      "name": "amount"
+    },
+    {
+      "name": "depreciation"
+    },
+    {
+      "name": "property"
+    },
+    {
+      "name": "plant"
+    },
+    {
+      "name": "equipment"
     }
   ],
   "triples": [
     {
-      "from": "Current assets",
-      "verb": "is part of",
-      "to": "Annual Report"
+      "name": "annual report",
+      "from": "report",
+      "verb": "kind of",
+      "to": "annual"
     },
     {
-      "from": "Non-current assets",
-      "verb": "is part of",
-      "to": "Annual Report"
+      "name": "current assets",
+      "from": "assets",
+      "verb": "kind of",
+      "to": "current"
     },
     {
-      "from": "Total assets",
-      "verb": "is part of",
-      "to": "Annual Report"
+      "name": "non-current assets",
+      "from": "assets",
+      "verb": "kind of",
+      "to": "non-current"
     },
     {
-      "from": "Current liabilities",
-      "verb": "is part of",
-      "to": "Annual Report"
+      "name": "total assets",
+      "from": "assets",
+      "verb": "kind of",
+      "to": "total"
     },
     {
-      "from": "Non-current liabilities",
-      "verb": "is part of",
-      "to": "Annual Report"
+      "name": "current liabilities",
+      "from": "liabilities",
+      "verb": "kind of",
+      "to": "current"
     },
     {
-      "from": "Equity attributable to shareholders of the parent",
-      "verb": "is part of",
-      "to": "Annual Report"
+      "name": "non-current liabilities",
+      "from": "liabilities",
+      "verb": "kind of",
+      "to": "non-current"
     },
     {
-      "from": "Non-controlling interests",
-      "verb": "is part of",
-      "to": "Annual Report"
+      "name": "shareholders of the parent",
+      "from": "shareholders",
+      "verb": "of",
+      "to": "parent"
     },
     {
-      "from": "Net financial debt",
-      "verb": "is part of",
-      "to": "Annual Report"
+      "name": "equity attributable to shareholders of the parent",
+      "from": "equity",
+      "verb": "of",
+      "to": "shareholders of the parent"
     },
     {
-      "from": "Operating cash flow",
-      "verb": "is part of",
-      "to": "Annual Report"
+      "name": "non-controlling interests",
+      "from": "interests",
+      "verb": "kind of",
+      "to": "non-controlling"
     },
     {
-      "from": "Free cash flow",
-      "verb": "is part of",
-      "to": "Annual Report"
+      "name": "financial debt",
+      "from": "debt",
+      "verb": "kind of",
+      "to": "financial"
     },
     {
-      "from": "Capital additions",
+      "name": "net financial debt",
+      "from": "financial debt",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "cash flow",
+      "from": "flow",
+      "verb": "of",
+      "to": "cash"
+    },
+    {
+      "name": "operating cash flow",
+      "from": "cash flow",
+      "verb": "kind of",
+      "to": "operating"
+    },
+    {
+      "name": "free cash flow",
+      "from": "cash flow",
+      "verb": "kind of",
+      "to": "free"
+    },
+    {
+      "name": "capital additions",
+      "from": "additions",
+      "verb": "of",
+      "to": "capital"
+    },
+    {
+      "name": "operating profit",
+      "from": "profit",
+      "verb": "kind of",
+      "to": "operating"
+    },
+    {
+      "name": "trading operating profit",
+      "from": "operating profit",
+      "verb": "kind of",
+      "to": "trading"
+    },
+    {
+      "name": "underlying trading operating profit",
+      "from": "trading operating profit",
+      "verb": "kind of",
+      "to": "underlying"
+    },
+    {
+      "name": "net profit",
+      "from": "profit",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "profit for the year",
+      "from": "profit",
+      "verb": "of",
+      "to": "year"
+    },
+    {
+      "name": "profit for the year attributable to shareholders of the parent",
+      "from": "profit for the year",
+      "verb": "of",
+      "to": "shareholders of the parent"
+    },
+    {
+      "name": "profit for the year attributable to shareholders of the parent (net profit)",
+      "from": "profit for the year attributable to shareholders of the parent",
+      "verb": "kind of",
+      "to": "net profit"
+    },
+    {
+      "from": "amount",
+      "verb": "of",
+      "to": "dividend"
+    },
+    {
+      "name": "total amount of dividend",
+      "from": "amount of dividend",
+      "verb": "kind of",
+      "to": "total"
+    },
+    {
+      "from": "plant",
+      "verb": "and",
+      "to": "equipment"
+    },
+    {
+      "name": "property, plant and equipment",
+      "from": "property",
+      "verb": "and",
+      "to": "plant and equipment"
+    },
+    {
+      "from": "depreciation",
+      "verb": "of",
+      "to": "property, plant and equipment"
+    },
+    {
+      "from": "current assets",
       "verb": "is part of",
-      "to": "Annual Report"
+      "to": "annual report"
+    },
+    {
+      "from": "non-current assets",
+      "verb": "is part of",
+      "to": "annual report"
+    },
+    {
+      "from": "total assets",
+      "verb": "is part of",
+      "to": "annual report"
+    },
+    {
+      "from": "current liabilities",
+      "verb": "is part of",
+      "to": "annual report"
+    },
+    {
+      "from": "non-current liabilities",
+      "verb": "is part of",
+      "to": "annual report"
+    },
+    {
+      "from": "equity attributable to shareholders of the parent",
+      "verb": "is part of",
+      "to": "annual report"
+    },
+    {
+      "from": "non-controlling interests",
+      "verb": "is part of",
+      "to": "annual report"
+    },
+    {
+      "from": "net financial debt",
+      "verb": "is part of",
+      "to": "annual report"
+    },
+    {
+      "from": "operating cash flow",
+      "verb": "is part of",
+      "to": "annual report"
+    },
+    {
+      "from": "free cash flow",
+      "verb": "is part of",
+      "to": "annual report"
+    },
+    {
+      "from": "capital additions",
+      "verb": "is part of",
+      "to": "annual report"
     },
     {
       "from": "sales",
       "verb": "is part of",
-      "to": "Annual Report"
+      "to": "annual report"
     },
     {
-      "from": "Underlying Trading operating profit",
+      "from": "underlying trading operating profit",
       "verb": "is part of",
-      "to": "Annual Report"
+      "to": "annual report"
     },
     {
-      "from": "Trading operating profit",
+      "from": "trading operating profit",
       "verb": "is part of",
-      "to": "Annual Report"
+      "to": "annual report"
     },
     {
-      "from": "Taxes",
+      "from": "taxes",
       "verb": "is part of",
-      "to": "Annual Report"
+      "to": "annual report"
     },
     {
-      "from": "Profit for the year attributable to shareholders of the parent (Net profit)",
+      "from": "profit for the year attributable to shareholders of the parent (net profit)",
       "verb": "is part of",
-      "to": "Annual Report"
+      "to": "annual report"
     },
     {
-      "from": "Total amount of dividend",
+      "from": "total amount of dividend",
       "verb": "is part of",
-      "to": "Annual Report"
+      "to": "annual report"
     },
     {
-      "from": "Depreciation of property, plant and equipment",
+      "from": "depreciation of property, plant and equipment",
       "verb": "is part of",
-      "to": "Annual Report"
+      "to": "annual report"
     }
   ],
   "formulas": [],
@@ -141,7 +408,7 @@
         "2019",
         "CHF",
         "million",
-        "Current assets"
+        "current assets"
       ],
       "number": "35663",
       "protection": "admin_protection",
@@ -153,7 +420,7 @@
         "2019",
         "CHF",
         "million",
-        "Non-current assets"
+        "non-current assets"
       ],
       "number": "92277",
       "protection": "admin_protection",
@@ -165,7 +432,7 @@
         "2019",
         "CHF",
         "million",
-        "Total assets"
+        "total assets"
       ],
       "number": "127940",
       "protection": "admin_protection",
@@ -177,7 +444,7 @@
         "2019",
         "CHF",
         "million",
-        "Current liabilities"
+        "current liabilities"
       ],
       "number": "41615",
       "protection": "admin_protection",
@@ -189,7 +456,7 @@
         "2019",
         "CHF",
         "million",
-        "Non-current liabilities"
+        "non-current liabilities"
       ],
       "number": "33463",
       "protection": "admin_protection",
@@ -201,7 +468,7 @@
         "2019",
         "CHF",
         "million",
-        "Equity attributable to shareholders of the parent"
+        "equity attributable to shareholders of the parent"
       ],
       "number": "52035",
       "protection": "admin_protection",
@@ -213,7 +480,7 @@
         "2019",
         "CHF",
         "million",
-        "Non-controlling interests"
+        "non-controlling interests"
       ],
       "number": "827",
       "protection": "admin_protection",
@@ -225,7 +492,7 @@
         "2019",
         "CHF",
         "million",
-        "Net financial debt"
+        "net financial debt"
       ],
       "number": "27138",
       "protection": "admin_protection",
@@ -237,7 +504,7 @@
         "2019",
         "CHF",
         "million",
-        "Operating cash flow"
+        "operating cash flow"
       ],
       "number": "15850",
       "protection": "admin_protection",
@@ -249,7 +516,7 @@
         "2019",
         "CHF",
         "million",
-        "Free cash flow"
+        "free cash flow"
       ],
       "number": "11934",
       "protection": "admin_protection",
@@ -261,7 +528,7 @@
         "2019",
         "CHF",
         "million",
-        "Capital additions"
+        "capital additions"
       ],
       "number": "5482",
       "protection": "admin_protection",
@@ -285,7 +552,7 @@
         "2019",
         "CHF",
         "million",
-        "Underlying Trading operating profit"
+        "underlying trading operating profit"
       ],
       "number": "16260",
       "protection": "admin_protection",
@@ -297,7 +564,7 @@
         "2019",
         "CHF",
         "million",
-        "Trading operating profit"
+        "trading operating profit"
       ],
       "number": "13674",
       "protection": "admin_protection",
@@ -309,7 +576,7 @@
         "2019",
         "CHF",
         "million",
-        "Taxes"
+        "taxes"
       ],
       "number": "3159",
       "protection": "admin_protection",
@@ -321,7 +588,7 @@
         "2019",
         "CHF",
         "million",
-        "Profit for the year attributable to shareholders of the parent (Net profit)"
+        "profit for the year attributable to shareholders of the parent (net profit)"
       ],
       "number": "12609",
       "protection": "admin_protection",
@@ -333,7 +600,7 @@
         "2019",
         "CHF",
         "million",
-        "Total amount of dividend"
+        "total amount of dividend"
       ],
       "number": "7795",
       "protection": "admin_protection",
@@ -345,7 +612,7 @@
         "2019",
         "CHF",
         "million",
-        "Depreciation of property, plant and equipment"
+        "depreciation of property, plant and equipment"
       ],
       "number": "3488",
       "protection": "admin_protection",
@@ -357,7 +624,7 @@
         "2018",
         "CHF",
         "million",
-        "Current assets"
+        "current assets"
       ],
       "number": "41003",
       "protection": "admin_protection",
@@ -369,7 +636,7 @@
         "2018",
         "CHF",
         "million",
-        "Non-current assets"
+        "non-current assets"
       ],
       "number": "96012",
       "protection": "admin_protection",
@@ -381,7 +648,7 @@
         "2018",
         "CHF",
         "million",
-        "Total assets"
+        "total assets"
       ],
       "number": "137015",
       "protection": "admin_protection",
@@ -393,7 +660,7 @@
         "2018",
         "CHF",
         "million",
-        "Current liabilities"
+        "current liabilities"
       ],
       "number": "43030",
       "protection": "admin_protection",
@@ -405,7 +672,7 @@
         "2018",
         "CHF",
         "million",
-        "Non-current liabilities"
+        "non-current liabilities"
       ],
       "number": "35582",
       "protection": "admin_protection",
@@ -417,7 +684,7 @@
         "2018",
         "CHF",
         "million",
-        "Equity attributable to shareholders of the parent"
+        "equity attributable to shareholders of the parent"
       ],
       "number": "57363",
       "protection": "admin_protection",
@@ -429,7 +696,7 @@
         "2018",
         "CHF",
         "million",
-        "Non-controlling interests"
+        "non-controlling interests"
       ],
       "number": "1040",
       "protection": "admin_protection",
@@ -441,7 +708,7 @@
         "2018",
         "CHF",
         "million",
-        "Net financial debt"
+        "net financial debt"
       ],
       "number": "30330",
       "protection": "admin_protection",
@@ -453,7 +720,7 @@
         "2018",
         "CHF",
         "million",
-        "Operating cash flow"
+        "operating cash flow"
       ],
       "number": "15398",
       "protection": "admin_protection",
@@ -465,7 +732,7 @@
         "2018",
         "CHF",
         "million",
-        "Free cash flow"
+        "free cash flow"
       ],
       "number": "10765",
       "protection": "admin_protection",
@@ -477,7 +744,7 @@
         "2018",
         "CHF",
         "million",
-        "Capital additions"
+        "capital additions"
       ],
       "number": "14711",
       "protection": "admin_protection",
@@ -501,7 +768,7 @@
         "2018",
         "CHF",
         "million",
-        "Underlying Trading operating profit"
+        "underlying trading operating profit"
       ],
       "number": "15521",
       "protection": "admin_protection",
@@ -513,7 +780,7 @@
         "2018",
         "CHF",
         "million",
-        "Trading operating profit"
+        "trading operating profit"
       ],
       "number": "13789",
       "protection": "admin_protection",
@@ -525,7 +792,7 @@
         "2018",
         "CHF",
         "million",
-        "Taxes"
+        "taxes"
       ],
       "number": "3439",
       "protection": "admin_protection",
@@ -537,7 +804,7 @@
         "2018",
         "CHF",
         "million",
-        "Profit for the year attributable to shareholders of the parent (Net profit)"
+        "profit for the year attributable to shareholders of the parent (net profit)"
       ],
       "number": "10135",
       "protection": "admin_protection",
@@ -549,7 +816,7 @@
         "2018",
         "CHF",
         "million",
-        "Total amount of dividend"
+        "total amount of dividend"
       ],
       "number": "7230",
       "protection": "admin_protection",
@@ -561,7 +828,7 @@
         "2018",
         "CHF",
         "million",
-        "Depreciation of property, plant and equipment"
+        "depreciation of property, plant and equipment"
       ],
       "number": "3604",
       "protection": "admin_protection",
@@ -573,7 +840,7 @@
         "2017",
         "CHF",
         "million",
-        "Current assets"
+        "current assets"
       ],
       "number": "31884",
       "protection": "admin_protection",
@@ -585,7 +852,7 @@
         "2017",
         "CHF",
         "million",
-        "Non-current assets"
+        "non-current assets"
       ],
       "number": "101326",
       "protection": "admin_protection",
@@ -597,7 +864,7 @@
         "2017",
         "CHF",
         "million",
-        "Total assets"
+        "total assets"
       ],
       "number": "133210",
       "protection": "admin_protection",
@@ -609,7 +876,7 @@
         "2017",
         "CHF",
         "million",
-        "Current liabilities"
+        "current liabilities"
       ],
       "number": "38189",
       "protection": "admin_protection",
@@ -621,7 +888,7 @@
         "2017",
         "CHF",
         "million",
-        "Non-current liabilities"
+        "non-current liabilities"
       ],
       "number": "32792",
       "protection": "admin_protection",
@@ -633,7 +900,7 @@
         "2017",
         "CHF",
         "million",
-        "Equity attributable to shareholders of the parent"
+        "equity attributable to shareholders of the parent"
       ],
       "number": "60956",
       "protection": "admin_protection",
@@ -645,7 +912,7 @@
         "2017",
         "CHF",
         "million",
-        "Non-controlling interests"
+        "non-controlling interests"
       ],
       "number": "1273",
       "protection": "admin_protection",
@@ -657,7 +924,7 @@
         "2017",
         "CHF",
         "million",
-        "Net financial debt"
+        "net financial debt"
       ],
       "number": "21369",
       "protection": "admin_protection",
@@ -669,7 +936,7 @@
         "2017",
         "CHF",
         "million",
-        "Operating cash flow"
+        "operating cash flow"
       ],
       "number": "14199",
       "protection": "admin_protection",
@@ -681,7 +948,7 @@
         "2017",
         "CHF",
         "million",
-        "Free cash flow"
+        "free cash flow"
       ],
       "number": "9358",
       "protection": "admin_protection",
@@ -693,7 +960,7 @@
         "2017",
         "CHF",
         "million",
-        "Capital additions"
+        "capital additions"
       ],
       "number": "6569",
       "protection": "admin_protection",
@@ -717,7 +984,7 @@
         "2017",
         "CHF",
         "million",
-        "Underlying Trading operating profit"
+        "underlying trading operating profit"
       ],
       "number": "14771",
       "protection": "admin_protection",
@@ -729,7 +996,7 @@
         "2017",
         "CHF",
         "million",
-        "Trading operating profit"
+        "trading operating profit"
       ],
       "number": "13277",
       "protection": "admin_protection",
@@ -741,7 +1008,7 @@
         "2017",
         "CHF",
         "million",
-        "Taxes"
+        "taxes"
       ],
       "number": "2773",
       "protection": "admin_protection",
@@ -753,7 +1020,7 @@
         "2017",
         "CHF",
         "million",
-        "Profit for the year attributable to shareholders of the parent (Net profit)"
+        "profit for the year attributable to shareholders of the parent (net profit)"
       ],
       "number": "7156",
       "protection": "admin_protection",
@@ -765,7 +1032,7 @@
         "2017",
         "CHF",
         "million",
-        "Total amount of dividend"
+        "total amount of dividend"
       ],
       "number": "7124",
       "protection": "admin_protection",
@@ -777,7 +1044,7 @@
         "2017",
         "CHF",
         "million",
-        "Depreciation of property, plant and equipment"
+        "depreciation of property, plant and equipment"
       ],
       "number": "3560",
       "protection": "admin_protection",
@@ -789,7 +1056,7 @@
         "2016",
         "CHF",
         "million",
-        "Current assets"
+        "current assets"
       ],
       "number": "32042",
       "protection": "admin_protection",
@@ -801,7 +1068,7 @@
         "2016",
         "CHF",
         "million",
-        "Non-current assets"
+        "non-current assets"
       ],
       "number": "99859",
       "protection": "admin_protection",
@@ -813,7 +1080,7 @@
         "2016",
         "CHF",
         "million",
-        "Total assets"
+        "total assets"
       ],
       "number": "131901",
       "protection": "admin_protection",
@@ -825,7 +1092,7 @@
         "2016",
         "CHF",
         "million",
-        "Current liabilities"
+        "current liabilities"
       ],
       "number": "37517",
       "protection": "admin_protection",
@@ -837,7 +1104,7 @@
         "2016",
         "CHF",
         "million",
-        "Non-current liabilities"
+        "non-current liabilities"
       ],
       "number": "28403",
       "protection": "admin_protection",
@@ -849,7 +1116,7 @@
         "2016",
         "CHF",
         "million",
-        "Equity attributable to shareholders of the parent"
+        "equity attributable to shareholders of the parent"
       ],
       "number": "64590",
       "protection": "admin_protection",
@@ -861,7 +1128,7 @@
         "2016",
         "CHF",
         "million",
-        "Non-controlling interests"
+        "non-controlling interests"
       ],
       "number": "1391",
       "protection": "admin_protection",
@@ -873,7 +1140,7 @@
         "2016",
         "CHF",
         "million",
-        "Net financial debt"
+        "net financial debt"
       ],
       "number": "13913",
       "protection": "admin_protection",
@@ -885,7 +1152,7 @@
         "2016",
         "CHF",
         "million",
-        "Operating cash flow"
+        "operating cash flow"
       ],
       "number": "15582",
       "protection": "admin_protection",
@@ -897,7 +1164,7 @@
         "2016",
         "CHF",
         "million",
-        "Free cash flow"
+        "free cash flow"
       ],
       "number": "10108",
       "protection": "admin_protection",
@@ -909,7 +1176,7 @@
         "2016",
         "CHF",
         "million",
-        "Capital additions"
+        "capital additions"
       ],
       "number": "5462",
       "protection": "admin_protection",
@@ -933,7 +1200,7 @@
         "2016",
         "CHF",
         "million",
-        "Underlying Trading operating profit"
+        "underlying trading operating profit"
       ],
       "number": "14307",
       "protection": "admin_protection",
@@ -945,7 +1212,7 @@
         "2016",
         "CHF",
         "million",
-        "Trading operating profit"
+        "trading operating profit"
       ],
       "number": "13693",
       "protection": "admin_protection",
@@ -957,7 +1224,7 @@
         "2016",
         "CHF",
         "million",
-        "Taxes"
+        "taxes"
       ],
       "number": "4413",
       "protection": "admin_protection",
@@ -969,7 +1236,7 @@
         "2016",
         "CHF",
         "million",
-        "Profit for the year attributable to shareholders of the parent (Net profit)"
+        "profit for the year attributable to shareholders of the parent (net profit)"
       ],
       "number": "8531",
       "protection": "admin_protection",
@@ -981,7 +1248,7 @@
         "2016",
         "CHF",
         "million",
-        "Total amount of dividend"
+        "total amount of dividend"
       ],
       "number": "7126",
       "protection": "admin_protection",
@@ -993,7 +1260,7 @@
         "2016",
         "CHF",
         "million",
-        "Depreciation of property, plant and equipment"
+        "depreciation of property, plant and equipment"
       ],
       "number": "2795",
       "protection": "admin_protection",
@@ -1005,7 +1272,7 @@
         "2015",
         "CHF",
         "million",
-        "Current assets"
+        "current assets"
       ],
       "number": "29434",
       "protection": "admin_protection",
@@ -1017,7 +1284,7 @@
         "2015",
         "CHF",
         "million",
-        "Non-current assets"
+        "non-current assets"
       ],
       "number": "94558",
       "protection": "admin_protection",
@@ -1029,7 +1296,7 @@
         "2015",
         "CHF",
         "million",
-        "Total assets"
+        "total assets"
       ],
       "number": "123992",
       "protection": "admin_protection",
@@ -1041,7 +1308,7 @@
         "2015",
         "CHF",
         "million",
-        "Current liabilities"
+        "current liabilities"
       ],
       "number": "33321",
       "protection": "admin_protection",
@@ -1053,7 +1320,7 @@
         "2015",
         "CHF",
         "million",
-        "Non-current liabilities"
+        "non-current liabilities"
       ],
       "number": "26685",
       "protection": "admin_protection",
@@ -1065,7 +1332,7 @@
         "2015",
         "CHF",
         "million",
-        "Equity attributable to shareholders of the parent"
+        "equity attributable to shareholders of the parent"
       ],
       "number": "62338",
       "protection": "admin_protection",
@@ -1077,7 +1344,7 @@
         "2015",
         "CHF",
         "million",
-        "Non-controlling interests"
+        "non-controlling interests"
       ],
       "number": "1648",
       "protection": "admin_protection",
@@ -1089,7 +1356,7 @@
         "2015",
         "CHF",
         "million",
-        "Net financial debt"
+        "net financial debt"
       ],
       "number": "15425",
       "protection": "admin_protection",
@@ -1101,7 +1368,7 @@
         "2015",
         "CHF",
         "million",
-        "Operating cash flow"
+        "operating cash flow"
       ],
       "number": "14302",
       "protection": "admin_protection",
@@ -1113,7 +1380,7 @@
         "2015",
         "CHF",
         "million",
-        "Free cash flow"
+        "free cash flow"
       ],
       "number": "9945",
       "protection": "admin_protection",
@@ -1125,7 +1392,7 @@
         "2015",
         "CHF",
         "million",
-        "Capital additions"
+        "capital additions"
       ],
       "number": "4883",
       "protection": "admin_protection",
@@ -1149,7 +1416,7 @@
         "2015",
         "CHF",
         "million",
-        "Underlying Trading operating profit"
+        "underlying trading operating profit"
       ],
       "number": "14032",
       "protection": "admin_protection",
@@ -1161,7 +1428,7 @@
         "2015",
         "CHF",
         "million",
-        "Trading operating profit"
+        "trading operating profit"
       ],
       "number": "13382",
       "protection": "admin_protection",
@@ -1173,7 +1440,7 @@
         "2015",
         "CHF",
         "million",
-        "Taxes"
+        "taxes"
       ],
       "number": "3305",
       "protection": "admin_protection",
@@ -1185,7 +1452,7 @@
         "2015",
         "CHF",
         "million",
-        "Profit for the year attributable to shareholders of the parent (Net profit)"
+        "profit for the year attributable to shareholders of the parent (net profit)"
       ],
       "number": "9066",
       "protection": "admin_protection",
@@ -1197,7 +1464,7 @@
         "2015",
         "CHF",
         "million",
-        "Total amount of dividend"
+        "total amount of dividend"
       ],
       "number": "6937",
       "protection": "admin_protection",
@@ -1209,7 +1476,7 @@
         "2015",
         "CHF",
         "million",
-        "Depreciation of property, plant and equipment"
+        "depreciation of property, plant and equipment"
       ],
       "number": "2861",
       "protection": "admin_protection",
@@ -1221,7 +1488,7 @@
         "2014",
         "CHF",
         "million",
-        "Current assets"
+        "current assets"
       ],
       "number": "33961",
       "protection": "admin_protection",
@@ -1233,7 +1500,7 @@
         "2014",
         "CHF",
         "million",
-        "Non-current assets"
+        "non-current assets"
       ],
       "number": "99489",
       "protection": "admin_protection",
@@ -1245,7 +1512,7 @@
         "2014",
         "CHF",
         "million",
-        "Total assets"
+        "total assets"
       ],
       "number": "133450",
       "protection": "admin_protection",
@@ -1257,7 +1524,7 @@
         "2014",
         "CHF",
         "million",
-        "Current liabilities"
+        "current liabilities"
       ],
       "number": "32895",
       "protection": "admin_protection",
@@ -1269,7 +1536,7 @@
         "2014",
         "CHF",
         "million",
-        "Non-current liabilities"
+        "non-current liabilities"
       ],
       "number": "28671",
       "protection": "admin_protection",
@@ -1281,7 +1548,7 @@
         "2014",
         "CHF",
         "million",
-        "Equity attributable to shareholders of the parent"
+        "equity attributable to shareholders of the parent"
       ],
       "number": "70130",
       "protection": "admin_protection",
@@ -1293,7 +1560,7 @@
         "2014",
         "CHF",
         "million",
-        "Non-controlling interests"
+        "non-controlling interests"
       ],
       "number": "1754",
       "protection": "admin_protection",
@@ -1305,7 +1572,7 @@
         "2014",
         "CHF",
         "million",
-        "Net financial debt"
+        "net financial debt"
       ],
       "number": "12325",
       "protection": "admin_protection",
@@ -1317,7 +1584,7 @@
         "2014",
         "CHF",
         "million",
-        "Operating cash flow"
+        "operating cash flow"
       ],
       "number": "14700",
       "protection": "admin_protection",
@@ -1329,7 +1596,7 @@
         "2014",
         "CHF",
         "million",
-        "Free cash flow"
+        "free cash flow"
       ],
       "number": "14137",
       "protection": "admin_protection",
@@ -1341,7 +1608,7 @@
         "2014",
         "CHF",
         "million",
-        "Capital additions"
+        "capital additions"
       ],
       "number": "3914",
       "protection": "admin_protection",
@@ -1365,7 +1632,7 @@
         "2014",
         "CHF",
         "million",
-        "Underlying Trading operating profit"
+        "underlying trading operating profit"
       ],
       "number": "14816",
       "protection": "admin_protection",
@@ -1377,7 +1644,7 @@
         "2014",
         "CHF",
         "million",
-        "Trading operating profit"
+        "trading operating profit"
       ],
       "number": "14019",
       "protection": "admin_protection",
@@ -1389,7 +1656,7 @@
         "2014",
         "CHF",
         "million",
-        "Taxes"
+        "taxes"
       ],
       "number": "3367",
       "protection": "admin_protection",
@@ -1401,7 +1668,7 @@
         "2014",
         "CHF",
         "million",
-        "Profit for the year attributable to shareholders of the parent (Net profit)"
+        "profit for the year attributable to shareholders of the parent (net profit)"
       ],
       "number": "14456",
       "protection": "admin_protection",
@@ -1413,7 +1680,7 @@
         "2014",
         "CHF",
         "million",
-        "Total amount of dividend"
+        "total amount of dividend"
       ],
       "number": "6950",
       "protection": "admin_protection",
@@ -1425,7 +1692,7 @@
         "2014",
         "CHF",
         "million",
-        "Depreciation of property, plant and equipment"
+        "depreciation of property, plant and equipment"
       ],
       "number": "2782",
       "protection": "admin_protection",
@@ -1437,7 +1704,7 @@
         "2013",
         "CHF",
         "million",
-        "Current assets"
+        "current assets"
       ],
       "number": "30066",
       "protection": "admin_protection",
@@ -1449,7 +1716,7 @@
         "2013",
         "CHF",
         "million",
-        "Non-current assets"
+        "non-current assets"
       ],
       "number": "90376",
       "protection": "admin_protection",
@@ -1461,7 +1728,7 @@
         "2013",
         "CHF",
         "million",
-        "Total assets"
+        "total assets"
       ],
       "number": "120442",
       "protection": "admin_protection",
@@ -1473,7 +1740,7 @@
         "2013",
         "CHF",
         "million",
-        "Current liabilities"
+        "current liabilities"
       ],
       "number": "32917",
       "protection": "admin_protection",
@@ -1485,7 +1752,7 @@
         "2013",
         "CHF",
         "million",
-        "Non-current liabilities"
+        "non-current liabilities"
       ],
       "number": "23386",
       "protection": "admin_protection",
@@ -1497,7 +1764,7 @@
         "2013",
         "CHF",
         "million",
-        "Equity attributable to shareholders of the parent"
+        "equity attributable to shareholders of the parent"
       ],
       "number": "62575",
       "protection": "admin_protection",
@@ -1509,7 +1776,7 @@
         "2013",
         "CHF",
         "million",
-        "Non-controlling interests"
+        "non-controlling interests"
       ],
       "number": "1564",
       "protection": "admin_protection",
@@ -1521,7 +1788,7 @@
         "2013",
         "CHF",
         "million",
-        "Net financial debt"
+        "net financial debt"
       ],
       "number": "14690",
       "protection": "admin_protection",
@@ -1533,7 +1800,7 @@
         "2013",
         "CHF",
         "million",
-        "Operating cash flow"
+        "operating cash flow"
       ],
       "number": "14992",
       "protection": "admin_protection",
@@ -1545,7 +1812,7 @@
         "2013",
         "CHF",
         "million",
-        "Free cash flow"
+        "free cash flow"
       ],
       "number": "10486",
       "protection": "admin_protection",
@@ -1557,7 +1824,7 @@
         "2013",
         "CHF",
         "million",
-        "Capital additions"
+        "capital additions"
       ],
       "number": "4928",
       "protection": "admin_protection",
@@ -1581,7 +1848,7 @@
         "2013",
         "CHF",
         "million",
-        "Underlying Trading operating profit"
+        "underlying trading operating profit"
       ],
       "number": "14892",
       "protection": "admin_protection",
@@ -1593,7 +1860,7 @@
         "2013",
         "CHF",
         "million",
-        "Trading operating profit"
+        "trading operating profit"
       ],
       "number": "14047",
       "protection": "admin_protection",
@@ -1605,7 +1872,7 @@
         "2013",
         "CHF",
         "million",
-        "Taxes"
+        "taxes"
       ],
       "number": "3256",
       "protection": "admin_protection",
@@ -1617,7 +1884,7 @@
         "2013",
         "CHF",
         "million",
-        "Profit for the year attributable to shareholders of the parent (Net profit)"
+        "profit for the year attributable to shareholders of the parent (net profit)"
       ],
       "number": "10015",
       "protection": "admin_protection",
@@ -1629,7 +1896,7 @@
         "2013",
         "CHF",
         "million",
-        "Total amount of dividend"
+        "total amount of dividend"
       ],
       "number": "6863",
       "protection": "admin_protection",
@@ -1641,7 +1908,7 @@
         "2013",
         "CHF",
         "million",
-        "Depreciation of property, plant and equipment"
+        "depreciation of property, plant and equipment"
       ],
       "number": "2864",
       "protection": "admin_protection",

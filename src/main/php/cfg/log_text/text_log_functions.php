@@ -40,10 +40,12 @@ include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VIEW . 'view.php';
+//include_once html_paths::HTML . 'html_base.php';
 //include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -53,7 +55,9 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
@@ -162,8 +166,10 @@ function log_err(string $msg_text,
                  string $trace = '',
                  ?user  $calling_usr = null): string
 {
-    global $errors;
-    $errors++;
+    global $sys;
+    if ($sys !== null) {
+        $sys->errors++;
+    }
     // TODO move the next lines to a class and a private function "get_function_name"
     $lib = new library();
     if ($function_name == '' or $function_name == null) {
@@ -238,7 +244,7 @@ function log_fatal(string $msg_text,
                    string $trace = '',
                    ?user  $calling_usr = null): string
 {
-    $time = (new DateTime())->format('c');
+    $time = new DateTime()->format('c');
     echo $time . ': FATAL ERROR! ' . $msg_text . "\n";
     $STDERR = fopen('error.log', 'a');
     fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n");
@@ -362,7 +368,11 @@ function log_msg(string  $msg_text,
                     $sys_log_fnc->name = $function_name;
                     $sys_log_fnc->code_id = $function_name;
                     $msg->usr = $sys->user_log();
-                    $sys_log_fnc->save($msg);
+                    // for saving a new function name a system user is needed
+                    $sys_msg = clone $msg;
+                    $sys_msg->usr = $sys->system_user();
+                    $sys_log_fnc->save($sys_msg);
+                    $msg->merge($sys_msg);
                     $sys->typ_lst->sys_log_fnc->add($sys_log_fnc, false);
                 }
 
@@ -373,7 +383,11 @@ function log_msg(string  $msg_text,
             if ($msg_log_level >= text_log::MSG_LEVEL) {
                 echo "Zukunft.com has detected a critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
                 if ($sys_log->id > 0) {
-                    echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log->id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log->id . '</a><br>';
+                    $html = new html_base();
+                    $url_rel = api::SCRIPT_PATH . api::ERROR_LOG_SCRIPT. '?' . url_var::ID . '=' . $sys_log->id;
+                    $url = THIS_URL . $url_rel;
+                    $ref = $html->ref($url_rel, $url);
+                    echo 'You can track the solving of the error with this link: ' . $ref . '<br>';
                 }
             } else {
                 if ($msg_log_level >= text_log::DSP_LEVEL) {

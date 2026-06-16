@@ -5,6 +5,8 @@
     model/element/element.php - either a word, triple, verb or formula with a link to a formula
     -------------------------
 
+    $elm is the suggested var name
+
     formula elements are terms or expression operators such as add or brackets
     The term formula elements are saved in the database for fast detection of dependencies
     formula elements are terms with a link to a formula

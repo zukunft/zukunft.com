@@ -835,27 +835,38 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * can merge if all unique keys match
-     * check that the given object is by all unique keys the same as the actual object
+     * check that the given object links by all unique keys exactly the same as this link
+     * so that the two objects can be merged instead of creating a duplicate link
+     * the base sandbox::is_same already compares the class and the linked from and to ids
+     * (via is_same_std), so here only the link type is added as an additional unique key
+     * for predicated links (e.g. ref) where the same from and to can be linked with different types
+     * TODO Prio 2 check additional as a seconde line of defence that the from and to objects have the same class
+     *             and if not create a message to the user
      * @param sandbox_link|combine_named|type_object|sandbox|null $obj_to_check the object used for the comparison
-     * @return bool true if the objects should not be in the database at the same time
+     * @return bool true if the given object links exactly the same objects as this object
      */
     function is_same(sandbox_link|combine_named|type_object|sandbox|null $obj_to_check): bool
     {
         $result = parent::is_same($obj_to_check);
 
-        if ($this::class == $obj_to_check::class) {
-            if ($this->fob?->is_same($obj_to_check->fob) or $this->tob?->is_same($obj_to_check->tob)) {
-                if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
-                    if ($this->predicate_id != $obj_to_check->predicate_id) {
-                        $result = false;
-                    }
-                } else {
+        // for predicated links (e.g. ref) the link type must match too to be the same link
+        if ($result) {
+            if ($this::class != $obj_to_check::class) {
+                $result = false;
+            } else {
+                if ($this->fob == null or $obj_to_check->fob == null
+                    or $this->tob == null or $obj_to_check->tob == null) {
+                    // TODO Prio 3 add error message that an object is missing
                     $result = false;
+                } else {
+                    // the from and to objects have no name set if reloaded via row_mapper_sandbox so tha is_same check cannot be done on the object
+                    if (in_array($this::class, def::LINK_TYPE_CLASSES)) {
+                        if ($this->predicate_id != $obj_to_check->predicate_id) {
+                            $result = false;
+                        }
+                    }
                 }
             }
-        } else {
-            $result = false;
         }
 
         return $result;
@@ -1913,7 +1924,8 @@ class sandbox_link extends sandbox
      *                              of the internal error that an overwrite is missing to interrupt the workflow
      * @return bool true if no preserved link of link name is used and the link can be saved to the database
      */
-    protected function check_save(user_message $usr_msg): bool
+    protected
+    function check_save(user_message $usr_msg): bool
     {
         return true;
     }

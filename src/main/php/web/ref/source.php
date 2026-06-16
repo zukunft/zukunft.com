@@ -5,6 +5,8 @@
     web/ref/source.php - the extension of the source API objects to create source base html code
     ------------------
 
+    $src is the suggested var name
+
     The main sections of this object are
     - object vars:       the variables of this word object
     - set and get:       to capsule the vars from unexpected changes
@@ -79,6 +81,7 @@ class source extends sandbox_code_id
     const string VIEW_ADD = views::SOURCE_ADD;
     const string VIEW_EDIT = views::SOURCE_EDIT;
     const string VIEW_DEL = views::SOURCE_DEL;
+    const int VIEW_EDIT_ID = views::SOURCE_EDIT_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::SOURCE_ADD;
@@ -219,9 +222,9 @@ class source extends sandbox_code_id
     {
         $used_source_type_id = $this->type_id();
         if ($used_source_type_id == null) {
-            $used_source_type_id = $typ_lst->html_source_types->default_id();
+            $used_source_type_id = $typ_lst->src_typ->default_id();
         }
-        return $typ_lst->html_source_types->selector($form, $used_source_type_id);
+        return $typ_lst->src_typ->selector($form, $used_source_type_id);
     }
 
     /**

@@ -5,6 +5,8 @@
     web/frontend.php - the main html frontend application
     ----------------
 
+    $ui is the suggested var name
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -33,6 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\web;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::WEB_CONST . 'paths.php';
 
@@ -53,13 +56,19 @@ include_once html_paths::HELPER . 'url_mapper.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
+include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FORMULA . 'formula_link.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'type_list.php';
@@ -89,14 +98,24 @@ include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::SYSTEM . 'job.php';
+include_once html_paths::SYSTEM . 'language.php';
+include_once html_paths::SYSTEM . 'sys_log.php';
+include_once html_paths::VIEW . 'view_relation.php';
+include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 //include_once test_paths::CONST . 'files.php';
+// to avoid that names used for testing are used in production
+include_once test_paths::CONST . 'formula_names.php';
+include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'languages.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
@@ -113,56 +132,75 @@ include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call;
-use Zukunft\ZukunftCom\main\php\web\view\view_list;
-use Zukunft\ZukunftCom\test\php\const\files as test_files;
-use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
-use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
-use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
-use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
-use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
-use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
-use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
-use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_ui;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\files;
-use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
-use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
-use Zukunft\ZukunftCom\main\php\shared\helper\Message;
-use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
-use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
-use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
-
+// cfg group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log as sys_log_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
-use Random\RandomException;
+// web group (alphabetic by FQN)
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
+use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
+use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list as sandbox_list_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_ui;
+use Zukunft\ZukunftCom\main\php\web\system\job as job_ui;
+use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+// shared group (alphabetic by FQN)
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+// test group (alphabetic by FQN)
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use DateTime;
 use Exception;
+use Random\RandomException;
 
 class frontend
 {
@@ -173,16 +211,6 @@ class frontend
 
     const string PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
 
-
-    /*
-     * servers
-     */
-
-    // TODO Prio 1 review (get from .env and not move to application.yaml and detect and fix it on initial program start)
-    const string HOST_DEV = 'http://localhost/';
-    const string HOST_UAT = 'https://test.zukunft.com/';
-    const string HOST_PROD = 'https://www.zukunft.com/';
-    const string HOST_SYS_LOG = '';
 
     /*
      * vars
@@ -231,18 +259,17 @@ class frontend
      */
 
     /**
-     * TODO to be deprecated
+     * TODO Prio 3 to be deprecated and replaced with ?
      * start a frontend session with direct db access
      *
-     * @param string $code_name
+     * @param string $code_name the unique identifier for the initial called code part
      * @param Message $msg to collect any messages and suggested solutions for the user
+     * @param array $url_arr the parameters given with the url for the request
      * @return sql_db
      */
-    function start(string $code_name, Message $msg = new Message()): sql_db
+    function start(string $code_name, Message $msg = new Message(), array $url_arr = []): sql_db
     {
         global $sys;
-        global $errors;
-
         $sys->script = $code_name;
         $sys->times->switch(system_time_type::INIT);
 
@@ -256,12 +283,12 @@ class frontend
             } catch (RandomException $e) {
                 log_err('RandomException ' . $e->getMessage());
             }
-        } elseif (!empty($_POST[url_var::SESSION_TOKEN])) {
+        } elseif (!empty($url_arr[url_var::SESSION_TOKEN])) {
             // TODO Prio 0 add the session token to each frontend form
-            if (!hash_equals($_SESSION[url_var::SESSION_TOKEN], $_POST[url_var::SESSION_TOKEN])) {
+            if (!hash_equals($_SESSION[url_var::SESSION_TOKEN], $url_arr[url_var::SESSION_TOKEN])) {
                 $msg_txt = 'Suspect request. Please close browser, delete cache and login again.';
                 log_fatal($msg_txt, 'view.php');
-                log_fatal('session token is' . $_SESSION[url_var::SESSION_TOKEN] . ' but POST token is ' . $_POST[url_var::SESSION_TOKEN], 'view.php');
+                log_fatal('session token is' . $_SESSION[url_var::SESSION_TOKEN] . ' but POST token is ' . $url_arr[url_var::SESSION_TOKEN], 'view.php');
                 $session_is_fine = false;
             }
         }
@@ -281,9 +308,7 @@ class frontend
             log_info('environment ' . getenv(ENVIRONMENT));
         }
 
-        $sys->pod_name = $code_name;
-
-        $errors = 0;
+        $sys->pod_name = POD_NAME;
 
         log_debug($code_name . ': session_start');
 
@@ -304,7 +329,7 @@ class frontend
     }
 
     /**
-     * TODO to be deprecated
+     * TODO Prio 1 to be deprecated and use the api only for the frontend
      * open the database connection and load the base cache
      * @param string $code_name the place that is displayed to the user e.g. add word
      * @return sql_db the open database connection
@@ -312,8 +337,8 @@ class frontend
     private function open_db(string $code_name): sql_db
     {
 
-        global $sys;       // the global system time control including the preloaded types
-        global $db_con;    // the database connection
+        global $db_con;    // the global database connection
+        global $sys;       // the backend system control object with the preloaded types
         global $cac;       // the global user data cache including the system views
         global $cfg;       // the user configuration values
         global $mtr;       // the translation object
@@ -354,9 +379,10 @@ class frontend
 
             // load system configuration
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+            $sys->load_cache_type($db_con);
             // TODO cache the system config json and detect
             $cfg = new config_numbers($usr_sys);
-            $cfg->load_cfg($usr_sys);
+            $cfg->load_cfg(null, $usr_sys);
             $mtr = new Translator($cfg->language());
 
             // preload all types from the database
@@ -410,9 +436,9 @@ class frontend
 
         // html header
         $html = new html_base();
-        echo $html->header($title, '', api::HOST_DEV, api::BS_PATH_DEV, api::BS_CSS_PATH_DEV);
+        echo $html->header($title, '', language_codes::SYS, THIS_URL);
 
-        if (self::HOST_SYS_LOG != '') {
+        if (SYS_LOG_URL != '') {
             $result .= $this->log_info('start ' . $this->code_name);
         }
         return $result;
@@ -446,7 +472,7 @@ class frontend
         // Closing connection
         $db_con->close();
 
-        if (self::HOST_SYS_LOG != '') {
+        if (SYS_LOG_URL != '') {
             return $this->log_info('end ' . $this->code_name);
         } else {
             return '';
@@ -460,7 +486,6 @@ class frontend
     function load_cache(): user_message
     {
         global $sys;
-
         $sys->times->switch(system_time_type::LOAD_FRONTEND);
         $msg = new user_message();
         if ($this->dto?->typ_lst_cache == null) {
@@ -548,7 +573,6 @@ class frontend
 
     function get_user(): user_ui
     {
-        global $usr;
         $usr = new user_ui();
         return $usr;
     }
@@ -559,51 +583,59 @@ class frontend
      */
 
     /**
-     * execute database updates via api
+     * execute the user request e.g. a database update and create the url for the next page
+     * the execution should be done via api
      *
-     * @param string $action the standard action
-     * @param user_ui $usr the session user who has requested the view
+     * @param array $url_array the parsed url as an array
+     * @param user_backend $usr_backend the backend user object updated in-place on successful login
+     * @param user_ui $usr the frontend user object updated in-place on successful login
      * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
-     * @return string the html code to show the page to the user
+     * @param bool $do_it can be set to false for unit testing without executing the exaction
+     * @return array the url array to display the result and the next step
      */
-    function url_to_action(
-        string       $action,
-        string       $step,
-        db_object_ui $dbo,
+    function  url_to_action(
         array        $url_array,
+        user_backend &$usr_backend,
+        user_ui      &$usr,
         user_message $usr_msg,
-        string       $back
-    ): string
+        data_object  $dto = new data_object(),
+        bool         $do_it = true
+    ): array
     {
-        $url = ''; // the follow-up url
+        // init the url to show the result to the user and for the next step
+        $url = $url_array;
 
-        // save form action
-        // if the save bottom has been pressed
-        if ($step > 0 and $action == url_var::CRUD_CREATE) {
-            $dbo->url_mapper($url_array, $usr_msg);
-            $upd_result = new user_message();
-            // $upd_result = $dbo->add_via_api();
+        // detect the url format and map it to standard keys
+        $url_map = new url_mapper();
+        $url_array = $url_map->url_to_standard($url_array, $usr_msg);
 
-            // if update was fine ...
-            if ($upd_result->is_ok()) {
-                // TODO Prio 0 get the id from the result
-                //$id = $dbo->id();
-                $id = 0;
-                // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
-                // switched off because maybe staying on the edit page is the expected behaviour
-                if ($back == '' or $back == 0) {
-                    $view_id = views::START_ID;
-                }
-                //$result .= dsp_go_back($back, $usr);
-            } else {
-                // ... or in case of a problem prepare to show the message
-                $msg = $upd_result->get_last_message();
-            }
-        }
+        // get vars for the main entries just to make code more readable
+        $view = $url_array[url_var::MASK];
+        $step = $url_array[url_var::STEP];
+        $action = $url_array[url_var::ACTION] ?? null;
+        $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
+        $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
+
+        match (true) {
+            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $usr_msg, $usr_backend, $usr, $do_it),
+            $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $usr_msg, $usr_backend, $usr, $do_it),
+            $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $usr_msg, $usr_backend, $usr, $do_it),
+            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr, $usr_msg, $do_it),
+            $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $usr_msg, $do_it),
+            $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $usr_backend, $usr_msg, $do_it),
+            in_array($view, views::ADD_MASKS_IDS) => $url = $this->action_crud(
+                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
+            in_array($view, views::EDIT_MASKS_IDS) => $url = $this->action_crud(
+                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_UPDATE, $do_it),
+            in_array($view, views::DEL_MASKS_IDS) => $url = $this->action_crud(
+                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_DELETE, $do_it),
+            default => null
+        };
 
         return $url;
     }
+
 
     /*
      * view
@@ -615,14 +647,14 @@ class frontend
      * TODO add the db update via api
      *
      * @param array $url_array the parsed url as an array
-     * @param user_ui $usr the session user who has requested the view
+     * @param user_ui|null $usr the session user who has requested the view
      * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @return string the html code to show the page to the user
      */
     function url_to_html(
         array        $url_array,
-        user_ui      $usr,
+        user_ui|null      $usr,
         user_message $usr_msg,
         data_object  $dto = new data_object()
     ): string
@@ -636,15 +668,13 @@ class frontend
         // detect the url format and map it to standard keys
         $url_map = new url_mapper();
         $url_array = $url_map->url_to_standard($url_array, $usr_msg);
-        if (!$usr_msg->is_ok()) {
-            $msg_txt = $usr_msg->var_message_text();
-        }
 
         // get vars for the main entries just to make code more readable
         $view = $url_array[url_var::MASK];
         $step = $url_array[url_var::STEP];
         $action = $url_array[url_var::ACTION] ?? null;
         $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
+        $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
 
         $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
         $view_words = $url_array[url_var::WORDS] ?? '';
@@ -664,13 +694,21 @@ class frontend
             $view = views::START_ID;
         }
 
-        // get the view id if the view code id is used
-        // TODO Prio 1 move to url_to_standard
+        // the view cache must be loaded (via load_cache or load_dummy_cache_from_test_resources) before rendering
+        if ($this->dto?->typ_lst_cache == null) {
+            return log_err('frontend view cache not loaded before url_to_html for view "' . $view . '"',
+                'frontend->url_to_html');
+        }
+
+        // get the view, id and code if the view code id or id is used
         if (is_numeric($view)) {
             $view_id = $view;
+            $msk = $this->dto->typ_lst_cache->get_view_by_id($view_id);
+            $view_code_id = $msk?->code_id ?? '';
         } else {
             $msk = $this->dto->typ_lst_cache->get_view($view);
             $view_id = $msk->id();
+            $view_code_id = $view;
         }
 
         // select the main object to display
@@ -680,7 +718,9 @@ class frontend
         // if the save bottom has been pressed
         if ($step > 0 and $action == url_var::CRUD_CREATE) {
             $dbo->url_mapper($url_array, $usr_msg, $dto);
-            $upd_result = $dbo->add_via_api($usr, $usr_msg);
+            if ($usr != null) {
+                $upd_result = $dbo->add_via_api($usr, $usr_msg);
+            }
 
             // if update was fine ...
             if ($upd_result->is_ok()) {
@@ -705,13 +745,19 @@ class frontend
             // if only the id is included in the url load the data via api
             // TODO Prio 1 why? better always reload from db
             if (count($url_array) <= 3) {
-                $dbo->load_by_id($id);
+                if (in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
+                    $dbo->load_by_id($id);
+                } else {
+                    $dbo->load_by_id_with_related($id);
+                }
             } else {
                 $dbo->url_mapper($url_array, $usr_msg, $dto);
             }
         } else {
             // get last term used by the user or a default value
-            $wrd = $usr->last_term();
+            if ($usr != null) {
+                $wrd = $usr->last_term();
+            }
         }
 
         // select the view
@@ -756,19 +802,46 @@ class frontend
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
                 $title = $msk_ui->title($dbo);
-                $dsp_text = $msk_ui->show($dbo, $dto, $back);
+                $dsp_text = $msk_ui->show($dbo, $dto, $back, '', false, $url_array);
 
                 // use a fallback if the view is empty
                 if ($dsp_text == '' or $msk_ui->name() == '') {
-                    $msk_ui = $this->dto->typ_lst_cache->get_view(views::START);
-                    $dsp_text = $msk_ui->name_tip($dbo, $back);
+                    $dsp_text = $msk_ui->name_tip();
                 }
                 if ($dsp_text == '') {
                     $result .= 'Please add a component to the view by clicking on Edit on the top right.';
                 } else {
                     $html = new html_base();
-                    $result .= $html->header($title, '');
-                    $result .= $dsp_text;
+                    $result .= $html->header($title, '', $lan);
+                    if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
+                        $logged_in = $usr !== null && !$usr->is_ip_only();
+                        $result .= $html->navbar($view_id, $url_array,
+                            $logged_in ? $usr->name() : null,
+                            $logged_in ? $usr->navbar_role() : null);
+                    }
+                    $result .= $html->main($dsp_text);
+                    if ($usr_msg->has_info()) {
+                        $msg_txt = $usr_msg->get_last_message_translated();
+                        if ($msg_txt === '') {
+                            $msg_txt = $usr_msg->get_last_message();
+                        }
+                        if ($msg_txt === '') {
+                            $msg_txt = $usr_msg->get_last_info();
+                        }
+                        if ($msg_txt !== '') {
+                            if ($usr_msg->has_msg_id(msg_id::PASSWORD_WRONG)) {
+                                $reset_link = $html->ref(
+                                    api::RESET_SCRIPT,
+                                    msg_id::PASSWORD_WRONG->value,
+                                    msg_id::PASSWORD_WRONG_TITLE->value
+                                );
+                                $notification_html = htmlspecialchars(msg_id::LOGIN_FAILED->value . '. ') . $reset_link;
+                                $result .= $html->dsp_notification_html($notification_html);
+                            } else {
+                                $result .= $html->dsp_notification($msg_txt);
+                            }
+                        }
+                    }
                     $result .= $html->footer();
                 }
             }
@@ -789,6 +862,466 @@ class frontend
     /*
      * execute
      */
+
+    /**
+     * validate credentials, start the session, and return the URL to redirect to after login
+     * TODO Prio 2 review and try to avoid the backend frontend mix for user returns
+     *
+     * @param array $url_array the normalised URL params including username and password
+     * @param user_message $usr_msg collects errors if login fails
+     * @param user_backend $usr_backend updated in-place with the logged-in user on success
+     * @param user_ui $usr_ui updated in-place from the backend user's api_json on success
+     * @param bool $do_it false for unit tests that should not touch the session
+     * @return array URL array pointing to the back page on success, or the original login URL (minus credentials) on failure
+     */
+    private function action_login(
+        array        $url_array,
+        user_message $usr_msg,
+        user_backend &$usr_backend,
+        user_ui      &$usr_ui,
+        bool         $do_it
+    ): array
+    {
+        // no 'htmlspecialchars()' to avoid converting usernames like O'Brien or a&b before writing to the database
+        // SQL injection protection is done be using only prepared queries
+        $usr_name = $url_array[url_var::USERNAME] ?? $url_array[url_var::USERNAME_HUMAN] ?? '';
+        $pw = $url_array[url_var::USER_PASSWORD] ?? $url_array[url_var::USER_PASSWORD_HUMAN] ?? '';
+        $logged_in = false;
+
+        if ($do_it) {
+            $db_usr = new user_backend();
+            $login_msg = new backend_user_message();
+            $logged_in = $db_usr->login($usr_name, $pw, $login_msg);
+            if ($logged_in) {
+                $usr_backend = $db_usr;
+                $usr_ui->set_from_json($db_usr->api_json(), $usr_msg);
+            } else {
+                $msg_login_ui = new user_message();
+                $msg_login_ui->api_mapper($login_msg->api_array());
+                $usr_msg->merge($msg_login_ui);
+            }
+        }
+
+        if ($logged_in) {
+            $back_array = html_base::url_par_from_back_part($url_array);
+            $next_url = empty($back_array) ? [url_var::MASK => views::LOGIN_ID] : $back_array;
+        } else {
+            // strip credentials so they don't leak into the rendered page; preserve the mask and 9-prefixed back params
+            $next_url = $url_array;
+            unset($next_url[url_var::USERNAME], $next_url[url_var::USERNAME_HUMAN]);
+            unset($next_url[url_var::USER_PASSWORD], $next_url[url_var::USER_PASSWORD_HUMAN]);
+            unset($next_url[url_var::SESSION_TOKEN], $next_url[url_var::POST_SUBMIT]);
+        }
+        return $next_url;
+    }
+
+    /**
+     * validate the signup form, create the user account, auto-login, and return the next URL
+     *
+     * @param array $url_array the normalised URL params including username, email, and passwords
+     * @param user_message $usr_msg collects validation errors or save failures
+     * @param user_backend $usr_backend updated in-place with the new user on success
+     * @param user_ui $usr_ui updated in-place from the new user's api_json on success
+     * @param bool $do_it false for unit tests that should not touch the database or session
+     * @return array URL array pointing to the back page on success, or the signup page (minus passwords) on failure
+     */
+    private function action_signup(
+        array        $url_array,
+        user_message $usr_msg,
+        user_backend &$usr_backend,
+        user_ui      &$usr_ui,
+        bool         $do_it
+    ): array
+    {
+        // no htmlspecialchars() — SQL injection is handled by prepared queries; output escaping happens in form_input()
+        $usr_name = $url_array[url_var::USERNAME] ?? $url_array[url_var::USERNAME_HUMAN] ?? '';
+        $email = $url_array[url_var::EMAIL] ?? $url_array[url_var::EMAIL_HUMAN] ?? '';
+        $pw = $url_array[url_var::USER_PASSWORD] ?? $url_array[url_var::USER_PASSWORD_HUMAN] ?? '';
+        $pw_re = $url_array[url_var::USER_PASSWORD_RETYPE] ?? $url_array[url_var::USER_PASSWORD_RETYPE_HUMAN] ?? '';
+        $signed_up = false;
+
+        if ($do_it) {
+            $existing = new user_backend();
+            $existing->load_by_name($usr_name);
+            if ($existing->has_db_id()) {
+                $usr_msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
+            }
+            if (empty($email)) {
+                $usr_msg->add(msg_id::SIGNUP_ERR_EMAIL_EMPTY, []);
+            }
+            if (empty($pw)) {
+                $usr_msg->add(msg_id::SIGNUP_ERR_PW_EMPTY, []);
+            }
+            if (empty($pw_re)) {
+                $usr_msg->add(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY, []);
+            }
+            if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
+                $usr_msg->add(msg_id::SIGNUP_ERR_PW_MISMATCH, []);
+            }
+
+            if ($usr_msg->is_ok()) {
+                $signup_msg = new backend_user_message();
+                $new_usr = new user_backend();
+                $new_usr->name = $usr_name;
+                $new_usr->email = $email;
+                $new_usr->set_password($pw, $signup_msg);
+                if ($signup_msg->is_ok()) {
+                    $new_usr->save($signup_msg);
+                    $usr_by_name = new user_backend();
+                    $usr_by_name->load_by_name($usr_name);
+                    $usr_id = $usr_by_name->id();
+                    if ($usr_id > 0) {
+                        session_start();
+                        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                            try {
+                                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                            } catch (RandomException $e) {
+                                log_err('RandomException ' . $e->getMessage());
+                            }
+                        }
+                        $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
+                        $_SESSION[url_var::USERNAME_HUMAN] = $usr_name;
+                        $_SESSION[url_var::SESSION_LOGGED] = true;
+                        $usr_backend = $usr_by_name;
+                        $usr_ui->set_from_json($usr_by_name->api_json(), $usr_msg);
+                        $signed_up = true;
+                    } else {
+                        log_err('Cannot find id for ' . $usr_name . ' after signup.', 'action_signup');
+                        $signup_msg->add(msg_id::SIGNUP_ERR_FAILED, []);
+                    }
+                }
+                $msg_signup_ui = new user_message();
+                $msg_signup_ui->api_mapper($signup_msg->api_array());
+                $usr_msg->merge($msg_signup_ui);
+            }
+        }
+
+        if ($signed_up) {
+            $back_array = html_base::url_par_from_back_part($url_array);
+            $next_url = empty($back_array) ? [url_var::MASK => views::START_ID] : $back_array;
+        } else {
+            // strip passwords so they don't leak into the rendered page; preserve mask and 9-prefixed back params
+            $next_url = $url_array;
+            unset($next_url[url_var::USER_PASSWORD], $next_url[url_var::USER_PASSWORD_HUMAN]);
+            unset($next_url[url_var::USER_PASSWORD_RETYPE], $next_url[url_var::USER_PASSWORD_RETYPE_HUMAN]);
+            unset($next_url[url_var::SESSION_TOKEN], $next_url[url_var::POST_SUBMIT]);
+        }
+        return $next_url;
+    }
+
+    /**
+     * validate the activation key, set the new password and auto-login the user
+     * @param array $url_array the normalised URL params; expects id, key, and the two password fields
+     * @param user_message $usr_msg collects validation and save errors shown to the user
+     * @param user_backend $usr_backend updated in-place with the activated user on success
+     * @param user_ui $usr_ui updated in-place from the activated user's api_json on success
+     * @param bool $do_it false for unit tests that should not touch the database or session
+     * @return array URL array pointing to the back page on success, or the activate page (minus passwords) on failure
+     */
+    private function action_login_activate(
+        array        $url_array,
+        user_message $usr_msg,
+        user_backend &$usr_backend,
+        user_ui      &$usr_ui,
+        bool         $do_it
+    ): array
+    {
+        global $mtr;
+
+        $usr_id = (int)($url_array[url_var::ID] ?? 0);
+        $post_key = $url_array[url_var::POST_KEY] ?? '';
+        $pw = $url_array[url_var::USER_PASSWORD] ?? $url_array[url_var::USER_PASSWORD_HUMAN] ?? '';
+        $pw_re = $url_array[url_var::USER_PASSWORD_RETYPE] ?? $url_array[url_var::USER_PASSWORD_RETYPE_HUMAN] ?? '';
+        $activated = false;
+
+        if ($do_it) {
+            if ($usr_id <= 0) {
+                $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_MISSING_ID));
+            } else {
+                $usr = new user_backend();
+                $usr->load_by_id($usr_id);
+                $db_key = $usr->activation_key ?? '';
+                $db_timeout = $usr->activation_timeout;
+                $db_now = $usr->db_now;
+
+                if ($db_key === $post_key && $db_timeout !== null && $db_timeout > $db_now) {
+                    if (empty($pw)) { $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY)); }
+                    if (empty($pw_re)) { $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY)); }
+                    if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
+                        $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_MISMATCH));
+                    }
+
+                    if ($usr_msg->is_ok()) {
+                        $activate_msg = new backend_user_message();
+                        $usr->set_password($pw, $activate_msg);
+                        if ($activate_msg->is_ok()) {
+                            $usr->activation_key = '';
+                            $usr->activation_timeout = new DateTime();
+                            $usr->save($activate_msg);
+                            $usr_by_id = new user_backend();
+                            $usr_by_id->load_by_id($usr_id);
+                            if ($usr_by_id->has_db_id()) {
+                                session_start();
+                                if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                                    try {
+                                        $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                                    } catch (RandomException $e) {
+                                        log_err('RandomException ' . $e->getMessage());
+                                    }
+                                }
+                                $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
+                                $_SESSION[url_var::USERNAME_HUMAN] = $usr_by_id->name();
+                                $_SESSION[url_var::SESSION_LOGGED] = true;
+                                $usr_backend = $usr_by_id;
+                                $usr_ui->set_from_json($usr_by_id->api_json(), $usr_msg);
+                                $activated = true;
+                            } else {
+                                log_err('Cannot find id ' . $usr_id . ' after password change.', 'action_login_activate');
+                                $activate_msg->add_message_text($mtr->txt(msg_id::ACTIVATE_ERR_FAILED));
+                            }
+                        }
+                        $msg_activate_ui = new user_message();
+                        $msg_activate_ui->api_mapper($activate_msg->api_array());
+                        $usr_msg->merge($msg_activate_ui);
+                    }
+                } else {
+                    if ($db_key !== '') {
+                        $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_MISMATCH));
+                    } else {
+                        $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_EXPIRED));
+                    }
+                }
+            }
+        }
+
+        if ($activated) {
+            $back_array = html_base::url_par_from_back_part($url_array);
+            $next_url = empty($back_array) ? [url_var::MASK => views::START_ID] : $back_array;
+        } else {
+            $next_url = $url_array;
+            unset($next_url[url_var::USER_PASSWORD], $next_url[url_var::USER_PASSWORD_HUMAN]);
+            unset($next_url[url_var::USER_PASSWORD_RETYPE], $next_url[url_var::USER_PASSWORD_RETYPE_HUMAN]);
+            unset($next_url[url_var::SESSION_TOKEN], $next_url[url_var::POST_SUBMIT]);
+        }
+        return $next_url;
+    }
+
+    /**
+     * record the logoff time, clear the session and reset both user objects to anonymous IP-only state
+     * mirrors the login process: on login the users are set to the DB user; on logout they are reset to empty
+     * @param user_backend $usr_backend the currently logged-in backend user; last_logoff is saved and object is reset
+     * @param user_ui $usr_ui the frontend user object; reset to an empty (IP-only) object after logout
+     * @param user_message $usr_msg collects errors from saving the logoff time
+     * @param bool $do_it false for unit tests that should not touch the database or session
+     * @return array URL array pointing to the logout confirmation view
+     */
+    private function action_logout(
+        user_backend &$usr_backend,
+        user_ui      &$usr_ui,
+        user_message $usr_msg,
+        bool         $do_it
+    ): array
+    {
+        if ($do_it) {
+            if ($usr_backend->has_db_id()) {
+                $logoff_msg = new backend_user_message();
+                $logoff_msg->usr = $usr_backend;
+                $usr_backend->last_logoff = new DateTime();
+                $usr_backend->save($logoff_msg);
+                $msg_logoff_ui = new user_message();
+                $msg_logoff_ui->api_mapper($logoff_msg->api_array());
+                $usr_msg->merge($msg_logoff_ui);
+            }
+            if (isset($_SESSION)) {
+                $_SESSION = [];
+                session_destroy();
+            }
+        }
+        $usr_backend = new user_backend();
+        $usr_ui = new user_ui();
+        return [url_var::MASK => views::LOGOUT_ID];
+    }
+
+    /**
+     * translate a message for use in outgoing emails: returns the user-language text, or
+     * "user-language / English" when the user language differs from English
+     * @param msg_id $id the message constant to translate
+     * @return string the bilingual text suitable for an email body or subject line
+     */
+    private function mail_txt(msg_id $id): string
+    {
+        global $mtr;
+        $user_txt = $mtr->txt($id);
+        $en_txt = $mtr->txt($id, language_codes::EN);
+        if ($user_txt === $en_txt) {
+            return $user_txt;
+        }
+        return $user_txt . ' / ' . $en_txt;
+    }
+
+    /**
+     * send a password-reset email and redirect to the activation page
+     * @param array $url_array the normalised URL params (expects USERNAME_HUMAN and/or EMAIL_HUMAN)
+     * @param user_message $usr_msg collects errors shown to the user
+     * @param bool $do_it false for unit tests that should not touch the database or send email
+     * @return array URL array for the next page
+     */
+    private function action_login_reset(
+        array        $url_array,
+        user_message $usr_msg,
+        bool         $do_it
+    ): array
+    {
+        global $mtr;
+
+        $usr_name = $url_array[url_var::USERNAME_HUMAN] ?? '';
+        $usr_mail = $url_array[url_var::EMAIL_HUMAN] ?? '';
+        $db_usr = new user_backend();
+        $key = '';
+        $sent = false;
+
+        if ($do_it) {
+            if ($db_usr->load_by_name_or_email($usr_name, $usr_mail)) {
+                $key_ok = true;
+                try {
+                    $key = bin2hex(random_bytes(10));
+                } catch (RandomException $e) {
+                    log_err('RandomException in action_login_reset: ' . $e->getMessage());
+                    $usr_msg->add_message($mtr->txt(msg_id::RESET_ERR_KEY_GEN));
+                    $key_ok = false;
+                }
+                if ($key_ok) {
+                    $timeout = new DateTime();
+                    try {
+                        $timeout->modify('+1 day');
+                    } catch (Exception $e) {
+                        log_err('DateTime modify failed in action_login_reset: ' . $e->getMessage());
+                    }
+                    $db_usr->activation_key = $key;
+                    $db_usr->activation_timeout = $timeout;
+                    $reset_msg = new backend_user_message();
+                    $db_usr->save($reset_msg);
+                    $msg_reset_ui = new user_message();
+                    $msg_reset_ui->api_mapper($reset_msg->api_array());
+                    $usr_msg->merge($msg_reset_ui);
+
+                    if ($usr_msg->is_ok()) {
+                        $activate_url = POD_NAME . api::LOGIN_ACTIVATE_FORWARD
+                            . url_var::PAR . url_var::ID . url_var::EQ . $db_usr->id
+                            . '&' . url_var::POST_KEY . url_var::EQ . $key;
+                        $mail_subject = POD_NAME . ' - ' . $this->mail_txt(msg_id::RESET_MAIL_SUBJECT);
+                        $mail_body = $this->mail_txt(msg_id::RESET_MAIL_HELLO) . "\n\n"
+                            . $this->mail_txt(msg_id::RESET_MAIL_KEY_INTRO) . ' ' . $key . "\n\n"
+                            . $this->mail_txt(msg_id::RESET_MAIL_LINK_INTRO) . "\n" . $activate_url . "\n\n"
+                            . $this->mail_txt(msg_id::RESET_MAIL_IGNORE);
+                        mail($db_usr->email, $mail_subject, $mail_body, users::mail_header());
+                        $sent = true;
+                    }
+                }
+            } else {
+                $usr_msg->add_message($mtr->txt(msg_id::RESET_ERR_NOT_FOUND));
+            }
+        }
+
+        if ($sent) {
+            $next_url = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => $db_usr->id];
+        } else {
+            $next_url = $url_array;
+            unset($next_url[url_var::POST_SUBMIT]);
+        }
+        return $next_url;
+    }
+
+    /**
+     * apply a sys_log status update on behalf of an admin; mirrors the action portion of
+     * the legacy /http/error_update.php script: when an admin clicks "close" on a sys_log row
+     * the id + status arrive as URL parameters and the matching entry is saved with the new
+     * status; non-admins and incomplete parameters are ignored — the page is just re-rendered
+     *
+     * @param array $url_array the normalised URL params; expects ID (log id) and
+     *                         rest_ctrl::PAR_LOG_STATUS (new status id)
+     * @param user_backend $usr_backend the session user; only admins may perform this action
+     * @param user_message $usr_msg collects backend errors so they surface in the notification bar
+     * @param bool $do_it set to false in unit tests so the DB is not touched
+     * @return array the URL array for the next page — stays on the error_update view with the
+     *               action parameters stripped so a page reload does not re-submit the change
+     */
+    private function action_error_update(
+        array        $url_array,
+        user_backend $usr_backend,
+        user_message $usr_msg,
+        bool         $do_it
+    ): array
+    {
+        if ($do_it and $usr_backend->is_admin()) {
+            $log_id = (int)($url_array[url_var::ID] ?? 0);
+            $status_id = (int)($url_array[rest_ctrl::PAR_LOG_STATUS] ?? 0);
+            if ($log_id > 0 and $status_id > 0) {
+                $err_entry = new sys_log_backend();
+                $err_entry->set_user($usr_backend);
+                $err_entry->id = $log_id;
+                $err_entry->status_id = $status_id;
+                $save_msg = new backend_user_message();
+                $err_entry->save($save_msg);
+                $msg_ui = new user_message();
+                $msg_ui->api_mapper($save_msg->api_array());
+                $usr_msg->merge($msg_ui);
+            }
+        }
+        $next_url = $url_array;
+        unset($next_url[url_var::ID]);
+        unset($next_url[rest_ctrl::PAR_LOG_STATUS]);
+        unset($next_url[url_var::POST_SUBMIT]);
+        $next_url[url_var::MASK] = views::ERROR_UPDATE_ID;
+        return $next_url;
+    }
+
+    /**
+     * execute a create, update, or delete action on a sandbox object and return the next URL
+     * @param array $url_array the normalised URL params
+     * @param int $view the view ID that determines the object type
+     * @param user_ui $usr the session user executing the action
+     * @param user_message $usr_msg collects errors
+     * @param data_object $dto the frontend cache
+     * @param string $crud one of url_var::CRUD_CREATE / CRUD_UPDATE / CRUD_DELETE
+     * @param bool $do_it false for unit tests that should not touch the database
+     * @return array URL array for the next page
+     */
+    private function action_crud(
+        array        $url_array,
+        int          $view,
+        user_ui      $usr,
+        user_message $usr_msg,
+        data_object  $dto,
+        string       $crud,
+        bool         $do_it
+    ): array
+    {
+        $next_url = html_base::url_from_back($url_array);
+        $dbo = $this->view_id_to_dbo_ui($view);
+        $dbo->url_mapper($url_array, $usr_msg, $dto);
+
+        if ($do_it) {
+            $result_msg = match ($crud) {
+                url_var::CRUD_CREATE => $dbo->add_via_api($usr, $usr_msg),
+                url_var::CRUD_UPDATE => $dbo->update($usr, $usr_msg),
+                url_var::CRUD_DELETE => $dbo->del($usr, $usr_msg),
+                default => new user_message()
+            };
+            if (!$result_msg->is_ok()) {
+                $usr_msg->add_message($result_msg->get_last_message());
+                // stay on the current view so the user can fix errors
+                return $url_array;
+            }
+        }
+
+        // on success: go back to the calling page or to the start view
+        if ($next_url !== '') {
+            parse_str(parse_url($next_url, PHP_URL_QUERY) ?? '', $next_array);
+            return $next_array;
+        }
+        return [url_var::MASK => views::START_ID];
+    }
 
     private function exe_process_step(
         sandbox_ui|sandbox_named_ui|db_object_ui $sbx,
@@ -838,7 +1371,7 @@ class frontend
     {
         $lib = new library();
         $class = $lib->class_to_name_pur($class);
-        $url = self::HOST_DEV . url_var::API_PATH . $lib->camelize_ex_1($class);
+        $url = THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {
@@ -852,11 +1385,17 @@ class frontend
      * internal
      */
 
-    private
-    function view_id_to_dbo_ui(int $view_id): sandbox_ui|sandbox_named_ui|db_object_ui
+    /**
+     * create the frontend object that is the base for the given view id
+     * @param int $view_id the id of the predefined view
+     * @return sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui the matching main frontend object
+     */
+    private function view_id_to_dbo_ui(int $view_id): sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui
     {
         // select the main object to display
-        if (in_array($view_id, views::WORD_MASKS_IDS)) {
+        if ($view_id == views::START_ID) {
+            $dbo_ui = new word_ui();
+        } elseif (in_array($view_id, views::WORD_MASKS_IDS)) {
             $dbo_ui = new word_ui();
         } elseif (in_array($view_id, views::VERB_MASKS_IDS)) {
             $dbo_ui = new verb_ui();
@@ -878,7 +1417,48 @@ class frontend
             $dbo_ui = new view_ui();
         } elseif (in_array($view_id, views::COMPONENT_MASKS_IDS)) {
             $dbo_ui = new component_ui();
+        } elseif (in_array($view_id, views::VIEW_RELATION_MASKS_IDS)) {
+            $dbo_ui = new view_relation_ui();
+        } elseif (in_array($view_id, views::VIEW_LINK_MASKS_IDS)) {
+            $dbo_ui = new term_view_ui();
+        } elseif (in_array($view_id, views::COMPONENT_LINK_MASKS_IDS)) {
+            $dbo_ui = new component_link_ui();
+        } elseif (in_array($view_id, views::FORMULA_LINK_MASKS_IDS)) {
+            $dbo_ui = new formula_link_ui();
+        } elseif (in_array($view_id, views::USER_MASKS_IDS)) {
+            $dbo_ui = new user_ui();
+        } elseif (in_array($view_id, views::LANGUAGE_MASKS_IDS)) {
+            $dbo_ui = new language_ui(0, null);
+        } elseif (in_array($view_id, views::CONFIRM_MASKS_IDS)) {
+            $dbo_ui = new word_ui();
+        } elseif (in_array($view_id, views::PHRASE_MASKS_IDS)) {
+            $dbo_ui = new phrase_ui();
+        } elseif (in_array($view_id, views::CHANGEABLE_PHRASE_VIEW_IDS)) {
+            $dbo_ui = new phrase_ui();
+        } elseif (in_array($view_id, views::CONTEXT_VIEW_IDS)) {
+            $dbo_ui = new phrase_list_ui();
+        } elseif (in_array($view_id, views::JOB_MASKS_IDS)) {
+            $dbo_ui = new job_ui();
+        } elseif (in_array($view_id, views::SYSTEM_LOG_VIEW_IDS)) {
+            $dbo_ui = new sys_log_ui();
+        } elseif ($view_id === views::ABOUT_ID
+            or $view_id === views::SETUP_ID) {
+            $dbo_ui = new db_object_ui();
+        } elseif (in_array($view_id, views::USER_LOGIN_MASK_IDS)) {
+            $dbo_ui = new user_ui();
+        } elseif (in_array($view_id, views::ADMIN_MASK_IDS)) {
+            $dbo_ui = new user_ui();
+        } elseif ($view_id === views::ERROR_LOG_ID
+            or $view_id === views::ERROR_UPDATE_ID) {
+            $dbo_ui = new db_object_ui();
+        } elseif ($view_id === views::WORD_FIND_ID
+            or $view_id === views::SEARCH_FULL_ID) {
+            $dbo_ui = new word_ui();
+        } elseif ($view_id === views::SANDBOX_ID
+            or $view_id === views::UNDO_ID) {
+            $dbo_ui = new db_object_ui();
         } else {
+            log_err('ui object missing for view id ' . $view_id);
             $dbo_ui = new word_ui();
         }
         return $dbo_ui;

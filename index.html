@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>zukunft.com - calc with words</title>
     <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
@@ -16,34 +16,36 @@
     </div>
 
     <div class="search-section">
-        <label for="search-input" class="search-label"></label>
+        <form action="/http/view.php" method="get" class="search-form">
+            <label for="search-input" class="search-label"></label>
 
-        <input type="text"
-               id="search-input"
-               name="q"
-               list="search-suggestions"
-               placeholder="e.g. decision, raking, global, problem, solution ..."
-               class="standard-input">
-        <button type="submit" class="btn btn-search">Search</button>
+            <input type="text"
+                   id="search-input"
+                   name="q"
+                   list="search-suggestions"
+                   placeholder="e.g. decision, raking, global, problem, solution ..."
+                   class="standard-input">
+            <button type="submit" class="btn btn-search">Search</button>
 
-        <datalist id="search-suggestions">
-            <option value="decision">
-            <option value="raking">
-            <option value="global">
-            <option value="problem">
-            <option value="solution">
-            <option value="words">
-            <option value="climate">
-            <option value="health">
-        </datalist>
+            <datalist id="search-suggestions">
+                <option value="decision">
+                <option value="raking">
+                <option value="global">
+                <option value="problem">
+                <option value="solution">
+                <option value="words">
+                <option value="climate">
+                <option value="health">
+            </datalist>
+        </form>
     </div>
 
     <div class="cta-section">
         <p>To be able to change data in this version 0.0.3, please</p>
         <div class="auth-links">
-            <a href="/http/signup.php" class="btn">signup</a>
+            <a href="/http/view.php?m=60" class="btn">signup</a>
             <span>or</span>
-            <a href="/http/login.php" class="btn">login</a>
+            <a href="/http/view.php?m=61" class="btn">login</a>
         </div>
     </div>
 

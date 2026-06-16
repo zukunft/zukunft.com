@@ -39,6 +39,7 @@ The steps should be
 */
 
 $app = new frontend();
+global $sys;
 $db_con = $app->start("setup", "center_form");
 
 // load the session user parameters

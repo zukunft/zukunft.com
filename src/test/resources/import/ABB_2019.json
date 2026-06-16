@@ -69,91 +69,486 @@
     {
       "name": "2015",
       "type": "time"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "statement"
+    },
+    {
+      "name": "sales"
+    },
+    {
+      "name": "revenues"
+    },
+    {
+      "name": "total"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "gross"
+    },
+    {
+      "name": "profit"
+    },
+    {
+      "name": "selling"
+    },
+    {
+      "name": "general"
+    },
+    {
+      "name": "administrative"
+    },
+    {
+      "name": "expenses"
+    },
+    {
+      "name": "expense"
+    },
+    {
+      "name": "non-order"
+    },
+    {
+      "name": "related"
+    },
+    {
+      "name": "research"
+    },
+    {
+      "name": "development"
+    },
+    {
+      "name": "other"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "operations"
+    },
+    {
+      "name": "interest"
+    },
+    {
+      "name": "dividend"
+    },
+    {
+      "name": "finance"
+    },
+    {
+      "name": "non-operational"
+    },
+    {
+      "name": "pension"
+    },
+    {
+      "name": "credit"
+    },
+    {
+      "name": "continuing"
+    },
+    {
+      "name": "taxes"
+    },
+    {
+      "name": "provision"
+    },
+    {
+      "name": "discontinued"
+    },
+    {
+      "name": "noncontrolling"
+    },
+    {
+      "name": "interests"
     }
   ],
   "triples": [
     {
-      "from": "Total revenues ",
+      "name": "income statement",
+      "from": "statement",
+      "verb": "of",
+      "to": "income",
+      "description": "financial statement showing a company's revenues, expenses and resulting profit or loss over a period",
+      "refs": [
+        {
+          "name": "Income_statement",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q193224",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "total revenues",
+      "from": "revenues",
+      "verb": "kind of",
+      "to": "total",
+      "description": "sum of all revenue line items for the period"
+    },
+    {
+      "from": "cost",
+      "verb": "of",
+      "to": "sales",
+      "description": "direct cost attributable to the goods or services sold",
+      "refs": [
+        {
+          "name": "Cost_of_goods_sold",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1108445",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "total cost of sales",
+      "from": "cost of sales",
+      "verb": "kind of",
+      "to": "total"
+    },
+    {
+      "name": "gross profit",
+      "from": "profit",
+      "verb": "kind of",
+      "to": "gross",
+      "description": "revenue minus cost of goods sold, before deducting operating expenses",
+      "refs": [
+        {
+          "name": "Gross_profit",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1571317",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "general",
+      "verb": "and",
+      "to": "administrative"
+    },
+    {
+      "name": "selling, general and administrative",
+      "from": "selling",
+      "verb": "and",
+      "to": "general and administrative"
+    },
+    {
+      "name": "selling, general and administrative expenses",
+      "from": "expenses",
+      "verb": "kind of",
+      "to": "selling, general and administrative",
+      "description": "operating expenses for sales, marketing, executive and back-office functions (SG&A)",
+      "refs": [
+        {
+          "name": "SG%26A",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7396041",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "research",
+      "verb": "and",
+      "to": "development",
+      "description": "activities a company undertakes to innovate and introduce new products and services",
+      "refs": [
+        {
+          "name": "Research_and_development",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q635757",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "non-order related",
+      "from": "related",
+      "verb": "kind of",
+      "to": "non-order"
+    },
+    {
+      "name": "non-order related research and development",
+      "from": "research and development",
+      "verb": "kind of",
+      "to": "non-order related"
+    },
+    {
+      "name": "non-order related research and development expenses",
+      "from": "expenses",
+      "verb": "kind of",
+      "to": "non-order related research and development",
+      "description": "R&D expenses not directly attributable to a specific customer order"
+    },
+    {
+      "name": "other income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "other"
+    },
+    {
+      "name": "other income (expense), net",
+      "from": "other income",
+      "verb": "kind of",
+      "to": "net",
+      "description": "net of other income and other expense items outside the company's core operations"
+    },
+    {
+      "name": "income from operations",
+      "from": "income",
+      "verb": "of",
+      "to": "operations",
+      "description": "profit from the company's core business activities before interest and taxes",
+      "refs": [
+        {
+          "name": "Earnings_before_interest_and_taxes",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2090322",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "interest",
+      "verb": "and",
+      "to": "dividend"
+    },
+    {
+      "name": "interest and dividend income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "interest and dividend"
+    },
+    {
+      "from": "interest",
+      "verb": "and",
+      "to": "finance"
+    },
+    {
+      "name": "interest and other finance expense",
+      "from": "expense",
+      "verb": "kind of",
+      "to": "interest and finance"
+    },
+    {
+      "name": "non-operational pension",
+      "from": "pension",
+      "verb": "kind of",
+      "to": "non-operational"
+    },
+    {
+      "name": "non-operational pension (cost) credit",
+      "from": "credit",
+      "verb": "of",
+      "to": "non-operational pension",
+      "description": "net of non-operational pension cost and credit, reported separately from operating expenses"
+    },
+    {
+      "name": "continuing operations",
+      "from": "operations",
+      "verb": "kind of",
+      "to": "continuing"
+    },
+    {
+      "name": "income from continuing operations",
+      "from": "income",
+      "verb": "of",
+      "to": "continuing operations"
+    },
+    {
+      "name": "income from continuing operations before taxes",
+      "from": "income from continuing operations",
+      "verb": "of",
+      "to": "taxes"
+    },
+    {
+      "name": "provision for taxes",
+      "from": "provision",
+      "verb": "of",
+      "to": "taxes",
+      "description": "income tax expense recognised on the income statement"
+    },
+    {
+      "name": "income from continuing operations, net of tax",
+      "from": "income from continuing operations",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "discontinued operations",
+      "from": "operations",
+      "verb": "kind of",
+      "to": "discontinued",
+      "description": "parts of a company that have been sold, abandoned, or otherwise disposed of and are reported separately",
+      "refs": [
+        {
+          "name": "Discontinued_operations",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "income from discontinued operations",
+      "from": "income",
+      "verb": "of",
+      "to": "discontinued operations"
+    },
+    {
+      "name": "income from discontinued operations, net of tax",
+      "from": "income from discontinued operations",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "net income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "net",
+      "description": "total profit of a company after all expenses, taxes and other deductions; the bottom line of the income statement",
+      "refs": [
+        {
+          "name": "Net_income",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q193219",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "noncontrolling interests",
+      "from": "interests",
+      "verb": "kind of",
+      "to": "noncontrolling",
+      "description": "equity ownership in a subsidiary not attributable to the parent company",
+      "refs": [
+        {
+          "name": "Minority_interest",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1232293",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "net income attributable to noncontrolling interests",
+      "from": "net income",
+      "verb": "of",
+      "to": "noncontrolling interests"
+    },
+    {
+      "name": "net income attributable to ABB",
+      "from": "net income",
+      "verb": "of",
+      "to": "ABB"
+    },
+    {
+      "from": "total revenues",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Total cost of sales",
+      "from": "total cost of sales",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Gross profit ",
+      "from": "gross profit",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Selling, general and administrative expenses",
+      "from": "selling, general and administrative expenses",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Non-order related research and development expenses",
+      "from": "non-order related research and development expenses",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Other income (expense), net ",
+      "from": "other income (expense), net",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Income from operations ",
+      "from": "income from operations",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Interest and dividend income ",
+      "from": "interest and dividend income",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Interest and other finance expense ",
+      "from": "interest and other finance expense",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Non-operational pension (cost) credit",
+      "from": "non-operational pension (cost) credit",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Income from continuing operations before taxes ",
+      "from": "income from continuing operations before taxes",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Provision for taxes ",
+      "from": "provision for taxes",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Income from continuing operations, net of tax ",
+      "from": "income from continuing operations, net of tax",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Income from discontinued operations, net of tax ",
+      "from": "income from discontinued operations, net of tax",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Net income ",
+      "from": "net income",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Net income attributable to noncontrolling interests ",
+      "from": "net income attributable to noncontrolling interests",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Net income attributable to ABB ",
+      "from": "net income attributable to ABB",
       "verb": "is part of",
       "to": "income statement"
     }
@@ -172,7 +567,7 @@
         "2019",
         "USD",
         "million",
-        "Total revenues "
+        "total revenues"
       ],
       "number": "27978",
       "protection": "admin_protection",
@@ -184,7 +579,7 @@
         "2019",
         "USD",
         "million",
-        "Total cost of sales"
+        "total cost of sales"
       ],
       "number": "-19072",
       "protection": "admin_protection",
@@ -196,7 +591,7 @@
         "2019",
         "USD",
         "million",
-        "Gross profit "
+        "gross profit"
       ],
       "number": "8906",
       "protection": "admin_protection",
@@ -208,7 +603,7 @@
         "2019",
         "USD",
         "million",
-        "Selling, general and administrative expenses"
+        "selling, general and administrative expenses"
       ],
       "number": "-5447",
       "protection": "admin_protection",
@@ -220,7 +615,7 @@
         "2019",
         "USD",
         "million",
-        "Non-order related research and development expenses"
+        "non-order related research and development expenses"
       ],
       "number": "-1198",
       "protection": "admin_protection",
@@ -232,7 +627,7 @@
         "2019",
         "USD",
         "million",
-        "Other income (expense), net "
+        "other income (expense), net"
       ],
       "number": "-323",
       "protection": "admin_protection",
@@ -244,7 +639,7 @@
         "2019",
         "USD",
         "million",
-        "Income from operations "
+        "income from operations"
       ],
       "number": "1938",
       "protection": "admin_protection",
@@ -256,7 +651,7 @@
         "2019",
         "USD",
         "million",
-        "Interest and dividend income "
+        "interest and dividend income"
       ],
       "number": "67",
       "protection": "admin_protection",
@@ -268,7 +663,7 @@
         "2019",
         "USD",
         "million",
-        "Interest and other finance expense "
+        "interest and other finance expense"
       ],
       "number": "-215",
       "protection": "admin_protection",
@@ -280,7 +675,7 @@
         "2019",
         "USD",
         "million",
-        "Non-operational pension (cost) credit"
+        "non-operational pension (cost) credit"
       ],
       "number": "72",
       "protection": "admin_protection",
@@ -292,7 +687,7 @@
         "2019",
         "USD",
         "million",
-        "Income from continuing operations before taxes "
+        "income from continuing operations before taxes"
       ],
       "number": "1862",
       "protection": "admin_protection",
@@ -304,7 +699,7 @@
         "2019",
         "USD",
         "million",
-        "Provision for taxes "
+        "provision for taxes"
       ],
       "number": "-772",
       "protection": "admin_protection",
@@ -316,7 +711,7 @@
         "2019",
         "USD",
         "million",
-        "Income from continuing operations, net of tax "
+        "income from continuing operations, net of tax"
       ],
       "number": "1090",
       "protection": "admin_protection",
@@ -328,7 +723,7 @@
         "2019",
         "USD",
         "million",
-        "Income from discontinued operations, net of tax "
+        "income from discontinued operations, net of tax"
       ],
       "number": "438",
       "protection": "admin_protection",
@@ -340,7 +735,7 @@
         "2019",
         "USD",
         "million",
-        "Net income "
+        "net income"
       ],
       "number": "1528",
       "protection": "admin_protection",
@@ -352,7 +747,7 @@
         "2019",
         "USD",
         "million",
-        "Net income attributable to noncontrolling interests "
+        "net income attributable to noncontrolling interests"
       ],
       "number": "-89",
       "protection": "admin_protection",
@@ -364,7 +759,7 @@
         "2019",
         "USD",
         "million",
-        "Net income attributable to ABB "
+        "net income attributable to ABB"
       ],
       "number": "1439",
       "protection": "admin_protection",
@@ -376,7 +771,7 @@
         "2018",
         "USD",
         "million",
-        "Total revenues "
+        "total revenues"
       ],
       "number": "27662",
       "protection": "admin_protection",
@@ -388,7 +783,7 @@
         "2018",
         "USD",
         "million",
-        "Total cost of sales"
+        "total cost of sales"
       ],
       "number": "-19118",
       "protection": "admin_protection",
@@ -400,7 +795,7 @@
         "2018",
         "USD",
         "million",
-        "Gross profit "
+        "gross profit"
       ],
       "number": "8544",
       "protection": "admin_protection",
@@ -412,7 +807,7 @@
         "2018",
         "USD",
         "million",
-        "Selling, general and administrative expenses"
+        "selling, general and administrative expenses"
       ],
       "number": "-5295",
       "protection": "admin_protection",
@@ -424,7 +819,7 @@
         "2018",
         "USD",
         "million",
-        "Non-order related research and development expenses"
+        "non-order related research and development expenses"
       ],
       "number": "-1147",
       "protection": "admin_protection",
@@ -436,7 +831,7 @@
         "2018",
         "USD",
         "million",
-        "Other income (expense), net "
+        "other income (expense), net"
       ],
       "number": "124",
       "protection": "admin_protection",
@@ -448,7 +843,7 @@
         "2018",
         "USD",
         "million",
-        "Income from operations "
+        "income from operations"
       ],
       "number": "2226",
       "protection": "admin_protection",
@@ -460,7 +855,7 @@
         "2018",
         "USD",
         "million",
-        "Interest and dividend income "
+        "interest and dividend income"
       ],
       "number": "72",
       "protection": "admin_protection",
@@ -472,7 +867,7 @@
         "2018",
         "USD",
         "million",
-        "Interest and other finance expense "
+        "interest and other finance expense"
       ],
       "number": "-262",
       "protection": "admin_protection",
@@ -484,7 +879,7 @@
         "2018",
         "USD",
         "million",
-        "Non-operational pension (cost) credit"
+        "non-operational pension (cost) credit"
       ],
       "number": "83",
       "protection": "admin_protection",
@@ -496,7 +891,7 @@
         "2018",
         "USD",
         "million",
-        "Income from continuing operations before taxes "
+        "income from continuing operations before taxes"
       ],
       "number": "2119",
       "protection": "admin_protection",
@@ -508,7 +903,7 @@
         "2018",
         "USD",
         "million",
-        "Provision for taxes "
+        "provision for taxes"
       ],
       "number": "-544",
       "protection": "admin_protection",
@@ -520,7 +915,7 @@
         "2018",
         "USD",
         "million",
-        "Income from continuing operations, net of tax "
+        "income from continuing operations, net of tax"
       ],
       "number": "1575",
       "protection": "admin_protection",
@@ -532,7 +927,7 @@
         "2018",
         "USD",
         "million",
-        "Income from discontinued operations, net of tax "
+        "income from discontinued operations, net of tax"
       ],
       "number": "723",
       "protection": "admin_protection",
@@ -544,7 +939,7 @@
         "2018",
         "USD",
         "million",
-        "Net income "
+        "net income"
       ],
       "number": "2298",
       "protection": "admin_protection",
@@ -556,7 +951,7 @@
         "2018",
         "USD",
         "million",
-        "Net income attributable to noncontrolling interests "
+        "net income attributable to noncontrolling interests"
       ],
       "number": "-125",
       "protection": "admin_protection",
@@ -568,7 +963,7 @@
         "2018",
         "USD",
         "million",
-        "Net income attributable to ABB "
+        "net income attributable to ABB"
       ],
       "number": "2173",
       "protection": "admin_protection",
@@ -580,7 +975,7 @@
         "2017",
         "USD",
         "million",
-        "Total revenues "
+        "total revenues"
       ],
       "number": "25196",
       "protection": "admin_protection",
@@ -592,7 +987,7 @@
         "2017",
         "USD",
         "million",
-        "Total cost of sales"
+        "total cost of sales"
       ],
       "number": "-17350",
       "protection": "admin_protection",
@@ -604,7 +999,7 @@
         "2017",
         "USD",
         "million",
-        "Gross profit "
+        "gross profit"
       ],
       "number": "7846",
       "protection": "admin_protection",
@@ -616,7 +1011,7 @@
         "2017",
         "USD",
         "million",
-        "Selling, general and administrative expenses"
+        "selling, general and administrative expenses"
       ],
       "number": "-4765",
       "protection": "admin_protection",
@@ -628,7 +1023,7 @@
         "2017",
         "USD",
         "million",
-        "Non-order related research and development expenses"
+        "non-order related research and development expenses"
       ],
       "number": "-1013",
       "protection": "admin_protection",
@@ -640,7 +1035,7 @@
         "2017",
         "USD",
         "million",
-        "Other income (expense), net "
+        "other income (expense), net"
       ],
       "number": "162",
       "protection": "admin_protection",
@@ -652,7 +1047,7 @@
         "2017",
         "USD",
         "million",
-        "Income from operations "
+        "income from operations"
       ],
       "number": "2230",
       "protection": "admin_protection",
@@ -664,7 +1059,7 @@
         "2017",
         "USD",
         "million",
-        "Interest and dividend income "
+        "interest and dividend income"
       ],
       "number": "73",
       "protection": "admin_protection",
@@ -676,7 +1071,7 @@
         "2017",
         "USD",
         "million",
-        "Interest and other finance expense "
+        "interest and other finance expense"
       ],
       "number": "-234",
       "protection": "admin_protection",
@@ -688,7 +1083,7 @@
         "2017",
         "USD",
         "million",
-        "Non-operational pension (cost) credit"
+        "non-operational pension (cost) credit"
       ],
       "number": "33",
       "protection": "admin_protection",
@@ -700,7 +1095,7 @@
         "2017",
         "USD",
         "million",
-        "Income from continuing operations before taxes "
+        "income from continuing operations before taxes"
       ],
       "number": "2102",
       "protection": "admin_protection",
@@ -712,7 +1107,7 @@
         "2017",
         "USD",
         "million",
-        "Provision for taxes "
+        "provision for taxes"
       ],
       "number": "-583",
       "protection": "admin_protection",
@@ -724,7 +1119,7 @@
         "2017",
         "USD",
         "million",
-        "Income from continuing operations, net of tax "
+        "income from continuing operations, net of tax"
       ],
       "number": "1519",
       "protection": "admin_protection",
@@ -736,7 +1131,7 @@
         "2017",
         "USD",
         "million",
-        "Income from discontinued operations, net of tax "
+        "income from discontinued operations, net of tax"
       ],
       "number": "846",
       "protection": "admin_protection",
@@ -748,7 +1143,7 @@
         "2017",
         "USD",
         "million",
-        "Net income "
+        "net income"
       ],
       "number": "2365",
       "protection": "admin_protection",
@@ -760,7 +1155,7 @@
         "2017",
         "USD",
         "million",
-        "Net income attributable to noncontrolling interests "
+        "net income attributable to noncontrolling interests"
       ],
       "number": "-152",
       "protection": "admin_protection",
@@ -772,7 +1167,7 @@
         "2017",
         "USD",
         "million",
-        "Net income attributable to ABB "
+        "net income attributable to ABB"
       ],
       "number": "2213",
       "protection": "admin_protection",
@@ -784,7 +1179,7 @@
         "2016",
         "USD",
         "million",
-        "Total revenues "
+        "total revenues"
       ],
       "number": "24929",
       "protection": "admin_protection",
@@ -796,7 +1191,7 @@
         "2016",
         "USD",
         "million",
-        "Total cost of sales"
+        "total cost of sales"
       ],
       "number": "-17396",
       "protection": "admin_protection",
@@ -808,7 +1203,7 @@
         "2016",
         "USD",
         "million",
-        "Gross profit "
+        "gross profit"
       ],
       "number": "7533",
       "protection": "admin_protection",
@@ -820,7 +1215,7 @@
         "2016",
         "USD",
         "million",
-        "Selling, general and administrative expenses"
+        "selling, general and administrative expenses"
       ],
       "number": "-4532",
       "protection": "admin_protection",
@@ -832,7 +1227,7 @@
         "2016",
         "USD",
         "million",
-        "Non-order related research and development expenses"
+        "non-order related research and development expenses"
       ],
       "number": "-967",
       "protection": "admin_protection",
@@ -844,7 +1239,7 @@
         "2016",
         "USD",
         "million",
-        "Other income (expense), net "
+        "other income (expense), net"
       ],
       "number": "-105",
       "protection": "admin_protection",
@@ -856,7 +1251,7 @@
         "2016",
         "USD",
         "million",
-        "Income from operations "
+        "income from operations"
       ],
       "number": "1929",
       "protection": "admin_protection",
@@ -868,7 +1263,7 @@
         "2016",
         "USD",
         "million",
-        "Interest and dividend income "
+        "interest and dividend income"
       ],
       "number": "71",
       "protection": "admin_protection",
@@ -880,7 +1275,7 @@
         "2016",
         "USD",
         "million",
-        "Interest and other finance expense "
+        "interest and other finance expense"
       ],
       "number": "-201",
       "protection": "admin_protection",
@@ -892,7 +1287,7 @@
         "2016",
         "USD",
         "million",
-        "Non-operational pension (cost) credit"
+        "non-operational pension (cost) credit"
       ],
       "number": "-38",
       "protection": "admin_protection",
@@ -904,7 +1299,7 @@
         "2016",
         "USD",
         "million",
-        "Income from continuing operations before taxes "
+        "income from continuing operations before taxes"
       ],
       "number": "1761",
       "protection": "admin_protection",
@@ -916,7 +1311,7 @@
         "2016",
         "USD",
         "million",
-        "Provision for taxes "
+        "provision for taxes"
       ],
       "number": "-526",
       "protection": "admin_protection",
@@ -928,7 +1323,7 @@
         "2016",
         "USD",
         "million",
-        "Income from continuing operations, net of tax "
+        "income from continuing operations, net of tax"
       ],
       "number": "1235",
       "protection": "admin_protection",
@@ -940,7 +1335,7 @@
         "2016",
         "USD",
         "million",
-        "Income from discontinued operations, net of tax "
+        "income from discontinued operations, net of tax"
       ],
       "number": "799",
       "protection": "admin_protection",
@@ -952,7 +1347,7 @@
         "2016",
         "USD",
         "million",
-        "Net income "
+        "net income"
       ],
       "number": "2034",
       "protection": "admin_protection",
@@ -964,7 +1359,7 @@
         "2016",
         "USD",
         "million",
-        "Net income attributable to noncontrolling interests "
+        "net income attributable to noncontrolling interests"
       ],
       "number": "-135",
       "protection": "admin_protection",
@@ -976,7 +1371,7 @@
         "2016",
         "USD",
         "million",
-        "Net income attributable to ABB "
+        "net income attributable to ABB"
       ],
       "number": "1899",
       "protection": "admin_protection",
@@ -988,7 +1383,7 @@
         "2015",
         "USD",
         "million",
-        "Total revenues "
+        "total revenues"
       ],
       "number": "26459",
       "protection": "admin_protection",
@@ -1000,7 +1395,7 @@
         "2015",
         "USD",
         "million",
-        "Total cost of sales"
+        "total cost of sales"
       ],
       "number": "-18429",
       "protection": "admin_protection",
@@ -1012,7 +1407,7 @@
         "2015",
         "USD",
         "million",
-        "Gross profit "
+        "gross profit"
       ],
       "number": "8030",
       "protection": "admin_protection",
@@ -1024,7 +1419,7 @@
         "2015",
         "USD",
         "million",
-        "Selling, general and administrative expenses"
+        "selling, general and administrative expenses"
       ],
       "number": "-4769",
       "protection": "admin_protection",
@@ -1036,7 +1431,7 @@
         "2015",
         "USD",
         "million",
-        "Non-order related research and development expenses"
+        "non-order related research and development expenses"
       ],
       "number": "-1041",
       "protection": "admin_protection",
@@ -1048,7 +1443,7 @@
         "2015",
         "USD",
         "million",
-        "Other income (expense), net "
+        "other income (expense), net"
       ],
       "number": "-102",
       "protection": "admin_protection",
@@ -1060,7 +1455,7 @@
         "2015",
         "USD",
         "million",
-        "Income from operations "
+        "income from operations"
       ],
       "number": "2118",
       "protection": "admin_protection",
@@ -1072,7 +1467,7 @@
         "2015",
         "USD",
         "million",
-        "Interest and dividend income "
+        "interest and dividend income"
       ],
       "number": "74",
       "protection": "admin_protection",
@@ -1084,7 +1479,7 @@
         "2015",
         "USD",
         "million",
-        "Interest and other finance expense "
+        "interest and other finance expense"
       ],
       "number": "-240",
       "protection": "admin_protection",
@@ -1096,7 +1491,7 @@
         "2015",
         "USD",
         "million",
-        "Non-operational pension (cost) credit"
+        "non-operational pension (cost) credit"
       ],
       "number": "-20",
       "protection": "admin_protection",
@@ -1108,7 +1503,7 @@
         "2015",
         "USD",
         "million",
-        "Income from continuing operations before taxes "
+        "income from continuing operations before taxes"
       ],
       "number": "1932",
       "protection": "admin_protection",
@@ -1120,7 +1515,7 @@
         "2015",
         "USD",
         "million",
-        "Provision for taxes "
+        "provision for taxes"
       ],
       "number": "-566",
       "protection": "admin_protection",
@@ -1132,7 +1527,7 @@
         "2015",
         "USD",
         "million",
-        "Income from continuing operations, net of tax "
+        "income from continuing operations, net of tax"
       ],
       "number": "1366",
       "protection": "admin_protection",
@@ -1144,7 +1539,7 @@
         "2015",
         "USD",
         "million",
-        "Income from discontinued operations, net of tax "
+        "income from discontinued operations, net of tax"
       ],
       "number": "689",
       "protection": "admin_protection",
@@ -1156,7 +1551,7 @@
         "2015",
         "USD",
         "million",
-        "Net income "
+        "net income"
       ],
       "number": "2055",
       "protection": "admin_protection",
@@ -1168,7 +1563,7 @@
         "2015",
         "USD",
         "million",
-        "Net income attributable to noncontrolling interests "
+        "net income attributable to noncontrolling interests"
       ],
       "number": "-122",
       "protection": "admin_protection",
@@ -1180,7 +1575,7 @@
         "2015",
         "USD",
         "million",
-        "Net income attributable to ABB "
+        "net income attributable to ABB"
       ],
       "number": "1933",
       "protection": "admin_protection",

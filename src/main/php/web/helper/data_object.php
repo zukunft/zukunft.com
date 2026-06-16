@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::REF . 'source_list.php';
 //include_once html_paths::REF . 'ref_list.php';
 //include_once html_paths::RESULT . 'result_list.php';
+//include_once html_paths::SYSTEM . 'sys_log_list.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value_list.php';
@@ -64,6 +65,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -175,12 +177,22 @@ class data_object
     }
     public view_list $msk_lst;
     private component_list $cmp_lst;
+    // TODO Prio 0 rename to $typ_lst
     public ?type_lists $typ_lst_cache = null;
+
+    // the user-specific frontend configuration (loaded once at request start)
+    public ?config $cfg = null;
+
+    // the interactive debug level (0 = off) set once at request start from the url
+    public int $debug = 0;
 
     // the session user
     public user $usr;
 
     public change_log_list $chg_log;
+
+    // the open system errors related to the session user
+    public sys_log_list $sys_log;
 
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
@@ -230,6 +242,7 @@ class data_object
         $this->msk_lst = new view_list();
         $this->cmp_lst = new component_list();
         $this->chg_log = new change_log_list();
+        $this->sys_log = new sys_log_list();
         $this->online = true;
     }
 
@@ -263,6 +276,115 @@ class data_object
         return $usr_msg->is_ok();
     }
 
+
+    /**
+     * @return word_list with the words of this data object
+     */
+    function word_list(): word_list
+    {
+        return $this->wrd_lst;
+    }
+
+    /**
+     * @return triple_list with the triples of this data object
+     */
+    function triple_list(): triple_list
+    {
+        return $this->trp_lst;
+    }
+
+    /**
+     * @return phrase_list with the phrases of this data object
+     */
+    function phrase_list(): phrase_list
+    {
+        return $this->phr_lst;
+    }
+
+    /**
+     * set the source_list of this data object
+     * @param source_list $src_lst
+     */
+    function set_source_list(source_list $src_lst): void
+    {
+        $this->src_lst = $src_lst;
+    }
+
+    /**
+     * @return source_list with the sources of this data object
+     */
+    function source_list(): source_list
+    {
+        return $this->src_lst;
+    }
+
+    /**
+     * set the ref_list of this data object
+     * @param ref_list $ref_lst
+     */
+    function set_ref_list(ref_list $ref_lst): void
+    {
+        $this->ref_lst = $ref_lst;
+    }
+
+    /**
+     * @return ref_list with the refs of this data object
+     */
+    function ref_list(): ref_list
+    {
+        return $this->ref_lst;
+    }
+
+    /**
+     * set the value_list of this data object
+     * @param value_list $val_lst
+     */
+    function set_value_list(value_list $val_lst): void
+    {
+        $this->val_lst = $val_lst;
+    }
+
+    /**
+     * @return value_list with the value of this data object
+     */
+    function value_list(): value_list
+    {
+        return $this->val_lst;
+    }
+
+    /**
+     * set the formula_link_list of this data object
+     * @param formula_link_list $frm_lnk_lst
+     */
+    function set_formula_link_list(formula_link_list $frm_lnk_lst): void
+    {
+        $this->frm_lnk_lst = $frm_lnk_lst;
+    }
+
+    /**
+     * @return formula_link_list with the formula links of this data object
+     */
+    function formula_link_list(): formula_link_list
+    {
+        return $this->frm_lnk_lst;
+    }
+
+    /**
+     * set the result_list of this data object
+     * @param result_list $res_lst
+     */
+    function set_result_list(result_list $res_lst): void
+    {
+        $this->res_lst = $res_lst;
+    }
+
+    /**
+     * @return result_list with the results of this data object
+     */
+    function result_list(): result_list
+    {
+        return $this->res_lst;
+    }
 
     /**
      * set the formula_list of this data object
@@ -317,6 +439,24 @@ class data_object
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return array with a list of suggested im- and export file names
+     */
+    function file_list(): array
+    {
+        // TODO Prio 3 create this function
+        return [];
+    }
+
+    /**
+     * @return bool true if this context object contains a list of suggested im- and export file names
+     */
+    function has_file_list(): bool
+    {
+        // TODO Prio 3 create this function
+        return false;
     }
 
     /**
@@ -388,6 +528,22 @@ class data_object
     function change_log(): change_log_list
     {
         return $this->chg_log;
+    }
+
+    /**
+     * @return bool true if this context object contains at least one system log entry
+     */
+    function has_sys_log(): bool
+    {
+        return !$this->sys_log->is_empty();
+    }
+
+    /**
+     * @return sys_log_list the cache of the open system errors related to the session user
+     */
+    function sys_log_list(): sys_log_list
+    {
+        return $this->sys_log;
     }
 
 

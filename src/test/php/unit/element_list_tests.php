@@ -86,7 +86,7 @@ class element_list_tests
         $trm_lst = $t_trm->term_list_time();
         $elm_lst = $frm->elements($usr_msg, $trm_lst);
         $result = $elm_lst->dsp_id();
-        $target = '"minute" (element_id 1/104) for user 3 (zukunft.com system test)';
+        $target = '"minute" (element_id 1/103) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
     }

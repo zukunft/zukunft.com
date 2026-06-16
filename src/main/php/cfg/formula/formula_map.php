@@ -186,6 +186,7 @@ class formula_map extends sandbox_code_id
     protected bool $ref_text_dirty;          // true if the human-readable text has been updated and not yet converted
     public ?string $usr_text = null;       // the formula expression in the user format
     private bool $usr_text_dirty;          // true if the reference text has been updated and not yet converted
+    public ?string $latex = null;          // the formula in latex format
     public ?string $description = null;    // describes to the user what this formula is doing
     public ?bool $need_all_val = null;     // calculate and save the result only if all used values are not null
     public ?DateTime $last_update = null;  // the time of the last update of fields that may influence the calculated results
@@ -250,6 +251,7 @@ class formula_map extends sandbox_code_id
         $this->ref_text_dirty = false;
         $this->usr_text = null;
         $this->usr_text_dirty = false;
+        $this->latex = null;
         $this->type_id = null;
         $this->need_all_val = null;
         $this->last_update = null;
@@ -293,6 +295,9 @@ class formula_map extends sandbox_code_id
             }
             if (array_key_exists(formula_db::FLD_FORMULA_USER_TEXT, $db_row)) {
                 $this->usr_text = $db_row[formula_db::FLD_FORMULA_USER_TEXT];
+            }
+            if (array_key_exists(formula_db::FLD_LATEX, $db_row)) {
+                $this->latex = $db_row[formula_db::FLD_LATEX];
             }
             if (array_key_exists(formula_db::FLD_ALL_NEEDED, $db_row)) {
                 $this->need_all_val = $lib->get_bool($db_row[formula_db::FLD_ALL_NEEDED]);
@@ -349,6 +354,14 @@ class formula_map extends sandbox_code_id
             }
         }
 
+        if (array_key_exists(sql_db::FLD_IMPACT, $api_json)) {
+            $this->impact = $api_json[sql_db::FLD_IMPACT];
+        }
+
+        if (array_key_exists(json_fields::LATEX, $api_json)) {
+            $this->latex = $api_json[json_fields::LATEX];
+        }
+
         return $usr_msg->is_ok();
     }
 
@@ -391,6 +404,16 @@ class formula_map extends sandbox_code_id
             }
         }
 
+        if (key_exists(json_fields::LATEX, $in_ex_json)) {
+            if ($in_ex_json[json_fields::LATEX] <> '') {
+                $this->latex = $in_ex_json[json_fields::LATEX];
+            }
+        }
+
+        if (key_exists(json_fields::IMPACT, $in_ex_json)) {
+            $this->impact = $in_ex_json[json_fields::IMPACT];
+        }
+
         // TODO Prio 2 allow only one way to assign phrases on import
         // assign the phrases to the formula
         if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
@@ -398,22 +421,27 @@ class formula_map extends sandbox_code_id
             $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $dto);
         }
 
-        // assign the phrases to the formula
+        // assigned_word assigns exactly one phrase to the formula;
+        // to assign several phrases use the 'assigned' json array instead
         if (key_exists(json_fields::ASSIGNED_WORD, $in_ex_json)) {
-            $phr_names = explode(",", $in_ex_json[json_fields::ASSIGNED_WORD]);
-            if ($dto != null) {
-                $phr_lst = $dto->phrase_list();
-                foreach ($phr_names as $name) {
-                    $phr = $phr_lst->get_by_name($name);
-                    if ($phr == null) {
-                        $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
-                            msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
-                            msg_id::VAR_NAME => $name,
-                            msg_id::VAR_FORMULA => $this->name(),
-                        ]);
-                    } else {
-                        $this->link_phrase($phr, $msg);
-                    }
+            $assigned = $in_ex_json[json_fields::ASSIGNED_WORD];
+            $phr_names = is_array($assigned) ? $assigned : explode(",", $assigned);
+            if (count($phr_names) > 1) {
+                $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_USE_ASSIGNED, [
+                    msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
+                    msg_id::VAR_FORMULA => $this->name(),
+                ]);
+            } elseif ($dto != null) {
+                $name = $phr_names[0] ?? '';
+                $phr = $dto->phrase_list()->get_by_name($name);
+                if ($phr == null) {
+                    $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
+                        msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
+                        msg_id::VAR_NAME => $name,
+                        msg_id::VAR_FORMULA => $this->name(),
+                    ]);
+                } else {
+                    $this->link_phrase($phr, $msg);
                 }
             }
         }
@@ -446,6 +474,7 @@ class formula_map extends sandbox_code_id
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::USR_TEXT] = $this->usr_text;
             $vars[json_fields::REF_TEXT] = $this->ref_text;
+            $vars[json_fields::LATEX] = $this->latex;
             $vars[json_fields::IMPACT] = $this->impact;
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -541,6 +570,22 @@ class formula_map extends sandbox_code_id
             $this->generate_ref_text($trm_lst, $usr_msg);
         }
         return $this->ref_text;
+    }
+
+    /**
+     * @param string|null $latex the formula in latex format
+     */
+    function set_latex(?string $latex): void
+    {
+        $this->latex = $latex;
+    }
+
+    /**
+     * @return string|null the formula in latex format
+     */
+    function get_latex(): ?string
+    {
+        return $this->latex;
     }
 
 
@@ -695,6 +740,14 @@ class formula_map extends sandbox_code_id
         ?formula_list $frm_lst = null
     ): term_list
     {
+        // a partial-update import (e.g. formulas_update.json carrying only name + description)
+        // leaves usr_text and ref_text empty after import_mapper's reset; with no expression
+        // there are no terms to look up, and trying would add a spurious EXPRESSION_EMPTY
+        // error before the save loop has a chance to fill the formula from the DB
+        if (($this->usr_text === null || $this->usr_text === '')
+            && ($this->ref_text === null || $this->ref_text === '')) {
+            return $trm_lst ?? new term_list($this->get_user());
+        }
         $exp = $this->expression($trm_lst);
         // TODO Prio 2 try to avoid reloading of the terms
         $trm_lst = $this->load_terms($usr_msg, $trm_lst, $exp);
@@ -851,6 +904,9 @@ class formula_map extends sandbox_code_id
         if ($std_obj->usr_text !== $this->usr_text) {
             $result->usr_text = $this->usr_text;
         }
+        if ($std_obj->latex !== $this->latex) {
+            $result->latex = $this->latex;
+        }
         if ($std_obj->need_all_val !== $this->need_all_val) {
             $result->need_all_val = $this->need_all_val;
         }
@@ -895,6 +951,9 @@ class formula_map extends sandbox_code_id
             }
             if ($this->usr_text === null and $used_obj->usr_text != null) {
                 $this->usr_text = $used_obj->usr_text;
+            }
+            if ($this->latex === null and $used_obj->latex != null) {
+                $this->latex = $used_obj->latex;
             }
             if ($this->need_all_val === null and $used_obj->need_all_val != null) {
                 $this->need_all_val = $used_obj->need_all_val;
@@ -1002,6 +1061,11 @@ class formula_map extends sandbox_code_id
         }
         if ($this->get_usr_text() != null) {
             if ($this->get_usr_text() != $db_obj->get_usr_text()) {
+                $result = true;
+            }
+        }
+        if ($this->latex != null) {
+            if ($this->latex != $db_obj->latex) {
                 $result = true;
             }
         }
@@ -1115,15 +1179,21 @@ class formula_map extends sandbox_code_id
         if ($this->usr_text <> '') {
             $vars[json_fields::EXPRESSION] = $this->usr_text;
         }
+        if ($this->latex <> '') {
+            $vars[json_fields::LATEX] = $this->latex;
+        }
 
+        // export the assigned phrases by name, consistent with the import:
+        // a single phrase via 'assigned_word', several phrases via the 'assigned' json array
         if ($do_load) {
-            $exp_lst = [];
             $phr_lst = $this->assign_phr_lst_direct();
             if ($phr_lst != null) {
-                foreach ($phr_lst->lst() as $phr) {
-                    $exp_lst[] = $phr->export_json([]);
+                $names = $phr_lst->names();
+                if (count($names) == 1) {
+                    $vars[json_fields::ASSIGNED_WORD] = $names[0];
+                } elseif (count($names) > 1) {
+                    $vars[json_fields::ASSIGNED] = $names;
                 }
-                $vars[json_fields::ASSIGNED_WORD] = $exp_lst;
             }
         }
         // the impact is only included in the export as an indication to validate the consistency
@@ -1553,6 +1623,14 @@ class formula_map extends sandbox_code_id
      */
     function element_refresh(user_message $usr_msg, ?term_list $trm_lst = null): bool
     {
+        // skip refresh when the imported formula has no expression (partial update);
+        // the existing element rows in the database remain valid because the formula's
+        // expression in the database has not changed
+        if (($this->usr_text === null || $this->usr_text === '')
+            && ($this->ref_text === null || $this->ref_text === '')) {
+            return true;
+        }
+
         $imp = new import();
 
         $frm_usr_msg = $usr_msg->clone_reset();
@@ -1831,6 +1909,7 @@ class formula_map extends sandbox_code_id
                 formula_db::FLD_TYPE,
                 formula_db::FLD_FORMULA_TEXT,
                 formula_db::FLD_FORMULA_USER_TEXT,
+                formula_db::FLD_LATEX,
                 formula_db::FLD_ALL_NEEDED,
                 formula_db::FLD_LAST_UPDATE,
                 formula_db::FLD_VIEW,
@@ -1911,6 +1990,21 @@ class formula_map extends sandbox_code_id
                 $this->usr_text,
                 formula_db::FLD_FORMULA_USER_TEXT_SQL_TYP,
                 $obj->usr_text
+            );
+        }
+        if ($obj->latex !== $this->latex) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_LATEX,
+                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_LATEX),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                formula_db::FLD_LATEX,
+                $this->latex,
+                formula_db::FLD_LATEX_SQL_TYP,
+                $obj->latex
             );
         }
         if ($obj->need_all_val !== $this->need_all_val) {

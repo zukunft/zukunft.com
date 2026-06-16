@@ -32,6 +32,8 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\test\php\const\word_names;
+
 class groups
 {
 
@@ -42,8 +44,8 @@ class groups
     const string TN_READ_COM = 'ratio of the circumference of a circle to its diameter';
     const string TN_RENAMED = 'Pi';
 
-    const string ZH_CITY_INHABITANTS = words::ZH . ' ' . words::CITY . ' ' . words::INHABITANTS;
-    const string ZH_CITY_INHABITANTS_COM = words::INHABITANTS . ' in the ' . words::CITY . ' of ' . words::ZH;
+    const string ZH_CITY_INHABITANTS = word_names::ZH . ' ' . word_names::CITY . ' ' . word_names::INHABITANTS;
+    const string ZH_CITY_INHABITANTS_COM = word_names::INHABITANTS . ' in the ' . word_names::CITY . ' of ' . word_names::ZH;
 
     // si units
     const string TIME_DEFINITION = 'hyperfine transition frequency of Cs';
@@ -57,10 +59,10 @@ class groups
     const string TN_ADD_BIG_FUNC = 'System Test Group big added via sql function';
     const string TN_ADD_BIG_SQL = 'System Test Group big added via sql insert';
 
-    const string TN_ZH_2019 = self::ZH_CITY_INHABITANTS . ' (' . words::YEAR_2019 . ')';
-    const string TN_CH_INCREASE_2020 = words::TEST_INCREASE . ' in ' . words::CH . '\'s ' . words::INHABITANTS . ' from ' . words::YEAR_2019 . ' to ' . words::YEAR_2020 . ' in ' . words::PCT;
-    const string TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . words::MIO;
-    const string TN_CH_2019 = words::INHABITANTS . ' of ' . words::CH . ' in Mio (' . words::YEAR_2019 . ')';
+    const string TN_ZH_2019 = self::ZH_CITY_INHABITANTS . ' (' . word_names::YEAR_2019 . ')';
+    const string TN_CH_INCREASE_2020 = word_names::TEST_INCREASE . ' in ' . words::CH . '\'s ' . word_names::INHABITANTS . ' from ' . word_names::YEAR_2019 . ' to ' . word_names::YEAR_2020 . ' in ' . words::PCT;
+    const string TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . word_names::MIO;
+    const string TN_CH_2019 = word_names::INHABITANTS . ' of ' . words::CH . ' in Mio (' . word_names::YEAR_2019 . ')';
 
     const string TN_TIME_VALUE = 'zukunft.com beta launch date';
     const string TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';
@@ -83,9 +85,9 @@ class groups
     // and that should be created before the system test starts
     const array TEST_GROUPS_CREATE = [
         [self::TN_READ,
-            [words::PI, words::MATH]],
+            [word_names::PI, word_names::MATH]],
         [self::TN_CH_2019,
-            [words::INHABITANTS, words::COUNTRY, words::CH, words::YEAR_2019, words::MIO]]
+            [word_names::INHABITANTS, words::COUNTRY, words::CH, word_names::YEAR_2019, word_names::MIO]]
     ];
 
 }

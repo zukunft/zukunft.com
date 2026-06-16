@@ -62,6 +62,11 @@ class phrase_types
     const string SCALING_NAME = "scaling";
     const string SCALING_HIDDEN = "scaling_hidden";
     const string SCALING_HIDDEN_NAME = "hidden scaling";
+    // all types that mark a phrase as a scaling phrase e.g. "million" or the hidden scaling phrase "one"
+    const array SCALING_TYPES = [
+        self::SCALING,
+        self::SCALING_HIDDEN,
+    ];
     const string SCALING_PCT = "scaling_percent"; // TODO used to define the scaling formula word to scale percentage values ?
     const string SCALING_PCT_NAME = "scaling word percent";
     const string SCALED_MEASURE = "scaled_measure"; // TODO add usage sample

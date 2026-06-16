@@ -46,6 +46,7 @@ $result = ''; // reset the html code var
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("triple");
 
 if (!$db_con->connected()) {

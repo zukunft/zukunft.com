@@ -5,6 +5,7 @@
     model/helper/object_mapper.php - a library class to collect the backend object mappings
     ------------------------------
 
+    $map is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

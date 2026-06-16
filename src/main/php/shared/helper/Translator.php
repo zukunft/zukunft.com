@@ -5,6 +5,7 @@
     shared/helper/Translator.php - translates a message for the user into the user language
     ----------------------------
 
+    $mtr is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

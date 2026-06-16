@@ -86,14 +86,14 @@ class component_link_write_tests
 
         $test_name = 'check list of linked views contains the added view for user "' . $t->usr1->dsp_id() . '"';
         $cmp = $t_db->load_component(components::TEST_ADD_NAME);
-        $dsp_lst = $cmp->assigned_msk_ids();
-        $result = $msk->is_in_list($dsp_lst);
+        $msk_lst = $cmp->assigned_msk_ids();
+        $result = $msk->is_in_list($msk_lst);
         $t->assert($test_name, $result, true);
 
         $test_name = 'check if the link is shown correctly also for the second user "' . $t->usr2->dsp_id() . '"';
         $cmp = $t_db->load_component(components::TEST_ADD_NAME, $t->usr2);
-        $dsp_lst = $cmp->assigned_msk_ids();
-        $result = $msk->is_in_list($dsp_lst);
+        $msk_lst = $cmp->assigned_msk_ids();
+        $result = $msk->is_in_list($msk_lst);
         $t->assert($test_name, $result, true);
 
         // ... check if the value update has been triggered
@@ -120,8 +120,8 @@ class component_link_write_tests
 
         // ... check if the link is really not used any more for the second user
         $cmp = $t_db->load_component(components::TEST_ADD_NAME, $t->usr2);
-        $dsp_lst = $cmp->assigned_msk_ids();
-        $result = $msk->is_in_list($dsp_lst);
+        $msk_lst = $cmp->assigned_msk_ids();
+        $result = $msk->is_in_list($msk_lst);
         $target = false;
         $t->assert('view component->assign_dsp_ids contains "' . $msk->name() . '" for user "' . $t->usr2->name . '" not any more', $result, $target);
 
@@ -130,8 +130,8 @@ class component_link_write_tests
 
         // ... check if the link is still used for the first user
         $cmp = $t_db->load_component(components::TEST_ADD_NAME);
-        $dsp_lst = $cmp->assigned_msk_ids();
-        $result = $msk->is_in_list($dsp_lst);
+        $msk_lst = $cmp->assigned_msk_ids();
+        $result = $msk->is_in_list($msk_lst);
         $target = true;
         $t->assert('view component->assign_dsp_ids still contains "' . $msk->name() . '" for user "' . $t->usr1->name . '"', $result, $target);
 
@@ -153,8 +153,8 @@ class component_link_write_tests
 
         // check if the view component is not used any more for both users
         $cmp = $t_db->load_component(components::TEST_ADD_NAME);
-        $dsp_lst = $cmp->assigned_msk_ids();
-        $result = $msk->is_in_list($dsp_lst);
+        $msk_lst = $cmp->assigned_msk_ids();
+        $result = $msk->is_in_list($msk_lst);
         $target = false;
         $t->assert('view component->assign_dsp_ids contains "' . $msk->name() . '" for user "' . $t->usr1->name . '" not any more', $result, $target);
 

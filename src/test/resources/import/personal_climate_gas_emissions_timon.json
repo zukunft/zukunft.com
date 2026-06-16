@@ -17,6 +17,30 @@
     {
       "name": "per kWh",
       "type": "measure_divisor"
+    },
+    {
+      "name": "electricity"
+    },
+    {
+      "name": "consumed"
+    },
+    {
+      "name": "gram"
+    },
+    {
+      "name": "CO2"
+    },
+    {
+      "name": "solar"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "Swiss"
+    },
+    {
+      "name": "hydropower"
     }
   ],
   "triples": [
@@ -25,6 +49,18 @@
       "from": "electricity",
       "verb": "can be",
       "to": "consumed"
+    },
+    {
+      "name": "solar power",
+      "from": "power",
+      "verb": "kind of",
+      "to": "solar"
+    },
+    {
+      "name": "Swiss hydropower",
+      "from": "hydropower",
+      "verb": "kind of",
+      "to": "Swiss"
     }
   ],
   "formulas": [],
@@ -60,7 +96,7 @@
       "words": [
         "electricity",
         "kWh",
-        "Solar power",
+        "solar power",
         "2019"
       ],
       "number": "5740",
@@ -81,13 +117,13 @@
         "gram",
         "CO2",
         "per kWh",
-        "Solar power",
+        "solar power",
         "2019"
       ],
       "number": "54",
       "share": "public",
       "protection": "admin_protection",
-      "source": "Renewable and Sustainable Energy Reviews 42, (2015)"
+      "source": "Renewable and Sustainable Energy Reviews Volume 42, February 2015, Pages 1113-1122"
     },
     {
       "words": [
@@ -100,7 +136,14 @@
       "number": "14.4",
       "share": "public",
       "protection": "admin_protection",
-      "source": "Strommix 2018 - Schweizerische Energie-Stiftung"
+      "source": "STROMMIX 2018 (energiestiftung.ch)"
+    }
+  ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
     }
   ],
   "views": [
@@ -111,8 +154,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         }
       ]
     }

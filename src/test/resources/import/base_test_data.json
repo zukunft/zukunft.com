@@ -58,7 +58,8 @@
           "name": "Q72",
           "type": "wikidata"
         }
-      ]
+      ],
+      "impact": 71152
     },
     {
       "name": "Zurich (Canton)",
@@ -74,7 +75,8 @@
           "name": "Q11943",
           "type": "wikidata"
         }
-      ]
+      ],
+      "impact": 32400
     },
     {
       "name": "Zurich Insurance",
@@ -90,7 +92,8 @@
           "name": "Q230426",
           "type": "wikidata"
         }
-      ]
+      ],
+      "impact": 22500
     },
     {
       "name": "2020 (year)",

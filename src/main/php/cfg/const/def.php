@@ -42,6 +42,9 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
 //include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_HELPER . 'db_cache.php';
+//include_once paths::MODEL_HELPER . 'db_cache_status.php';
+//include_once paths::MODEL_HELPER . 'db_cache_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_FORMULA . 'formula_map.php';
@@ -139,6 +142,9 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
@@ -221,7 +227,6 @@ class def
      * main code const
      */
 
-    const string POD_NAME = "zukunft.com"; // the default pod name if not defined
     const string PRG_VERSION = "0.0.3"; // to detect the correct update script and to mark the data export
     const string NEXT_VERSION = "0.0.4"; // to prevent importing incompatible data
     const string FIRST_VERSION = "0.0.2"; // the last program version which has not a basic upgrade process
@@ -240,7 +245,7 @@ class def
 
     // TODO Prio 2 allow overwrite by the config value
     const int MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
-    const int MAX_RECURSIVE = 10; // max number of recursive call to avoid endless looping in case of a program error
+    const int MAX_RECURSIVE = 20; // max number of recursive call to avoid endless looping in case of a program error
 
 
     /*
@@ -483,7 +488,9 @@ class def
         view_type::class,
         view_style::class,
         view_relation_types::class,
-        phrase_types::class
+        phrase_types::class,
+        db_cache_status::class,
+        db_cache_type::class,
     ];
 
     // log type classes that have a csv file for the initial load
@@ -565,6 +572,7 @@ class def
     // list of classes that use a database table but where the changes never needs to be added to the change log
     const array CLASSES_NO_LOG = [
         job::class,
+        db_cache::class,
     ];
 
     // list of classes that use a database table but where the changes do not need to be logged
@@ -582,6 +590,7 @@ class def
         'change*',
         session::class,
         job::class,
+        db_cache::class,
         element::class,
         'phrase*',
         'user_phrase*',
@@ -614,6 +623,9 @@ class def
         'jobs',
         'job_statuum',
         'job_types',
+        'db_cache_statuum',
+        'db_cache_types',
+        'db_caches',
         'user_official_types',
         'ip_ranges',
         'sessions',
@@ -821,6 +833,8 @@ class def
         'job_statuum_job_status_id_seq',
         'job_types_job_type_id_seq',
         'jobs_job_id_seq',
+        'db_cache_statuum_status_id_seq',
+        'db_cache_types_type_id_seq',
         'sys_log_status_sys_log_status_id_seq',
         'sys_log_functions_sys_log_function_id_seq',
         'share_types_share_type_id_seq',

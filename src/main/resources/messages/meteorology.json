@@ -1,0 +1,2056 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-04 12:00:00",
+  "user": "timon",
+  "selection": [
+    "meteorology"
+  ],
+  "description": "Main meteorological definitions and formulas that are not part of the units, physics, math, chemistry or geology base data.",
+  "words": [
+    {
+      "name": "meteorology",
+      "description": "branch of science dealing with the study of atmospheric phenomena and the short term variation of weather conditions including wind, precipitation, temperature, humidity, cloud cover, and air pressure",
+      "refs": [
+        {
+          "name": "Meteorology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25261",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "science"
+    },
+    {
+      "name": "climatology",
+      "description": "study of climate",
+      "refs": [
+        {
+          "name": "Climatology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52139",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hydrometeorology",
+      "description": "study of water in the atmosphere",
+      "refs": [
+        {
+          "name": "Hydrometeorology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1045317",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "aeronomy",
+      "description": "science of the upper region of the atmosphere",
+      "refs": [
+        {
+          "name": "Aeronomy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q16360",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "atmosphere",
+      "description": "gas layer surrounding Earth",
+      "refs": [
+        {
+          "name": "Atmosphere of Earth",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3230",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "troposphere",
+      "description": "lowest layer of the atmosphere",
+      "refs": [
+        {
+          "name": "Troposphere",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q40631",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stratosphere",
+      "description": "layer of the atmosphere",
+      "refs": [
+        {
+          "name": "Stratosphere",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q108376",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mesosphere",
+      "description": "layer of the atmosphere",
+      "refs": [
+        {
+          "name": "Mesosphere",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q162167",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "thermosphere",
+      "description": "layer of the Earth's atmosphere above the mesosphere and below the exosphere",
+      "refs": [
+        {
+          "name": "Thermosphere",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q178043",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "exosphere",
+      "description": "outermost layer of the atmosphere",
+      "refs": [
+        {
+          "name": "Exosphere",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170332",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "tropopause",
+      "description": "upper boundary of troposphere",
+      "refs": [
+        {
+          "name": "Tropopause",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q186433",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "advection",
+      "description": "transport of a substance by bulk motion",
+      "refs": [
+        {
+          "name": "Advection",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q379788",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "insolation",
+      "description": "power per unit area received from the Sun in the form of electromagnetic radiation",
+      "refs": [
+        {
+          "name": "Solar irradiance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7556707",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "albedo",
+      "description": "ratio of reflected radiation to incident radiation",
+      "refs": [
+        {
+          "name": "Albedo",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q101038",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ozone",
+      "description": "chemical compound",
+      "refs": [
+        {
+          "name": "Ozone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q36933",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "aerosol",
+      "description": "colloid of fine solid particles or liquid droplets, in air or another gas",
+      "refs": [
+        {
+          "name": "Aerosol",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q104541",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "smog",
+      "description": "severe air pollution",
+      "refs": [
+        {
+          "name": "Smog",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q169994",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "weather",
+      "description": "state of the atmosphere",
+      "refs": [
+        {
+          "name": "Weather",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11663",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "climate",
+      "description": "long-term statistical characterization of atmospheric conditions in a region, typically averaged over periods of 30 years or more",
+      "refs": [
+        {
+          "name": "Climate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7937",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "monsoon",
+      "description": "seasonal changes in atmospheric circulation and precipitation associated with the asymmetric heating of land and sea",
+      "refs": [
+        {
+          "name": "Monsoon",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q42967",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "El Nino-Southern Oscillation",
+      "description": "irregularly periodic variation in winds and sea surface temperatures over the tropical eastern Pacific Ocean; see Wikipedia: El Niño–Southern Oscillation (Q14524818)"
+    },
+    {
+      "name": "cyclone",
+      "description": "large scale air mass that rotates around a strong center of low pressure",
+      "refs": [
+        {
+          "name": "Cyclone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q79602",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "anticyclone",
+      "description": "region where the atmospheric pressure at the surface of the planet is greater than its surrounding environment",
+      "refs": [
+        {
+          "name": "Anticyclone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1709543",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "wind",
+      "description": "flow of gases or air on a large scale",
+      "refs": [
+        {
+          "name": "Wind",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8094",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "tornado",
+      "description": "violently rotating column of air that is in contact with both the earth's surface and a cumulonimbus cloud in the air",
+      "refs": [
+        {
+          "name": "Tornado",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8081",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "thunderstorm",
+      "description": "a storm characterized by the presence of lightning, usually accompanied by strong winds and often produce heavy rain and sometimes snow, sleet, or hail, but some produce little precipitation or no precipitation at all",
+      "refs": [
+        {
+          "name": "Thunderstorm",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2857578",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "lightning",
+      "description": "weather phenomenon involving electrostatic discharge",
+      "refs": [
+        {
+          "name": "Lightning",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q33741",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "thunder",
+      "description": "sound caused by a lightning strike",
+      "refs": [
+        {
+          "name": "Thunder",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83301",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "humidity",
+      "description": "amount of water vapor in the air",
+      "refs": [
+        {
+          "name": "Humidity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q180600",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "precipitation",
+      "description": "liquid or solid water that falls to the ground",
+      "refs": [
+        {
+          "name": "Precipitation (meteorology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25257",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "rain",
+      "description": "liquid water in the form of droplets that have condensed from atmospheric water vapor and then precipitated",
+      "refs": [
+        {
+          "name": "Rain",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7925",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "snow",
+      "description": "precipitation in the form of ice crystal flakes",
+      "refs": [
+        {
+          "name": "Snow",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7561",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hail",
+      "description": "type of precipitation formed out of ice",
+      "refs": [
+        {
+          "name": "Hail",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37602",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "drizzle",
+      "description": "light liquid precipitation",
+      "refs": [
+        {
+          "name": "Drizzle",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q211521",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "condensation",
+      "description": "change of the physical state of matter from gas phase into liquid phase; reverse of evaporation",
+      "refs": [
+        {
+          "name": "Condensation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q166583",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "evaporation",
+      "description": "type of vaporization of a liquid that occurs from its surface; surface phenomenon",
+      "refs": [
+        {
+          "name": "Evaporation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q132814",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sublimation",
+      "description": "transition of a substance directly from the solid to the gas state",
+      "refs": [
+        {
+          "name": "Sublimation (phase transition)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q131800",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "transpiration",
+      "description": "process of water moving through a plant and its evaporation from aerial parts",
+      "refs": [
+        {
+          "name": "Transpiration",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q167980",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cloud",
+      "description": "visible mass of liquid droplets or frozen crystals suspended in the atmosphere",
+      "refs": [
+        {
+          "name": "Cloud",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8074",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fog",
+      "description": "atmospheric phenomenon",
+      "refs": [
+        {
+          "name": "Fog",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37477",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mist",
+      "description": "phenomenon caused by small droplets of water suspended in air",
+      "refs": [
+        {
+          "name": "Mist",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q192196",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "evapotranspiration",
+      "description": "biophysicogeochemical process",
+      "refs": [
+        {
+          "name": "Evapotranspiration",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q828158",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "dew",
+      "description": "water in the form of droplets that appears on thin, exposed objects in the morning or evening",
+      "refs": [
+        {
+          "name": "Dew",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41097",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "frost",
+      "description": "coating or deposit of ice that may form in humid air in cold conditions, usually overnight",
+      "refs": [
+        {
+          "name": "Frost",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4590598",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "visibility",
+      "description": "in meteorology, distance at which an object or light can be clearly discerned",
+      "refs": [
+        {
+          "name": "Visibility",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q654068",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "barometer",
+      "description": "scientific instrument used to measure atmospheric pressure",
+      "refs": [
+        {
+          "name": "Barometer",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q79757",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "thermometer",
+      "description": "device that measures temperature or a temperature gradient",
+      "refs": [
+        {
+          "name": "Thermometer",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q646",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hygrometer",
+      "description": "instrument used for measuring the moisture content in the atmosphere",
+      "refs": [
+        {
+          "name": "Hygrometer",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q183173",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "anemometer",
+      "description": "meteorological instrumentation used for measuring the speed of wind",
+      "refs": [
+        {
+          "name": "Anemometer",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q175029",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "radiosonde",
+      "description": "meteorological instrumentation",
+      "refs": [
+        {
+          "name": "Radiosonde",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q852817",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "latitude",
+      "description": "angle between zenith and a plane parallel to the equator",
+      "refs": [
+        {
+          "name": "Latitude",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q34027",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "altitude",
+      "description": "height in relation to a certain reference point",
+      "refs": [
+        {
+          "name": "Altitude",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190200",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "El Niño",
+      "description": "the warm phase of the El Niño–Southern Oscillation, with warmer sea surface temperatures in the central and eastern Pacific"
+    },
+    {
+      "name": "La Niña",
+      "description": "the cool phase of the El Niño–Southern Oscillation, with cooler sea surface temperatures in the central and eastern Pacific"
+    },
+    {
+      "name": "atmospheric"
+    },
+    {
+      "name": "physics"
+    },
+    {
+      "name": "chemistry"
+    },
+    {
+      "name": "synoptic"
+    },
+    {
+      "name": "dynamic"
+    },
+    {
+      "name": "forecasting"
+    },
+    {
+      "name": "pressure"
+    },
+    {
+      "name": "gradient"
+    },
+    {
+      "name": "force"
+    },
+    {
+      "name": "lapse"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "temperature"
+    },
+    {
+      "name": "inversion"
+    },
+    {
+      "name": "adiabatic"
+    },
+    {
+      "name": "process"
+    },
+    {
+      "name": "convection"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "solar"
+    },
+    {
+      "name": "irradiance"
+    },
+    {
+      "name": "greenhouse"
+    },
+    {
+      "name": "effect"
+    },
+    {
+      "name": "outgoing"
+    },
+    {
+      "name": "longwave"
+    },
+    {
+      "name": "radiation"
+    },
+    {
+      "name": "shortwave"
+    },
+    {
+      "name": "constant"
+    },
+    {
+      "name": "Coriolis"
+    },
+    {
+      "name": "geostrophic"
+    },
+    {
+      "name": "layer"
+    },
+    {
+      "name": "cycle"
+    },
+    {
+      "name": "water"
+    },
+    {
+      "name": "mass"
+    },
+    {
+      "name": "air"
+    },
+    {
+      "name": "front"
+    },
+    {
+      "name": "cold"
+    },
+    {
+      "name": "warm"
+    },
+    {
+      "name": "occluded"
+    },
+    {
+      "name": "stationary"
+    },
+    {
+      "name": "speed"
+    },
+    {
+      "name": "direction"
+    },
+    {
+      "name": "jet"
+    },
+    {
+      "name": "stream"
+    },
+    {
+      "name": "trade"
+    },
+    {
+      "name": "tropical"
+    },
+    {
+      "name": "relative"
+    },
+    {
+      "name": "specific"
+    },
+    {
+      "name": "mixing"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "vapor"
+    },
+    {
+      "name": "cumulus"
+    },
+    {
+      "name": "stratus"
+    },
+    {
+      "name": "cirrus"
+    },
+    {
+      "name": "cumulonimbus"
+    },
+    {
+      "name": "surface"
+    },
+    {
+      "name": "runoff"
+    },
+    {
+      "name": "heat"
+    },
+    {
+      "name": "index"
+    },
+    {
+      "name": "chill"
+    },
+    {
+      "name": "gauge"
+    },
+    {
+      "name": "balloon"
+    },
+    {
+      "name": "station"
+    },
+    {
+      "name": "standard"
+    },
+    {
+      "name": "saturation"
+    },
+    {
+      "name": "parameter"
+    },
+    {
+      "name": "angular"
+    },
+    {
+      "name": "velocity"
+    },
+    {
+      "name": "Earth"
+    },
+    {
+      "name": "dry"
+    },
+    {
+      "name": "moist"
+    },
+    {
+      "name": "reflected"
+    },
+    {
+      "name": "incoming"
+    },
+    {
+      "name": "celsius"
+    },
+    {
+      "name": "difference"
+    },
+    {
+      "name": "height"
+    },
+    {
+      "name": "environmental"
+    }
+  ],
+  "triples": [
+    {
+      "name": "atmospheric physics",
+      "description": "application of physics to the study of the atmosphere. see Wikipedia: Atmospheric physics (Q5334416)",
+      "from": "physics",
+      "verb": "kind of",
+      "to": "atmospheric"
+    },
+    {
+      "name": "atmospheric chemistry",
+      "description": "branch of atmospheric science. see Wikipedia: Atmospheric chemistry (Q287919)",
+      "from": "chemistry",
+      "verb": "kind of",
+      "to": "atmospheric"
+    },
+    {
+      "name": "synoptic meteorology",
+      "description": "1000-km-order method of measuring weather systems. see Wikipedia: Synoptic scale meteorology (Q1233837)",
+      "from": "meteorology",
+      "verb": "kind of",
+      "to": "synoptic"
+    },
+    {
+      "name": "dynamic meteorology",
+      "description": "branch of science dealing with the study of atmospheric phenomena and the short term variation of weather conditions including wind, precipitation, temperature, humidity, cloud cover, and air pressure. see Wikipedia: Atmospheric dynamics (Q25261)",
+      "from": "meteorology",
+      "verb": "kind of",
+      "to": "dynamic"
+    },
+    {
+      "name": "weather forecasting",
+      "description": "application of science and technology to predict the conditions of the atmosphere for a given location and time. see Wikipedia: Weather forecasting (Q182868)",
+      "from": "forecasting",
+      "verb": "of",
+      "to": "weather"
+    },
+    {
+      "name": "atmospheric pressure",
+      "description": "static pressure exerted by the weight of the atmosphere. see Wikipedia: Atmospheric pressure (Q81809)",
+      "from": "pressure",
+      "verb": "kind of",
+      "to": "atmospheric"
+    },
+    {
+      "name": "pressure gradient",
+      "from": "gradient",
+      "verb": "of",
+      "to": "pressure"
+    },
+    {
+      "name": "pressure gradient force",
+      "description": "physical force from a pressure differential. see Wikipedia: Pressure-gradient force (Q1541234)",
+      "from": "force",
+      "verb": "of",
+      "to": "pressure gradient"
+    },
+    {
+      "name": "lapse rate",
+      "description": "vertical rate of change of temperature in atmosphere. see Wikipedia: Lapse rate (Q66900467)",
+      "from": "rate",
+      "verb": "of",
+      "to": "lapse"
+    },
+    {
+      "name": "temperature inversion",
+      "description": "deviation from the normal change of an atmospheric property with altitude. see Wikipedia: Inversion (meteorology) (Q190096)",
+      "from": "inversion",
+      "verb": "of",
+      "to": "temperature"
+    },
+    {
+      "name": "adiabatic process",
+      "description": "thermodynamic process with zero heat transfer. see Wikipedia: Adiabatic process (Q182453)",
+      "from": "process",
+      "verb": "kind of",
+      "to": "adiabatic"
+    },
+    {
+      "name": "atmospheric convection",
+      "description": "atmospheric phenomenon. see Wikipedia: Atmospheric convection (Q931652)",
+      "from": "convection",
+      "verb": "kind of",
+      "to": "atmospheric"
+    },
+    {
+      "name": "potential temperature",
+      "description": "temperature that a fluid would attain if adiabatically brought to a standard reference pressure. see Wikipedia: Potential temperature (Q760765)",
+      "from": "temperature",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "solar irradiance",
+      "description": "power per unit area received from the Sun in the form of electromagnetic radiation. see Wikipedia: Solar irradiance (Q7556707)",
+      "from": "irradiance",
+      "verb": "of",
+      "to": "solar"
+    },
+    {
+      "name": "greenhouse effect",
+      "description": "atmospheric heat retention. see Wikipedia: Greenhouse effect (Q41560)",
+      "from": "effect",
+      "verb": "of",
+      "to": "greenhouse"
+    },
+    {
+      "name": "longwave radiation",
+      "from": "radiation",
+      "verb": "kind of",
+      "to": "longwave"
+    },
+    {
+      "name": "outgoing longwave radiation",
+      "description": "electromagnetic radiation of wavelengths between 3.0 and 100 μm emitted from Earth and its atmosphere out to space in the form of thermal radiation. see Wikipedia: Outgoing longwave radiation (Q2999493)",
+      "from": "longwave radiation",
+      "verb": "kind of",
+      "to": "outgoing"
+    },
+    {
+      "name": "shortwave radiation",
+      "description": "type of radiant energy. see Wikipedia: Shortwave radiation (Q7502259)",
+      "from": "radiation",
+      "verb": "kind of",
+      "to": "shortwave"
+    },
+    {
+      "name": "solar constant",
+      "description": "intensity of sunlight. see Wikipedia: Solar constant (Q335272)",
+      "from": "constant",
+      "verb": "of",
+      "to": "solar"
+    },
+    {
+      "name": "Coriolis force",
+      "description": "apparent or fictitious force on objects moving within a reference frame that rotates with respect to an inertial frame. see Wikipedia: Coriolis force (Q169973)",
+      "from": "force",
+      "verb": "of",
+      "to": "Coriolis"
+    },
+    {
+      "name": "geostrophic wind",
+      "description": "theoretical wind that would result from an exact balance between the Coriolis force and the pressure gradient force. see Wikipedia: Geostrophic wind (Q929043)",
+      "from": "wind",
+      "verb": "kind of",
+      "to": "geostrophic"
+    },
+    {
+      "name": "ozone layer",
+      "description": "region of Earth's stratosphere that absorbs most of the Sun's UV radiation. see Wikipedia: Ozone layer (Q79995)",
+      "from": "layer",
+      "verb": "of",
+      "to": "ozone"
+    },
+    {
+      "name": "water cycle",
+      "description": "continuous movement of water on, above and below the surface of the Earth. see Wikipedia: Water cycle (Q81041)",
+      "from": "cycle",
+      "verb": "of",
+      "to": "water"
+    },
+    {
+      "name": "air mass",
+      "description": "widespread body of air approximately homogeneous in its horizontal extent with vertical temperature and moisture variations that are approximately the same over its horizontal extent. see Wikipedia: Air mass (Q216823)",
+      "from": "mass",
+      "verb": "of",
+      "to": "air"
+    },
+    {
+      "name": "weather front",
+      "description": "boundary separating two masses of air of different densities. see Wikipedia: Weather front (Q189796)",
+      "from": "front",
+      "verb": "of",
+      "to": "weather"
+    },
+    {
+      "name": "cold front",
+      "description": "leading edge of a cooler mass of air. see Wikipedia: Cold front (Q210316)",
+      "from": "front",
+      "verb": "kind of",
+      "to": "cold"
+    },
+    {
+      "name": "warm front",
+      "description": "boundary of advancing mass of warm air. see Wikipedia: Warm front (Q537536)",
+      "from": "front",
+      "verb": "kind of",
+      "to": "warm"
+    },
+    {
+      "name": "occluded front",
+      "description": "part of cyclone formation. see Wikipedia: Occluded front (Q747330)",
+      "from": "front",
+      "verb": "kind of",
+      "to": "occluded"
+    },
+    {
+      "name": "stationary front",
+      "description": "weather front. see Wikipedia: Stationary front (Q1194255)",
+      "from": "front",
+      "verb": "kind of",
+      "to": "stationary"
+    },
+    {
+      "name": "wind speed",
+      "description": "measure. see Wikipedia: Wind speed (Q1464943)",
+      "from": "speed",
+      "verb": "of",
+      "to": "wind"
+    },
+    {
+      "name": "wind direction",
+      "description": "geographic direction from which a wind blows. see Wikipedia: Wind direction (Q1057900)",
+      "from": "direction",
+      "verb": "of",
+      "to": "wind"
+    },
+    {
+      "name": "jet stream",
+      "description": "fast-flowing atmospheric air-current. see Wikipedia: Jet stream (Q202325)",
+      "from": "stream",
+      "verb": "kind of",
+      "to": "jet"
+    },
+    {
+      "name": "trade winds",
+      "description": "permanent east-to-west prevailing winds that flow in the Earth's equatorial region. see Wikipedia: Trade winds (Q160603)",
+      "from": "wind",
+      "verb": "kind of",
+      "to": "trade"
+    },
+    {
+      "name": "tropical cyclone",
+      "description": "rapidly rotating storm system that forms in the tropics. see Wikipedia: Tropical cyclone (Q8092)",
+      "from": "cyclone",
+      "verb": "kind of",
+      "to": "tropical"
+    },
+    {
+      "name": "relative humidity",
+      "description": "amount of water vapor in the air. see Wikipedia: Humidity (Q180600)",
+      "from": "humidity",
+      "verb": "kind of",
+      "to": "relative"
+    },
+    {
+      "name": "specific humidity",
+      "description": "amount of water vapor in the air. see Wikipedia: Specific humidity (Q180600)",
+      "from": "humidity",
+      "verb": "kind of",
+      "to": "specific"
+    },
+    {
+      "name": "mixing ratio",
+      "description": "abundance of one component of a mixture relative to others. see Wikipedia: Mixing ratio (Q171293)",
+      "from": "ratio",
+      "verb": "of",
+      "to": "mixing"
+    },
+    {
+      "name": "dew point",
+      "description": "temperature at which air becomes saturated with water vapour. see Wikipedia: Dew point (Q178828)",
+      "from": "point",
+      "verb": "of",
+      "to": "dew"
+    },
+    {
+      "name": "water vapor",
+      "description": "gaseous phase of water; unlike other forms of water, water vapor is invisible. see Wikipedia: Water vapor (Q190120)",
+      "from": "vapor",
+      "verb": "of",
+      "to": "water"
+    },
+    {
+      "name": "vapor pressure",
+      "description": "pressure exterted by a vapor in thermodynamic equilibrium. see Wikipedia: Vapor pressure (Q2661322)",
+      "from": "pressure",
+      "verb": "of",
+      "to": "vapor"
+    },
+    {
+      "name": "cumulus cloud",
+      "description": "genus of clouds, low-level cloud. see Wikipedia: Cumulus cloud (Q14189)",
+      "from": "cloud",
+      "verb": "kind of",
+      "to": "cumulus"
+    },
+    {
+      "name": "stratus cloud",
+      "description": "type of cloud. see Wikipedia: Stratus cloud (Q40526)",
+      "from": "cloud",
+      "verb": "kind of",
+      "to": "stratus"
+    },
+    {
+      "name": "cirrus cloud",
+      "description": "cloud type. see Wikipedia: Cirrus cloud (Q185638)",
+      "from": "cloud",
+      "verb": "kind of",
+      "to": "cirrus"
+    },
+    {
+      "name": "cumulonimbus cloud",
+      "description": "genus of clouds, dense towering vertical cloud associated with thunderstorms and atmospheric instability. see Wikipedia: Cumulonimbus cloud (Q182311)",
+      "from": "cloud",
+      "verb": "kind of",
+      "to": "cumulonimbus"
+    },
+    {
+      "name": "surface runoff",
+      "description": "flow of excess rainwater not infiltrating in the ground over its surface. see Wikipedia: Surface runoff (Q1444790)",
+      "from": "runoff",
+      "verb": "of",
+      "to": "surface"
+    },
+    {
+      "name": "heat index",
+      "description": "temperature index that accounts for the effects of humidity. see Wikipedia: Heat index (Q2141844)",
+      "from": "index",
+      "verb": "of",
+      "to": "heat"
+    },
+    {
+      "name": "wind chill",
+      "description": "lowering of body temperature due to the passing-flow of lower-temperature air. see Wikipedia: Wind chill (Q1044340)",
+      "from": "chill",
+      "verb": "of",
+      "to": "wind"
+    },
+    {
+      "name": "rain gauge",
+      "description": "meteorological instrumentation. see Wikipedia: Rain gauge (Q190052)",
+      "from": "gauge",
+      "verb": "of",
+      "to": "rain"
+    },
+    {
+      "name": "weather balloon",
+      "description": "meteorological instrumentation. see Wikipedia: Weather balloon (Q1128180)",
+      "from": "balloon",
+      "verb": "of",
+      "to": "weather"
+    },
+    {
+      "name": "weather station",
+      "description": "set of sensors that record and provide physical measurements and meteorological parameters. see Wikipedia: Weather station (Q190107)",
+      "from": "station",
+      "verb": "of",
+      "to": "weather"
+    },
+    {
+      "name": "standard atmospheric pressure",
+      "description": "physical conditions at sea level. see Wikipedia: Standard sea-level conditions (Q7598376)",
+      "from": "atmospheric pressure",
+      "verb": "kind of",
+      "to": "standard"
+    },
+    {
+      "name": "saturation vapor pressure",
+      "description": "the vapor pressure at which air is saturated with water vapor at a given temperature",
+      "from": "vapor pressure",
+      "verb": "kind of",
+      "to": "saturation"
+    },
+    {
+      "name": "Coriolis parameter",
+      "description": "twice the vertical component of the Earth's angular velocity, used in the equations of atmospheric motion",
+      "from": "parameter",
+      "verb": "of",
+      "to": "Coriolis"
+    },
+    {
+      "name": "angular velocity",
+      "from": "velocity",
+      "verb": "kind of",
+      "to": "angular"
+    },
+    {
+      "description": "the rate of rotation of the Earth about its axis, about 7.292e-5 radians per second",
+      "from": "angular velocity",
+      "verb": "of",
+      "to": "Earth"
+    },
+    {
+      "description": "the mass of water vapor contained in a parcel of air",
+      "from": "mass",
+      "verb": "of",
+      "to": "water vapor"
+    },
+    {
+      "name": "dry air",
+      "from": "air",
+      "verb": "kind of",
+      "to": "dry"
+    },
+    {
+      "description": "the mass of the dry air, excluding water vapor, in a parcel of air",
+      "from": "mass",
+      "verb": "of",
+      "to": "dry air"
+    },
+    {
+      "name": "moist air",
+      "from": "air",
+      "verb": "kind of",
+      "to": "moist"
+    },
+    {
+      "description": "the total mass of a parcel of moist air including its water vapor",
+      "from": "mass",
+      "verb": "of",
+      "to": "moist air"
+    },
+    {
+      "name": "reflected radiation",
+      "description": "the amount of radiation reflected by a surface",
+      "from": "radiation",
+      "verb": "kind of",
+      "to": "reflected"
+    },
+    {
+      "name": "incoming radiation",
+      "description": "the amount of radiation arriving at a surface",
+      "from": "radiation",
+      "verb": "kind of",
+      "to": "incoming"
+    },
+    {
+      "description": "the air temperature expressed in degrees Celsius",
+      "from": "temperature",
+      "verb": "in",
+      "to": "celsius"
+    },
+    {
+      "name": "temperature difference",
+      "description": "the difference in temperature between two points",
+      "from": "difference",
+      "verb": "of",
+      "to": "temperature"
+    },
+    {
+      "name": "height difference",
+      "description": "the difference in height between two points",
+      "from": "difference",
+      "verb": "of",
+      "to": "height"
+    },
+    {
+      "name": "dry adiabatic",
+      "from": "adiabatic",
+      "verb": "kind of",
+      "to": "dry"
+    },
+    {
+      "name": "dry adiabatic lapse rate",
+      "description": "the rate at which an unsaturated air parcel cools as it rises, about 9.8 K per kilometre",
+      "from": "lapse rate",
+      "verb": "kind of",
+      "to": "dry adiabatic"
+    },
+    {
+      "name": "environmental lapse rate",
+      "description": "the actual rate at which air temperature decreases with height in the atmosphere",
+      "from": "lapse rate",
+      "verb": "kind of",
+      "to": "environmental"
+    },
+    {
+      "from": "meteorology",
+      "verb": "is part of",
+      "to": "science"
+    },
+    {
+      "from": "climatology",
+      "verb": "is part of",
+      "to": "meteorology"
+    },
+    {
+      "from": "atmospheric physics",
+      "verb": "is part of",
+      "to": "meteorology"
+    },
+    {
+      "from": "atmospheric chemistry",
+      "verb": "is part of",
+      "to": "meteorology"
+    },
+    {
+      "from": "synoptic meteorology",
+      "verb": "is part of",
+      "to": "meteorology"
+    },
+    {
+      "from": "dynamic meteorology",
+      "verb": "is part of",
+      "to": "meteorology"
+    },
+    {
+      "from": "hydrometeorology",
+      "verb": "is part of",
+      "to": "meteorology"
+    },
+    {
+      "from": "aeronomy",
+      "verb": "is part of",
+      "to": "meteorology"
+    },
+    {
+      "from": "weather forecasting",
+      "verb": "is part of",
+      "to": "meteorology"
+    },
+    {
+      "from": "atmosphere",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "troposphere",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "stratosphere",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "mesosphere",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "thermosphere",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "exosphere",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "tropopause",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "atmospheric pressure",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "pressure gradient force",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "lapse rate",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "temperature inversion",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "adiabatic process",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "atmospheric convection",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "advection",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "potential temperature",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "solar irradiance",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "insolation",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "albedo",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "greenhouse effect",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "outgoing longwave radiation",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "shortwave radiation",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "solar constant",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "Coriolis force",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "geostrophic wind",
+      "verb": "is part of",
+      "to": "atmospheric physics"
+    },
+    {
+      "from": "ozone",
+      "verb": "is part of",
+      "to": "atmospheric chemistry"
+    },
+    {
+      "from": "ozone layer",
+      "verb": "is part of",
+      "to": "atmospheric chemistry"
+    },
+    {
+      "from": "aerosol",
+      "verb": "is part of",
+      "to": "atmospheric chemistry"
+    },
+    {
+      "from": "smog",
+      "verb": "is part of",
+      "to": "atmospheric chemistry"
+    },
+    {
+      "from": "weather",
+      "verb": "is part of",
+      "to": "climatology"
+    },
+    {
+      "from": "climate",
+      "verb": "is part of",
+      "to": "climatology"
+    },
+    {
+      "from": "monsoon",
+      "verb": "is part of",
+      "to": "climatology"
+    },
+    {
+      "from": "El Nino-Southern Oscillation",
+      "verb": "is part of",
+      "to": "climatology"
+    },
+    {
+      "from": "water cycle",
+      "verb": "is part of",
+      "to": "climatology"
+    },
+    {
+      "from": "air mass",
+      "verb": "is part of",
+      "to": "synoptic meteorology"
+    },
+    {
+      "from": "weather front",
+      "verb": "is part of",
+      "to": "synoptic meteorology"
+    },
+    {
+      "from": "cold front",
+      "verb": "is part of",
+      "to": "synoptic meteorology"
+    },
+    {
+      "from": "warm front",
+      "verb": "is part of",
+      "to": "synoptic meteorology"
+    },
+    {
+      "from": "occluded front",
+      "verb": "is part of",
+      "to": "synoptic meteorology"
+    },
+    {
+      "from": "stationary front",
+      "verb": "is part of",
+      "to": "synoptic meteorology"
+    },
+    {
+      "from": "cyclone",
+      "verb": "is part of",
+      "to": "synoptic meteorology"
+    },
+    {
+      "from": "anticyclone",
+      "verb": "is part of",
+      "to": "synoptic meteorology"
+    },
+    {
+      "from": "wind",
+      "verb": "is part of",
+      "to": "dynamic meteorology"
+    },
+    {
+      "from": "wind speed",
+      "verb": "is part of",
+      "to": "dynamic meteorology"
+    },
+    {
+      "from": "wind direction",
+      "verb": "is part of",
+      "to": "dynamic meteorology"
+    },
+    {
+      "from": "jet stream",
+      "verb": "is part of",
+      "to": "dynamic meteorology"
+    },
+    {
+      "from": "trade winds",
+      "verb": "is part of",
+      "to": "dynamic meteorology"
+    },
+    {
+      "from": "tropical cyclone",
+      "verb": "is part of",
+      "to": "dynamic meteorology"
+    },
+    {
+      "from": "tornado",
+      "verb": "is part of",
+      "to": "dynamic meteorology"
+    },
+    {
+      "from": "thunderstorm",
+      "verb": "is part of",
+      "to": "dynamic meteorology"
+    },
+    {
+      "from": "lightning",
+      "verb": "is part of",
+      "to": "dynamic meteorology"
+    },
+    {
+      "from": "thunder",
+      "verb": "is part of",
+      "to": "dynamic meteorology"
+    },
+    {
+      "from": "humidity",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "relative humidity",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "specific humidity",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "mixing ratio",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "dew point",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "water vapor",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "vapor pressure",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "precipitation",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "rain",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "snow",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "hail",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "drizzle",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "condensation",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "evaporation",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "sublimation",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "transpiration",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "cloud",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "cumulus cloud",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "stratus cloud",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "cirrus cloud",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "cumulonimbus cloud",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "fog",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "mist",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "evapotranspiration",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "surface runoff",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "dew",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "frost",
+      "verb": "is part of",
+      "to": "hydrometeorology"
+    },
+    {
+      "from": "visibility",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "from": "heat index",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "from": "wind chill",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "from": "barometer",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "from": "thermometer",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "from": "hygrometer",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "from": "anemometer",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "from": "rain gauge",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "from": "radiosonde",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "from": "weather balloon",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "from": "weather station",
+      "verb": "is part of",
+      "to": "weather forecasting"
+    },
+    {
+      "name": "El Niño phase",
+      "from": "El Niño",
+      "verb": "is part of",
+      "to": "El Nino-Southern Oscillation"
+    },
+    {
+      "name": "La Niña phase",
+      "from": "La Niña",
+      "verb": "is part of",
+      "to": "El Nino-Southern Oscillation"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "definition of relative humidity",
+      "expression": "\"relative humidity\" = \"vapor pressure\" / \"saturation vapor pressure\" * 100",
+      "latex": "RH = \\frac{e}{e_s} \\cdot 100",
+      "assigned": [
+        "vapor pressure",
+        "saturation vapor pressure"
+      ]
+    },
+    {
+      "name": "definition of mixing ratio",
+      "expression": "\"mixing ratio\" = \"mass of water vapor\" / \"mass of dry air\"",
+      "latex": "w = \\frac{m_v}{m_d}",
+      "assigned": [
+        "mass of water vapor",
+        "mass of dry air"
+      ]
+    },
+    {
+      "name": "definition of specific humidity",
+      "expression": "\"specific humidity\" = \"mass of water vapor\" / \"mass of moist air\"",
+      "latex": "q = \\frac{m_v}{m}",
+      "assigned": [
+        "mass of water vapor",
+        "mass of moist air"
+      ]
+    },
+    {
+      "name": "definition of Coriolis parameter",
+      "expression": "\"Coriolis parameter\" = 2 * \"angular velocity of Earth\" * sin(\"latitude\")",
+      "latex": "f = 2 \\Omega \\sin\\phi",
+      "assigned": [
+        "angular velocity of Earth",
+        "latitude"
+      ]
+    },
+    {
+      "name": "definition of albedo",
+      "expression": "\"albedo\" = \"reflected radiation\" / \"incoming radiation\"",
+      "latex": "\\alpha = \\frac{R_{\\uparrow}}{R_{\\downarrow}}",
+      "assigned": [
+        "reflected radiation",
+        "incoming radiation"
+      ]
+    },
+    {
+      "name": "definition of saturation vapor pressure",
+      "expression": "\"saturation vapor pressure\" = 6.112 * exp(17.67 * \"temperature in celsius\" / ( \"temperature in celsius\" + 243.5 ))",
+      "latex": "e_s = 6.112\\,e^{\\frac{17.67\\,T}{T + 243.5}}",
+      "assigned": [
+        "temperature in celsius"
+      ]
+    },
+    {
+      "name": "barometric height formula",
+      "expression": "\"atmospheric pressure\" = \"standard atmospheric pressure\" * exp(- \"altitude\" / 8000)",
+      "latex": "p = p_0\\,e^{-z/H}",
+      "assigned": [
+        "altitude"
+      ]
+    },
+    {
+      "name": "definition of environmental lapse rate",
+      "expression": "\"environmental lapse rate\" = \"temperature difference\" / \"height difference\"",
+      "latex": "\\Gamma = \\frac{\\Delta T}{\\Delta z}",
+      "assigned": [
+        "temperature difference",
+        "height difference"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "by definition",
+      "description": "a value that is fixed by an unambiguous definition or convention rather than measured"
+    },
+    {
+      "name": "meteorology reference data",
+      "description": "typical reference values for the atmosphere as cited in meteorology textbooks"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "standard atmospheric pressure"
+      ],
+      "number": "101325",
+      "source": "by definition"
+    },
+    {
+      "words": [
+        "angular velocity of Earth"
+      ],
+      "number": "0.00007292115",
+      "source": "by definition"
+    },
+    {
+      "words": [
+        "dry adiabatic lapse rate"
+      ],
+      "number": "0.0098",
+      "source": "by definition"
+    },
+    {
+      "words": [
+        "environmental lapse rate"
+      ],
+      "number": "0.0065",
+      "source": "meteorology reference data"
+    },
+    {
+      "words": [
+        "solar constant"
+      ],
+      "number": "1361",
+      "source": "meteorology reference data"
+    }
+  ]
+}

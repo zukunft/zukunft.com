@@ -5,6 +5,8 @@
     web/formula/formula.php - the display extension of the api formula object
     -----------------------
 
+    $frm is the suggested var name
+
     to create the HTML code to display a formula
 
     The main sections of this object are
@@ -120,6 +122,7 @@ class formula extends sandbox_code_id
     const string VIEW_ADD = views::FORMULA_ADD;
     const string VIEW_EDIT = views::FORMULA_EDIT;
     const string VIEW_DEL = views::FORMULA_DEL;
+    const int VIEW_EDIT_ID = views::FORMULA_EDIT_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::FORMULA_ADD;
@@ -134,10 +137,11 @@ class formula extends sandbox_code_id
     // the formula expression as shown to the user
     private string $usr_text = '';
     private string $ref_text = '';
+    private string $latex = '';            // the formula in latex format
     public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
     public ?phrase $name_wrd = null;         // the triple object for the formula name:
     // the impact used to sort the triples
-    private float $impact = 0.0;
+    public float $impact = 0.0;
 
 
     /*
@@ -159,6 +163,11 @@ class formula extends sandbox_code_id
             if (array_key_exists(url_var::USER_EXPRESSION, $url_array)) {
                 if ($url_array[url_var::USER_EXPRESSION] != null) {
                     $this->set_usr_text($url_array[url_var::USER_EXPRESSION]);
+                }
+            }
+            if (array_key_exists(url_var::LATEX, $url_array)) {
+                if ($url_array[url_var::LATEX] != null) {
+                    $this->set_latex($url_array[url_var::LATEX]);
                 }
             }
             if (array_key_exists(url_var::NEED_ALL, $url_array)) {
@@ -200,6 +209,11 @@ class formula extends sandbox_code_id
             $this->set_ref_text($json_array[json_fields::REF_TEXT]);
         } else {
             $this->set_ref_text(null);
+        }
+        if (array_key_exists(json_fields::LATEX, $json_array)) {
+            $this->set_latex($json_array[json_fields::LATEX]);
+        } else {
+            $this->set_latex(null);
         }
         if (array_key_exists(json_fields::NEED_ALL_VAL, $json_array)) {
             $this->need_all_val = $json_array[json_fields::NEED_ALL_VAL];
@@ -252,6 +266,18 @@ class formula extends sandbox_code_id
         return $this->ref_text;
     }
 
+    function set_latex(?string $latex): void
+    {
+        if ($latex != null) {
+            $this->latex = $latex;
+        }
+    }
+
+    function get_latex(): string
+    {
+        return $this->latex;
+    }
+
     function impact(): float
     {
         return $this->impact;
@@ -282,7 +308,9 @@ class formula extends sandbox_code_id
         $vars = parent::api_array();
 
         $vars[json_fields::USER_TEXT] = $this->get_usr_text();
-        // usage and impact are not included here because this system value is never updated by the frontend
+        $vars[json_fields::LATEX] = $this->get_latex();
+        // usage is not included here because this system value is never updated by the frontend
+        $vars[json_fields::IMPACT] = $this->impact;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -321,7 +349,7 @@ class formula extends sandbox_code_id
      */
     function edit_link(?string $back = ''): string
     {
-        $url = $this->obj_url(views::FORMULA_EDIT, $back);
+        $url = $this->obj_url(views::FORMULA_EDIT_ID, $back);
         return (new html_base())->ref($url, $this->name(), $this->name());
     }
 
@@ -369,7 +397,7 @@ class formula extends sandbox_code_id
      */
     function dsp_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        return $typ_lst->html_formula_types->selector($form);
+        return $typ_lst->frm_typ->selector($form);
     }
 
     /**
@@ -381,9 +409,9 @@ class formula extends sandbox_code_id
     {
         $used_formula_type_id = $this->type_id();
         if ($used_formula_type_id == null) {
-            $used_formula_type_id = $typ_lst->html_formula_types->default_id();
+            $used_formula_type_id = $typ_lst->frm_typ->default_id();
         }
-        return $typ_lst->html_formula_types->selector($form, $used_formula_type_id);
+        return $typ_lst->frm_typ->selector($form, $used_formula_type_id);
     }
 
 
@@ -466,8 +494,8 @@ class formula extends sandbox_code_id
         ?back_trace $back = null
     ): string
     {
-        $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(formula::class, $this->id(), $size, $page, $call, $back);
+        $log_ui = new user_log_display();
+        return $log_ui->dsp_hist(formula::class, $this->id(), $size, $page, $call, $back);
     }
 
     // display the history of a formula
@@ -491,8 +519,8 @@ class formula extends sandbox_code_id
         log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = $this->dsp_hist_log($page, $size, $call, $back);
-        $result .= $log_dsp->dsp_hist_links();
+        $log_ui = $this->dsp_hist_log($page, $size, $call, $back);
+        $result .= $log_ui->dsp_hist_links();
 
         log_debug("done");
         return $result;
@@ -505,8 +533,8 @@ class formula extends sandbox_code_id
      */
     function dsp_edit($add, $wrd, $back): string
     {
-        global $usr;
-        global $cac;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
 
         log_debug(" for " . $wrd->name() . ", back:" . $back);
         $result = '';
@@ -545,7 +573,7 @@ class formula extends sandbox_code_id
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_8);
-        $result .= $this->dsp_type_selector($form_name, $cac->typ_lis->frm_typ);
+        $result .= $this->dsp_type_selector($form_name, $ui_sys?->typ_lst_cache->frm_typ);
         $result .= '</div>';
         $result .= $html->form_field(
             url_var::DESCRIPTION,
@@ -664,7 +692,7 @@ class formula extends sandbox_code_id
             */
         } else {
             if ($this->id() > 0) {
-                $url = $this->obj_url(views::FORMULA_ADD);
+                $url = $this->obj_url(views::FORMULA_ADD_ID);
                 // TODO check if 'add_link=1' is needed
                 $result .= (new button($url, $back))->add(msg_id::FORMULA_ADD);
             }
@@ -683,20 +711,21 @@ class formula extends sandbox_code_id
 
     function dsp_test_and_samples(string $back = ''): string
     {
-        global $usr;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
         log_debug($this->ref_text);
         $result = '<br>';
         $html = new html_base();
 
-        $result .= $html->dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back);
-        $result .= $html->dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back . '&refresh=1');
+        $result .= $html->dsp_btn_text("Test", rest_ctrl::PATH_FIXED .'formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back);
+        $result .= $html->dsp_btn_text("Refresh results", rest_ctrl::PATH_FIXED .'formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back . '&refresh=1');
 
         $result .= '<br><br>';
 
         // display some sample values
         log_debug("value list");
         $res_lst = new result_list($usr);
-        $res_lst->load_by_obj($this);
+        $res_lst->load_by_formula($this);
         $sample_val = $res_lst->display();
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {

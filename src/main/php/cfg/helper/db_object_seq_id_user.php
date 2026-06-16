@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
@@ -62,6 +63,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
@@ -210,6 +212,25 @@ class db_object_seq_id_user extends db_object_seq_id
     function get_user_id(): int
     {
         return $this->usr->id;
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load a cache from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        return $this->id();
     }
 
 

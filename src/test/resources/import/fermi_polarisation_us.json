@@ -1,0 +1,354 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-04 08:00:00",
+  "user": "timon",
+  "selection": [
+    "partisanship estimates"
+  ],
+  "description": "Fermi estimates for US political polarisation, expressed as single words combined into triples, plus a formula, sources and values. Based on Andris et al. (2015) network analysis across three historical phases.",
+  "words": [
+    {
+      "name": "partisanship",
+      "description": "strong adherence to a political party or faction over cross-party consensus",
+      "refs": [
+        {
+          "name": "Partisan_(political)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "house",
+      "description": "in this context, the U.S. House of Representatives, the lower chamber of Congress",
+      "refs": [
+        {
+          "name": "United_States_House_of_Representatives",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "size",
+      "description": "numerical extent or count of a set"
+    },
+    {
+      "name": "early",
+      "description": "near the beginning of a period"
+    },
+    {
+      "name": "mid",
+      "description": "near the middle of a period"
+    },
+    {
+      "name": "late",
+      "description": "near the end of a period"
+    },
+    {
+      "name": "polarization",
+      "description": "process by which a population splits into opposing ideological clusters",
+      "refs": [
+        {
+          "name": "Political_polarization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "rate",
+      "description": "frequency or proportion measured per unit of comparison"
+    },
+    {
+      "name": "cooperation",
+      "description": "joint action across opposing groups toward a common outcome",
+      "refs": [
+        {
+          "name": "Cooperation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "creeping",
+      "description": "advancing slowly and almost imperceptibly"
+    },
+    {
+      "name": "beginning",
+      "description": "early stage of a process"
+    },
+    {
+      "name": "visual",
+      "description": "perceived through sight, especially in graphical form"
+    },
+    {
+      "name": "turning",
+      "description": "act of reversing direction"
+    },
+    {
+      "name": "point",
+      "description": "specific moment or value in a sequence"
+    },
+    {
+      "name": "algorithmic",
+      "description": "produced or driven by an algorithm, especially a computational ranking process",
+      "refs": [
+        {
+          "name": "Algorithm",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "paranoia",
+      "description": "condition of persistent, unfounded suspicion of others",
+      "refs": [
+        {
+          "name": "Paranoia",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "growth",
+      "description": "increase in size, quantity, or extent over time"
+    },
+    {
+      "name": "factor",
+      "description": "quantity multiplied with others to produce a result"
+    },
+    {
+      "name": "year",
+      "description": "calendar year used to anchor a historical phase"
+    }
+  ],
+  "triples": [
+    {
+      "name": "house size",
+      "from": "size",
+      "verb": "of",
+      "to": "house",
+      "description": "total number of voting representatives in the U.S. House of Representatives"
+    },
+    {
+      "name": "polarization rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "polarization"
+    },
+    {
+      "name": "early polarization rate",
+      "from": "polarization rate",
+      "verb": "kind of",
+      "to": "early",
+      "description": "estimated level of network or societal splitting during the creeping beginning phase (1950s-1960s)"
+    },
+    {
+      "name": "mid polarization rate",
+      "from": "polarization rate",
+      "verb": "kind of",
+      "to": "mid",
+      "description": "estimated level of network or societal splitting during the visual turning point phase (1970s-1980s)"
+    },
+    {
+      "name": "late polarization rate",
+      "from": "polarization rate",
+      "verb": "kind of",
+      "to": "late",
+      "description": "estimated level of network or societal splitting during the algorithmic paranoia phase (2000s-2012)"
+    },
+    {
+      "name": "cooperation rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "cooperation"
+    },
+    {
+      "name": "early cooperation rate",
+      "from": "cooperation rate",
+      "verb": "kind of",
+      "to": "early",
+      "description": "fraction of non-partisan voting pairs or super-cooperators in the early post-war network"
+    },
+    {
+      "name": "late cooperation rate",
+      "from": "cooperation rate",
+      "verb": "kind of",
+      "to": "late",
+      "description": "fraction of non-partisan voting pairs or super-cooperators remaining by the end of the study period"
+    },
+    {
+      "name": "creeping beginning",
+      "from": "beginning",
+      "verb": "kind of",
+      "to": "creeping",
+      "description": "initial period where over-party cooperation began its long-term continuous decline"
+    },
+    {
+      "name": "turning point",
+      "from": "point",
+      "verb": "of",
+      "to": "turning"
+    },
+    {
+      "name": "visual turning point",
+      "from": "turning point",
+      "verb": "kind of",
+      "to": "visual",
+      "description": "period where network clusters began to visibly stretch and separate"
+    },
+    {
+      "name": "algorithmic paranoia",
+      "from": "paranoia",
+      "verb": "kind of",
+      "to": "algorithmic",
+      "description": "modern period characterised by absolute division into two isolated ideological clusters"
+    },
+    {
+      "name": "growth factor",
+      "from": "factor",
+      "verb": "of",
+      "to": "growth"
+    },
+    {
+      "name": "polarization growth factor",
+      "from": "growth factor",
+      "verb": "of",
+      "to": "polarization",
+      "description": "ratio of late to early polarization rate; an order-of-magnitude measure of how far polarisation has grown"
+    },
+    {
+      "name": "early polarization rate in creeping beginning",
+      "from": "early polarization rate",
+      "verb": "is part of",
+      "to": "creeping beginning",
+      "description": "baseline level of division during the early phase"
+    },
+    {
+      "name": "mid polarization rate in visual turning point",
+      "from": "mid polarization rate",
+      "verb": "is part of",
+      "to": "visual turning point",
+      "description": "elevated division during the transition towards polarised mass media"
+    },
+    {
+      "name": "late polarization rate in algorithmic paranoia",
+      "from": "late polarization rate",
+      "verb": "is part of",
+      "to": "algorithmic paranoia",
+      "description": "maximum separation corresponding to algorithmic social media networks"
+    },
+    {
+      "name": "polarization year",
+      "from": "year",
+      "verb": "of",
+      "to": "polarization"
+    },
+    {
+      "name": "early polarization year",
+      "from": "polarization year",
+      "verb": "kind of",
+      "to": "early",
+      "description": "representative calendar year anchoring the creeping beginning phase"
+    },
+    {
+      "name": "mid polarization year",
+      "from": "polarization year",
+      "verb": "kind of",
+      "to": "mid",
+      "description": "representative calendar year anchoring the visual turning point phase"
+    },
+    {
+      "name": "late polarization year",
+      "from": "polarization year",
+      "verb": "kind of",
+      "to": "late",
+      "description": "representative calendar year anchoring the algorithmic paranoia phase"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "polarization growth factor formula",
+      "expression": "\"polarization growth factor\" = \"late polarization rate\" / \"early polarization rate\"",
+      "latex": "G = \\frac{P_{late}}{P_{early}}",
+      "assigned": [
+        "late polarization rate",
+        "early polarization rate"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "Andris paper",
+      "description": "The Rise of Partisanship and Super-Cooperators in the U.S. House of Representatives (Andris et al., 2015)",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0123507"
+    },
+    {
+      "name": "Fermi estimate",
+      "description": "an order-of-magnitude figure assumed for Fermi estimation based on empirical trends"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "house size"
+      ],
+      "number": "435",
+      "source": "Andris paper"
+    },
+    {
+      "words": [
+        "early polarization rate"
+      ],
+      "number": "0.15",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "mid polarization rate"
+      ],
+      "number": "0.45",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "late polarization rate"
+      ],
+      "number": "0.95",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "early polarization year"
+      ],
+      "number": "1960",
+      "source": "Andris paper"
+    },
+    {
+      "words": [
+        "mid polarization year"
+      ],
+      "number": "1980",
+      "source": "Andris paper"
+    },
+    {
+      "words": [
+        "late polarization year"
+      ],
+      "number": "2010",
+      "source": "Andris paper"
+    },
+    {
+      "words": [
+        "early cooperation rate"
+      ],
+      "number": "0.35",
+      "source": "Andris paper"
+    },
+    {
+      "words": [
+        "late cooperation rate"
+      ],
+      "number": "0.01",
+      "source": "Andris paper"
+    }
+  ]
+}

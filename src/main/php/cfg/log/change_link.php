@@ -69,7 +69,9 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -91,7 +93,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Exception;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class change_link extends change_log
 {
@@ -215,6 +219,9 @@ class change_link extends change_log
             $this->new_link_id = $db_row[self::FLD_NEW_LINK_ID];
             $this->new_text_to = $db_row[self::FLD_NEW_TO_TEXT];
             $this->new_to_id = $db_row[self::FLD_NEW_TO_ID];
+            if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
+                $this->row_id = $db_row[self::FLD_ROW_ID];
+            }
             // TODO check if not the complete user should be loaded
             $usr = new user();
             $usr->id = $db_row[user_db::FLD_ID];
@@ -222,6 +229,28 @@ class change_link extends change_log
             $this->set_user($usr);
         }
         return $result;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * add the link change fields to the api json message of one change log entry
+     * the relevant link side is sent as old/new value so the frontend can show it without the db ids
+     *
+     * @param api_type_list $typ_lst configuration for the api message
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array with the json fields of one link change
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars[json_fields::ID] = $this->id();
+        $vars[json_fields::OLD_VALUE] = $this->old_text_to;
+        $vars[json_fields::NEW_VALUE] = $this->new_text_to;
+        return $vars;
     }
 
     /**

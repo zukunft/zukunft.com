@@ -6,3 +6,11 @@
 .env
 .vscode/
 /composer.lock
+/composer.phar
+/vendor/
+/cache/cfg_zukunft.com system.json
+# XBRL fileset source files unpacked from the committed zip by the convert tests
+/src/test/resources/import/xbrl/abb-2013-xbrl_fileset-20131231/*.xml
+/src/test/resources/import/xbrl/abb-2013-xbrl_fileset-20131231/*.xsd
+# but keep the hand reduced facts snippet used by the facts converter test
+!/src/test/resources/import/xbrl/abb-2013-xbrl_fileset-20131231/sample.xml

@@ -5,6 +5,8 @@
     web/value/value.php - create the html code to show a value to the user
     -------------------
 
+    $val is the suggested var name
+
     to create the HTML code to show a value to the user
     and allow changing the value
 
@@ -36,6 +38,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\value;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -46,7 +49,6 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::FIGURE . 'figure.php';
-include_once html_paths::HELPER . 'config.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -65,7 +67,6 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\group\group;
-use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
@@ -96,6 +97,7 @@ class value extends sandbox_value
     const string VIEW_ADD = views::VALUE_ADD;
     const string VIEW_EDIT = views::VALUE_EDIT;
     const string VIEW_DEL = views::VALUE_DEL;
+    const int VIEW_EDIT_ID = views::VALUE_EDIT_ID;
 
     // curl message id
     const msg_id MSG_ADD = msg_id::VALUE_ADD;
@@ -397,6 +399,16 @@ class value extends sandbox_value
     }
 
     /**
+     * the impact of a value is the highest impact of the phrases it is assigned to
+     * so that the most relevant values (e.g. of the highest ranked phrase) are shown first
+     * @return float the system calculated impact used to sort the values
+     */
+    function impact(): float
+    {
+        return $this->grp->phr_lst()->max_impact();
+    }
+
+    /**
      * @return string interface function to align the value with the other sandbox objects
      */
     function get_description(): string
@@ -438,9 +450,9 @@ class value extends sandbox_value
      */
     function val_formatted(): string
     {
+        global $ui_sys;
+        $cfg = $ui_sys->cfg;
         $result = '';
-
-        $cfg = new config();
 
         if (!is_null($this->number())) {
             // load the list of phrases if needed
@@ -525,7 +537,7 @@ class value extends sandbox_value
      * possible future parameters:
      * $fixed_words - words that the user is not suggested to change this time
      * $select_word - suggested words which the user can change
-     * $type_word   - word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
+     * $type_word   - word to preselect the suggested words e.g. "country" to list all their countries first for the suggested word
      *
      * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
      * @returns string the HTML code for a button to add a value related to this value
@@ -603,15 +615,17 @@ class value extends sandbox_value
     // the same as \html\btn_del_value, but with another icon
     function btn_undo_add_value($back): string
     {
-        return \Zukunft\ZukunftCom\main\php\web\btn_undo('delete this value', '/http/value_del.php?id=' . $this->id() . '&back=' . $back . '');
+        return \Zukunft\ZukunftCom\main\php\web\btn_undo('delete this value',
+            new html_base()->url_new(views::VALUE_DEL_ID, $this->id(), '', $back));
     }
 
     // display a value, means create the HTML code that allows to edit the value
     function dsp_tbl_std($back): string
     {
         log_debug('value->dsp_tbl_std ');
+        $html = new html_base();
         $result = '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted()) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -620,9 +634,10 @@ class value extends sandbox_value
     function dsp_tbl_usr($back): string
     {
         log_debug('value->dsp_tbl_usr');
+        $html = new html_base();
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" class="' . styles::STYLE_USER . '">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted(), '', styles::STYLE_USER) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -646,15 +661,15 @@ class value extends sandbox_value
         log_debug("value->dsp_hist for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->obj = $this;
-        $log_dsp->type = \Zukunft\ZukunftCom\main\php\cfg\value\value::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        //$result .= $log_dsp->dsp_hist_old();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->obj = $this;
+        $log_ui->type = \Zukunft\ZukunftCom\main\php\cfg\value\value::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        //$result .= $log_ui->dsp_hist_old();
 
         log_debug("done");
         return $result;
@@ -666,14 +681,14 @@ class value extends sandbox_value
         log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = value::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        //$result .= $log_dsp->dsp_hist_links();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->type = value::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        //$result .= $log_ui->dsp_hist_links();
 
         log_debug("done");
         return $result;
@@ -693,7 +708,8 @@ class value extends sandbox_value
     {
         log_debug("value->dsp_samples (" . $wrd_id . ",rt" . implode(",", $start_wrd_ids) . ",size" . $size . ")");
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
 
         $html = new html_base();
@@ -742,7 +758,7 @@ class value extends sandbox_value
                 if ($word_names <> "") {
                     // display a row if the value has changed and
                     $result .= '<tr>';
-                    $result .= '<td><a href="/http/value_edit.php?id=' . $group_id . '&back=' . $back . '" class="grey">' . $row_value . '</a></td>';
+                    $result .= '<td>' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $group_id, '', $back), $row_value, '', 'grey') . '</td>';
                     $result .= '<td>' . $word_names . '</td>';
                     $result .= '</tr>';
                     $row_nbr++;
@@ -758,7 +774,7 @@ class value extends sandbox_value
         // display the last row if there has been at least one word
         if ($word_names <> "") {
             $result .= '<tr>';
-            $result .= '<td><a href="/http/value_edit.php?id=' . $group_id . '&back=' . $back . '" class="grey">' . $row_value . '</a></td>';
+            $result .= '<td>' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $group_id, '', $back), $row_value, '', 'grey') . '</td>';
             $result .= '<td>' . $word_names . '</td>';
             $result .= '</tr>';
         }
@@ -808,7 +824,7 @@ class value extends sandbox_value
                 log_debug('value->dsp_edit ' . $this->dsp_id());
             }
         }
-        $this_url = '/http/' . $script . '.php?id=' . $this->id() . '&back=' . $back; // url to call this display again to display the user changes
+        $this_url = rest_ctrl::PATH_FIXED . $script . '.php?id=' . $this->id() . '&back=' . $back; // url to call this display again to display the user changes
 
         // display the words and triples
         $result .= $html->dsp_tbl_start_select();
@@ -914,10 +930,10 @@ class value extends sandbox_value
                         '&confirm=1';
                     // url for the case that this phrase should be renamed
                     if ($phr->id() > 0) {
-                        $phrase_url = '/http/word_edit.php?id=' . $phr->id . '&back=' . $back;
+                        $phrase_url = '' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_EDIT . '&id=' . $phr->id . '&back=' . $back;
                     } else {
                         $lnk_id = $phr->id * -1;
-                        $phrase_url = '/http/view.php?m=' . views::TRIPLE_EDIT . '&id=' . $lnk_id . '&back=' . $back;
+                        $phrase_url = '' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::TRIPLE_EDIT . '&id=' . $lnk_id . '&back=' . $back;
                     }
 
                     // show the phrase selector
@@ -1043,9 +1059,9 @@ class value extends sandbox_value
         log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
-            $scr_dsp = new source($src->api_json());
+            $scr_ui = new source($src->api_json());
             // TODO Prio 0 add the source selector to the value mask
-            //$result .= $scr_dsp->dsp_select($script, $back);
+            //$result .= $scr_ui->dsp_select($script, $back);
             $result .= '<br><br>';
         }
 
@@ -1089,6 +1105,14 @@ class value extends sandbox_value
 
         log_debug("done");
         return $result;
+    }
+
+    /**
+     * @return string that best describes this object
+     */
+    function display(): string
+    {
+        return $this->name();
     }
 
 }

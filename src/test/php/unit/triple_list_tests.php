@@ -46,9 +46,9 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -77,7 +77,7 @@ class triple_list_tests
         // load only the names
         $trp_lst = new triple_list($usr);
         $t->assert_sql_names($sc, $trp_lst, new triple($usr));
-        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triples::MATH_CONST_COM);
+        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triple_names::MATH_CONST_COM);
 
         // load by triple ids
         $test_name = 'load triples by ids';

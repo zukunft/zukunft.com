@@ -55,6 +55,7 @@ include_once paths::SHARED . 'json_fields.php';
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("component_add");
 $lib = new library();
 
@@ -83,9 +84,9 @@ if ($usr->id > 0) {
     $usr->load_usr_data();
 
     // init the display object to show the standard elements such as the header
-    global $sys_msk_cac;
+    global $sys;
     $dsp_db = new view($usr);
-    $dsp_db->load_by_id($sys_msk_cac->id(views::COMPONENT_ADD));
+    $dsp_db->load_by_id($sys->msk_cac->id(views::COMPONENT_ADD));
     $msk = new view_ui($dsp_db->api_json());
 
     // create the view component object to apply the user changes to it
@@ -155,8 +156,8 @@ if ($usr->id > 0) {
         }
 
         // show the word and its relations, so that the user can change it
-        $cmp_dsp = new component_ui($cmp->api_json());
-        $result .= $cmp_dsp->dsp_add($add_link, $wrd, $back);
+        $cmp_ui = new component_ui($cmp->api_json());
+        $result .= $cmp_ui->dsp_add($add_link, $wrd, $back);
     }
 }
 

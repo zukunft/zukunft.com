@@ -7,6 +7,7 @@ PREPARE term_list_by_ids (bigint,bigint[]) AS
            CASE WHEN (u.description <> ''   IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
            CASE WHEN (u.formula_text <> ''  IS NOT TRUE) THEN s.formula_text  ELSE u.formula_text  END AS formula_text,
            CASE WHEN (u.resolved_text <> '' IS NOT TRUE) THEN s.resolved_text ELSE u.resolved_text END AS resolved_text,
+           CASE WHEN (u.latex         <> '' IS NOT TRUE) THEN s.latex         ELSE u.latex         END AS latex,
            CASE WHEN (u.usage               IS     NULL) THEN s.usage         ELSE u.usage         END AS usage,
            CASE WHEN (u.impact              IS     NULL) THEN s.impact        ELSE u.impact        END AS impact,
            CASE WHEN (u.excluded            IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,

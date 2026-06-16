@@ -43,10 +43,10 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -67,20 +67,20 @@ class term_write_tests
         $t->header($ts);
 
         // load the main test word
-        $wrd_zh = $t_db->test_word(words::ZH);
+        $wrd_zh = $t_db->test_word(word_names::ZH);
 
         // check that adding the predefined word "company" creates an error message
         $term = new term($usr);
-        $term->load_by_obj_name(words::ZH);
-        $target = 'A word with the name "' . words::ZH . '" already exists. '
+        $term->load_by_obj_name(word_names::ZH);
+        $target = 'A word with the name "' . word_names::ZH . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
         // ... check also for a triple
         $term = new term($usr);
-        $term->load_by_obj_name(triples::CITY_ZH);
-        $target = '<style class="text-danger">A triple with the name "' . triples::CITY_ZH . '" already exists. '
+        $term->load_by_obj_name(triple_names::CITY_ZH);
+        $target = '<style class="text-danger">A triple with the name "' . triple_names::CITY_ZH . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.</style>';
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
@@ -96,9 +96,9 @@ class term_write_tests
 
         // ... check also for a formula
         $term = new term($usr);
-        $term->load_by_obj_name(formulas::INCREASE);
+        $term->load_by_obj_name(formula_names::INCREASE);
         // each formula name has also a word
-        $target = 'A formula with the name "' . formulas::INCREASE . '" already exists. '
+        $target = 'A formula with the name "' . formula_names::INCREASE . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.';
         $result = $html->dsp_err($term->id_used_msg_text($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);

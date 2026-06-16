@@ -1,0 +1,157 @@
+{
+    "version": "0.0.3",
+    "time": "2024-04-05T08:35:30+00:00",
+    "user": "timon",
+    "selection": [
+        "ABB"
+    ],
+    "words": [
+        {
+            "name": "ABB"
+        },
+        {
+            "name": "2013",
+            "type": "time"
+        },
+        {
+            "name": "2012",
+            "type": "time"
+        },
+        {
+            "name": "2011",
+            "type": "time"
+        },
+        {
+            "name": "2010",
+            "type": "time"
+        },
+        {
+            "name": "USD"
+        },
+        {
+            "name": "for"
+        },
+        {
+            "name": "allowance"
+        },
+        {
+            "name": "doubtful"
+        },
+        {
+            "name": "accounts"
+        },
+        {
+            "name": "receivable"
+        },
+        {
+            "name": "current"
+        }
+    ],
+    "triples": [
+        {
+            "name": "doubtful accounts",
+            "from": "doubtful",
+            "verb": "and",
+            "to": "accounts"
+        },
+        {
+            "name": "doubtful accounts receivable",
+            "from": "doubtful accounts",
+            "verb": "kind of",
+            "to": "receivable"
+        },
+        {
+            "name": "doubtful accounts receivable current",
+            "from": "doubtful accounts receivable",
+            "verb": "kind of",
+            "to": "current"
+        },
+        {
+            "name": "allowance for doubtful accounts receivable current",
+            "from": "allowance",
+            "verb": "used for",
+            "to": "doubtful accounts receivable current",
+            "description": "us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent"
+        },
+        {
+            "name": "allowance for doubtful accounts",
+            "from": "allowance",
+            "verb": "used for",
+            "to": "doubtful accounts"
+        }
+    ],
+    "formulas": [],
+    "sources": [
+        {
+            "name": "ABB XBRL files for 2013",
+            "url": "https://new.abb.com/investorrelations/calendar-events-and-publications/financial-results-and-presentations/sec-filings/xbrl-2013"
+        }
+    ],
+    "values": [
+        {
+            "words": [
+                "ABB",
+                "allowance for doubtful accounts receivable current",
+                "USD",
+                "2012"
+            ],
+            "number": "271000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "allowance for doubtful accounts receivable current",
+                "USD",
+                "2013"
+            ],
+            "number": "317000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "allowance for doubtful accounts receivable current",
+                "allowance for doubtful accounts",
+                "USD",
+                "2010"
+            ],
+            "number": "215000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "allowance for doubtful accounts receivable current",
+                "allowance for doubtful accounts",
+                "USD",
+                "2011"
+            ],
+            "number": "227000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "allowance for doubtful accounts receivable current",
+                "allowance for doubtful accounts",
+                "USD",
+                "2012"
+            ],
+            "number": "271000000",
+            "source": "ABB XBRL files for 2013"
+        },
+        {
+            "words": [
+                "ABB",
+                "allowance for doubtful accounts receivable current",
+                "allowance for doubtful accounts",
+                "USD",
+                "2013"
+            ],
+            "number": "317000000",
+            "source": "ABB XBRL files for 2013"
+        }
+    ],
+    "views": []
+}

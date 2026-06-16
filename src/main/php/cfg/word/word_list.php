@@ -11,7 +11,7 @@
     TODO: add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a company" is true
     TODO: add bool $incl_alias to include all alias words that are of the ids
     TODO: look at a word list and remove the general word, if there is a more specific word also part of the list
-          e.g. remove "Country", but keep "Switzerland"
+          e.g. remove "country", but keep "Switzerland"
 
     The main sections of this object are
     - construct and map: including the mapping of the db row to this word object
@@ -810,7 +810,7 @@ class word_list extends sandbox_list_named
     /**
      * look at a word list and remove the general word,
      * if there is a more specific word also part of the list
-     * e.g. remove "Country", but keep "Switzerland"
+     * e.g. remove "country", but keep "Switzerland"
      *
      * @returns word_list with the specific words
      */
@@ -878,8 +878,8 @@ class word_list extends sandbox_list_named
      * diff as a function, because it seems the array_diff does not work for an object list
      * TODO rename to del or intersect
      *
-     * e.g. if the $this word list is "January, February, March, April, May, June, Juli, August, September, October, November, December"
-     * and the $del_wrd_lst is "May, June, Juli, August"
+     * e.g. if the $this word list is "January, February, March, April, May, June, July, August, September, October, November, December"
+     * and the $del_wrd_lst is "May, June, July, August"
      * than $this->diff should be "January, February, March, April, September, October, November, December" and save to eat huîtres
      *
      * @param word_list $del_wrd_lst is the list of words that should be removed from this list object
@@ -1134,17 +1134,14 @@ class word_list extends sandbox_list_named
      */
     function scaling_lst(): word_list
     {
-        global $sys;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
         $result = new word_list($this->get_user());
-        $scale_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
-        $scale_hidden_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING_HIDDEN);
-        // loop over the word ids and add only the time ids to the result array
+        // loop over the words and add only the scaling words to the result list
         foreach ($this->lst() as $wrd) {
-            if ($wrd->type_id == $scale_type or $wrd->type_id == $scale_hidden_type) {
+            if ($wrd->is_scaling()) {
                 $wrd->usr = $this->get_user(); // review: should not be needed
                 $result->add_obj($wrd);
                 log_debug('found (' . $wrd->name() . ')');
@@ -1419,8 +1416,8 @@ class word_list extends sandbox_list_named
         log_debug();
 
         foreach ($this->lst() as $wrd) {
-            // $wrd_dsp = $wrd->dsp_obj();
-            // TODO review $view = $wrd_dsp->get_view();
+            // $wrd_ui = $wrd->dsp_obj();
+            // TODO review $view = $wrd_ui->get_view();
             $view = $wrd->get_view();
             if (isset($view)) {
                 $is_in_list = false;

@@ -33,12 +33,14 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::SHARED_CONST . 'groups.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;

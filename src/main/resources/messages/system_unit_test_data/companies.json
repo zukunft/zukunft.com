@@ -1,0 +1,1234 @@
+{
+  "version": "0.0.1",
+  "pod": "zukunft.com",
+  "time": "2020-03-08 19:05:57",
+  "user": "timon",
+  "selection": [
+    "company"
+  ],
+  "words": [
+    {
+      "name": "company",
+      "view": "company list with main ratios",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ABB",
+      "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Zürich",
+      "refs": [
+        {
+          "name": "ABB",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52825",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Danone",
+      "description": "Danone S.A. is a French multinational food-products corporation based in Paris. It was founded in 1919 in Barcelona, Spain.",
+      "refs": [
+        {
+          "name": "Danone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q329426",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Nestlé"
+    },
+    {
+      "name": "Vestas"
+    },
+    {
+      "name": "Zurich"
+    },
+    {
+      "name": "City"
+    },
+    {
+      "name": "Canton"
+    },
+    {
+      "name": "Migros"
+    },
+    {
+      "name": "Cooperative"
+    },
+    {
+      "name": "currency"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "thousand"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "2019"
+    },
+    {
+      "name": "2012"
+    },
+    {
+      "name": "CHF",
+      "type": "measure"
+    },
+    {
+      "name": "EUR",
+      "type": "measure"
+    },
+    {
+      "name": "USD",
+      "type": "measure"
+    },
+    {
+      "name": "scaling",
+      "type": "scaling"
+    },
+    {
+      "name": "Revenues"
+    },
+    {
+      "name": "balance"
+    },
+    {
+      "name": "sheet"
+    },
+    {
+      "name": "cash"
+    },
+    {
+      "name": "flow"
+    },
+    {
+      "name": "statement"
+    },
+    {
+      "name": "forecast"
+    },
+    {
+      "name": "sales"
+    },
+    {
+      "name": "sector"
+    },
+    {
+      "name": "employee"
+    },
+    {
+      "name": "Energy"
+    },
+    {
+      "name": "Brand"
+    },
+    {
+      "name": "Nestle"
+    },
+    {
+      "name": "Other"
+    },
+    {
+      "name": "Selling"
+    },
+    {
+      "name": "expenses"
+    },
+    {
+      "name": "expense"
+    },
+    {
+      "name": "General"
+    },
+    {
+      "name": "administrative"
+    },
+    {
+      "name": "sustainable"
+    },
+    {
+      "name": "labels"
+    },
+    {
+      "name": "operating"
+    },
+    {
+      "name": "trading"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "Cost"
+    },
+    {
+      "name": "reported"
+    },
+    {
+      "name": "goods"
+    },
+    {
+      "name": "sold"
+    },
+    {
+      "name": "Distribution"
+    },
+    {
+      "name": "costs"
+    },
+    {
+      "name": "Research"
+    },
+    {
+      "name": "Profit"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "equity"
+    },
+    {
+      "name": "method"
+    },
+    {
+      "name": "investments"
+    },
+    {
+      "name": "Financial"
+    },
+    {
+      "name": "Interest"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "tax"
+    },
+    {
+      "name": "Share"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "Number"
+    },
+    {
+      "name": "shares"
+    },
+    {
+      "name": "Target"
+    },
+    {
+      "name": "Price"
+    },
+    {
+      "name": "Earning"
+    },
+    {
+      "name": "Ratio"
+    },
+    {
+      "name": "Income"
+    },
+    {
+      "name": "associates"
+    },
+    {
+      "name": "joint"
+    },
+    {
+      "name": "ventures"
+    },
+    {
+      "name": "attributable"
+    },
+    {
+      "name": "non-controlling"
+    },
+    {
+      "name": "interests"
+    },
+    {
+      "name": "Prepared"
+    },
+    {
+      "name": "dishes"
+    },
+    {
+      "name": "Operating"
+    },
+    {
+      "name": "profit"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "prior"
+    },
+    {
+      "name": "max",
+      "description": "used to define the number of forecast periods"
+    },
+    {
+      "name": "2030",
+      "type": "time"
+    },
+    {
+      "name": "2029",
+      "type": "time"
+    },
+    {
+      "name": "2028",
+      "type": "time"
+    },
+    {
+      "name": "2027",
+      "type": "time"
+    },
+    {
+      "name": "2026",
+      "type": "time"
+    },
+    {
+      "name": "2025",
+      "type": "time"
+    },
+    {
+      "name": "2024",
+      "type": "time"
+    },
+    {
+      "name": "2023",
+      "type": "time"
+    },
+    {
+      "name": "2022",
+      "type": "time"
+    },
+    {
+      "name": "2021",
+      "type": "time"
+    },
+    {
+      "name": "2020",
+      "type": "time"
+    },
+    {
+      "name": "2010",
+      "type": "time"
+    },
+    {
+      "name": "2018",
+      "type": "time"
+    },
+    {
+      "name": "2017",
+      "type": "time"
+    },
+    {
+      "name": "2016",
+      "type": "time"
+    },
+    {
+      "name": "2015",
+      "type": "time"
+    },
+    {
+      "name": "2014",
+      "type": "time"
+    },
+    {
+      "name": "2013",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "name": "balance sheet",
+      "from": "sheet",
+      "verb": "of",
+      "to": "balance"
+    },
+    {
+      "name": "company has a balance sheet",
+      "from": "company",
+      "verb": "has a",
+      "to": "balance sheet"
+    },
+    {
+      "from": "company",
+      "verb": "has a",
+      "to": "forecast"
+    },
+    {
+      "name": "ABB (company)",
+      "from": "ABB",
+      "verb": "is a",
+      "to": "company"
+    },
+    {
+      "name": "Danone (company)",
+      "from": "Danone",
+      "verb": "is a",
+      "to": "company"
+    },
+    {
+      "name": "Nestlé (company)",
+      "from": "Nestlé",
+      "verb": "is a",
+      "to": "company"
+    },
+    {
+      "name": "Vestas SA",
+      "from": "Vestas",
+      "verb": "is a",
+      "to": "company"
+    },
+    {
+      "name": "Zurich Insurance",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "company"
+    },
+    {
+      "name": "Zurich (City)",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "City"
+    },
+    {
+      "name": "Zurich (Canton)",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "name": "Migros (Cooperative)",
+      "from": "Migros",
+      "verb": "is a",
+      "to": "Cooperative"
+    },
+    {
+      "name": "CHF (currency)",
+      "from": "CHF",
+      "verb": "is a",
+      "to": "currency"
+    },
+    {
+      "name": "EUR (currency)",
+      "from": "EUR",
+      "verb": "is a",
+      "to": "currency"
+    },
+    {
+      "name": "USD (currency)",
+      "from": "USD",
+      "verb": "is a",
+      "to": "currency"
+    },
+    {
+      "name": "billion (scaling)",
+      "from": "billion",
+      "verb": "is a",
+      "to": "scaling"
+    },
+    {
+      "name": "million (scaling)",
+      "from": "million",
+      "verb": "is a",
+      "to": "scaling"
+    },
+    {
+      "name": "thousand (scaling)",
+      "from": "thousand",
+      "verb": "is a",
+      "to": "scaling"
+    },
+    {
+      "name": "2030 (year)",
+      "from": "2030",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2029 (year)",
+      "from": "2029",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2028 (year)",
+      "from": "2028",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2027 (year)",
+      "from": "2027",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2026 (year)",
+      "from": "2026",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2025 (year)",
+      "from": "2025",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2024 (year)",
+      "from": "2024",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2023 (year)",
+      "from": "2023",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2022 (year)",
+      "from": "2022",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2021 (year)",
+      "from": "2021",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2020 (year)",
+      "from": "2020",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2019 (year)",
+      "from": "2019",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2018 (year)",
+      "from": "2018",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2017 (year)",
+      "from": "2017",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2016 (year)",
+      "from": "2016",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2015 (year)",
+      "from": "2015",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2014 (year)",
+      "from": "2014",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2013 (year)",
+      "from": "2013",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2030 is follower of 2029",
+      "from": "2030",
+      "verb": "is follower of",
+      "to": "2029"
+    },
+    {
+      "name": "2029 is follower of 2028",
+      "from": "2029",
+      "verb": "is follower of",
+      "to": "2028"
+    },
+    {
+      "name": "2028 is follower of 2027",
+      "from": "2028",
+      "verb": "is follower of",
+      "to": "2027"
+    },
+    {
+      "name": "2027 is follower of 2026",
+      "from": "2027",
+      "verb": "is follower of",
+      "to": "2026"
+    },
+    {
+      "name": "2026 is follower of 2025",
+      "from": "2026",
+      "verb": "is follower of",
+      "to": "2025"
+    },
+    {
+      "name": "2025 is follower of 2024",
+      "from": "2025",
+      "verb": "is follower of",
+      "to": "2024"
+    },
+    {
+      "name": "2024 is follower of 2023",
+      "from": "2024",
+      "verb": "is follower of",
+      "to": "2023"
+    },
+    {
+      "name": "2023 is follower of 2022",
+      "from": "2023",
+      "verb": "is follower of",
+      "to": "2022"
+    },
+    {
+      "name": "2022 is follower of 2021",
+      "from": "2022",
+      "verb": "is follower of",
+      "to": "2021"
+    },
+    {
+      "name": "2021 is follower of 2020",
+      "from": "2021",
+      "verb": "is follower of",
+      "to": "2020"
+    },
+    {
+      "name": "2020 is follower of 2019",
+      "from": "2020",
+      "verb": "is follower of",
+      "to": "2019"
+    },
+    {
+      "name": "2018 is follower of 2017",
+      "from": "2018",
+      "verb": "is follower of",
+      "to": "2017"
+    },
+    {
+      "name": "2017 is follower of 2016",
+      "from": "2017",
+      "verb": "is follower of",
+      "to": "2016"
+    },
+    {
+      "name": "2016 is follower of 2015",
+      "from": "2016",
+      "verb": "is follower of",
+      "to": "2015"
+    },
+    {
+      "name": "2015 is follower of 2014",
+      "from": "2015",
+      "verb": "is follower of",
+      "to": "2014"
+    },
+    {
+      "name": "2014 is follower of 2013",
+      "from": "2014",
+      "verb": "is follower of",
+      "to": "2013"
+    },
+    {
+      "name": "2013 is follower of 2012",
+      "from": "2013",
+      "verb": "is follower of",
+      "to": "2012"
+    },
+    {
+      "name": "income taxes",
+      "from": "tax",
+      "verb": "on",
+      "to": "income"
+    },
+    {
+      "name": "cash flow",
+      "from": "cash",
+      "verb": "can",
+      "to": "flow"
+    },
+    {
+      "name": "cash flow statement",
+      "from": "cash flow",
+      "verb": "can use",
+      "to": "statement"
+    },
+    {
+      "name": "income taxes is part of cash flow statement",
+      "from": "income taxes",
+      "verb": "is part of",
+      "to": "cash flow statement"
+    },
+    {
+      "name": "sustainable labels",
+      "from": "labels",
+      "verb": "kind of",
+      "to": "sustainable"
+    },
+    {
+      "name": "sales of sustainable labels",
+      "from": "sales",
+      "verb": "of",
+      "to": "sustainable labels"
+    },
+    {
+      "name": "sales of sustainable labels is part of sales",
+      "from": "sales of sustainable labels",
+      "verb": "is part of",
+      "to": "sales"
+    },
+    {
+      "name": "sales can be used as a differentiator for sector",
+      "from": "sales",
+      "verb": "can be used as a differentiator for",
+      "to": "sector"
+    },
+    {
+      "name": "company uses employee",
+      "from": "company",
+      "verb": "uses",
+      "to": "employee"
+    },
+    {
+      "name": "company uses Energy",
+      "from": "company",
+      "verb": "uses",
+      "to": "Energy"
+    },
+    {
+      "name": "Nestlé uses Brand",
+      "from": "Nestlé",
+      "verb": "uses",
+      "to": "Brand"
+    },
+    {
+      "name": "Nestle is alias of Nestlé",
+      "from": "Nestle",
+      "verb": "is alias of",
+      "to": "Nestlé"
+    },
+    {
+      "name": "Other revenues",
+      "from": "Revenues",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "Selling expenses",
+      "from": "expenses",
+      "verb": "kind of",
+      "to": "Selling"
+    },
+    {
+      "name": "General administrative",
+      "from": "administrative",
+      "verb": "kind of",
+      "to": "General"
+    },
+    {
+      "name": "General administrative expenses",
+      "from": "expenses",
+      "verb": "of",
+      "to": "General administrative"
+    },
+    {
+      "name": "operating expense",
+      "from": "expense",
+      "verb": "kind of",
+      "to": "operating"
+    },
+    {
+      "name": "Other operating expense",
+      "from": "operating expense",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "trading expense",
+      "from": "expense",
+      "verb": "kind of",
+      "to": "trading"
+    },
+    {
+      "name": "Other trading expense",
+      "from": "trading expense",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "trading income",
+      "from": "income",
+      "verb": "of",
+      "to": "trading"
+    },
+    {
+      "name": "Other trading income",
+      "from": "trading income",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "trading expenses",
+      "from": "expenses",
+      "verb": "of",
+      "to": "trading"
+    },
+    {
+      "name": "Other trading expenses",
+      "from": "trading expenses",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "operating net",
+      "from": "net",
+      "verb": "of",
+      "to": "operating"
+    },
+    {
+      "name": "Other operating net",
+      "from": "operating net",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "Cost of sales",
+      "from": "Cost",
+      "verb": "of",
+      "to": "sales"
+    },
+    {
+      "name": "Cost of sales (reported)",
+      "from": "Cost of sales",
+      "verb": "kind of",
+      "to": "reported"
+    },
+    {
+      "name": "goods sold",
+      "from": "goods",
+      "verb": "kind of",
+      "to": "sold"
+    },
+    {
+      "name": "Cost of goods sold",
+      "from": "Cost",
+      "verb": "of",
+      "to": "goods sold"
+    },
+    {
+      "name": "Distribution costs",
+      "from": "costs",
+      "verb": "of",
+      "to": "Distribution"
+    },
+    {
+      "name": "Research costs",
+      "from": "costs",
+      "verb": "of",
+      "to": "Research"
+    },
+    {
+      "name": "equity method",
+      "from": "method",
+      "verb": "kind of",
+      "to": "equity"
+    },
+    {
+      "name": "equity method investments",
+      "from": "investments",
+      "verb": "of",
+      "to": "equity method"
+    },
+    {
+      "name": "Profit/loss",
+      "from": "Profit",
+      "verb": "and",
+      "to": "loss"
+    },
+    {
+      "name": "Profit/loss on equity method investments",
+      "from": "Profit/loss",
+      "verb": "on",
+      "to": "equity method investments"
+    },
+    {
+      "name": "Profit/loss on equity method investments, net",
+      "from": "Profit/loss on equity method investments",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "income/expense",
+      "from": "income",
+      "verb": "and",
+      "to": "expense"
+    },
+    {
+      "name": "financial income/expense",
+      "from": "income/expense",
+      "verb": "kind of",
+      "to": "Financial"
+    },
+    {
+      "name": "Other financial income/expense",
+      "from": "financial income/expense",
+      "verb": "kind of",
+      "to": "Other"
+    },
+    {
+      "name": "Other financial income/expense, net",
+      "from": "Other financial income/expense",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "Financial income",
+      "from": "income",
+      "verb": "of",
+      "to": "Financial"
+    },
+    {
+      "name": "Financial expense",
+      "from": "expense",
+      "verb": "of",
+      "to": "Financial"
+    },
+    {
+      "name": "Interest income",
+      "from": "income",
+      "verb": "of",
+      "to": "Interest"
+    },
+    {
+      "name": "Interest expense",
+      "from": "expense",
+      "verb": "of",
+      "to": "Interest"
+    },
+    {
+      "name": "Share price",
+      "from": "price",
+      "verb": "of",
+      "to": "Share"
+    },
+    {
+      "name": "Number of shares",
+      "from": "Number",
+      "verb": "of",
+      "to": "shares"
+    },
+    {
+      "name": "Price Earning",
+      "from": "Earning",
+      "verb": "and",
+      "to": "Price"
+    },
+    {
+      "name": "Price Earning Ratio",
+      "from": "Ratio",
+      "verb": "of",
+      "to": "Price Earning"
+    },
+    {
+      "name": "Target Price Earning Ratio",
+      "from": "Price Earning Ratio",
+      "verb": "kind of",
+      "to": "Target"
+    },
+    {
+      "name": "joint ventures",
+      "from": "ventures",
+      "verb": "kind of",
+      "to": "joint"
+    },
+    {
+      "name": "associates and joint ventures",
+      "from": "associates",
+      "verb": "and",
+      "to": "joint ventures"
+    },
+    {
+      "name": "Income from associates and joint ventures",
+      "from": "Income",
+      "verb": "of",
+      "to": "associates and joint ventures"
+    },
+    {
+      "name": "non-controlling interests",
+      "from": "interests",
+      "verb": "kind of",
+      "to": "non-controlling"
+    },
+    {
+      "name": "attributable to non-controlling interests",
+      "from": "attributable",
+      "verb": "to",
+      "to": "non-controlling interests"
+    },
+    {
+      "name": "Profit attributable to non-controlling interests",
+      "from": "Profit",
+      "verb": "kind of",
+      "to": "attributable to non-controlling interests"
+    },
+    {
+      "name": "Prepared dishes",
+      "from": "dishes",
+      "verb": "kind of",
+      "to": "Prepared"
+    },
+    {
+      "name": "Operating profit",
+      "from": "profit",
+      "verb": "kind of",
+      "to": "Operating"
+    },
+    {
+      "name": "Operating profit (reported)",
+      "from": "Operating profit",
+      "verb": "kind of",
+      "to": "reported"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "yearly increase",
+      "expression": "\"percent\" = ( \"is a\" \"year\" - \"prior\" \"year\" ) / \"prior\" \"year\"",
+      "assigned_word": "sales"
+    },
+    {
+      "name": "Operating income",
+      "expression": "=\"Revenues\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Operating expenses",
+      "expression": "=\"Selling expenses\" + \"General administrative expenses\" + \"Other operating expense\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Other trading net",
+      "expression": "= \"Other trading income\" + \"Other trading expenses\" + \"Other revenues\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Cost of sales formula",
+      "expression": "= \"Cost of sales (reported)\" + \"Cost of goods sold\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Operating Profit",
+      "expression": "= \"sales\" + \"Other trading net\" + \"Other operating net\" + \"Cost of sales formula\" + \"Distribution costs\" + \"Research costs\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Financial income/expense, net",
+      "expression": "=\"Profit/loss on equity method investments, net\" + \"Other financial income/expense, net\" + \"Financial income\" + \"Financial expense\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Interest income/expense, net",
+      "expression": "=\"Interest income\" + \"Interest expense\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Profit before income taxes",
+      "expression": "=\"Operating Profit\" + \"Operating expenses\"  + \"Operating income\" + \"Financial income/expense, net\" + \"Interest income/expense, net\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Net profit",
+      "expression": "=\"Profit before income taxes\" + \"income taxes\" + \"Income from associates and joint ventures\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Profit attributable to shareholders",
+      "expression": "=\"Net profit\" - \"Profit attributable to non-controlling interests\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Earnings per share",
+      "expression": "= \"Profit attributable to shareholders\" / \"Number of shares\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Price Earning ratio",
+      "expression": "= \"Share price\" / \"Earnings per share\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "Target Price",
+      "expression": "= \"Earnings per share\" * \"Target Price Earning Ratio\"",
+      "assigned_word": "company"
+    },
+    {
+      "name": "increase",
+      "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+      "description": "calculate the increase in percent e.g. yearly",
+      "assigned_word": "year"
+    }
+  ],
+  "sources": [
+    {
+      "name": "my estimates"
+    },
+    {
+      "name": "ABB ANNUAL REPORT 2017",
+      "url": "https://new.abb.com/docs/default-source/investor-center-docs/annual-report/annual-report-2017/abb-group-annual-report-2017-english.pdf"
+    },
+    {
+      "name": "Consolidated Financial Statements of the Nestlé Group 2016",
+      "url": "https://www.nestle.com/asset-library/documents/library/documents/financial_statements/2016-financial-statements-en.pdf"
+    },
+    {
+      "name": "Nestlé Financial Statement 2016",
+      "url": "https://www.nestle.com/asset-library/documents/library/documents/financial_statements/2016-financial-statements-en.pdf"
+    },
+    {
+      "name": "Migros Facts & figures 2016",
+      "url": "https://www.migros.ch/dam/jcr...9877.../EN_MGB_Zahlen_und_Fakten_2016.pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "Nestlé",
+        "sales",
+        "2014"
+      ],
+      "number": "-1678",
+      "source": "Nestlé Financial Statement 2016"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "Prepared dishes",
+        "2016"
+      ],
+      "number": "6512"
+    }
+  ],
+  "components": [
+    {
+      "name": "formula list",
+      "description": "list of formulas",
+      "type": "formula_list"
+    },
+    {
+      "name": "Cash Flow Statement",
+      "description": "for company show the standard cash flow statement",
+      "type": "values_related",
+      "row": "cash flow statement",
+      "column": "year"
+    },
+    {
+      "name": "Export JSON",
+      "type": "export_json"
+    },
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
+    },
+    {
+      "name": "company with ratios",
+      "type": "word_value_list",
+      "row": "company",
+      "column": "company main ratio"
+    },
+    {
+      "name": "Export XML",
+      "type": "export_xml"
+    }
+  ],
+  "views": [
+    {
+      "name": "company sheet",
+      "comment": "The income statement, balance sheet or cash flow sheet of a big company",
+      "type": "detail_view",
+      "components": [
+        {
+          "position": "1",
+          "name": "Cash Flow Statement"
+        },
+        {
+          "position": "2",
+          "name": "formula list"
+        },
+        {
+          "position": "3",
+          "name": "Export JSON"
+        }
+      ]
+    },
+    {
+      "name": "complete",
+      "comment": "Show a word, all related words to edit the word tree and the linked formulas with some results",
+      "type": "word_default",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word"
+        },
+        {
+          "position": "2",
+          "name": "formula list"
+        },
+        {
+          "position": "3",
+          "name": "Export JSON"
+        },
+        {
+          "position": "4",
+          "name": "Export XML"
+        }
+      ]
+    },
+    {
+      "name": "company list with main ratios",
+      "comment": "List the most interesting companies with the main ratios",
+      "type": "detail_view",
+      "components": [
+        {
+          "position": "1",
+          "name": "company with ratios"
+        }
+      ]
+    }
+  ]
+}

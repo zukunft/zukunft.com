@@ -37,7 +37,7 @@ include_once paths::SHARED_CONST . 'words.php';
 use Zukunft\ZukunftCom\main\php\cfg\export\xml;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\service\export\json_io;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 function run_export_test(test_cleanup $t): void
@@ -52,7 +52,7 @@ function run_export_test(test_cleanup $t): void
     $t->subheader($ts . 'xml');
 
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_names(array(words::MATH));
+    $phr_lst->load_by_names(array(word_names::MATH));
     $xml_export = new xml($usr);
     $result = $xml_export->export_by_phrase_list($phr_lst, $usr);
     $target = 'mathematics';

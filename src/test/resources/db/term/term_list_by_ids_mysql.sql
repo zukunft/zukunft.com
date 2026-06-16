@@ -7,6 +7,7 @@ PREPARE term_list_by_ids FROM
             IF(u.description   IS NULL,s.description,   u.description)   AS description,
             IF(u.formula_text  IS NULL,s.formula_text,  u.formula_text)  AS formula_text,
             IF(u.resolved_text IS NULL,s.resolved_text, u.resolved_text) AS resolved_text,
+            IF(u.latex         IS NULL,s.latex,         u.latex)         AS latex,
             IF(u.`usage`       IS NULL,s.`usage`,       u.`usage`)       AS `usage`,
             IF(u.impact        IS NULL,s.impact,        u.impact)        AS impact,
             IF(u.excluded      IS NULL,s.excluded,      u.excluded)      AS excluded,

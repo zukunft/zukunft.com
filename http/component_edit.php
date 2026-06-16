@@ -53,6 +53,7 @@ include_once paths::SHARED . 'json_fields.php';
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("component_edit");
 $html = new html_base();
 
@@ -141,8 +142,8 @@ if ($usr->id > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // in view edit views the view cannot be changed
-            $msk_dsp = new view_ui($msk->api_json());
-            $result .= $msk_dsp->dsp_navbar_no_view($wrd->id());
+            $msk_ui = new view_ui($msk->api_json());
+            $result .= $msk_ui->dsp_navbar_no_view($wrd->id());
             $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // if the user has requested to use this display component also in another view, $add_link is greater than 0
@@ -152,8 +153,8 @@ if ($usr->id > 0) {
             }
 
             // show the word and its relations, so that the user can change it
-            $cmp_dsp = new component_ui($cmp->api_json());
-            $result .= $cmp_dsp->dsp_edit($add_link, $wrd, $back);
+            $cmp_ui = new component_ui($cmp->api_json());
+            $result .= $cmp_ui->dsp_edit($add_link, $wrd, $back);
         }
     }
 }

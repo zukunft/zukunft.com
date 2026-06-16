@@ -136,6 +136,111 @@ the target model object structure is:
         component_pos_type - TODO use a simple enum?
         ref_link_wikidata - the link to wikidata
 
+## backend only vars
+
+The frontend (`web/`) objects mirror the backend (`cfg/`) objects but omit vars that serve purely backend concerns: DB plumbing, calculation state, and eagerly loaded related objects. The following vars exist in the backend class but have no counterpart in the corresponding frontend class.
+
+### sandbox (base, affects all domain objects)
+
+| var | reason absent from frontend |
+|---|---|
+| `$rename_can_switch` | internal save-logic flag — whether saving can redirect to an existing object with the new name |
+| `$usr_cfg_id` | DB row ID of the user-specific override record; the frontend only receives the effective merged values |
+| `$owner_id` | stored as a FK int; the frontend uses `$owner` (a `user` object) instead |
+
+### sandbox_link (base for triple, formula_link, component_link, ref, term_view, view_relation)
+
+TODO deprecate
+
+| var | reason absent from frontend |
+|---|---|
+| `$from_name` | string label for the "from" object type used in log messages (e.g. `"view"`); not needed for display |
+| `$to_name` | string label for the "to" object type used in log messages |
+
+### word
+
+| var | reason absent from frontend |
+|---|---|
+| `$link_type_id` | list-context metadata: which relation caused this word to appear in a word_list; the frontend never builds word lists this way |
+| `$view` | resolved default view object; requires a DB load the frontend does not perform |
+| `$ref_lst` | array of external reference objects; loaded lazily in the backend, not sent to the frontend |
+
+### triple
+
+TODO add $code_id and $usage to the frontend object
+
+| var | reason absent from frontend |
+|---|---|
+| `$name_given` | user-supplied name override (separate from the auto-generated form/verb/to name) |
+| `$name_generated` | auto-generated name computed from the linked objects; the frontend derives it on the fly from `$from`/`$verb`/`$to` |
+| `$code_id` | machine-readable identifier for system-fixed triples; not editable by users via the UI |
+| `$usage` | frequency count; stored for ranking but not displayed in the basic object form |
+| `$view` | resolved default view; requires DB load |
+| `$ref_lst` | list of external references; not sent to the frontend |
+
+### formula
+
+| var | reason absent from frontend |
+|---|---|
+| `$ref_text_r` | right-hand side of the equation expression used as a work-in-progress field during calculation; purely internal to the formula engine |
+
+### view
+
+TODO add $style to the frontend object
+
+| var | reason absent from frontend |
+|---|---|
+| `$cmp_lnk_lst` | full list of `component_link` objects loaded for rendering; the frontend builds its component list through `url_mapper` calls, not a stored list |
+| `$trm_msk_lst` | full list of `term_view` links; loaded for backend rendering decisions |
+| `$style` | resolved style `type_object`; the frontend receives the style ID via the API and resolves it from the local type cache |
+
+### component
+
+TODO add $style, $row_phrase and $word_id_col2 to the frontend object
+
+| var | reason absent from frontend |
+|---|---|
+| `$link_type_id` | component link type; managed at the `component_link` level in the frontend |
+| `$word_id_col2` | second column word for matrix-style components; the frontend receives this as an API field |
+| `$obj` | generic linked object placeholder used during backend rendering |
+| `$row_phrase` / `$col_phrase` / `$col_sub_phrase` | phrase references for table/matrix layout; resolved during backend rendering |
+| `$frm` | formula object linked to this component; resolved during backend rendering |
+| `$style` | resolved style `type_object`; frontend uses integer `$style_id` and resolves from cache |
+
+### component_link
+
+TODO add $style and $pos_type to the frontend object
+
+| var | reason absent from frontend |
+|---|---|
+| `$pos_type` | resolved `type_object` for the position type; the frontend stores the integer `$pos_type_id` and resolves it from `type_lists` |
+| `$style` | resolved `type_object` for the style; the frontend stores `$style_id` (int) |
+
+### sandbox_value (base for value and result)
+
+| var | reason absent from frontend |
+|---|---|
+| `$last_update` | timestamp of the last DB write; used for cache invalidation on the backend only |
+
+### value
+
+| var | reason absent from frontend |
+|---|---|
+| `$number` | the actual numeric value is hoisted to `sandbox_value` in the frontend (`$number` lives there) rather than in `value` directly; the frontend `value` class stores `$src` (source) instead |
+
+### result
+
+| var | reason absent from frontend |
+|---|---|
+| `$number` | same as value: the numeric payload lives at the `sandbox_value` level in the frontend |
+
+### ref
+
+| var | reason absent from frontend |
+|---|---|
+| `$name` | external display name fetched from the reference source; the frontend identifies refs by phrase + source, not by the cached name |
+| `$code_id` | machine-readable identifier for fixed system references; not exposed in the UI form |
+
 ## database change setup
 
 User Sandbox: values, formulas, formula_links, views and view elements are included in the user sandbox, which means, each user can exclude or adjust single entries

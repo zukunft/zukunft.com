@@ -53,6 +53,7 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
+include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::CREATE . 'test_objects.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
@@ -70,12 +71,12 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
 
@@ -92,7 +93,7 @@ class test_formulas extends test_objects
      */
     function cleanup(string $ts): void
     {
-        parent::cleanup_objects($ts, formulas::TEST_FORMULAS, new formula($this->env->usr1));
+        parent::cleanup_objects($ts, formula_names::TEST_FORMULAS, new formula($this->env->usr1));
 
         // also clean up the triples, verbs and words used for the triples
         $t_trp = new test_triples($this->env);
@@ -111,8 +112,9 @@ class test_formulas extends test_objects
     {
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
-        $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
-        $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
+        $frm->set(formula_names::SCALE_TO_SEC_ID, formula_names::SCALE_TO_SEC);
+        $frm->set_user_text(formula_names::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
+        $frm->set_latex(formula_names::SCALE_TO_SEC_LATEX);
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }
@@ -124,8 +126,20 @@ class test_formulas extends test_objects
     {
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
-        $frm->set(formulas::SCALE_HOUR_ID, formulas::SCALE_HOUR);
-        $frm->set_user_text(formulas::SCALE_HOUR_EXP, $t_trm->term_list_time());
+        $frm->set(formula_names::SCALE_HOUR_ID, formula_names::SCALE_HOUR);
+        $frm->set_user_text(formula_names::SCALE_HOUR_EXP, $t_trm->term_list_time());
+        $frm->set_type(formula_type::CALC, $this->env->usr1);
+        return $frm;
+    }
+
+    /**
+     * @return formula to scale a value from millions to one e.g. for the scaling tests
+     */
+    function formula_scale_mio(): formula
+    {
+        $frm = new formula($this->env->usr1);
+        $frm->set(formula_names::SCALE_MIO_ID, formula_names::SCALE_MIO);
+        $frm->ref_text = formula_names::SCALE_MIO_DB;
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }
@@ -136,7 +150,7 @@ class test_formulas extends test_objects
     function formula_name_only(): formula
     {
         $frm = new formula($this->env->usr1);
-        $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_MIO_EXP);
+        $frm->set(formula_names::SCALE_TO_SEC_ID, formula_names::SCALE_MIO_EXP);
         $frm->ref_text = null;
         return $frm;
     }
@@ -161,14 +175,14 @@ class test_formulas extends test_objects
         global $sys;
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
-        $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
+        $frm->set(formula_names::SCALE_TO_SEC_ID, formula_names::SCALE_TO_SEC);
         // TODO Prio 1 activate
-        //$frm->set_code_id(formulas::SCALE_TO_SEC_CODE_ID, $this->env->usr_system);
-        $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
+        //$frm->set_code_id(formula_names::SCALE_TO_SEC_CODE_ID, $this->env->usr_system);
+        $frm->set_user_text(formula_names::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
         // TODO Prio 1 activate
         //$frm->set_owner_id($this->env->usr1->id());
         $frm->set_type(formula_type::CALC, $this->env->usr1);
-        $frm->description = formulas::SCALE_TO_SEC_COM;
+        $frm->description = formula_names::SCALE_TO_SEC_COM;
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
         $frm->set_view_id(views::START_ID);
@@ -195,8 +209,8 @@ class test_formulas extends test_objects
     {
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
-        $frm->set_name(formulas::SYSTEM_TEST_ADD);
-        $frm->set_user_text(formulas::INCREASE_EXP, $t_trm->term_list_increase());
+        $frm->set_name(formula_names::SYSTEM_TEST_ADD);
+        $frm->set_user_text(formula_names::INCREASE_EXP, $t_trm->term_list_increase());
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }
@@ -209,9 +223,9 @@ class test_formulas extends test_objects
         global $sys;
         $frm = $this->formula_add();
         // TODO Prio 1 activate
-        //$frm->set_code_id(formulas::SCALE_TO_SEC_CODE_ID, $this->env->usr_system);
+        //$frm->set_code_id(formula_names::SCALE_TO_SEC_CODE_ID, $this->env->usr_system);
         //$frm->set_owner_id($this->env->usr1->id());
-        $frm->description = formulas::SCALE_TO_SEC_COM;
+        $frm->description = formula_names::SCALE_TO_SEC_COM;
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
         $frm->set_view_id(views::START_ID);
@@ -230,8 +244,8 @@ class test_formulas extends test_objects
     {
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
-        $frm->set(formulas::INCREASE_ID, formulas::INCREASE);
-        $frm->set_user_text(formulas::INCREASE_EXP, $t_trm->term_list_increase());
+        $frm->set(formula_names::INCREASE_ID, formula_names::INCREASE);
+        $frm->set_user_text(formula_names::INCREASE_EXP, $t_trm->term_list_increase());
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }
@@ -244,10 +258,10 @@ class test_formulas extends test_objects
         global $sys;
         $t_phr = new test_phrases($this->env);
         $frm = new formula($this->env->usr1);
-        $frm->set(formulas::THIS_ID, formulas::THIS_NAME);
-        $frm->set_user_text(formulas::THIS_EXP, $t_phr->phrase_list_increase()->term_list());
+        $frm->set(formula_names::THIS_ID, formula_names::THIS_NAME);
+        $frm->set_user_text(formula_names::THIS_EXP, $t_phr->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::THIS, $this->env->usr1);
-        $frm->description = formulas::THIS_COM;
+        $frm->description = formula_names::THIS_COM;
         $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $frm;
     }
@@ -259,8 +273,8 @@ class test_formulas extends test_objects
     {
         $t_phr = new test_phrases($this->env);
         $frm = new formula($this->env->usr1);
-        $frm->set(formulas::PRIOR_ID, formulas::PRIOR);
-        $frm->set_user_text(formulas::PRIOR_EXP, $t_phr->phrase_list_increase()->term_list());
+        $frm->set(formula_names::PRIOR_ID, formula_names::PRIOR);
+        $frm->set_user_text(formula_names::PRIOR_EXP, $t_phr->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::PREV, $this->env->usr1);
         return $frm;
     }
@@ -272,8 +286,8 @@ class test_formulas extends test_objects
     {
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
-        $frm->set(formulas::CITY_POPULATION_ID, formulas::CITY_POPULATION);
-        $frm->set_user_text(formulas::CITY_POPULATION_EXP, $t_trm->term_list_increase());
+        $frm->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
+        $frm->set_user_text(formula_names::CITY_POPULATION_EXP, $t_trm->term_list_increase());
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }
@@ -289,6 +303,7 @@ class test_formulas extends test_objects
     {
         $lst = new formula_list($this->env->usr1);
         $lst->add($this->formula());
+        $lst->add($this->formula_increase());
         $lst->add($this->formula_this());
         $lst->add($this->formula_prior());
         $lst->add($this->formula_city_population());
@@ -309,6 +324,27 @@ class test_formulas extends test_objects
         $lnk->set(1, $this->formula(), $t_wrd->word_minute()->phrase());
         $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::TIME_PERIOD));
         $lnk->order_nbr = 2;
+        return $lnk;
+    }
+
+    /**
+     * @return formula_link the increase formula assigned to the word "mathematics"
+     *         as a sample to show the formula list on the default word page
+     */
+    function formula_link_increase(): formula_link
+    {
+        $t_wrd = new test_words($this->env);
+        $lnk = new formula_link($this->env->usr1);
+        $lnk->set(2, $this->formula_increase(), $t_wrd->word()->phrase());
+        return $lnk;
+    }
+
+    function formula_link_add(): formula_link
+    {
+        $t_wrd = new test_words($this->env);
+        $lnk = new formula_link($this->env->usr1);
+        $lnk->set_formula($this->formula_add());
+        $lnk->set_phrase($t_wrd->word_add()->phrase());
         return $lnk;
     }
 
@@ -345,6 +381,7 @@ class test_formulas extends test_objects
     {
         $lst = new formula_link_list($this->env->usr1);
         $lst->add_link($this->formula_link());
+        $lst->add_link($this->formula_link_increase());
         return $lst;
     }
 
@@ -362,8 +399,8 @@ class test_formulas extends test_objects
     {
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
-        $frm->set_name(formulas::SYSTEM_TEST_ADD_VIA_FUNC);
-        $frm->set_user_text(formulas::INCREASE_EXP, $t_trm->term_list_increase());
+        $frm->set_name(formula_names::SYSTEM_TEST_ADD_VIA_FUNC);
+        $frm->set_user_text(formula_names::INCREASE_EXP, $t_trm->term_list_increase());
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
     }
@@ -424,7 +461,7 @@ class test_formulas extends test_objects
 
         $frm = new formula($test_usr);
         $frm->id = $id;
-        $frm->set_name(formulas::TEST_SPEED_PREFIX . $id);
+        $frm->set_name(formula_names::TEST_SPEED_PREFIX . $id);
 
         $type_id = rand(1, $sys->typ_lst->frm_typ->count());
         $frm->set_type_id($type_id, $test_usr);

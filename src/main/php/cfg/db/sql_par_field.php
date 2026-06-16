@@ -5,6 +5,8 @@
     model/db/sql_par_field.php - combine a sql parameter field name with the value and the parameter type
     --------------------------
 
+    $fld is the suggested var name
+
     TODO split to a sql_par_field_log and a sql_par_field object
 
 

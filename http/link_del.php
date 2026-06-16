@@ -52,6 +52,7 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("link_del");
 
 $result = ''; // reset the html code var
@@ -91,9 +92,9 @@ if ($usr->id > 0) {
             $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
 
             //$result .= $lnk->dsp_del($back);
         }

@@ -35,10 +35,12 @@ namespace Zukunft\ZukunftCom\test\php\create;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -72,7 +74,7 @@ class test_terms
     function term_triple(): term
     {
         $t_trp = new test_triples($this->env);
-        return $t_trp->triple()->term();
+        return $t_trp->triple_impact()->term();
     }
 
     function term_triple_pi(): term
@@ -170,8 +172,9 @@ class test_terms
     function term_list_time(): term_list
     {
         $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         $lst = new term_list($this->env->usr1);
-        $lst->add($t_wrd->second()->term());
+        $lst->add($t_trp->second()->term());
         $lst->add($t_wrd->word_minute()->term());
         $lst->add($t_wrd->word_hour()->term());
         return $lst;
@@ -221,6 +224,53 @@ class test_terms
         $lst->add($t_wrd->word_one()->term());
         $lst->add($t_wrd->word_mio()->term());
         return $lst;
+    }
+
+    /**
+     * @return term_list a term list with the scaling terms and the million scaling formula
+     */
+    function term_list_scale_mio(): term_list
+    {
+        $t_frm = new test_formulas($this->env);
+        $lst = $this->term_list_scale();
+        $lst->add($t_frm->formula_scale_mio()->term());
+        return $lst;
+    }
+
+    /**
+     * @return data_object with the million scaling formula and its result word "one"
+     *                     as loaded by value->scale for the scale calculation
+     */
+    function dto_scale_mio(): data_object
+    {
+        $t_wrd = new test_words($this->env);
+        $t_frm = new test_formulas($this->env);
+        $dto = new data_object($this->env->usr1);
+        $dto->add_word($t_wrd->word_one());
+        $dto->add_formula($t_frm->formula_scale_mio());
+        return $dto;
+    }
+
+    /**
+     * @return data_object without any scaling formula to test the missing formula warning
+     */
+    function dto_scale_none(): data_object
+    {
+        return new data_object($this->env->usr1);
+    }
+
+    /**
+     * @return data_object with the million scaling formula but the result word "one"
+     *                     missing the scaling type to test the scaling type check
+     */
+    function dto_scale_mio_unscaled(): data_object
+    {
+        $t_wrd = new test_words($this->env);
+        $t_frm = new test_formulas($this->env);
+        $dto = new data_object($this->env->usr1);
+        $dto->add_word($t_wrd->word_one_unscaled());
+        $dto->add_formula($t_frm->formula_scale_mio());
+        return $dto;
     }
 
     /**

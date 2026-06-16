@@ -1,0 +1,1484 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "Fermi estimates for every pro/contra argument of the RSI / overstimulation / zukunft.com discussion, with reproducible calc-validation chains"
+  ],
+  "description": "Encodes the pro and contra arguments of the thread into the zukunft.com graph. Each value carries a provenance qualifier triple - 'measured value' for figures taken from a source, 'assumed value' for set Fermi inputs - so that a set assumption can never be mistaken for a measurement. v0.0.4 additions: the dominant 'overstimulation gap' is now decomposed into 'intensity gap' x 'vulnerability gap'; the upper-bound (gap 10) sign-flip scenario is encoded as reproducible values and calc chains rather than prose; the previously dead 'confidence' inputs now feed a confidence-discounted RSI expected harm; the empirical/normative split is attached to the normative value entries; and an enforcement false-positive (over-blocking) cost is added to the contra side of the rollback balance. Every calc-validation entry is reproduced by check.py and is order-independent of the input values.",
+  "words": [
+    {
+      "name": "value"
+    },
+    {
+      "name": "measured",
+      "description": "provenance qualifier: the number is taken from a cited source and is in principle verifiable"
+    },
+    {
+      "name": "assumed",
+      "description": "provenance qualifier: the number is a set Fermi input, not a measurement; the conclusion may hinge on it"
+    },
+    {
+      "name": "harm"
+    },
+    {
+      "name": "weight"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "benefit"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "population"
+    },
+    {
+      "name": "exposure"
+    },
+    {
+      "name": "duration"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "hour"
+    },
+    {
+      "name": "day"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "gap"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "effect"
+    },
+    {
+      "name": "reach"
+    },
+    {
+      "name": "score"
+    },
+    {
+      "name": "status",
+      "description": "as in status quo: the present-day un-intervened state"
+    },
+    {
+      "name": "quo"
+    },
+    {
+      "name": "rollback",
+      "description": "reduction of digital overstimulation, e.g. via content regulation / press-code enforcement"
+    },
+    {
+      "name": "intervention"
+    },
+    {
+      "name": "measurement",
+      "description": "the act of running a study to estimate the sign-determining factor"
+    },
+    {
+      "name": "study"
+    },
+    {
+      "name": "information"
+    },
+    {
+      "name": "decision"
+    },
+    {
+      "name": "overstimulation"
+    },
+    {
+      "name": "cognition"
+    },
+    {
+      "name": "model"
+    },
+    {
+      "name": "mouse"
+    },
+    {
+      "name": "human"
+    },
+    {
+      "name": "adult"
+    },
+    {
+      "name": "neonatal",
+      "description": "during the critical developmental window; the mouse study used p10 pups"
+    },
+    {
+      "name": "coercion"
+    },
+    {
+      "name": "structure"
+    },
+    {
+      "name": "identity"
+    },
+    {
+      "name": "group"
+    },
+    {
+      "name": "incentive"
+    },
+    {
+      "name": "friction"
+    },
+    {
+      "name": "readiness",
+      "description": "willingness to subject oneself to the effort of checking, as opposed to the ability to do so"
+    },
+    {
+      "name": "autonomy"
+    },
+    {
+      "name": "misuse"
+    },
+    {
+      "name": "DALY",
+      "type": "measure",
+      "description": "disability-adjusted life year (UN); one lost year of healthy life"
+    },
+    {
+      "name": "HTP",
+      "type": "measure",
+      "description": "Happy Time Point; DALY extended to Maslow levels 1-2, impact-weighted reach"
+    },
+    {
+      "name": "CHF",
+      "type": "measure"
+    },
+    {
+      "name": "dB",
+      "type": "measure",
+      "description": "decibel, sound pressure level"
+    },
+    {
+      "name": "RSI",
+      "description": "recursive self-improvement: AI that builds the next, better AI generation - distinct from intra-task self-verification"
+    },
+    {
+      "name": "verification",
+      "description": "intra-task self-checking: extra test/correction code within a single task"
+    },
+    {
+      "name": "direct",
+      "description": "base modifier for directional properties"
+    },
+    {
+      "name": "reduction",
+      "description": "base concept for a decrease in a specific friction quantity"
+    },
+    {
+      "name": "runaway",
+      "description": "uncontrolled compounding feedback loop"
+    },
+    {
+      "name": "mitigation",
+      "description": "actions taken to reduce the severity or probability of a negative event"
+    },
+    {
+      "name": "efficacy",
+      "description": "the performance metrics of a specific intervention framework"
+    },
+    {
+      "name": "audio",
+      "description": "sound-related metric components"
+    },
+    {
+      "name": "uncertainty"
+    },
+    {
+      "name": "confidence"
+    },
+    {
+      "name": "evidence"
+    },
+    {
+      "name": "sensitivity"
+    },
+    {
+      "name": "option"
+    },
+    {
+      "name": "dependency"
+    },
+    {
+      "name": "assumption"
+    },
+    {
+      "name": "normative",
+      "description": "value judgement rather than empirical observation"
+    },
+    {
+      "name": "empirical",
+      "description": "derived from observation or experiment"
+    },
+    {
+      "name": "vulnerability"
+    },
+    {
+      "name": "bound"
+    },
+    {
+      "name": "upper"
+    },
+    {
+      "name": "overblocking",
+      "description": "enforcement false positive: legitimate content wrongly hidden by press-code / one-click-hide enforcement"
+    }
+  ],
+  "triples": [
+    {
+      "name": "measured value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "measured"
+    },
+    {
+      "name": "assumed value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "assumed"
+    },
+    {
+      "name": "status quo",
+      "from": "status",
+      "verb": "of",
+      "to": "quo"
+    },
+    {
+      "name": "harm weight",
+      "from": "weight",
+      "verb": "of",
+      "to": "harm"
+    },
+    {
+      "name": "harm per person",
+      "from": "harm",
+      "verb": "of",
+      "to": "person"
+    },
+    {
+      "name": "exposure duration",
+      "from": "duration",
+      "verb": "of",
+      "to": "exposure"
+    },
+    {
+      "name": "status quo harm weight",
+      "from": "harm weight",
+      "verb": "of",
+      "to": "status quo"
+    },
+    {
+      "name": "status quo harm per person",
+      "from": "harm per person",
+      "verb": "of",
+      "to": "status quo"
+    },
+    {
+      "name": "status quo total harm",
+      "from": "harm",
+      "verb": "of",
+      "to": "status quo"
+    },
+    {
+      "name": "model harm weight",
+      "from": "harm weight",
+      "verb": "of",
+      "to": "model"
+    },
+    {
+      "name": "overstimulation gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "overstimulation",
+      "description": "orders-of-magnitude gap in intensity x vulnerability between the neonatal-mouse model dose and adult status-quo media use"
+    },
+    {
+      "name": "rollback intervention",
+      "from": "intervention",
+      "verb": "kind of",
+      "to": "rollback"
+    },
+    {
+      "name": "rollback cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "rollback intervention"
+    },
+    {
+      "name": "autonomy cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "autonomy"
+    },
+    {
+      "name": "misuse probability",
+      "from": "probability",
+      "verb": "of",
+      "to": "misuse"
+    },
+    {
+      "name": "misuse harm",
+      "from": "harm",
+      "verb": "of",
+      "to": "misuse"
+    },
+    {
+      "name": "misuse expected value",
+      "from": "misuse harm",
+      "verb": "of",
+      "to": "misuse probability",
+      "description": "probability-weighted misuse harm"
+    },
+    {
+      "name": "rollback net balance",
+      "from": "net",
+      "verb": "of",
+      "to": "rollback intervention"
+    },
+    {
+      "name": "study cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "study"
+    },
+    {
+      "name": "financial study cost",
+      "from": "study cost",
+      "verb": "measured in",
+      "to": "CHF"
+    },
+    {
+      "name": "conversion ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "CHF",
+      "description": "WHO budget conversion factor to HTP"
+    },
+    {
+      "name": "value of information",
+      "from": "value",
+      "verb": "of",
+      "to": "information"
+    },
+    {
+      "name": "flip probability",
+      "from": "probability",
+      "verb": "of",
+      "to": "decision",
+      "description": "probability that the measurement actually flips the decision sign"
+    },
+    {
+      "name": "avoided wrong decision",
+      "from": "harm",
+      "verb": "of",
+      "to": "decision",
+      "description": "harm of the wrong decision that the measurement avoids"
+    },
+    {
+      "name": "value of information ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "value of information"
+    },
+    {
+      "name": "overstimulated mouse",
+      "from": "mouse",
+      "verb": "kind of",
+      "to": "overstimulation"
+    },
+    {
+      "name": "neonatal mouse",
+      "from": "mouse",
+      "verb": "kind of",
+      "to": "neonatal"
+    },
+    {
+      "name": "exposure hours",
+      "from": "hour",
+      "verb": "of",
+      "to": "exposure"
+    },
+    {
+      "name": "exposure days",
+      "from": "day",
+      "verb": "of",
+      "to": "exposure"
+    },
+    {
+      "name": "total exposure hours",
+      "from": "exposure hours",
+      "verb": "of",
+      "to": "overstimulated mouse"
+    },
+    {
+      "name": "audio level",
+      "from": "audio",
+      "verb": "measured in",
+      "to": "dB"
+    },
+    {
+      "name": "coercion structure",
+      "from": "coercion",
+      "verb": "and",
+      "to": "structure",
+      "description": "lever: mandatory justification before voting; forces checking instead of inviting it"
+    },
+    {
+      "name": "identity group",
+      "from": "identity",
+      "verb": "and",
+      "to": "group",
+      "description": "lever: peer norm makes checking a status marker"
+    },
+    {
+      "name": "direct incentive",
+      "from": "direct",
+      "verb": "modifier of",
+      "to": "incentive",
+      "description": "lever: ranking / reputation / money reward for rare-but-right"
+    },
+    {
+      "name": "friction reduction",
+      "from": "reduction",
+      "verb": "acting on",
+      "to": "friction",
+      "description": "lever: remove distraction; acts on opportunity not motivation - the petition's mechanism"
+    },
+    {
+      "name": "readiness effect",
+      "from": "effect",
+      "verb": "of",
+      "to": "readiness"
+    },
+    {
+      "name": "readiness reach",
+      "from": "reach",
+      "verb": "of",
+      "to": "readiness"
+    },
+    {
+      "name": "lever score",
+      "from": "score",
+      "verb": "of",
+      "to": "readiness",
+      "description": "effect x reach product, ordinal, for ranking the levers only"
+    },
+    {
+      "name": "coercion structure score",
+      "from": "lever score",
+      "verb": "of",
+      "to": "coercion structure"
+    },
+    {
+      "name": "identity group score",
+      "from": "lever score",
+      "verb": "of",
+      "to": "identity group"
+    },
+    {
+      "name": "direct incentive score",
+      "from": "lever score",
+      "verb": "of",
+      "to": "direct incentive"
+    },
+    {
+      "name": "friction reduction score",
+      "from": "lever score",
+      "verb": "of",
+      "to": "friction reduction"
+    },
+    {
+      "name": "RSI runaway",
+      "from": "RSI",
+      "verb": "leads to",
+      "to": "runaway"
+    },
+    {
+      "name": "runaway probability",
+      "from": "probability",
+      "verb": "of",
+      "to": "RSI runaway"
+    },
+    {
+      "name": "runaway harm",
+      "from": "harm",
+      "verb": "of",
+      "to": "RSI runaway"
+    },
+    {
+      "name": "RSI expected harm",
+      "from": "harm",
+      "verb": "expected from",
+      "to": "RSI runaway"
+    },
+    {
+      "name": "verification cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "verification"
+    },
+    {
+      "name": "verification mitigation efficacy",
+      "from": "efficacy",
+      "verb": "of",
+      "to": "verification"
+    },
+    {
+      "name": "verification net balance",
+      "from": "net",
+      "verb": "of",
+      "to": "verification"
+    },
+    {
+      "name": "empirical value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "empirical"
+    },
+    {
+      "name": "normative value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "normative"
+    },
+    {
+      "name": "decision option",
+      "from": "option",
+      "verb": "of",
+      "to": "decision"
+    },
+    {
+      "name": "critical sensitivity",
+      "from": "sensitivity",
+      "verb": "of",
+      "to": "decision"
+    },
+    {
+      "name": "formula dependency",
+      "from": "dependency",
+      "verb": "of",
+      "to": "formula"
+    },
+    {
+      "name": "intensity gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "exposure",
+      "description": "dose ratio: neonatal-mouse model intensity (70 dB + flashing light, 6h/day) vs adult status-quo media exposure"
+    },
+    {
+      "name": "vulnerability gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "vulnerability",
+      "description": "developmental-window ratio: neonatal (p10) critical-period plasticity vs adult susceptibility"
+    },
+    {
+      "name": "upper bound",
+      "from": "bound",
+      "verb": "kind of",
+      "to": "upper",
+      "description": "optimistic-for-rollback gap scenario: overstimulation gap = 10 instead of 100"
+    },
+    {
+      "name": "confidence discounted RSI harm",
+      "from": "RSI expected harm",
+      "verb": "weighted by",
+      "to": "confidence",
+      "description": "RSI expected harm multiplied by the confidence in its source, so a low-confidence risk figure does not dominate the ledger at face value"
+    },
+    {
+      "name": "overblocking cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "overblocking",
+      "description": "expected HTP cost of legitimate speech/information wrongly suppressed by the rollback's enforcement mechanism (e.g. Ein-Klick-Verbergen over-application)"
+    },
+    {
+      "name": "overblocking probability",
+      "from": "probability",
+      "verb": "of",
+      "to": "overblocking"
+    },
+    {
+      "name": "overblocking harm",
+      "from": "harm",
+      "verb": "of",
+      "to": "overblocking"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Christakis 2012 mouse overstimulation",
+      "description": "Christakis DA, Ramirez JSB, Ramirez JM (2012). Overstimulation of newborn mice leads to behavioral differences and deficits in cognitive performance. Scientific Reports 2:546. p10 mice, 70 dB audio + flashing lights, 6 h/day, 42 days; overstimulated mice performed significantly worse on Light-Dark Latency, Elevated Plus Maze, Novel Object Recognition and Barnes Maze.",
+      "url": "https://doi.org/10.1038/srep00546"
+    },
+    {
+      "name": "Anthropic RSI warning (heise 2026)",
+      "description": "heise online: Skynet-Szenario - Anthropic warnt vor KI, die sich selbst entwickelt. Source of the RSI definition used to separate recursive self-improvement from intra-task self-verification.",
+      "url": "https://www.heise.de/news/Skynet-Szenario-Anthropic-warnt-vor-KI-die-sich-selbst-entwickelt-11319846.html"
+    },
+    {
+      "name": "WHO cost-effectiveness threshold",
+      "description": "Health-economic convention: an intervention's cost per DALY averted, here a set ~50000 CHF/DALY threshold used only to convert study cost into HTP.",
+      "url": "https://www.who.int/data/gho"
+    },
+    {
+      "name": "Decision analysis convention",
+      "description": "General decision-analysis practice: identify sign-determining assumptions and prioritise measuring them.",
+      "url": "https://en.wikipedia.org/wiki/Decision_analysis"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "status quo harm weight formula",
+      "expression": "\"status quo harm weight\" = \"model harm weight\" / \"overstimulation gap\"",
+      "assigned": [
+        "model harm weight",
+        "overstimulation gap"
+      ]
+    },
+    {
+      "name": "status quo harm per person formula",
+      "expression": "\"status quo harm per person\" = \"status quo harm weight\" * \"exposure duration\"",
+      "assigned": [
+        "status quo harm weight",
+        "exposure duration"
+      ]
+    },
+    {
+      "name": "status quo total harm formula",
+      "expression": "\"status quo total harm\" = \"status quo harm per person\" * \"population\"",
+      "assigned": [
+        "status quo harm per person",
+        "population"
+      ]
+    },
+    {
+      "name": "autonomy cost formula",
+      "expression": "\"autonomy cost\" = \"harm weight\" * \"population\" * \"exposure duration\"",
+      "assigned": [
+        "harm weight",
+        "population",
+        "exposure duration"
+      ]
+    },
+    {
+      "name": "misuse expected value formula",
+      "expression": "\"misuse expected value\" = \"misuse probability\" * \"misuse harm\"",
+      "assigned": [
+        "misuse probability",
+        "misuse harm"
+      ]
+    },
+    {
+      "name": "rollback cost formula",
+      "expression": "\"rollback cost\" = \"autonomy cost\" + \"misuse expected value\" + \"overblocking cost\"",
+      "assigned": [
+        "autonomy cost",
+        "misuse expected value",
+        "overblocking cost"
+      ]
+    },
+    {
+      "name": "rollback net balance formula",
+      "expression": "\"rollback net balance\" = \"status quo total harm\" - \"rollback cost\"",
+      "assigned": [
+        "status quo total harm",
+        "rollback cost"
+      ]
+    },
+    {
+      "name": "study cost in HTP formula",
+      "expression": "\"study cost\" = \"financial study cost\" / \"conversion ratio\"",
+      "assigned": [
+        "financial study cost",
+        "conversion ratio"
+      ]
+    },
+    {
+      "name": "value of information formula",
+      "expression": "\"value of information\" = \"flip probability\" * \"avoided wrong decision\"",
+      "assigned": [
+        "flip probability",
+        "avoided wrong decision"
+      ]
+    },
+    {
+      "name": "value of information ratio formula",
+      "expression": "\"value of information ratio\" = \"value of information\" / \"study cost\"",
+      "assigned": [
+        "value of information",
+        "study cost"
+      ]
+    },
+    {
+      "name": "lever score formula",
+      "expression": "\"lever score\" = \"readiness effect\" * \"readiness reach\"",
+      "assigned": [
+        "readiness effect",
+        "readiness reach"
+      ]
+    },
+    {
+      "name": "total exposure hours formula",
+      "expression": "\"total exposure hours\" = \"exposure hours\" * \"exposure days\"",
+      "assigned": [
+        "exposure hours",
+        "exposure days"
+      ]
+    },
+    {
+      "name": "RSI expected harm formula",
+      "expression": "\"RSI expected harm\" = \"runaway probability\" * \"runaway harm\"",
+      "assigned": [
+        "runaway probability",
+        "runaway harm"
+      ]
+    },
+    {
+      "name": "verification net balance formula",
+      "expression": "\"verification net balance\" = (\"RSI expected harm\" * \"verification mitigation efficacy\") - \"verification cost\"",
+      "assigned": [
+        "RSI expected harm",
+        "verification mitigation efficacy",
+        "verification cost"
+      ]
+    },
+    {
+      "name": "decision sensitivity formula",
+      "expression": "\"sensitivity\" = \"uncertainty\" * \"effect\"",
+      "assigned": [
+        "uncertainty",
+        "effect"
+      ]
+    },
+    {
+      "name": "overstimulation gap formula",
+      "expression": "\"overstimulation gap\" = \"intensity gap\" * \"vulnerability gap\"",
+      "assigned": [
+        "intensity gap",
+        "vulnerability gap"
+      ]
+    },
+    {
+      "name": "confidence discounted RSI harm formula",
+      "expression": "\"confidence discounted RSI harm\" = \"RSI expected harm\" * \"confidence\"",
+      "assigned": [
+        "RSI expected harm",
+        "confidence"
+      ]
+    },
+    {
+      "name": "overblocking cost formula",
+      "expression": "\"overblocking cost\" = \"overblocking probability\" * \"overblocking harm\"",
+      "assigned": [
+        "overblocking probability",
+        "overblocking harm"
+      ]
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "model harm weight",
+        "DALY",
+        "year",
+        "assumed value"
+      ],
+      "number": "0.2",
+      "source": "Christakis 2012 mouse overstimulation"
+    },
+    {
+      "words": [
+        "overstimulation gap",
+        "factor",
+        "assumed value"
+      ],
+      "number": "100"
+    },
+    {
+      "words": [
+        "exposure duration",
+        "status quo",
+        "year",
+        "adult",
+        "assumed value"
+      ],
+      "number": "40"
+    },
+    {
+      "words": [
+        "population",
+        "adult",
+        "assumed value"
+      ],
+      "number": "80000000"
+    },
+    {
+      "words": [
+        "harm weight",
+        "autonomy",
+        "DALY",
+        "year",
+        "normative",
+        "assumed value"
+      ],
+      "number": "0.001",
+      "note": "Normative value: the disutility of lost autonomy is a value judgement, not a measured quantity."
+    },
+    {
+      "words": [
+        "misuse probability",
+        "assumed value"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "misuse harm",
+        "HTP",
+        "normative",
+        "assumed value"
+      ],
+      "number": "10000000",
+      "note": "Normative value: the HTP cost assigned to misuse reflects a value judgement about its severity."
+    },
+    {
+      "words": [
+        "financial study cost",
+        "CHF",
+        "assumed value"
+      ],
+      "number": "3500000"
+    },
+    {
+      "words": [
+        "conversion ratio",
+        "factor",
+        "CHF",
+        "DALY",
+        "assumed value"
+      ],
+      "number": "50000",
+      "source": "WHO cost-effectiveness threshold"
+    },
+    {
+      "words": [
+        "flip probability",
+        "assumed value"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "avoided wrong decision",
+        "HTP",
+        "assumed value"
+      ],
+      "number": "5000000"
+    },
+    {
+      "words": [
+        "audio level",
+        "overstimulated mouse",
+        "dB",
+        "measured value"
+      ],
+      "number": "70",
+      "source": "Christakis 2012 mouse overstimulation"
+    },
+    {
+      "words": [
+        "exposure hours",
+        "overstimulated mouse",
+        "measured value"
+      ],
+      "number": "6",
+      "source": "Christakis 2012 mouse overstimulation"
+    },
+    {
+      "words": [
+        "exposure days",
+        "overstimulated mouse",
+        "measured value"
+      ],
+      "number": "42",
+      "source": "Christakis 2012 mouse overstimulation"
+    },
+    {
+      "words": [
+        "readiness effect",
+        "coercion structure",
+        "score",
+        "assumed value"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "readiness reach",
+        "coercion structure",
+        "score",
+        "assumed value"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "readiness effect",
+        "identity group",
+        "score",
+        "assumed value"
+      ],
+      "number": "2.5"
+    },
+    {
+      "words": [
+        "readiness reach",
+        "identity group",
+        "score",
+        "assumed value"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "readiness effect",
+        "direct incentive",
+        "score",
+        "assumed value"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "readiness reach",
+        "direct incentive",
+        "score",
+        "assumed value"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "readiness effect",
+        "friction reduction",
+        "score",
+        "assumed value"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "readiness reach",
+        "friction reduction",
+        "score",
+        "assumed value"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "runaway probability",
+        "RSI",
+        "assumed value"
+      ],
+      "number": "0.05",
+      "source": "Anthropic RSI warning (heise 2026)"
+    },
+    {
+      "words": [
+        "runaway harm",
+        "HTP",
+        "assumed value"
+      ],
+      "number": "50000000"
+    },
+    {
+      "words": [
+        "verification mitigation efficacy",
+        "factor",
+        "assumed value"
+      ],
+      "number": "0.9"
+    },
+    {
+      "words": [
+        "verification cost",
+        "HTP",
+        "assumed value"
+      ],
+      "number": "200000"
+    },
+    {
+      "words": [
+        "uncertainty",
+        "overstimulation gap",
+        "assumed value"
+      ],
+      "number": "0.9"
+    },
+    {
+      "words": [
+        "confidence",
+        "Christakis 2012 mouse overstimulation",
+        "assumed value"
+      ],
+      "number": "0.7"
+    },
+    {
+      "words": [
+        "confidence",
+        "Anthropic RSI warning (heise 2026)",
+        "assumed value"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "intensity gap",
+        "factor",
+        "assumed value"
+      ],
+      "number": "10",
+      "note": "Dose ratio component of the overstimulation gap."
+    },
+    {
+      "words": [
+        "vulnerability gap",
+        "factor",
+        "assumed value"
+      ],
+      "number": "10",
+      "note": "Developmental-window component. Product with intensity gap = 100, the lower-bound overstimulation gap."
+    },
+    {
+      "words": [
+        "overstimulation gap",
+        "upper bound",
+        "factor",
+        "assumed value"
+      ],
+      "number": "10",
+      "note": "Upper-bound scenario: status-quo harm is 10x larger than the lower-bound case."
+    },
+    {
+      "words": [
+        "overblocking",
+        "probability",
+        "assumed value"
+      ],
+      "number": "0.2",
+      "note": "Assumed share of hide-actions that wrongly target legitimate content."
+    },
+    {
+      "words": [
+        "overblocking",
+        "harm",
+        "HTP",
+        "normative",
+        "assumed value"
+      ],
+      "number": "5000000",
+      "note": "Normative value: HTP cost of the suppressed legitimate information if over-blocking were certain."
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "model harm weight",
+        "overstimulation gap",
+        "DALY",
+        "year",
+        "assumed value"
+      ],
+      "formula": "status quo harm weight formula",
+      "words": [
+        "status quo harm weight",
+        "DALY",
+        "year"
+      ],
+      "number": "0.002",
+      "note": "CONTRA the status-quo-is-harmful thesis: lower bound, gap factor 100. With gap 10 the result would be 0.02."
+    },
+    {
+      "context": [
+        "status quo harm weight",
+        "exposure duration",
+        "DALY",
+        "year",
+        "adult"
+      ],
+      "formula": "status quo harm per person formula",
+      "words": [
+        "status quo harm per person",
+        "DALY",
+        "adult"
+      ],
+      "number": "0.08"
+    },
+    {
+      "context": [
+        "status quo harm per person",
+        "population",
+        "adult"
+      ],
+      "formula": "status quo total harm formula",
+      "words": [
+        "status quo total harm",
+        "HTP"
+      ],
+      "number": "6400000",
+      "note": "PRO the thesis: even at the conservative lower bound the diffuse mass harm is ~6.4M HTP, because reach is huge while per-capita weight is tiny. This is the strength of the HTP logic - it makes sub-threshold mass harm visible."
+    },
+    {
+      "context": [
+        "harm weight",
+        "autonomy",
+        "population",
+        "exposure duration",
+        "adult"
+      ],
+      "formula": "autonomy cost formula",
+      "words": [
+        "autonomy cost",
+        "HTP"
+      ],
+      "number": "3200000"
+    },
+    {
+      "context": [
+        "misuse probability",
+        "misuse harm",
+        "HTP"
+      ],
+      "formula": "misuse expected value formula",
+      "words": [
+        "misuse expected value",
+        "HTP"
+      ],
+      "number": "1000000"
+    },
+    {
+      "context": [
+        "autonomy cost",
+        "misuse expected value",
+        "overblocking cost",
+        "HTP"
+      ],
+      "formula": "rollback cost formula",
+      "words": [
+        "rollback cost",
+        "HTP"
+      ],
+      "number": "5200000",
+      "note": "CONTRA naive rollback: primum non nocere requires the intervention's own cost (now ~5.2M HTP, including ~1M HTP of enforcement over-blocking) be counted against the harm it averts."
+    },
+    {
+      "context": [
+        "status quo total harm",
+        "rollback cost",
+        "HTP"
+      ],
+      "formula": "rollback net balance formula",
+      "words": [
+        "rollback net balance",
+        "HTP"
+      ],
+      "number": "1200000",
+      "note": "KEY RESULT - sign uncertain: at lower bound (gap 100) net = 6.4M - 5.2M = 1.2M, even closer to a wash once the enforcement over-blocking cost is included. At upper bound (gap 10) status-quo harm = 64M, net = 64M - 5.2M = 58.8M, a clear rollback win. The decision still hinges on the single un-measured overstimulation gap."
+    },
+    {
+      "context": [
+        "financial study cost",
+        "conversion ratio",
+        "CHF",
+        "DALY"
+      ],
+      "formula": "study cost in HTP formula",
+      "words": [
+        "study cost",
+        "HTP"
+      ],
+      "number": "70",
+      "note": "Harm of measuring: ~70 HTP of foregone alternative use of the research budget. Observation study, so participant harm ~0."
+    },
+    {
+      "context": [
+        "flip probability",
+        "avoided wrong decision",
+        "HTP"
+      ],
+      "formula": "value of information formula",
+      "words": [
+        "value of information",
+        "HTP"
+      ],
+      "number": "2500000"
+    },
+    {
+      "context": [
+        "value of information",
+        "study cost",
+        "HTP"
+      ],
+      "formula": "value of information ratio formula",
+      "words": [
+        "value of information ratio",
+        "ratio"
+      ],
+      "number": "35714.29",
+      "note": "PRO measuring first: benefit ~2.5M HTP vs cost ~70 HTP gives ~35700:1 (the discussion's spoken ~25000:1 was a looser estimate; recomputed here). Unlike rollback and petition, the SIGN of measuring is robust. Caveat: holds only if the study design can actually flip the sign - a confounded observational study flips nothing and the ratio collapses."
+    },
+    {
+      "context": [
+        "exposure hours",
+        "exposure days",
+        "overstimulated mouse"
+      ],
+      "formula": "total exposure hours formula",
+      "words": [
+        "total exposure hours",
+        "overstimulated mouse"
+      ],
+      "number": "252",
+      "note": "Documented dose of the mouse model: 6 h/day x 42 days = 252 h at 70 dB + flashing light, neonatal. The argument the source does NOT support: extrapolating this non-normative neonatal extreme to adult status-quo media use. Datapoint, not keystone."
+    },
+    {
+      "context": [
+        "readiness effect",
+        "readiness reach",
+        "coercion structure",
+        "score"
+      ],
+      "formula": "lever score formula",
+      "words": [
+        "coercion structure score",
+        "score"
+      ],
+      "number": "9",
+      "note": "Readiness lever ranking (effect x reach, ordinal). Coercion/structure highest - forces checking, reaches the unwilling."
+    },
+    {
+      "context": [
+        "readiness effect",
+        "readiness reach",
+        "identity group",
+        "score"
+      ],
+      "formula": "lever score formula",
+      "words": [
+        "identity group score",
+        "score"
+      ],
+      "number": "5"
+    },
+    {
+      "context": [
+        "readiness effect",
+        "readiness reach",
+        "direct incentive",
+        "score"
+      ],
+      "formula": "lever score formula",
+      "words": [
+        "direct incentive score",
+        "score"
+      ],
+      "number": "4"
+    },
+    {
+      "context": [
+        "readiness effect",
+        "readiness reach",
+        "friction reduction",
+        "score"
+      ],
+      "formula": "lever score formula",
+      "words": [
+        "friction reduction score",
+        "score"
+      ],
+      "number": "1",
+      "note": "CONTRA the petition: friction reduction (the petition's mechanism) ranks last - it acts on opportunity, not motivation, reaching only the already-willing. Three stronger levers are already inside zukunft.com."
+    },
+    {
+      "context": [
+        "runaway probability",
+        "runaway harm",
+        "RSI"
+      ],
+      "formula": "RSI expected harm formula",
+      "words": [
+        "RSI expected harm",
+        "HTP"
+      ],
+      "number": "2500000",
+      "note": "Fermi risk baseline for recursive self-improvement runaway loops prior to engineering safeguards."
+    },
+    {
+      "context": [
+        "RSI expected harm",
+        "verification mitigation efficacy",
+        "verification cost",
+        "HTP"
+      ],
+      "formula": "verification net balance formula",
+      "words": [
+        "verification net balance",
+        "HTP"
+      ],
+      "number": "2050000",
+      "note": "PRO Intra-task verification frameworks: Although implementation costs 200k HTP in latency/overhead, filtering 90% of recursive failures yields a highly positive net balance of ~2.05M HTP, justifying structural enforcement over reliance on pure regulation."
+    },
+    {
+      "context": [
+        "uncertainty",
+        "effect"
+      ],
+      "formula": "decision sensitivity formula",
+      "words": [
+        "sensitivity",
+        "score"
+      ],
+      "number": "0.9",
+      "note": "The current model indicates that the overstimulation gap is the dominant sign-determining assumption and therefore the highest-value measurement target."
+    },
+    {
+      "context": [
+        "intensity gap",
+        "vulnerability gap",
+        "factor",
+        "assumed value"
+      ],
+      "formula": "overstimulation gap formula",
+      "words": [
+        "overstimulation gap",
+        "factor"
+      ],
+      "number": "100",
+      "note": "Decomposition of the dominant assumption: gap 100 = intensity 10 x vulnerability 10. Makes auditable which half (dose vs developmental window) drives the sign. Sensitivity analysis should target whichever factor is more measurable - intensity is observable now, vulnerability needs a developmental study."
+    },
+    {
+      "context": [
+        "model harm weight",
+        "overstimulation gap",
+        "upper bound",
+        "DALY",
+        "year",
+        "assumed value"
+      ],
+      "formula": "status quo harm weight formula",
+      "words": [
+        "status quo harm weight",
+        "upper bound",
+        "DALY",
+        "year"
+      ],
+      "number": "0.02",
+      "note": "Upper-bound harm weight, gap factor 10."
+    },
+    {
+      "context": [
+        "status quo harm weight",
+        "upper bound",
+        "exposure duration",
+        "DALY",
+        "year",
+        "adult"
+      ],
+      "formula": "status quo harm per person formula",
+      "words": [
+        "status quo harm per person",
+        "upper bound",
+        "DALY",
+        "adult"
+      ],
+      "number": "0.8"
+    },
+    {
+      "context": [
+        "status quo harm per person",
+        "upper bound",
+        "population",
+        "adult"
+      ],
+      "formula": "status quo total harm formula",
+      "words": [
+        "status quo total harm",
+        "upper bound",
+        "HTP"
+      ],
+      "number": "64000000",
+      "note": "PRO rollback at the upper bound: 64M HTP of diffuse mass harm."
+    },
+    {
+      "context": [
+        "RSI expected harm",
+        "confidence",
+        "Anthropic RSI warning (heise 2026)",
+        "HTP"
+      ],
+      "formula": "confidence discounted RSI harm formula",
+      "words": [
+        "confidence discounted RSI harm",
+        "HTP"
+      ],
+      "number": "750000",
+      "note": "The RSI source carries low confidence (0.3), so its 2.5M HTP expected harm enters the ledger discounted to ~750k HTP. This keeps a single low-confidence frontier-risk figure from dominating empirically better-supported terms."
+    },
+    {
+      "context": [
+        "overblocking probability",
+        "overblocking harm",
+        "HTP"
+      ],
+      "formula": "overblocking cost formula",
+      "words": [
+        "overblocking cost",
+        "HTP"
+      ],
+      "number": "1000000",
+      "note": "CONTRA rollback (new term): the enforcement mechanism itself suppresses some legitimate content. Expected cost ~1M HTP, previously omitted - its omission biased rollback net upward."
+    },
+    {
+      "context": [
+        "status quo total harm",
+        "upper bound",
+        "rollback cost",
+        "HTP"
+      ],
+      "formula": "rollback net balance formula",
+      "words": [
+        "rollback net balance",
+        "upper bound",
+        "HTP"
+      ],
+      "number": "58800000",
+      "note": "Upper-bound counterpart to the KEY RESULT, now reproducible rather than narrated in prose: gap 10 -> net 58.8M HTP, a clear rollback win. The lower- and upper-bound nets bracket the decision."
+    }
+  ]
+}

@@ -34,12 +34,14 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\element\element;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -62,17 +64,17 @@ class element_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
+        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         // load increase formula for testing
-        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
+        $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
         $elm_lst = $exp->element_list($usr_msg);
 
         // get the test word ids
         $wrd_country = $t_db->load_word(words::COUNTRY);
-        $wrd_canton = $t_db->load_word(words::CANTON);
+        $wrd_canton = $t_db->load_word(word_names::CANTON);
         $vrb_id = $sys->typ_lst->vrb->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
@@ -87,7 +89,7 @@ class element_write_tests
 
                 $result = $elm->dsp_id();
                 if ($pos == 0) {
-                    $target = 'word "Country" (' . $wrd_country->id . ') for user 3 (zukunft.com system test)';
+                    $target = 'word "country" (' . $wrd_country->id . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 1) {
                     $target = 'verb "can be used as a differentiator for" (' . $vrb_id . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 2) {
@@ -99,7 +101,7 @@ class element_write_tests
 
                 $result = $elm->name();
                 if ($pos == 0) {
-                    $target = 'Country';
+                    $target = 'country';
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
@@ -109,11 +111,11 @@ class element_write_tests
                 }
                 $t->assert('element->dsp_id', $result, $target);
 
-                $elm_dsp = new element($elm->api_json());
-                $result = $elm_dsp->link($back);
-                $url = '<a href="/http/view.php?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
+                $elm_ui = new element($elm->api_json());
+                $result = $elm_ui->link($back);
+                $url = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
                 if ($pos == 0) {
-                    $target = $url . $wrd_country->id . '&back=0" title="Country">Country</a>';
+                    $target = $url . $wrd_country->id . '&back=0" title="country">country</a>';
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
@@ -151,18 +153,18 @@ class element_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
+        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         // load increase formula for testing
-        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
+        $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_SECTOR);
         $trm_lst = $frm->load_terms($usr_msg);
         $exp = $frm->expression($trm_lst);
         $elm_lst = $exp->element_list($usr_msg, $trm_lst);
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
-            $target = '"Country","can be used as a differentiator for","Canton","System Test Word Total"';
+            $target = '"country","can be used as a differentiator for","Canton","System Test Word Total"';
             $t->dsp_contains(', element_list->dsp_id', $target, $result);
         } else {
             $result = 'formula element list not set';

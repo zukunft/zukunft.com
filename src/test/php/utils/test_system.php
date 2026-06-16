@@ -31,13 +31,15 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_CONST . 'users.php';
 
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
@@ -53,7 +55,7 @@ function run_system_test(all_tests $t): void
     $t->header($ts);
 
     // load the main test word
-    $wrd_company = $t_db->test_word(words::COMPANY);
+    $wrd_company = $t_db->test_word(word_names::COMPANY);
 
     if ($t::TEST_EMAIL) {
         $t->subheader($ts . 'est mail sending');
@@ -93,8 +95,9 @@ function run_system_test(all_tests $t): void
     $usr_by_id->load_by_id(users::SYSTEM_TEST_ID);
     $usr_test = new user;
     $usr_test->load_by_name(users::SYSTEM_TEST_NAME);
-    $target = '<a href="/http/user.php?id=' . $usr_test->id() . '">zukunft.com system test</a>';
-    $result = $usr_by_id->display();
+    $usr_ui = new user_ui($usr_by_id->api_json());
+    $target = '<a href="/http/view.php?m=74&id=' . $usr_test->id() . '">zukunft.com system test</a>';
+    $result = $usr_ui->display();
     $t->assert('user->load for id ' . $wrd_company->id(), $result, $target);
 
 

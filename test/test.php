@@ -51,7 +51,6 @@ include_once test_paths::UTILS . 'all_tests.php';
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
-
 global $db_con;
 
 // open database and display header

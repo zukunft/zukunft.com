@@ -71,10 +71,12 @@ include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UNIT_UI . 'spacial_cases_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_tests.php';
 
+use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class all_ui_tests extends all_unit_tests
 {
@@ -86,11 +88,20 @@ class all_ui_tests extends all_unit_tests
         $ts = 'unit ui html ';
         $t->header($ts);
 
+        // create a dummy users for testing
+        $t->users_for_unit_tests();
+
+        // prepare the unit tests
+        $tl = new test_lib();
+        $tl->ui_test_cache($t->usr_dev, $t);
+        $u_env = new unit_env();
+        $u_env->init_unit_tests();
+
         $t->subheader($ts . 'base');
         // the used html elements e.g. the buttons
         new base_ui_tests()->run($t);
         new user_ui_tests()->run($t);
-        new horizontal_ui_tests()->run($t);
+        new horizontal_ui_tests()->run($t, $ui);
 
         $t->subheader($ts . 'page');
         // test all interface functions of the frontend classes
@@ -134,7 +145,7 @@ class all_ui_tests extends all_unit_tests
         $t->subheader($ts . 'check about page e.g. to check the library');
 
         $test_name = 'check about page e.g. to check the library';
-        $result = file_get_contents(api::HOST_TESTING .  'http/about.php');
+        $result = file_get_contents(THIS_URL .  'http/about.php');
         $target = 'zukunft.com AG';
         $t->assert_text_contains($test_name, $result, $target);
 

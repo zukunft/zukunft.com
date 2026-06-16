@@ -51,6 +51,7 @@ include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -84,6 +85,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -129,7 +131,7 @@ class result_list extends sandbox_value_list
      * @param int $page the offset for the limit
      * @return bool true if at least one value found
      */
-    function load_by_phr_lst(
+    function load_by_phrase_list(
         phrase_list $phr_lst,
         bool        $or = false,
         int         $limit = sql_db::ROW_LIMIT,
@@ -157,6 +159,36 @@ class result_list extends sandbox_value_list
 
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_frm($sc, $frm);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the list of results that have been calculated by the given formula
+     * dedicated replacement for the formula case of the deprecated load_by_obj
+     *
+     * @param formula $frm the formula whose results should be loaded
+     * @return bool true if at least one result has been loaded
+     */
+    function load_by_formula(formula $frm): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_formula($db_con, $frm);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the list of results that are linked to the given phrase (a word or a triple)
+     * dedicated replacement for the word and triple case of the deprecated load_by_obj
+     *
+     * @param phrase $phr the phrase whose results should be loaded
+     * @return bool true if at least one result has been loaded
+     */
+    function load_by_phrase(phrase $phr): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_phrase($db_con, $phr);
         return $this->load($qp);
     }
 
@@ -275,6 +307,77 @@ class result_list extends sandbox_value_list
             $qp->merge($qp_tbl, true);
         }
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+        return $qp;
+    }
+
+    /**
+     * create the SQL statement to load the list of results calculated by the given formula
+     * dedicated replacement for the formula case of the deprecated load_sql_by_obj_old
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param formula $frm the formula whose results should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_formula(sql_db $db_con, formula $frm): sql_par
+    {
+        $qp = new sql_par(self::class);
+        if ($frm->id() <= 0) {
+            log_err('The formula id must be set to load the results of a ' . self::class,
+                self::class . '->load_sql_by_formula');
+            $qp->name = '';
+        } else {
+            $db_con->set_class(result::class);
+            // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+            $res = new result($this->get_user());
+            $db_con->set_id_field($res->id_field());
+            $qp->name .= formula_db::FLD_ID;
+            $db_con->set_name($qp->name);
+            $db_con->set_fields(result_db::FLD_NAMES);
+            $db_con->set_usr($this->get_user()->id);
+            $db_con->add_par(sql_par_type::INT, $frm->id());
+            $qp->sql = $db_con->select_by_field_list(array(formula_db::FLD_ID));
+            $qp->par = $db_con->get_par();
+        }
+        return $qp;
+    }
+
+    /**
+     * create the SQL statement to load the list of results linked to the given phrase (a word or a triple)
+     * dedicated replacement for the word and triple case of the deprecated load_sql_by_obj_old
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase $phr the phrase whose results should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_phrase(sql_db $db_con, phrase $phr): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $obj = $phr->obj();
+        $fld = '';
+        if ($obj !== null and $obj->id() > 0) {
+            if (get_class($obj) == word::class) {
+                $fld = word_db::FLD_ID;
+            } elseif (get_class($obj) == triple::class) {
+                $fld = triple_db::FLD_ID;
+            }
+        }
+        if ($fld == '') {
+            log_err('The word or triple id must be set to load the results of a ' . self::class,
+                self::class . '->load_sql_by_phrase');
+            $qp->name = '';
+        } else {
+            $db_con->set_class(result::class);
+            // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+            $res = new result($this->get_user());
+            $db_con->set_id_field($res->id_field());
+            $qp->name .= $fld;
+            $db_con->set_name($qp->name);
+            $db_con->set_fields(result_db::FLD_NAMES);
+            $db_con->set_usr($this->get_user()->id);
+            $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
+            $qp->sql = $db_con->select_by_field_list(array($fld));
+            $qp->par = $db_con->get_par();
+        }
         return $qp;
     }
 
@@ -549,12 +652,13 @@ class result_list extends sandbox_value_list
      *   and with or without time selection
      * a word or a triple
      *
-     * TODO: split to single functions and deprecate
-     *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param object $obj a named object used for selection e.g. a formula
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     * @deprecated use the dedicated builder instead: load_sql_by_formula() for a formula,
+     *             load_sql_by_phrase() for a word or triple,
+     *             and load_sql_by_grp() / load_sql_by_src_grp() for a phrase group
      */
     function load_sql_by_obj_old(sql_db $db_con, object $obj, bool $by_source = false): sql_par
     {
@@ -668,6 +772,9 @@ class result_list extends sandbox_value_list
      * @param object $obj a named object used for selection e.g. a formula
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if value or phrases are found
+     * @deprecated use the dedicated loader instead: load_by_formula() for a formula,
+     *             load_by_phrase() for a word or triple,
+     *             and load_by_grp() for a phrase group (with $by_source for the source group)
      */
     function load_by_obj(object $obj, bool $by_source = false): bool
     {
@@ -1163,7 +1270,7 @@ class result_list extends sandbox_value_list
     function load_by_val(value_base $val): string
     {
         $phr_lst = $val->phr_lst();
-        return $this->load_by_phr_lst($phr_lst);
+        return $this->load_by_phrase_list($phr_lst);
     }
 
     /**
@@ -1183,6 +1290,81 @@ class result_list extends sandbox_value_list
             }
         } else {
             log_debug($val_to_add->dsp_id() . ' not added, because it is already in the list');
+        }
+        return $result;
+    }
+
+    /**
+     * add a result to the list without checking for duplicates
+     * used by the json import where the result has no db id yet
+     * @param result|null $res_to_add the result object to be added to the list
+     */
+    function add_result_direct(?result $res_to_add): void
+    {
+        if ($res_to_add != null) {
+            $lst = $this->lst();
+            $lst[] = $res_to_add;
+            $this->set_lst($lst);
+        }
+    }
+
+    /**
+     * save all pre-calculated results of this list to the database
+     * the formulas and the phrase groups must already exist in the database
+     * so this function is called after the formula save in data_object::save
+     *
+     * @param user_message $msg the message that should be shown to the user in case something went wrong
+     * @param import $imp the import object that holds the progress display
+     * @param float $est_per_sec the expected number of results that can be saved per second
+     * @return bool true if every result has been saved without error
+     */
+    function save(user_message $msg, import $imp, float $est_per_sec = 0.0): bool
+    {
+        if ($this->is_empty()) {
+            log_info('no results to save');
+        } else {
+            $i = 0;
+            $imp->step_start(msg_id::SAVE, result::class);
+            foreach ($this->lst() as $res) {
+                if ($res->grp()->id() == 0) {
+                    $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
+                }
+                if ($this->can_save_result($res)) {
+                    $res->save($msg);
+                    $i++;
+                }
+                $imp->display_progress($i, $est_per_sec, $res->dsp_id());
+            }
+            $imp->step_end($i);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * true when the result can be saved through the current result::save infrastructure
+     *
+     * result::save writes source_group_id as a bigint column on results_main; that only
+     * works when the source group is "prime" (≤4 phrases, encoded as a 64-bit int). A
+     * 5+ phrase source group encodes as an alpha-num string and would need a separate
+     * group-save step (insert a row in groups_main, then use its bigint id) — that step
+     * does not yet exist in the import path. Until it does, skip such results with a
+     * warning rather than crashing the whole import.
+     *
+     * TODO Prio 0 save non-prime source groups via group_list::save, then drop this guard
+     *
+     * @param result $res the imported result whose save would otherwise hit the schema gap
+     * @return bool true when the result is safe to hand to result::save
+     */
+    private function can_save_result(result $res): bool
+    {
+        $result = true;
+        if ($res->src_grp !== null and !$res->src_grp->is_prime()) {
+            log_warning(
+                'skipping import of result ' . $res->dsp_id()
+                . ' because its source group has more than 4 phrases'
+                . ' and saving non-prime source groups is not yet supported'
+            );
+            $result = false;
         }
         return $result;
     }

@@ -55,6 +55,7 @@ include_once paths::SHARED_CONST . 'views.php';
 
 /* open database */
 $app = new frontend();
+global $sys;
 $db_con = $app->start("phrase_list");
 $html = new html_base();
 
@@ -183,10 +184,10 @@ if ($usr->id() > 0) {
         $result .= $msk->dsp_navbar($dto, $back);
         $result .= $html->dsp_err($usr_msg->all_message_text());
 
-        $wrd_dsp = new word_ui($wrd->api_json());
-        //$msk_dsp = new view_dsp();
-        //$msk_dsp->load_by_id_with(views::WORD_ADD_ID);
-        //$result .= $wrd_dsp->dsp_add($phr_id, $phr_to, $vrb_id, $back);
+        $wrd_ui = new word_ui($wrd->api_json());
+        //$msk_ui = new view_dsp();
+        //$msk_ui->load_by_id_with(views::WORD_ADD_ID);
+        //$result .= $wrd_ui->dsp_add($phr_id, $phr_to, $vrb_id, $back);
     }
 }
 

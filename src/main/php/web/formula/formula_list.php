@@ -33,6 +33,7 @@ namespace Zukunft\ZukunftCom\main\php\web\formula;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 //include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -41,9 +42,13 @@ include_once html_paths::HTML . 'styles.php';
 //include_once html_paths::RESULT . 'result.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
+include_once html_paths::HELPER . 'config.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once test_paths::CONST . 'formula_names.php';
 include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
@@ -51,10 +56,27 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 
 class formula_list extends ListBase
 {
+
+    /*
+     * load
+     */
+
+    /**
+     * load the formulas assigned to the given phrase from the backend via api
+     *
+     * @param int $id the id of the phrase to which the formulas are assigned
+     * @return bool true if at least one formula has been loaded
+     */
+    function load_by_phr_id(int $id): bool
+    {
+        return parent::load_by_id(self::class, url_var::PHRASE, $id);
+    }
+
 
     /*
      * set and get
@@ -77,6 +99,7 @@ class formula_list extends ListBase
 
     /**
      * get the default formula
+     * TODO Prio 1 review and check if null is not the better value
      * TODO if a phrase can be ranked use the ranking formula
      * @param sandbox $sbx the object to which the default formula should be found
      * @return int the formula id if no formula has been selected until now
@@ -84,8 +107,8 @@ class formula_list extends ListBase
     function default_id(sandbox $sbx): int
     {
         return match ($sbx::class) {
-            result::class => formulas::NOT_SET_ID,
-            default => formulas::INCREASE_ID
+            result::class => formula_names::NOT_SET_ID,
+            default => formula_names::INCREASE_ID
         };
     }
 
@@ -132,23 +155,44 @@ class formula_list extends ListBase
 
     /**
      * @param string $back the back trace url for the undo functionality
+     * @param int $limit the max number of formula names to show
      * @return string with a list of the formula names with html links
      * ex. names_linked
      */
-    function name_link(string $back = ''): string
+    /**
+     * sort this formula list in place so that the formula with the highest impact is first
+     * formulas with the same (or no) impact are sorted by name so that the order is always
+     * deterministic and the html does not change between runs e.g. for the snapshot tests
+     * @return void
+     */
+    function sort_by_impact(): void
     {
-        return implode(', ', $this->names_link($back));
+        $lst = $this->lst();
+        usort($lst, function (formula $a, formula $b) {
+            return $b->impact() <=> $a->impact()
+                ?: strcmp($a->name() ?? '', $b->name() ?? '');
+        });
+        $this->set_lst($lst);
+    }
+
+    function name_link(string $back = '', int $limit = config::LIMIT_NAME_LIST): string
+    {
+        $this->sort_by_impact();
+        return implode(', ', $this->names_link($back, $limit));
     }
 
     /**
      * @param string $back the back trace url for the undo functionality
+     * @param int $limit the max number of formula names to add to the list
      * @return array with a list of the formula names with html links
      */
-    private function names_link(string $back = ''): array
+    private function names_link(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
     {
         $result = array();
         foreach ($this->lst() as $frm) {
-            $result[] = $frm->name_link($back);
+            if (count($result) < $limit) {
+                $result[] = $frm->name_link($back);
+            }
         }
         return $result;
     }
@@ -162,6 +206,7 @@ class formula_list extends ListBase
     {
         $html = new html_base();
         $cols = '';
+        $this->sort_by_impact();
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $wrd) {
@@ -191,25 +236,25 @@ class formula_list extends ListBase
                     // formatting should be moved
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($back));
-                    $frm_dsp = $frm->dsp_obj_old();
+                    $frm_ui = $frm->dsp_obj_old();
                     $frm_html = new formula($frm->api_json());
                     $result = '';
                     if ($frm->name_wrd != null) {
-                        $result = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $back);
+                        $result = $frm_ui->dsp_result($frm->name_wrd->phrase(), $back);
                     }
                     // if the result is empty use the id to be able to select the formula
                     if ($result == '') {
-                        $result .= $frm_dsp->id();
+                        $result .= $frm_ui->id();
                     } else {
                         $result .= ' value ' . $result;
                     }
                     $result .= ' ' . $frm_html->edit_link($back);
                     if ($type == 'short') {
-                        $result .= ' ' . $frm_dsp->btn_del($back);
+                        $result .= ' ' . $frm_ui->btn_del($back);
                         $result .= ', ';
                     } else {
-                        $result .= ' (' . $frm_dsp->dsp_text($back) . ')';
-                        $result .= ' ' . $frm_dsp->btn_del($back);
+                        $result .= ' (' . $frm_ui->dsp_text($back) . ')';
+                        $result .= ' ' . $frm_ui->btn_del($back);
                         $result .= ' <br> ';
                     }
                 }

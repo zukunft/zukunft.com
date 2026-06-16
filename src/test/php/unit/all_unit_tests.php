@@ -38,6 +38,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -78,7 +79,7 @@ class all_unit_tests extends test_cleanup
     /**
      * run all unit test in a useful order
      */
-    function run_unit(): void
+    function run_unit(frontend $ui): void
     {
         // start the test section (ts)
         $ts = 'unit ';
@@ -87,8 +88,14 @@ class all_unit_tests extends test_cleanup
         // remember the global var for restore after the unit tests
         global $db_con;
         global $usr;
+        global $sys;
         $global_db_con = $db_con;
         $global_usr = $usr;
+
+        // create the testing users
+        $this->subheader($ts . 'prepare');
+        $this->set_users();
+        $sys->usr_req = $this->usr1;
 
         $t_typ = new test_types($this);
 
@@ -123,12 +130,13 @@ class all_unit_tests extends test_cleanup
         new sandbox_tests()->run($this);
         new language_tests()->run($this); // TODO add assert_api_to_ui
         new type_tests()->run($this); // TODO add assert_api_to_ui
+        new db_cache_tests()->run($this);
 
         // do the user object unit tests
         new horizontal_tests()->run($this);
         new permission_tests()->run($this);
         new system_view_ui_tests()->run($this);
-        new word_tests()->run($this);
+        new word_tests()->run($this, $ui->dto->typ_lst_cache);
         new word_list_tests()->run($this);
         new verb_tests()->run($this);
         new triple_tests()->run($this);
@@ -183,7 +191,7 @@ class all_unit_tests extends test_cleanup
      * create a dummy database connection for internal unit testing
      * @return void
      */
-    private function db_con_for_unit_tests(): void
+    protected function db_con_for_unit_tests(): void
     {
         global $db_con;
 
@@ -196,7 +204,7 @@ class all_unit_tests extends test_cleanup
      * create the dummy users for internal unit testing
      * @return void
      */
-    private function users_for_unit_tests(): void
+    protected function users_for_unit_tests(): void
     {
         global $sys;
 

@@ -56,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("verb_edit");
 $html = new html_base();
 
@@ -127,9 +128,9 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // show the verb and its relations, so that the user can change it

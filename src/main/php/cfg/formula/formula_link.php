@@ -248,7 +248,10 @@ class formula_link extends sandbox_link
             // TODO load by if from cache?
             if (key_exists(formula_db::FLD_ID, $db_row)) {
                 $this->formula()->id = $db_row[formula_db::FLD_ID];
-                $this->phrase()->set_id($db_row[phrase::FLD_ID]);
+                // set_obj_from_id (not set_id) so a negative phrase id is mapped to a triple
+                // and a positive id to a word; otherwise the to object stays a word with the
+                // triple id and is_same() wrongly reports the link as different on re-import
+                $this->phrase()->set_obj_from_id($db_row[phrase::FLD_ID]);
                 $this->predicate_id = $db_row[formula_link_type::FLD_ID];
                 $this->order_nbr = $db_row[formula_link::FLD_ORDER];
             } else {
@@ -967,119 +970,6 @@ class formula_link extends sandbox_link
         return $log;
     }
 
-    /**
-     * update a formula_link in the database or create a user formula_link
-     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
-     * @return bool true if everything has been fine
-     */
-    function save(
-        user_message        $msg,
-        sql_type_list|array $sc_par_lst = []
-    ): bool
-    {
-
-        global $db_con;
-
-        // by default all changes are logged
-        if (is_array($sc_par_lst)) {
-            if ($sc_par_lst == []) {
-                $sc_par_lst = new sql_type_list([sql_type::LOG]);
-            } else {
-                $sc_par_lst = new sql_type_list($sc_par_lst);
-            }
-        }
-
-        // check if the required parameters are set
-        if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            log_debug('"' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '" (id ' . $this->id() . ') for user ' . $this->get_user()->name);
-        } elseif ($this->id() > 0) {
-            log_debug('id ' . $this->id() . ' for user ' . $this->get_user()->name);
-        } else {
-            log_err("Either the formula and the word or the id must be set to link a formula to a word.", "formula_link->save");
-        }
-
-        // load the objects if needed
-        $this->reload_objects($msg);
-
-        // build the database object because the is anyway needed
-        $db_con->set_usr($this->get_user()->id);
-        $db_con->set_class(formula_link::class);
-
-        // check if a new value is supposed to be added
-        if ($this->id() <= 0) {
-            log_debug('check if a new formula_link for "' . $this->formula()->name() . '" and "' . $this->phrase()->name() . '" needs to be created');
-            // check if a formula_link with the same formula and word is already in the database
-            // TODO Prio 0 use $chk_msg
-            $db_chk = $this->clone_reset(true);
-            $chk_msg = $msg->clone_reset();
-            $db_chk->load_standard_by_link($this->formula()->id(), $this->phrase()->id(), $chk_msg);
-            if ($db_chk->id() > 0) {
-                $this->id = $db_chk->id();
-            }
-        }
-
-        if ($this->id() <= 0) {
-            if ($this->db_ready($msg)) {
-                log_debug('new formula link from "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '"');
-                $this->add($msg);
-            }
-        } else {
-            log_debug('update "' . $this->id() . '"');
-            // read the database values to be able to check if something has been changed; done first,
-            // because it needs to be done for user and general formulas
-            $db_rec = new formula_link($this->get_user());
-            $db_rec->load_by_id($this->id());
-            $db_rec->reload_objects($msg);
-            $db_con->set_class(formula_link::class);
-            // relevant is if there is a user config in the database
-            // so use this information to prevent
-            // the need to forward the db_rec to all functions
-            if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
-                $this->usr_cfg_id = $db_rec->usr_cfg_id;
-            }
-            log_debug("database formula loaded (" . $db_rec->id() . ")");
-            $std_rec = new formula_link($this->get_user()); // must also be set to allow to take the ownership
-            $std_rec->load_standard($this->id(), $msg);
-            log_debug("standard formula settings loaded (" . $std_rec->id() . ")");
-
-            // for a correct user formula link detection (function can_change) set the owner even if the formula link has not been loaded before the save
-            if ($this->owner_id <= 0) {
-                $this->owner_id = $std_rec->owner_id;
-            }
-
-            // it should not be possible to change the formula or the word, but nevertheless check
-            // instead of changing the formula or the word, a new link should be created and the old deleted
-            if ($db_rec->formula() != null) {
-                if ($db_rec->formula()->id() <> $this->formula()->id()
-                    or $db_rec->phrase()->id() <> $this->phrase()->id()) {
-                    log_debug("update link settings for id " . $this->id() . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
-                    $msg->add_message_text(log_info('The formula link "' . $db_rec->formula()->name() . '" with "' . $db_rec->phrase()->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->formula()->name() . '" with "' . $this->phrase()->name() . '" (id ' . $this->formula()->id() . ',' . $this->phrase()->id() . '). Instead the program should have created a new link.', "formula_link->save"));
-                }
-            }
-
-            // check if the id parameters are supposed to be changed
-            $this->reload_objects($msg);
-            if ($msg->is_ok()) {
-                if ($this->is_key_updated($db_rec)) {
-                    $this->delete_old_key_row($db_rec, $msg);
-                }
-            }
-
-            // if a problem has appeared up to here, don't try to save the values
-            // the problem is shown to the user by the calling interactive script
-            if ($msg->is_ok()) {
-                $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
-            }
-        }
-
-        if (!$msg->is_ok()) {
-            log_err($msg->all_message_text());
-        }
-
-        return $msg->is_ok();
-    }
-
 
     protected function all_sandbox_fields(): array
     {
@@ -1212,24 +1102,6 @@ class formula_link extends sandbox_link
         }
         if ($this->phrase_id() != 0) {
             $result = ' to ' . $this->phrase()->name();
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return string return the html code to display the link name
-     */
-    function name_linked(string $back = ''): string
-    {
-        $result = '';
-        $msg = new user_message();
-
-        $this->reload_objects($msg);
-        if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            $result = $this->formula()->name_linked($back) . ' to ' . $this->phrase()->display_linked();
-        } else {
-            $result .= log_err("The formula or the linked word cannot be loaded.", "formula_link->name");
         }
 
         return $result;

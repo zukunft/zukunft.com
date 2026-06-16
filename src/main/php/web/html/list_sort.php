@@ -44,13 +44,14 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'words.php';
+//include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class list_sort
 {
@@ -105,10 +106,10 @@ class list_sort
             $htp = new word();
             $htp->load_by_name('htp');
         } else {
-            $trillion = $cac?->phr_lst->get_by_name(words::TRILLION);
-            $billion = $cac?->phr_lst->get_by_name(words::BILLION);
-            $usd = $cac?->phr_lst->get_by_name(words::USD);
-            $htp = $cac?->phr_lst->get_by_name(words::HTP);
+            $trillion = $cac?->phr_lst->get_by_name(word_names::TRILLION);
+            $billion = $cac?->phr_lst->get_by_name(word_names::BILLION);
+            $usd = $cac?->phr_lst->get_by_name(word_names::USD);
+            $htp = $cac?->phr_lst->get_by_name(word_names::HTP);
         }
 
         // check if the phrase list has at least the most necessary entries

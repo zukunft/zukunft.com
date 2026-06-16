@@ -186,11 +186,14 @@ class view_list extends ListBase
      */
     private function names_linked(string $back = ''): array
     {
+        // key by name and sort so the rendered order is deterministic and independent
+        // of the api/db row order (see the frontend list-sorting rule)
         $views = array();
         foreach ($this->lst() as $msk) {
-            $views[] = $msk->name_link();
+            $views[$msk->name()] = $msk->name_link();
         }
-        return $views;
+        ksort($views, SORT_NATURAL);
+        return array_values($views);
     }
 
 
@@ -303,7 +306,6 @@ class view_list extends ListBase
     function selector_page($wrd_id, $back): string
     {
 
-        global $db_con;
         $result = '';
 
         $sql = "SELECT view_id, view_name
@@ -311,23 +313,25 @@ class view_list extends ListBase
                  WHERE code_id IS NULL
               ORDER BY view_name;";
         $sql = sql_lst_usr("view", $this->user());
-        $call = '/http/view.php?words=' . $wrd_id;
+        $call = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::PHRASE . '&' .url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
         //$db_con = New mysql;
         $db_con->usr_id = $this->user()->id();
-        $dsp_lst = $db_con->get_old($sql);
-        foreach ($dsp_lst as $dsp) {
-            $view_id = $dsp['id'];
-            $view_name = $dsp['name'];
+        $msk_lst = $db_con->get_old($sql);
+        foreach ($msk_lst as $msk) {
+            $view_id = $msk['id'];
+            $view_name = $msk['name'];
             if ($view_id == $this->id()) {
                 $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
             } else {
                 $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
             }
-            $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_edit = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::VIEW_EDIT
+                . '&id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
             $result .= \html\btn_edit('design the view', $call_edit) . ' ';
-            $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_del = api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::VIEW_DEL
+                . '&id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
             $result .= \html\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';
         }

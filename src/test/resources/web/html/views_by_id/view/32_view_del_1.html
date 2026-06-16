@@ -1,50 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>Delete view Start view (zukunft.com)</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <script src="/external_lib/bootstrap/js/bootstrap.js"></script>
-    <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
-    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-    <script defer src="/external_lib/fontawesome/js/all.js"></script>
-</head>
-<body>
-<div class="container">
-    <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
-            src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="kp"></label><input
-                class="form-control mr-sm-2" type="search" name="pattern" id="kp" placeholder="word or formula">
-            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
-        </form>
-        <div class="col-md-2">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="/http/view.php?m=74&id=3"
-                                      title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com
-                    system test</a></li>
-                <li class="active"></li>
-                <li class="active"><a href="/http/view.php?m=view_edit&id=32" title="adjust the view"><i
-                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=32" title="create a new view"><i
-                        class="far fa-plus-square"></i></a></li>
-            </ul>
-        </div>
-    </nav>
-    <br><br><br><br><br><h4>Delete view</h4>
-    <form action="/http/view.php" id="view_del"><input class="form-control" type="hidden" name="mask" id="m" value="32"><input
-            class="form-control" type="hidden" name="id" id="id" value="1"><input class="form-control" type="hidden"
-                                                                                  name="back" id="9" value="1"><input
-            class="form-control" type="hidden" name="confirm" id="z" value="1">
-        <div class="row col-md-12">Start view</div>
-        <a href="/http/view.php?m=0&id=1" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
-        <button class="btn btn-space col-1 btn-outline-secondary" type="submit">Delete</button>
-    </form>
-</div>
-<footer>
-    <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot; <a
-            href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
-        available under the <a href="//creativecommons.org/publicdomain/zero/1.0/"
-                               title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License
-        and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a
-                href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License</small></div>
-</footer>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            Delete view Start view (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="67">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=32&9m=32&9a=d&9id=1&9k=Start%20view&9o=A%20dynamic%20entry%20mask%20that%20initially%20shows%20a%20table%20for%20calculations%20with%20the%20biggest%20problems%20from%20the%20user%20point%20of%20view%20and%20suggestions%20what%20the%20user%20can%20do%20to%20solve%20these%20problems.%20Used%20also%20as%20fallback%20view.&9y=2&9s=3&9sp=2&9z=0">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30&9m=32&9a=d&9id=1&9k=Start%20view&9o=A%20dynamic%20entry%20mask%20that%20initially%20shows%20a%20table%20for%20calculations%20with%20the%20biggest%20problems%20from%20the%20user%20point%20of%20view%20and%20suggestions%20what%20the%20user%20can%20do%20to%20solve%20these%20problems.%20Used%20also%20as%20fallback%20view.&9y=2&9s=3&9sp=2&9z=0">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=32&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=32&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=32&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=32&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=32&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=32&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=32&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=61&9m=32&9a=d&9id=1&9k=Start%20view&9o=A%20dynamic%20entry%20mask%20that%20initially%20shows%20a%20table%20for%20calculations%20with%20the%20biggest%20problems%20from%20the%20user%20point%20of%20view%20and%20suggestions%20what%20the%20user%20can%20do%20to%20solve%20these%20problems.%20Used%20also%20as%20fallback%20view.&9y=2&9s=3&9sp=2&9z=0">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=60&9m=32&9a=d&9id=1&9k=Start%20view&9o=A%20dynamic%20entry%20mask%20that%20initially%20shows%20a%20table%20for%20calculations%20with%20the%20biggest%20problems%20from%20the%20user%20point%20of%20view%20and%20suggestions%20what%20the%20user%20can%20do%20to%20solve%20these%20problems.%20Used%20also%20as%20fallback%20view.&9y=2&9s=3&9sp=2&9z=0">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings?9m=32&9a=d&9id=1&9k=Start%20view&9o=A%20dynamic%20entry%20mask%20that%20initially%20shows%20a%20table%20for%20calculations%20with%20the%20biggest%20problems%20from%20the%20user%20point%20of%20view%20and%20suggestions%20what%20the%20user%20can%20do%20to%20solve%20these%20problems.%20Used%20also%20as%20fallback%20view.&9y=2&9s=3&9sp=2&9z=0">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Delete view
+            </h4>
+            <form action="/http/view.php" id="view_del">
+                <input class="form-control" type="hidden" name="mask" id="m" value="32">
+                <input class="form-control" type="hidden" name="id" id="id" value="1">
+                <input class="form-control" type="hidden" name="back" id="9" value="1">
+                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <div class="row col-md-12">
+                    Start view
+                </div>
+                <a href="/http/view.php?m=0&id=1" class="btn btn-space col-1 btn-outline-secondary">
+                    cancel
+                </a>
+                <button class="btn btn-space col-1 btn-outline-secondary" type="submit">
+                    delete
+                </button>
+            </form>
+        </main>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
 </html>

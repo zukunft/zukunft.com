@@ -54,6 +54,7 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("verbs");
 
 $result = ''; // reset the html code var
@@ -76,16 +77,16 @@ if ($usr->id() > 0) {
     $msk->load_by_code_id(views::VERBS);
 
     // show the header
-    $msk_dsp = new view_ui($msk->api_json());
+    $msk_ui = new view_ui($msk->api_json());
     $dto = new data_object();
-    $result .= $msk_dsp->dsp_navbar($dto, $back);
+    $result .= $msk_ui->dsp_navbar($dto, $back);
 
     // display the verb list
     $result .= $html->dsp_text_h2("Word link types");
     $vrb_lst = new verb_list($usr);
     $vrb_lst->load($db_con);
-    $vrb_lst_dsp = new verb_list_ui($vrb_lst->api_json());
-    $result .= $vrb_lst_dsp->dsp_list();
+    $vrb_lst_ui = new verb_list_ui($vrb_lst->api_json());
+    $result .= $vrb_lst_ui->dsp_list();
     //$result .= zul_dsp_list ($usr->id());
 }
 

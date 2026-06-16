@@ -138,7 +138,8 @@ class group_list extends sandbox_list
      */
     function dsp_id(): string
     {
-        global $debug;
+        global $ui_sys;
+        $debug = $ui_sys?->debug ?? 0;
         $lib = new library();
         $result = '';
         // check the object setup

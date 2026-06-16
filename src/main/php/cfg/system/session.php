@@ -5,6 +5,7 @@
     model/system/session.php - to control the user frontend sessions
     ----------------------
 
+    $ses is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

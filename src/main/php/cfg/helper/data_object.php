@@ -45,6 +45,8 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_REF . 'ref.php';
@@ -77,6 +79,8 @@ include_once paths::MODEL_VIEW . 'term_view_list.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::SERVICE_MATH . 'calc_internal.php';
+include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -101,6 +105,8 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
@@ -124,6 +130,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
@@ -154,6 +162,8 @@ class data_object
     private value_list $val_lst;
     private formula_list $frm_lst;
     private formula_link_list $frm_lnk_lst;
+    private result_list $res_lst;
+    private result_list $res_chk_lst;
     private term_list $trm_lst;
     private bool $trm_lst_dirty;
     private view_list $msk_lst;
@@ -197,6 +207,8 @@ class data_object
         $this->val_lst = new value_list($usr);
         $this->frm_lst = new formula_list($usr);
         $this->frm_lnk_lst = new formula_link_list($usr);
+        $this->res_lst = new result_list($usr);
+        $this->res_chk_lst = new result_list($usr);
         $this->trm_lst = new term_list($usr);
         $this->trm_lst_dirty = false;
         $this->msk_lst = new view_list($usr);
@@ -293,7 +305,7 @@ class data_object
      */
     function get_first_word(): ?word
     {
-            return $this->wrd_lst->get_first_object();
+        return $this->wrd_lst->get_first_object();
     }
 
     /**
@@ -361,6 +373,16 @@ class data_object
     }
 
     /**
+     * set the term list of this data object e.g. with the terms preloaded for a formula calculation
+     * @param term_list $trm_lst the terms that should be cached in this data object
+     */
+    function set_term_list(term_list $trm_lst): void
+    {
+        $this->trm_lst = $trm_lst;
+        $this->trm_lst_dirty = false;
+    }
+
+    /**
      * @return source_list with the sources of this data object
      */
     function source_list(): source_list
@@ -374,6 +396,15 @@ class data_object
     function reference_list(): ref_list
     {
         return $this->ref_lst;
+    }
+
+    /**
+     * set the value list of this data object e.g. with the values preloaded for a formula calculation
+     * @param value_list $val_lst the values that should be cached in this data object
+     */
+    function set_value_list(value_list $val_lst): void
+    {
+        $this->val_lst = $val_lst;
     }
 
     /**
@@ -398,6 +429,22 @@ class data_object
     function formula_link_list(): formula_link_list
     {
         return $this->frm_lnk_lst;
+    }
+
+    /**
+     * @return result_list with the pre-calculated results of this data object
+     */
+    function result_list(): result_list
+    {
+        return $this->res_lst;
+    }
+
+    /**
+     * @return result_list with the pre-calculated results of this data object used for the consistency cjhecks
+     */
+    function result_check_list(): result_list
+    {
+        return $this->res_chk_lst;
     }
 
     /**
@@ -848,6 +895,108 @@ class data_object
         $this->val_lst->add_value_direct($val);
     }
 
+    /**
+     * add a pre-calculated result to the list
+     * @param result $res a result that has been mapped from the import json
+     * @return void
+     */
+    function add_result(result $res): void
+    {
+        $this->res_lst->add_result_direct($res);
+    }
+
+    /**
+     * add a pre-calculated result to the list that should also be used for the import consistency check
+     * @param result $res a result that has been mapped from the import json
+     * @return void
+     */
+    function add_calc_validation(result $res): void
+    {
+        $this->res_chk_lst->add_result_direct($res);
+    }
+
+    /**
+     * check if the pre-calculated results of an import can be reproduced
+     * based on the values and formulas of this data object
+     * e.g. to check the consistency of an import file without using the database
+     *
+     * @param user_message $msg to collect the problems that the user should fix in the import file
+     * @return int the number of pre-calculated results that could not be reproduced
+     */
+    function validate_results(user_message $msg): int
+    {
+        $failures = 0;
+        foreach ($this->res_chk_lst->lst() as $res_chk) {
+            $usr_msg = new user_message();
+            $this->validate_result($res_chk, $usr_msg);
+            if (!$usr_msg->is_ok()) {
+                $failures++;
+            }
+            $msg->merge($usr_msg);
+        }
+        return $failures;
+    }
+
+    /**
+     * check if one pre-calculated result can be reproduced
+     * based on the values and formulas of this data object
+     *
+     * @param result $res_chk the imported result with the expected number
+     * @param user_message $msg to collect the problems that the user should fix in the import file
+     * @return void
+     */
+    private function validate_result(result $res_chk, user_message $msg): void
+    {
+        $lib = new library();
+
+        // use the formula of this data object because the result may only know the formula name
+        $frm = null;
+        if (isset($res_chk->frm)) {
+            $frm = $this->formula_list()->get_by_name($res_chk->frm->name());
+        }
+        $res_name = $res_chk->grp()->phrase_list()->dsp_name();
+        if ($frm == null or $frm->usr_text == null or $frm->usr_text == '') {
+            $msg->add(msg_id::CALC_VALIDATION_FORMULA_MISSING, [
+                msg_id::VAR_FORMULA_NAME => isset($res_chk->frm) ? $res_chk->frm->name() : '',
+                msg_id::VAR_NAME => $res_name
+            ]);
+        } else {
+            // select the values by the context phrases e.g. "apple", "price", "quantity" and "CHF"
+            $ctx_names = $res_chk->src_grp?->phrase_list()->names() ?? $res_chk->grp()->phrase_list()->names();
+            // replace the phrase names in the source part of the expression with the imported values
+            $r_part = $lib->str_right_of($frm->usr_text, chars::CHAR_CALC);
+            $exp_part_lst = explode(chars::TERM_DELIMITER, $r_part);
+            $i = 1; // the phrase names are the odd entries between the term delimiters
+            while ($i < count($exp_part_lst)) {
+                $phr_name = $exp_part_lst[$i];
+                $val = $this->value_list()->get_by_name_and_context($phr_name, $ctx_names);
+                if ($val == null) {
+                    $msg->add(msg_id::CALC_VALIDATION_VALUE_MISSING, [
+                        msg_id::VAR_WORD_NAME => $phr_name,
+                        msg_id::VAR_NAME => $res_name
+                    ]);
+                } else {
+                    $r_part = str_replace(
+                        chars::TERM_DELIMITER . $phr_name . chars::TERM_DELIMITER,
+                        $val->number(), $r_part);
+                }
+                $i = $i + 2;
+            }
+            // calculate and compare the result if all values have been found
+            if ($msg->is_ok()) {
+                $calc = new calc_internal();
+                $num_chk = $calc->parse($r_part);
+                if ((float)$num_chk != (float)$res_chk->number()) {
+                    $msg->add(msg_id::CALC_VALIDATION_FAILED, [
+                        msg_id::VAR_VALUE => $res_chk->number(),
+                        msg_id::VAR_NAME => $res_name,
+                        msg_id::VAR_VALUE_CHK => $num_chk
+                    ]);
+                }
+            }
+        }
+    }
+
     function add_message(msg_id $msg): void
     {
         $this->usr_msg->add_id($msg);
@@ -904,6 +1053,13 @@ class data_object
         global $cfg;
         global $sys;
 
+        // reject the import upfront if a formula shares its name with another term (word, verb or
+        // triple), because the shared name leads to an ambiguous id assignment (the formula could
+        // inherit the other term's id and the later element insert would violate elements_formula_fk)
+        if (!$this->check_formula_name_collision($usr_msg)) {
+            return false;
+        }
+
         // get the relevant config values
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $val_per_sec = $cfg->get_by([words::VALUES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
@@ -933,16 +1089,7 @@ class data_object
         if ($this->save_triples($usr_msg, $imp, $phr_lst)) {
             $phr_lst = $this->phrase_list();
             foreach ($this->value_list()->lst() as $val) {
-                foreach ($val->phrase_list()->lst() as $phr) {
-                    if ($phr->id() == 0) {
-                        if ($phr->name() == '') {
-                            $usr_msg->add_warning_text('phrase id and name missing in ' . $phr->dsp_id());
-                        } else {
-                            $phr_reloaded = $phr_lst->get_by_name($phr->name());
-                            $this->set_phrase_id($phr, $phr_reloaded, $usr_msg);
-                        }
-                    }
-                }
+                $this->resolve_phrase_list_ids($val->phrase_list(), $phr_lst, $usr_msg);
             }
         }
 
@@ -956,7 +1103,9 @@ class data_object
                 $phr = $ref->phrase();
                 if ($phr->id() == 0) {
                     if ($phr->name() == '') {
-                        $usr_msg->add_warning_text('phrase id and name missing in ' . $phr->dsp_id());
+                        $usr_msg->add(msg_id::PHRASE_ID_AND_NAME_MISSING_IN, [
+                            msg_id::VAR_NAME => $phr->dsp_id()
+                        ]);
                     } else {
                         $phr_reloaded = $phr_lst->get_by_name($phr->name());
                         $this->set_phrase_id($phr, $phr_reloaded, $usr_msg);
@@ -1005,16 +1154,80 @@ class data_object
         $trm_lst->merge($sys->typ_lst->vrb->term_list($vrb_usr));
 
         // import the formulas
-        $this->save_formulas($usr_msg, $imp, $trm_lst);
+        if ($usr_msg->is_ok()) {
+            $this->save_formulas($usr_msg, $imp, $trm_lst);
+        } else {
+            log_debug('formulas not imported because ' . $usr_msg->all_message_text());
+        }
+
+        // import the pre-calculated results after the formulas so the formula ids are set
+        if ($usr_msg->is_ok()) {
+            $this->save_results($usr_msg, $imp);
+        } else {
+            log_debug('results not imported because ' . $usr_msg->all_message_text());
+        }
 
         // import the components before the view because the views use the components
-        $this->save_components($usr_msg, $imp);
+        if ($usr_msg->is_ok()) {
+            $this->save_components($usr_msg, $imp);
+        } else {
+            log_debug('components not imported because ' . $usr_msg->all_message_text());
+        }
 
         // import the views
         // TODO Prio 1 review and use predefined functions for save view list
-        $this->save_views($usr_msg, $imp);
+        if ($usr_msg->is_ok()) {
+            $this->save_views($usr_msg, $imp);
+        } else {
+            log_debug('views not imported because ' . $usr_msg->all_message_text());
+        }
 
         return $usr_msg->is_ok();
+    }
+
+    /**
+     * check that no formula in the import shares its name with another term (a word, verb or
+     * triple), because a shared name causes an ambiguous id assignment during the import (the
+     * formula could inherit the other term's id, which then violates the elements_formula_fk
+     * on the element insert)
+     *
+     * @param user_message $usr_msg the shared import message; one error is added per colliding name
+     * @return bool true if there is no formula/term name collision
+     */
+    private function check_formula_name_collision(user_message $usr_msg): bool
+    {
+        $result = $this->check_formula_names_against($this->word_list()->names(), word::class, $usr_msg);
+        if (!$this->check_formula_names_against($this->verb_list()->names(), verb::class, $usr_msg)) {
+            $result = false;
+        }
+        if (!$this->check_formula_names_against($this->triple_list()->names(), triple::class, $usr_msg)) {
+            $result = false;
+        }
+        return $result;
+    }
+
+    /**
+     * report each formula whose name also appears in the given list of other-term names
+     *
+     * @param array $other_names the names of the words, verbs or triples to check against
+     * @param string $class the class of the other term, used to name the colliding type in the message
+     * @param user_message $usr_msg the shared import message; one error is added per colliding name
+     * @return bool true if no formula name collides with a name in $other_names
+     */
+    private function check_formula_names_against(array $other_names, string $class, user_message $usr_msg): bool
+    {
+        $lib = new library();
+        $result = true;
+        foreach ($this->formula_list()->lst() as $frm) {
+            if (in_array($frm->name(), $other_names)) {
+                $usr_msg->add(msg_id::FORMULA_NAME_EQUALS_TERM, [
+                    msg_id::VAR_FORMULA_NAME => $frm->name(),
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($class)
+                ]);
+                $result = false;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1148,8 +1361,11 @@ class data_object
                     if ($frm->ref_text != null) {
                         $msg_elm = $usr_msg->clone_reset();
                         if (!$frm->element_refresh($msg_elm, $cache)) {
-                            log_info('formula import failed on first try. relevant?');
-                            //$usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
+                            // TODO Prio 3 the import intentionally tolerates first-try element refresh
+                            //   failures, so $msg_elm is dropped instead of merged into $usr_msg;
+                            //   log the dropped messages as a warning so they are not lost for review
+                            log_warning('formula element refresh failed for ' . $frm->dsp_id()
+                                . ' and the messages are dropped because ' . $msg_elm->all_message_text());
                         }
                     }
                 }
@@ -1181,6 +1397,85 @@ class data_object
     }
 
     /**
+     * add or update all pre-calculated results to the database
+     * called after save_formulas so each result's formula reference already has its db id
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param import $imp the import object that includes the start time of the import
+     */
+    private function save_results(user_message $usr_msg, import $imp): void
+    {
+        global $cfg;
+
+        $res_per_sec = $cfg->get_by([words::RESULTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+
+        $res_lst = $this->result_list();
+        if (!$res_lst->is_empty()) {
+            $this->set_result_phrase_ids($usr_msg);
+            $res_est = $res_lst->count() / $res_per_sec;
+            $imp->step_start(msg_id::SAVE, result::class, $res_lst->count(), $res_est);
+            $res_lst->save($usr_msg, $imp, $res_per_sec);
+            $imp->step_end($res_lst->count(), $res_per_sec);
+        }
+    }
+
+    /**
+     * resolve the db phrase ids on each result's grp and src_grp phrase list and rebuild
+     * the composite group ids — needed so result::save picks the right prime/main table
+     * variant and the prepared statement name carries the correct "_pN" phrase-count suffix
+     * (without this, a 4-phrase and a 1-phrase result would collide under the same name)
+     *
+     * @param user_message $usr_msg warnings are added if a phrase name is missing from the dto
+     */
+    private function set_result_phrase_ids(user_message $usr_msg): void
+    {
+        $phr_lst = $this->phrase_list();
+        foreach ($this->result_list()->lst() as $res) {
+            $this->resolve_phrase_list_ids($res->grp()->phrase_list(), $phr_lst, $usr_msg);
+            $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
+            if ($res->src_grp !== null) {
+                $this->resolve_phrase_list_ids($res->src_grp->phrase_list(), $phr_lst, $usr_msg);
+                // an unresolved source phrase list yields no group; skip it with a
+                // warning instead of passing null to the non-nullable set_src_grp
+                $src_grp = $res->src_grp->phrase_list()->get_grp_id(false);
+                if ($src_grp !== null) {
+                    $res->set_src_grp($src_grp);
+                } else {
+                    $usr_msg->add_warning_with_vars(msg_id::IMPORT_RESULT_SOURCE_GROUP_MISSING, [
+                        msg_id::VAR_GROUP => $res->grp()->dsp_id()
+                    ]);
+                }
+            }
+        }
+    }
+
+    /**
+     * fill in any missing phrase id in $target by looking up its name in $resolved
+     *
+     * @param phrase_list $target the phrase list whose entries may still have id 0
+     * @param phrase_list $resolved the dto's merged phrase list (words + triples already saved)
+     * @param user_message $usr_msg warning sink for the unresolvable case
+     */
+    private function resolve_phrase_list_ids(
+        phrase_list  $target,
+        phrase_list  $resolved,
+        user_message $usr_msg
+    ): void
+    {
+        foreach ($target->lst() as $phr) {
+            if ($phr->id() == 0) {
+                if ($phr->name() == '') {
+                    $usr_msg->add(msg_id::PHRASE_ID_AND_NAME_MISSING_IN, [
+                        msg_id::VAR_NAME => $phr->dsp_id()
+                    ]);
+                } else {
+                    $phr_reloaded = $resolved->get_by_name($phr->name());
+                    $this->set_phrase_id($phr, $phr_reloaded, $usr_msg);
+                }
+            }
+        }
+    }
+
+    /**
      * add or update all components to the database
      * @param import $imp the import object that includes the start time of the import
      * @return void ok or the error message for the user with the suggested solution
@@ -1205,7 +1500,7 @@ class data_object
                                     $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
                                 } else {
                                     $cmp->id = $cmp_reloaded->id();
-                                    $lnk->set_component_id($cmp_reloaded->id());
+                                    $lnk->set_component($cmp_reloaded);
                                 }
                             }
                         }

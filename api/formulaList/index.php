@@ -34,9 +34,11 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -49,6 +51,7 @@ if ($db_con->is_open()) {
 
     // get the parameters
     $frm_ids = $_GET[url_var::ID_LST] ?? '';
+    $phr_id = $_GET[url_var::PHRASE] ?? 0;
 
     $msg = '';
     $result = ''; // reset the json message string
@@ -64,8 +67,15 @@ if ($db_con->is_open()) {
             $lst = new formula_list($usr);
             $lst->load_by_ids(explode(',', $frm_ids));
             $result = $lst->api_json();
+        } elseif ($phr_id != 0) {
+            // the formulas assigned to a phrase e.g. for the default word page
+            $phr = new phrase($usr);
+            $phr->set_id((int)$phr_id);
+            $lst = new formula_list($usr);
+            $lst->load_by_phr($phr);
+            $result = $lst->api_json();
         } else {
-            $msg = 'list of formula id is missing';
+            $msg = 'list of formula id or the phrase id is missing';
         }
     }
 

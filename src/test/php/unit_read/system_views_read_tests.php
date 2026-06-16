@@ -45,11 +45,13 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -78,6 +80,7 @@ class system_views_read_tests
 
         // create the stable test context that is not based on the database so that the test results rarely change
         // unlike ti horizontal system view test for this test the object can be filled with data for special cases
+        global $sys;
         $ui = new frontend('system_views_read_tests');
         $ui->load_cache();
         $cfg = new data_object_ui();
@@ -87,10 +90,15 @@ class system_views_read_tests
         $cfg->set_view_list($t_msk->view_list_ui());
         $cfg->set_component_list($t_cmp->component_list_ui());
         // create the test pages
-        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), 1, $cfg);
-        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));
-        $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), 1, $cfg);
-        $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), 1, $cfg);
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
+        // Zurich and CHF is the example for the page-title symbol-line layout
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::ZH_ID, $cfg);
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::CHF_ID, $cfg);
+        // inhabitants is the example for the related formula list (e.g. the "increase" formula)
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::INHABITANT_ID, $cfg);
+        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1), word_names::MATH_ID);
+        $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
+        $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         $t->assert_view(views::VERB, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_ADD, $t->usr1, new verb());
         $t->assert_view(views::VERB_EDIT, $t->usr1, new verb(), 1, $cfg);
@@ -140,7 +148,6 @@ class system_views_read_tests
         $t->header($ts);
 
         $html = new html_base();
-        $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../main/resources/style/style.css" /> </head> <body class="center_form">'));
         $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
         $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
         $t->dsp_contains(", dsp_header", $target, $result);
@@ -157,17 +164,19 @@ class system_views_read_tests
         // $t->dsp_contains(', frontend about.php '.$result.' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         $is_connected = $t->dsp_web_test(
-            api::MAIN_SCRIPT_PATH . 'privacy_policy.html',
+            api::SCRIPT_PATH_NAME . 'privacy_policy.html',
             'Swiss purpose of data protection',
             ', frontend privacy_policy.php contains at least');
         $is_connected = $t->dsp_web_test(
-            api::MAIN_SCRIPT_PATH . 'error_update.php?id=1',
+            api::SCRIPT_PATH_NAME . 'view.php?m=66&id=1',
             'not permitted',
-            ', frontend error_update.php contains at least', $is_connected);
+            ', frontend view.php?m=error_update contains at least', $is_connected);
+        // the former find.php has been replaced by the word find view (m=67)
         $t->dsp_web_test(
-            api::MAIN_SCRIPT_PATH . 'find.php?pattern=' . words::ABB,
-            words::ABB,
-            ', frontend find.php contains at least', $is_connected);
+            api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID
+            . url_var::ADD . url_var::PATTERN_HUMAN . url_var::EQ . word_names::ABB,
+            word_names::ABB,
+            ', frontend view.php for the word find view contains at least', $is_connected);
 
     }
 

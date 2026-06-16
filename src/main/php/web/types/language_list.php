@@ -36,9 +36,13 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -46,6 +50,27 @@ class language_list extends type_list
 {
 
     const string NAME = url_var::LANGUAGE;
+
+
+    function select_list_item(string $url): string
+    {
+        $html = new html_base();
+        $txt = '';
+        foreach ($this->lst as $lan) {
+            $txt .= $lan->select_list_item($url, self::NAME, $lan->local_name, $lan->name);
+        }
+        $txt .= $this->select_list_item_more();
+        return $html->list_unsorted($txt);
+    }
+
+    private function select_list_item_more(): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $url = $html->url_new(views::LANGUAGE_SELECT);
+        $txt = $html->ref($url, $mtr->txt(msg_id::AND_MORE));
+        return $html->list_item($txt);
+    }
 
     /**
      * create the HTML code to select a language

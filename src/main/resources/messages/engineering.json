@@ -1,0 +1,2036 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-05 12:00:00",
+  "user": "timon",
+  "selection": [
+    "engineering"
+  ],
+  "description": "Main engineering definitions and formulas that are not part of the units, physics, math, chemistry or biology base data.",
+  "words": [
+    {
+      "name": "engineering",
+      "description": "the use of scientific and mathematical principles to design and build systems and structures",
+      "refs": [
+        {
+          "name": "Engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11023",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "science"
+    },
+    {
+      "name": "strain",
+      "description": "the relative deformation of a body under stress",
+      "refs": [
+        {
+          "name": "Strain (mechanics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1990546",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "elasticity",
+      "description": "the ability of a material to return to its shape after deformation",
+      "refs": [
+        {
+          "name": "Elasticity (physics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q62932",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "plasticity",
+      "description": "the permanent deformation of a material under stress",
+      "refs": [
+        {
+          "name": "Plasticity (physics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q472074",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hardness",
+      "description": "the resistance of a material to localized deformation",
+      "refs": [
+        {
+          "name": "Hardness",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3236003",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ductility",
+      "description": "the ability of a material to deform under tensile stress",
+      "refs": [
+        {
+          "name": "Ductility",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q211702",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "brittleness",
+      "description": "the tendency of a material to fracture without plastic deformation",
+      "refs": [
+        {
+          "name": "Brittleness",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q898288",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "toughness",
+      "description": "the ability of a material to absorb energy before fracturing",
+      "refs": [
+        {
+          "name": "Toughness",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q486802",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stiffness",
+      "description": "the resistance of an elastic body to deformation",
+      "refs": [
+        {
+          "name": "Stiffness",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q569057",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fatigue",
+      "description": "the weakening of a material caused by repeated loading",
+      "refs": [
+        {
+          "name": "Fatigue (material)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q507234",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gear",
+      "description": "a rotating machine part with teeth that transmits torque",
+      "refs": [
+        {
+          "name": "Gear",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q143873",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "bearing",
+      "description": "a machine element that constrains motion and reduces friction",
+      "refs": [
+        {
+          "name": "Bearing (mechanical)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190100",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "lever",
+      "description": "a rigid bar that pivots to transmit force",
+      "refs": [
+        {
+          "name": "Lever",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q40164",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "pulley",
+      "description": "a wheel on an axle used to change the direction of a force",
+      "refs": [
+        {
+          "name": "Pulley",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q48378",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "flywheel",
+      "description": "a rotating mass used to store rotational energy",
+      "refs": [
+        {
+          "name": "Flywheel",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q183576",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "piston",
+      "description": "a component that moves within a cylinder to transfer force",
+      "refs": [
+        {
+          "name": "Piston",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q45227",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "circuit",
+      "description": "a closed path through which electric current flows",
+      "refs": [
+        {
+          "name": "Electrical network",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q132629",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "resistor",
+      "description": "a component that limits electric current",
+      "refs": [
+        {
+          "name": "Resistor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5321",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "capacitor",
+      "description": "a component that stores energy in an electric field",
+      "refs": [
+        {
+          "name": "Capacitor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5322",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "inductor",
+      "description": "a component that stores energy in a magnetic field",
+      "refs": [
+        {
+          "name": "Inductor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5325",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "transistor",
+      "description": "a semiconductor device used to switch or amplify signals",
+      "refs": [
+        {
+          "name": "Transistor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5339",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "diode",
+      "description": "a component that conducts current mainly in one direction",
+      "refs": [
+        {
+          "name": "Diode",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11656",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "impedance",
+      "description": "the opposition of a circuit to alternating current",
+      "refs": [
+        {
+          "name": "Electrical impedance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179043",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reactance",
+      "description": "the opposition to current change due to capacitance or inductance",
+      "refs": [
+        {
+          "name": "Electrical reactance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q193972",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "transformer",
+      "description": "a device that transfers energy between circuits by induction",
+      "refs": [
+        {
+          "name": "Transformer",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11658",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "semiconductor",
+      "description": "a material with conductivity between a conductor and an insulator",
+      "refs": [
+        {
+          "name": "Semiconductor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11456",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "conductor",
+      "description": "a material that allows the flow of electric current",
+      "refs": [
+        {
+          "name": "Electrical conductor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q124291",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "insulator",
+      "description": "a material that resists the flow of electric current",
+      "refs": [
+        {
+          "name": "Insulator (electricity)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q178150",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "amplifier",
+      "description": "a device that increases the power of a signal",
+      "refs": [
+        {
+          "name": "Amplifier",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q211554",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "beam",
+      "description": "a structural element that resists loads applied perpendicular to its axis",
+      "refs": [
+        {
+          "name": "Beam (structure)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3705329",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "column",
+      "description": "a vertical structural element that carries compressive loads",
+      "refs": [
+        {
+          "name": "Column",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4817",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "truss",
+      "description": "a structure of members forming triangular units",
+      "refs": [
+        {
+          "name": "Truss",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1328068",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "span",
+      "description": "the distance between two structural supports",
+      "refs": [
+        {
+          "name": "Span (engineering)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1960395",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "foundation",
+      "description": "the lowest part of a structure that transfers loads to the ground",
+      "refs": [
+        {
+          "name": "Foundation (engineering)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q191360",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "concrete",
+      "description": "a composite building material of cement, aggregate and water",
+      "refs": [
+        {
+          "name": "Concrete",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q22657",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "deflection",
+      "description": "the displacement of a structural element under load",
+      "refs": [
+        {
+          "name": "Deflection (engineering)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3074663",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cantilever",
+      "description": "a beam supported at only one end",
+      "refs": [
+        {
+          "name": "Cantilever",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17227",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reactor",
+      "description": "a vessel in which a chemical reaction is carried out",
+      "refs": [
+        {
+          "name": "Chemical reactor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q557573",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "distillation",
+      "description": "separation of components by differences in boiling point",
+      "refs": [
+        {
+          "name": "Distillation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q101017",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "viscosity",
+      "description": "a measure of a fluid resistance to flow",
+      "refs": [
+        {
+          "name": "Viscosity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q128709",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "pump",
+      "description": "a device that moves fluids by mechanical action",
+      "refs": [
+        {
+          "name": "Pump",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q134574",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "valve",
+      "description": "a device that controls the flow of a fluid",
+      "refs": [
+        {
+          "name": "Valve",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q208443",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "alloy",
+      "description": "a mixture of a metal with other elements",
+      "refs": [
+        {
+          "name": "Alloy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37756",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ceramic",
+      "description": "an inorganic non-metallic solid material",
+      "refs": [
+        {
+          "name": "Ceramic",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q45621",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "corrosion",
+      "description": "the gradual destruction of materials by chemical reaction",
+      "refs": [
+        {
+          "name": "Corrosion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q137056",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "annealing",
+      "description": "a heat treatment that alters the properties of a material",
+      "refs": [
+        {
+          "name": "Annealing (materials science)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q187360",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fracture",
+      "description": "the separation of a material into pieces under stress",
+      "refs": [
+        {
+          "name": "Fracture",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5120022",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "weld",
+      "description": "a joint formed by fusing materials together",
+      "refs": [
+        {
+          "name": "Welding",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q131172",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "feedback",
+      "description": "the return of part of a system output to its input",
+      "refs": [
+        {
+          "name": "Feedback",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q183635",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gain",
+      "description": "the ratio of output to input of a system or amplifier",
+      "refs": [
+        {
+          "name": "Gain (electronics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q854659",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sensor",
+      "description": "a device that detects and measures a physical quantity",
+      "refs": [
+        {
+          "name": "Sensor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q167676",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "actuator",
+      "description": "a device that converts a control signal into physical motion",
+      "refs": [
+        {
+          "name": "Actuator",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q423488",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stability",
+      "description": "the ability of a system to return to equilibrium after a disturbance",
+      "refs": [
+        {
+          "name": "Stability theory",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1756677",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "signal",
+      "description": "a function that conveys information about a system",
+      "refs": [
+        {
+          "name": "Signal",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q174984",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "setpoint",
+      "description": "the desired value that a control system tries to maintain",
+      "refs": [
+        {
+          "name": "Setpoint (control system)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1752097",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "efficiency",
+      "description": "the ratio of useful output to total input of a system",
+      "refs": [
+        {
+          "name": "Efficiency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1034411",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mechanical"
+    },
+    {
+      "name": "electrical"
+    },
+    {
+      "name": "civil"
+    },
+    {
+      "name": "chemical"
+    },
+    {
+      "name": "materials"
+    },
+    {
+      "name": "control"
+    },
+    {
+      "name": "stress"
+    },
+    {
+      "name": "yield"
+    },
+    {
+      "name": "strength"
+    },
+    {
+      "name": "tensile"
+    },
+    {
+      "name": "ultimate"
+    },
+    {
+      "name": "shear"
+    },
+    {
+      "name": "modulus"
+    },
+    {
+      "name": "Young's"
+    },
+    {
+      "name": "Poisson's"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "safety"
+    },
+    {
+      "name": "current"
+    },
+    {
+      "name": "alternating"
+    },
+    {
+      "name": "direct"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "structural"
+    },
+    {
+      "name": "load"
+    },
+    {
+      "name": "reinforced"
+    },
+    {
+      "name": "bending"
+    },
+    {
+      "name": "moment"
+    },
+    {
+      "name": "force"
+    },
+    {
+      "name": "heat"
+    },
+    {
+      "name": "exchanger"
+    },
+    {
+      "name": "fluid"
+    },
+    {
+      "name": "flow"
+    },
+    {
+      "name": "Reynolds"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "laminar"
+    },
+    {
+      "name": "turbulent"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "composite"
+    },
+    {
+      "name": "material"
+    },
+    {
+      "name": "crystal"
+    },
+    {
+      "name": "structure"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "transfer"
+    },
+    {
+      "name": "function"
+    },
+    {
+      "name": "PID"
+    },
+    {
+      "name": "controller"
+    },
+    {
+      "name": "standard"
+    },
+    {
+      "name": "gravity"
+    },
+    {
+      "name": "atmosphere"
+    }
+  ],
+  "triples": [
+    {
+      "name": "mechanical engineering",
+      "description": "the branch of engineering dealing with the design and analysis of mechanical systems, forces and motion",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "mechanical",
+      "refs": [
+        {
+          "name": "Mechanical engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q101333",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "electrical engineering",
+      "description": "the branch of engineering dealing with the study and application of electricity, electronics and electromagnetism",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "electrical",
+      "refs": [
+        {
+          "name": "Electrical engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q43035",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "civil engineering",
+      "description": "the branch of engineering dealing with the design and construction of structures and infrastructure",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "civil",
+      "refs": [
+        {
+          "name": "Civil engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q77590",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "chemical engineering",
+      "description": "the branch of engineering dealing with the application of chemistry and physics to industrial processes",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "chemical",
+      "refs": [
+        {
+          "name": "Chemical engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83588",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "materials engineering",
+      "description": "the branch of engineering dealing with the properties, processing and selection of materials",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "materials",
+      "refs": [
+        {
+          "name": "Materials science",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q228736",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "control engineering",
+      "description": "the branch of engineering dealing with the design of systems that regulate the behaviour of other systems",
+      "from": "engineering",
+      "verb": "kind of",
+      "to": "control",
+      "refs": [
+        {
+          "name": "Control engineering",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4917288",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mechanical stress",
+      "description": "the internal force per unit area within a deformable body",
+      "from": "stress",
+      "verb": "kind of",
+      "to": "mechanical",
+      "refs": [
+        {
+          "name": "Stress (mechanics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q206175",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "yield strength",
+      "description": "the stress at which a material begins to deform plastically",
+      "from": "strength",
+      "verb": "kind of",
+      "to": "yield",
+      "refs": [
+        {
+          "name": "Yield (engineering)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q899301",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "tensile strength",
+      "description": "the maximum tensile stress a material can withstand",
+      "from": "strength",
+      "verb": "kind of",
+      "to": "tensile",
+      "refs": [
+        {
+          "name": "Ultimate tensile strength",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q76005",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ultimate strength",
+      "description": "the maximum stress a material can withstand before failure",
+      "from": "strength",
+      "verb": "kind of",
+      "to": "ultimate",
+      "refs": [
+        {
+          "name": "Ultimate tensile strength",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q76005",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "shear stress",
+      "description": "the stress component parallel to a material cross section",
+      "from": "stress",
+      "verb": "kind of",
+      "to": "shear",
+      "refs": [
+        {
+          "name": "Shear stress",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q657936",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Young's modulus",
+      "description": "the ratio of tensile stress to tensile strain of a material",
+      "from": "modulus",
+      "verb": "of",
+      "to": "Young's",
+      "refs": [
+        {
+          "name": "Young's modulus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2091584",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "shear modulus",
+      "description": "the ratio of shear stress to shear strain",
+      "from": "modulus",
+      "verb": "kind of",
+      "to": "shear",
+      "refs": [
+        {
+          "name": "Shear modulus",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q461466",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Poisson's ratio",
+      "description": "the ratio of transverse to axial strain",
+      "from": "ratio",
+      "verb": "of",
+      "to": "Poisson's",
+      "refs": [
+        {
+          "name": "Poisson's ratio",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190453",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "description": "the ratio of a material strength to the expected load",
+      "from": "factor",
+      "verb": "of",
+      "to": "safety",
+      "refs": [
+        {
+          "name": "Factor of safety",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2034862",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "alternating current",
+      "description": "an electric current that periodically reverses direction",
+      "from": "current",
+      "verb": "kind of",
+      "to": "alternating",
+      "refs": [
+        {
+          "name": "Alternating current",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q124164",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "direct current",
+      "description": "an electric current that flows in one direction",
+      "from": "current",
+      "verb": "kind of",
+      "to": "direct",
+      "refs": [
+        {
+          "name": "Direct current",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q159241",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "power factor",
+      "description": "the ratio of real power to apparent power in a circuit",
+      "from": "factor",
+      "verb": "of",
+      "to": "power",
+      "refs": [
+        {
+          "name": "Power factor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q750454",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "structural load",
+      "description": "a force or other action applied to a structure",
+      "from": "load",
+      "verb": "kind of",
+      "to": "structural",
+      "refs": [
+        {
+          "name": "Structural load",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7964839",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reinforced concrete",
+      "description": "concrete with embedded steel to resist tension",
+      "from": "concrete",
+      "verb": "kind of",
+      "to": "reinforced",
+      "refs": [
+        {
+          "name": "Reinforced concrete",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q184190",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "bending moment",
+      "description": "the internal moment that causes a beam to bend",
+      "from": "moment",
+      "verb": "of",
+      "to": "bending",
+      "refs": [
+        {
+          "name": "Bending moment",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q857244",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "shear force",
+      "description": "the internal force acting parallel to a cross section",
+      "from": "force",
+      "verb": "kind of",
+      "to": "shear",
+      "refs": [
+        {
+          "name": "Shear force",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7492174",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "heat exchanger",
+      "description": "a device that transfers heat between fluids",
+      "from": "exchanger",
+      "verb": "of",
+      "to": "heat",
+      "refs": [
+        {
+          "name": "Heat exchanger",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189124",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fluid flow",
+      "description": "the movement of a liquid or gas",
+      "from": "flow",
+      "verb": "of",
+      "to": "fluid",
+      "refs": [
+        {
+          "name": "Fluid dynamics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q216320",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Reynolds number",
+      "description": "a dimensionless number that predicts flow patterns",
+      "from": "number",
+      "verb": "of",
+      "to": "Reynolds",
+      "refs": [
+        {
+          "name": "Reynolds number",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q178932",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "laminar flow",
+      "description": "smooth fluid flow in parallel layers",
+      "from": "flow",
+      "verb": "kind of",
+      "to": "laminar",
+      "refs": [
+        {
+          "name": "Laminar flow",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189452",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "turbulent flow",
+      "description": "chaotic fluid flow with mixing and eddies",
+      "from": "flow",
+      "verb": "kind of",
+      "to": "turbulent",
+      "refs": [
+        {
+          "name": "Turbulence",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190132",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "flow rate",
+      "description": "the volume of fluid that passes per unit time",
+      "from": "rate",
+      "verb": "of",
+      "to": "flow",
+      "refs": [
+        {
+          "name": "Volumetric flow rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1134348",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "composite material",
+      "description": "a material made from two or more constituent materials",
+      "from": "material",
+      "verb": "kind of",
+      "to": "composite",
+      "refs": [
+        {
+          "name": "Composite material",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q181790",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "crystal structure",
+      "description": "the ordered arrangement of atoms in a crystalline material",
+      "from": "structure",
+      "verb": "of",
+      "to": "crystal",
+      "refs": [
+        {
+          "name": "Crystal structure",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q895901",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "control system",
+      "description": "a system that manages the behaviour of other systems",
+      "from": "system",
+      "verb": "of",
+      "to": "control",
+      "refs": [
+        {
+          "name": "Control system",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q959968",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "transfer function",
+      "description": "the ratio of output to input of a system in the frequency domain",
+      "from": "function",
+      "verb": "of",
+      "to": "transfer",
+      "refs": [
+        {
+          "name": "Transfer function",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q334269",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "PID controller",
+      "description": "a control loop using proportional, integral and derivative terms",
+      "from": "controller",
+      "verb": "kind of",
+      "to": "PID",
+      "refs": [
+        {
+          "name": "PID controller",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q716829",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "standard gravity",
+      "description": "the standard acceleration due to gravity at the Earth surface, 9.80665 metre per second squared",
+      "from": "gravity",
+      "verb": "kind of",
+      "to": "standard"
+    },
+    {
+      "name": "standard atmosphere",
+      "description": "the standard reference air pressure, 101325 pascal",
+      "from": "atmosphere",
+      "verb": "kind of",
+      "to": "standard"
+    },
+    {
+      "from": "engineering",
+      "verb": "is part of",
+      "to": "science"
+    },
+    {
+      "from": "mechanical engineering",
+      "verb": "is part of",
+      "to": "engineering"
+    },
+    {
+      "from": "electrical engineering",
+      "verb": "is part of",
+      "to": "engineering"
+    },
+    {
+      "from": "civil engineering",
+      "verb": "is part of",
+      "to": "engineering"
+    },
+    {
+      "from": "chemical engineering",
+      "verb": "is part of",
+      "to": "engineering"
+    },
+    {
+      "from": "materials engineering",
+      "verb": "is part of",
+      "to": "engineering"
+    },
+    {
+      "from": "control engineering",
+      "verb": "is part of",
+      "to": "engineering"
+    },
+    {
+      "from": "mechanical stress",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "strain",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "elasticity",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "plasticity",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "yield strength",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "tensile strength",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "ultimate strength",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "shear stress",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "hardness",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "ductility",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "brittleness",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "toughness",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "stiffness",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "fatigue",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "Young's modulus",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "shear modulus",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "Poisson's ratio",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "factor of safety",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "gear",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "bearing",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "lever",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "pulley",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "flywheel",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "piston",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "circuit",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "resistor",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "capacitor",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "inductor",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "transistor",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "diode",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "impedance",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "reactance",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "transformer",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "semiconductor",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "conductor",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "insulator",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "alternating current",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "direct current",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "amplifier",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "power factor",
+      "verb": "is part of",
+      "to": "electrical engineering"
+    },
+    {
+      "from": "beam",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "column",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "truss",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "structural load",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "span",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "foundation",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "concrete",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "reinforced concrete",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "deflection",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "cantilever",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "bending moment",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "shear force",
+      "verb": "is part of",
+      "to": "civil engineering"
+    },
+    {
+      "from": "reactor",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "distillation",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "heat exchanger",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "fluid flow",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "Reynolds number",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "viscosity",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "laminar flow",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "turbulent flow",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "pump",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "valve",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "flow rate",
+      "verb": "is part of",
+      "to": "chemical engineering"
+    },
+    {
+      "from": "alloy",
+      "verb": "is part of",
+      "to": "materials engineering"
+    },
+    {
+      "from": "composite material",
+      "verb": "is part of",
+      "to": "materials engineering"
+    },
+    {
+      "from": "ceramic",
+      "verb": "is part of",
+      "to": "materials engineering"
+    },
+    {
+      "from": "corrosion",
+      "verb": "is part of",
+      "to": "materials engineering"
+    },
+    {
+      "from": "annealing",
+      "verb": "is part of",
+      "to": "materials engineering"
+    },
+    {
+      "from": "crystal structure",
+      "verb": "is part of",
+      "to": "materials engineering"
+    },
+    {
+      "from": "fracture",
+      "verb": "is part of",
+      "to": "materials engineering"
+    },
+    {
+      "from": "weld",
+      "verb": "is part of",
+      "to": "materials engineering"
+    },
+    {
+      "from": "feedback",
+      "verb": "is part of",
+      "to": "control engineering"
+    },
+    {
+      "from": "control system",
+      "verb": "is part of",
+      "to": "control engineering"
+    },
+    {
+      "from": "transfer function",
+      "verb": "is part of",
+      "to": "control engineering"
+    },
+    {
+      "from": "gain",
+      "verb": "is part of",
+      "to": "control engineering"
+    },
+    {
+      "from": "sensor",
+      "verb": "is part of",
+      "to": "control engineering"
+    },
+    {
+      "from": "actuator",
+      "verb": "is part of",
+      "to": "control engineering"
+    },
+    {
+      "from": "PID controller",
+      "verb": "is part of",
+      "to": "control engineering"
+    },
+    {
+      "from": "stability",
+      "verb": "is part of",
+      "to": "control engineering"
+    },
+    {
+      "from": "signal",
+      "verb": "is part of",
+      "to": "control engineering"
+    },
+    {
+      "from": "setpoint",
+      "verb": "is part of",
+      "to": "control engineering"
+    },
+    {
+      "from": "efficiency",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "standard gravity",
+      "verb": "is part of",
+      "to": "mechanical engineering"
+    },
+    {
+      "from": "standard atmosphere",
+      "verb": "is part of",
+      "to": "civil engineering"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "Ohm's law",
+      "expression": "\"voltage\" = \"current\" * \"resistance\"",
+      "latex": "V = I \\cdot R",
+      "assigned_word": "resistor"
+    },
+    {
+      "name": "definition of mechanical stress",
+      "expression": "\"mechanical stress\" = \"force\" / \"area\"",
+      "latex": "\\sigma = \\frac{F}{A}",
+      "assigned_word": "mechanical stress"
+    },
+    {
+      "name": "definition of Young's modulus",
+      "expression": "\"Young's modulus\" = \"mechanical stress\" / \"strain\"",
+      "latex": "E = \\frac{\\sigma}{\\varepsilon}",
+      "assigned_word": "Young's modulus"
+    },
+    {
+      "name": "definition of the factor of safety",
+      "expression": "\"factor of safety\" = \"ultimate strength\" / \"mechanical stress\"",
+      "latex": "\\mathrm{FoS} = \\frac{\\sigma_u}{\\sigma}",
+      "assigned_word": "factor of safety"
+    },
+    {
+      "name": "electrical power",
+      "expression": "\"power\" = \"voltage\" * \"current\"",
+      "latex": "P = V \\cdot I",
+      "assigned_word": "power factor"
+    },
+    {
+      "name": "definition of the Reynolds number",
+      "expression": "\"Reynolds number\" = ( \"density\" * \"velocity\" * \"length\" ) / \"viscosity\"",
+      "latex": "\\mathrm{Re} = \\frac{\\rho\\, v\\, L}{\\mu}",
+      "assigned_word": "Reynolds number"
+    },
+    {
+      "name": "energy stored in a capacitor",
+      "expression": "\"energy\" = \"capacitance\" * \"voltage\"^2 / 2",
+      "latex": "E = \\tfrac{1}{2} C V^2",
+      "assigned_word": "capacitor"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "standard gravity"
+      ],
+      "number": "9.80665",
+      "share": "public"
+    },
+    {
+      "words": [
+        "standard atmosphere"
+      ],
+      "number": "101325",
+      "share": "public"
+    }
+  ]
+}

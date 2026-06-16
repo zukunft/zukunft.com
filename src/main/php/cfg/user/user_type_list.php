@@ -5,6 +5,7 @@
     model/user/user_type_list.php - a list of possible user types with the database id
     -----------------------------
 
+    $usr_typ_lst is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

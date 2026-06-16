@@ -38,8 +38,8 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_sandbox_test(all_tests $t): void
@@ -57,10 +57,10 @@ function run_sandbox_test(all_tests $t): void
     // a word is not the same as the same word that represents a formula
     $wrd1 = new word($t->usr1);
     $wrd1->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
-    $wrd1->set_name(words::MIO);
+    $wrd1->set_name(word_names::MIO);
     $wrd2 = new word($t->usr1);
     $wrd2->type_id = $sys->typ_lst->phr_typ->default_id();
-    $wrd2->set_name(words::MIO);
+    $wrd2->set_name(word_names::MIO);
     $target = false;
     $result = $wrd1->is_same($wrd2);
     $t->assert("a word is not the same as the same word that represents a formula", $result, $target);

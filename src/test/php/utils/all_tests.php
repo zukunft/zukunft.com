@@ -15,7 +15,7 @@
 
     - target is to executes all class methods and all functions at least once
     - in case of errors in the methods automatically a ticket is opened the the table sys_log
-    - with zukunft.com/error_update.php the tickets can be view and closed
+    - with zukunft.com/view.php?m=66 (views::ERROR_UPDATE_ID) the tickets can be viewed and closed
     - and compares the result with the expected result
     - in case of an unexpected result also a ticket is created
     - check the correct setup of the base words, numbers and formulas
@@ -171,10 +171,10 @@ class all_tests extends all_unit_write_tests
 
     function run_all_tests(): void
     {
-        global $errors;
+        global $sys;
 
         // init
-        $errors = 0;
+        $sys->errors = 0;
         $t_db = new test_db_load($this);
         $usr_msg = new user_message();
         $map = new MapObject();
@@ -183,6 +183,9 @@ class all_tests extends all_unit_write_tests
         // start the test section (ts)
         $ts = 'Start of all zukunft.com tests ';
         $this->header($ts);
+        $this->set_users();
+        $ui = new frontend('all tests');
+        $ui->load_dummy_cache_from_test_resources($this->usr1);
 
         // if requested only run some selected tests
         if (QUICK_TEST_ONLY) {
@@ -192,45 +195,45 @@ class all_tests extends all_unit_write_tests
             // ... otherwise run the test starting with internal unit test
 
             // first run the unit tests without database connection
-            $this->run_unit();
+            $this->run_unit($ui);
 
             // run the database read tests also to check if the test results are influenced by any leftovers
-            if ($errors <= ERROR_LIMIT) {
+            if ($sys->errors <= ERROR_LIMIT) {
                 $this->run_unit_db_tests($this);
             }
 
             // check if database reading via api still produces the expected results
-            if ($errors <= ERROR_LIMIT and API_TEST) {
+            if ($sys->errors <= ERROR_LIMIT and API_TEST) {
                 $t_api = new all_api_tests();
                 $t_api->run_api_tests($this, $this->usr1, $usr_msg_ui);
             }
 
             // database reset is switched off here for better detection of leftovers
             // it can be started via reset_db
-            if ($this->db_reset_allowed() and $errors <= ERROR_LIMIT and !$this->only_unit_tests()) {
+            if ($this->db_reset_allowed() and $sys->errors <= ERROR_LIMIT and !$this->only_unit_tests()) {
                 $this->run_db_recreate();
             }
 
             // html page creation based on the url
-            if ($errors <= ERROR_LIMIT and FRONTEND_TEST) {
+            if ($sys->errors <= ERROR_LIMIT and FRONTEND_TEST) {
                 // test the html ui on localhost without api
                 $ui = new frontend('unit ui tests');
                 $ui->load_dummy_cache_from_test_resources($this->usr1);
                 new all_ui_tests()->run($this, $ui);
             }
 
-            if ($errors <= ERROR_LIMIT and WORKFLOW_TEST) {
+            if ($sys->errors <= ERROR_LIMIT and WORKFLOW_TEST) {
                 $t_wf = new all_workflow_tests();
                 $t_wf->run_workflow_tests($this, $this->usr1, $usr_msg_ui);
             }
 
-            if ($errors <= ERROR_LIMIT and WRITE_TEST) {
+            if ($sys->errors <= ERROR_LIMIT and WRITE_TEST) {
                 $this->run_db_write_tests($this);
             }
 
             // recreate the type list api message based on the updated db
             // because this json is used for the unit tests
-            $t_db->type_list_recreate($this, $this->usr1);
+            $t_db->type_list_check($this, $this->usr1);
         }
 
         // display the test results

@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("view_confirm");
 $html = new html_base();
 

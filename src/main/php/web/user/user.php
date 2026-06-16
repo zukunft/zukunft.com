@@ -5,6 +5,8 @@
     web/user/user.php - functions to create the HTML code to display the user setup and log information
     -----------------
 
+    $usr is the suggested var name
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -31,10 +33,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\user;
 
-use DateTime;
-use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 // get the api const that are shared between the backend and the html frontend
@@ -42,7 +41,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'user_log_display.php';
-include_once html_paths::REF . 'source.php';
+//include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
@@ -50,7 +49,10 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Translator.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
@@ -65,10 +67,16 @@ use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use DateTime;
+use DateTimeInterface;
 
 class user extends db_object
 {
@@ -383,7 +391,7 @@ class user extends db_object
     }
 
     // TODO restrict the access to the unhashed password
-    function password(): string
+    function password(): string|null
     {
         return $this->password;
     }
@@ -394,16 +402,28 @@ class user extends db_object
      */
 
     /**
+     * @return bool true if the user is only identified by IP address and has not logged in
+     */
+    function is_ip_only(): bool
+    {
+        global $ui_sys;
+        if ($this->profile_id <= 0) {
+            return true;
+        }
+        return $this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY);
+    }
+
+    /**
      * @returns bool true if the user has admin rights
      */
     function is_admin(): bool
     {
-        global $sys;
+        global $ui_sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::ADMIN)) {
                 $result = true;
             }
         }
@@ -415,17 +435,55 @@ class user extends db_object
      */
     function is_system(): bool
     {
-        global $sys;
+        global $ui_sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::TEST)
+                or $this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
         }
         return $result;
+    }
+
+    /**
+     * @return string|null the human-readable profile name e.g. "admin" or null if profile is not set
+     */
+    function profile_name(): ?string
+    {
+        global $ui_sys;
+        if ($this->profile_id > 0) {
+            return $ui_sys->typ_lst_cache->usr_pro->name($this->profile_id);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * returns the role label for the navbar tooltip and dropdown header, or null for regular users
+     * regular profiles (NAME_ONLY, EMAIL, HUMAN) show no role; elevated profiles (ADMIN, DEV, SYS_LINK, TEST, LOG, SYSTEM) do
+     *
+     * @return string|null the profile name to display next to the username, or null for regular users
+     */
+    function navbar_role(): ?string
+    {
+        global $ui_sys;
+        $elevated = [
+            user_profiles::SYS_LINK,
+            user_profiles::ADMIN,
+            user_profiles::DEV,
+            user_profiles::TEST,
+            user_profiles::LOG,
+            user_profiles::SYSTEM,
+        ];
+        foreach ($elevated as $prf) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id($prf)) {
+                return $this->profile_name();
+            }
+        }
+        return null;
     }
 
     /**
@@ -501,6 +559,128 @@ class user extends db_object
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
+    /**
+     * build the login form HTML
+     *
+     * @param string $extra_hidden additional hidden fields to inject before the submit button e.g. the mask id and 9-prefixed back params
+     * @param string $back_url when non-empty an "or go back" link is appended after "or signup"
+     * @return string the complete login form HTML followed by an "or signup" link
+     */
+    function form_login(string $extra_hidden = '', string $back_url = ''): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME_OR_EMAIL) . $html->br();
+        $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
+        $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
+        $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN) . $html->br2();
+        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $extra_hidden;
+        $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN)) . $html->br2();
+        $or_signup = $mtr->txt(msg_id::OR) . ' ' . $html->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::SIGNUP));
+        $or_back = '';
+        if ($back_url !== '') {
+            $or_back = ' ' . $mtr->txt(msg_id::OR) . ' ' . $mtr->txt(msg_id::GO) . ' ' . $html->ref($back_url, $mtr->txt(msg_id::BACK_LINK));
+        }
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str) . $or_signup . $or_back;
+    }
+
+    /**
+     * build the signup form HTML
+     *
+     * @param string $extra_hidden additional hidden fields to inject e.g. the mask id and 9-prefixed back params
+     * @param string $usr_name pre-filled username shown when re-displaying after a validation error
+     * @param string $email pre-filled email shown when re-displaying after a validation error
+     * @return string the complete signup form HTML
+     */
+    function form_signup(string $extra_hidden = '', string $usr_name = '', string $email = ''): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $form_usr = $mtr->txt(msg_id::FORM_NAME_USER_NAME) . $html->br();
+        $form_usr .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME, $usr_name);
+        $form_str = $html->p($form_usr);
+        $form_mail = $mtr->txt(msg_id::FORM_NAME_USER_EMAIL) . $html->br();
+        $form_mail .= $html->form_input(html_base::INPUT_TEXT, url_var::EMAIL, $email);
+        $form_str .= $html->p($form_mail);
+        $form_pw = $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
+        $form_pw .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD);
+        $form_str .= $html->p($form_pw);
+        $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
+        $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE);
+        $form_str .= $html->p($form_pwr);
+        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $extra_hidden;
+        $form_str .= $html->button_submit($mtr->txt(msg_id::SIGN_UP));
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
+    }
+
+    /**
+     * build the activate (password change) form HTML
+     *
+     * @param string $extra_hidden hidden fields for MASK and back params
+     * @param int $usr_id the user id from the activation link
+     * @param string $key the activation key from the activation link; if empty an input field is shown
+     * @return string the complete form HTML or an error message if usr_id is missing
+     */
+    function form_activate(string $extra_hidden = '', int $usr_id = 0, string $key = ''): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        if ($usr_id <= 0) {
+            return $html->dsp_err($mtr->txt(msg_id::ACTIVATE_ERR_MISSING_ID));
+        }
+        $form_str = $html->form_hidden(url_var::ID, (string)$usr_id);
+        if ($key !== '') {
+            $form_str .= $html->form_hidden(url_var::POST_KEY, $key);
+        } else {
+            $form_key = $mtr->txt(msg_id::ACTIVATE_KEY_LABEL) . $html->br();
+            $form_key .= $html->form_input(html_base::INPUT_TEXT, url_var::POST_KEY);
+            $form_str .= $html->p($form_key);
+        }
+        $form_pw = $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
+        $form_pw .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD);
+        $form_str .= $html->p($form_pw);
+        $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
+        $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE);
+        $form_str .= $html->p($form_pwr);
+        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $extra_hidden;
+        $form_str .= $html->button_submit($mtr->txt(msg_id::ACTIVATE_SUBMIT));
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
+    }
+
+
+    /**
+     * build the password reset request form HTML
+     *
+     * @param string $extra_hidden additional hidden fields to inject e.g. the mask id and back params
+     * @param string $back_url URL to navigate to when the user cancels; falls back to the main page if empty
+     * @return string the complete reset form HTML followed by an "or cancel and go back" link
+     */
+    function form_reset(string $extra_hidden = '', string $back_url = ''): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $form_usr = $mtr->txt(msg_id::FORM_NAME_USER_NAME) . $html->br();
+        $form_usr .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN);
+        $form_str = $html->p($form_usr);
+        $form_mail = $mtr->txt(msg_id::FORM_NAME_USER_EMAIL) . $html->br();
+        $form_mail .= $html->form_input(html_base::INPUT_EMAIL, url_var::EMAIL_HUMAN);
+        $form_str .= $html->p($form_mail);
+        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $extra_hidden;
+        $form_str .= $html->button_submit($mtr->txt(msg_id::RESET_SUBMIT));
+        $cancel_url = $back_url !== '' ? $back_url : api::MAIN_SCRIPT;
+        $or_cancel = ' ' . $mtr->txt(msg_id::OR) . ' ' . $mtr->txt(msg_id::CANCEL_AND_GO) . ' ' . $html->ref($cancel_url, $mtr->txt(msg_id::BACK_LINK));
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str) . $or_cancel;
+    }
+
+
     /*
      * to review
      */
@@ -537,8 +717,8 @@ class user extends db_object
      */
     function dsp_changes(int $size, int $page, ?back_trace $back = null): string
     {
-        $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(user::class, $this->id(), $size, $page, '', $back);
+        $log_ui = new user_log_display();
+        return $log_ui->dsp_hist(user::class, $this->id(), $size, $page, '', $back);
     }
 
     // display the error that are related to the user, so that he can track when they are closed
@@ -555,12 +735,20 @@ class user extends db_object
         //$err_lst->dsp_type = $dsp_type;
         //$err_lst->back = $back;
         if ($err_lst->load()) {
-            $err_lst_dsp = new sys_log_list($err_lst->api_json());
-            $result = $err_lst_dsp->get_html();
+            $err_lst_ui = new sys_log_list($err_lst->api_json());
+            $result = $err_lst_ui->get_html();
         }
 
         log_debug('done');
         return $result;
     }
+
+    // create the HTML code to display the username with the HTML link
+    function display(): string
+    {
+        $html = new html_base();
+        return $html->ref_view(views::USER_ID, $this->id, $this->name);
+    }
+
 
 }

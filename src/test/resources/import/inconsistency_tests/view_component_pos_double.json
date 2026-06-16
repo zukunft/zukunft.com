@@ -1,0 +1,39 @@
+{
+  "version": "0.0.3",
+  "time": "2024-06-14 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "view with a double component position"
+  ],
+  "components": [
+    {
+      "name": "system show field name",
+      "description": "show the object name as read only text",
+      "type": "system_show_field_name",
+      "code_id": "show_field_name"
+    },
+    {
+      "name": "system show field description",
+      "description": "show the object description as read only text",
+      "type": "system_show_field_description",
+      "code_id": "show_field_description"
+    }
+  ],
+  "views": [
+    {
+      "name": "test view with a double component position",
+      "description": "a view that uses the component position 1 twice to test the position completeness check",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "system show field name"
+        },
+        {
+          "position": "1",
+          "name": "system show field description"
+        }
+      ]
+    }
+  ]
+}

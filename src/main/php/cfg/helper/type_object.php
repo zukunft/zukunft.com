@@ -184,23 +184,25 @@ class type_object extends db_object_seq_id
     function row_mapper_typ_obj(array $db_row, string $class): bool
     {
         $result = parent::row_mapper($db_row, $this->id_field_typ($class));
-        // set the id upfront to allow row mapping
-        if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
-            $this->id = ($db_row[language::FLD_ID]);
-        }
-        if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-            $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
-        }
-        if (array_key_exists($this->name_field(), $db_row)) {
-            $this->name = strval($db_row[$this->name_field()]);
-        }
-        if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
-            $this->description = strval($db_row[sql_db::FLD_DESCRIPTION]);
-        }
-        if (($this->code_id == null or $this->name == '')
-            and ($this->name == null or $this->name == '')) {
-            log_err('either the name of code_id must be set');
-            $result = false;
+        if ($result) {
+            // set the id upfront to allow row mapping
+            if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
+                $this->id = ($db_row[language::FLD_ID]);
+            }
+            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
+                $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
+            }
+            if (array_key_exists($this->name_field(), $db_row)) {
+                $this->name = strval($db_row[$this->name_field()]);
+            }
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = strval($db_row[sql_db::FLD_DESCRIPTION]);
+            }
+            if (($this->code_id == null or $this->name == '')
+                and ($this->name == null or $this->name == '')) {
+                log_err('either the name of code_id must be set');
+                $result = false;
+            }
         }
         return $result;
     }
@@ -378,6 +380,9 @@ class type_object extends db_object_seq_id
      */
     function load_sql_by_id(sql_creator $sc, int $id, string $class = ''): sql_par
     {
+        if ($class == '') {
+            $class = $this::class;
+        }
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_ID);
         $sc->add_where($this->id_field_typ($class), $id);
@@ -409,6 +414,9 @@ class type_object extends db_object_seq_id
      */
     function load_sql_by_name(sql_creator $sc, string $name, string $class = ''): sql_par
     {
+        if ($class == '') {
+            $class = $this::class;
+        }
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, 'by_' . sql_db::FLD_NAME);
         $sc->add_where($this->name_field_typ($class), $name);
@@ -428,6 +436,9 @@ class type_object extends db_object_seq_id
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = ''): sql_par
     {
+        if ($class == '') {
+            $class = $this::class;
+        }
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, 'by_' . sql_db::FLD_CODE_ID);
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
@@ -435,6 +446,16 @@ class type_object extends db_object_seq_id
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+    /**
+     * load a type object from the database using the type table of this class
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the type object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        return $this->load_typ_obj($qp, $this::class);
     }
 
     /**
@@ -448,7 +469,11 @@ class type_object extends db_object_seq_id
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper_typ_obj($db_row, $class);
+        if ($db_row == null) {
+            $this->id = 0;
+        } else {
+            $this->row_mapper_typ_obj($db_row, $class);
+        }
         return $this->id();
     }
 
@@ -1029,7 +1054,11 @@ class type_object extends db_object_seq_id
     protected function can_delete(user_message $msg): bool
     {
         $can_del = false;
-        if (!$this->is_used()) {
+
+        if ($msg->usr === null) {
+            log_err('user not set in user_message', 'can_delete');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif (!$this->is_used()) {
             if ($this->code_id != null or $this->code_id != '') {
                 if ($msg->usr->is_admin() or $msg->usr->is_system()) {
                     $can_del = true;
@@ -1041,10 +1070,11 @@ class type_object extends db_object_seq_id
             }
         } else {
             // for the system user it should be possible to delete a type
-            if ($msg->usr->is_system()) {
+            if ($msg->usr->is_system() or $msg->usr->is_admin_local()) {
                 $can_del = true;
             }
         }
+
         return $can_del;
     }
 

@@ -53,6 +53,7 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("import");
 $html = new html_base();
 
@@ -174,18 +175,18 @@ if ($usr->id() > 0) {
     if ($result == '') {
         log_debug('import.php display mask ');
         // show the value and the linked words to edit the value (again after removing or adding a word)
-        $msk_dsp = new view_ui($msk->api_json());
+        $msk_ui = new view_ui($msk->api_json());
         $dto = new data_object();
-        $result .= $msk_dsp->dsp_navbar($dto, $back);
+        $result .= $msk_ui->dsp_navbar($dto, $back);
         $result .= $html->dsp_err($msg->all_message_text());
 
         $result .= $html->dsp_form_file_select();
-        // $result .= dsp_btn_text ('Start import', '/http/import.php?confirm=1&filepath='.);
+        // $result .= dsp_btn_text ('Start import', rest_ctrl::PATH_FIXED .'import.php?confirm=1&filepath='.);
         /*
         if ($fileName == '') {
-          $result .= dsp_btn_text ('Start import', '/http/import.php?confirm=1');
+          $result .= dsp_btn_text ('Start import', rest_ctrl::PATH_FIXED .'import.php?confirm=1');
         } else {
-          $result .= dsp_btn_text ('Start import', '/http/import.php?confirm=1&filename='.$fileName);
+          $result .= dsp_btn_text ('Start import', rest_ctrl::PATH_FIXED .'import.php?confirm=1&filename='.$fileName);
         }
         */
     }

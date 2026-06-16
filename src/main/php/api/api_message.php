@@ -120,16 +120,16 @@ class api_message
     }
 
     // TODO call once in global $sys
-    function api_site_name(sql_db $db_con): string
+    function api_site_name(sql_db $db_con = new sql_db()): string
     {
         $cfg = new config();
         // for unit tests use the default pod name
-        $site_name = def::POD_NAME;
+        $site_name = POD_NAME;
         if ($db_con->connected()) {
             $site_name = $cfg->get_db(config::SITE_NAME, $db_con);
             // TODO remove this fallback case
             if ($site_name == '') {
-                $site_name = def::POD_NAME;
+                $site_name = POD_NAME;
             }
         }
         return $site_name;

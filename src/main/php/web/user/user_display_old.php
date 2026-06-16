@@ -74,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
@@ -98,28 +99,6 @@ class user_display_old extends user
         return $this->viewer;
     }
 
-    // display the error that are related to the user, so that he can track when they are closed
-    // or display the error that are related to the user, so that he can track when they are closed
-    function dsp_errors($dsp_type, $size, $page, $back): string
-    {
-        log_debug($dsp_type . ' errors for user ' . $this->name);
-
-        $result = '';
-        $err_lst = new sys_log_list;
-        //$err_lst->set_user($this);
-        //$err_lst->page = $page;
-        //$err_lst->size = $size;
-        //$err_lst->dsp_type = $dsp_type;
-        //$err_lst->back = $back;
-        if ($err_lst->load()) {
-            $err_lst_dsp = new sys_log_list($err_lst->api_json());
-            $result = $err_lst_dsp->get_html();
-        }
-
-        log_debug('done');
-        return $result;
-    }
-
     /**
      * display word changes by the user which are not (yet) standard
      */
@@ -127,7 +106,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $html = new html_base();
         $result = ''; // reset the html code var
 
@@ -153,7 +133,7 @@ class user_display_old extends user
             }
             $result .= '<td>' . $wrd_row['usr_word_name'] . '</td><td>' . $wrd_row['word_name'] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_word='.$log_row['type_table'].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = '/http/user.php?id=' . $this->id() . '&undo_word=' . $wrd_row['word_id'] . '&back=' . $back . '';
+            $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_word=' . $wrd_row['word_id'] . '&back=' . $back . '';
             $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
             $result .= '</tr>';
         }
@@ -170,7 +150,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -293,10 +274,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $wrd_lnk_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_triple.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_triple.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard triple " . $sbx_row['std_triple'], $url) . '</td>';
 
                     // display the triple changes by the user
@@ -336,7 +317,8 @@ class user_display_old extends user
     {
         log_debug('user_dsp->dsp_sandbox_frm(u' . $this->id() . ')');
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -368,7 +350,7 @@ class user_display_old extends user
             $result .= '<td>' . $frm_row['usr_formula_text'] . '</td>';
             $result .= '<td>' . $frm_row[formula_db::FLD_FORMULA_TEXT] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula_db::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = '/http/user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula_db::FLD_ID] . '&back=' . $back . '';
+            $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula_db::FLD_ID] . '&back=' . $back . '';
             $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula " . $frm_row[formula_db::FLD_FORMULA_TEXT], $url) . '</td>';
             $result .= '</tr>';
         }
@@ -385,7 +367,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -454,14 +437,16 @@ class user_display_old extends user
                 } else {
 
                     // prepare the row formula_links
-                    $sandbox_item_name = $frm_usr->formula()->name_linked($back);
+                    $frm_ui = new formula($frm_usr->formula()->api_json());
+                    $sandbox_item_name = $frm_ui->name_linked($back);
                     //$sandbox_item_name = $frm_usr->name_linked($back);
 
                     // format the user formula_link
                     if ($frm_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $frm_usr->phrase()->name_linked();
+                        $phr_ui = new phrase($frm_usr->phrase()->api_json());
+                        $sandbox_usr_txt = $phr_ui->name_linked();
                         //$sandbox_usr_txt = $frm_usr->link_name;
                     }
 
@@ -469,7 +454,8 @@ class user_display_old extends user
                     if ($frm_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $frm_std->phrase()->name_linked();
+                        $phr_ui = new phrase($frm_usr->phrase()->api_json());
+                        $sandbox_std_txt = $phr_ui->name_linked();
                         //$sandbox_std_txt = $frm_std->link_name;
                     }
 
@@ -500,12 +486,13 @@ class user_display_old extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $frm_lnk_other->tob()->name_linked();
+                        $to_ui = new phrase($frm_lnk_other->tob()->api_json());
+                        $sandbox_other .= $to_ui->name_linked();
                     }
-                    $sandbox_other = '<a href="/http/user_formula_link.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_formula_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_formula_link=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_formula_link=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula_link " . $sbx_row['std_formula_link'], $url) . '</td>';
 
                     // display the formula_link changes by the user
@@ -545,7 +532,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -622,8 +610,8 @@ class user_display_old extends user
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (!$val_usr->grp->phrase_list()->is_empty()) {
-                        $phr_lst_dsp = new phrase_list($val_usr->grp->phrase_list()->api_json());
-                        $sandbox_item_name = $phr_lst_dsp->name_linked();
+                        $phr_lst_ui = new phrase_list($val_usr->grp->phrase_list()->api_json());
+                        $sandbox_item_name = $phr_lst_ui->name_linked();
                     }
 
                     // format the user value
@@ -632,7 +620,7 @@ class user_display_old extends user
                     } else {
                         $sandbox_usr_txt = $val_usr->val_formatted();
                     }
-                    $sandbox_usr_txt = '<a href="/http/value_edit.php?id=' . $val_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = $html->ref(rest_ctrl::PATH_FIXED .'value_edit.php?id=' . $val_usr->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard value
                     if ($val_std->is_excluded()) {
@@ -671,10 +659,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $val_other->val_formatted();
                     }
-                    $sandbox_other = '<a href="/http/user_value.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_value.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_value=' . $val_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_value=' . $val_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard value " . $val_row['std_value'], $url) . '</td>';
 
                     // display the value changes by the user
@@ -713,7 +701,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -764,19 +753,19 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the view objects with the minimal parameter needed
-                $dsp_usr = new view_ui($this);
-                $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->set_name($sbx_row['usr_name']);
-                $dsp_usr->description = $sbx_row['usr_description'];
-                $dsp_usr->set_type_id($sbx_row['usr_type']);
-                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
-                $dsp_usr->set_user($this);
+                $usr_ui = new view_ui($this);
+                $usr_ui->set_id($sbx_row['id']);
+                $usr_ui->set_name($sbx_row['usr_name']);
+                $usr_ui->description = $sbx_row['usr_description'];
+                $usr_ui->set_type_id($sbx_row['usr_type']);
+                $usr_ui->set_excluded($sbx_row['usr_excluded']);
+                $usr_ui->set_user($this);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->load_by_id($sbx_row['owner_id']);
 
-                $dsp_std = clone $dsp_usr;
+                $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->description = $sbx_row['std_description'];
@@ -784,20 +773,20 @@ class user_display_old extends user
                 $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->set_name($dsp_std->name())
-                    and $dsp_usr->description == $dsp_std->description
-                    and $dsp_usr->type_id() == $dsp_std->type_id()
-                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
-                    $dsp_usr->del_usr_cfg();
+                if ($usr_ui->set_name($dsp_std->name())
+                    and $usr_ui->description == $dsp_std->description
+                    and $usr_ui->type_id() == $dsp_std->type_id()
+                    and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
+                    $usr_ui->del_usr_cfg();
                 } else {
 
                     // format the user view
-                    if ($dsp_usr->is_excluded()) {
+                    if ($usr_ui->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->name();
+                        $sandbox_usr_txt = $usr_ui->name();
                     }
-                    $sandbox_usr_txt = '<a href="/http/view_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = $html->ref(rest_ctrl::PATH_FIXED .'view_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard view
                     if ($dsp_std->is_excluded()) {
@@ -827,7 +816,7 @@ class user_display_old extends user
                         $usr_other->load_by_id($dsp_other_row[user_db::FLD_ID]);
 
                         // to review: load all user views with one query
-                        $dsp_other = clone $dsp_usr;
+                        $dsp_other = clone $usr_ui;
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row[view_db::FLD_NAME]);
                         $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
@@ -838,10 +827,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $dsp_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_view.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_view.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_view=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_view=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard view " . $sbx_row['std_view'], $url) . '</td>';
 
                     // display the view changes by the user
@@ -879,7 +868,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -930,18 +920,18 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the component object with the minimal parameter needed
-                $dsp_usr = new component($this);
-                $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->set_name($sbx_row['usr_name']);
-                $dsp_usr->description = $sbx_row['usr_comment'];
-                $dsp_usr->type_id = $sbx_row['usr_type'];
-                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
+                $usr_ui = new component($this);
+                $usr_ui->set_id($sbx_row['id']);
+                $usr_ui->set_name($sbx_row['usr_name']);
+                $usr_ui->description = $sbx_row['usr_comment'];
+                $usr_ui->type_id = $sbx_row['usr_type'];
+                $usr_ui->set_excluded($sbx_row['usr_excluded']);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->load_by_id($sbx_row['owner_id']);
 
-                $dsp_std = clone $dsp_usr;
+                $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->description = $sbx_row['std_comment'];
@@ -949,20 +939,20 @@ class user_display_old extends user
                 $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->name() == $dsp_std->name()
-                    and $dsp_usr->description == $dsp_std->description
-                    and $dsp_usr->type_id == $dsp_std->type_id
-                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
-                    $dsp_usr->del_usr_cfg();
+                if ($usr_ui->name() == $dsp_std->name()
+                    and $usr_ui->description == $dsp_std->description
+                    and $usr_ui->type_id == $dsp_std->type_id
+                    and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
+                    $usr_ui->del_usr_cfg();
                 } else {
 
                     // format the user component
-                    if ($dsp_usr->is_excluded()) {
+                    if ($usr_ui->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->name();
+                        $sandbox_usr_txt = $usr_ui->name();
                     }
-                    $sandbox_usr_txt = '<a href="/http/component_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = $html->ref(rest_ctrl::PATH_FIXED .'component_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard component
                     if ($dsp_std->is_excluded()) {
@@ -992,7 +982,7 @@ class user_display_old extends user
                         $usr_other->load_by_id($cmp_other_row[user_db::FLD_ID]);
 
                         // to review: load all user components with one query
-                        $cmp_other = clone $dsp_usr;
+                        $cmp_other = clone $usr_ui;
                         $cmp_other->set_user($usr_other);
                         $cmp_other->set_name($cmp_other_row[component::FLD_NAME]);
                         $cmp_other->description = $cmp_other_row[sql_db::FLD_DESCRIPTION];
@@ -1003,10 +993,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $cmp_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_component=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_component=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard component " . $sbx_row['std_component'], $url) . '</td>';
 
                     // display the component changes by the user
@@ -1044,7 +1034,8 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
         $result = ''; // reset the html code var
         $html = new html_base();
 
@@ -1098,40 +1089,40 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the component_link objects with the minimal parameter needed
-                $dsp_usr = new component_link($this);
-                $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->view()->set_id($sbx_row[view_db::FLD_ID]);
-                $dsp_usr->get_component()->set_id($sbx_row[component::FLD_ID]);
-                $dsp_usr->order_nbr = $sbx_row['usr_order'];
-                $dsp_usr->position_type = $sbx_row['usr_type'];
-                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
-                $dsp_usr->load_objects();
+                $usr_ui = new component_link($this);
+                $usr_ui->set_id($sbx_row['id']);
+                $usr_ui->view()->set_id($sbx_row[view_db::FLD_ID]);
+                $usr_ui->get_component()->set_id($sbx_row[component::FLD_ID]);
+                $usr_ui->order_nbr = $sbx_row['usr_order'];
+                $usr_ui->position_type = $sbx_row['usr_type'];
+                $usr_ui->set_excluded($sbx_row['usr_excluded']);
+                $usr_ui->load_objects();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->load_by_id($sbx_row['owner_id']);
 
-                $dsp_std = clone $dsp_usr;
+                $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->order_nbr = $sbx_row['std_order'];
                 $dsp_std->position_type = $sbx_row['std_type'];
                 $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->order_nbr == $dsp_std->order_nbr
-                    and $dsp_usr->position_type == $dsp_std->position_type
-                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
-                    $dsp_usr->del_usr_cfg();
+                if ($usr_ui->order_nbr == $dsp_std->order_nbr
+                    and $usr_ui->position_type == $dsp_std->position_type
+                    and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
+                    $usr_ui->del_usr_cfg();
                 } else {
 
                     // prepare the row component_links
-                    $sandbox_item_name = $dsp_usr->name_linked($back);
+                    $sandbox_item_name = $usr_ui->name_linked($back);
 
                     // format the user component_link
-                    if ($dsp_usr->is_excluded()) {
+                    if ($usr_ui->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->order_nbr;
+                        $sandbox_usr_txt = $usr_ui->order_nbr;
                     }
 
                     // format the standard component_link
@@ -1156,25 +1147,25 @@ class user_display_old extends user
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
                     $sbx_lst_other = $db_con->get_old($sql_other);
-                    foreach ($sbx_lst_other as $dsp_lnk_other_row) {
+                    foreach ($sbx_lst_other as $lnk_other_row_ui) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($dsp_lnk_other_row[user_db::FLD_ID]);
+                        $usr_other->load_by_id($lnk_other_row_ui[user_db::FLD_ID]);
 
                         // to review: load all user component_links with one query
-                        $dsp_lnk_other = clone $dsp_usr;
-                        $dsp_lnk_other->set_user($usr_other);
-                        $dsp_lnk_other->order_nbr = $dsp_lnk_other_row['order_nbr'];
-                        $dsp_lnk_other->position_type = $dsp_lnk_other_row['position_type'];
-                        $dsp_lnk_other->set_excluded($dsp_lnk_other_row[sql_db::FLD_EXCLUDED]);
+                        $lnk_other_ui = clone $usr_ui;
+                        $lnk_other_ui->set_user($usr_other);
+                        $lnk_other_ui->order_nbr = $lnk_other_row_ui['order_nbr'];
+                        $lnk_other_ui->position_type = $lnk_other_row_ui['position_type'];
+                        $lnk_other_ui->set_excluded($lnk_other_row_ui[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $dsp_lnk_other->name();
+                        $sandbox_other .= $lnk_other_ui->name();
                     }
-                    $sandbox_other = '<a href="/http/user_component_link.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_component_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_component_link=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_component_link=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard component_link " . $sbx_row['std_component_link'], $url) . '</td>';
 
                     // display the component_link changes by the user
@@ -1214,8 +1205,11 @@ class user_display_old extends user
     {
         log_debug($this->id());
 
-        global $db_con;
-        global $usr;
+        global $ui_sys;
+
+        // TODO Prio 0 split and move the database part to the backend
+        $db_con = new sql_db();
+        $usr = $ui_sys->usr;
         $result = ''; // reset the html code var
         $html = new html_base();
         $usr_msg = new user_message();
@@ -1271,19 +1265,19 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the source objects with the minimal parameter needed
-                $dsp_usr = new source($usr);
-                $dsp_usr->id = $sbx_row['id'];
-                $dsp_usr->set_name($sbx_row['usr_name']);
-                $dsp_usr->url = $sbx_row['usr_url'];
-                $dsp_usr->description = $sbx_row['usr_comment'];
-                $dsp_usr->type_id = $sbx_row['usr_type'];
-                $dsp_usr->excluded = $sbx_row['usr_excluded'];
+                $usr_ui = new source($usr);
+                $usr_ui->id = $sbx_row['id'];
+                $usr_ui->set_name($sbx_row['usr_name']);
+                $usr_ui->url = $sbx_row['usr_url'];
+                $usr_ui->description = $sbx_row['usr_comment'];
+                $usr_ui->type_id = $sbx_row['usr_type'];
+                $usr_ui->excluded = $sbx_row['usr_excluded'];
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->load_by_id($sbx_row['owner_id']);
 
-                $dsp_std = clone $dsp_usr;
+                $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->url = $sbx_row['std_url'];
@@ -1292,23 +1286,23 @@ class user_display_old extends user
                 $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->name() == $dsp_std->name()
-                    and $dsp_usr->url == $dsp_std->url
-                    and $dsp_usr->description == $dsp_std->description
-                    and $dsp_usr->type_id == $dsp_std->type_id
-                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
+                if ($usr_ui->name() == $dsp_std->name()
+                    and $usr_ui->url == $dsp_std->url
+                    and $usr_ui->description == $dsp_std->description
+                    and $usr_ui->type_id == $dsp_std->type_id
+                    and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
                     // TODO: add user config also to source?
-                    //$dsp_usr->del_usr_cfg();
-                    $dsp_usr->del($usr_msg);
+                    //$usr_ui->del_usr_cfg();
+                    $usr_ui->del($usr_msg);
                 } else {
 
                     // format the user source
-                    if ($dsp_usr->is_excluded()) {
+                    if ($usr_ui->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->name();
+                        $sandbox_usr_txt = $usr_ui->name();
                     }
-                    $sandbox_usr_txt = '<a href="/http/source_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = $html->ref(rest_ctrl::PATH_FIXED .'source_edit.php?id=' . $usr_ui->id() . '&back=' . $back, $sandbox_usr_txt);
 
                     // format the standard source
                     if ($dsp_std->is_excluded()) {
@@ -1339,7 +1333,7 @@ class user_display_old extends user
                         $usr_other->load_by_id($dsp_other_row[user_db::FLD_ID]);
 
                         // to review: load all user sources with one query
-                        $dsp_other = clone $dsp_usr;
+                        $dsp_other = clone $usr_ui;
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row['source_name']);
                         $dsp_other->url = $dsp_other_row[source_db::FLD_URL];
@@ -1351,10 +1345,10 @@ class user_display_old extends user
                         }
                         $sandbox_other .= $dsp_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_source.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_source.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id() . '&undo_source=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_source=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard source " . $sbx_row['std_source'], $url) . '</td>';
 
                     // display the source changes by the user

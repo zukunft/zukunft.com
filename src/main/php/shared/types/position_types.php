@@ -51,6 +51,34 @@ class position_types
     // place the component right or left the previous component but within an explicitly defined row
     const string COLUMN = "column";
 
+    // start the first column of a group that is shown side by side on wide screens
+    // and below each other if the screen width in pixel is below
+    // the 'min side width' of the user configuration
+    const string SIDE_OR_FIRST_BELOW = "side_or_first_below";
+    const int SIDE_OR_FIRST_BELOW_ID = 5;
+
+    // start a following column of a side by side group that is moved below on small screens
+    const string SIDE_OR_BELOW = "side_or_below";
+    const int SIDE_OR_BELOW_ID = 6;
+
+    // start the last column of a side by side group that is moved below on small screens
+    const string SIDE_OR_LAST_BELOW = "side_or_last_below";
+    const int SIDE_OR_LAST_BELOW_ID = 7;
+
+    // the position types that start a new column of a group
+    // that is shown side by side on wide screens and stacked on small screens
+    const array SIDE_OR_BELOW_GROUP = [
+        self::SIDE_OR_FIRST_BELOW,
+        self::SIDE_OR_BELOW,
+        self::SIDE_OR_LAST_BELOW,
+    ];
+
+    // the maximal number of side-or-below columns shown side by side on the widest screen;
+    // each column gets a minimal width of 'max side width' / this count so that up to this
+    // many columns fit at the configured wide width and the row wraps to fewer columns
+    // (down to one) as the screen gets narrower
+    const int MAX_SIDE_COLUMNS = 4;
+
     const string DEFAULT = self::BELOW;
     const int DEFAULT_ID = 1;
 

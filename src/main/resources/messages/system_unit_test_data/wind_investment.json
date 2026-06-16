@@ -1,0 +1,812 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-04 21:02:00",
+  "user": "timon",
+  "selection": [
+    "wind power investment"
+  ],
+  "words": [
+    {
+      "name": "2022",
+      "type": "time"
+    },
+    {
+      "name": "Wind",
+      "refs": [
+        {
+          "name": "Wind",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Power"
+    },
+    {
+      "name": "energy"
+    },
+    {
+      "name": "product"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "variable"
+    },
+    {
+      "name": "constant"
+    },
+    {
+      "name": "lifetime"
+    },
+    {
+      "name": "savings"
+    },
+    {
+      "name": "investment"
+    },
+    {
+      "name": "maintenance"
+    },
+    {
+      "name": "replacement"
+    },
+    {
+      "name": "mix"
+    },
+    {
+      "name": "climate"
+    },
+    {
+      "name": "warming"
+    },
+    {
+      "name": "gas"
+    },
+    {
+      "name": "investor"
+    },
+    {
+      "name": "Equity"
+    },
+    {
+      "name": "Outstanding"
+    },
+    {
+      "name": "Investment"
+    },
+    {
+      "name": "duration"
+    },
+    {
+      "name": "Production"
+    },
+    {
+      "name": "GWh"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "years"
+    },
+    {
+      "name": "North"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "CO2-eq"
+    },
+    {
+      "name": "kilowatt"
+    },
+    {
+      "name": "kWh"
+    },
+    {
+      "name": "Share"
+    },
+    {
+      "name": "proportion"
+    },
+    {
+      "name": "Price"
+    },
+    {
+      "name": "Euro"
+    },
+    {
+      "name": "gram"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "DKK"
+    },
+    {
+      "name": "Turbine",
+      "refs": [
+        {
+          "name": "Turbine",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "rating"
+    },
+    {
+      "name": "Top"
+    },
+    {
+      "name": "Seller"
+    },
+    {
+      "name": "Watt"
+    },
+    {
+      "name": "Kilo"
+    },
+    {
+      "name": "Mega"
+    },
+    {
+      "name": "Giga"
+    },
+    {
+      "name": "Tera"
+    },
+    {
+      "name": "Diameter",
+      "refs": [
+        {
+          "name": "Diameter",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "metre"
+    },
+    {
+      "name": "surface"
+    },
+    {
+      "name": "m²",
+      "refs": [
+        {
+          "name": "Square metre",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cP,Betz",
+      "refs": [
+        {
+          "name": "Betz's_law",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "global"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "Germany"
+    },
+    {
+      "name": "Sea"
+    },
+    {
+      "name": "Coast"
+    },
+    {
+      "name": "median"
+    },
+    {
+      "name": "speed"
+    },
+    {
+      "name": "second"
+    },
+    {
+      "name": "density"
+    },
+    {
+      "name": "Vestas"
+    },
+    {
+      "name": "company"
+    },
+    {
+      "name": "Plant"
+    },
+    {
+      "name": "hour"
+    },
+    {
+      "name": "full"
+    },
+    {
+      "name": "load"
+    },
+    {
+      "name": "electricity"
+    },
+    {
+      "name": "costs"
+    },
+    {
+      "name": "emissions"
+    },
+    {
+      "name": "plant"
+    },
+    {
+      "name": "production"
+    },
+    {
+      "name": "sheet"
+    },
+    {
+      "name": "balance"
+    }
+  ],
+  "triples": [
+    {
+      "name": "Wind Turbine",
+      "from": "Turbine",
+      "verb": "can use",
+      "to": "Wind"
+    },
+    {
+      "name": "North Sea",
+      "from": "Sea",
+      "verb": "kind of",
+      "to": "North"
+    },
+    {
+      "name": "North Sea Coast",
+      "from": "North Sea",
+      "verb": "has a",
+      "to": "Coast"
+    },
+    {
+      "name": "Power Plant",
+      "from": "Plant",
+      "verb": "of",
+      "to": "Power"
+    },
+    {
+      "name": "Wind Turbine (Power Plant)",
+      "from": "Wind Turbine",
+      "verb": "is a",
+      "to": "Power Plant"
+    },
+    {
+      "name": "kW",
+      "from": "Watt",
+      "verb": "scaled by",
+      "to": "Kilo"
+    },
+    {
+      "name": "kilowatt hour",
+      "from": "kilowatt",
+      "verb": "per",
+      "to": "hour"
+    },
+    {
+      "name": "MW",
+      "from": "Watt",
+      "verb": "scaled by",
+      "to": "Mega"
+    },
+    {
+      "name": "German North Sea Coast",
+      "from": "Germany",
+      "verb": "has a",
+      "to": "North Sea Coast"
+    },
+    {
+      "name": "metre per second",
+      "from": "metre",
+      "verb": "per",
+      "to": "second"
+    },
+    {
+      "from": "m/s",
+      "verb": "is symbol for",
+      "to": "metre per second"
+    },
+    {
+      "name": "W/m²",
+      "from": "Watt",
+      "verb": "per",
+      "to": "m²"
+    },
+    {
+      "name": "per kWh",
+      "verb": "per",
+      "to": "kWh"
+    },
+    {
+      "name": "Power per Wind Turbine",
+      "from": "Power",
+      "verb": "per",
+      "to": "Wind Turbine"
+    },
+    {
+      "name": "full load",
+      "from": "load",
+      "verb": "kind of",
+      "to": "full"
+    },
+    {
+      "name": "Full load hours",
+      "from": "hour",
+      "verb": "with",
+      "to": "full load"
+    },
+    {
+      "name": "Gigawatt",
+      "from": "Watt",
+      "verb": "scaled by",
+      "to": "Giga"
+    },
+    {
+      "name": "GWh",
+      "from": "Gigawatt",
+      "verb": "per",
+      "to": "hour"
+    },
+    {
+      "name": "GWh/a",
+      "from": "GWh",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "h/a",
+      "from": "hour",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "energy (product)",
+      "from": "energy",
+      "verb": "is a",
+      "to": "product"
+    },
+    {
+      "name": "time variable",
+      "from": "time",
+      "verb": "can be",
+      "to": "variable"
+    },
+    {
+      "name": "time constant",
+      "from": "time",
+      "verb": "can be",
+      "to": "constant"
+    },
+    {
+      "name": "production per time",
+      "from": "product",
+      "verb": "per",
+      "to": "time variable"
+    },
+    {
+      "name": "production per time constant",
+      "from": "product",
+      "verb": "per",
+      "to": "time constant"
+    },
+    {
+      "name": "lifetime per time",
+      "from": "lifetime",
+      "verb": "is a",
+      "to": "time variable"
+    },
+    {
+      "name": "time variable scaled by time",
+      "from": "time variable",
+      "verb": "scaled by",
+      "to": "time constant"
+    },
+    {
+      "name": "savings (production)",
+      "from": "savings",
+      "verb": "scaled by",
+      "to": "production"
+    },
+    {
+      "name": "second (time constant)",
+      "from": "second",
+      "verb": "is a",
+      "to": "time constant"
+    },
+    {
+      "name": "per year",
+      "from": "time",
+      "verb": "can be",
+      "to": "year"
+    },
+    {
+      "name": "replacement mix",
+      "from": "replacement",
+      "verb": "can be",
+      "to": "mix"
+    },
+    {
+      "name": "climate gas",
+      "from": "climate",
+      "verb": "can cause",
+      "to": "warming"
+    },
+    {
+      "name": "North Germany",
+      "from": "North",
+      "verb": "is part of",
+      "to": "Germany"
+    },
+    {
+      "name": "Production per year",
+      "from": "Production",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "energy production",
+      "from": "production",
+      "verb": "of",
+      "to": "energy"
+    },
+    {
+      "name": "energy production per year",
+      "from": "energy production",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "lifetime in years",
+      "from": "lifetime",
+      "verb": "in",
+      "to": "year"
+    },
+    {
+      "name": "Investment duration",
+      "from": "Investment",
+      "verb": "has a",
+      "to": "duration"
+    },
+    {
+      "name": "Power rating",
+      "from": "Power",
+      "verb": "of",
+      "to": "rating",
+      "description": "see Wikipedia: Power_rating"
+    },
+    {
+      "name": "Top Seller",
+      "from": "Seller",
+      "verb": "kind of",
+      "to": "Top",
+      "description": "The most often sold product type"
+    },
+    {
+      "name": "global warming",
+      "from": "warming",
+      "verb": "kind of",
+      "to": "global"
+    },
+    {
+      "name": "global warming potential",
+      "from": "potential",
+      "verb": "of",
+      "to": "global warming",
+      "description": "see Wikipedia: Global warming potential"
+    },
+    {
+      "name": "Power density",
+      "from": "density",
+      "verb": "of",
+      "to": "Power"
+    },
+    {
+      "name": "Share Price",
+      "from": "Price",
+      "verb": "of",
+      "to": "Share"
+    },
+    {
+      "name": "balance sheet",
+      "from": "sheet",
+      "verb": "of",
+      "to": "balance"
+    },
+    {
+      "name": "climate gas emissions",
+      "from": "emissions",
+      "verb": "of",
+      "to": "climate gas"
+    },
+    {
+      "name": "production climate emissions",
+      "from": "climate gas emissions",
+      "verb": "of",
+      "to": "production"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "lifetime energy production",
+      "expression": "=\"energy production per year\" * \"lifetime in years\"",
+      "assigned_word": "Power Plant"
+    },
+    {
+      "name": "production climate emissions per kWh",
+      "expression": "=\"production climate emissions\" / \"kWh\"",
+      "assigned_word": "Power Plant"
+    },
+    {
+      "name": "CO2 reduction based on replacement mix",
+      "expression": "=\"CO2-eq\" \"replacement mix\" / \"CO2-eq\" \"production climate emissions per kWh\"",
+      "assigned_word": "Power Plant"
+    },
+    {
+      "name": "lifetime CO2 emissions",
+      "expression": "=\"CO2-eq\" \"climate gas emissions\" * \"lifetime\"",
+      "assigned_word": "Power Plant"
+    },
+    {
+      "name": "Euro per tonne",
+      "expression": "=\"CO2-eq\" \"climate gas emissions\" * \"lifetime\" /  \"investment\"",
+      "assigned_word": "Power Plant"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Windertrag Rechner Volker Quaschning",
+      "url": "https://www.volker-quaschning.de/software/windertrag/index.php"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "Power rating",
+        "kW",
+        "2022"
+      ],
+      "number": "3000",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "Diameter",
+        "metre",
+        "2022"
+      ],
+      "number": "115",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "Turbine",
+        "surface",
+        "m²",
+        "2022"
+      ],
+      "number": "10386.9",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "cP,Betz",
+        "2022"
+      ],
+      "number": "0.476",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "German North Sea Coast",
+        "median",
+        "Wind",
+        "speed",
+        "m/s"
+      ],
+      "number": "6.9",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "German North Sea Coast",
+        "median",
+        "Wind",
+        "Power density",
+        "W/m²"
+      ],
+      "number": "384.3",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "German North Sea Coast",
+        "median",
+        "Wind",
+        "Power per Wind Turbine",
+        "MW"
+      ],
+      "number": "1.1",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "German North Sea Coast",
+        "median",
+        "Wind Turbine",
+        "electricity",
+        "production",
+        "GWh/a"
+      ],
+      "number": "9.633",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "German North Sea Coast",
+        "median",
+        "Wind Turbine",
+        "full load",
+        "h/a"
+      ],
+      "number": "3211",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "investment",
+        "costs",
+        "2022"
+      ],
+      "number": "3.6",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "maintenance",
+        "costs",
+        "per year",
+        "million",
+        "Euro"
+      ],
+      "number": "0.108",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "German North Sea Coast",
+        "electricity"
+      ],
+      "number": "4.38",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind",
+        "Turbine",
+        "lifetime",
+        "years"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "electricity",
+        "replacement mix",
+        "North Germany",
+        "CO2-eq",
+        "gram",
+        "kilowatt hour"
+      ],
+      "number": "600"
+    },
+    {
+      "words": [
+        "production",
+        "climate gas",
+        "emissions",
+        "per kWh",
+        "Wind",
+        "Turbine",
+        "CO2-eq",
+        "gram"
+      ],
+      "number": "15"
+    },
+    {
+      "words": [
+        "investor",
+        "energy",
+        "production",
+        "plant",
+        "proportion",
+        "percent"
+      ],
+      "number": "0.85"
+    },
+    {
+      "words": [
+        "Vestas",
+        "Equity",
+        "Price",
+        "DKK"
+      ],
+      "number": "168.5"
+    },
+    {
+      "words": [
+        "Vestas",
+        "Outstanding",
+        "Share"
+      ],
+      "number": "3.03"
+    },
+    {
+      "words": [
+        "Investment duration"
+      ],
+      "number": "18"
+    },
+    {
+      "words": [
+        "Vestas",
+        "Production per year",
+        "MW",
+        "Power rating"
+      ],
+      "number": "12000"
+    }
+  ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
+    }
+  ],
+  "views": [
+    {
+      "name": "Wind investment",
+      "comment": "show is a investment in a wind park or a producer of wind turbines is better",
+      "type": "detail_view",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word"
+        }
+      ]
+    }
+  ]
+}

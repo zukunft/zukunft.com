@@ -61,9 +61,10 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 $app = new frontend();
+global $sys;
 $db_con = $app->start("error_log");
 
-global $sys_msk_cac;
+global $sys;
 
 $result = ''; // reset the html code var
 
@@ -87,13 +88,13 @@ if ($usr->id > 0) {
         $usr->load_usr_data();
 
         // prepare the display to edit the view
-        $view_id = $sys_msk_cac->id(views::ERR_LOG);
+        $view_id = $sys->msk_cac->id(views::ERR_LOG);
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();
-        $msk_dsp = new view_ui($msk->api_json());
+        $msk_ui = new view_ui($msk->api_json());
         $dto = new data_object();
-        $result .= $msk_dsp->dsp_navbar($dto, $back);
+        $result .= $msk_ui->dsp_navbar($dto, $back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
         $result .= err_dsp($err_id, $usr->id);
     }

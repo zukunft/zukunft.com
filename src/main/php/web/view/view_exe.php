@@ -46,8 +46,11 @@ include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::VIEW . 'view_base.php';
 include_once html_paths::VIEW . 'view_list.php';
@@ -56,6 +59,7 @@ include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
@@ -70,13 +74,17 @@ use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\display_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -93,7 +101,7 @@ class view_exe extends view_base
 
     /**
      * create the html code to view a sandbox object
-     * @param db_object $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the word, triple or formula object that should be shown to the user
      * @param data_object|null $cfg the context used to create the view
      * @param string $back the history of the user actions to allow rollbacks
      * @param string $pattern the selection pattern to filter a selection
@@ -102,11 +110,12 @@ class view_exe extends view_base
      * TODO use backtrace or use a global backtrace var
      */
     function show(
-        db_object    $dbo,
-        ?data_object $cfg = null,
-        string       $back = '',
-        string       $pattern = '',
-        bool         $test_mode = false
+        db_object|type_object|combine_named|sandbox_list $dbo,
+        ?data_object                                     $cfg = null,
+        string                                           $back = '',
+        string                                           $pattern = '',
+        bool                                             $test_mode = false,
+        array                                            $url_array = []
     ): string
     {
         $result = '';
@@ -128,8 +137,8 @@ class view_exe extends view_base
         } else {
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open();
-            $result .= $this->dsp_navbar($cfg, $back);
-            $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $pattern, $test_mode);
+            //$result .= $this->dsp_navbar($cfg, $back);
+            $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $pattern, $test_mode, $url_array);
             $result .= $this->dsp_type_close();
         }
 
@@ -139,7 +148,7 @@ class view_exe extends view_base
     /**
      * create the html code for all components of this view
      *
-     * @param db_object $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the word, triple or formula object that should be shown to the user
      * @param data_object|null $cfg the context used to create the view
      * @param string $form_name the name of the view which is also used for the html form name
      * @param string $back the backtrace for undo actions
@@ -148,12 +157,13 @@ class view_exe extends view_base
      * @return string the html code of all view components
      */
     private function dsp_entries(
-        db_object    $dbo,
-        ?data_object $cfg = null,
-        string       $form_name = '',
-        string       $back = '',
-        string       $pattern = '',
-        bool         $test_mode = false
+        db_object|type_object|combine_named|sandbox_list $dbo,
+        ?data_object                                     $cfg = null,
+        string                                           $form_name = '',
+        string                                           $back = '',
+        string                                           $pattern = '',
+        bool                                             $test_mode = false,
+        array                                            $url_array = []
     ): string
     {
         $html = new html_base();
@@ -177,15 +187,30 @@ class view_exe extends view_base
             $auto_row = true;
             // the style for the column if used
             $style_id = null;
+            // the columns of a side-or-below group that are stacked on small screens
+            $col_lst = [];
             foreach ($this->cmp_lst->lst() as $cmp) {
+                $pos_type = $cmp->pos_type_code_id($cfg->typ_lst_cache);
                 // add previous collected components to the final result
-                if ($row != '') {
+                if ($row != '' or $col_lst != []) {
                     // position the next component in a new row
-                    if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::BELOW) {
-                        if ($auto_row) {
-                            // the full page width row if a row contains only standard form elements
+                    if ($pos_type == position_types::BELOW) {
+                        if ($col_lst != []) {
+                            // close the side-or-below group with the last collected column
+                            $col_lst[] = $row;
+                            $result .= $this->dsp_side_or_below_row($col_lst);
+                            $col_lst = [];
+                            $style_id = null;
+                        } elseif ($auto_row) {
+                            // the row uses the style of the component e.g. col-md-4 for a short line
+                            // or the full page width if no style is set
                             // TODO easy move code to HTML class
-                            $result .= $html->div_row($row, view_styles::DEFAULT_ROW);
+                            $row_style = $html->get_style_code($style_id);
+                            if ($row_style == '') {
+                                $row_style = view_styles::DEFAULT_ROW;
+                            }
+                            $result .= $html->div_row($row, $row_style);
+                            $style_id = null;
                         } else {
                             // the component html code is added without adding a table row
                             $result .= $html->add_style($row, $style_id);
@@ -194,7 +219,12 @@ class view_exe extends view_base
                         $row = '';
                         $auto_row = true;
                     }
-                    if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::COLUMN) {
+                    if (in_array($pos_type, position_types::SIDE_OR_BELOW_GROUP)) {
+                        // the collected components become a column of the side-or-below group
+                        $col_lst[] = $row;
+                        $row = '';
+                    }
+                    if ($pos_type == position_types::COLUMN) {
                         // the component html code is added without adding a table row using the same style
                         $result .= $html->add_style($row, $style_id);
                         $row = '';
@@ -210,7 +240,7 @@ class view_exe extends view_base
                 if ($cmp->needs_row_components($cfg->typ_lst_cache)) {
                     $auto_row = false;
                 }
-                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode);
+                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode, $url_array);
 
                 // remember the style to apply it to the complete row or column
                 // TODO Prio 1 use a row / col explicit style parameter instead
@@ -227,12 +257,56 @@ class view_exe extends view_base
                 }
 
             }
-            if ($row != '') {
+            if ($col_lst != []) {
+                // close a side-or-below group at the end of the view
+                $col_lst[] = $row;
+                $result .= $this->dsp_side_or_below_row($col_lst);
+            } elseif ($row != '') {
                 $result .= $row;
             }
         }
 
         return $result;
+    }
+
+    /**
+     * combine the columns of a side-or-below group to one row
+     * that shows the columns side by side on wide screens
+     * and wraps them onto fewer rows (down to a single stacked column)
+     * as the screen gets narrower than the configured side widths
+     *
+     * @param array $col_lst the html code of the columns
+     * @return string the html code of the row with the wrapping columns
+     */
+    private function dsp_side_or_below_row(array $col_lst): string
+    {
+        global $ui_sys;
+
+        $html = new html_base();
+        if ($ui_sys?->cfg !== null) {
+            $min_width = (int)$ui_sys->cfg->get_by(
+                [triples::SIDE_WIDTH, words::MIN, words::LAYOUT, words::FRONTEND, words::USER],
+                def::FALLBACK_MIN_SIDE_WIDTH);
+            $wide_width = (int)$ui_sys->cfg->get_by(
+                [triples::SIDE_WIDTH, words::MAX, words::LAYOUT, words::FRONTEND, words::USER],
+                def::FALLBACK_WIDE_SIDE_WIDTH);
+        } else {
+            $min_width = def::FALLBACK_MIN_SIDE_WIDTH;
+            $wide_width = def::FALLBACK_WIDE_SIDE_WIDTH;
+        }
+        // size each column so that up to MAX_SIDE_COLUMNS fit at the configured wide width
+        // and the flex row wraps to fewer columns as the screen gets narrower;
+        // never narrower than half the min side width so two columns still fit above it
+        $col_width = max(
+            (int)round($wide_width / position_types::MAX_SIDE_COLUMNS),
+            (int)round($min_width / 2));
+        $cols = '';
+        foreach ($col_lst as $col) {
+            if ($col != '') {
+                $cols .= $html->div_col_min_width($col, $col_width);
+            }
+        }
+        return $html->div_row($cols);
     }
 
 
@@ -264,7 +338,8 @@ class view_exe extends view_base
         // for the word array build an object
         if ($this->type_id() == 1) {
             $result = $result . '<br><br>';
-            //$result = $result . '<a href="/http/view.php?words='.implode (",", $word_array).'&type=3">Really?</a>';
+            //$result = $result . '<a href="' . api::MAIN_SCRIPT_REL . '?' . url_var::MASK . '=' . views::PHRASE . '&'
+            // . url_var::ID . '='.implode (",", $word_array).'&type=3">Really?</a>';
             $result = $result . '</h1>';
         }
         return $result;
@@ -299,27 +374,28 @@ class view_exe extends view_base
      */
     function dsp_edit($add_cmp, $wrd, $back): string
     {
-        global $usr;
-        global $sys;
-        global $cfg;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
 
         $result = '';
         $html = new html_base();
 
         // use the default settings if needed
         if ($this->type_id() <= 0) {
-            $this->set_type_id($sys->typ_lst->msk_typ->id(view_types::DEFAULT));
+            $this->set_type_id($ui_sys->typ_lst_cache->msk_typ->id(view_types::DEFAULT));
         }
 
         // the header to add or change a view
         if ($this->id() <= 0) {
             $this->log_debug('create a view');
             $script = "view_add";
-            $result .= $html->dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+            $result .= $html->dsp_text_h2('Create a new view (for '
+                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         } else {
             $this->log_debug($this->dsp_id() . ' for user ' . $usr->name() . ' (called from ' . $back . ')');
             $script = "view_edit";
-            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for '
+                . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         }
         $result .= '<div class="row">';
 
@@ -347,7 +423,8 @@ class view_exe extends view_base
             $result .= $this->dsp_type_selector($script);
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION);
-            $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id() . "&back=" . $back);
+            $result .= $html->dsp_form_end('', $back,
+                $html->url_new(views::VIEW_DEL_ID, $this->id(), '', $back));
         }
 
         // in edit mode show the assigned words and the hist on the right
@@ -355,7 +432,11 @@ class view_exe extends view_base
             $result .= '</div>';
 
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
-            $row_limit = $cfg->get_by([triples::ROW_LIMIT, words::DATABASE], def::FALLBACK_DB_PAGE_ROWS);
+            if ($ui_sys?->cfg !== null) {
+                $row_limit = $ui_sys->cfg->get_by([triples::ROW_LIMIT, words::DATABASE], def::FALLBACK_DB_PAGE_ROWS);
+            } else {
+                $row_limit = def::FALLBACK_DB_PAGE_ROWS;
+            }
 
             // collect the history
             $changes = $this->dsp_hist(0, $row_limit, '', $back);
@@ -393,7 +474,8 @@ class view_exe extends view_base
     private function dsp_type_selector(string $form): string
     {//$sel->bs_class = $class;
         //$sel->attribute = $attribute;
-        return null->html_view_types->selector($form);
+        global $ui_sys;
+        return $ui_sys->typ_lst_cache->msk_typ->selector($form);
     }
 
     /**
@@ -402,7 +484,7 @@ class view_exe extends view_base
     private function linked_components($add_cmp, $wrd, string $script, $back): string
     {
         $html = new html_base();
-        global $ui_cfg;
+        global $ui_sys;
 
         $result = '';
 
@@ -418,10 +500,8 @@ class view_exe extends view_base
             $this->log_debug('loaded');
             $dsp_list = new display_list;
             $dsp_list->lst = $this->cmp_lst->lst();
-            $dsp_list->script_name = "view_edit.php";
-            $dsp_list->class_edit = view_exe::class;
             $dsp_list->script_parameter = $this->id() . "&back=" . $back . "&word=" . $wrd->id();
-            $result .= $dsp_list->display($back);
+            $result .= $dsp_list->display(view_exe::class, $this->id(), $back);
             $this->log_debug('displayed');
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '<tr><td>';
@@ -433,15 +513,17 @@ class view_exe extends view_base
                 $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
                 $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
-                $result .= $this->component_selector($script, '', $id_selected, $ui_cfg->component_list());
+                $result .= $this->component_selector($script, '', $id_selected, $ui_sys->component_list());
 
-                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
+                $result .= $html->dsp_form_end('',
+                    $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
-                $result .= $this->component_selector($script, '', $this->type_id(), $ui_cfg->component_list());
-                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
+                $result .= $this->component_selector($script, '', $this->type_id(), $ui_sys->component_list());
+                $result .= $html->dsp_form_end('',
+                    $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
             } else {
                 $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
                 $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
@@ -508,23 +590,24 @@ class view_exe extends view_base
         $this->log_debug($this->id() . ',' . $wrd_id);
 
         $result = '';
+        $html = new html_base();
 
-        $dsp_lst = new view_list();
+        $msk_lst = new view_list();
 
-        $call = '/http/view.php?words=' . $wrd_id;
+        $call = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&' . url_var::ID . '=' . $wrd_id;
         $field = 'new_id';
 
-        foreach ($dsp_lst as $dsp) {
-            $view_id = $dsp->id();
-            $view_name = $dsp->name();
+        foreach ($msk_lst as $msk) {
+            $view_id = $msk->id();
+            $view_name = $msk->name();
             if ($view_id == $this->id()) {
-                $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
+                $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
             } else {
-                $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
+                $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
-            $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_edit = $html->url_new(views::VIEW_EDIT_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
             $result .= btn_edit('design the view', $call_edit) . ' ';
-            $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_del = $html->url_new(views::VIEW_DEL_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';
         }

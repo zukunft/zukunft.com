@@ -51,6 +51,7 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("view_del");
 $html = new html_base();
 
@@ -88,9 +89,9 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
 
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno("Delete " . $dsp_del->name() . "? ", "/http/view_del.php?id=" . $dsp_del_id . "&back=" . $back);
         }

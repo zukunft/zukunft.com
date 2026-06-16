@@ -5,6 +5,8 @@
     model/application.php - the main backend application object to start and stop the $app
     ---------------------
 
+    $app is the suggested var name
+
     reads the backend environment vars,
     opens and closes the database connection
     and reads the system configuration from the database
@@ -50,6 +52,7 @@ include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'system_object.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
@@ -66,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
@@ -109,7 +113,7 @@ class application
         $db_con->db_type = SQL_DB_TYPE;
         $db_con->open();
 
-        // for the api only english is used
+        // for the api only English is used
         $mtr = new Translator(language_codes::SYS);
 
         // preload all types from the database
@@ -150,7 +154,7 @@ class application
         $db_con->open();
         log_debug($code_name . ' ... database link open');
 
-        // for the api only english is used
+        // for the api only English is used
         global $mtr;
         $mtr = new Translator(language_codes::SYS);
 
@@ -188,7 +192,6 @@ class application
     ): sql_db
     {
         global $sys;
-        global $errors;
 
         $sys->script = $code_name;
         $sys->times->switch(system_time_type::INIT);
@@ -221,9 +224,10 @@ class application
             log_info('environment ' . getenv(ENVIRONMENT));
         }
 
-        $sys->pod_name = $code_name;
+        // TODO Prio 0 combine with frontend.php
+        $sys->pod_name = POD_NAME;
 
-        $errors = 0;
+        $sys->errors = 0;
 
         log_debug($code_name . ': session_start');
 
@@ -287,9 +291,10 @@ class application
 
             // load system configuration
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+            $sys->load_cache_type($db_con);
             // TODO cache the system config json and detect
             $cfg = new config_numbers($usr_sys);
-            $cfg->load_cfg($usr_sys);
+            $cfg->load_cfg(null, $usr_sys);
             $mtr = new Translator($cfg->language());
 
             // preload all types from the database
@@ -337,9 +342,21 @@ class application
         if ($sys_time_end > $sys->time_limit) {
             $db_con->usr_id = users::SYSTEM_ID;
             $db_con->set_class(system_time_type::class);
-            $sys_script_id = $db_con->get_id($sys->script);
+            $fnc_lst = $sys->typ_lst->sys_log_fnc;
+            // TODO Prio 1 use an object and add tests
+            $sys_script_id = $fnc_lst->id_by_name($sys->script);
             if ($sys_script_id <= 0) {
-                $sys_script_id = $db_con->add_id($sys->script);
+                $sys_script = new system_time_type();
+                $sys_script->name = $sys->script;
+                $sys_script->code_id = $sys->script;
+                $sys_usr = new user();
+                $sys_usr->load_by_id(users::SYSTEM_ID);
+                $msg = new user_message($sys_usr);
+                $sys_script->save($msg);
+                if ($msg->is_ok()) {
+                    $sys_script_id = $sys_script->id();
+                    $sys->typ_lst->sys_log_fnc->add($sys_script);
+                }
             }
             $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
             $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);

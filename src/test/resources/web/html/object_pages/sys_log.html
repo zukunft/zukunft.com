@@ -1,76 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>test sys_log (zukunft.com)</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
-    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
-</head>
-<body>
-<div class="container"><h4>system log display test</h4>user view of a table with system log entries<br>
-    <table class="table table-striped table-bordered">
-        <tr>
-            <th>creation time</th>
-            <th>user</th>
-            <th>issue description</th>
-            <th>owner</th>
-            <th>status</th>
-        </tr>
-        <tr>
-            <td>2023-01-03 20:59:59</td>
-            <td>1</td>
-            <td>the log text that describes the problem for the user or system admin</td>
-            <td>0</td>
-            <td>1</td>
-        </tr>
-        <tr>
-            <td>2023-01-03 21:58:58</td>
-            <td>4</td>
-            <td>the log 2 text that describes the problem for the user or system admin</td>
-            <td>1</td>
-            <td>3</td>
-        </tr>
-    </table>
-    <br>admin view of a table with system log entries<br>
-    <table class="table table-striped table-bordered">
-        <tr>
-            <th>creation time</th>
-            <th>user</th>
-            <th>issue description</th>
-            <th>trace</th>
-            <th>program part</th>
-            <th>owner</th>
-            <th>status</th>
-        </tr>
-        <tr>
-            <td>2023-01-03T20:59:59+01:00</td>
-            <td></td>
-            <td>the log text that describes the problem for the user or system admin</td>
-            <td>the technical trace back description for debugging</td>
-            <td>3</td>
-            <td>0</td>
-            <td>1</td>
-            <td><a href="/http/error_update.php?id=1&status=4" title="close">close</a></td>
-        </tr>
-        <tr>
-            <td>2023-01-03T21:58:58+01:00</td>
-            <td></td>
-            <td>the log 2 text that describes the problem for the user or system admin</td>
-            <td>the technical trace 2 back description for debugging</td>
-            <td>5</td>
-            <td>1</td>
-            <td>3</td>
-            <td><a href="/http/error_update.php?id=2&status=4" title="close">close</a></td>
-        </tr>
-    </table>
-    <br></div>
-<footer>
-    <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot; <a
-            href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
-        available under the <a href="//creativecommons.org/publicdomain/zero/1.0/"
-                               title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License
-        and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a
-                href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License</small></div>
-</footer>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            test sys_log (zukunft.com)
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="67">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=view_change&id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=31&id=1">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=30">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=61">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=60">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                system log display test
+            </h4>
+            user view of a table with system log entries
+            <br>
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>
+                        creation time
+                    </th>
+                    <th>
+                        user
+                    </th>
+                    <th>
+                        issue description
+                    </th>
+                    <th>
+                        owner
+                    </th>
+                    <th>
+                        status
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        2023-01-03 20:59:59
+                    </td>
+                    <td>
+                        1
+                    </td>
+                    <td>
+                        the log text that describes the problem for the user or system admin
+                    </td>
+                    <td>
+                        0
+                    </td>
+                    <td>
+                        1
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        2023-01-03 21:58:58
+                    </td>
+                    <td>
+                        4
+                    </td>
+                    <td>
+                        the log 2 text that describes the problem for the user or system admin
+                    </td>
+                    <td>
+                        1
+                    </td>
+                    <td>
+                        3
+                    </td>
+                </tr>
+            </table>
+            <br>
+            admin view of a table with system log entries
+            <br>
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>
+                        creation time
+                    </th>
+                    <th>
+                        user
+                    </th>
+                    <th>
+                        issue description
+                    </th>
+                    <th>
+                        trace
+                    </th>
+                    <th>
+                        program part
+                    </th>
+                    <th>
+                        owner
+                    </th>
+                    <th>
+                        status
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        2023-01-03T20:59:59+01:00
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        the log text that describes the problem for the user or system admin
+                    </td>
+                    <td>
+                        the technical trace back description for debugging
+                    </td>
+                    <td>
+                        3
+                    </td>
+                    <td>
+                        0
+                    </td>
+                    <td>
+                        1
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=66&id=1&status=4">
+                            close
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        2023-01-03T21:58:58+01:00
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        the log 2 text that describes the problem for the user or system admin
+                    </td>
+                    <td>
+                        the technical trace 2 back description for debugging
+                    </td>
+                    <td>
+                        5
+                    </td>
+                    <td>
+                        1
+                    </td>
+                    <td>
+                        3
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=66&id=2&status=4">
+                            close
+                        </a>
+                    </td>
+                </tr>
+            </table>
+            <br>
+        </main>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
 </html>

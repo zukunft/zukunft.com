@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("values_paste");
 
 $result = ''; // reset the html code var
@@ -73,7 +74,7 @@ if ($usr->id() > 0) {
         // get the linked words from url
         $wrd_pos  = 1;
         $wrd_ids  = array(); // suggested word for the new value that the user can change
-        $type_ids = array(); // word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word; if the type id is -1 the word is not supposed to be adjusted e.g. when editing a table cell
+        $type_ids = array(); // word to preselect the suggested words e.g. "country" to list all their countries first for the suggested word; if the type id is -1 the word is not supposed to be adjusted e.g. when editing a table cell
         $db_ids   = array(); // database id of the link to identify link updates
         while (isset($_GET['word'.$wrd_pos])) {
           $wrd_ids[] = $_GET['word'.$wrd_pos];

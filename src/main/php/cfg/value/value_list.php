@@ -224,6 +224,28 @@ class value_list extends sandbox_value_list
         return $result;
     }
 
+    /**
+     * get the first value of the list that is related to the given phrase name
+     * and where all phrases of the value are within the given context
+     * e.g. to select the value that a formula uses to calculate a result
+     *
+     * @param string $phr_name the name of the phrase that selects the value e.g. "price"
+     * @param array $ctx_names the phrase names that limit the selection e.g. "apple" and "CHF"
+     * @return value_base|null the first matching value or null if no value matches
+     */
+    function get_by_name_and_context(string $phr_name, array $ctx_names): ?value_base
+    {
+        $result = null;
+        foreach ($this->lst() as $val) {
+            if ($result == null) {
+                if ($val->match_all([$phr_name]) and $val->matches_context($ctx_names)) {
+                    $result = $val;
+                }
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * load
@@ -296,9 +318,29 @@ class value_list extends sandbox_value_list
         if (count($val_ids) === 0) {
             $val_ids = $this->ids();
         }
-        $sc = $db_con->sql_creator();
-        $qp = $this->load_sql_by_ids($sc, $val_ids, 0, 0, false, $val_typ);
-        return $this->load($qp);
+        // PRIME and MOST/BIG values cannot be UNION-ed in a single query:
+        // PRIME selects the four phrase_id_* columns and MOST/BIG selects a
+        // single group_id column, so the column counts differ. Split the id
+        // list by table type and run one query per type, merging the rows
+        // into this list.
+        $grp_id_helper = new group_id();
+        $ids_by_type = [];
+        foreach ($val_ids as $id) {
+            $tt = $grp_id_helper->table_type($id)->value;
+            $ids_by_type[$tt][] = $id;
+        }
+        $loaded = false;
+        foreach ($ids_by_type as $type_ids) {
+            if (empty($type_ids)) {
+                continue;
+            }
+            $sc = $db_con->sql_creator();
+            $qp = $this->load_sql_by_ids($sc, $type_ids, 0, 0, false, $val_typ);
+            if ($this->load($qp)) {
+                $loaded = true;
+            }
+        }
+        return $loaded;
     }
 
     // interface load
@@ -656,8 +698,10 @@ class value_list extends sandbox_value_list
             $tbl_typ = array_shift($matrix_row);
             $sc_par_lst->add($tbl_typ);
             $sc_par_lst->add($val_typ->sql_type());
-            // TODO add the union query creation for the other table types
-            // combine the select statements with and instead of union if possible
+            // PRIME values are addressed by their 1..4 phrase id columns,
+            // so one sub-query per matrix row is built here; MOST and BIG
+            // values are addressed by group_id and batched per table type
+            // outside this loop.
             if ($tbl_typ == sql_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
@@ -701,6 +745,59 @@ class value_list extends sandbox_value_list
 
                 $qp->merge($qp_tbl, false, $sc_par_lst);
             }
+        }
+
+        // MOST and BIG values key by group_id (char(112) / text), so the
+        // whole batch for one table type can be served with a single
+        // `group_id = ANY (...)` clause that gets UNION-merged with the
+        // PRIME sub-queries above.
+        $grp_id_helper = new group_id();
+        foreach ([sql_type::MOST, sql_type::BIG] as $tbl_typ) {
+            $type_ids = array();
+            foreach ($ids as $id) {
+                if ($grp_id_helper->table_type($id) == $tbl_typ) {
+                    $type_ids[] = $id;
+                }
+            }
+            if (empty($type_ids)) {
+                continue;
+            }
+
+            $sc_par_lst = new sql_type_list();
+            $sc_par_lst->add($tbl_typ);
+            $sc_par_lst->add($val_typ->sql_type());
+            if ($usr_tbl) {
+                $sc_par_lst->add(sql_type::USER);
+            }
+            $qp_tbl = $this->load_sql_multi($sc, '', $sc_par_lst);
+            // load_sql_multi defaults the id field to the PRIME phrase_id_1..4
+            // columns (fresh value()->is_prime() is true because its empty
+            // group has id 0). MOST/BIG values key on group_id, so the
+            // user-join must use group_id; otherwise the JOIN references
+            // s.phrase_id_1 on a values/values_big table that has no such
+            // column. Override before generating the SQL.
+            $sc->set_id_field(value_db::FLD_ID);
+            $txt_fld_lst = $sc_par_lst->txt_user_fields();
+            $num_fld_lst = $sc_par_lst->num_user_fields();
+            $geo_fld_lst = $sc_par_lst->geo_user_fields();
+            if ($par_offset == 0) {
+                $sc->set_usr_fields($txt_fld_lst);
+                $sc->set_usr_num_fields($num_fld_lst);
+                $sc->set_usr_geo_fields($geo_fld_lst);
+            } else {
+                $sc->set_usr_fields($txt_fld_lst, false);
+                $sc->set_usr_num_fields($num_fld_lst, false);
+                $sc->set_usr_geo_fields($geo_fld_lst, false);
+            }
+            $sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
+            $sc->add_where(value_db::FLD_ID, $type_ids, sql_par_type::TEXT_LIST, null, '', $par_offset);
+
+            $qp_tbl->sql = $sc->sql($par_offset, true, false);
+            $qp_tbl->par = $sc->get_par();
+            $par_offset = $par_offset + count($qp_tbl->par);
+            $par_types = array_merge($par_types, $sc->get_par_types());
+
+            $qp->merge($qp_tbl, false, $sc_par_lst);
         }
 
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);

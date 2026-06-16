@@ -39,8 +39,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::GROUP . 'group.php';
-//include_once html_paths::HELPER . 'config.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once html_paths::FORMULA . 'formula.php';
@@ -50,34 +51,46 @@ include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VERB . 'verb_list.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\group\group;
-use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class phrase_list extends sandbox_list_named
@@ -86,6 +99,37 @@ class phrase_list extends sandbox_list_named
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this phrase list frontend object based on the url array
+     * the comma-separated phrase ids are read from the CONTEXT field;
+     * the sign of each id encodes the class (positive = word, negative = triple)
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    {
+        if (array_key_exists(url_var::CONTEXT, $url_array)) {
+            $id_csv = $url_array[url_var::CONTEXT];
+            if ($id_csv !== '' && $id_csv !== null) {
+                foreach (explode(',', $id_csv) as $id_str) {
+                    $id_int = (int)$id_str;
+                    $phr = new phrase();
+                    // positive phrase id = word, negative = triple (see phrase::id())
+                    if ($id_int >= 0) {
+                        $phr->set_obj(new word());
+                    } else {
+                        $phr->set_obj(new triple());
+                    }
+                    $phr->set_id($id_int);
+                    $this->add($phr);
+                }
+            }
+        }
+        return $usr_msg;
+    }
 
     /**
      * set the vars of a phrase list based on the given json
@@ -203,6 +247,81 @@ class phrase_list extends sandbox_list_named
         return $phr;
     }
 
+    /**
+     * build the category subtitle html for the page-title
+     * based on the verbs::CATEGORY_VERBS priority list
+     *
+     * e.g. "CHF is symbol for <Swiss Franc>"
+     * or if not a symbol e.g. "Zurich is a <City>, <Canton>, <Company>")
+     *
+     * @param phrase $phr the starting phrase whose category subtitle is being rendered
+     * @param int|null $max the maximal number of links to show
+     * @return string the rendered subtitle html, or '' when no category verb matches
+     */
+    function category_subtitle(
+        phrase $phr,
+        ?int   $max = null
+    ): string
+    {
+        global $ui_sys;
+
+        $result = '';
+
+        $vrb_cac = $ui_sys->typ_lst_cache->vrb ?? null;
+
+        if ($this->is_empty()) {
+            log_debug('list of related phrase is empty for ' . $phr->dsp_id());
+            // an empty related list is normal (e.g. a word with no connecting triples)
+        } elseif ($vrb_cac === null) {
+            log_err('the verb type cache is not loaded, so the category subtitle for '
+                . $phr->dsp_id() . ' cannot be built');
+        } else {
+            $this->sort_by_impact();
+            foreach (verbs::CATEGORY_VERBS as [$vrb_code_id, $direction]) {
+                // the first (highest-priority) category verb with matching entries wins
+                if ($result === '') {
+                    $vrb = $vrb_cac->get_by_code_id($vrb_code_id);
+                    if ($vrb === null) {
+                        log_err('the category verb "' . $vrb_code_id . '" is missing in the verb cache');
+                    } else {
+                        $links = [];
+                        foreach ($this->lst() as $lnk_phr) {
+                            if ($lnk_phr->is_triple()) {
+                                $trp = $lnk_phr->obj();
+                                $lnk = $trp->get_link_by_verb($phr, $vrb, $direction);
+                                if ($lnk !== null) {
+                                    if (count($links) < $max or $max === null) {
+                                        $links[] = $lnk;
+                                    } else {
+                                        $links[] = $this->more_link($phr->id());
+                                    }
+                                }
+                            }
+                        }
+                        if (count($links) > 0) {
+                            $result = $vrb->name() . ' ' . implode(', ', $links);
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * placeholder link to all related object for a (too) long list
+     * @param int $parent_id the id of the object who related objects should be shown
+     * @return ?string the html code of the more placeholder
+     */
+    private function more_link(
+        int $parent_id
+    ): ?string
+    {
+        $html = new html_base();
+        $url = $html->url_new(views::WORD_RELATED_ID, $parent_id);
+        return $html->ref($url, '...');
+    }
+
 
     /*
      * select
@@ -272,6 +391,89 @@ class phrase_list extends sandbox_list_named
             }
         }
         return $result;
+    }
+
+    /**
+     * get the triples that point to the given phrase excluding the given verbs
+     * e.g. to show the related phrases without the alias and symbol entries on the default word page
+     * @param phrase $phr the target phrase
+     * @param array $vrb_ids the database ids of the verbs to exclude
+     * @return phrase_list the triples to the given phrase without the excluded verbs
+     */
+    function parent_triples_ex_verbs(phrase $phr, array $vrb_ids): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $trp) {
+            if ($trp->is_triple()) {
+                if (!in_array($trp->get_verb()?->id(), $vrb_ids)) {
+                    if ($trp->get_to()->id() == $phr->id()) {
+                        $result->add($trp);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * to select a phrase from this list
+     * @param string $name the unique name within the html form for this selector
+     * @param string $form the name of the html form
+     * @param int|null $selected the row id of the suggested phrase or the already selected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @param msg_id $label_id the translation id for the text shown to the user
+     * @param string $style the style code e.g. to define the target width
+     * @return string the html code to select the phrase
+     */
+    public function phrase_selector(
+        string $name,
+        string $form,
+        ?int   $selected = null,
+        string $pattern = '',
+        msg_id $label_id = msg_id::FORM_SELECT_PHRASE,
+        string $style = view_styles::COL_SM_4
+    ): string
+    {
+        return $this->selector($form, $selected, $name, $label_id, $style, html_selector::TYPE_DATALIST);
+    }
+
+    /**
+     * create the HTML code to select a view
+     * overrides db_object::view_selector for phrase_list objects
+     * since a phrase_list is not a sandbox object, the default view falls back to the bare phrase view
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with the suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+    ): string
+    {
+        $msk_lst = $msk_lst->ex_system();
+        return $msk_lst->selector($form, views::PHRASE_ID, $name, $msg_id);
+    }
+
+    /**
+     * the html code to select a filename e.g. to upload the file
+     * @param string $form the name of the view which is also used for the html form name
+     * @param data_object|null $cfg the context used to create the view
+     * @return string with the html code to select a file
+     */
+    public function select_file(string $form, ?data_object $cfg = null): string
+    {
+        $name = '';
+        $lst = [];
+        if ($cfg !== null && $cfg->has_file_list()) {
+            $lst = $cfg->file_list();
+            if ($lst !== []) {
+                $name = $lst[0];
+            }
+        }
+        return $this->file_selector($form, $name, $lst);
     }
 
     /**
@@ -390,12 +592,63 @@ class phrase_list extends sandbox_list_named
 
 
     /*
+     * sort
+     */
+
+    /**
+     * sort this phrase list in place so that the phrase with the highest impact is first
+     * the impact is the system calculated relevance of the wrapped word or triple
+     * phrases with the same (or no) impact are sorted by name and finally by id so that the
+     * order is always deterministic and the html does not change between runs e.g. for the
+     * snapshot tests, also when the phrase names are not loaded (only the ids are known)
+     * @return void
+     */
+    function sort_by_impact(): void
+    {
+        $lst = $this->lst();
+        usort($lst, function (phrase $a, phrase $b) {
+            return $b->impact() <=> $a->impact()
+                ?: strcmp($a->name() ?? '', $b->name() ?? '')
+                ?: $a->id() <=> $b->id();
+        });
+        $this->set_lst($lst);
+    }
+
+    /**
+     * @return float the highest system calculated impact of the phrases in this list (0.0 if the list is empty)
+     */
+    function max_impact(): float
+    {
+        $max = 0.0;
+        foreach ($this->lst() as $phr) {
+            if ($phr->impact() > $max) {
+                $max = $phr->impact();
+            }
+        }
+        return $max;
+    }
+
+
+    /*
      * display
      */
+
+    /**
+     * create the html code to display the phrases sorted with the highest impact first
+     * e.g. to show the stock with the highest market capitalisation first
+     * in contrast to name_link() which sorts the phrases by name
+     * @return string with a list of the phrase names with html links
+     */
+    function name_link_by_impact(): string
+    {
+        $this->sort_by_impact();
+        return implode(', ', $this->names_linked());
+    }
 
     function name_link_list(?phrase_list $phr_lst_header = null): string
     {
         $result = '';
+        $this->sort_by_impact();
         if ($phr_lst_header != null) {
             if (!$phr_lst_header->is_empty()) {
                 $this->remove($phr_lst_header);
@@ -584,12 +837,10 @@ class phrase_list extends sandbox_list_named
      */
     function mainly(): ?phrase
     {
-        global $db_con;
         $phr = null;
         if ($this->count() > 1) {
-            $cfg = new config();
             // TODO get from frontend config
-            // $is_dominant_pct = $cfg->get(config::MIN_PCT_OF_PHRASES_TO_PRESELECT, $db_con);
+            // $is_dominant_pct = $ui_sys->cfg->get(config::MIN_PCT_OF_PHRASES_TO_PRESELECT, $db_con);
             $is_dominant_pct = 0.3;
             $count_lst = array_count_values($this->id_lst());
             sort($count_lst);
@@ -637,7 +888,8 @@ class phrase_list extends sandbox_list_named
      */
     function dsp_name(): string
     {
-        global $debug;
+        global $ui_sys;
+        $debug = $ui_sys->debug;
         $lib = new library();
 
         $name_lst = $this->names();
@@ -721,7 +973,7 @@ class phrase_list extends sandbox_list_named
         }
         $url_phr = $this->id_url_long();
 
-        $val_btn_call  = '/http/value_add.php?back='.$back.$url_phr;
+        $val_btn_call  = rest_ctrl::PATH_FIXED .'value_add.php?back='.$back.$url_phr;
         $result .= \html\btn_add ($val_btn_title, $val_btn_call);
         zu_debug('phrase_list->btn_add_value -> done');
         */

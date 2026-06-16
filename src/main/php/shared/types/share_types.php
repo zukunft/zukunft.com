@@ -40,6 +40,7 @@ class share_types
     const string PUBLIC_NAME = "public";
     const string PUBLIC_COM = "value can be seen and used by everyone (default)";
     const string PERSONAL = "personal";
+    const string PERSONAL_NAME = "personal";
     const string GROUP = "group";
     const string PRIVATE = "private";
     const string PERSONAL_LOG = "personal_log";

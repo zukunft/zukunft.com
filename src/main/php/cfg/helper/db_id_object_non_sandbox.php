@@ -181,7 +181,8 @@ class db_id_object_non_sandbox extends db_object_seq_id
      */
     function del(user_message $msg): bool
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         if ($this->id() == 0) {

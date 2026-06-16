@@ -527,7 +527,7 @@ class test_api extends test_base
         $url_map = new url_mapper();
         $usr_msg = new user_message_ui();
         $class = $lib->class_to_name($class);
-        $url = api::HOST_TESTING . url_var::API_PATH . $lib->camelize_ex_1($class);
+        $url = THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {
@@ -738,18 +738,26 @@ class test_api extends test_base
         // remove the change time
         if ($actual != null) {
             $actual = $this->json_remove_volatile($actual, $ignore_id);
+            $actual = $this->json_remove_fields_only_to_ui($actual);
         }
         if ($expected != null) {
             $expected = $this->json_remove_volatile($expected, $ignore_id);
+            $expected = $this->json_remove_fields_only_to_ui($expected);
         }
 
-        // TODO remove, for faster debugging only
-        $json_actual = json_encode($actual);
-        $json_expected = json_encode($expected);
-        if ($contains) {
-            return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true);
+        if ($expected === null) {
+            log_err('the file ' . $filename . ' for ' . $class_for_file . ' is missing');
+            return false;
         } else {
-            return $this->assert_json($class . ' API GET', $actual, $expected);
+
+            // TODO remove, for faster debugging only
+            $json_actual = json_encode($actual);
+            $json_expected = json_encode($expected);
+            if ($contains) {
+                return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true);
+            } else {
+                return $this->assert_json($class . ' API GET', $actual, $expected);
+            }
         }
     }
 
@@ -796,7 +804,7 @@ class test_api extends test_base
             $class = url_var::REF_API;
         }
         $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
-        return api::HOST_TESTING . url_var::API_PATH . $url_class;
+        return THIS_URL . url_var::API_PATH . $url_class;
     }
 
     /**

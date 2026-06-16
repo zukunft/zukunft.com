@@ -33,10 +33,11 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
@@ -44,7 +45,8 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 include_once html_paths::FIGURE . 'figure.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'url_var.php';
 
 class figure_tests
 {
@@ -111,7 +113,7 @@ class figure_tests
         $fig = $t_fig->figure_value();
         $dsp = $tl->ui_obj($fig, new figure_ui());
         $html_link = $dsp->display_linked();
-        $t->assert_text_contains('figure html link', $html_link, rest_ctrl::RESULT_EDIT);
+        $t->assert_text_contains('figure html link', $html_link, url_var::MASK . '=' . views::RESULT_EDIT_ID);
 
     }
 

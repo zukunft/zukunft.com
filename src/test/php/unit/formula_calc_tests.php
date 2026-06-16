@@ -38,19 +38,25 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once html_paths::ELEMENT . 'element_group.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -92,9 +98,9 @@ class formula_calc_tests
 
         $result = $exp->dsp_id();
         $target = '""' . words::PERCENT . '" = ( "'
-            . words::THIS_NAME . '" - "'
-            . words::PRIOR_NAME . '" ) / "'
-            . words::PRIOR_NAME . '"" ({w'
+            . word_names::THIS_NAME . '" - "'
+            . word_names::PRIOR_NAME . '" ) / "'
+            . word_names::PRIOR_NAME . '"" ({w'
             . $wrd_pct->id() . '}=({f'
             . $frm_this->id() . '}-{f'
             . $frm_prior->id() . '})/{f'
@@ -106,35 +112,30 @@ class formula_calc_tests
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"'
-            . formulas::THIS_NAME . '" ('
+            . formula_names::THIS_NAME . '" ('
             . $frm_this->id() . ') / "'
-            . formulas::PRIOR . '" ('
+            . formula_names::PRIOR . '" ('
             . $frm_prior->id() . ') / "'
-            . formulas::PRIOR . '" ('
+            . formula_names::PRIOR . '" ('
             . $frm_prior->id() . ')';
         $t->dsp_contains($test_name, $target, $result);
 
         $test_name = 'formula increase; test the display name that can be used for user debugging';
         $frm_html = new formula_ui($frm->api_json());
-        $trm_lst_dsp = new term_list_ui($trm_lst->api_json());
+        $trm_lst_ui = new term_list_ui($trm_lst->api_json());
         $back = 0;
-        $result = $frm_html->dsp_text($back, $trm_lst_dsp);
+        $result = $frm_html->dsp_text($back, $trm_lst_ui);
+        $frm_edit_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_EDIT_ID . '&id=';
         $target = '"' . words::PERCENT
-            . '" = ( <a href="/http/formula_edit.php?id='
-            . $frm_this->id() . '&back=0" title="'
-            . words::THIS_NAME . '">'
-            . words::THIS_NAME
-            . '</a> - <a href="/http/formula_edit.php?id='
+            . '" = ( <a href="' . $frm_edit_url
+            . $frm_this->id() . '&back=0">'
+            . word_names::THIS_NAME
+            . '</a> - <a href="' . $frm_edit_url
             . $frm_prior->id()
-            . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="'
-            . words::PRIOR_NAME . '">'
-            . words::PRIOR_NAME . '</a>>'
-            . words::PRIOR_NAME
-            . '</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id='
-            . $frm_prior->id() . '&back=0" title="'
-            . words::PRIOR_NAME . '">'
-            . words::PRIOR_NAME . '</a>>'
-            . words::PRIOR_NAME . '</a>';
+            . '&back=0">'
+            . word_names::PRIOR_NAME
+            . '</a> ) / <a href="' . $frm_edit_url . '20&back=0">'
+            . word_names::PRIOR_NAME . '</a>';
         $t->assert($test_name, $result, $target);
 
         // define the element group object to retrieve the value
@@ -142,12 +143,11 @@ class formula_calc_tests
         if (count($elm_grp_lst->lst()) > 0) {
             // get "this" from the formula element group list
             $elm_grp = $elm_grp_lst->lst()[0];
-            $elm_grp_dsp = new element_group_ui($elm_grp->api_json());
-            $result = $elm_grp_dsp->dsp_names();
-            $target = '<a href="/http/formula_edit.php?id='
-                . $frm_this->id() . '" title="'
-                . words::THIS_NAME . '">'
-                . words::THIS_NAME . '</a>';
+            $elm_grp_ui = new element_group_ui($elm_grp->api_json());
+            $result = $elm_grp_ui->dsp_names();
+            $target = '<a href="' . $frm_edit_url
+                . $frm_this->id() . '">'
+                . word_names::THIS_NAME . '</a>';
             $t->assert('element_group->dsp_names', trim($result), trim($target));
         }
         /*
@@ -158,9 +158,9 @@ class formula_calc_tests
 
             $test_name = 'formula increase; test if the values for an element group are displayed correctly';
             $frm_html = new formula_dsp($frm->api_json());
-            $trm_lst_dsp = new term_list_dsp($trm_lst->api_json());
+            $trm_lst_ui = new term_list_dsp($trm_lst->api_json());
             $back = 0;
-            $result = $frm_html->dsp_text($back, $trm_lst_dsp);
+            $result = $frm_html->dsp_text($back, $trm_lst_ui);
             $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
             $t->assert($test_name, $result, $target);
         }
@@ -179,9 +179,9 @@ class formula_calc_tests
         $target->add($frm_wrd->phrase());
         $trm_lst->add($frm_wrd->term());
         $exp = new expression($frm);
-        $exp->set_ref_text('{w' . words::ONE_ID . '}={w' . words::MIO_ID . '}*1000000', $t_trm->term_list_scale());
+        $exp->set_ref_text('{w' . word_names::ONE_ID . '}={w' . word_names::MIO_ID . '}*1000000', $t_trm->term_list_scale());
         $result = $exp->load_result_phrases($trm_lst);
-        $t->assert('Expression->res_phr_lst for ' . formulas::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
+        $t->assert('Expression->res_phr_lst for ' . formula_names::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
 
         // get the special formulas used in a formula to calculate the result
         // e.g. "next" is a special formula to get the following values
@@ -199,17 +199,17 @@ class formula_calc_tests
         $frm = $t_frm->formula();
         $trm_lst = $frm->term_list($t_trm->term_list_time());
         $t->assert($test_name, $trm_lst->dsp_id(),
-            '"' . words::MINUTE . '","' . words::SECOND . '" ('
-            . $lib->term_id(words::SECOND_ID, word::class) . ','
-            . $lib->term_id(words::MINUTE_ID, word::class) . ')');
+            '"' . word_names::MINUTE . '","' . triple_names::SECOND . '" ('
+            . $lib->term_id(triple_names::SECOND_ID, triple::class) . ','
+            . $lib->term_id(word_names::MINUTE_ID, word::class) . ')');
 
         // TODO add result display test
 
         // test the calculation of one value
         $trm_lst = $t->term_list_for_tests(array(
             words::PCT,
-            formulas::THIS_NAME,
-            formulas::PRIOR
+            formula_names::THIS_NAME,
+            formula_names::PRIOR
         ));
         $phr_lst = $t_phr->phrase_list_increase();
 
@@ -227,8 +227,28 @@ class formula_calc_tests
         $test_name = 'formula city population reference text';
         $frm = $t_frm->formula_city_population();
         $result = $frm->get_ref_text();
-        $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . words::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . words::CITY_ID . '})';
+        $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . word_names::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . word_names::CITY_ID . '})';
         $t->assert($test_name, $result, $target);
+
+
+        $t->subheader($ts . 'to_num_new');
+
+        // result_can_calc is the gate used by to_num_new to decide if a result can be calculated;
+        // when the formula does not require all values it may always be calculated
+        $test_name = 'result_can_calc allows the calculation when not all values are needed';
+        $frm = $t_frm->formula_increase();
+        $frm->need_all_val = false;
+        $res = new result($usr);
+        $t->assert_true($test_name, $frm->result_can_calc($res));
+
+        // ... but it denies the calculation when all values are needed and one is still missing
+        $test_name = 'result_can_calc denies the calculation when a needed value is missing';
+        $frm->need_all_val = true;
+        $res->val_missing = true;
+        $t->assert_false($test_name, $frm->result_can_calc($res));
+
+        // the full to_num_new calculation (load_data_for_calc + filling the figures + parsing the
+        // result) needs the values loaded from the database; see the commented to_num test above
 
     }
 

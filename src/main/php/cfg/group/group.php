@@ -5,6 +5,8 @@
     model/group/group.php - a combination of a word list and a triple_list
     ---------------------
 
+    $grp is the suggested var name
+
     the prime group is designed to be useful for normal values e.g. the number of inhabitants in Zurich 2023
     the index group is designed to be useful for structured values e.g.
     the index big group is designed to be useful for highly structured values e.g. the ISIN as a 48-bit value with up to 65k fields (because each field can be a triple a multi dimensional tables can be store with index big)
@@ -1263,8 +1265,9 @@ class group extends sandbox_multi
      */
     protected function check_preserved(user_message $msg): bool
     {
-        global $usr;
+        global $sys;
         global $mtr;
+        $usr = $sys?->usr_req;
 
         // init
         $msg_res = $mtr->txt(msg_id::IS_RESERVED);
@@ -1574,7 +1577,7 @@ class group extends sandbox_multi
         $db_chk = clone $this;
         $db_chk->reset(true);
         // check with the standard namespace
-        if ($db_chk->load_standard_by_name($this->name())) {
+        if ($db_chk->load_standard_by_name($this->name(), $msg)) {
             if ($db_chk->id() > 0) {
                 log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
                 $sim = $db_chk;

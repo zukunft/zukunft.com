@@ -389,9 +389,16 @@ class ip_range extends db_object_seq_id
     protected function can_delete(user_message $msg): bool
     {
         $can_del = false;
-        if ($msg->usr->is_admin() or $msg->usr->is_system()) {
-            $can_del = true;
+
+        if ($msg->usr === null) {
+            log_err('user not set in user_message', 'can_delete');
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } else {
+            if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+                $can_del = true;
+            }
         }
+
         return $can_del;
     }
 

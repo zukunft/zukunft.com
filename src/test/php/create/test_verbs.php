@@ -116,6 +116,22 @@ class test_verbs extends test_objects
     }
 
     /**
+     * @return verb the "is symbol for" verb used by symbol-relation triples (e.g. "CHF is symbol for Swiss franc")
+     */
+    function verb_is_symbol(): verb
+    {
+        return new verb(verbs::SYMBOL_ID, verbs::SYMBOL_NAME, verbs::SYMBOL);
+    }
+
+    /**
+     * @return verb the "in" verb used by unit prefix triples (e.g. "in USD")
+     */
+    function verb_in(): verb
+    {
+        return new verb(verbs::IN_ID, verbs::IN_NAME, verbs::IN);
+    }
+
+    /**
      * @return verb a standard verb with all fields set
      */
     function verb_is_filled(): verb

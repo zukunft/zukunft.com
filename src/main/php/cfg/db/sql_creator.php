@@ -46,6 +46,8 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_ELEMENT . 'element.php';
+//include_once paths::MODEL_HELPER . 'db_cache.php';
+//include_once paths::MODEL_HELPER . 'db_cache_status.php';
 //include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_LOG . 'change_value.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
@@ -107,6 +109,8 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
@@ -210,6 +214,7 @@ class sql_creator
         change_link::class,
         sys_log::class,
         job::class,
+        db_cache::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
 
@@ -600,7 +605,8 @@ class sql_creator
      */
     function set_class(string $class, sql_type_list $sc_par_lst = new sql_type_list(), string $ext = ''): bool
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
 
         $this->reset();
         $this->class = $class;
@@ -2525,6 +2531,7 @@ class sql_creator
      * @param int|string|array $id_field the id field or id fields of the table from where the row should be deleted
      * @param int|string|array $id
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param sql_par_field_list $fvt_lst
      * @return string
      */
     function create_sql_delete(
@@ -4239,7 +4246,11 @@ class sql_creator
                     }
                 }
             } else {
-                log_err('Query is not a sub query, but parameters types are missing for ' . $this->query_name);
+                if ($sc_par_lst->is_delete()) {
+                    log_info('No parameters types for ' . $this->query_name);
+                } else {
+                    log_err('Query is not a sub query, but parameters types are missing for ' . $this->query_name);
+                }
             }
         }
 
@@ -4989,6 +5000,12 @@ class sql_creator
         if ($result == 'change_values_geo_big_id') {
             $result = 'change_id';
         }
+        if ($result == 'db_cache_status_id') {
+            $result = 'status_id';
+        }
+        if ($result == 'db_cache_type_id') {
+            $result = 'type_id';
+        }
         return $result;
     }
 
@@ -5178,6 +5195,13 @@ class sql_creator
         if ($result == 'views_typess') {
             $result = 'views_types';
         }
+        // for the database upgrade process only
+        if ($result == 'db_cache_statuss') {
+            $result = 'db_cache_statuum';
+        }
+        if ($result == 'db_cache_typess') {
+            $result = 'db_cache_types';
+        }
         /*
         if ($this->db_type == self::MYSQL) {
             if ($result == 'values') {
@@ -5309,6 +5333,12 @@ class sql_creator
             $result = job_status::FLD_NAME;
         }
         if ($result == 'job_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'db_cache_status_name') {
+            $result = db_cache_status::FLD_NAME;
+        }
+        if ($result == 'db_cache_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
