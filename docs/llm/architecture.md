@@ -171,6 +171,12 @@ Each main object file follows this section order:
 12. sql write — `sql_insert()`, `sql_update()`, `sql_delete()`
 13. info / internal / debug — `name()`, `dsp_id()`, helpers
 
+**Within each section, order the functions top down**: the public, frequently
+called entry points at the top, the rarely used and private helpers they
+delegate to at the bottom (e.g. `load_by_phrase` before `load_sql_by_phrase`).
+A reader scanning a section meets the high-level function before the detail it
+calls, and the most common entry point is found first.
+
 ## Standard function names
 
 | Function | Purpose |
@@ -185,6 +191,21 @@ Each main object file follows this section order:
 | `dsp_id` | Debug string with name + IDs (never calls debug functions itself) |
 | `name` | User-facing object name |
 | `sql_insert` / `sql_update` / `sql_delete` | Create SQL statement objects |
+
+**Spell function names out in full** — `load_by_phrase_list`, not `load_by_phr_lst`.
+This is the opposite of the variable rule below: variables use the 3-letter
+abbreviations, but a function name is read at a call site that already costs far
+more (a call is a real operation) than the few extra characters, so the clarity
+of the full word wins. So use the spelled-out object name in `load_by_*` and
+similar verbs (`load_by_phrase`, not `load_by_phr`); reserve the abbreviations
+for variables.
+
+**Name a thing by the broadest concept that already covers its parts** — don't
+enumerate items that a single term already implies. A list shown "without
+subtitles" needs no "and symbols" suffix because the subtitle category already
+includes the symbols; `related phrases without subtitles` beats `related phrases
+without symbols and subtitle`. Shorter and one fewer thing to keep in sync when
+the parts change.
 
 ## Naming conventions
 

@@ -23,3 +23,7 @@ The recommended steps to test any code changes are
 7. in case of errors fix them and repeat step 6 or worst case even step 1
 8. if /test/test.php is fine the commit can be done
 9. to fill the local server with all data run /test/test_full_load.php
+
+### additional line in src/main/resources/db_code_links
+
+if an additional entry in any of the files in src/main/resources/db_code_links is done run test/reset_db.php at least once and update src/test/resources/api/ui_config/ui_config.json and src/test/resources/api/type_lists/type_lists.json based on the difference reported in the run to refresh the preloaded type list. After that refresh the local deployment to update the api tests. 

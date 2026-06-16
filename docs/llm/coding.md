@@ -50,7 +50,9 @@ detail file. Order is by how often they fire, not importance.
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
 - Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
 - Main object files follow the standard section order; functions use the standard names. → `docs/llm/architecture.md`
+- Within a section, order functions top down: public / often-used entry points first, rarely-used private helpers last (`load_by_phrase` before `load_sql_by_phrase`). → `docs/llm/architecture.md`
 - Variable names are the 3-letter abbreviations (or combinations); only `$i` may be single-char. → `docs/llm/architecture.md`
+- Function names are spelled out in full (`load_by_phrase_list`, not `load_by_phr_lst`); the abbreviations are for variables only. → `docs/llm/architecture.md`
 - Every class file declares its suggested `$abbr` var name in the opening docblock. → `docs/llm/architecture.md`
 - Every parameter gets a `@param` line stating its purpose and the effect of each meaningful value.
 - `@param` / `@return` descriptions stay on one line where possible; longer rationale belongs in a `docs/` file the docblock can point to.

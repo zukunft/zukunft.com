@@ -366,6 +366,7 @@ class component_exe extends component
             component_types::PHRASE_ALIASES => $list->phrase_aliases($dbo, $cfg->phrase_list()),
             component_types::PHRASE_SYMBOLS => $list->phrase_symbols($dbo, $cfg->phrase_list()),
             component_types::LIST_PHRASES_RELATED_EX_SYMBOLS => $list->phrases_related_ex_symbols($dbo, $cfg->phrase_list()),
+            component_types::LIST_PHRASES_RELATED_EX_SUBTITLE => $list->phrases_related_ex_subtitle($dbo, $cfg->phrase_list()),
             component_types::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $cfg),
             component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $cfg),
             component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $cfg),
