@@ -887,3 +887,5 @@ change_field_id,change_field_name,table_id,description
 886,latex,10,
 887,latex,11,
 888,action,114,
+889,impact,22,
+890,last_update,22,

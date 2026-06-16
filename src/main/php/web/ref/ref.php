@@ -123,6 +123,10 @@ class ref extends sandbox
             $this->description = $value;
         }
     }
+    // a cached number used for the default sorting and as an importance indicator of the reference
+    public ?float $impact = null;
+    // timestamp of the last successful update of the reference (as the api formatted text)
+    public ?string $last_update = null;
 
 
     /*
@@ -246,6 +250,16 @@ class ref extends sandbox
             $this->description = $json_array[json_fields::DESCRIPTION];
         } else {
             $this->description = null;
+        }
+        if (array_key_exists(json_fields::IMPACT, $json_array)) {
+            $this->impact = $json_array[json_fields::IMPACT];
+        } else {
+            $this->impact = null;
+        }
+        if (array_key_exists(json_fields::LAST_UPDATE, $json_array)) {
+            $this->last_update = $json_array[json_fields::LAST_UPDATE];
+        } else {
+            $this->last_update = null;
         }
         return $msg->is_ok();
     }
@@ -400,7 +414,14 @@ class ref extends sandbox
      */
     function name_tip(): string
     {
-        return $this->type_name() . ' ' . $this->external_key();
+        $result = $this->type_name() . ' ' . $this->external_key();
+        if ($this->last_update != null) {
+            $result .= ', last update ' . $this->last_update;
+        }
+        if ($this->impact != null) {
+            $result .= ', impact ' . $this->impact;
+        }
+        return $result;
     }
 
     /**

@@ -4,6 +4,8 @@ PREPARE ref_by_link_type_ids (bigint, bigint, bigint, text) AS
            s.user_id,
            s.phrase_id,
            s.ref_type_id,
+           s.impact,
+           s.last_update,
            CASE WHEN (u.external_key <> '' IS NOT TRUE) THEN s.external_key   ELSE u.external_key   END AS external_key,
            CASE WHEN (u.url          <> '' IS NOT TRUE) THEN s.url            ELSE u.url            END AS url,
            CASE WHEN (u.description  <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,

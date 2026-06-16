@@ -171,6 +171,7 @@
     \-- to_name - section for function to_name not yet defined that it should be set and get in /ref/ref.php
     \-- has_type - section for function has_type not yet defined that it should be set and get in /ref/ref.php
     \-- type_name - section for function type_name is expected to be preloaded in /ref/ref.php
+    \-- last_update - section for function last_update not yet defined that it should be set and get in /ref/ref.php
     \-- source_id - section for function source_id not yet defined that it should be set and get in /ref/ref.php
     \-- source_name - section for function source_name not yet defined that it should be set and get in /ref/ref.php
     \-- cloned_linked - section for function cloned_linked not yet defined that it should be set and get in /ref/ref.php
