@@ -93,6 +93,8 @@ class system_views_read_tests
         // Zurich and CHF is the example for the page-title symbol-line layout
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::ZH_ID, $cfg);
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::CHF_ID, $cfg);
+        // inhabitants is the example for the related formula list (e.g. the "increase" formula)
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::INHABITANT_ID, $cfg);
         $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1), words::MATH_ID);
         $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), words::MATH_ID, $cfg);
         $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), words::MATH_ID, $cfg);

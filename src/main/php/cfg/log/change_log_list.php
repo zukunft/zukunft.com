@@ -81,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class change_log_list extends list_db_read
@@ -89,11 +90,32 @@ class change_log_list extends list_db_read
 
     // TODO add cast
     // TODO add JSON export test
-    // TODO add API controller
     // TODO add API test
     // TODO add table view
     // TODO add table view unit test
     // TODO add table view db read test
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the api json array with one entry per change so that the frontend
+     * can show e.g. the recent changes of a word on the default word page
+     *
+     * @param api_type_list $typ_lst configuration for the api message
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = [];
+        foreach ($this->lst() as $chg) {
+            $vars[] = $chg->api_json_array($typ_lst, $usr);
+        }
+        return $vars;
+    }
 
 
     /*

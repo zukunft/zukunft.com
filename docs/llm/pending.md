@@ -36,13 +36,15 @@ The default view for a word should have four column for width screens > 2800 pix
 6. maybe a preselected third tab with the user changes if the user has done some overwrites
    the tab switch has the position type 'side_or_last_below'
 
-show the phrases related to a word in the default word page; create first a list of unit tests 
-show the value related to a word in the default word page
-show the references related to a word in the default word page
+show the phrases related to a word in the default word page; create first a list of unit tests
+for the change log use a fixed date for the creation of the unit test files
+to display a date use a format from config that the user can overwrite
 show the changes of a word in the default word page
 show the description of the word on the left 1/3 of the screen
 add the component position type "side or below" that shows this component right of the previous component is not the screen size is too small, what is too small is taken from the config which the user can overwrite an the default value is 1000 pixel
 show the views assigned to a word in the default word page
+
+move time zone setting to .env
 
 
 add the formulas assigned to the parent phrase to the word_default view using also 1/3 of the screen width

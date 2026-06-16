@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -46,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -117,7 +119,7 @@ class component_write_tests
 
         // check if the component adding has been logged
         $result = $t->log_last_by_field($cmp, component::FLD_NAME, $cmp->id(), true);
-        $target = users::SYSTEM_TEST_NAME . ' added "System Test View Component"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "System Test View Component"';
         $t->assert('component->save adding logged for "' . components::TEST_ADD_NAME . '"', $result, $target);
 
         // check if adding the same component again creates a correct error message
@@ -151,7 +153,7 @@ class component_write_tests
 
         // check if the component renaming has been logged
         $result = $t->log_last_by_field($cmp_renamed, component::FLD_NAME, $cmp_renamed->id(), true);
-        $target = users::SYSTEM_TEST_NAME . ' changed "System Test View Component" to "System Test View Component Renamed"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed "System Test View Component" to "System Test View Component Renamed"';
         $t->assert('component->save rename logged for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the component parameters can be added
@@ -177,14 +179,14 @@ class component_write_tests
         // TODO create an additional test based on change_tables and change_fields to receive data for an deprecated table or field
         $result = $t->log_last_by_field($cmp_reloaded, sql_db::FLD_DESCRIPTION, $cmp_reloaded->id(), true);
         // TODO Prio 1 fix it
-        $target = users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         if ($result != $target) {
-            $target = users::SYSTEM_TEST_NAME . ' changed "System Test View Component description" to "Just added for testing the user sandbox"';
+            $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed "System Test View Component description" to "Just added for testing the user sandbox"';
         }
         $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
         $result = $t->log_last_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id(), true);
         // TODO Prio 1 fix it
-        $target = users::SYSTEM_TEST_NAME . ' added "word name"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "word name"';
         if ($result != $target) {
             $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "word name" to "formulas"';
         }

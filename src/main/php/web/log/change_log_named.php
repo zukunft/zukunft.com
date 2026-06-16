@@ -31,6 +31,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\log;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -60,6 +61,16 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class change_log_named extends change_log
 {
+
+    /*
+     * test
+     */
+
+    // a fixed change time shown in test mode so the change log snapshots stay
+    // deterministic regardless of when the test data was created;
+    // matches test_const::DUMMY_DATETIME used to set the test change log entries
+    const string TEST_TIME = '2022-12-26T18:23:45+01:00';
+
 
     /*
      * object vars
@@ -282,18 +293,20 @@ class change_log_named extends change_log
     }
 
     /**
+     * @param bool $test_mode true to show a fixed change time so that automatic
+     *                        test snapshots stay deterministic
      * @return string the current change as a human-readable text
-     *                optional without time for automatic testing
      */
-    public function dsp(bool $ex_time = false): string
+    public function dsp(bool $test_mode = false): string
     {
         global $ui_sys;
         global $mtr;
         $result = '';
 
-        if (!$ex_time) {
-            $result .= date_format($this->change_time, $ui_sys->cfg->date_time_format()) . ' ';
-        }
+        // in test mode use a fixed change time so the change log snapshots do not
+        // change with the moment the test data happened to be created
+        $time = $test_mode ? new DateTime(self::TEST_TIME) : $this->change_time;
+        $result .= date_format($time, $ui_sys->cfg->date_time_format()) . ' ';
         if ($this->usr != null) {
             if ($this->usr->name() <> '') {
                 $result .= $this->usr->name() . ' ';

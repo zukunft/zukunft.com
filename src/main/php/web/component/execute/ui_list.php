@@ -361,9 +361,14 @@ class ui_list extends ui_base
         if ($dbo::class == triple::class) {
             $phr = $dbo->phrase();
         }
-        $ref_lst = $dto->ref_list_cloned();
         if ($phr != null) {
-            $ref_lst = $ref_lst->get_by_phrase($phr);
+            // a word loaded for its page carries its references directly (like the related
+            // values and formulas); otherwise fall back to the page reference cache
+            if ($dbo::class == word::class and $dbo->ref_lst != null) {
+                $ref_lst = $dbo->ref_lst;
+            } else {
+                $ref_lst = $dto->ref_list_cloned()->get_by_phrase($phr);
+            }
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($dbo->phrase());
             $result = $ref_lst->list($phr_lst);
@@ -404,19 +409,26 @@ class ui_list extends ui_base
     {
         global $ui_sys;
 
-        if ($wrd::class == phrase::class) {
-            $phr = $wrd;
+        // a word loaded for its page carries its related formulas directly (like the
+        // related values), so use that list; otherwise fall back to the formula link
+        // cache or, outside the unit tests, an api load
+        if ($wrd::class == word::class and $wrd->frm_lst != null) {
+            $frm_lst = $wrd->frm_lst;
         } else {
-            $phr = $wrd->phrase();
-        }
-        $lnk_lst = $cac?->frm_lnk_lst;
-        $frm_lst = new formula_list();
-        // the default cache is an empty list, so an empty cache triggers the backend call
-        if ($lnk_lst != null and !$lnk_lst->is_empty()) {
-            $frm_lst = $lnk_lst->get_formula_list($phr, $cac->frm_lst);
-        } elseif (!$test_mode) {
-            // TODO Prio 2 decide if and when a reloading via api is done
-            $frm_lst->load_by_phr_id($phr->id());
+            if ($wrd::class == phrase::class) {
+                $phr = $wrd;
+            } else {
+                $phr = $wrd->phrase();
+            }
+            $lnk_lst = $cac?->frm_lnk_lst;
+            $frm_lst = new formula_list();
+            // the default cache is an empty list, so an empty cache triggers the backend call
+            if ($lnk_lst != null and !$lnk_lst->is_empty()) {
+                $frm_lst = $lnk_lst->get_formula_list($phr, $cac->frm_lst);
+            } elseif (!$test_mode) {
+                // TODO Prio 2 decide if and when a reloading via api is done
+                $frm_lst->load_by_phr_id($phr->id());
+            }
         }
         if ($ui_sys?->cfg !== null) {
             $row_limit = $ui_sys->cfg->get_by(

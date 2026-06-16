@@ -51,12 +51,14 @@
 
 namespace Zukunft\ZukunftCom\test\php\utils;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -3910,7 +3912,7 @@ class test_base
     {
         $lib = new library();
         $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = $sbx->get_user()->name() . ' ' . $action . ' "';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ' . $action . ' "';
         if ($action == msg_id::LOG_UPDATE->value) {
             $target .= $old_name . '" to "' . $name . '"';
         } else {
@@ -4150,7 +4152,7 @@ class test_base
     {
         $lib = new library();
         $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = $sbx->get_user()->name() . ' ' . $action . ' "';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ' . $action . ' "';
         if ($action == msg_id::LOG_UPDATE->value) {
             $target .= $old_name . '" to "' . $name . '"';
         } else {

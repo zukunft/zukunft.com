@@ -34,6 +34,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -55,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
@@ -318,7 +320,7 @@ class word_write_tests
         if ($wrd_add->id() > 0) {
             $result = $t->log_last_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id(), true);
         }
-        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_ADD . '"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "' . words::TEST_ADD . '"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'trying to create a new word with the name "' . words::TEST_ADD . '" again automatically merges the word with existing word if no unique key differs';
@@ -472,14 +474,14 @@ class word_write_tests
 
         // check if the word parameter adding have been logged
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_WORD_PLURAL, $wrd_reloaded->id(), true);
-        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . 's"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . 's"';
         $t->assert('word->load plural for "' . words::TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($wrd_reloaded, sql_db::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
-        $target = users::SYSTEM_TEST_NAME . ' changed "' . words::TEST_ADD_COM . '" to "' . words::TEST_RENAMED . ' description"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed "' . words::TEST_ADD_COM . '" to "' . words::TEST_RENAMED . ' description"';
         $t->assert('word->load description for "' . words::TEST_RENAMED . '" logged', $result, $target);
         $t->assert('word->load ref_2 for "' . words::TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_PHRASE_TYPE, $wrd_reloaded->id(), true);
-        $target = users::SYSTEM_TEST_NAME . ' added "differentiator filler"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "differentiator filler"';
         $t->assert('word->load type_id for "' . words::TEST_RENAMED . '" logged', $result, $target);
 
         $test_name = 'check if a user-specific word is created if another user changes the word to ' . words::TEST_RENAMED;
