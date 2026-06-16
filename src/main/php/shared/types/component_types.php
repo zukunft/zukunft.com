@@ -411,6 +411,9 @@ class component_types
     const string LIST_PHRASES_RELATED_EX_SYMBOLS = "list_phrases_related_ex_symbols";
     const int LIST_PHRASES_RELATED_EX_SYMBOLS_ID = 196;
     const string LIST_PHRASES_RELATED_EX_SYMBOLS_COM = "list of phrases related to the given phrase excluding the alias and symbol entries";
+    const string LIST_PHRASES_RELATED_EX_SUBTITLE = "list_phrases_related_ex_subtitle";
+    const int LIST_PHRASES_RELATED_EX_SUBTITLE_ID = 197;
+    const string LIST_PHRASES_RELATED_EX_SUBTITLE_COM = "list of phrases related to the given phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components";
     const string LIST_TRIPLES_OF_VERB = "triples_by_verb";
     const int LIST_TRIPLES_OF_VERB_ID = 137;
     const string LIST_VALUES_BY_TRIPLE = "values_by_triple";
@@ -837,6 +840,7 @@ class component_types
         [self::PHRASE_ALIASES, self::PHRASE_ALIASES_ID],
         [self::PHRASE_SYMBOLS, self::PHRASE_SYMBOLS_ID],
         [self::LIST_PHRASES_RELATED_EX_SYMBOLS, self::LIST_PHRASES_RELATED_EX_SYMBOLS_ID],
+        [self::LIST_PHRASES_RELATED_EX_SUBTITLE, self::LIST_PHRASES_RELATED_EX_SUBTITLE_ID],
         [self::LIST_TRIPLES_OF_VERB, self::LIST_TRIPLES_OF_VERB_ID],
         [self::LIST_FORMULAS_OF_VERB, self::LIST_FORMULAS_OF_VERB_ID],
         [self::LIST_VALUES_BY_TRIPLE, self::LIST_VALUES_BY_TRIPLE_ID],

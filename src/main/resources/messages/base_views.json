@@ -184,6 +184,12 @@
       "code_id": "list_phrases_related_ex_symbols"
     },
     {
+      "name": "related phrases without subtitles",
+      "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
+      "type": "list_phrases_related_ex_subtitle",
+      "code_id": "list_phrases_related_ex_subtitle"
+    },
+    {
       "name": "system sub title values",
       "description": "show the language specific sub title for a value list",
       "type": "system_sub_title",
@@ -264,7 +270,7 @@
         },
         {
           "position": "7",
-          "name": "related phrases without symbols"
+          "name": "related phrases without subtitles"
         },
         {
           "position": "8",

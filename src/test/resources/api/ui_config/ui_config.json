@@ -8956,6 +8956,12 @@
         "code_id": "list_phrases_related_ex_symbols",
         "description": "list of phrases related to the given phrase excluding the alias and symbol entries",
         "id": 196
+      },
+      {
+        "name": "related phrases without subtitles",
+        "code_id": "list_phrases_related_ex_subtitle",
+        "description": "list of phrases related to the given phrase excluding the alias, symbol and is a entries that are already shown by the alias, symbol and subtitle components",
+        "id": 197
       }
     ],
     "component_link_types": [
@@ -20426,11 +20432,11 @@
           },
           {
             "link_id": 995,
-            "id": 296,
-            "name": "related phrases without symbols",
-            "description": "list of phrases related to this phrase excluding the alias and symbol entries",
-            "type_id": 196,
-            "code_id": "list_phrases_related_ex_symbols",
+            "id": 297,
+            "name": "related phrases without subtitles",
+            "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
+            "type_id": 197,
+            "code_id": "list_phrases_related_ex_subtitle",
             "position": 7,
             "position_type": 1
           },
@@ -20477,7 +20483,7 @@
           },
           {
             "link_id": 1000,
-            "id": 297,
+            "id": 298,
             "name": "formula list",
             "description": "list of formulas",
             "type_id": 12,

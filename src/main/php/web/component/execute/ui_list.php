@@ -130,7 +130,7 @@ class ui_list extends ui_base
      * @param phrase_list|null $phr_lst the cached list of phrases given by the caller
      * @return phrase_list|null the related phrases of the object or the given cache list
      */
-    private function related_list(word|db_object $wrd, ?phrase_list $phr_lst): ?phrase_list
+    private function related_list(word|phrase|db_object $wrd, ?phrase_list $phr_lst): ?phrase_list
     {
         if ($wrd::class == word::class or $wrd::class == triple::class) {
             if ($wrd->phr_lst != null) {
@@ -171,7 +171,6 @@ class ui_list extends ui_base
     /**
      * HTML for the phrases related to the given phrase excluding the alias and symbol entries
      * because these are already shown by the phrase_aliases and phrase_symbols components
-     * sorted with the highest impact first e.g. for stocks the highest market capitalisation
      *
      * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
@@ -179,14 +178,57 @@ class ui_list extends ui_base
      */
     function phrases_related_ex_symbols(word|db_object $wrd, ?phrase_list $phr_lst = null): string
     {
+        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS]);
+    }
+
+    /**
+     * HTML for the phrases related to the given phrase excluding the alias, symbol and "is a"
+     * entries, because the alias and symbol have their own components and the "is a" parents
+     * are already shown in the page subtitle (e.g. on the default word page)
+     *
+     * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code with the remaining related phrases
+     */
+    function phrases_related_ex_subtitle(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    {
+        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS, verbs::IS]);
+    }
+
+    /**
+     * HTML for the phrases related to the given phrase excluding the triples linked by the
+     * verbs in $ex_vrb_lst (an empty list shows all related phrases)
+     * sorted with the highest impact first e.g. for stocks the highest market capitalisation
+     *
+     * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @param array $ex_vrb_lst the code ids of the verbs whose triples should not be shown
+     * @return string the html code with the remaining related phrases
+     */
+    private function phrases_related_ex_verbs(
+        word|phrase|db_object $wrd,
+        ?phrase_list          $phr_lst,
+        array                 $ex_vrb_lst
+    ): string
+    {
         global $ui_sys;
 
+        // the object can be a phrase directly (e.g. the related-phrases component) or a
+        // word/triple that carries one
+        if ($wrd::class == phrase::class) {
+            $phr = $wrd;
+        } else {
+            $phr = $wrd->phrase();
+        }
         $result = '';
         $phr_cac = $this->related_list($wrd, $phr_lst);
         $vrb_cac = $ui_sys?->typ_lst_cache?->vrb;
         if ($phr_cac != null and $vrb_cac != null) {
-            $vrb_ids = [$vrb_cac->id(verbs::ALIAS), $vrb_cac->id(verbs::SYMBOL)];
-            $result = $phr_cac->parent_triples_ex_verbs($wrd->phrase(), $vrb_ids)->name_link_by_impact();
+            $vrb_ids = [];
+            foreach ($ex_vrb_lst as $vrb_code_id) {
+                $vrb_ids[] = $vrb_cac->id($vrb_code_id);
+            }
+            $result = $phr_cac->parent_triples_ex_verbs($phr, $vrb_ids)->name_link_by_impact();
         }
         return $result;
     }
@@ -676,7 +718,11 @@ class ui_list extends ui_base
      */
     function phrases_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
     {
-        return 'phrases_related placeholder';
+        $result = '';
+        if ($dbo != null) {
+            $result = $this->phrases_related_ex_verbs($dbo, $cfg?->phrase_list(), []);
+        }
+        return $result;
     }
 
     /**
